@@ -859,6 +859,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.rejectedFields.groupRejectionTime < this.unVerifiedObj.groupRequestTime &&
       this.unVerifiedObj.group
     ) {
+      if ((this.unVerifiedObj.groupRequestTime + 100) < this.rejectedFields.designationRejectionTime || 
+      (this.unVerifiedObj.groupRequestTime + 100) < this.unVerifiedObj.designationRequestTime) {
+        return false
+      }
       return true
     }
     return false
@@ -870,6 +874,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.unVerifiedObj.groupRequestTime < this.rejectedFields.groupRejectionTime &&
       this.rejectedFields.group
     ) {
+      if ((this.rejectedFields.groupRejectionTime + 100) < this.rejectedFields.designationRejectionTime || 
+      (this.rejectedFields.groupRejectionTime + 100) < this.unVerifiedObj.designationRequestTime) {
+        return false
+      }
       return true
     }
     return false
@@ -881,6 +889,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.rejectedFields.designationRejectionTime < this.unVerifiedObj.designationRequestTime &&
       this.unVerifiedObj.designation
     ) {
+      if ((this.unVerifiedObj.designationRequestTime + 100) < this.rejectedFields.groupRejectionTime || 
+      (this.unVerifiedObj.designationRequestTime + 100) < this.unVerifiedObj.groupRequestTime) {
+        return false
+      }
       return true
     }
     return false
@@ -892,42 +904,70 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.unVerifiedObj.designationRequestTime < this.rejectedFields.designationRejectionTime &&
       this.rejectedFields.designation
     ) {
+      if ((this.rejectedFields.designationRejectionTime + 100) < this.rejectedFields.groupRejectionTime || 
+      (this.rejectedFields.designationRejectionTime + 100) < this.unVerifiedObj.groupRequestTime) {
+        return false
+      }
       return true
     }
     return false
   }
 
-  handleSendApproval(): void {
-    const data: any = {
-      'designation': this.primaryDetailsForm.value['designation'],
-      'group': this.primaryDetailsForm.value['group'],
-    }
-    const postData: any = {
-      'request': {
-        'userId': this.configService.unMappedUser.id,
-        'employmentDetails': {
-          'departmentName': this.primaryDetailsForm.value['designation'],
-        },
-        'profileDetails': {
-          'professionalDetails': [],
-        },
-      },
+  get enableEditBtn(): boolean {
+    if (this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value &&
+    this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value
+    ) {
+      return true
+
+    } else if(this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value &&
+    (this.designationApprovedTime + 100) <= this.rejectedFields.groupRejectionTime) {
+      return true
+    } else if (this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value && 
+    (this.groupApprovedTime + 100) <= this.rejectedFields.designationRejectionTime) {
+      return true
     }
 
-    postData.request.profileDetails.professionalDetails.push(data)
-    this.userProfileService.editProfileDetails(postData)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.matSnackBar.open(this.handleTranslateTo('requestSent'))
-      this.editProfile = !this.editProfile
-      this.enableWR = true
-      this.portalProfile.verifiedKarmayogi = false
-      this.getSendApprovalStatus()
-    },         (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
+    return false
+  }
+
+  handleSendApproval(): void {
+    const data: any = {
+    }
+    if (this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value) {
+      data['designation'] = this.primaryDetailsForm.get('designation')!.value
+    }
+    if (this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value) {
+      data['group'] = this.primaryDetailsForm.get('group')!.value
+    }
+
+    if(data.designation || data.group) {
+      const postData: any = {
+        'request': {
+          'userId': this.configService.unMappedUser.id,
+          'employmentDetails': {
+            'departmentName': this.primaryDetailsForm.value['designation'],
+          },
+          'profileDetails': {
+            'professionalDetails': [],
+          },
+        },
       }
-    })
+
+      postData.request.profileDetails.professionalDetails.push(data)
+      this.userProfileService.editProfileDetails(postData)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.matSnackBar.open(this.handleTranslateTo('requestSent'))
+        this.editProfile = !this.editProfile
+        this.enableWR = true
+        this.portalProfile.verifiedKarmayogi = false
+        this.getSendApprovalStatus()
+      },         (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
+        }
+      })
+    }
 
   }
 

@@ -262,7 +262,7 @@
           <div class="flex flex-row gap-4" *ngIf="editProfile">
             <button class="outline-button" (click)="editProfile = !editProfile">{{ 'profileInfo.cancel' | translate
               }}</button>
-            <button class="save-button" (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
+            <button class="save-button" [ngClass]="{'disable-button': !enableEditBtn}" (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
               }}</button>
           </div>
         </div>
