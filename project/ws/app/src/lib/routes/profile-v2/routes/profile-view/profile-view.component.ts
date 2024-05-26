@@ -859,7 +859,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.rejectedFields.groupRejectionTime < this.unVerifiedObj.groupRequestTime &&
       this.unVerifiedObj.group
     ) {
-      if ((this.unVerifiedObj.groupRequestTime + 100) < this.rejectedFields.designationRejectionTime || 
+      if ((this.unVerifiedObj.groupRequestTime + 100) < this.rejectedFields.designationRejectionTime ||
       (this.unVerifiedObj.groupRequestTime + 100) < this.unVerifiedObj.designationRequestTime) {
         return false
       }
@@ -874,7 +874,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.unVerifiedObj.groupRequestTime < this.rejectedFields.groupRejectionTime &&
       this.rejectedFields.group
     ) {
-      if ((this.rejectedFields.groupRejectionTime + 100) < this.rejectedFields.designationRejectionTime || 
+      if ((this.rejectedFields.groupRejectionTime + 100) < this.rejectedFields.designationRejectionTime ||
       (this.rejectedFields.groupRejectionTime + 100) < this.unVerifiedObj.designationRequestTime) {
         return false
       }
@@ -889,7 +889,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.rejectedFields.designationRejectionTime < this.unVerifiedObj.designationRequestTime &&
       this.unVerifiedObj.designation
     ) {
-      if ((this.unVerifiedObj.designationRequestTime + 100) < this.rejectedFields.groupRejectionTime || 
+      if ((this.unVerifiedObj.designationRequestTime + 100) < this.rejectedFields.groupRejectionTime ||
       (this.unVerifiedObj.designationRequestTime + 100) < this.unVerifiedObj.groupRequestTime) {
         return false
       }
@@ -904,7 +904,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.unVerifiedObj.designationRequestTime < this.rejectedFields.designationRejectionTime &&
       this.rejectedFields.designation
     ) {
-      if ((this.rejectedFields.designationRejectionTime + 100) < this.rejectedFields.groupRejectionTime || 
+      if ((this.rejectedFields.designationRejectionTime + 100) < this.rejectedFields.groupRejectionTime ||
       (this.rejectedFields.designationRejectionTime + 100) < this.unVerifiedObj.groupRequestTime) {
         return false
       }
@@ -919,10 +919,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     ) {
       return true
 
-    } else if(this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value &&
+    }  if (this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value &&
     (this.designationApprovedTime + 100) <= this.rejectedFields.groupRejectionTime) {
       return true
-    } else if (this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value && 
+    } else if (this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value &&
     (this.groupApprovedTime + 100) <= this.rejectedFields.designationRejectionTime) {
       return true
     }
@@ -940,7 +940,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       data['group'] = this.primaryDetailsForm.get('group')!.value
     }
 
-    if(data.designation || data.group) {
+    if (data.designation || data.group) {
       const postData: any = {
         'request': {
           'userId': this.configService.unMappedUser.id,
