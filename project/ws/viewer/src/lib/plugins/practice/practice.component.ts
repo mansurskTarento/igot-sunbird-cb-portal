@@ -629,25 +629,27 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   getNextQuestion(idx: any) {
-    this.process = true
-    if (idx !== this.currentQuestionIndex) {
-      this.currentQuestionIndex = idx
-    }
-    const questions = this.secQuestions
-    this.currentQuestion = questions && questions[idx] ? questions[idx] : null
-    if (questions[idx] && questions[idx]['questionId']) {
-      this.questionVisitedData.push(questions[idx]['questionId'])
-    }
+    if(this.totalQCount > idx) {
+      this.process = true
+      if (idx !== this.currentQuestionIndex) {
+        this.currentQuestionIndex = idx
+      }
+      const questions = this.secQuestions
+      this.currentQuestion = questions && questions[idx] ? questions[idx] : null
+      if (questions[idx] && questions[idx]['questionId']) {
+        this.questionVisitedData.push(questions[idx]['questionId'])
+      }
 
-    setTimeout(() => {
-      this.process = false
-      // tslint:disable-next-line
-    }, 10)
-    this.showAnswer = false
-    this.matchHintDisplay = []
+      setTimeout(() => {
+        this.process = false
+        // tslint:disable-next-line
+      }, 10)
+      this.showAnswer = false
+      this.matchHintDisplay = []
 
-    if (this.compatibilityLevel <= 6) {
-      // console.log(this.generateRequest)
+      if (this.compatibilityLevel <= 6) {
+        // console.log(this.generateRequest)
+      }
     }
   }
   get current_Question(): NSPractice.IQuestionV2 {

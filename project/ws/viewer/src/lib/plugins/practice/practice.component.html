@@ -1406,7 +1406,7 @@
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-              [showOnlyQuestion]="false" [showMarkForReview]="true">
+              [showOnlyQuestion]="false" [showMarkForReview]="true" (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)">
             </viewer-question>
           </div>
 
