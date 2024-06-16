@@ -140,11 +140,16 @@ export class PracticeService {
           // this.mtfSrc['']
           // if (mtfSrc[question.questionId] && mtfSrc[question.questionId].source[i] && mtfSrc[question.questionId].target[i]) {
           //   for (let j = 0; j < question.options.length; j += 1) {
-              const opText = question.options[i].text.trim()
+              let opText = question.options[i].text.trim()
+              if (opText) {
+                opText = opText.replace(/(<([^>]+)>)/ig, '')
+              }
               if (mtfSrc[question.questionId] && mtfSrc[question.questionId].source.length
                 && mtfSrc[question.questionId].source.includes(opText)) {
-                const idxOfSource = _.indexOf(mtfSrc[question.questionId].source, question.options[i].text.trim())
-                question.options[i].response = mtfSrc[question.questionId].target[idxOfSource].trim()
+                const idxOfSource = _.indexOf(mtfSrc[question.questionId].source, opText)
+                if (mtfSrc[question.questionId].target[idxOfSource]) {
+                  question.options[i].response = mtfSrc[question.questionId].target[idxOfSource].trim()
+                }
                 question.options[i].userSelected = true
               // }
             // }

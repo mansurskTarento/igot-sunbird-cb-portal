@@ -135,7 +135,6 @@ export class ProviderPageComponent implements OnInit  {
     }
   }
 
- 
   raiseCompetencyTelemetry(name: string) {
     this.raiseTelemetry(`${name} core expertise`)
   }

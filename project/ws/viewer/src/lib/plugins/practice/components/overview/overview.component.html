@@ -83,7 +83,7 @@
       </div>
       <div>
         <div class="ml-5 start-assessment-cta-standalone block md:hidden" *ngIf="coursePrimaryCategory === 'Standalone Assessment'">
-          <button [disabled]="!consentGiven" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed" [class.spinner]="loading" [disabled]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary text-black'" class=" text-sm font-semibold  py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
+          <button [disabled]="!consentGiven ? 'disabled': null" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed" [class.spinner]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary-standalone text-standalone-black'" class=" text-sm font-semibold  py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
             <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
           </button>
           <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
@@ -91,7 +91,7 @@
       </div>
       </div>
       <div class="start-assessment-cta hidden md:block" *ngIf="coursePrimaryCategory === 'Standalone Assessment'">
-        <button [disabled]="!consentGiven" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed" [class.spinner]="loading" [disabled]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary text-black'" class="text-sm font-semibold py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
+        <button [disabled]="!consentGiven ? 'disabled': null" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed" [class.spinner]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary-standalone text-standalone-black'" class="text-sm font-semibold py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
           <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
         </button>
         <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
@@ -136,7 +136,7 @@
       <p [innerHtml]="instructionAssessment"></p>
     </div>
     <div class="consent-checkbox">
-      <mat-checkbox (change)="startTestEnable($event)">I have read and understood all the instructions. I understand that using unfair means of any sort for any advantage will lead to immediate disqualification. The decision of iGOTkarmayogi.gov.in  will be final in these matters.</mat-checkbox>
+      <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">I have read and understood all the instructions. I understand that using unfair means of any sort for any advantage will lead to immediate disqualification. The decision of iGOTkarmayogi.gov.in  will be final in these matters.</mat-checkbox>
     </div>
   </div>
 

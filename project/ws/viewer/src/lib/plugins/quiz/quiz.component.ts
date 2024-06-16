@@ -48,6 +48,7 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
         section: '',
         questionType: undefined,
         questionId: '',
+        questionLevel: '',
         options: [
           {
             optionId: '',

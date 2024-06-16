@@ -22,11 +22,16 @@ export class FinalAssessmentPopupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.assessmentData = data
-    this.setTableDataSource(data.tableDetails.tableData)
+    if (data && data.tableDetails && data.tableDetails.tableData) {
+      this.setTableDataSource(data.tableDetails.tableData)
+    }
+
   }
 
   ngOnInit() {
-    this.setTableColumns(this.assessmentData.tableDetails.tableColumns)
+    if (this.assessmentData && this.assessmentData.tableDetails && this.assessmentData.tableDetails.tableColumns) {
+      this.setTableColumns(this.assessmentData.tableDetails.tableColumns)
+    }
   }
 
   setTableColumns(columns: any) {

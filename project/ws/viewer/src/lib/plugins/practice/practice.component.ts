@@ -58,6 +58,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         questionId: '',
         instructions: '',
         questionType: undefined,
+        questionLevel: '',
         options: [
           {
             optionId: '',
@@ -134,6 +135,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   assessmentType = 'optionWeightage'
   compatibilityLevel = 2
   selectedAssessmentCompatibilityLevel = 2
+  sectionalInstruction: any = ''
+  allSectionTimeLimit = 0
   constructor(
     private events: EventService,
     public dialog: MatDialog,
@@ -282,6 +285,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       && _.get(this.quizSvc.paperSections, 'value.questionSet.children')) {
       this.paperSections = _.get(this.quizSvc.paperSections, 'value.questionSet.children')
       this.questionSectionTableData = _.get(this.quizSvc.paperSections, 'value.questionSet.children')
+
       const showTimer = _.toLower(_.get(this.quizSvc.paperSections, 'value.questionSet.showTimer')) === 'yes'
       if (showTimer || this.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE) {
         this.quizJson.timeLimit = (_.get(this.quizSvc.paperSections, 'value.questionSet.expectedDuration') || 0)
@@ -289,6 +293,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         // this.quizJson.timeLimit = this.duration * 60
         this.quizJson.timeLimit = this.quizJson.timeLimit
       }
+      this.allSectionTimeLimit = (_.get(this.quizSvc.paperSections, 'value.questionSet.expectedDuration') || 0)
       this.fetchingSectionsStatus = 'done'
       this.viewState = 'detail'
       this.startIfonlySection()
@@ -308,6 +313,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               // this.quizJson.timeLimit = this.duration * 60
               this.quizJson.timeLimit = this.quizJson.timeLimit
             }
+            this.allSectionTimeLimit = section.result.questionSet.expectedDuration
             // this.quizSvc.paperSections.next(section.result)
             const tempObj = _.get(section, 'result.questionSet.children')
             this.updataDB(tempObj)
@@ -340,6 +346,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               // this.quizJson.timeLimit = this.duration * 60
               this.quizJson.timeLimit = this.quizJson.timeLimit
             }
+            this.allSectionTimeLimit  = section.result.questionSet.expectedDuration
             // this.quizSvc.paperSections.next(section.result)
             const tempObj = _.get(section, 'result.questionSet.children')
             this.updataDB(tempObj)
@@ -361,6 +368,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     }
   }
+  
   startIfonlySection() {
     // console.log('in start only section', this.isOnlySection)
     // directly start section if only section is there is set
@@ -379,6 +387,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     this.updateTimer()
 
   }
+  
+
   get isOnlySection(): boolean {
     return !!this.paperSections && !!(this.paperSections.length === 1)
   }
@@ -427,8 +437,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    }
   }
   startSection(section: NSPractice.IPaperSection) {
-
+    this.sectionalInstruction = section.additionalInstructions
     this.selectedSectionIdentifier = section.identifier
+    if (section.childNodes && section.childNodes.length) {
+      this.totalQuestionsCount = section.childNodes.length
+      this.questionAttemptedCount = 0
+    }
+
+    if (section && section.expectedDuration) {
+      this.quizJson.timeLimit = section.expectedDuration
+      this.timeLeft  = section.expectedDuration
+    }
+    // this.quizJson.timeLimit = (_.get(this.quizSvc.paperSections, 'value.questionSet.expectedDuration') || 0)
     if (section) {
       // this.quizSvc.currentSection.next(section)
       this.fetchingQuestionsStatus = 'fetching'
@@ -462,6 +482,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
                 instructions: null,
                 options: this.getOptions(q),
                 editorState: q.editorState,
+                questionLevel: q.questionLevel,
               })
             }
           })
@@ -507,6 +528,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         case 'mcq-mca':
         case 'MCQ-MCA':
         case 'MCQ-MCA-W':
+        case 'MCQ-SCA-TF':
         case 'MCQ':
           _.each(this.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE && question.editorState
             // tslint:disable-next-line: align
@@ -630,15 +652,15 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
   getNextQuestion(idx: any) {
     if(this.totalQCount > idx) {
-      this.process = true
-      if (idx !== this.currentQuestionIndex) {
-        this.currentQuestionIndex = idx
-      }
-      const questions = this.secQuestions
-      this.currentQuestion = questions && questions[idx] ? questions[idx] : null
-      if (questions[idx] && questions[idx]['questionId']) {
-        this.questionVisitedData.push(questions[idx]['questionId'])
-      }
+    this.process = true
+    if (idx !== this.currentQuestionIndex) {
+      this.currentQuestionIndex = idx
+    }
+    const questions = this.secQuestions
+    this.currentQuestion = questions && questions[idx] ? questions[idx] : null
+    if (questions[idx] && questions[idx]['questionId']) {
+      this.questionVisitedData.push(questions[idx]['questionId'])
+    }
 
       setTimeout(() => {
         this.process = false
@@ -727,12 +749,26 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         .subscribe(_timeRemaining => {
           this.timeLeft -= 1
           if (this.timeLeft < 0) {
-            this.isIdeal = true
-            this.timeLeft = 0
-            if (this.timerSubscription) {
-              this.timerSubscription.unsubscribe()
+            if (this.paperSections && this.paperSections.length) {
+              if (this.allSecAttempted.full) {
+                this.isIdeal = true
+                this.timeLeft = 0
+                if (this.timerSubscription) {
+                  this.timerSubscription.unsubscribe()
+                }
+                this.submitQuiz()
+              } else if (this.allSecAttempted.next) {
+                this.nextSection(this.allSecAttempted.next)
+              }
+            } else {
+              this.isIdeal = true
+              this.timeLeft = 0
+              if (this.timerSubscription) {
+                this.timerSubscription.unsubscribe()
+              }
+              this.submitQuiz()
             }
-            this.submitQuiz()
+
           }
         })
     }
@@ -794,7 +830,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         // targetId: _.first(_.map(optionId, 'target.id')),
         // },
       }
+      // console.log('mTfval--', mTfval)
       this.quizSvc.mtfSrc.next(mTfval)
+
     }
     this.quizSvc.qAnsHash({ ...this.questionAnswerHash })
     const answered = (this.quizSvc.questionAnswerHash.getValue() || [])
@@ -898,6 +936,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               objectType: 'Question',
               primaryCategory: NsContent.EPrimaryCategory.MULTIPLE_CHOICE_QUESTION,
               qType: 'MCQ-MCA',
+              questionLevel: sq.questionLevel,
+              timeTaken: '',
               editorState: {
                 options: _.compact(_.map(sq.options, (_o: NSPractice.IOption) => {
                   if (_o.userSelected) {
@@ -919,6 +959,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               question: sq.question,
               primaryCategory: NsContent.EPrimaryCategory.SINGLE_CHOICE_QUESTION,
               qType: 'MCQ-SCA',
+              questionLevel: sq.questionLevel,
+              timeTaken: '',
               editorState: {
                 options: _.compact(_.map(sq.options, (_o: NSPractice.IOption) => {
                   if (_o.userSelected) {
@@ -933,6 +975,38 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             responseQ.push(mcqSca)
             break
           case 'ftb':
+            const obj: any = {}
+            let optionsAll: any = []
+            if (sq.options && sq.options.length) {
+              optionsAll =  _.compact(_.map(sq.options, (_o: NSPractice.IOption, idx: number) => {
+                  if (_o.response) {
+                    return {
+                      index: (_o.optionId || idx).toString(),
+                      selectedAnswer: _o.response || '',
+                    } as NSPractice.IResponseOptions
+                  } return null
+                }))
+                // selectedAnswer: _.join(_.map(sq.options, (_o: NSPractice.IOption) => {
+                //   return _o.response
+                // }),
+                //   // tslint:disable-next-line:align
+                //   ','
+                // ),
+
+            } else {
+              /* tslint:disable */
+              for (let i = 0; i < Object.keys(this.questionAnswerHash).length; i++) {
+                if (Object.keys(this.questionAnswerHash)[i] === sq.questionId) {
+                  /* tslint:disable */
+                  for (let j = 0; j < Object.values(this.questionAnswerHash)[i].length; j++) {
+                    obj['index'] = j,
+                    obj['selectedAnswer'] = Object.values(this.questionAnswerHash)[i][j]
+                    optionsAll.push(obj)
+                  }
+
+                }
+              }
+            }
             const ftb: NSPractice.IMCQ_FTB = {
               identifier: sq.questionId,
               mimeType: NsContent.EMimeTypes.QUESTION,
@@ -940,22 +1014,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               question: sq.question,
               primaryCategory: NsContent.EPrimaryCategory.FTB_QUESTION,
               qType: 'FTB',
-              editorState: {
-                options: _.compact(_.map(sq.options, (_o: NSPractice.IOption, idx: number) => {
-                  if (_o.response) {
-                    return {
-                      index: (_o.optionId || idx).toString(),
-                      selectedAnswer: _o.response || '',
-                    } as NSPractice.IResponseOptions
-                  } return null
-                })),
-                // selectedAnswer: _.join(_.map(sq.options, (_o: NSPractice.IOption) => {
-                //   return _o.response
-                // }),
-                //   // tslint:disable-next-line:align
-                //   ','
-                // ),
-              },
+              questionLevel: sq.questionLevel,
+              timeTaken: '',
+              editorState: { options: optionsAll },
             }
             responseQ.push(ftb)
             break
@@ -967,6 +1028,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               question: sq.question,
               primaryCategory: NsContent.EPrimaryCategory.MTF_QUESTION,
               qType: 'MTF',
+              questionLevel: sq.questionLevel,
+              timeTaken: '',
               editorState: {
                 options: _.compact(_.map(sq.options, (_o: NSPractice.IOption) => {
                   if (_o.userSelected) {
@@ -974,7 +1037,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
                       index: (_o.optionId).toString(),
                       selectedAnswer: _o.response,
                     } as NSPractice.IResponseOptions
-                  } return null
+                  }
+                    return {
+                      index: (_o.optionId).toString(),
+                      selectedAnswer: _o.response,
+                    } as NSPractice.IResponseOptions
+
                 })),
               },
             }
@@ -1426,26 +1494,46 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     const tableData: any = []
     /* tslint:disable */
     for (let i = 0; i < this.questionSectionTableData.length; i++) {
-      const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
-      const tableObj = {
-        section: this.questionSectionTableData[i]['name'],
-        NoOfQuestions: this.questionSectionTableData[i]['maxQuestions'],
-        answered: sectionChildNodes.answeredCount,
-        notAnswered: sectionChildNodes.notAnsweredCount,
-        markedForReview: sectionChildNodes.markedForReviewCount,
-        notVisited: sectionChildNodes.notVisitedCount,
+      if(this.allSecAttempted.full) {
+        const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
+        const tableObj = {
+          section: this.questionSectionTableData[i]['name'],
+          NoOfQuestions: this.questionSectionTableData[i]['maxQuestions'],
+          answered: sectionChildNodes.answeredCount,
+          notAnswered: sectionChildNodes.notAnsweredCount,
+          markedForReview: sectionChildNodes.markedForReviewCount,
+          notVisited: sectionChildNodes.notVisitedCount,
+        }
+        tableData.push(tableObj)
+      } else {
+        if(this.questionSectionTableData[i]['identifier'] === this.selectedSectionIdentifier) {
+          const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
+          const tableObj = {
+            section: this.questionSectionTableData[i]['name'],
+            NoOfQuestions: this.questionSectionTableData[i]['maxQuestions'],
+            answered: sectionChildNodes.answeredCount,
+            notAnswered: sectionChildNodes.notAnsweredCount,
+            markedForReview: sectionChildNodes.markedForReviewCount,
+            notVisited: sectionChildNodes.notVisitedCount,
+          }
+          tableData.push(tableObj)
+        }
       }
-      tableData.push(tableObj)
+     
     }
-    const popupData = {
-      headerText: 'Final Assessment',
+    let popupData:any = {
+      headerText: this.resourceName,
       assessmentType: this.assessmentType,
       tableDetails: {
         tableColumns,
         tableData,
-      },
-      warningNote: 'Do you want to submit your test finally. After submitting test, you will have to start the test from beginning.',
-      buttonsList: [
+      }      
+     
+    }
+
+    if(this.allSecAttempted.full) {
+      popupData['warningNote']= 'Do you want to submit your test finally. After submitting test, you will have to start the test from beginning.',
+      popupData['buttonsList'] =[
         {
           response: 'yes',
           text: 'Yes',
@@ -1461,7 +1549,20 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         //   text: 'back',
         //   classes: 'gray-full'
         // },
-      ],
+      ]
+    } else if(this.allSecAttempted.next) {
+      popupData['buttonsList'] =[
+        {
+          response: 'next-section',
+          text: 'Next Section',
+          classes: 'blue-full',
+        },
+        {
+          response: 'no',
+          text: 'Back to assessment',
+          classes: 'gray-full',
+        }
+      ]
     }
 
     if (this.assessmentType === 'optionWeightage') {
@@ -1476,6 +1577,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
   }
+
 
   showAssessmentPopup(popupData: any) {
     const dialogRef =  this.dialog.open(FinalAssessmentPopupComponent, {
@@ -1493,6 +1595,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           case 'yes':
           this.submitQuiz()
           break
+          case 'next-section':
+            if(this.allSecAttempted.next) {              
+              this.nextSection(this.allSecAttempted.next)
+            }
+            
+          break;
           case 'retake':
           this.action('retake')
           break
@@ -1537,6 +1645,27 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   getQuestionIndex(index: number): number {
     return (this.noOfQuestionsPerSet * this.currentSetNumber) + index + 1
+  }
+
+  getSectionTotalQuestionAndAnswerCount() {
+    let obj:any = {totalCount:0, answered:0, notAnswered:0, markedForReview:0, notVisited:0}
+    if(this.questionSectionTableData && this.questionSectionTableData.length) {      
+      for(let i = 0; i<this.questionSectionTableData.length;i++) {
+        if(this.questionSectionTableData[i]['identifier'] === this.selectedSectionIdentifier) {
+          const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
+          obj = {
+            section: this.questionSectionTableData[i]['name'],
+            totalCount: this.questionSectionTableData[i]['childNodes'].length,
+            answered: sectionChildNodes.answeredCount,
+            notAnswered: sectionChildNodes.notAnsweredCount,
+            markedForReview: sectionChildNodes.markedForReviewCount,
+            notVisited: sectionChildNodes.notVisitedCount,
+          }
+          break;
+        }
+      }
+    }
+    return obj
   }
 
 }

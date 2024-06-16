@@ -15,7 +15,9 @@ export namespace NSPractice {
     question: string
     questionId: string
     options: IOption[]
-    questionType?: TQuizQuestionType
+    questionType?: TQuizQuestionType,
+    questionLevel: String,
+    timeTaken: String
   }
 
   export interface IOption {
@@ -89,7 +91,8 @@ export namespace NSPractice {
     primaryCategory: string
     qType: string
     question: string
-    result: string
+    result: string,
+    questionLevel: string
   }
   export interface IQuizSubmitResponseV2 {
     identifier: string
@@ -201,7 +204,8 @@ export namespace NSPractice {
     contentDisposition: string
     visibility: string
     showSolutions: 'Yes' | 'No'
-    index: number
+    index: number,
+    expectedDuration: number
   }
   export interface IQuestionV2 {
     lastStatusChangedOn: string
@@ -293,7 +297,8 @@ export namespace NSPractice {
     primaryCategory: string
     mimeType: string
     objectType: 'Question'
-    qType: string
+    qType: string,
+    timeTaken: string,
     editorState: {
       options?: any[]
       selectedAnswer?: string | null
@@ -305,6 +310,7 @@ export namespace NSPractice {
     mimeType: NsContent.EMimeTypes.QUESTION
     qType: 'MCQ-SCA',
     question: String,
+    questionLevel: String,
     editorState: {
       options: IResponseOptions[]
     }
@@ -315,6 +321,7 @@ export namespace NSPractice {
     mimeType: NsContent.EMimeTypes.QUESTION
     qType: 'MCQ-MCA',
     question: String,
+    questionLevel: String,
     editorState: {
       options: IResponseOptions[]
     }
@@ -325,6 +332,7 @@ export namespace NSPractice {
     mimeType: NsContent.EMimeTypes.QUESTION
     qType: 'MTF',
     question: String,
+    questionLevel: String,
     editorState: {
       options: IResponseOptions[]
     }
@@ -334,7 +342,8 @@ export namespace NSPractice {
     primaryCategory: NsContent.EPrimaryCategory.FTB_QUESTION
     mimeType: NsContent.EMimeTypes.QUESTION
     qType: 'FTB'
-    question: String,
+    question: String
+    questionLevel: String,
     editorState: {
       // selectedAnswer: string | null
       options: IResponseOptions[]

@@ -253,6 +253,14 @@
     white-space: pre-wrap;
 }
 
+.secondary-standalone {
+    background-color: #999999;
+}
+
+.text-standalone-black {
+    color: #666666
+}
+
 @media only screen and (max-width: 767px) {
     .box-height {
         // min-height: 100%;

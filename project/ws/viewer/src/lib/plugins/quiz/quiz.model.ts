@@ -20,7 +20,8 @@ export namespace NSQuiz {
     questionId: string
     options: IOption[]
     editorState?: any[],
-    questionType?: TQuizQuestionType
+    questionType?: TQuizQuestionType,
+    questionLevel: string
   }
 
   export interface IOption {

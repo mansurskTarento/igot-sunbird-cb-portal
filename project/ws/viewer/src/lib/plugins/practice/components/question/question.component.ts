@@ -34,6 +34,8 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
     editorState: undefined,
     question: '',
     questionId: '',
+    questionLevel: '',
+    timeTaken: '',
     options: [
       {
         optionId: '',
@@ -46,7 +48,7 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() markedQuestions: Set<string> = new Set()
   @Output() itemSelected = new EventEmitter<string | Object>()
   @Output() getNextQuestion = new EventEmitter<Boolean>()
-
+  @Input() questionAnswerHash: any
   quizAnswerHash: { [questionId: string]: string[] } = {}
   title = 'match'
   itemSelectedList1: any
@@ -131,8 +133,15 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
       this.markedQuestions.delete(this.question.questionId)
     } else {
       this.markedQuestions.add(this.question.questionId)
-      this.getNextQuestion.emit(true)
+      if(this.coursePrimaryCategory === 'Standalone Assessment') {
+        this.getNextQuestion.emit(true)
+      }      
     }
+  }
+
+  clearResponse() {
+    // console.log('this.question.questionId', this.question)
+    // console.log('questionAnswerHash,', this.questionAnswerHash)
   }
 
   setBorderColorById(id: string, color: string | null) {

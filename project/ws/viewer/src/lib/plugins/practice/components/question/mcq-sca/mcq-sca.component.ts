@@ -29,7 +29,9 @@ export class SingleChoiseQuesComponent implements OnInit, OnDestroy {
         question: '',
         instructions: '',
         questionId: '',
+        questionLevel: '',
         editorState: undefined,
+        timeTaken: '',
         options: [
             {
                 optionId: '',

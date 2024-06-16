@@ -1163,9 +1163,9 @@
                 <div><img src="assets/icons/final-assessment/assessment.svg"></div>
                 <div>{{noOfQuestions}} {{ 'playerbrief.questions' | translate }}</div>
               </div>
-              <div class="flex flex-col margin-left-64 stats-label-top" *ngIf="quizJson?.timeLimit">
+              <div class="flex flex-col margin-left-64 stats-label-top" *ngIf="allSectionTimeLimit">
                 <div><img src="assets/icons/final-assessment/timer.svg"></div>
-                <div>{{( quizJson?.timeLimit | pipeDurationTransform: 'hms')}}</div>
+                <div>{{( allSectionTimeLimit | pipeDurationTransform: 'hms')}}</div>
               </div>
             </div>
           </div>
@@ -1182,9 +1182,9 @@
                   </select>
                 </mat-form-field>
               </div>
-              <div class="section-info" *ngIf="instructionAssessment" matTooltipClass="right-nav-tooltip"
-                [matTooltip]="instructionAssessment">
+              <div class="section-info tooltip" *ngIf="sectionalInstruction">
                 <img src="assets/icons/final-assessment/question_info.svg" />
+                <span class="tooltiptext" [innerHtml]="sectionalInstruction"></span>
               </div>
             </div>
           </div>
@@ -1231,7 +1231,8 @@
                 [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
                 (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
                 [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-                [showOnlyQuestion]="false">
+                [showOnlyQuestion]="false"
+                [questionAnswerHash]="questionAnswerHash">
               </viewer-question>
             </ng-container>
             <div class="flex flex-1">
@@ -1258,7 +1259,7 @@
                     </p>
                   </div>
                 </div>
-                <div class="timer" *ngIf="primaryCategory !== ePrimaryCategory.PRACTICE_RESOURCE">
+                <div class="timer" *ngIf="timeLeft">
                   <mat-chip-list><mat-chip class="light-blue"><span class="chip-text">
                         <div *ngIf="timeLeft" class="flex flex-1 flex-center">
                           <img src="assets/icons/final-assessment/timer.svg">
@@ -1294,11 +1295,11 @@
               <div class="mb-24 mt-4">
                 <div class="flex flex-row justify-around">
                   <div class="flex flex-col align-center">
-                    <div class="ques-count">{{totalQuestionsCount - questionAttemptedCount}}</div>
+                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] - getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                     <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
                   </div>
                   <div class="flex flex-col align-center">
-                    <div class="ques-count">{{questionAttemptedCount ? questionAttemptedCount : 0}}</div>
+                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                     <div class="stats-label">{{ 'playerbrief.answered' | translate }}</div>
                   </div>
                 </div>
@@ -1328,7 +1329,7 @@
                       {{ getQuestionIndex(i) }}
                     </div>
                     <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
-                      isQuestionAttempted(question?.questionId))">
+                      isQuestionAttempted(question?.questionId))">{{ getQuestionIndex(i)}}
                       <ng-container *ngIf="!isQuestionAttempted(question?.questionId)">{{ getQuestionIndex(i)
                         }}</ng-container>
 
@@ -1406,7 +1407,9 @@
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-              [showOnlyQuestion]="false" [showMarkForReview]="true" (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)">
+              [showOnlyQuestion]="false" [showMarkForReview]="true"
+              [questionAnswerHash]="questionAnswerHash"
+              (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)">
             </viewer-question>
           </div>
 
@@ -1755,9 +1758,9 @@
                 <div><img class="vertical-middle" src="assets/icons/final-assessment/assessment.svg"></div>
                 <div>{{noOfQuestions}} {{ 'playerbrief.questions' | translate }}</div>
               </div>
-              <div class="flex flex-col stats-label-top ml-5" *ngIf="quizJson?.timeLimit">
+              <div class="flex flex-col stats-label-top ml-5" *ngIf="allSectionTimeLimit">
                 <div><img src="assets/icons/final-assessment/timer.svg"></div>
-                <div>{{( quizJson?.timeLimit | pipeDurationTransform: 'hms')}}</div>
+                <div>{{( allSectionTimeLimit | pipeDurationTransform: 'hms')}}</div>
               </div>
             </div>
           </div>
@@ -1794,7 +1797,8 @@
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
               [showOnlyQuestion]="true" [showMarkForReview]="false"
-              [assessmentType]="assessmentType">
+              [assessmentType]="assessmentType"
+              [questionAnswerHash]="questionAnswerHash">
             </viewer-question>
           </ng-container>
         </div>
@@ -1810,7 +1814,7 @@
                   </div>
                 </div>
 
-                <div class="timer" *ngIf="primaryCategory !== ePrimaryCategory.PRACTICE_RESOURCE">
+                <div class="timer" *ngIf="timeLeft">
                   <mat-chip-list><mat-chip class="light-blue"><span class="chip-text">
                         <div *ngIf="timeLeft" class="flex flex-1 flex-center">
                           <img src="assets/icons/final-assessment/timer.svg">
@@ -1882,7 +1886,8 @@
                         {{ getQuestionIndex(i) }}
                       </div>
                       <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
-                       isQuestionAttempted(question?.questionId))">
+                       isQuestionAttempted(question?.questionId))">{{ getQuestionIndex(i)
+                       }}
                         <ng-container *ngIf="!isQuestionAttempted(question?.questionId)">{{ getQuestionIndex(i)
                           }}</ng-container>
                       </div>
@@ -1969,7 +1974,8 @@
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [showOnlyQuestion]="false"
               [coursePrimaryCategory]="coursePrimaryCategory"
-              [mobileQuestionSetExpand]="!expandFalse">
+              [mobileQuestionSetExpand]="!expandFalse"
+              [questionAnswerHash]="questionAnswerHash">
             </viewer-question>
           </ng-container>
           <!-- <div class="flex flex-1">
@@ -2000,7 +2006,8 @@
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-              [showOnlyQuestion]="false" [showMarkForReview]="true">
+              [showOnlyQuestion]="false" [showMarkForReview]="true"
+              (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)">
             </viewer-question>
           </div>
 

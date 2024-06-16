@@ -922,6 +922,36 @@ $nav-height: 40px;
   justify-content: right;
 }
 
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  min-width: 200px;
+  // width:100vh
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  word-wrap: break-word;
+  max-width: 600px;
+}
+
+.tooltip .tooltiptext ul li {
+  word-wrap: break-word;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 /** Media Query **/
 @media only screen and (max-width: 600px) {
   .overflow-hidden {

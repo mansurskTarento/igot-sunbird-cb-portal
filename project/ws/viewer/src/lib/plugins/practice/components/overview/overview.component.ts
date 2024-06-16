@@ -4,6 +4,8 @@ import { NSPractice } from '../../practice.model'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerHeaderSideBarToggleService } from './../../../../viewer-header-side-bar-toggle.service'
 import { PracticeService } from '../../practice.service'
+import { FinalAssessmentPopupComponent } from './../final-assessment-popup/final-assessment-popup.component'
+import { MatDialog } from '@angular/material'
 @Component({
   selector: 'viewer-overview',
   templateUrl: './overview.component.html',
@@ -34,6 +36,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   dataSubscription: any
   consentGiven = false
   constructor(
+    public dialog: MatDialog,
     private route: ActivatedRoute,
     public viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
     private quizSvc: PracticeService,
@@ -41,6 +44,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    if (this.canAttempt && (this.canAttempt.attemptsMade >= this.canAttempt.attemptsAllowed)) {
+      this.showAssessmentPopup()
+    }
+
     this.dataSubscription = this.route.data.subscribe(data => {
       if (data && data.pageData) {
         if (data && data.content && data.content.data && data.content.data.identifier) {
@@ -50,6 +57,41 @@ export class OverviewComponent implements OnInit, OnDestroy {
           }
         }
         this.isretakeAllowed = data.pageData.data.isretakeAllowed
+      }
+    })
+  }
+
+  showAssessmentPopup() {
+    const popupData = {
+      headerText: 'this.resourceName',
+      assessmentType: 'maxAttemptReached',
+
+      warningNote: 'Do you want to submit your test finally. After submitting test, you will have to start the test from beginning.',
+      buttonsList: [
+        {
+          response: 'yes',
+          text: 'Ok',
+          classes: 'blue-full',
+        },
+      ],
+    }
+    const dialogRef =  this.dialog.open(FinalAssessmentPopupComponent, {
+      data: popupData,
+      width: '626px',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '225px',
+      panelClass: 'final-assessment',
+    })
+    // dialogRef.componentInstance.xyz = this.configSvc
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        switch (result) {
+          case 'yes':
+          // this.submitQuiz()
+          break
+        }
+
       }
     })
   }

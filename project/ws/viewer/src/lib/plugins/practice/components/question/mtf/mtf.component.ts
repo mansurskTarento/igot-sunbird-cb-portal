@@ -30,6 +30,8 @@ export class MatchTheFollowingQuesComponent implements OnInit, OnChanges, AfterV
         instructions: '',
         question: '',
         questionId: '',
+        questionLevel: '',
+        timeTaken: '',
         editorState: undefined,
         options: [
             {
