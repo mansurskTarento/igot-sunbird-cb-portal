@@ -45,6 +45,9 @@ import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-polic
 import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
 import { AppHomePageResolverService } from './services/app-home-page-resolver.service'
 import { HomeResolverService } from './home/home/home-resolver.service'
+import { PublicExtTocComponent } from './routes/public/public-ext-toc/public-ext-toc.component'
+import { AppTocCiosResolverService } from '@ws/app/src/lib/routes/app-toc/resolvers/app-toc-cios-resolver.service'
+import { AppTocCiosUserEnrollResolverService } from '@ws/app/src/lib/routes/app-toc/resolvers/app-toc-cios-user-enroll-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -963,6 +966,20 @@ const routes: Routes = [
     resolve: {
       pageData: PageResolve,
       content: AppPublicTocResolverService,
+    },
+  },
+  {
+    path: 'public/toc/ext/:id',
+    component: PublicExtTocComponent,
+    data: {
+      pageType: 'feature',
+      pageKey: 'toc',
+      pageId: 'public/toc/:id',
+      module: 'Learn',
+    },
+    resolve: {
+      extContent: AppTocCiosResolverService,
+      userEnrollContent: AppTocCiosUserEnrollResolverService,
     },
   },
   {

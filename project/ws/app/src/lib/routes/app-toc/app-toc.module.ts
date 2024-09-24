@@ -280,6 +280,7 @@ import { CommonMethodsService } from '@sunbird-cb/consumption'
     AppTocHomeRootComponent,
     AppTocHomeComponent,
     ShareTocModule,
+    AppTocCiosHomeComponent
   ],
   entryComponents: [
     AppTocDialogIntroVideoComponent,

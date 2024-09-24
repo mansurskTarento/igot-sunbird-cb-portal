@@ -102,6 +102,7 @@ WIDGET_REGISTERED_LIB_MODULES, WIDGET_REGISTRATION_LIB_CONFIG,
 } from '@sunbird-cb/consumption'
 import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
 import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
+import { PublicExtTocModule } from './routes/public/public-ext-toc/public-ext-toc.module'
 
 @Injectable()
 export class HammerConfig extends GestureConfig {
@@ -203,6 +204,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PublicRequestModule,
     PublicWelcomeModule,
     PublicTocModule,
+    PublicExtTocModule,
     MobileAppModule,
     PipeSafeSanitizerModule,
     TourModule,
