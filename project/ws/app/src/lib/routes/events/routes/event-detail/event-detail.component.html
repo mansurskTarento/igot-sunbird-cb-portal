@@ -242,7 +242,7 @@
     </mat-tab>
     <mat-tab label="{{'discuss.comments' | translate}}">
       <!-- <h1>Comment Section - Coming Soon</h1> -->
-      <ng-container *ngIf="!skeletonLoader && !forPreview">
+      <ng-container *ngIf="!skeletonLoader">
         <!-- discussion v2 comments implmentation -->
         <!-- <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="showReviews && discussWidgetData"> -->
         <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="discussWidgetData">

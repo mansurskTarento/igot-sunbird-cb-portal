@@ -16,14 +16,14 @@
     <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
         <div class="flex">
             <div class="nlw-title gap-3">
-                {{nwlConfiguration?.title}}
+                {{currentLang === 'hi'? nwlConfiguration?.titleHi : nwlConfiguration?.title}}
             </div>
             <div class="nlw-title">
                 <img class="nlw-animation" src="assets/images/national-learning/nlw.gif" alt=""/>
             </div>
         </div>
         <div class="flex nlw-description">
-            {{nwlConfiguration?.description}}
+            {{currentLang === 'hi'? nwlConfiguration?.descriptionHi : nwlConfiguration?.description }}
         </div>
         <div class="progress-wrapper mt-5">
             <div class="flex items-center">

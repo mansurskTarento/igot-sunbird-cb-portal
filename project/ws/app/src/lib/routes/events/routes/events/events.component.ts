@@ -40,6 +40,7 @@ export class EventsComponent implements OnInit {
     maxWidgets: 2,
   }
   eventWidgetData: any
+  todaysLiveEvents: any = []
 
   constructor(
     private route: ActivatedRoute,
@@ -235,6 +236,7 @@ export class EventsComponent implements OnInit {
   }
 
   filter(key: string | 'timestamp' | 'best' | 'saved') {
+    let todaysLiveEvents: any = []
     let todayEvents: any[] = []
     let all: any[] = []
     let featuredEvents: any[] = []
@@ -250,10 +252,27 @@ export class EventsComponent implements OnInit {
 
     if (this.allEvents['todayEvents'] && this.allEvents['todayEvents'].length > 0) {
       this.allEvents['todayEvents'].forEach((event: any) => {
+        let isEventLive: any = false
         this.addCustomDateAndTime(event)
         todayEvents.push(event)
+        const now = new Date()
+        const today = moment(now).format('YYYY-MM-DD HH:mm')
+        if (moment(today).isBetween(event.eventCustomStartDate, event.eventCustomEndDate)) {
+          isEventLive = true
+          if (today >= event.eventCustomStartDate) {
+            if (event.recordedLinks && event.recordedLinks.length > 0) {
+              isEventLive = false
+            }
+          }
+        } else if (today >= event.eventCustomEndDate) {
+          isEventLive = false
+        }
+        if (isEventLive) {
+          todaysLiveEvents.push(event)
+        }
       })
       todayEvents = this.sortEvents(todayEvents)
+      todaysLiveEvents = this.sortEvents(todaysLiveEvents)
     }
 
     if (this.allEvents['featuredEvents'] && this.allEvents['featuredEvents'].length > 0) {
@@ -289,6 +308,7 @@ export class EventsComponent implements OnInit {
           break
         case 'todayEvents':
           this.todaysEvents = todayEvents
+          this.todaysLiveEvents = todaysLiveEvents
           break
         case 'featuredEvents':
           this.featuredEvents = featuredEvents

@@ -1,7 +1,7 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
 import { HomePageService } from 'src/app/services/home-page.service'
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
@@ -86,6 +86,7 @@ export class InsightSideBarComponent implements OnInit {
   canShowNlwCard = false
   totlaDays = 0
   daysCompleted = 0
+  currentLang: any = ''
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -94,12 +95,21 @@ export class InsightSideBarComponent implements OnInit {
     private translate: TranslateService,
     private events: EventService,
     private snackBar: MatSnackBar,
-    private router: Router) {
+    private router: Router,
+    private langtranslations: MultilingualTranslationsService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
       }
+      this.langtranslations.languageSelectedObservable.subscribe(() => {
+        if (localStorage.getItem('websiteLanguage')) {
+          this.translate.setDefaultLang('en')
+          const lang = localStorage.getItem('websiteLanguage')!
+          this.translate.use(lang)
+          this.currentLang = lang
+        }
+      })
     }
 
   ngOnInit() {
