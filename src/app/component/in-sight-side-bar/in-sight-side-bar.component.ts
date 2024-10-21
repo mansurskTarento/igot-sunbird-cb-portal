@@ -125,16 +125,15 @@ export class InsightSideBarComponent implements OnInit {
       }
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
-    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails 
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.profileStatus) {
       this.isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
     }
-    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails 
-      && this.configSvc.unMappedUser.profileDetails.employmentDetails && 
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails &&
       this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
       this.isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName === 'igot' ? true : false
     }
-   
 
     // this.learnAdvisoryDataLength = this.learnAdvisoryData.length
     this.getInsights()
