@@ -327,8 +327,8 @@ export class EventsComponent implements OnInit {
       liveEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventLive)
       pastEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventPast)
       futureEvents = karmayogiSaptahEvents.filter((futureEvent: any) => futureEvent.isEventFuture)
-      liveEvents = this.sortEvents(liveEvents)
-      futureEvents = this.sortEvents(futureEvents)
+      liveEvents = this.sortEventsAsc(liveEvents)
+      futureEvents = this.sortEventsAsc(futureEvents)
       pastEvents = this.sortEvents(pastEvents)
       karmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
       // karmayogiSaptahEvents = this.sortEvents(karmayogiSaptahEvents)
@@ -363,6 +363,13 @@ export class EventsComponent implements OnInit {
       const firstDate: any = new Date(a.eventCustomStartDate)
       const secondDate: any = new Date(b.eventCustomStartDate)
       return  secondDate > firstDate  ? 1 : -1
+    })
+  }
+  sortEventsAsc(eventData: any) {
+    return eventData.sort((a: any, b: any) => {
+      const firstDate: any = new Date(a.eventCustomStartDate)
+      const secondDate: any = new Date(b.eventCustomStartDate)
+      return  secondDate < firstDate  ? 1 : -1
     })
   }
 
