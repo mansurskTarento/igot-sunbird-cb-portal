@@ -110,7 +110,8 @@
             </div> -->
             <div class="ml-2" *ngIf="eventData?.resourceType === 'Karmayogi Saptah' && currentEvent">
               <button mat-raised-button type="button"
-                class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }} </button>
+                class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }}
+              </button>
             </div>
           </div>
         </div>
@@ -125,7 +126,8 @@
             title="{{eventData?.owner}}">By
             {{eventData?.owner}}</div>
         </div>
-        <div class="text-xs leading-4 source-text ng-star-inserted">({{'apptocsinglepage.lastUpdatedOn' | translate}} {{eventData?.lastStatusChangedOn |
+        <div class="text-xs leading-4 source-text ng-star-inserted">({{'apptocsinglepage.lastUpdatedOn' | translate}}
+          {{eventData?.lastStatusChangedOn |
           date: 'MMM d, y'}})</div>
       </div>
 
@@ -175,82 +177,68 @@
           </a>
       </div>
   </div> -->
-  <mat-tab-group>
-    <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
+    <ng-container>
+      <!-- *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace" -->
       <ng-container>
-        <!-- *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace" -->
-        <ng-container >
-          <div class="certificate-container" *ngIf="!skeletonLoader && (enrolledEvent?.status > 1 && pastEvent)">
-            <div class="flex flex-row earned-certificate-container">
-              <div class="ribbon"></div>
-              <div class="certificate-background">
-                <div class="p-4">
-                  <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
-                </div>
-                <div class="flex flex-col items-end">
-                  <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
-                </div>
-              </div>
-            </div>
-          </div>
-    
-          <div class="mobile-certificate-container" *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
-            <div class="earned-certificate-container">
-              <div class="flex flex-row">
-                <div class="ribbon"></div>
+        <div class="certificate-container" *ngIf="!skeletonLoader && (enrolledEvent?.status > 1 && pastEvent)">
+          <div class="flex flex-row earned-certificate-container">
+            <div class="ribbon"></div>
+            <div class="certificate-background">
+              <div class="p-4">
                 <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
               </div>
-    
-              <div class="certificate-background">
+              <div class="flex flex-col items-end">
                 <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
               </div>
             </div>
           </div>
-        </ng-container>
-        <div class="flex flex-1 flex-column mb-2">
-          <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
         </div>
-        <div class="flex flex-wrap">
-          <ng-container>
-            <div class="flex mb-5">
-              <p class="word-break">{{eventData?.description}}</p>
+
+        <div class="mobile-certificate-container" *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
+          <div class="earned-certificate-container">
+            <div class="flex flex-row">
+              <div class="ribbon"></div>
+              <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
             </div>
-          </ng-container>
-        </div>
-        <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
-          <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
-        </div>
-        <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
-          <ng-container>
-            <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
-              <app-presenter-card [userData]="user"
-                class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
+
+            <div class="certificate-background">
+              <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
             </div>
-          </ng-container>
-        </div>
-        <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.learningObjective">
-          <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
-        </div>
-        <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
-          <ng-container>
-            <div class="flex mb-5">
-              <p class="word-break">{{eventData?.learningObjective}}</p>
-            </div>
-          </ng-container>
+          </div>
         </div>
       </ng-container>
-    </mat-tab>
-    <mat-tab label="{{'discuss.comments' | translate}}">
-      <!-- <h1>Comment Section - Coming Soon</h1> -->
-      <ng-container *ngIf="!skeletonLoader">
-        <!-- discussion v2 comments implmentation -->
-        <!-- <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="showReviews && discussWidgetData"> -->
-        <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="discussWidgetData">
-            <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
-        </div>
+      <div class="flex flex-1 flex-column mb-2">
+        <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
+      </div>
+      <div class="flex flex-wrap">
+        <ng-container>
+          <div class="flex mb-5">
+            <p class="word-break">{{eventData?.description}}</p>
+          </div>
+        </ng-container>
+      </div>
+      <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
+        <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
+      </div>
+      <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
+        <ng-container>
+          <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
+            <app-presenter-card [userData]="user"
+              class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
+          </div>
+        </ng-container>
+      </div>
+      <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.learningObjective">
+        <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
+      </div>
+      <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
+        <ng-container>
+          <div class="flex mb-5">
+            <p class="word-break">{{eventData?.learningObjective}}</p>
+          </div>
+        </ng-container>
+      </div>
     </ng-container>
-    </mat-tab>
-  </mat-tab-group>
 
 
 
