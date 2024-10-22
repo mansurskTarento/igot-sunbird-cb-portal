@@ -102,6 +102,11 @@
         <ws-widget-karma-points [data]="kparray" [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent, 
           pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent }"></ws-widget-karma-points>
       </div>
+      <div class="certificate-info" *ngIf="isEnrolled && pastEvent && enrolledEvent?.status > 0 &&
+              !enrolledEvent?.certificateObj?.certId">
+        <p class="">{{ 'eventDetailsRightCard.certificateInfo' | translate }}</p>
+      </div>
+     
       <div class="margin-top-m">
         <span class="mat-subheading-2 ws-mat-accent-text" role="link" tabindex="0">{{ 'eventDetailsRightCard.eventType' | translate }}</span>
         <div class="flex flex-wrap" role="link" tabindex="0">
