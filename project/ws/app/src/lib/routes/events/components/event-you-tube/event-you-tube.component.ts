@@ -312,7 +312,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
       /* tslint:disable */
       console.log('req', req)
       /* tslint:enable */
-        this.eventService.saveEventProgressUpdate(req).subscribe(() => {
+        this.eventService.saveEventProgressUpdate(req).subscribe((_res: any) => {
           if (completionPercentage > 50) {
             this.resumeEventStatus =  2
           }
