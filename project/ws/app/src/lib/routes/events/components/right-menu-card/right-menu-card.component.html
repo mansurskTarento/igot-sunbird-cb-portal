@@ -103,7 +103,7 @@
           pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent }"></ws-widget-karma-points>
       </div>
       <div class="certificate-info" *ngIf="isEnrolled && pastEvent && enrolledEvent?.status > 0 &&
-              !enrolledEvent?.certificateObj?.certId">
+              enrolledEvent?.issuedCertificates?.length === 0">
         <p class="">{{ 'eventDetailsRightCard.certificateInfo' | translate }}</p>
       </div>
      
