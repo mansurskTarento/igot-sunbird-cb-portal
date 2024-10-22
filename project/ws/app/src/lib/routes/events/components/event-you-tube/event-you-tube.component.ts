@@ -56,6 +56,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   intervalStarted = false
   isEnrolled = false
   resumeEventStatus = 0
+  rateToFire = 60
   private player: videoJs.Player | null = null
   private dispose: (() => void) | null = null
   constructor(private route: ActivatedRoute, private eventService: EventService, private configSvc: ConfigurationsService) {
@@ -166,7 +167,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
             let currentDateTimeStamp = new Date().getTime()
             if(currentDateTimeStamp >= eventDateTimeStamp) {
-              if(timeSpent && timeSpent % 60 === 0) {
+              if(timeSpent && timeSpent % this.rateToFire === 0) {
                 this.startInterval(timeSpent, lastTimeAccessed)
               }
                 this.intervalStarted = true
@@ -300,6 +301,9 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             },
         ],
       },
+    }
+    if(completionPercentage > 50) {
+      this.rateToFire = 300
     }
     if (this.resumeEventStatus !== 2) {
       /* tslint:disable */
