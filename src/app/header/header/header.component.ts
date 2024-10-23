@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit {
     this.headerService.showNavbarDisplay$.pipe(delay(500)).subscribe(display => {
       this.showNavbar = display
     })
+
     // tslint:disable-next-line: whitespace
     this.widgetData = { // tslint:disable-next-line: whitespace
       widgets: [

@@ -32,6 +32,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   designationData: any[] = []
   private destroySubject$ = new Subject()
   isInValidOrgSelection = false
+  onLoad = true
 
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
@@ -80,7 +81,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           }
         })
     }
-
     if (this.transferRequestForm.get('designation')) {
       this.transferRequestForm.get('designation')!.valueChanges
         .pipe(
@@ -183,6 +183,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroySubject$.unsubscribe()
+  }
+
+  assignValue(): void {
+    if (this.onLoad) {
+      this.deptFilterData = this.departmentData
+      this.onLoad = false
+    }
   }
 
 }

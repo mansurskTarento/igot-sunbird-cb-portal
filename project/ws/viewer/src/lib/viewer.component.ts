@@ -6,7 +6,7 @@ import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb
 import { Subscription } from 'rxjs'
 import { RootService } from '../../../../../src/app/component/root/root.service'
 import { TStatus, ViewerDataService } from './viewer-data.service'
-import { WidgetUserService } from '@sunbird-cb/collection/src/lib/_services/widget-user.service copy'
+import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
@@ -83,8 +83,9 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     private utilitySvc: UtilityService,
     private changeDetector: ChangeDetectorRef,
     private widgetServ: WidgetContentService,
+    private widgetLibServ: WidgetContentLibService,
     private configSvc: ConfigurationsService,
-    private userSvc: WidgetUserService,
+    private userSvc: WidgetUserServiceLib,
     private abc: MobileAppsService,
     public viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
     public pdfScormDataService: PdfScormDataService,
@@ -171,7 +172,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     if (this.collectionId && this.enrollmentList) {
-      const enrolledCourseData = this.widgetServ.getEnrolledData(this.collectionId)
+      const enrolledCourseData = this.widgetLibServ.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId)
       this.enrolledCourseData = enrolledCourseData
       if (enrolledCourseData && enrolledCourseData.batch) {
         this.batchData = {
@@ -266,7 +267,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     if (this.collectionId) {
       if (!this.forPreview) {
-        const enrollCourseData = JSON.parse((localStorage.getItem('enrollmentMapData') as any))[this.collectionId]
+        const enrollCourseData = this.enrolledCourseData
         if (enrollCourseData && (enrollCourseData.completionPercentage === 100 || enrollCourseData.status === 2)) {
           this.downloadCertificate(enrollCourseData)
         }

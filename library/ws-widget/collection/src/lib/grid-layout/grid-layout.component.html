@@ -1,3 +1,4 @@
+<ng-container *ngIf="!disableMenu">
 <div class="flex flex-wrap fix-w mob-16" [ngClass]="fullMenuHeight ? 'full-height' : ''" *ngFor="let row of processed; trackBy:tracker" role="none"
   [ngClass]="{'px-6 pb-12 sm:px-8 md:px-10': widgetData.fromBasicEditor}" [ngClass]="containerClass">
   <div class="box" *ngFor="let col of row; trackBy:tracker2" [ngClass]="col.className" [ngStyle]="col?.styles"
@@ -62,4 +63,5 @@
     <img class="karmasahayogi" src="/assets/images/nps/Karmasahayogi@2x.svg" alt="karmasahayogi" />
   </div>
   </ng-container>
+</ng-container>
 

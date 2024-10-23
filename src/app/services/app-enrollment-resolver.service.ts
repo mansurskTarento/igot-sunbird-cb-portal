@@ -3,7 +3,8 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
-import {  WidgetUserService } from '@sunbird-cb/collection/src/public-api'
+
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable()
 export class AppEnrollmentResolverService
@@ -11,7 +12,7 @@ export class AppEnrollmentResolverService
     Resolve<
     Observable<IResolveResponse<any>> | IResolveResponse<any>
     > {
-    constructor(private configSvc: ConfigurationsService, private userSvc: WidgetUserService) {}
+    constructor(private configSvc: ConfigurationsService, private userSvc: WidgetUserServiceLib) {}
 
     resolve(
         _route: ActivatedRouteSnapshot,

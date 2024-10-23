@@ -12,17 +12,43 @@
         </div>
     </div>
 </div>
-
+<div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
+    <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
+        <div class="flex">
+            <div class="nlw-title gap-3">
+                {{currentLang === 'hi'? nwlConfiguration?.titleHi : nwlConfiguration?.title}}
+            </div>
+            <div class="nlw-title">
+                <img class="nlw-animation" src="assets/images/national-learning/nlw.gif" alt=""/>
+            </div>
+        </div>
+        <div class="flex nlw-description">
+            {{currentLang === 'hi'? nwlConfiguration?.descriptionHi : nwlConfiguration?.description }}
+        </div>
+        <div class="progress-wrapper mt-5">
+            <div class="flex items-center">
+                <div *ngFor="let n of [].constructor(totlaDays); let i = index">
+                    <div class="flex items-center">
+                        <div class="dot {{daysCompleted > i ? 'active' : ''}}" ></div>
+                        <div class="line {{daysCompleted > i ? 'active' : ''}}"></div>
+                        <div class="dot" *ngIf="(totlaDays - 1) === i"></div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-align-end nlw-redirect margin-top-l">
+            <button
+                class="nlw-view-more-btn mat-button mat-button-base text-white">
+                {{nwlConfiguration?.buttonText}}
+            </button>
+        </div>
+    </div>
+</div>
 <div class="margin-top-m">
     <ws-widget-profile-card-stats (expandCollapse)="expandCollapse($event)" (activity)="goToActivity($event)"
         [profileData]="homePageData.profileCard" [insightsData]="insightsData"
         [isLoading]="profileDataLoading"></ws-widget-profile-card-stats>
 </div>
-
-
-
-
-
 <section class="hidden md:block" style="position: relative;" [ngClass]="{'':!collapsed, 'margin-bottom-m': collapsed}">
     <!-- <div class="collapsible margin-top-m" [@collapse]="collapsed" *ngIf="surveyForm && surveyForm.active">
         <ws-widget-survey-form-section [surveyFormData]="surveyForm.surveyFormData"></ws-widget-survey-form-section>

@@ -28,6 +28,7 @@ export class EventsComponent implements OnInit {
   todaysEvents: any = []
   featuredEvents: any = []
   curatedEvents: any = []
+  karmayogiSaptahEvents: any = []
   alltypeEvents: any = []
   currentFilterSort = 'desc'
   departmentID: any
@@ -39,6 +40,8 @@ export class EventsComponent implements OnInit {
     maxWidgets: 2,
   }
   eventWidgetData: any
+  todaysEventWidgetData: any
+  todaysLiveEvents: any = []
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +66,7 @@ export class EventsComponent implements OnInit {
       this.translate.use(lang)
     }
     this.eventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.eventStrips) || []
+    this.todaysEventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.todaysEventStrips) || []
   }
 
   ngOnInit() {
@@ -149,6 +153,7 @@ export class EventsComponent implements OnInit {
       this.allEvents['todayEvents'] = []
       this.allEvents['featuredEvents'] = []
       this.allEvents['curatedEvents'] = []
+      this.allEvents['karmayogiSaptahEvents'] = []
       Object.keys(data).forEach((index: any) => {
         const obj = data[index]
         const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
@@ -199,6 +204,9 @@ export class EventsComponent implements OnInit {
         if (obj.createdFor && obj.createdFor[0] === this.spvOrgId) {
           this.allEvents['curatedEvents'].push(eventDataObj)
         }
+        if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
+          this.allEvents['karmayogiSaptahEvents'].push(eventDataObj)
+        }
 
         const now = new Date()
         const today = moment(now).format('YYYY-MM-DD HH:mm')
@@ -212,6 +220,7 @@ export class EventsComponent implements OnInit {
       this.filter('todayEvents')
       this.filter('featuredEvents')
       this.filter('curatedEvents')
+      this.filter('karmayogiSaptahEvents')
     }
   }
 
@@ -221,33 +230,109 @@ export class EventsComponent implements OnInit {
     const min = stime.substr(2, 3)
     return `${date} ${hour}${min}`
   }
+  addCustomDateAndTime (eventData: any) {
+    const eventDate = this.eventService.customDateFormat(eventData.event.startDate, eventData.event.startTime)
+    const eventendDate = this.eventService.customDateFormat(eventData.event.endDate, eventData.event.endTime)
+    eventData['eventCustomStartDate'] = eventDate
+    eventData['eventCustomEndDate'] = eventendDate
+  }
 
   filter(key: string | 'timestamp' | 'best' | 'saved') {
-    const todayEvents: any[] = []
-    const all: any[] = []
-    const featuredEvents: any[] = []
-    const curatedEvents: any[] = []
+    let todaysLiveEvents: any = []
+    let todayEvents: any[] = []
+    let all: any[] = []
+    let featuredEvents: any[] = []
+    let curatedEvents: any[] = []
+    let karmayogiSaptahEvents: any[] = []
     if (this.allEvents['all'] && this.allEvents['all'].length > 0) {
       this.allEvents['all'].forEach((event: any) => {
+        this.addCustomDateAndTime(event)
         all.push(event)
       })
+      all = this.sortEvents(all)
     }
 
     if (this.allEvents['todayEvents'] && this.allEvents['todayEvents'].length > 0) {
       this.allEvents['todayEvents'].forEach((event: any) => {
+        let isEventLive: any = false
+        this.addCustomDateAndTime(event)
         todayEvents.push(event)
+        const now = new Date()
+        const today = moment(now).format('YYYY-MM-DD HH:mm')
+        if (moment(today).isBetween(event.eventCustomStartDate, event.eventCustomEndDate)) {
+          isEventLive = true
+          if (today >= event.eventCustomStartDate) {
+            if (event.recordedLinks && event.recordedLinks.length > 0) {
+              isEventLive = false
+            }
+          }
+        } else if (today >= event.eventCustomEndDate) {
+          isEventLive = false
+        }
+        if (isEventLive) {
+          todaysLiveEvents.push(event)
+        }
       })
+      todayEvents = this.sortEvents(todayEvents)
+      todaysLiveEvents = this.sortEvents(todaysLiveEvents)
     }
 
     if (this.allEvents['featuredEvents'] && this.allEvents['featuredEvents'].length > 0) {
       this.allEvents['featuredEvents'].forEach((event: any) => {
+        this.addCustomDateAndTime(event)
         featuredEvents.push(event)
       })
+      featuredEvents =  this.sortEvents(featuredEvents)
     }
     if (this.allEvents['curatedEvents'] && this.allEvents['curatedEvents'].length > 0) {
       this.allEvents['curatedEvents'].forEach((event: any) => {
+        this.addCustomDateAndTime(event)
         curatedEvents.push(event)
       })
+      curatedEvents =  this.sortEvents(curatedEvents)
+    }
+
+    if (this.allEvents['karmayogiSaptahEvents'] && this.allEvents['karmayogiSaptahEvents'].length > 0) {
+      this.allEvents['karmayogiSaptahEvents'].forEach((event: any) => {
+        event['isEventPast'] = false
+        event['isEventLive'] = false
+        event['isEventFuture'] = false
+        this.addCustomDateAndTime(event)
+        const now = new Date()
+        const today = moment(now).format('YYYY-MM-DD HH:mm')
+        if (moment(today).isBetween(event.eventCustomStartDate, event.eventCustomEndDate)) {
+          event['isEventLive'] = true
+          if (today >= event.eventCustomStartDate) {
+            if (event.recordedLinks && event.recordedLinks.length > 0) {
+              event['isEventLive']  = false
+            }
+          }
+        } else if (today >= event.eventCustomEndDate) {
+          event['isEventLive']  = false
+          if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
+            event['isEventPast'] = true
+          }
+        } else {
+          if (moment(today).isBefore(event.eventCustomStartDate) && moment(today).isBefore(event.eventCustomEndDate)) {
+            event['isEventFuture'] = true
+          }
+        }
+        karmayogiSaptahEvents.push(event)
+      })
+
+      let liveEvents: any = []
+      let pastEvents: any = []
+      let futureEvents: any = []
+
+      liveEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventLive)
+      pastEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventPast)
+      futureEvents = karmayogiSaptahEvents.filter((futureEvent: any) => futureEvent.isEventFuture)
+      liveEvents = this.sortEventsAsc(liveEvents)
+      futureEvents = this.sortEventsAsc(futureEvents)
+      pastEvents = this.sortEvents(pastEvents)
+      karmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      // karmayogiSaptahEvents = this.sortEvents(karmayogiSaptahEvents)
+
     }
 
     if (key) {
@@ -258,6 +343,7 @@ export class EventsComponent implements OnInit {
           break
         case 'todayEvents':
           this.todaysEvents = todayEvents
+          this.todaysLiveEvents = todaysLiveEvents
           break
         case 'featuredEvents':
           this.featuredEvents = featuredEvents
@@ -265,8 +351,26 @@ export class EventsComponent implements OnInit {
         case 'curatedEvents':
           this.curatedEvents = curatedEvents
           break
+        case 'karmayogiSaptahEvents':
+          this.karmayogiSaptahEvents = karmayogiSaptahEvents
+          break
       }
     }
+  }
+
+  sortEvents(eventData: any) {
+    return eventData.sort((a: any, b: any) => {
+      const firstDate: any = new Date(a.eventCustomStartDate)
+      const secondDate: any = new Date(b.eventCustomStartDate)
+      return  secondDate > firstDate  ? 1 : -1
+    })
+  }
+  sortEventsAsc(eventData: any) {
+    return eventData.sort((a: any, b: any) => {
+      const firstDate: any = new Date(a.eventCustomStartDate)
+      const secondDate: any = new Date(b.eventCustomStartDate)
+      return  secondDate < firstDate  ? 1 : -1
+    })
   }
 
   compareDate(startDate: any) {

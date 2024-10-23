@@ -46,6 +46,7 @@ import { AssessmentPerformanceSummaryComponent } from './components/assessment-p
 import { AssessmentPerformanceInsightSummaryComponent } from './components/assessment-performance-insight-summary/assessment-performance-insight-summary.component'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
 import { QuestionSafeUrlPipe } from './question-safe-pipe.pipe'
+import { ReactiveFormsModule } from '@angular/forms'
 @NgModule({
   declarations: [
     FillInTheBlankComponent,
@@ -73,6 +74,7 @@ import { QuestionSafeUrlPipe } from './question-safe-pipe.pipe'
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     PipeDurationTransformModule,
     PipeLimitToModule,
     MatCardModule,

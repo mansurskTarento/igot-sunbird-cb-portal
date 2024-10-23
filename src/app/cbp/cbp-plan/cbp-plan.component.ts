@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { WidgetUserService } from '@sunbird-cb/collection/src/public-api'
 import {
   NsContent,
 } from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
@@ -13,7 +12,9 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import { NsCardContent } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.model'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
@@ -52,8 +53,9 @@ export class CbpPlanComponent implements OnInit {
   contentCompletedStatus = 2
   constructor(
     private activatedRoute: ActivatedRoute,
-    private widgetSvc: WidgetUserService,
+    private widgetSvc: WidgetUserServiceLib,
     private translate: TranslateService,
+    private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService
 
     ) {
@@ -79,7 +81,8 @@ export class CbpPlanComponent implements OnInit {
 
   async getCbPlans() {
     this.cbpLoader = true
-    let response = await this.widgetSvc.fetchCbpPlanList().toPromise()
+    const userId: any = this.configSvc.userProfile && this.configSvc.userProfile.userId
+    let response = await this.widgetSvc.fetchCbpPlanList(userId).toPromise()
     if (response.length) {
       this.cbpOriginalData = response
       this.upcommingList = []

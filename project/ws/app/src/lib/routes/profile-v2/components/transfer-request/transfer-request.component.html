@@ -13,7 +13,7 @@
                     <mat-option value="" disabled>{{ 'profileInfo.chooseOrganization' | translate }}</mat-option>
                     <mat-option *ngFor="let dept of departmentData" value="{{ dept }}">{{ dept }}</mat-option>
                 </mat-select> -->
-                <div class="flex flex-row auto-complete-row">
+                <div class="flex flex-row auto-complete-row" (click)="assignValue()">
                     <input type="text" class="input-text" matInput formControlName="organization"
                         [matAutocomplete]="departmentAuto">
                     <mat-icon>arrow_drop_down</mat-icon>

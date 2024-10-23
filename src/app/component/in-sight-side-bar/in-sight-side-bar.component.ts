@@ -1,12 +1,13 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
 import { HomePageService } from 'src/app/services/home-page.service'
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MatSnackBar } from '@angular/material'
+import moment from 'moment'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -81,6 +82,11 @@ export class InsightSideBarComponent implements OnInit {
   surveyForm: any
   isNotMyUser = false
   isIgotOrg = false
+  nwlConfiguration: any
+  canShowNlwCard = false
+  totlaDays = 0
+  daysCompleted = 0
+  currentLang: any = ''
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -89,12 +95,21 @@ export class InsightSideBarComponent implements OnInit {
     private translate: TranslateService,
     private events: EventService,
     private snackBar: MatSnackBar,
-    private router: Router) {
+    private router: Router,
+    private langtranslations: MultilingualTranslationsService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
       }
+      this.langtranslations.languageSelectedObservable.subscribe(() => {
+        if (localStorage.getItem('websiteLanguage')) {
+          this.translate.setDefaultLang('en')
+          const lang = localStorage.getItem('websiteLanguage')!
+          this.translate.use(lang)
+          this.currentLang = lang
+        }
+      })
     }
 
   ngOnInit() {
@@ -103,10 +118,23 @@ export class InsightSideBarComponent implements OnInit {
       this.homePageData = this.activatedRoute.snapshot.data.pageData.data
       this.learnAdvisoryData = this.activatedRoute.snapshot.data.pageData.data.learnerAdvisory
       this.surveyForm = this.activatedRoute.snapshot.data.pageData.data.surveyForm
+      // Fetch National learning week configurations
+      this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
+      if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
+        this.getNlwConfig()
+      }
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
-    this.isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
-    this.isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName === 'igot' ? true : false
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.profileStatus) {
+      this.isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
+    }
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails &&
+      this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
+      this.isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName === 'igot' ? true : false
+    }
+
     // this.learnAdvisoryDataLength = this.learnAdvisoryData.length
     this.getInsights()
     this.getPendingRequestData()
@@ -125,6 +153,27 @@ export class InsightSideBarComponent implements OnInit {
   //   const randomIndex = Math.floor(Math.random() * this.learnAdvisoryData.length)
   //   this.randomlearnAdvisoryObj = this.learnAdvisoryData[randomIndex]
   // }
+
+  getNlwConfig() {
+    const startDate = moment(this.nwlConfiguration.startDate, 'DD-MMYYYY')
+    const endDate = moment(this.nwlConfiguration.endDate, 'DD-MMYYYY')
+    this.totlaDays = endDate.diff(startDate, 'days')
+    const currentDate = moment()
+    if (currentDate.isBetween(startDate, endDate, null, '[]')) {
+      const daysPassed = currentDate.diff(startDate, 'days')
+      this.canShowNlwCard = true
+      this.daysCompleted = daysPassed
+
+    } else if (currentDate.isBefore(startDate)) {
+      this.canShowNlwCard = false
+    } else if (currentDate.isAfter(endDate)) {
+      const daysPassed = currentDate.diff(endDate, 'days')
+      if (daysPassed === 0) {
+        this.canShowNlwCard = true
+        this.daysCompleted = 6
+      }
+    }
+  }
 
   getInsights() {
     this.profileDataLoading = true
@@ -344,6 +393,21 @@ export class InsightSideBarComponent implements OnInit {
     if (event) {
       this.isLeaderboardExist = event
     }
+  }
+
+  navigateToNationalLearning() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'national-learning-week',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+
+    this.router.navigateByUrl('app/learn/karmayogi-saptah')
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

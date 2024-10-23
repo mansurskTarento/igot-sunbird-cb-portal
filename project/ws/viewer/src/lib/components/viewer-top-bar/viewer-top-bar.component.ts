@@ -12,6 +12,7 @@ import { CourseCompletionDialogComponent } from '../course-completion-dialog/cou
 import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 /* tslint:disable*/
 import _ from 'lodash'
 
@@ -69,6 +70,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   canShare = false
   primaryCategory = NsContent.EPrimaryCategory
   assessmentStart = false;
+  enrollmentList: any = []
   // primaryCategory = NsContent.EPrimaryCategory
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -85,7 +87,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private loggerSvc: LoggerService,
     private events: EventService,
     private assessmentStartCheckService: ViewerHeaderSideBarToggleService,
-    private resetRatingsService: ResetRatingsService
+    private resetRatingsService: ResetRatingsService,
+    private widgetLibSvc: WidgetContentLibService
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -98,6 +101,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
+    this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
+    && this.activatedRoute.snapshot.data.enrollmentData.data || []
     // this.getAuthDataIdentifer()
     if (window.innerWidth <= 1200) {
       this.isMobile = true
@@ -185,7 +190,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       this.collectionId = params.get('collectionId') as string
       this.collectionType = params.get('collectionType') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
-      const enrollList: any = JSON.parse(localStorage.getItem('enrollmentMapData') || '{}')
+      const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
       this.currentDataFromEnrollList =  enrollList[this.collectionId]
       this.getUserRating(false)
     })

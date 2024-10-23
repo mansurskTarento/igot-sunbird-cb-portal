@@ -24,6 +24,7 @@ export class ViewerUtilService {
   autoPlayNextVideo = new Subject()
   autoPlayNextAudio = new Subject()
   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+  publicUserDetails: any = {}
   constructor(
     private http: HttpClient,
     private configservice: ConfigurationsService,

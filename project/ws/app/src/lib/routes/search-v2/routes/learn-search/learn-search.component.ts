@@ -5,8 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
-import { WidgetContentService, NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
 
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 @Component({
   selector: 'ws-app-learn-search',
   templateUrl: './learn-search.component.html',
@@ -88,7 +89,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private activated: ActivatedRoute,
     private valueSvc: ValueService,
     private translate: TranslateService,
-    private contSvc: WidgetContentService,
+    private contSvc: WidgetContentLibService,
     private router: Router,
     private langtranslations: MultilingualTranslationsService,
   ) {

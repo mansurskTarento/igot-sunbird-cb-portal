@@ -92,7 +92,7 @@ export class SignupService {
           orgName,
           parentType: type,
         },
-        limit: 100,
+        limit: 500,
       },
     }
     return this.http.post(API_END_POINTS.SEARCH_ORG, req)

@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   ViewChild, ViewChildren,
   Renderer2,
+  TemplateRef,
 } from '@angular/core'
 import { MatDialog, MatSidenav, MatSnackBar, MatSnackBarConfig } from '@angular/material'
 import { Subscription, interval } from 'rxjs'
@@ -29,6 +30,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 // import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
@@ -144,8 +146,16 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   timeSpentOnQuestions: any = {}
   charactersPerPage = 1300
   showQuestionMarks = 'No'
+  questionParagraph = ''
   forPreview = (window.location.href.includes('public') || window.location.href.includes('author') ||
-                window.location.href.includes('editMode'))
+                window.location.href.includes('editMode') || window.location.href.includes('preview=true'))
+  forCreatorMode = window.location.href.includes('editMode=true')
+
+  public publicUserInfoForm!: FormGroup
+  public submitted = false
+  emailLengthVal = false
+
+  @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
     private events: EventService,
     public dialog: MatDialog,
@@ -155,6 +165,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private valueSvc: ValueService,
     // private vws: ViewerDataService,
+    private formBuilder: FormBuilder,
     public snackbar: MatSnackBar,
     private sanitized: DomSanitizer,
     private viewerDataSvc: ViewerDataService,
@@ -189,6 +200,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.isMobile = false
     }
+
+    if ((this.forPreview && !this.forCreatorMode) &&
+      this.primaryCategory === this.ePrimaryCategory.FINAL_ASSESSMENT &&
+       (this.quizData && this.quizData.isPublic)) {
+      this.getPublicUserDetails()
+    }
     // if (this.coursePrimaryCategory === 'Standalone Assessment') {
     //   // this.getSections()
     // }
@@ -212,7 +229,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       // ))
     ).subscribe(() => {
       if (this.viewState !== 'initial' && !this.isSubmitted) {
-        this.submitQuiz()
+        // this.submitQuiz()
       }
       // console.log(val)
     })
@@ -226,6 +243,25 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     //     this.viewState = 'answer' || 'review'
     //   }
     // })
+  }
+
+  getPublicUserDetails() {
+    this.publicUserInfoForm = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      email: [
+        '', [
+          Validators.required,
+          Validators.pattern(`^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`),
+        ],
+      ],
+    })
+    this.dialog.open(this.publicUserDialog, {
+      disableClose: true,
+      panelClass: 'public-user-dialog',
+      backdropClass: 'public-user-backdrop',
+      height : 'auto',
+      data: {},
+    })
   }
 
   retakeAssessment() {
@@ -284,6 +320,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     //   this.init()
     //   this.updateVisivility()
     // } else {
+
+    if ((this.forPreview && !this.forCreatorMode)) {
+      this.init()
+      this.updateVisivility()
+    } else {
       if (this.selectedAssessmentCompatibilityLevel) {
         if (this.selectedAssessmentCompatibilityLevel < 7) {
           this.quizSvc.canAttend(this.identifier).subscribe(response => {
@@ -311,6 +352,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           })
         }
       }
+    }
 
     // }
   }
@@ -411,6 +453,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.quizJson.questions  = []
     }
 
+    if (this.forPreview && this.quizData.isPublic) {
+      this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.quizData)
+    }
     this.fetchingSectionsStatus = 'fetching'
     if (this.quizSvc.paperSections && this.quizSvc.paperSections.value
       && _.get(this.quizSvc.paperSections, 'value.questionSet.children')) {
@@ -430,81 +475,96 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.startIfonlySection()
     } else {
       if (this.selectedAssessmentCompatibilityLevel < 7) {
-        this.quizSvc.getSectionV4(this.identifier).subscribe((section: NSPractice.ISectionResponse) => {
+
+        this.quizSvc.getSectionV4(this.identifier, this.forPreview,
+                                  this.getPublicContentRequestData()).subscribe((section: NSPractice.ISectionResponse) => {
           // console.log(section)
-          this.fetchingSectionsStatus = 'done'
-          if (section.responseCode && section.responseCode === 'OK') {
-            this.compatibilityLevel = section.result.questionSet.compatibilityLevel
-            this.assessmentType = section.result.questionSet.assessmentType
-            /** this is to enable or disable Timer */
-            const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
-            if (showTimer) {
-              this.quizJson.timeLimit = section.result.questionSet.expectedDuration
-            } else {
-              // this.quizJson.timeLimit = this.duration * 60
-              this.quizJson.timeLimit = this.quizJson.timeLimit
+          if (section && section.result && section.result.response) {
+            if ((this.forPreview && !this.forCreatorMode)) {
+              this.showPublicUserPopUp('noAtempt')
             }
-            this.allSectionTimeLimit = section.result.questionSet.expectedDuration
-            // this.quizSvc.paperSections.next(section.result)
-            const tempObj = _.get(section, 'result.questionSet.children')
-            this.showQuestionMarks = _.get(section, 'result.questionSet.showMarks', 'No')
-            this.updataDB(tempObj)
-            this.paperSections = []
-            this.questionSectionTableData = []
-            let totalQuestions = 0
-            _.each(tempObj, o => {
-              if (this.paperSections) {
-                this.paperSections.push(o)
-                this.questionSectionTableData.push(o)
-                if (o.childNodes) {
-                  totalQuestions = totalQuestions + o.childNodes.length
-                }
+          } else {
+            this.fetchingSectionsStatus = 'done'
+            if (section.responseCode && section.responseCode === 'OK') {
+              this.compatibilityLevel = section.result.questionSet.compatibilityLevel
+              this.assessmentType = section.result.questionSet.assessmentType
+              /** this is to enable or disable Timer */
+              const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
+              if (showTimer) {
+                this.quizJson.timeLimit = section.result.questionSet.expectedDuration
+              } else {
+                // this.quizJson.timeLimit = this.duration * 60
+                this.quizJson.timeLimit = this.quizJson.timeLimit
               }
-            })
-            this.totalAssessemntQuestionsCount = totalQuestions
-            // this.paperSections = _.get(section, 'result.questionSet.children')
-            this.viewState = 'detail'
-            // this.updateTimer()
-            this.startIfonlySection()
+              this.allSectionTimeLimit = section.result.questionSet.expectedDuration
+              // this.quizSvc.paperSections.next(section.result)
+              const tempObj = _.get(section, 'result.questionSet.children')
+              this.showQuestionMarks = _.get(section, 'result.questionSet.showMarks', 'No')
+              this.updataDB(tempObj)
+              this.paperSections = []
+              this.questionSectionTableData = []
+              let totalQuestions = 0
+              _.each(tempObj, o => {
+                if (this.paperSections) {
+                  this.paperSections.push(o)
+                  this.questionSectionTableData.push(o)
+                  if (o.childNodes) {
+                    totalQuestions = totalQuestions + o.childNodes.length
+                  }
+                }
+              })
+              this.totalAssessemntQuestionsCount = totalQuestions
+              // this.paperSections = _.get(section, 'result.questionSet.children')
+              this.viewState = 'detail'
+              // this.updateTimer()
+              this.startIfonlySection()
+            }
           }
         })
       } else {
-        this.quizSvc.getSection(this.identifier).subscribe((section: NSPractice.ISectionResponse) => {
+        this.quizSvc.getSection(this.identifier, this.forPreview,
+                                this.getPublicContentRequestData()).subscribe((section: NSPractice.ISectionResponse) => {
           // console.log(section)
-          this.fetchingSectionsStatus = 'done'
-          if (section.responseCode && section.responseCode === 'OK') {
-            this.compatibilityLevel = section.result.questionSet.compatibilityLevel
-            this.assessmentType = section.result.questionSet.assessmentType
-            /** this is to enable or disable Timer */
-            const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
-            if (showTimer) {
-              this.quizJson.timeLimit = section.result.questionSet.expectedDuration
-            } else {
-              // this.quizJson.timeLimit = this.duration * 60
-              this.quizJson.timeLimit = this.quizJson.timeLimit
-            }
-            this.allSectionTimeLimit  = section.result.questionSet.expectedDuration
-            // this.quizSvc.paperSections.next(section.result)
-            const tempObj = _.get(section, 'result.questionSet.children')
-            this.showQuestionMarks = _.get(section, 'result.questionSet.showMarks', 'No')
-            this.updataDB(tempObj)
-            this.paperSections = []
-            this.questionSectionTableData = []
-            let totalQuestions = 0
-            _.each(tempObj, o => {
-              if (this.paperSections) {
-                this.paperSections.push(o)
-                this.questionSectionTableData.push(o)
-                if (o.childNodes) {
-                  totalQuestions = totalQuestions + o.childNodes.length
-                }
+          if (section && section.result && section.result.response) {
+            if ((this.forPreview && !this.forCreatorMode)) {
+                this.showPublicUserPopUp('noAtempt')
               }
-            })
-            this.totalAssessemntQuestionsCount = totalQuestions
-            // this.paperSections = _.get(section, 'result.questionSet.children')
-            this.viewState = 'detail'
-            // this.updateTimer()
-            this.startIfonlySection()
+          } else {
+            this.fetchingSectionsStatus = 'done'
+            if (section.responseCode && section.responseCode === 'OK') {
+              this.compatibilityLevel = section.result.questionSet.compatibilityLevel
+              this.assessmentType = section.result.questionSet.assessmentType
+              /** this is to enable or disable Timer */
+              const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
+              if (showTimer) {
+                this.quizJson.timeLimit = section.result.questionSet.expectedDuration
+              } else {
+                // this.quizJson.timeLimit = this.duration * 60
+                this.quizJson.timeLimit = this.quizJson.timeLimit
+              }
+              this.allSectionTimeLimit  = section.result.questionSet.expectedDuration
+              // this.quizSvc.paperSections.next(section.result)
+              const tempObj = _.get(section, 'result.questionSet.children')
+              this.showQuestionMarks = _.get(section, 'result.questionSet.showMarks', 'No')
+              this.updataDB(tempObj)
+              this.paperSections = []
+              this.questionSectionTableData = []
+              let totalQuestions = 0
+              _.each(tempObj, o => {
+                if (this.paperSections) {
+                  this.paperSections.push(o)
+                  this.questionSectionTableData.push(o)
+                  if (o.childNodes) {
+                    totalQuestions = totalQuestions + o.childNodes.length
+                  }
+                }
+              })
+              this.totalAssessemntQuestionsCount = totalQuestions
+              // this.paperSections = _.get(section, 'result.questionSet.children')
+              this.viewState = 'detail'
+              // this.updateTimer()
+              this.startIfonlySection()
+            }
           }
         })
       }
@@ -577,6 +637,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    }
   }
   startSection(section: NSPractice.IPaperSection) {
+
     this.sectionalInstruction = section.additionalInstructions
     this.selectedSectionIdentifier = section.identifier
     if (section.childNodes && section.childNodes.length) {
@@ -609,10 +670,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         Promise.all(prom).then(qqr => {
           this.fetchingQuestionsStatus = 'done'
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
+          // console.log('question--', question)
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
           this.quizSvc.startSection(section)
           // console.log(this.quizSvc.secAttempted.value)
-          _.eachRight(question.questions, q => {
+          _.each(question.questions, q => {
             // const qHtml = document.createElement('div')
             // qHtml.innerHTML = q.editorState.question
             if (codes.indexOf(section.identifier) === -1) {
@@ -640,7 +702,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         //   const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
         //   this.quizSvc.startSection(section)
         //   // console.log(this.quizSvc.secAttempted.value)
-        //   _.eachRight(question.questions, q => {
+        //   _.each(question.questions, q => {
         //     // const qHtml = document.createElement('div')
         //     // qHtml.innerHTML = q.editorState.question
         //     if (codes.indexOf(section.identifier) === -1) {
@@ -658,13 +720,22 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         //   this.overViewed('start')
         // })
       }
+
+      if (section && section.questionParagraph) {
+        const questionParagraph = section.questionParagraph
+        this.questionParagraph = questionParagraph.replace(/&nbsp;/g, ' ')
+      } else {
+        this.questionParagraph = ''
+      }
     }
   }
   getMultiQuestions(ids: string[]) {
     if (this.selectedAssessmentCompatibilityLevel < 7) {
-      return this.quizSvc.getQuestionsV4(ids, this.identifier).toPromise()
+      return this.quizSvc.getQuestionsV4(ids, this.identifier, this.forPreview,
+                                         this.viewerSvc.publicUserDetails, this.collectionId).toPromise()
     }
-      return this.quizSvc.getQuestions(ids, this.identifier).toPromise()
+      return this.quizSvc.getQuestions(ids, this.identifier, this.forPreview,
+                                       this.viewerSvc.publicUserDetails, this.collectionId).toPromise()
   }
   getRhsValue(question: NSPractice.IQuestionV2) {
     if (question && question.qType) {
@@ -1424,12 +1495,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             prom.push(this.getMultiQuestions(l))
           })
           Promise.all(prom).then(qqr => {
-            console.log('qqr', qqr)
             allPromiseResolvedCount++;
             const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
             const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
             // console.log(this.quizSvc.secAttempted.value)
-            _.eachRight(question.questions, q => {
+            _.each(question.questions, q => {
               // const qHtml = document.createElement('div')
               // qHtml.innerHTML = q.editorState.question
               if (codes.indexOf(section.identifier) === -1) {
@@ -1497,20 +1567,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async submitAfterAllPromiseResolved() {
-    if (this.selectedAssessmentCompatibilityLevel < 7) {
-      const quizV4Res: any = await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
-      if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
-        if (quizV4Res.result.primaryCategory === 'Course Assessment') {
-          setTimeout(() => {
-            this.getQuizResult()
-          },         environment.quizResultTimeout)
-        } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
-          this.assignQuizResult(quizV4Res.result)
-        }
-      }
-    } else {
-      if(this.selectedAssessmentCompatibilityLevel >=8) {
-        const quizV4Res: any = await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {})
+    if(!this.forPreview || this.forCreatorMode){
+      if (this.selectedAssessmentCompatibilityLevel < 7) {
+        const quizV4Res: any = await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
         if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
           if (quizV4Res.result.primaryCategory === 'Course Assessment') {
             setTimeout(() => {
@@ -1521,18 +1580,51 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       } else {
-        const quizV4Res: any = await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {})
-        if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
-          if (quizV4Res.result.primaryCategory === 'Course Assessment') {
-            setTimeout(() => {
-              this.getQuizResult()
-            },         environment.quizResultTimeout)
-          } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
-            this.assignQuizResult(quizV4Res.result)
+        if(this.selectedAssessmentCompatibilityLevel >=8) {
+          const quizV4Res: any = await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {})
+          if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
+            if (quizV4Res.result.primaryCategory === 'Course Assessment') {
+              setTimeout(() => {
+                this.getQuizResult()
+              },         environment.quizResultTimeout)
+            } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
+              this.assignQuizResult(quizV4Res.result)
+            }
+          }
+        } else {
+          const quizV4Res: any = await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {})
+          if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
+            if (quizV4Res.result.primaryCategory === 'Course Assessment') {
+              setTimeout(() => {
+                this.getQuizResult()
+              },         environment.quizResultTimeout)
+            } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
+              this.assignQuizResult(quizV4Res.result)
+            }
           }
         }
       }
+    } else {
+      let requestData = this.generateRequest
+      requestData = {
+        ...requestData,
+        ...this.viewerSvc.publicUserDetails,
+        contextId: this.collectionId
+      }
       
+      const quizV4Res: any = await this.quizSvc.publicSubmit(requestData).toPromise().catch(_error => {})
+          if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
+            if (quizV4Res.result.primaryCategory === 'Course Assessment') {
+              setTimeout(() => {
+                this.getQuizResult()
+                if(this.forPreview && this.quizData.isPublic){
+                  this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
+                }
+              },         environment.quizResultTimeout)
+            } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
+              this.assignQuizResult(quizV4Res.result)
+            }
+      }
     }
   }
 
@@ -1552,7 +1644,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
           // console.log(this.quizSvc.secAttempted.value)
-          _.eachRight(question.questions, q => {
+          _.each(question.questions, q => {
             // const qHtml = document.createElement('div')
             // qHtml.innerHTML = q.editorState.question
             if (codes.indexOf(section.identifier) === -1) {
@@ -1586,18 +1678,33 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async submitAfterAllPromiseResolvedForOptionWeightage() {
-    if (this.selectedAssessmentCompatibilityLevel < 7) {
-      await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
-     
-    } else {
-      if (this.selectedAssessmentCompatibilityLevel >= 8) {
-        await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {}) 
+    if(!this.forPreview  || this.forCreatorMode){
+      if (this.selectedAssessmentCompatibilityLevel < 7) {
+        await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
+      
       } else {
-        await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {}) 
+        if (this.selectedAssessmentCompatibilityLevel >= 8) {
+          await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {}) 
+        } else {
+          await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {}) 
+        }
+            
       }
-          
+    } else {
+      let requestData : any = this.generateRequest
+      requestData = {
+        ...requestData,
+        ...this.viewerSvc.publicUserDetails,
+        contextId: this.collectionId
+      }
+      await this.quizSvc.publicSubmit(requestData ).toPromise().catch(_error => {}) 
+      if(this.forPreview && this.quizData.isPublic){
+        this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
+      }
     }
-    this.updateProgress(2)
+    if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
+      this.updateProgress(2)
+    }
   }
 
   showAnswers() {
@@ -1774,36 +1881,40 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         this.clearStoragePartial()
         this.clearStorage()
         this.retake = true
+        this.isSubmitted = false
         
         // this.init()
-        if(this.selectedAssessmentCompatibilityLevel < 7) {
-          // this.init()
-          if(this.ePrimaryCategory.FINAL_ASSESSMENT == this.primaryCategory) {
-            this.quizSvc.canAttend(this.identifier).subscribe(response => {
-              if (response) {
-                  this.canAttempt = response
-                //  this.canAttempt = {
-                //   attemptsAllowed: 1,
-                //   attemptsMade: 0,
-                // }
-              }
-            })
-          }          
-          this.retakeAssessment()
-        } else {      
-          if(this.ePrimaryCategory.FINAL_ASSESSMENT == this.primaryCategory) {
-            this.quizSvc.canAttendV5(this.identifier).subscribe(response => {
-              if (response) {
-                  this.canAttempt = response
-                //  this.canAttempt = {
-                //   attemptsAllowed: 1,
-                //   attemptsMade: 0,
-                // }
-              }
-            })
-          }          
-          this.retakeAssessment()
+        if(!this.forPreview) {
+          if(this.selectedAssessmentCompatibilityLevel < 7) {
+            // this.init()
+            if(this.ePrimaryCategory.FINAL_ASSESSMENT == this.primaryCategory ) {
+              this.quizSvc.canAttend(this.identifier).subscribe(response => {
+                if (response) {
+                    this.canAttempt = response
+                  //  this.canAttempt = {
+                  //   attemptsAllowed: 1,
+                  //   attemptsMade: 0,
+                  // }
+                }
+              })
+            }          
+            this.retakeAssessment()
+          } else {      
+            if(this.ePrimaryCategory.FINAL_ASSESSMENT == this.primaryCategory && !this.forPreview) {
+              this.quizSvc.canAttendV5(this.identifier).subscribe(response => {
+                if (response) {
+                    this.canAttempt = response
+                  //  this.canAttempt = {
+                  //   attemptsAllowed: 1,
+                  //   attemptsMade: 0,
+                  // }
+                }
+              })
+            }          
+            this.retakeAssessment()
+          }
         }
+        
         
         break
     }
@@ -1904,29 +2015,46 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async getQuizResult() {
-    const req = {
+    const req: any = {
       request: {
         assessmentId: this.generateRequest.identifier,
         batchId: this.generateRequest.batchId,
         courseId: this.generateRequest.courseId,
       },
     }
+    if(this.forPreview) {
+      req.request['email'] = this.viewerSvc.publicUserDetails.email
+      req.request['assessmentIdentifier'] =  this.generateRequest.identifier
+      req.request['contextId'] =  this.generateRequest.courseId
+    }
     if(this.selectedAssessmentCompatibilityLevel < 7) {
-      const resultRes: any = await this.quizSvc.quizResult(req).toPromise().catch(_error => {})
+      const resultRes: any = await this.quizSvc.quizResult(req,this.forPreview).toPromise().catch(_error => {})
       if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'success') {
         if (resultRes.result) {
           this.fetchingResultsStatus = (resultRes.result.isInProgress) ?  'fetching' : 'done'
           this.assignQuizResult(resultRes.result)
         }
+        if((this.forPreview && !this.forCreatorMode) && resultRes.result ) {
+          this.showPublicUserPopUp(resultRes.result.pass? 'pass': 'fail')
+        }
       } else if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'failed') {
         this.finalResponse = resultRes.responseCode
       }
     } else {
-      const resultRes: any = await this.quizSvc.quizResultV5(req).toPromise().catch(_error => {})
+      if(this.forPreview) {
+        req.request['email'] = this.viewerSvc.publicUserDetails.email
+        req.request['assessmentIdentifier'] =  this.generateRequest.identifier
+        req.request['contextId'] =  this.generateRequest.courseId
+      }
+      const resultRes: any = await this.quizSvc.quizResultV5(req,this.forPreview).toPromise().catch(_error => {})
       if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'success') {
         if (resultRes.result) {
           this.fetchingResultsStatus = (resultRes.result.isInProgress) ?  'fetching' : 'done'
           this.assignQuizResult(resultRes.result)
+        }
+
+        if((this.forPreview && !this.forCreatorMode) && resultRes.result) {
+          this.showPublicUserPopUp(resultRes.result.pass? 'pass': 'fail')
         }
       } else if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'failed') {
         this.finalResponse = resultRes.responseCode
@@ -1936,7 +2064,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   assignQuizResult(res: NSPractice.IQuizSubmitResponseV2) {
-    this.updateProgress(2)
+    if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
+      this.updateProgress(2)
+    }
     this.finalResponse = res
     if (this.quizJson.isAssessment) {
       this.isIdeal = true
@@ -1984,7 +2114,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             mode: WsEvents.WsTimeSpentMode.Play,
             content: data,
             identifier: data ? data.identifier : null,
-            mimeType: NsContent.EMimeTypes.PDF,
+            mimeType: NsContent.EMimeTypes.QUESTION_SET,
             url: data ? data.artifactUrl : null,
             object: {
                 id: data ? data.identifier : null,
@@ -2318,4 +2448,77 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     return 'countDownTimerGreen' 
   }
 
+  emailVerification(emailId: string) {
+    this.emailLengthVal = false
+    if (emailId && emailId.length > 0) {
+      const email = emailId.split('@')
+      if (email && email.length === 2) {
+        if ((email[0] && email[0].length > 64) || (email[1] && email[1].length > 255)) {
+          this.emailLengthVal = true
+        }
+      } else {
+        this.emailLengthVal = false
+      }
+    }
+  }
+  submitpublicUserInfo() {
+    this.viewerSvc.publicUserDetails =  this.publicUserInfoForm.value
+    this.dialog.closeAll()
+  }
+
+  getPublicContentRequestData(){
+    let assessmentReadReqData = {}
+
+    if(this.forPreview){
+      assessmentReadReqData = {
+        "assessmentIdentifier":this.identifier,
+        "contextId": this.collectionId,
+        ...this.viewerSvc.publicUserDetails
+      }
+    }
+    return assessmentReadReqData
+  }
+  showPublicUserPopUp(ontype: string) {
+    let msg: any = ''
+    switch(ontype) {
+      case 'pass':
+        msg = 'Congratulations! Your certificate will be sent to your email soon.'
+        break;
+      case 'noAtempt':
+        msg = 'You have successfully completed the assessment! If you have not received your certificate yet, don’t worry—we will resend them shortly.'
+        break;
+      case 'fail':
+        msg = 'Unfortunately, you did not pass. Please retake the assessment.'
+        break
+      default:
+        msg = 'Your certificate has been successfully resent to your email.'
+        break;
+    }
+    const dialogRef =  this.dialog.open(FinalAssessmentPopupComponent, {
+      data: {
+        assessmentType:'publicUserSuccess',
+        message: msg,
+        popUpType: ontype
+      },
+      width:'320px',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
+      panelClass: 'final-assessment',
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+       if(ontype === 'noAtempt') {
+        this.router.navigateByUrl(`public/toc/${this.collectionId}/overview`)
+       } else  if(ontype === 'pass') {
+        this.router.navigateByUrl(`public/toc/${this.collectionId}/overview`)
+       }
+      } else {
+        if(ontype !== 'fail') {
+          this.router.navigateByUrl(`public/toc/${this.collectionId}/overview`)
+        }
+      }
+    })
+  }
 }

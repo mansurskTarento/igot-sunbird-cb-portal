@@ -39,108 +39,131 @@ export class KarmaPointsComponent implements OnInit, OnChanges {
     this.condition = changes.condition && changes.condition.currentValue || null
 
     if (!this.condition) { return }
-    if (!this.condition.isPostAssessment && (this.condition.content && this.condition.content.hasOwnProperty('completionPercentage')
-     && !this.condition.content.completionPercentage
-     || (this.condition.content && this.condition.content.completionPercentage < 100))
-      && !this.condition.certData) {
-        if (this.condition.isAcbpClaim) {
-          this.getKPData('ACBP')
+    if (!this.condition && !this.condition.event) {
+      // For TOC karma points
+      if (!this.condition.isPostAssessment && (this.condition.content && this.condition.content.hasOwnProperty('completionPercentage')
+        && !this.condition.content.completionPercentage
+        || (this.condition.content && this.condition.content.completionPercentage < 100))
+         && !this.condition.certData) {
+           if (this.condition.isAcbpClaim) {
+             this.getKPData('ACBP')
+           }
+
+           if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
+             if (!this.condition.isAcbpClaim && !this.condition.monthlyCapExceed) {
+               this.getKPData('Resume')
+             }
+           }
+       }
+
+       if (this.condition && !this.condition.isPostAssessment
+        && ((this.condition.content && this.condition.content.completionPercentage === 100)
+        || this.condition.certData)) {
+        if (this.condition.isAcbpCourse && this.condition.isAcbpClaim && !this.condition.isClaimed) {
+          this.getKPData('ACBP CLAIM')
+          this.btnCategory = 'claim'
         }
 
         if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
-          if (!this.condition.isAcbpClaim && !this.condition.monthlyCapExceed) {
-            this.getKPData('Resume')
+          if (this.condition && !this.condition.isAcbpCourse && !this.condition.monthlyCapExceed) {
+            this.getKPData('Start again')
           }
-        }
-    }
 
-    if (this.condition && !this.condition.isPostAssessment
-      && ((this.condition.content && this.condition.content.completionPercentage === 100)
-      || this.condition.certData)) {
-      if (this.condition.isAcbpCourse && this.condition.isAcbpClaim && !this.condition.isClaimed) {
-        this.getKPData('ACBP CLAIM')
-        this.btnCategory = 'claim'
-      }
-
-      if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
-        if (this.condition && !this.condition.isAcbpCourse && !this.condition.monthlyCapExceed) {
-          this.getKPData('Start again')
-        }
-
-        if (!this.condition.isAcbpCourse && this.condition.monthlyCapExceed && !this.condition.isCompletedThisMonth) {
-          this.getKPData('Start again')
-        }
-      }
-    }
-
-    if (this.condition && this.condition.isPostAssessment
-      && this.condition.showTakeAssessment
-      && this.condition.showTakeAssessment.post_assessment) {
-      this.getKPData('Take Assessment')
-    }
-
-    if (this.condition && (this.condition.content
-      && this.condition.content.primaryCategory) !== this.condition.primaryCategory.RESOURCE
-      && !this.condition.enrollBtnLoading) {
-      if (this.condition.isAcbpCourse) {
-        this.getKPData('ACBP')
-      }
-
-      if (!this.condition.isAcbpCourse && !this.condition.monthlyCapExceed &&
-        this.condition.userEnrollmentList && !this.condition.userEnrollmentList.length) {
-        this.getKPData('Enroll')
-      }
-    }
-
-    if (this.condition && !this.condition.isPostAssessment
-      && (this.condition.content && this.condition.content.hasOwnProperty('completionPercentage')
-    && !this.condition.content.completionPercentage
-    || (this.condition.content && this.condition.content.completionPercentage < 100))) {
-
-        if (this.condition.isAcbpClaim) {
-          this.getKPData('ACBP')
-        }
-
-        if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
-          if (!this.condition.isAcbpClaim && !this.condition.monthlyCapExceed) {
-            this.getKPData('Resume')
+          if (!this.condition.isAcbpCourse && this.condition.monthlyCapExceed && !this.condition.isCompletedThisMonth) {
+            this.getKPData('Start again')
           }
         }
       }
 
-    if (this.condition && !this.condition.isPostAssessment
-      && (this.condition.content && this.condition.content.completionPercentage === 100)) {
-      if (this.condition.isAcbpCourse && this.condition.isAcbpClaim && !this.condition.isClaimed) {
-        this.getKPData('ACBP CLAIM')
-        this.btnCategory = 'claim'
+      if (this.condition && this.condition.isPostAssessment
+        && this.condition.showTakeAssessment
+        && this.condition.showTakeAssessment.post_assessment) {
+        this.getKPData('Take Assessment')
       }
 
-      if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
-        if (!this.condition.isAcbpCourse && !this.condition.monthlyCapExceed) {
-          this.getKPData('Start again')
+      if (this.condition && (this.condition.content
+        && this.condition.content.primaryCategory) !== this.condition.primaryCategory.RESOURCE
+        && !this.condition.enrollBtnLoading) {
+        if (this.condition.isAcbpCourse) {
+          this.getKPData('ACBP')
         }
 
-        if (!this.condition.isAcbpCourse && this.condition.monthlyCapExceed && !this.condition.isCompletedThisMonth) {
-          this.getKPData('Start again')
+        if (!this.condition.isAcbpCourse && !this.condition.monthlyCapExceed &&
+          this.condition.userEnrollmentList && !this.condition.userEnrollmentList.length) {
+          this.getKPData('Enroll')
+        }
+      }
+
+      if (this.condition && !this.condition.isPostAssessment
+        && (this.condition.content && this.condition.content.hasOwnProperty('completionPercentage')
+      && !this.condition.content.completionPercentage
+      || (this.condition.content && this.condition.content.completionPercentage < 100))) {
+
+          if (this.condition.isAcbpClaim) {
+            this.getKPData('ACBP')
+          }
+
+          if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
+            if (!this.condition.isAcbpClaim && !this.condition.monthlyCapExceed) {
+              this.getKPData('Resume')
+            }
+          }
+        }
+
+        if (this.condition && !this.condition.isPostAssessment
+          && (this.condition.content && this.condition.content.completionPercentage === 100)) {
+          if (this.condition.isAcbpCourse && this.condition.isAcbpClaim && !this.condition.isClaimed) {
+            this.getKPData('ACBP CLAIM')
+            this.btnCategory = 'claim'
+          }
+
+          if (this.condition.content.primaryCategory === this.condition.primaryCategory.COURSE) {
+            if (!this.condition.isAcbpCourse && !this.condition.monthlyCapExceed) {
+              this.getKPData('Start again')
+            }
+
+            if (!this.condition.isAcbpCourse && this.condition.monthlyCapExceed && !this.condition.isCompletedThisMonth) {
+              this.getKPData('Start again')
+            }
+          }
+        }
+        if (this.condition && this.condition.isPostAssessment && this.condition.showTakeAssessment
+          && this.condition.showTakeAssessment.post_assessment) {
+          this.getKPData('Take Assessment')
+        }
+
+        if (this.condition && this.condition.resumeData) {
+          if (!this.condition.userRating) {
+            this.getKPData('Rate this course')
+          }
+
+          if (this.condition.userRating) {
+            this.getKPData('Edit rating')
+          }
+        }
+    } else {
+      // For event karma points
+      if (this.condition && this.condition.isEnrolled) {
+        if (this.condition.currentEvent) {
+          this.getKPData('Complete')
+        }
+
+        if (this.condition.pastEvent) {
+          if (this.condition.enrolledEvent.status < 2) {
+            this.getKPData('')
+          }
+          if (this.condition.enrolledEvent.status === 2) {
+            this.getKPData('completed')
+          }
+        }
+      }
+
+      if (this.condition && !this.condition.isEnrolled) {
+        if (this.condition.currentEvent) {
+          this.getKPData('Complete')
         }
       }
     }
-
-    if (this.condition && this.condition.isPostAssessment && this.condition.showTakeAssessment
-      && this.condition.showTakeAssessment.post_assessment) {
-      this.getKPData('Take Assessment')
-    }
-
-    if (this.condition && this.condition.resumeData) {
-      if (!this.condition.userRating) {
-        this.getKPData('Rate this course')
-      }
-
-      if (this.condition.userRating) {
-        this.getKPData('Edit rating')
-      }
-    }
-
   }
 
   getKPData(btnType: string): void {

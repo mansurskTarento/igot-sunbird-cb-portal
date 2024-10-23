@@ -132,14 +132,58 @@
       }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (min-width: 280px) and (max-width: 344px) {
     .quiz-radio-button {
         margin: 5px;
         padding: 8px;
         min-width:inherit;
         background: #F5F5F5 !important;
         word-break: break-all;
-        width:318px;
+        width:250px;
+    }
+}
+
+@media only screen and (min-width: 345px) and (max-width: 360px) {
+    .quiz-radio-button {
+        margin: 5px;
+        padding: 8px;
+        min-width:inherit;
+        background: #F5F5F5 !important;
+        word-break: break-all;
+        width:284px;
+    }
+}
+
+@media only screen and (min-width: 361px) and (max-width: 375px) {
+    .quiz-radio-button {
+        margin: 5px;
+        padding: 8px;
+        min-width:inherit;
+        background: #F5F5F5 !important;
+        word-break: break-all;
+        width:290px;
+    }
+}
+
+@media only screen and (min-width: 376px) and (max-width: 539px) {
+    .quiz-radio-button {
+        margin: 5px;
+        padding: 8px;
+        min-width:inherit;
+        background: #F5F5F5 !important;
+        word-break: break-all;
+        width:310px;
+    }
+}
+
+@media only screen and (min-width: 540px) and (max-width: 767px) {
+    .quiz-radio-button {
+        margin: 5px;
+        padding: 8px;
+        min-width:inherit;
+        background: #F5F5F5 !important;
+        word-break: break-all;
+        width:auto;
     }
 }
 

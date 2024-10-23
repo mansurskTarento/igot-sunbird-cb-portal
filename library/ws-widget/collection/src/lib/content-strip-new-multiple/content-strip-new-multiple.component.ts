@@ -13,7 +13,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { WidgetUserService } from '../_services/widget-user.service'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
  // tslint:disable-next-line
 import _ from 'lodash'
 import { HttpClient } from '@angular/common/http'
@@ -80,7 +80,7 @@ export class ContentStripNewMultipleComponent extends WidgetBaseComponent
     public utilitySvc: UtilityService,
     private http: HttpClient,
     // private searchServSvc: SearchServService,
-    private userSvc: WidgetUserService,
+    private userSvc: WidgetUserServiceLib,
   ) {
     super()
   }

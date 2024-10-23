@@ -225,3 +225,11 @@
   width: 100%;
 }
 }
+
+@media screen and (min-width: 820px) and (max-width: 1232px) {
+  .top_footer_box .top_footer_inner {
+    max-width: calc(100vw - 100px);
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}

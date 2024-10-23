@@ -18,7 +18,7 @@ import moment from 'moment'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 
 import {
-  NsContent, WidgetContentService, WidgetUserService,
+  NsContent, WidgetContentService,
   viewerRouteGenerator, NsPlaylist, NsGoal,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
@@ -29,6 +29,7 @@ import {
   UtilityService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -244,7 +245,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     private route: ActivatedRoute,
     private router: Router,
     private contentSvc: WidgetContentService,
-    private userSvc: WidgetUserService,
+    private userSvc: WidgetUserServiceLib,
     public tocSvc: AppTocService,
     private loggerSvc: LoggerService,
     private configSvc: ConfigurationsService,
@@ -500,10 +501,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   isCourseCompletedOnThisMonth() {
-    const enrollList: any = JSON.parse(localStorage.getItem('enrollmentMapData') || '{}')
     const now = moment(this.serverDate).format('YYYY-MM-DD')
     if (this.content) {
-      const courseData = enrollList[this.content.identifier]
+      const courseData = this.enrolledCourseData
       if (courseData && courseData.completionPercentage === 100 && courseData.completedOn) {
         const completedOn = moment(courseData.completedOn).format('YYYY-MM-DD')
         const completedMonth = moment(completedOn, 'YYYY-MM-DD').month()
@@ -1003,6 +1003,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             })
             this.tocSvc.checkModuleWiseData(this.content)
             this.enrolledCourseData = enrolledCourse
+            this.isCourseCompletedOnThisMonth()
             this.currentCourseBatchId = enrolledCourse.batchId
             // this.downloadCert(enrolledCourse.issuedCertificates)
             if (enrolledCourse && enrolledCourse.issuedCertificates &&
@@ -1074,7 +1075,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             // this.tocSvc.contentLoader.next(false)
           }
         }
-        this.isCourseCompletedOnThisMonth()
         // console.log('calling ---------------- =========')
         // this.getLastPlayedResource()
       },
@@ -1950,4 +1950,15 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     this.autoEnrollCuratedProgram(NsContent.ECourseCategory.MODERATED_PROGRAM, batchData)
   }
 
+  raiseTelemetryForPublic() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        id: "view-assessment",
+        subType:"anonymous-assessment",
+      },{},
+      {
+        module: 'Landing Page',
+      })
+  }
 }

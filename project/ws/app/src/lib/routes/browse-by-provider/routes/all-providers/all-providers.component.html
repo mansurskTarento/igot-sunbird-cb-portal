@@ -91,7 +91,7 @@
                 <mat-sidenav-content class="custom-sidecontent  mat-drawer-content mat-sidenav-content">
 
                     <div class="provider_card_box">
-                        <ng-container *ngFor="let p of allProviders">
+                        <ng-container *ngFor="let p of clonesProviders">
                             <ng-container *ngIf="p?.orgId">
                                 <ws-app-provider-card [provider]="p"></ws-app-provider-card>
                             </ng-container>

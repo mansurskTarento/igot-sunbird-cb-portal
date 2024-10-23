@@ -13,11 +13,20 @@ export class EventsHomeComponent implements OnInit, OnDestroy {
   currentRoute = 'home'
   private bannerSubscription: any
   pageLayout: any
+  detailPageFlag = false
   constructor(private route: ActivatedRoute, private router: Router) {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         // Hide loading indicator
-        // console.log(event.url)
+        /* tslint:disable */
+        console.log(event)
+        /* tslint:enable */
+        const eventUrl = event.url.split('/').pop()
+        if (eventUrl && eventUrl.includes('do_')) {
+          this.detailPageFlag = true
+        } else {
+          this.detailPageFlag = false
+        }
         this.bindUrl(event.urlAfterRedirects.replace('/app/event-hub/', ''))
       }
 

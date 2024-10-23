@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router'
 import { ViewerHeaderSideBarToggleService } from './../../../../viewer-header-side-bar-toggle.service'
 import { PracticeService } from '../../practice.service'
 import { FinalAssessmentPopupComponent } from './../final-assessment-popup/final-assessment-popup.component'
-import { MatDialog } from '@angular/material'
+import { MatDialog, MatSnackBar } from '@angular/material'
 @Component({
   selector: 'viewer-overview',
   templateUrl: './overview.component.html',
@@ -24,6 +24,8 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedAssessmentCompatibilityLevel: any
   @Output() userSelection = new EventEmitter<NSPractice.TUserSelectionType>()
   @Input() forPreview = false
+  @Input() quizData: any
+  forCreatorMode = window.location.href.includes('editMode=true')
   questionTYP = NsContent.EPrimaryCategory
   // staticImage = '/assets/images/exam/practice-test.png'
   staticImage = '/assets/images/exam/practice-result.png'
@@ -41,6 +43,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
+    public snackbar: MatSnackBar,
     public viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
     private quizSvc: PracticeService,
     private langtranslations: MultilingualTranslationsService,
@@ -51,7 +54,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
       if (data && data.pageData) {
         if (data && data.content && data.content.data && data.content.data.identifier) {
           const identifier =  data.content.data.identifier
-          if (identifier) {
+          if (identifier && !this.forPreview) {
             this.checkForAssessmentSubmitAlready(identifier)
           }
         }
@@ -137,9 +140,20 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   overviewed(event: NSPractice.TUserSelectionType) {
-    this.loading = true
-    this.userSelection.emit(event)
-    this.viewerHeaderSideBarToggleService.visibilityStatus.next(false)
+    if ((this.forPreview && !this.forCreatorMode) &&
+      this.primaryCategory === this.questionTYP.FINAL_ASSESSMENT) {
+      if (this.quizData && this.quizData.isPublic) {
+        this.loading = true
+        this.userSelection.emit(event)
+        this.viewerHeaderSideBarToggleService.visibilityStatus.next(false)
+      } else {
+        this.snackbar.open('The content is not available to access.')
+      }
+    } else {
+      this.loading = true
+      this.userSelection.emit(event)
+      this.viewerHeaderSideBarToggleService.visibilityStatus.next(false)
+    }
   }
 
   translateLabels(label: string, type: any) {

@@ -1246,6 +1246,31 @@ $nav-height: 40px;
     pointer-events: none;
   }
 }
+
+@media only screen and (min-width: 345px) and (max-width: 600px) {
+  .quiz-container-standalone {
+    height: calc(100vh - 176px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+@media only screen and (min-width: 280px) and (max-width: 344px) {
+  .quiz-container-standalone {
+    height: calc(100vh - 344px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
 @media only screen and (min-width: 375px) and (max-width: 375px) {
   .info-hover {
     display: block;
@@ -1283,6 +1308,8 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
+  
 }
 @media only screen and (min-width: 390px) and (max-width: 393px) {
   .info-hover {
@@ -1412,4 +1439,217 @@ $nav-height: 40px;
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+
+::ng-deep .public-user-dialog {
+
+  max-width: 100vw;
+  mat-dialog-container {
+    width: 400px;
+
+    @media only screen and (min-width: 320px) and (max-width: 768px) {
+      width: 100%;
+    }
+  }
+}
+::ng-deep .public-user-backdrop {
+  filter: blur(32px);
+  background-color: #ffffff;
+  opacity: 0.5 !important;
+}
+
+.input-wrapper {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.form-label {
+  color: #222222;
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+  font-family: 'Lato', sans-serif;
+
+  @include breakpoint-xs {
+    display: block;
+  }
+  @include breakpoint-s {
+    display: block;
+  }
+}
+
+.profile-box {
+  margin: $size-xs auto 0 !important;
+
+  .img-column {
+    flex: 100px 0 0;
+  }
+
+  .input-column {
+    flex: auto;
+  }
+
+  ::ng-deep .mat-form-field {
+    width: 100%;
+    max-width: 340px;
+
+    &.full-width {
+      max-width: 100%;
+    }
+
+    &.no-pb .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+
+  .combined-field {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .w-full-imp {
+    width: 100% !important;
+  }
+
+  .button {
+    font-family: 'Poppins', sans-serif;
+    color: #F9F9F9;
+    font-size: 14px;
+    line-height: 19px;
+    height: 40px;
+    background-color: rgb(0, 116, 182, 1);
+    border-radius: 4px;
+    transition: all .25s ease-in;
+    width: 100%;
+    border:0;
+    cursor: pointer;
+  }
+
+  .submitBtn{
+    color: #fff !important;
+  }
+
+  .submitBtn:disabled,
+  .submitBtn[disabled] {
+    opacity: 0.6;
+  }
+
+  .btn-success {
+    background-color: rgb(48, 105, 51) !important;
+    border-radius: 4px;
+    width: 240px;
+    box-shadow: none;
+    margin-right: 16px;
+
+    &.btn-responsive {
+      width: 100%;
+      max-width: 340px;
+    }
+  }
+
+  .btn-success:disabled,
+  .btn-success[disabled] {
+    opacity: 0.6;
+  }
+
+  .btn-danger {
+    height: 30px;
+    width: 30px
+  }
+
+  .color-danger {
+    font-size: 30px;
+    height: 30px;
+    width: 30px;
+    color: #e44;
+  }
+
+  ::ng-deep .mat-form-field-outline {
+    min-height: 48px;
+    background: #fff;
+    border-radius: 4px;
+
+    .mat-form-field-outline-start {
+      border: 1px solid #70707069;
+      border-radius: 4px 0 0 4px;
+      border-right-style: none;
+      min-width: 4px;
+    }
+
+    .mat-form-field-outline-gap {
+      border: 1px solid currentColor;
+      border-radius: 82px;
+      border-left-style: none;
+      border-right-style: none;
+    }
+
+    .mat-form-field-outline-end {
+      border: 1px solid #70707069;
+      border-left-style: none;
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  ::ng-deep .mat-form-field-outline.mat-form-field-outline-thick {
+    min-height: 48px;
+    background: #fff;
+    border-radius: 4px;
+
+    .mat-form-field-outline-start {
+      border-radius: 4px 0 0 4px;
+      min-width: 4px;
+      border: 1px solid currentColor;
+      border-right-style: none;
+    }
+
+    .mat-form-field-outline-gap {
+      border-width: 1px;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      border-left-style: none;
+      border-right-style: none;
+    }
+
+    .mat-form-field-outline-end {
+      border-width: 1px;
+      border-radius: 0 4px 4px 0;
+      border: 1px solid currentColor;
+      border-left-style: none;
+    }
+  }
+
+
+  ::ng-deep .mat-form-field-flex {
+    min-height: 48px;
+    align-items: center;
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    padding: 0;
+    margin: 9px 0 0 0;
+    border: none;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-subscript-wrapper {
+    padding: 0 !important;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .quiz-question-left-container {
+    width: 65%;
+  }
+  .quiz-question-right-container {
+    width: 35%;
+    background-color: #EDF1F7;
+    display: block;
+    overflow-y: auto;
+  }
+
+  .butto_box {
+    margin-top: 0;
+  }
 }

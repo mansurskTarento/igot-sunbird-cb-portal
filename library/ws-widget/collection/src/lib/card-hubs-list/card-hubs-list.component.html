@@ -1,4 +1,4 @@
-<mat-card class="base-layout container-balanced" role="navigation" *ngIf="isHubEnable">
+<mat-card class="base-layout container-balanced" role="navigation">
   <mat-card-content>
     <div class="flex flex-1 flex-column" role="presentation">
       <div class="flex flex-1 secondary-nav" role="menubar">
@@ -83,7 +83,7 @@
                 <div class="mat-caption cohorts-desc ws-mat-black60-text">{{ 'cardshublist.settingSubtitle' | translate }}</div>
               </div>
             </a>
-            <a class="flex flex-wrap mb-4 mobile" *ngIf="!isMentor" role="menuitem" (click)="toggleVisibility()"
+            <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
             (click)="trackTelemetry('discover-mentors'); routeToMentorship()">
             <div class="icon ws-mat-primary-tags">
               <mat-icon class=" m-auto mat-icon notranslate material-icons mat-icon-no-color" role="img"

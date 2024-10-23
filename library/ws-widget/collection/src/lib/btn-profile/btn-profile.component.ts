@@ -48,6 +48,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   profileImage!: string | null
   private readonly featuresConfig: IGroupWithFeatureWidgets[] = []
   portalLinks: any[] = []
+  hideMenu = false
   constructor(
     private configSvc: ConfigurationsService,
     private dialog: MatDialog,
@@ -149,6 +150,26 @@ export class BtnProfileComponent extends WidgetBaseComponent
 
     if (this.featuresConfig && this.featuresConfig.length > 0) {
       this.getPortalLinks()
+    }
+    let isNotMyUser = false
+    let isIgotOrg = false
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.profileStatus) {
+      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
+    }
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
+        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+    }
+    // let isIgotOrg = true
+    if (isNotMyUser && isIgotOrg) {
+      this.hideMenu = true
+      // this.router.navigateByUrl('app/person-profile/me#profileInfo')
+    } else {
+      this.hideMenu = false
     }
   }
 

@@ -1,12 +1,14 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core'
+import { Component, OnDestroy, OnInit, Input, OnChanges } from '@angular/core'
 import moment from 'moment'
-import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService as EventServiceGlobal, WsEvents } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { EventService } from '../../services/events.service'
+import { MatSnackBar } from '@angular/material'
 // import { ActivatedRoute } from '@angular/router'
 // import { ConfigurationsService } from '@ws-widget/utils'
 // import { NSProfileDataV2 } from '../../models/profile-v2.model'
-
 @Component({
   selector: 'app-right-menu-card',
   templateUrl: './right-menu-card.component.html',
@@ -15,8 +17,11 @@ import { TranslateService } from '@ngx-translate/core'
   host: { class: 'flex flex-1' },
   /* tslint:enable */
 })
-export class RightMenuCardComponent implements OnInit, OnDestroy {
+export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() eventData: any
+  @Input() isenrollFlow: any
+  @Input() enrollFlowItems: any
+  @Input() enrolledEvent: any
   startTime: any
   endTime: any
   lastUpdate: any
@@ -24,16 +29,26 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
   futureEvent = false
   currentEvent = false
   isSpvEvent = false
+  youTubeLinkFlag = false
+  kparray: any = []
+  enrollBtnLoading = false
+  videoId = ''
+  eventEnrollmentList: any
+  isEnrolled = false
+  batchId = ''
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
   // badges!: NSProfileDataV2.IBadgeResponse
   // currentEvent!: any
   constructor(
-    // private route: ActivatedRoute,
-    // configSvc: ConfigurationsService,
-    private events: EventService,
-    private translate: TranslateService
+    private matSnackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private configSvc: ConfigurationsService,
+    private events: EventServiceGlobal,
+    private translate: TranslateService,
+    private router: Router,
+    private eventSvc: EventService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -42,8 +57,10 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit(): void {
-    // this.completedPercent = 86
+    this.loadEnrolledEventData()
+    this.kparray = (this.route.parent && this.route.parent.snapshot.data.pageData.data.karmaPoints) || []
     if (this.eventData) {
+
       this.startTime = this.eventData.startTime.split('+')[0].replace(/(.*)\D\d+/, '$1')
       this.endTime = this.eventData.endTime.split('+')[0].replace(/(.*)\D\d+/, '$1')
       this.lastUpdate = this.eventData.lastUpdatedOn.split('T')[0]
@@ -58,7 +75,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
 
       const spvOrgId = environment.spvorgID
       if (this.eventData.createdFor && this.eventData.createdFor[0] === spvOrgId) {
-        this.isSpvEvent =  true
+        this.isSpvEvent = true
       }
 
       if (isToday) {
@@ -76,7 +93,29 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
           this.pastEvent = false
         }
       }
+
+      if (this.eventData && this.eventData.registrationLink) {
+        if (this.eventData && this.eventData.registrationLink && this.eventData.resourceType === 'Karmayogi Saptah') {
+          const videoId = this.eventData.registrationLink.split('?')[0].split('/').pop()
+          if (videoId) {
+            this.videoId = videoId
+            this.youTubeLinkFlag = true
+          } else {
+            this.youTubeLinkFlag = false
+          }
+        }
+
+      }
     }
+  }
+
+  get progressVal() {
+    return this.enrolledEvent && this.enrolledEvent.status === 2 ? 100 : this.enrolledEvent.completionPercentage
+  }
+
+  ngOnChanges() {
+    this.loadEnrolledEventData()
+    // console.log(this.enrolledEvent)
   }
 
   customDateFormat(date: any, time: any) {
@@ -103,10 +142,10 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
     const currentTime = new Date().getHours() * 60 + new Date().getMinutes()
     const minustime = starttime - currentTime
     // tslint:disable-next-line:max-line-length
-    if (eventData.startDate === todaysdate && (minustime > 0 && minustime < 16) && (selectedStartDate > today || selectedEndDate < today))  {
+    if (eventData.startDate === todaysdate && (minustime > 0 && minustime < 16) && (selectedStartDate > today || selectedEndDate < today)) {
       return true
     }
-    if (eventData.startDate === todaysdate && (today >= selectedStartDate && today <= selectedEndDate))  {
+    if (eventData.startDate === todaysdate && (today >= selectedStartDate && today <= selectedEndDate)) {
       return true
     }
     return false
@@ -164,14 +203,100 @@ export class RightMenuCardComponent implements OnInit, OnDestroy {
       {
         pageIdExt: 'event',
         module: WsEvents.EnumTelemetrymodules.EVENTS,
-    })
+      })
   }
 
   getLink() {
     if (this.eventData && this.eventData.recordedLinks && this.eventData.recordedLinks.length > 0) {
       return this.eventData.recordedLinks[0]
     }
-      return this.eventData.registrationLink
+    return this.eventData.registrationLink
+  }
 
+  navigateToPLayer() {
+    if (this.isenrollFlow) {
+      this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
+    }
+  }
+
+  navigateToSamePagewithBatchId(batchId: string) {
+    if (batchId) {
+      this.router.navigate(
+        [],
+        {
+          relativeTo: this.route,
+          queryParams: { batchId },
+          queryParamsHandling: 'merge',
+        })
+    }
+  }
+
+  enrolltoEvent() {
+    if (this.eventData.identifier && this.configSvc && this.configSvc.userProfile && this.batchId) {
+      this.enrollBtnLoading = true
+      // const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
+      const req = {
+        request: {
+          userId: this.configSvc.userProfile.userId || '',
+          eventId: this.eventData.identifier || '',
+          batchId: this.batchId,
+        },
+      }
+      // console.log('req ::', req)
+      /* tslint:disable */
+      this.eventSvc.enrollEvent(req).subscribe(res => {
+          if (res.responseCode === 'OK' || res.result.response === 'SUCCESS') {
+            this.openSnackBar('Enrolled Successfully')
+          }
+          if (this.batchId) {
+            // this.navigateToPlayerPage(batchId)
+            this.isEnrolled = true
+            this.navigateToSamePagewithBatchId(this.batchId)
+          }
+          this.enrollBtnLoading = false
+
+        },
+                                               (err: any) => {
+          this.enrollBtnLoading = false
+          this.openSnackBar(err.error.params.errmsg || 'Something went wrong! please try again later.')
+        }
+      )
+    }
+  }
+
+  showYoutubeVideo() {
+    this.events.raiseInteractTelemetry({
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: 'event-enroll',
+    },
+                                       {},
+                                       {
+      module: WsEvents.EnumTelemetrymodules.EVENTS,
+    })
+    this.eventSvc.eventEnrollEvent.next(true)
+  }
+
+  loadEnrolledEventData() {
+    this.isEnrolled = this.enrolledEvent ? true : false
+    if (this.enrolledEvent && this.enrolledEvent.batchDetails) {
+      if (Array.isArray(this.enrolledEvent.batchDetails) && this.enrolledEvent.batchDetails.length > 0) {
+        this.batchId = this.enrolledEvent.batchDetails[0].batchId || ''
+        this.navigateToSamePagewithBatchId(this.batchId)
+      }
+    } else {
+      if (this.eventData && typeof this.eventData.batches === 'string') {
+        this.eventData.batches = JSON.parse(this.eventData.batches)
+      }
+      if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
+        this.batchId = this.eventData.batches[0].batchId || ''
+        this.navigateToSamePagewithBatchId(this.batchId)
+      }
+    }
+  }
+
+
+
+  public openSnackBar(message: string) {
+    this.matSnackBar.open(message)
   }
 }

@@ -11,6 +11,7 @@ import { ViewerUtilService } from '../../viewer-util.service'
 import { CourseCompletionDialogComponent } from '../course-completion-dialog/course-completion-dialog.component'
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
   templateUrl: './viewer-secondary-top-bar.component.html',
@@ -61,6 +62,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   canShare = false
   rootOrgId: any
   currentDataFromEnrollList: any
+  enrollmentList: any = []
   pageScrollSubscription: Subscription | null = null
   // primaryCategory = NsContent.EPrimaryCategory
   constructor(
@@ -76,7 +78,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     private viewerSvc: ViewerUtilService,
     private pdfScormDataService: PdfScormDataService,
     private events: EventService,
-    private appTocSvc: AppTocService
+    private appTocSvc: AppTocService,
+    private widgetLibSvc: WidgetContentLibService
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -90,7 +93,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // this.getAuthDataIdentifer()
-
+    this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
+    && this.activatedRoute.snapshot.data.enrollmentData.data || []
     this.pageScrollSubscription = this.appTocSvc.updatePageScroll.subscribe((value: boolean) => {
       if (value) {
         setTimeout(() => {
@@ -210,7 +214,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     this.paramSubscription = this.activatedRoute.queryParamMap.subscribe(async params => {
       this.collectionId = params.get('collectionId') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
-      const enrollList: any = JSON.parse(localStorage.getItem('enrollmentMapData') || '{}')
+      const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
       this.currentDataFromEnrollList =  enrollList[this.collectionId]
     })
 

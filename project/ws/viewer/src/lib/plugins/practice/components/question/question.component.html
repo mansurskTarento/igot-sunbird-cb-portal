@@ -159,7 +159,7 @@
         </div>
       </div>
       <div class="respo flex flex-column padding-top-m">
-        <div class="flex flex-1- flex-column respo_inner">
+        <div class="flex flex-column respo_inner">
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
               <h2 [innerHTML]="question?.question | QuestionSafeUrl" class="m-auto quiz-question mat-h2">
@@ -225,6 +225,8 @@
       <div class="respo flex flex-column" *ngIf="!showOnlyQuestion" [ngClass]="mobileQuestionSetExpand ? 'mobile-responsive-question-container-expand' : 'mobile-responsive-question-container'">
         
         <div class="flex flex-column respo_inner">
+          <p *ngIf="questionParagraph"><strong>{{'practiceoverview.paragraphLabel' | translate}}</strong></p>
+          <p *ngIf="questionParagraph" [innerHtml]="questionParagraph"></p>
           <div class="flex flex-1">
             <h2 *ngIf="question.questionType !== 'ftb'" class="mat-h2" [innerHTML]="question?.question | QuestionSafeUrl"
               class="quiz-question">
@@ -284,6 +286,10 @@
   <mat-card *ngIf="(question?.questionType === 'mtf' || question?.questionType === 'ftb')"
     class="flex flex-1 respo margin-bottom-m no-shadow standalone-assessment" [ngClass]="showOnlyQuestion ? 'show-only-question': 'show-only-answer'">
     <div class="flex flex-column width-100"> 
+      <div class="paragraph">
+        <p *ngIf="questionParagraph"><strong>{{'practiceoverview.paragraphLabel' | translate}}</strong></p>
+        <p *ngIf="questionParagraph" [innerHtml]="questionParagraph"></p>
+      </div>
         <div class="flex flex-row width-100 justify-between question-with-background" *ngIf="showOnlyQuestion">
           <div class="question-heading">
             <div>
@@ -305,7 +311,7 @@
           </div>
         </div>
       <div class="respo flex flex-column " *ngIf="!showOnlyQuestion" [ngClass]="mobileQuestionSetExpand ? 'mobile-responsive-question-container-expand' : 'mobile-responsive-question-container'">
-        <div class="flex flex-1- flex-column respo_inner">
+        <div class="flex flex-1 flex-column respo_inner">          
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
               <h2 [innerHTML]="question?.question | QuestionSafeUrl" class="m-auto quiz-question mat-h2">

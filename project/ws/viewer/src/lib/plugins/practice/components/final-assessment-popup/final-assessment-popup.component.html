@@ -2,7 +2,7 @@
     <button *ngIf="assessmentData?.assessmentType !== 'maxAttemptReached'" mat-icon-button class="close-button" [mat-dialog-close]="true">
         <mat-icon class="close-icon">close</mat-icon>
     </button>
-    <ng-container *ngIf="assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'maxAttemptReached'">
+    <ng-container *ngIf="assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'publicUserSuccess'">
         <div class="assessment-results">
             <ng-container *ngIf="assessmentData?.headerText">
                 <div class="header p-3">{{assessmentData.headerText}}</div>
@@ -81,6 +81,20 @@
                 <button mat-button class="flex justify-center items-center px-4 gap-2 blue-full-no-attempt"
                     (click)="closePopup('r')">                   
                     <span> OK</span>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="assessmentData?.assessmentType === 'publicUserSuccess'">
+        <div class="py-4 px-4">
+            <div class="flex flex-col align-center justify-center align-center">
+                <img class="img" src="assets/icons/final-assessment/no-attempt.svg">
+                <p class="mt-4 py-4">{{assessmentData?.message}}</p>
+            </div>
+            <div class="flex flex-col align-center justify-center">
+                <button mat-button class="flex justify-center items-center px-4 gap-2 blue-full-no-attempt"
+                    (click)="closePopup('r')">                   
+                    <span>OK</span>
                 </button>
             </div>
         </div>

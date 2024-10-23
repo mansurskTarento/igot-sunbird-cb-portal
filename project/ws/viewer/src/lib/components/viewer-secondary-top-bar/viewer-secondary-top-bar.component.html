@@ -97,7 +97,7 @@
             <mat-icon class="">share</mat-icon>
           </div>
       </div>
-      <ng-container *ngIf="contentMIMEType !== 'application/vnd.sunbird.questionset'">
+      <ng-container *ngIf="contentMIMEType !== 'application/vnd.sunbird.questionset' || forPreview">
         <div class="flex nexPrevContainerMobile">
          
           <a mat-icon-button class="margin-left-16" [routerLink]="prevResourceUrl" *ngIf="isTypeOfCollection && prevResourceUrl"

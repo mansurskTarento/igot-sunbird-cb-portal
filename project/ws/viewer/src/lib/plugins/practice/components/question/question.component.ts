@@ -53,6 +53,7 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   @Output() clearQuestion = new EventEmitter<Boolean>()
   @Input() questionAnswerHash: any
   @Input() showQuestionMarks = 'No'
+  @Input() questionParagraph = ''
   quizAnswerHash: { [questionId: string]: string[] } = {}
   title = 'match'
   itemSelectedList1: any

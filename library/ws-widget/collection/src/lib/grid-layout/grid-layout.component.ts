@@ -120,7 +120,28 @@ export class GridLayoutComponent extends WidgetBaseComponent
   reviewCommentLength = 0
   @ViewChild('textArea', { static: false }) textArea!: ElementRef
   noHtmlCharacter = new RegExp(/<[^>]*>|(function[^\s]+)|(javascript:[^\s]+)/i)
+  disableMenu = false
   ngOnInit() {
+    let isNotMyUser = false
+    let isIgotOrg = false
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.profileStatus) {
+      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
+    }
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
+        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+    }
+    // let isIgotOrg = true
+    if (isNotMyUser && isIgotOrg) {
+      this.disableMenu = true
+      // this.router.navigateByUrl('app/person-profile/me#profileInfo')
+    } else {
+      this.disableMenu = false
+    }
     this.npsCategory = localStorage.getItem('npsCategory') ? localStorage.getItem('npsCategory') : 'NPS'
     if (window.innerWidth < 540) {
       this.isMobile = true

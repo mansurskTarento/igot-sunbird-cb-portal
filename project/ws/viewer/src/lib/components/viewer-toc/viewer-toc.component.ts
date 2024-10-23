@@ -8,9 +8,9 @@ import {
   NsContent,
   VIEWER_ROUTE_FROM_MIME,
   WidgetContentService,
-  WidgetUserService,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import {
   // LoggerService,
   ConfigurationsService,
@@ -82,7 +82,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     private viewSvc: ViewerUtilService,
     private configSvc: ConfigurationsService,
     private contentProgressSvc: ContentProgressService,
-    private userSvc: WidgetUserService
+    private userSvc: WidgetUserServiceLib
     // private tocSvc: AppTocService,
   ) {
     this.nestedTreeControl = new NestedTreeControl<IViewerTocCard>(this._getChildren)

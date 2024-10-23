@@ -12,7 +12,7 @@ import _ from 'lodash'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 // import { Router } from '@angular/router'
@@ -55,7 +55,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     private langtranslations: MultilingualTranslationsService,
     private certificateService: CertificateService,
     private translate: TranslateService,
-    private contSvc: WidgetContentService,
+    private contSvc: WidgetContentLibService,
     private router: Router,
 
   ) {

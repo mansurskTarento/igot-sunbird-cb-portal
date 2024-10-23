@@ -15,7 +15,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { WidgetUserService } from '../_services/widget-user.service'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { environment } from 'src/environments/environment'
 // tslint:disable-next-line
 import * as _ from 'lodash'
@@ -99,7 +99,7 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     public utilitySvc: UtilityService,
     // private http: HttpClient,
     // private searchServSvc: SearchServService,
-    private userSvc: WidgetUserService,
+    private userSvc: WidgetUserServiceLib,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService
   ) {
@@ -765,7 +765,8 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     strip: NsContentStripWithTabs.IContentStripUnit,
   ) {
     this.eventSvc.setEventListData(contents)
-    return (this.eventSvc.todaysEvents || []).map((content: any, idx: any) => (content ? {
+    const eventData = strip.key === 'liveEvents' ? this.eventSvc.todaysLiveEvents : this.eventSvc.todaysEvents
+    return (eventData || []).map((content: any, idx: any) => (content ? {
       widgetType: 'card',
       widgetSubType: 'eventHubCard',
       widgetHostClass: 'mb-2',
@@ -791,7 +792,7 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
   ) {
     return [1, 2, 3, 4, 5, 6, 7, 7, 8, 9, 10].map(_content => ({
       widgetType: 'card',
-      widgetSubType: 'cardContent',
+      widgetSubType: strip.key.includes('events') || strip.key.includes('Events') ? 'eventHubCard' : 'cardContent',
       widgetHostClass: 'mb-2',
       widgetData: {
         cardSubType: strip.loaderConfig && strip.loaderConfig.cardSubType || 'card-standard-skeleton',
@@ -1069,7 +1070,8 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
 
       let courses: NsContent.IContent[]
       let tabResults: any[] = []
-      const response = await this.userSvc.fetchCbpPlanList().toPromise()
+      const userId: any = this.configSvc.userProfile && this.configSvc.userProfile.userId
+      const response = await this.userSvc.fetchCbpPlanList(userId).toPromise()
       if (response) {
             courses = response
             if (strip.tabs && strip.tabs.length) {

@@ -3,7 +3,7 @@
   [complexityLevel]="complexityLevel" [duration]="duration" [timeLimit]="getTimeLimit"
   [primaryCategory]="primaryCategory" [canAttempt]="canAttempt" [noOfQuestions]="noOfQuestions"
   (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory"
-  [instructionAssessment]="instructionAssessment"
+  [instructionAssessment]="instructionAssessment" [quizData]="quizData"
   [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
   [forPreview]="forPreview">
 </viewer-overview>
@@ -66,7 +66,7 @@
               <ng-container *ngIf="!isXsmall">{{ 'playerbrief.next' | translate }}</ng-container>
             </a>
             &nbsp;&nbsp;
-            <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forPreview"
+            <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode"
               class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button (click)="proceedToSubmit()">
               <ng-container *ngIf="!isXsmall">{{ 'playerbrief.submit' | translate }}</ng-container>
             </a>
@@ -418,7 +418,7 @@
         <div class="flex flex-column justify-between align-center assessment-header">
           <div class="w-full">
             <div class="ques_stats_container">
-              <div class="flex flex-row justify-between ques_stats_container_box">
+              <!-- <div class="flex flex-row justify-between ques_stats_container_box">
                 <div class="timer" *ngIf="primaryCategory !== ePrimaryCategory.PRACTICE_RESOURCE">
                   <mat-chip-list><mat-chip class="light-blue"><span class="chip-text">
                         <div *ngIf="timeLeft" class="flex flex-1 flex-center">
@@ -454,7 +454,7 @@
                       </span>
                     </mat-chip></mat-chip-list>
                 </div>
-              </div>
+              </div> -->
               <div class="mb-24 mt-4">
                 <div class="flex flex-row">
                   <div class="flex flex-col align-center w-full">
@@ -635,7 +635,8 @@
                 [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
                 [showAnswer]="showAnswer" [currentQuestion]="current_Question" [showOnlyQuestion]="false"
                 [mobileQuestionSetExpand]="!expandFalse" [showQuestionMarks]="showQuestionMarks"
-                [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+                [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+                >
               </viewer-question>
             </ng-container>
             <div class="flex flex-1">
@@ -683,7 +684,7 @@
             <ng-container>{{ 'playerbrief.next' | translate }}</ng-container>
           </a>
           &nbsp;&nbsp;
-          <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forPreview" class="text-white ws-mat-primary-background quest_btn"
+          <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode" class="text-white ws-mat-primary-background quest_btn"
             mat-button (click)="proceedToSubmit()">
             <ng-container>{{ 'playerbrief.submit' | translate }}</ng-container>
           </a>
@@ -1113,9 +1114,11 @@
 <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
   <div #quizContainer class="quiz-container-standalone"
     *ngIf="viewState !== 'initial' && !isMobile && fetchingQuestionsStatus === 'done'">
+    
     <div class="margin-m"
       *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
       <div class="standalone-left-container">
+        
         <div class="flex flex-row justify-between align-center assessment-header">
           <div>
             <div (click)="back()" class="no-border flex cursor-pointer back_button">
@@ -1133,9 +1136,10 @@
                 <div>{{( allSectionTimeLimit | pipeDurationTransform: 'hms')}}</div>
               </div>
             </div>
-          </div>
+          </div>          
         </div>
         <div class="flex flex-row question-section-container" [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-between': 'justify-right'">
+          
           <div class="section-dd-container" *ngIf="assessmentType !== 'optionalWeightage'">
             <div class="flex flex-row"  [ngClass]="{'hide-section': paperSections.length < 2}">
               <div>
@@ -1154,7 +1158,7 @@
             </div>
           </div>
 
-          <div *ngIf="!forPreview">
+          <div *ngIf="!forCreatorMode">
             <a [ngClass]="(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn justify-right ': 'text-white ws-mat-primary-background margin-xs quest_btn justify-right' "  
             mat-button (click)="proceedToSubmit()">
               <ng-container *ngIf="!isXsmall">{{ 'playerbrief.submitTheTest' | translate }}</ng-container>
@@ -1171,7 +1175,8 @@
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"              
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
               [showOnlyQuestion]="true" [showMarkForReview]="false" [showQuestionMarks]="showQuestionMarks"
-              [assessmentType]="assessmentType" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+              [assessmentType]="assessmentType" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              >
             </viewer-question>
           </ng-container>
         </div>
@@ -1179,6 +1184,7 @@
       </div>
 
       <div class="standalone-quiz-container flex flex-row">
+        
         <div 
           [ngClass]="expandFalse ? ( assessmentType !== 'optionalWeightage' ? 'quiz-question-left-container' : 'quiz-question-left-container-full') : 'quiz-question-left-container-full'">
 
@@ -1190,6 +1196,7 @@
               </mat-progress-bar>
             </div>
             <ng-container *ngIf="current_Question && !process">
+              
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
                 [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
@@ -1199,7 +1206,8 @@
                 [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
                 [showOnlyQuestion]="false" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
                 [questionAnswerHash]="questionAnswerHash" [showQuestionMarks]="showQuestionMarks"
-                [assessmentType]="assessmentType">
+                [assessmentType]="assessmentType"
+                [questionParagraph]="questionParagraph">
               </viewer-question>
             </ng-container>
             <div class="flex flex-1">
@@ -1364,7 +1372,8 @@
               (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)"
               (clearQuestion)="clearQuestion(current_Question)"
               [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              >
             </viewer-question>
           </div>
 
@@ -1737,8 +1746,7 @@
             </div>
           </div>
 
-          <div *ngIf="!forPreview">
-            
+          <div *ngIf="!forCreatorMode">
             <a mat-button (click)="proceedToSubmit()" [ngClass]=
             "(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn_option_weightage': 'text-white ws-mat-primary-background margin-xs quest_btn' ">
               <ng-container>{{ 'playerbrief.submitTheTest' | translate }}</ng-container>
@@ -1757,7 +1765,8 @@
               [showOnlyQuestion]="true" [showMarkForReview]="false"
               [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
               [questionAnswerHash]="questionAnswerHash"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              >
             </viewer-question>
           </ng-container>
         </div>
@@ -1921,7 +1930,8 @@
               [mobileQuestionSetExpand]="!expandFalse"
               [questionAnswerHash]="questionAnswerHash"
               [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              [questionParagraph]="questionParagraph">
             </viewer-question>
           </ng-container>
           <!-- <div class="flex flex-1">
@@ -1956,7 +1966,8 @@
               (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)"
               (clearQuestion)="clearQuestion(current_Question)"
               [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              >
             </viewer-question>
           </div>
 
@@ -2264,6 +2275,72 @@
   <div class="margin-m">
     <div class="flex flex-center">
       <mat-spinner></mat-spinner>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #publicUserDialog>
+  <div class="profile-box mr-8" >
+    <div class="card">
+      <h2 class="head py-2">Fill up the details</h2>
+      <form class="user-login" [formGroup]="publicUserInfoForm" (ngSubmit)="submitpublicUserInfo()">
+        <div class="flex flex-col content-center flex-wrap">
+          <div class="input-wrapper ">
+            <label for="name" class=" margin-remove-bottom form-label required"
+              i18n="First name label|Label which explains the user to enter first name" i18n-aria-label
+              aria-label="First name label">
+              {{ 'publicrequest.fullName' | translate }}
+            </label>
+            <mat-form-field appearance="outline" class="">
+              <input id="name" matInput #name formControlName="name" i18n-placeholder
+                placeholder="{{'publicrequest.enterYourFullName' | translate}}" autocomplete="off" i18n-aria-label aria-label="First Name input" maxlength="150" />
+              <mat-error [hidden]="false" i18n="First Name Error|Explains name is required" i18n-aria-label
+                aria-label="First Name Error|Explains name is required "
+                *ngIf="publicUserInfoForm?.controls['name'].errors?.required">
+                {{ 'publicrequest.fullNameMandatory' | translate }}
+              </mat-error>
+              <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['name'].errors?.pattern"
+                i18n-aria-label
+                aria-label="First name Error|Name fields cannot contain numbers and special characters except ">
+                {{ 'publicrequest.fullNameWitoutSp' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="input-wrapper ">
+            <label for="email" class=" margin-remove-bottom form-label required"
+                  i18n="Email label|Label which explains the user to enter Email" i18n-aria-label
+                  aria-label="Email label">
+                  {{ 'publicrequest.email' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="" id="email">
+                  <input id="email" name="emailField" autocomplete="off" type="email" maxlength="320"  (input)="emailVerification($event.target.value)"
+                    matInput placeholder="{{'publicrequest.enterYourEmailAddress' | translate}}" #email
+                    formControlName="email" i18n-aria-label aria-label="Email input">
+                <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified" [hidden]="!isEmailVerified"></mat-icon>
+                  <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['email'].errors?.required"
+                  i18n="Email Error|Explains name is required">
+                  {{ 'publicrequest.pleaseEnterEmail' | translate }}
+                </mat-error>
+                <mat-error [hidden]="false"  *ngIf="publicUserInfoForm.controls['email'].touched && publicUserInfoForm?.controls['email'].errors?.pattern"
+                  i18n-aria-label aria-label="Please enter a valid email address">
+                  {{ 'publicrequest.validEmail' | translate }}
+                </mat-error>
+                <div *ngIf="publicUserInfoForm.controls['email'].touched && emailLengthVal" class="email-error"
+                  i18n="Email Error|Explains character validation">
+                  {{ 'publicrequest.emailLengthValidation' | translate }}
+                </div>
+                </mat-form-field>
+          </div>
+          </div>
+        <div class="buttons text-center">
+          <button mat-flat-button type="submit"
+                    class="submitBtn text-white ws-mat-primary-background ws-mat-white-text"
+                    [disabled]="!publicUserInfoForm?.valid">
+                    {{ 'publicrequest.submit' | translate }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </ng-template>

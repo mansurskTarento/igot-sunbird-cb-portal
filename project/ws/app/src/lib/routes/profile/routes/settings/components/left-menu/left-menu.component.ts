@@ -14,6 +14,7 @@ export class LeftMenuComponent implements OnInit, OnDestroy {
 
   @Input()
   tabsData!: any
+  disableMenu = false
   constructor(
     private events: EventService,
     private configSvc: ConfigurationsService,
@@ -29,6 +30,35 @@ export class LeftMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    let isNotMyUser = false
+    let isIgotOrg = false
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.profileStatus) {
+      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
+    }
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails
+      && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
+        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+    }
+    // let isIgotOrg = true
+    if (isNotMyUser && isIgotOrg) {
+      this.disableMenu = true
+      // this.router.navigateByUrl('app/person-profile/me#profileInfo')
+    } else {
+      this.disableMenu = false
+    }
+    if(this.disableMenu) {
+      this.tabsData = this.tabsData.map((item:any)=>{
+        if(item.name === 'getStartedTour') {
+          item['enabled'] = false
+        }
+        return item
+      })
+      console.log('this.tabsData ',this.tabsData )
+    }
 
   }
   ngOnDestroy() {

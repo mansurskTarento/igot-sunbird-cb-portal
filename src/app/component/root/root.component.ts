@@ -54,7 +54,7 @@ import { concat, interval, timer, of } from 'rxjs'
 export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   hideHeaderAndFooter = false
-
+  disableHeightOnTop = false
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -405,7 +405,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
+      this.disableHeightOnTop = true
       this.router.navigateByUrl('app/person-profile/me#profileInfo')
+    } else {
+      this.disableHeightOnTop = false
     }
   }
 

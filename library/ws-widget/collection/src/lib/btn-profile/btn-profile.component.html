@@ -80,19 +80,19 @@
   </section> -->
 
   <section class="padding-xs">
-    <a mat-menu-item role="link" (click)="redirectToTourPage()" class="app-tour flex items-center">
+    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToTourPage()" class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span i18n>{{'profileDropdown.getStarted' | translate }}</span>
     </a>
-    <a mat-menu-item role="link" (click)="redirectToLearnersPage()" class="app-tour flex items-center">
+    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToLearnersPage()" class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span i18n>{{'profileDropdown.tipsLearners' | translate }}</span>
     </a>
-    <a mat-menu-item role="link" (click)="redirectToMyLearning()" class="app-features flex items-center">
+    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToMyLearning()" class="app-features flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span i18n>{{'profileDropdown.myLearning' | translate }}</span>
     </a>
-    <a mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()" class="app-features flex items-center">
+    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()" class="app-features flex items-center">
       <span i18n>{{'profileDropdown.learningHistory' | translate }}</span>
     </a>
     <a mat-menu-item role="link" routerLink="/app/profile/settings" class="all-features flex items-center" (click)="raiseTelemetry('Settings')">
