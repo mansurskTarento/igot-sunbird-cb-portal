@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, Input } from '@angular/core'
 import { UserAutocompleteService } from './user-autocomplete.service'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators'
 import { NsAutoComplete } from './user-autocomplete.model'
@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 export class UserAutocompleteComponent implements OnInit {
 
   separatorKeysCodes: number[] = [ENTER, COMMA]
-  userFormControl = new FormControl()
+  userFormControl = new UntypedFormControl()
   selectedUsers: NsAutoComplete.IUserAutoComplete[] = []
   autocompleteAllUsers: NsAutoComplete.IUserAutoComplete[] = []
   tagsFromConversation = []

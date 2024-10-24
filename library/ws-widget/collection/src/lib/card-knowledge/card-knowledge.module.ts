@@ -12,26 +12,23 @@ import { MatChipsModule } from '@angular/material/chips'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardKnowledgeComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    DefaultThumbnailModule,
-    BtnFollowModule,
-    BtnContentShareModule,
-
-    // Material Imports
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatChipsModule,
-    PipeDurationTransformModule,
-    BtnKbAnalyticsModule,
-    PipePartialContentModule,
-    PipePublicURLModule,
-  ],
-  exports: [CardKnowledgeComponent],
-  entryComponents: [CardKnowledgeComponent],
-
+    declarations: [CardKnowledgeComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        DefaultThumbnailModule,
+        BtnFollowModule,
+        BtnContentShareModule,
+        // Material Imports
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatChipsModule,
+        PipeDurationTransformModule,
+        BtnKbAnalyticsModule,
+        PipePartialContentModule,
+        PipePublicURLModule,
+    ],
+    exports: [CardKnowledgeComponent]
 })
 export class CardKnowledgeModule { }

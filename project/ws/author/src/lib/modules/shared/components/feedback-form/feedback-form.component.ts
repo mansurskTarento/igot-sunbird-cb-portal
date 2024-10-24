@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core'
 
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import {
   NsAutoComplete,
   UserAutocompleteService,
@@ -36,7 +36,7 @@ export class FeedbackFormComponent implements OnInit {
   forSelf = true
   selectedUsersDetails: any[] = []
   employeeList: any[] = []
-  publisherDetailsCtrl!: FormControl
+  publisherDetailsCtrl!: UntypedFormControl
   userMessage = ''
   fetchTagsStatus: 'done' | 'fetching' | null = null
   hasError = false
@@ -53,7 +53,7 @@ export class FeedbackFormComponent implements OnInit {
 
   ngOnInit() {
     this.userMessage = `Grant me the ${this.data} role`
-    this.publisherDetailsCtrl = new FormControl()
+    this.publisherDetailsCtrl = new UntypedFormControl()
     this.publisherDetailsCtrl.valueChanges
       .pipe(
         debounceTime(500),

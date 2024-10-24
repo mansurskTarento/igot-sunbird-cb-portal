@@ -6,17 +6,16 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [SkeletonLoaderComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-  ],
-  exports: [
-    SkeletonLoaderComponent,
-  ],
-  entryComponents: [SkeletonLoaderComponent],
+    declarations: [SkeletonLoaderComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+    ],
+    exports: [
+        SkeletonLoaderComponent,
+    ]
 })
 export class SkeletonLoaderModule { }

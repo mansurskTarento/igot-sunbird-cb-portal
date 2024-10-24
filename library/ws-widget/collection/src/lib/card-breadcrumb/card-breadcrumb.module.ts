@@ -6,8 +6,7 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardBreadcrumbComponent],
-  imports: [CommonModule, RouterModule, MatCardModule, MatIconModule],
-  entryComponents: [CardBreadcrumbComponent],
+    declarations: [CardBreadcrumbComponent],
+    imports: [CommonModule, RouterModule, MatCardModule, MatIconModule]
 })
 export class CardBreadcrumbModule {}

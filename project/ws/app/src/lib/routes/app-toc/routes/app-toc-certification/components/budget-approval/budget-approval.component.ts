@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import {
-  FormGroup,
-  FormControl,
+  UntypedFormGroup,
+  UntypedFormControl,
   Validators,
   AbstractControl,
   ValidationErrors,
@@ -38,7 +38,7 @@ export class BudgetApprovalComponent implements OnInit, OnDestroy {
   managerFetchStatus: TFetchStatus
   requestSendStatus: TSendStatus
 
-  budgetForm: FormGroup
+  budgetForm: UntypedFormGroup
 
   contentMetaSub?: Subscription
   certificationMetaSub?: Subscription
@@ -62,14 +62,14 @@ export class BudgetApprovalComponent implements OnInit, OnDestroy {
     this.managerFetchStatus = 'none'
     this.requestSendStatus = 'none'
 
-    this.budgetForm = new FormGroup({
-      currency: new FormControl('', Validators.required),
-      amount: new FormControl('', [
+    this.budgetForm = new UntypedFormGroup({
+      currency: new UntypedFormControl('', Validators.required),
+      amount: new UntypedFormControl('', [
         Validators.required,
         Validators.min(0),
         Validators.max(99999999),
       ]),
-      approverEmail: new FormControl(
+      approverEmail: new UntypedFormControl(
         '',
         [Validators.required],
         [this.validateApproverEmail.bind(this)],

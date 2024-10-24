@@ -13,24 +13,22 @@ import { AddWebPagesComponent } from './components/web-module-editor/add-web-pag
 import { WebStoreService } from './services/store.service'
 
 @NgModule({
-  declarations: [
-    WebModuleEditorComponent,
-    UploadAudioComponent,
-    AudioStripsComponent,
-    AddWebPagesComponent,
-  ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    EditorSharedModule,
-    DragDropModule,
-    AuthViewerModule,
-    WebPageRoutingModule,
-    HorizontalScrollerModule,
-  ],
-  providers: [WebStoreService],
-  entryComponents: [UploadAudioComponent],
-  exports: [AddWebPagesComponent],
-
+    declarations: [
+        WebModuleEditorComponent,
+        UploadAudioComponent,
+        AudioStripsComponent,
+        AddWebPagesComponent,
+    ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        EditorSharedModule,
+        DragDropModule,
+        AuthViewerModule,
+        WebPageRoutingModule,
+        HorizontalScrollerModule,
+    ],
+    providers: [WebStoreService],
+    exports: [AddWebPagesComponent]
 })
 export class WebPageModule { }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { Subscription } from 'rxjs'
 import { TSendStatus } from '@sunbird-cb/utils-v2'
@@ -17,14 +17,14 @@ import {
 })
 export class ContentRequestComponent implements OnDestroy {
   sendStatus: TSendStatus
-  contentRequestForm: FormGroup
+  contentRequestForm: UntypedFormGroup
   private _submitSub?: Subscription
 
   constructor(private feedbackSvc: FeedbackService, private snackbar: MatSnackBar) {
     this.sendStatus = 'none'
 
-    this.contentRequestForm = new FormGroup({
-      contentRequest: new FormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
+    this.contentRequestForm = new UntypedFormGroup({
+      contentRequest: new UntypedFormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
     })
   }
 

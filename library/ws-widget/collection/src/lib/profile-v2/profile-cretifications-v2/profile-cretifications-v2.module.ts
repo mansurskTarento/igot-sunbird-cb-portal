@@ -13,22 +13,21 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [ProfileCretificationsV2Component],
-  imports: [
-    BrowserModule,
-    MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    DefaultThumbnailModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    ProfileCertificateDialogModule,
-    PipePublicURLModule,
-    PipeCertificateImageURLModule,
-    TranslateModule,
-  ],
-  entryComponents: [ProfileCretificationsV2Component],
+    declarations: [ProfileCretificationsV2Component],
+    imports: [
+        BrowserModule,
+        MatButtonModule,
+        MatCardModule,
+        MatChipsModule,
+        DefaultThumbnailModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        ProfileCertificateDialogModule,
+        PipePublicURLModule,
+        PipeCertificateImageURLModule,
+        TranslateModule,
+    ]
 })
 export class ProfileCretificationsV2Module {}

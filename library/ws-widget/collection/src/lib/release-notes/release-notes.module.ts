@@ -15,21 +15,20 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [ReleaseNotesComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    MatChipsModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatExpansionModule,
-    BtnPageBackModule,
-  ],
-  entryComponents: [ReleaseNotesComponent],
+    declarations: [ReleaseNotesComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatTooltipModule,
+        MatChipsModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatExpansionModule,
+        BtnPageBackModule,
+    ]
 })
 export class ReleaseNotesModule { }

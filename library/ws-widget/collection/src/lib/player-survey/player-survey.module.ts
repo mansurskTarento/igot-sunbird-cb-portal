@@ -13,23 +13,22 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatSliderModule } from '@angular/material/slider'
 import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
-  declarations: [PlayerSurveyComponent],
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatSliderModule,
-    MatToolbarModule,
-    ReactiveFormsModule,
-    BtnFullscreenModule,
-    MatInputModule,
-    MicroSurveyModule,
-    TranslateModule.forChild(),
-  ],
-  exports: [PlayerSurveyComponent],
-  entryComponents: [PlayerSurveyComponent],
+    declarations: [PlayerSurveyComponent],
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatSliderModule,
+        MatToolbarModule,
+        ReactiveFormsModule,
+        BtnFullscreenModule,
+        MatInputModule,
+        MicroSurveyModule,
+        TranslateModule.forChild(),
+    ],
+    exports: [PlayerSurveyComponent]
 })
 export class PlayerSurveyModule { }

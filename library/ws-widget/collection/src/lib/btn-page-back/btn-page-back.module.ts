@@ -9,17 +9,16 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [BtnPageBackComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    PipeOrderByModule,
-    TranslateModule,
-  ],
-  exports: [BtnPageBackComponent],
-  entryComponents: [BtnPageBackComponent],
+    declarations: [BtnPageBackComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        PipeOrderByModule,
+        TranslateModule,
+    ],
+    exports: [BtnPageBackComponent]
 })
 export class BtnPageBackModule { }

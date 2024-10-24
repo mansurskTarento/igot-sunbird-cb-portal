@@ -6,14 +6,13 @@ import { MatButtonModule } from '@angular/material/button'
 import { TranslateModule } from '@ngx-translate/core'
 
 @NgModule({
-  declarations: [CardNotifyComponent],
-  imports: [
-    CommonModule,
-    BrowserModule,
-    MatButtonModule,
-    TranslateModule,
-  ],
-  exports: [CardNotifyComponent],
-  entryComponents: [CardNotifyComponent],
+    declarations: [CardNotifyComponent],
+    imports: [
+        CommonModule,
+        BrowserModule,
+        MatButtonModule,
+        TranslateModule,
+    ],
+    exports: [CardNotifyComponent]
 })
 export class CardNotifyModule { }

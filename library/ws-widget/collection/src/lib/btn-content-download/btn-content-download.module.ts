@@ -6,14 +6,13 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnContentDownloadComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-  ],
-  exports: [BtnContentDownloadComponent],
-  entryComponents: [BtnContentDownloadComponent],
+    declarations: [BtnContentDownloadComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+    ],
+    exports: [BtnContentDownloadComponent]
 })
 export class BtnContentDownloadModule { }

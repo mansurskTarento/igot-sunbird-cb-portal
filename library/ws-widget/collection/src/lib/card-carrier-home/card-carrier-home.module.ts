@@ -11,19 +11,18 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 @NgModule({
-  declarations: [CardCarrierHomeComponent, CardCarrierComponent],
-  imports: [
-    BrowserModule,
-    MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    PipeRelativeTimeModule,
-  ],
-  entryComponents: [CardCarrierHomeComponent],
+    declarations: [CardCarrierHomeComponent, CardCarrierComponent],
+    imports: [
+        BrowserModule,
+        MatButtonModule,
+        MatCardModule,
+        MatChipsModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        PipeRelativeTimeModule,
+    ]
 })
 export class CardCarrierHomeModule {
 

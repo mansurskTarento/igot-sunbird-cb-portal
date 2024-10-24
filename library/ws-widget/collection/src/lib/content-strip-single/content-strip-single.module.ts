@@ -12,19 +12,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [ContentStripSingleComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    HorizontalScrollerModule,
-    WidgetResolverModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    MatChipsModule,
-    MatCardModule,
-  ],
-  entryComponents: [ContentStripSingleComponent],
+    declarations: [ContentStripSingleComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        HorizontalScrollerModule,
+        WidgetResolverModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatChipsModule,
+        MatCardModule,
+    ]
 })
 export class ContentStripSingleModule {}

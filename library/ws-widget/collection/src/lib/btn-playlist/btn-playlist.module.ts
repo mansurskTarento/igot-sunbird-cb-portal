@@ -15,24 +15,22 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnPlaylistComponent, BtnPlaylistDialogComponent, BtnPlaylistSelectionComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-
-    // Material Imports
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatMenuModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    MatListModule,
-  ],
-  exports: [BtnPlaylistComponent],
-  entryComponents: [BtnPlaylistComponent, BtnPlaylistDialogComponent],
+    declarations: [BtnPlaylistComponent, BtnPlaylistDialogComponent, BtnPlaylistSelectionComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        // Material Imports
+        MatDialogModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        MatMenuModule,
+        MatFormFieldModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+        MatListModule,
+    ],
+    exports: [BtnPlaylistComponent]
 })
 export class BtnPlaylistModule { }

@@ -9,19 +9,18 @@ import { MatCardModule } from '@angular/material/card'
 import { ConnectionHoverModule } from '../connection-hover-card/connection-hover.module'
 
 @NgModule({
-  declarations: [ConnectionNameComponent],
-  imports: [
-    CommonModule,
-    PipeNameTransformModule,
-    FormsModule,
-    AvatarPhotoModule,
-    MatIconModule,
-    MatCardModule,
-    ConnectionHoverModule,
-  ],
-  exports: [ConnectionNameComponent],
-  entryComponents: [ConnectionNameComponent],
-  providers: [],
+    declarations: [ConnectionNameComponent],
+    imports: [
+        CommonModule,
+        PipeNameTransformModule,
+        FormsModule,
+        AvatarPhotoModule,
+        MatIconModule,
+        MatCardModule,
+        ConnectionHoverModule,
+    ],
+    exports: [ConnectionNameComponent],
+    providers: []
 })
 export class ConnectionNameModule {
 

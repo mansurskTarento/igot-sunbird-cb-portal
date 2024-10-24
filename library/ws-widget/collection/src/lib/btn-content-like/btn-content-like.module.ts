@@ -7,15 +7,14 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnContentLikeComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatBadgeModule,
-  ],
-  exports: [BtnContentLikeComponent],
-  entryComponents: [BtnContentLikeComponent],
+    declarations: [BtnContentLikeComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatBadgeModule,
+    ],
+    exports: [BtnContentLikeComponent]
 })
 export class BtnContentLikeModule { }

@@ -8,7 +8,7 @@ import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.compo
 import { MatDialog } from '@angular/material/dialog'
 import { Subscription } from 'rxjs'
 import { CompLocalService } from '../../services/comp.service'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
@@ -31,7 +31,7 @@ export class CurrentCompetenciesComponent implements OnInit, OnDestroy {
   infoIcon = false
   currentComps: NSProfileDataV3.ICompetencie[] = []
   private currentCompSubscription: Subscription | null = null
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   constructor(
     private configService: ConfigurationsService,
     private activateroute: ActivatedRoute,

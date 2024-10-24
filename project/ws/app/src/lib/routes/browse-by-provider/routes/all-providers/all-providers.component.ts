@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { BrowseProviderService } from '../../services/browse-provider.service'
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
 import { Subject, Observable } from 'rxjs'
@@ -22,7 +22,7 @@ export class AllProvidersComponent implements OnInit {
   page = 1
   defaultLimit = 20
   limit = 20
-  searchForm: FormGroup | undefined
+  searchForm: UntypedFormGroup | undefined
   sortBy: any
   searchQuery = ''
   allProviders: any
@@ -73,9 +73,9 @@ export class AllProvidersComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.searchForm = new FormGroup({
-      sortByControl: new FormControl(''),
-      searchKey: new FormControl(''),
+    this.searchForm = new UntypedFormGroup({
+      sortByControl: new UntypedFormControl(''),
+      searchKey: new UntypedFormControl(''),
     })
     this.sortType('asc')
     this.displayLoader = this.browseProviderSvc.isLoading()

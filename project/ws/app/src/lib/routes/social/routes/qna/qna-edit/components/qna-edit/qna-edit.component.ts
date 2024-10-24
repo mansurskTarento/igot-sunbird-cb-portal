@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Data, Router } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
@@ -66,7 +66,7 @@ export class QnaEditComponent implements OnInit, OnDestroy {
   }
 
   separatorKeysCodes: number[] = [ENTER, COMMA]
-  tagsCtrl = new FormControl()
+  tagsCtrl = new UntypedFormControl()
   selectedTags: NsDiscussionForum.IPostTag[] = []
   autocompleteAllTags: NsDiscussionForum.IPostTag[] = []
   tagsFromConversation: NsDiscussionForum.IPostTag[] = []

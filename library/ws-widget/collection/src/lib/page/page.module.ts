@@ -13,21 +13,20 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 // import { BtnFeatureModule } from '../btn-feature/btn-feature.module'
 
 @NgModule({
-  declarations: [PageComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    WidgetResolverModule,
-    BtnPageBackModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatMenuModule,
-    TourModule,
-    // BtnFeatureModule,
-  ],
-  exports: [PageComponent],
-  entryComponents: [PageComponent],
+    declarations: [PageComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        WidgetResolverModule,
+        BtnPageBackModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatMenuModule,
+        TourModule,
+        // BtnFeatureModule,
+    ],
+    exports: [PageComponent]
 })
 export class PageModule { }

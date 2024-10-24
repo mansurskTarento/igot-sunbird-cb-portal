@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
@@ -54,7 +54,7 @@ export class BlogEditComponent implements OnInit {
   }
 
   separatorKeysCodes: number[] = [ENTER, COMMA]
-  tagsCtrl = new FormControl()
+  tagsCtrl = new UntypedFormControl()
   selectedTags: NsDiscussionForum.IPostTag[] = []
   autocompleteAllTags: NsDiscussionForum.IPostTag[] = []
   tagsFromConversation: NsDiscussionForum.IPostTag[] = []

@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { FormControl, Validators } from '@angular/forms'
+import { UntypedFormControl, Validators } from '@angular/forms'
 import { EventService, TFetchStatus, WsEvents } from '@sunbird-cb/utils-v2'
 import { NsPlaylist } from '../btn-playlist.model'
 import { BtnPlaylistService } from '../btn-playlist.service'
@@ -26,7 +26,7 @@ export class BtnPlaylistSelectionComponent implements OnInit {
   createPlaylistMode = false
   selectedPlaylists = new Set<string>()
 
-  playlistNameFormControl = new FormControl('', [
+  playlistNameFormControl = new UntypedFormControl('', [
     Validators.required,
     Validators.minLength(1),
     Validators.maxLength(100),

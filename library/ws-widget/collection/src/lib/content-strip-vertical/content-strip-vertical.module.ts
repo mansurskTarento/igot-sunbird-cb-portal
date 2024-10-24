@@ -14,19 +14,18 @@ import {
 } from '@angular/material'
 
 @NgModule({
-  declarations: [ContentStripVerticalComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    HorizontalScrollerModule,
-    WidgetResolverModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    MatChipsModule,
-    MatCardModule,
-  ],
-  entryComponents: [ContentStripVerticalComponent],
+    declarations: [ContentStripVerticalComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        HorizontalScrollerModule,
+        WidgetResolverModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatChipsModule,
+        MatCardModule,
+    ]
 })
 export class ContentStripVerticalModule { }

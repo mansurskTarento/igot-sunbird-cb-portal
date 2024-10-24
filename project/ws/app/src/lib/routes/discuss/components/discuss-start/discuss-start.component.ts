@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
-import { FormGroup, FormBuilder } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { DiscussService } from '../../services/discuss.service'
 import { NSDiscussData } from '../../models/discuss.model'
 import { MatChipInputEvent } from '@angular/material/chips'
@@ -16,7 +16,7 @@ export interface IDialogData {
   styleUrls: ['./discuss-start.component.scss'],
 })
 export class DiscussStartComponent implements OnInit {
-  startForm!: FormGroup
+  startForm!: UntypedFormGroup
   allCategories!: NSDiscussData.ICategorie[]
   allTags!: NSDiscussData.ITag[]
   separatorKeysCodes: number[] = [ENTER, COMMA]
@@ -31,7 +31,7 @@ export class DiscussStartComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DiscussStartComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IDialogData,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private discussService: DiscussService,
     private snackBar: MatSnackBar) {
   }

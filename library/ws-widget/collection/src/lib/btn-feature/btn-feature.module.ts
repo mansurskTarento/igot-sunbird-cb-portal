@@ -12,19 +12,18 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnFeatureComponent, WidgetUrlResolverDirective],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatCardModule,
-    MatMenuModule,
-    MatRippleModule,
-    MatBadgeModule,
-  ],
-  exports: [BtnFeatureComponent],
-  entryComponents: [BtnFeatureComponent],
+    declarations: [BtnFeatureComponent, WidgetUrlResolverDirective],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatCardModule,
+        MatMenuModule,
+        MatRippleModule,
+        MatBadgeModule,
+    ],
+    exports: [BtnFeatureComponent]
 })
 export class BtnFeatureModule {}

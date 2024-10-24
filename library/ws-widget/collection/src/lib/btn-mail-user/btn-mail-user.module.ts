@@ -12,18 +12,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnMailUserComponent, BtnMailUserDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-  ],
-  exports: [BtnMailUserComponent],
-  entryComponents: [BtnMailUserComponent, BtnMailUserDialogComponent],
+    declarations: [BtnMailUserComponent, BtnMailUserDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+    ],
+    exports: [BtnMailUserComponent]
 })
 export class BtnMailUserModule { }

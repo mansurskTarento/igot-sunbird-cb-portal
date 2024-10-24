@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
 import { Observable } from 'rxjs'
@@ -32,7 +32,7 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
   styleUrls: ['./request-dialog.component.scss'],
 })
 export class RequestDialogComponent implements OnInit {
-  requestForm!: FormGroup
+  requestForm!: UntypedFormGroup
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
   customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`
   customCharsPatternOrg = `^[a-zA-Z0-9 \\w\-\&,\(\)]*$`
@@ -61,9 +61,9 @@ export class RequestDialogComponent implements OnInit {
     this.requestType = this.data.reqType
     this.userData = this.data
 
-    this.requestForm = new FormGroup({
+    this.requestForm = new UntypedFormGroup({
       // tslint:disable-next-line:max-line-length
-      designation: new FormControl('', this.requestType === 'Position' ? [Validators.pattern(this.customCharsPattern),
+      designation: new UntypedFormControl('', this.requestType === 'Position' ? [Validators.pattern(this.customCharsPattern),
       Validators.required, forbiddenNamesValidatorPosition(this.masterPositions)] : []),
     })
 

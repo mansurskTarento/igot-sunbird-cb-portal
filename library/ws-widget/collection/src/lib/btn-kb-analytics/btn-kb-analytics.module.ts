@@ -6,14 +6,13 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [BtnKbAnalyticsComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-  ],
-  exports: [BtnKbAnalyticsComponent],
-  entryComponents: [BtnKbAnalyticsComponent],
+    declarations: [BtnKbAnalyticsComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
+    ],
+    exports: [BtnKbAnalyticsComponent]
 })
 export class BtnKbAnalyticsModule { }

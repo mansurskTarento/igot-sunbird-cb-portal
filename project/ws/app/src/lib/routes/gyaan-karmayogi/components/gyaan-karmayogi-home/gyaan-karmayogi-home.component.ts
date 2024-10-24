@@ -1,6 +1,6 @@
 
 import { Component, OnInit } from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
@@ -18,7 +18,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   facetsdata: any
   hideAllStrip = false
   sectorNames: any = []
-  searchControl = new FormControl('')
+  searchControl = new UntypedFormControl('')
   selectedSector: any = gyaanConstants.allSectors
   categories: any = [{
     name: gyaanConstants.allCategories,
@@ -34,7 +34,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
     name: gyaanConstants.allSectors,
   }]
 
-  gyaanForm: FormGroup | undefined
+  gyaanForm: UntypedFormGroup | undefined
 
   constructor(public translate: TranslateService,
               private route: ActivatedRoute,
@@ -48,10 +48,10 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gyaanForm = new FormGroup({
-      sectors: new FormControl(''),
-      subSectors: new FormControl(''),
-      category: new FormControl(''),
+    this.gyaanForm = new UntypedFormGroup({
+      sectors: new UntypedFormControl(''),
+      subSectors: new UntypedFormControl(''),
+      category: new UntypedFormControl(''),
     })
     this.pageConfig = (this.route.parent && this.route.parent.snapshot.data)
     this.stripData = JSON.parse(JSON.stringify((this.route.parent && this.route.parent.snapshot.data.pageData.data.stripConfig))) || []
@@ -125,7 +125,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   }
 
   // this method is called when user clicks on apply button from ui
-  applyFilter(form: FormGroup) {
+  applyFilter(form: UntypedFormGroup) {
     const addFilters: any = {}
 
     if (form.value.sectors && form.value.sectors.name !== gyaanConstants.allSectors) {

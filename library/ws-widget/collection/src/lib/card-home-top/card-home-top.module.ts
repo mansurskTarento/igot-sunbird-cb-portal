@@ -21,13 +21,12 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [CardHomeTopComponent, StarRatingComponent, CardActivityComponent,
-    CardCompetencyComponent, CardGoalComponent,
-    CardLearningStatusComponent],
-  imports: [AvatarPhotoModule, BrowserModule, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatGridListModule,
-    MatExpansionModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatFormFieldModule,
-    MatTooltipModule, HorizontalScrollerModule, PipeNameTransformModule],
-  entryComponents: [CardHomeTopComponent],
+    declarations: [CardHomeTopComponent, StarRatingComponent, CardActivityComponent,
+        CardCompetencyComponent, CardGoalComponent,
+        CardLearningStatusComponent],
+    imports: [AvatarPhotoModule, BrowserModule, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatGridListModule,
+        MatExpansionModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule, MatFormFieldModule,
+        MatTooltipModule, HorizontalScrollerModule, PipeNameTransformModule]
 })
 export class CardHomeTopModule {
 

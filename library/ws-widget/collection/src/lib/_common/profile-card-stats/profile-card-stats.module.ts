@@ -11,23 +11,22 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [ProfileCardStatsComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-    AvatarPhotoModule,
-    SlidersDynamicModule,
-    PipeDurationTransformModule,
-    WeeklyClapsModule,
-    TranslateModule,
-    PipeOrdinalModule,
-  ],
-  exports: [
-    ProfileCardStatsComponent,
-  ],
-  entryComponents: [ProfileCardStatsComponent],
+    declarations: [ProfileCardStatsComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+        AvatarPhotoModule,
+        SlidersDynamicModule,
+        PipeDurationTransformModule,
+        WeeklyClapsModule,
+        TranslateModule,
+        PipeOrdinalModule,
+    ],
+    exports: [
+        ProfileCardStatsComponent,
+    ]
 })
 export class ProfileCardStatsModule { }

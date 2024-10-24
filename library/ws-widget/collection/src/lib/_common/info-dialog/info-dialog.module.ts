@@ -5,17 +5,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 @NgModule({
-  declarations: [InfoDialogComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-  ],
-  exports: [
-    InfoDialogComponent,
-  ],
-  entryComponents: [InfoDialogComponent],
+    declarations: [InfoDialogComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+    ],
+    exports: [
+        InfoDialogComponent,
+    ]
 })
 export class InfoDialogModule { }

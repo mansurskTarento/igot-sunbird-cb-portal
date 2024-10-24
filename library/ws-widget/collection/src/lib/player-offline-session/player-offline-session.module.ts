@@ -12,22 +12,21 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatSliderModule } from '@angular/material/slider'
 import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
-  declarations: [PlayerOfflineSessionComponent],
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatSliderModule,
-    MatToolbarModule,
-    ReactiveFormsModule,
-    BtnFullscreenModule,
-    MatInputModule,
-    AttendanceCardModule,
-  ],
-  exports: [PlayerOfflineSessionComponent],
-  entryComponents: [PlayerOfflineSessionComponent],
+    declarations: [PlayerOfflineSessionComponent],
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatSliderModule,
+        MatToolbarModule,
+        ReactiveFormsModule,
+        BtnFullscreenModule,
+        MatInputModule,
+        AttendanceCardModule,
+    ],
+    exports: [PlayerOfflineSessionComponent]
 })
 export class PlayerOfflineSessionModule { }

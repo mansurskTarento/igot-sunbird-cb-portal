@@ -11,17 +11,16 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [TreeCatalogComponent, TreeCatalogMenuComponent, TreeCatalogRoutePipe],
-  imports: [
-    CommonModule,
-    RouterModule,
-    TreeModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatProgressSpinnerModule,
-  ],
-  exports: [TreeCatalogComponent, TreeCatalogMenuComponent],
-  entryComponents: [TreeCatalogComponent],
+    declarations: [TreeCatalogComponent, TreeCatalogMenuComponent, TreeCatalogRoutePipe],
+    imports: [
+        CommonModule,
+        RouterModule,
+        TreeModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatProgressSpinnerModule,
+    ],
+    exports: [TreeCatalogComponent, TreeCatalogMenuComponent]
 })
 export class TreeCatalogModule { }

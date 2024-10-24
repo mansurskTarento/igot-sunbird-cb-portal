@@ -8,7 +8,7 @@ import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.compo
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { CompLocalService } from '../../services/comp.service'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
@@ -29,7 +29,7 @@ export class DesiredCompetenciesComponent implements OnInit, OnDestroy {
   overallCompetencies!: NSProfileDataV3.ICompetencie[]
   desiredcompList: any = []
   placeHolder = 'Search here'
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   desiredComps: NSProfileDataV3.ICompetencie[] = []
   private desiredCompSubscription: Subscription | null = null
 

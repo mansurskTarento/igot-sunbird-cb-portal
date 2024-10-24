@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
 // tslint:disable-next-line
@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
     /* tslint:enable */
 })
 export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
-    createRole!: FormGroup
+    createRole!: UntypedFormGroup
     public selectedActivity: any[] = []
     separatorKeysCodes: number[] = [ENTER, COMMA]
     userRoles: NSProfileDataV3.IRolesAndActivities[] = []
@@ -61,9 +61,9 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
         this.userRoles = _.get(this.configSvc.unMappedUser, 'profileDetails.userRoles') || []
     }
     ngOnInit(): void {
-        this.createRole = new FormGroup({
-            roleName: new FormControl('', [Validators.required]),
-            activity: new FormControl('', [Validators.required]),
+        this.createRole = new UntypedFormGroup({
+            roleName: new UntypedFormControl('', [Validators.required]),
+            activity: new UntypedFormControl('', [Validators.required]),
         })
     }
     ngOnDestroy(): void {

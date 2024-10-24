@@ -14,21 +14,19 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 // import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 
 @NgModule({
-  declarations: [MarkAsCompleteComponent, ConfirmDialogComponent],
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    RouterModule,
-  ],
-  // providers: [AppTocService],
-  entryComponents: [ConfirmDialogComponent],
-  exports: [MarkAsCompleteComponent],
+    declarations: [MarkAsCompleteComponent, ConfirmDialogComponent],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatIconModule,
+        MatDividerModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        RouterModule,
+    ],
+    exports: [MarkAsCompleteComponent]
 })
 export class MarkAsCompleteModule { }

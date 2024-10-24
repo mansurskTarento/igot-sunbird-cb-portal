@@ -5,14 +5,13 @@ import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
 import { MatIconModule } from '@angular/material/icon'
 import { TranslateModule } from '@ngx-translate/core'
 @NgModule({
-  declarations: [PlayerVideoComponent],
-  imports: [
-    CommonModule,
-    PipePublicURLModule,
-    MatIconModule,
-    TranslateModule,
-  ],
-  exports: [PlayerVideoComponent],
-  entryComponents: [PlayerVideoComponent],
+    declarations: [PlayerVideoComponent],
+    imports: [
+        CommonModule,
+        PipePublicURLModule,
+        MatIconModule,
+        TranslateModule,
+    ],
+    exports: [PlayerVideoComponent]
 })
 export class PlayerVideoModule { }

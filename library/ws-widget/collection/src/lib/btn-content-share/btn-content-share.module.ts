@@ -18,24 +18,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnContentShareComponent, BtnContentShareDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatChipsModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    UserAutocompleteModule,
-    BtnLinkedinShareModule,
-    BtnFacebookShareModule,
-    BtnTwitterShareModule,
-  ],
-  exports: [BtnContentShareComponent],
-  entryComponents: [BtnContentShareComponent, BtnContentShareDialogComponent],
+    declarations: [BtnContentShareComponent, BtnContentShareDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatChipsModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        UserAutocompleteModule,
+        BtnLinkedinShareModule,
+        BtnFacebookShareModule,
+        BtnTwitterShareModule,
+    ],
+    exports: [BtnContentShareComponent]
 })
 export class BtnContentShareModule {
   public static forRoot(environment: any): ModuleWithProviders<BtnContentShareModule> {

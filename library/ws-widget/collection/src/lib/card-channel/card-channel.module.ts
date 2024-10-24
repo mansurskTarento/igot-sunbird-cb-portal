@@ -6,16 +6,14 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardChannelComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-
-    // Material Imports
-    MatCardModule,
-    MatIconModule,
-  ],
-  exports: [CardChannelComponent],
-  entryComponents: [CardChannelComponent],
+    declarations: [CardChannelComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        // Material Imports
+        MatCardModule,
+        MatIconModule,
+    ],
+    exports: [CardChannelComponent]
 })
 export class CardChannelModule { }

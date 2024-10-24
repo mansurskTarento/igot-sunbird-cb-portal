@@ -12,17 +12,16 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnAdminComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    DialogBoxModeratorModule,
-    DialogBoxAdminModule,
-  ],
-  exports: [BtnAdminComponent],
-  entryComponents: [BtnModeratorComponent, DialogBoxModeratorComponent, DialogBoxAdminComponent],
+    declarations: [BtnAdminComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        DialogBoxModeratorModule,
+        DialogBoxAdminModule,
+    ],
+    exports: [BtnAdminComponent]
 })
 export class BtnAdminModule { }

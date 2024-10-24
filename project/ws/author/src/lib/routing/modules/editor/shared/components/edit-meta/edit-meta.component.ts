@@ -12,7 +12,7 @@ import {
   ViewChild,
   Inject,
 } from '@angular/core'
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 import { MatChipInputEvent } from '@angular/material/chips'
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -74,19 +74,19 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   addOnBlur = true
   addConcepts = false
   isFileUploaded = false
-  fileUploadForm!: FormGroup
-  creatorContactsCtrl!: FormControl
-  trackContactsCtrl!: FormControl
-  publisherDetailsCtrl!: FormControl
-  editorsCtrl!: FormControl
-  creatorDetailsCtrl!: FormControl
-  audienceCtrl!: FormControl
-  jobProfileCtrl!: FormControl
-  regionCtrl!: FormControl
-  accessPathsCtrl!: FormControl
-  keywordsCtrl!: FormControl
-  competencyCtrl!: FormControl
-  contentForm!: FormGroup
+  fileUploadForm!: UntypedFormGroup
+  creatorContactsCtrl!: UntypedFormControl
+  trackContactsCtrl!: UntypedFormControl
+  publisherDetailsCtrl!: UntypedFormControl
+  editorsCtrl!: UntypedFormControl
+  creatorDetailsCtrl!: UntypedFormControl
+  audienceCtrl!: UntypedFormControl
+  jobProfileCtrl!: UntypedFormControl
+  regionCtrl!: UntypedFormControl
+  accessPathsCtrl!: UntypedFormControl
+  keywordsCtrl!: UntypedFormControl
+  competencyCtrl!: UntypedFormControl
+  contentForm!: UntypedFormGroup
   selectedSkills: string[] = []
   canUpdate = true
   ordinals!: any
@@ -140,7 +140,7 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   competencyOptions$: Observable<any[]> = of([])
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private uploadService: UploadService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
@@ -176,18 +176,18 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
       this.jobProfileList = this.ordinals.jobProfile
       this.complexityLevelList = this.ordinals.audience
     }
-    this.creatorContactsCtrl = new FormControl()
-    this.trackContactsCtrl = new FormControl()
-    this.publisherDetailsCtrl = new FormControl()
-    this.editorsCtrl = new FormControl()
-    this.creatorDetailsCtrl = new FormControl()
-    this.keywordsCtrl = new FormControl('')
-    this.competencyCtrl = new FormControl('')
+    this.creatorContactsCtrl = new UntypedFormControl()
+    this.trackContactsCtrl = new UntypedFormControl()
+    this.publisherDetailsCtrl = new UntypedFormControl()
+    this.editorsCtrl = new UntypedFormControl()
+    this.creatorDetailsCtrl = new UntypedFormControl()
+    this.keywordsCtrl = new UntypedFormControl('')
+    this.competencyCtrl = new UntypedFormControl('')
 
-    this.audienceCtrl = new FormControl()
-    this.jobProfileCtrl = new FormControl()
-    this.regionCtrl = new FormControl()
-    this.accessPathsCtrl = new FormControl()
+    this.audienceCtrl = new UntypedFormControl()
+    this.jobProfileCtrl = new UntypedFormControl()
+    this.regionCtrl = new UntypedFormControl()
+    this.accessPathsCtrl = new UntypedFormControl()
     this.accessPathsCtrl.disable()
 
     this.creatorContactsCtrl.valueChanges

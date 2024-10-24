@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Input } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { EventService, WsEvents, LoggerService, NsContent } from '@sunbird-cb/utils-v2'
 import { RatingService } from '@sunbird-cb/collection/src/lib/_services/rating.service'
 import { switchMap, takeUntil } from 'rxjs/operators'
@@ -22,7 +22,7 @@ export class ContentRatingV2DialogComponent implements OnInit {
   @Input()  isEditMode = false
   content: NsContent.IContent | null = null
   userRating = 0
-  feedbackForm: FormGroup
+  feedbackForm: UntypedFormGroup
   showSuccessScreen = false
   formDisabled = true
   isEdited = false
@@ -37,10 +37,10 @@ export class ContentRatingV2DialogComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
   ) {
-    this.feedbackForm = new FormGroup({
-      review: new FormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
-      rating: new FormControl(0, []),
-      recommend: new FormControl(false),
+    this.feedbackForm = new UntypedFormGroup({
+      review: new UntypedFormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
+      rating: new UntypedFormControl(0, []),
+      recommend: new UntypedFormControl(false),
     })
   }
 

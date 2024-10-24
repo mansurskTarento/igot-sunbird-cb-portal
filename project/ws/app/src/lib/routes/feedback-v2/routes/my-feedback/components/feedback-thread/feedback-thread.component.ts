@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { noop } from 'rxjs'
@@ -26,7 +26,7 @@ export class FeedbackThreadComponent implements OnInit, OnChanges {
   feedbackReply!: IFeedback
   threadFetchStatus: TFetchStatus
   sendStatus: TSendStatus
-  replyForm: FormGroup
+  replyForm: UntypedFormGroup
   viewedBy: EFeedbackRole
 
   constructor(
@@ -40,8 +40,8 @@ export class FeedbackThreadComponent implements OnInit, OnChanges {
 
     this.viewedBy = this.route.snapshot.url[0].path as EFeedbackRole
 
-    this.replyForm = new FormGroup({
-      reply: new FormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
+    this.replyForm = new UntypedFormGroup({
+      reply: new UntypedFormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
     })
   }
 

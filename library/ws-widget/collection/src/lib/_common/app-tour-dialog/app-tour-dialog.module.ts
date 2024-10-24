@@ -7,13 +7,12 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [AppTourDialogComponent],
-  imports: [
-    CommonModule,
-    MatDialogModule, MatButtonModule,
-    MatIconModule,
-    RouterModule,
-  ],
-  entryComponents: [AppTourDialogComponent],
+    declarations: [AppTourDialogComponent],
+    imports: [
+        CommonModule,
+        MatDialogModule, MatButtonModule,
+        MatIconModule,
+        RouterModule,
+    ]
 })
 export class AppTourDialogModule { }

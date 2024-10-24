@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { NsContent } from '@sunbird-cb/collection'
 import { ViewSubmissionComponent } from './components/view-submission/view-submission.component'
 import { ResourceCollectionService } from './resource-collection.service'
@@ -25,7 +25,7 @@ export class ResourceCollectionComponent implements OnInit {
   type = 'all'
   contentId = ''
   fetchingStatus: 'fetching' | 'fetched' = 'fetched'
-  answerControl: FormControl
+  answerControl: UntypedFormControl
   selectedFile: File | null = null
   message: string | null = null
   submitData = {
@@ -44,7 +44,7 @@ export class ResourceCollectionComponent implements OnInit {
     private resourceSvc: ResourceCollectionService,
     private dialog: MatDialog,
   ) {
-    this.answerControl = new FormControl('')
+    this.answerControl = new UntypedFormControl('')
   }
   private openSnackBar(primaryMsg: string, duration: number = 3000) {
     this.snackBar.open(primaryMsg, 'X', {

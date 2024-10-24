@@ -7,15 +7,14 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [BreadcrumbsOrgComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-  ],
-  exports: [BreadcrumbsOrgComponent],
-  entryComponents: [BreadcrumbsOrgComponent],
+    declarations: [BreadcrumbsOrgComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+    ],
+    exports: [BreadcrumbsOrgComponent]
 })
 export class BreadcrumbsOrgModule { }

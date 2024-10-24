@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router'
 import { CompetenceService } from '../../services/competence.service'
 /* tslint:disable */
 import * as _ from 'lodash'
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfigurationsService, WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -42,8 +42,8 @@ export class CompetenceAllComponent implements OnInit {
   filteredCompetencies!: NSCompetencie.ICompetencie[]
   searchJson!: NSCompetencie.ISearch[]
   searchKey = ''
-  queryControl = new FormControl('')
-  queryFracControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
+  queryFracControl = new UntypedFormControl('')
   selectedId = ''
   currentProfile: any
   userPosition: any = null

@@ -13,23 +13,22 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [LeftMenuWithoutLogoComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    WidgetResolverModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatChipsModule,
-    MatCardModule,
-    MatListModule,
-  ],
-  entryComponents: [LeftMenuWithoutLogoComponent],
-  exports: [
-    LeftMenuWithoutLogoComponent,
-  ],
+    declarations: [LeftMenuWithoutLogoComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        WidgetResolverModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatSidenavModule,
+        MatChipsModule,
+        MatCardModule,
+        MatListModule,
+    ],
+    exports: [
+        LeftMenuWithoutLogoComponent,
+    ]
 })
 export class LeftMenuWithoutLogoModule { }

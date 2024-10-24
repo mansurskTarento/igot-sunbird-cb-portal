@@ -9,20 +9,19 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [PendingRequestComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-    AvatarPhotoModule,
-    SkeletonLoaderModule,
-    TranslateModule,
-  ],
-  exports: [
-    PendingRequestComponent,
-  ],
-  entryComponents: [PendingRequestComponent],
+    declarations: [PendingRequestComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+        AvatarPhotoModule,
+        SkeletonLoaderModule,
+        TranslateModule,
+    ],
+    exports: [
+        PendingRequestComponent,
+    ]
 })
 export class PendingRequestModule { }

@@ -19,31 +19,29 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardLearnComponent],
-  imports: [
-    CommonModule,
-    UserImageModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatCardModule,
-    HorizontalScrollerModule,
-    ActivityCardModule,
-    TourModule,
-    ChallengeModule,
-    RouterModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-  ],
-  entryComponents: [CardLearnComponent],
-  schemas: [NO_ERRORS_SCHEMA],
-  // providers: [ActivitiesService],
+    declarations: [CardLearnComponent],
+    imports: [
+        CommonModule,
+        UserImageModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatCardModule,
+        HorizontalScrollerModule,
+        ActivityCardModule,
+        TourModule,
+        ChallengeModule,
+        RouterModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+    ],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class CardLearnModule { }

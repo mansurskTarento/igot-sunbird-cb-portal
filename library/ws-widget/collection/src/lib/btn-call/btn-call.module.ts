@@ -9,16 +9,15 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnCallComponent, BtnCallDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatSnackBarModule,
-  ],
-  exports: [BtnCallComponent],
-  entryComponents: [BtnCallComponent, BtnCallDialogComponent],
+    declarations: [BtnCallComponent, BtnCallDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatSnackBarModule,
+    ],
+    exports: [BtnCallComponent]
 })
 export class BtnCallModule { }

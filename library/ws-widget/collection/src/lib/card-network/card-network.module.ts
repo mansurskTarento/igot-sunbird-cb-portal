@@ -19,28 +19,27 @@ import { MatInputModule } from '@angular/material/input'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [CardNetworkComponent],
-  imports: [
-    CommonModule,
-    AvatarPhotoModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    HorizontalScrollerModule,
-    ActivityCardModule,
-    TourModule,
-    PipeNameTransformModule,
-    ChallengeModule,
-    MatInputModule,
-    MatGridListModule,
-    FormsModule,
-  ],
-  entryComponents: [CardNetworkComponent],
-  providers: [CardNetWorkService],
+    declarations: [CardNetworkComponent],
+    imports: [
+        CommonModule,
+        AvatarPhotoModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        HorizontalScrollerModule,
+        ActivityCardModule,
+        TourModule,
+        PipeNameTransformModule,
+        ChallengeModule,
+        MatInputModule,
+        MatGridListModule,
+        FormsModule,
+    ],
+    providers: [CardNetWorkService]
 })
 export class CardNetworkModule {
 

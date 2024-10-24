@@ -6,13 +6,12 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [ChannelHubComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatCardModule,
-    MatIconModule,
-  ],
-  entryComponents: [ChannelHubComponent],
+    declarations: [ChannelHubComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatCardModule,
+        MatIconModule,
+    ]
 })
 export class ChannelHubModule { }

@@ -17,31 +17,28 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({
-  declarations: [ResourceCollectionComponent, ViewSubmissionComponent],
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatCardModule,
-    MatPaginatorModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatIconModule,
-    MatToolbarModule,
-    ReactiveFormsModule,
-    MatProgressSpinnerModule,
-    PlayerPdfModule,
-    PlayerVideoModule,
-    PlayerSurveyModule,
-  ],
-  entryComponents: [
-    ViewSubmissionComponent,
-  ],
-  exports: [
-    ResourceCollectionComponent,
-  ],
+    declarations: [ResourceCollectionComponent, ViewSubmissionComponent],
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatCardModule,
+        MatPaginatorModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatIconModule,
+        MatToolbarModule,
+        ReactiveFormsModule,
+        MatProgressSpinnerModule,
+        PlayerPdfModule,
+        PlayerVideoModule,
+        PlayerSurveyModule,
+    ],
+    exports: [
+        ResourceCollectionComponent,
+    ]
 })
 export class ResourceCollectionModule { }

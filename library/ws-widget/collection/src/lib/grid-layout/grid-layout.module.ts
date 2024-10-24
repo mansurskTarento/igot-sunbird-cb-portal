@@ -11,13 +11,12 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
-  declarations: [GridLayoutComponent],
-  imports: [CommonModule, WidgetResolverModule, MatFormFieldModule,
-    MatButtonModule, MatIconModule, FormsModule, TranslateModule, MatSnackBarModule],
-  exports: [GridLayoutComponent],
-  entryComponents: [GridLayoutComponent],
-  providers: [
-    NPSGridService,
-  ],
+    declarations: [GridLayoutComponent],
+    imports: [CommonModule, WidgetResolverModule, MatFormFieldModule,
+        MatButtonModule, MatIconModule, FormsModule, TranslateModule, MatSnackBarModule],
+    exports: [GridLayoutComponent],
+    providers: [
+        NPSGridService,
+    ]
 })
 export class GridLayoutModule { }

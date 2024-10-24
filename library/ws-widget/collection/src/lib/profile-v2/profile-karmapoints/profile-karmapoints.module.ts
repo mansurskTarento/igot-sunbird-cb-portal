@@ -13,10 +13,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [ProfileKarmapointsComponent],
-  imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule, PipeOrderByModule, TranslateModule],
-  entryComponents: [ProfileKarmapointsComponent],
+    declarations: [ProfileKarmapointsComponent],
+    imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
+        MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule, PipeOrderByModule, TranslateModule]
 })
 export class ProfileKarmapointsModule {
 

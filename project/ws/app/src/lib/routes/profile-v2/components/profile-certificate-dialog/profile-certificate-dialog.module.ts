@@ -11,21 +11,20 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [ProfileCertificateDialogComponent],
-  imports: [
-    CommonModule,
-    CommonModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatSnackBarModule,
-    PipeSafeSanitizerModule,
-  ],
-  exports: [
-    ProfileCertificateDialogComponent,
-  ],
-  entryComponents: [ProfileCertificateDialogComponent],
+    declarations: [ProfileCertificateDialogComponent],
+    imports: [
+        CommonModule,
+        CommonModule,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatSnackBarModule,
+        PipeSafeSanitizerModule,
+    ],
+    exports: [
+        ProfileCertificateDialogComponent,
+    ]
 })
 export class ProfileCertificateDialogModule { }

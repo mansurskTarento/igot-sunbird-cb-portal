@@ -9,17 +9,16 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 
 @NgModule({
-  declarations: [BtnAppsComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatRippleModule,
-    WidgetResolverModule,
-  ],
-  exports: [BtnAppsComponent],
-  entryComponents: [BtnAppsComponent],
+    declarations: [BtnAppsComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatRippleModule,
+        WidgetResolverModule,
+    ],
+    exports: [BtnAppsComponent]
 })
 export class BtnAppsModule { }

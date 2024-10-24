@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core'
-import { FormGroup, FormBuilder, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
@@ -21,7 +21,7 @@ export class PlaylistCreateComponent implements OnInit {
   @ViewChild('createPlaylistSuccessMessage', { static: true }) createPlaylistSuccessMessage!: ElementRef<any>
   @ViewChild('playlistForm', { static: true }) playlistForm!: ElementRef<any>
 
-  createPlaylistForm: FormGroup
+  createPlaylistForm: UntypedFormGroup
   createPlaylistStatus: TFetchStatus = 'none'
   showContentPlayListError = false
 
@@ -35,7 +35,7 @@ export class PlaylistCreateComponent implements OnInit {
   isShareEnabled = false
   pageNavbar: Partial<NsPage.INavBackground> = this.configSvc.pageNavBar
   constructor(
-    fb: FormBuilder,
+    fb: UntypedFormBuilder,
     private router: Router,
     private events: EventService,
     private snackBar: MatSnackBar,

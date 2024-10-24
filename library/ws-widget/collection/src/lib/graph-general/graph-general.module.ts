@@ -6,8 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatSelectModule } from '@angular/material/select'
 
 @NgModule({
-  declarations: [GraphGeneralComponent],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSelectModule, MatFormFieldModule],
-  entryComponents: [GraphGeneralComponent],
+    declarations: [GraphGeneralComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSelectModule, MatFormFieldModule]
 })
 export class GraphGeneralModule {}

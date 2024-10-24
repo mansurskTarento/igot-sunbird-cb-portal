@@ -11,19 +11,18 @@ import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardEventHubComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDividerModule,
-    DefaultThumbnailModule,
-    SkeletonLoaderModule,
-    MatProgressSpinnerModule,
-  ],
-  entryComponents: [CardEventHubComponent],
-  exports: [CardEventHubComponent],
+    declarations: [CardEventHubComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDividerModule,
+        DefaultThumbnailModule,
+        SkeletonLoaderModule,
+        MatProgressSpinnerModule,
+    ],
+    exports: [CardEventHubComponent]
 })
 export class CardEventHubModule { }

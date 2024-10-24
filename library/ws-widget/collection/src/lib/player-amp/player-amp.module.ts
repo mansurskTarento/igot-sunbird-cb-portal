@@ -4,11 +4,10 @@ import { PlayerAmpComponent } from './player-amp.component'
 import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
 
 @NgModule({
-  declarations: [PlayerAmpComponent],
-  imports: [
-    CommonModule,
-    PipePublicURLModule,
-  ],
-  entryComponents: [PlayerAmpComponent],
+    declarations: [PlayerAmpComponent],
+    imports: [
+        CommonModule,
+        PipePublicURLModule,
+    ]
 })
 export class PlayerAmpModule { }

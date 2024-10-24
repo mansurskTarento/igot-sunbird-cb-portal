@@ -17,22 +17,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnGoalsComponent, BtnGoalsDialogComponent, BtnGoalsSelectionComponent, BtnGoalsErrorComponent],
-  imports: [
-    FormsModule,
-    RouterModule,
-    ReactiveFormsModule,
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    MatListModule,
-    MatDialogModule,
-  ],
-  exports: [BtnGoalsComponent],
-  entryComponents: [BtnGoalsComponent, BtnGoalsDialogComponent, BtnGoalsErrorComponent],
+    declarations: [BtnGoalsComponent, BtnGoalsDialogComponent, BtnGoalsSelectionComponent, BtnGoalsErrorComponent],
+    imports: [
+        FormsModule,
+        RouterModule,
+        ReactiveFormsModule,
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+        MatListModule,
+        MatDialogModule,
+    ],
+    exports: [BtnGoalsComponent]
 })
 export class BtnGoalsModule { }

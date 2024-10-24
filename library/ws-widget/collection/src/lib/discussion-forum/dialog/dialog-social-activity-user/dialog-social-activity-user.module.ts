@@ -9,16 +9,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatTabsModule } from '@angular/material/tabs'
 
 @NgModule({
-  declarations: [DialogSocialActivityUserComponent],
-  imports: [
-    CommonModule,
-    MatTabsModule,
-    MatDividerModule,
-    MatIconModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    UserImageModule,
-  ],
-  entryComponents: [DialogSocialActivityUserComponent],
+    declarations: [DialogSocialActivityUserComponent],
+    imports: [
+        CommonModule,
+        MatTabsModule,
+        MatDividerModule,
+        MatIconModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        UserImageModule,
+    ]
 })
 export class DialogSocialActivityUserModule { }

@@ -7,9 +7,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnFollowComponent],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, MatBadgeModule],
-  exports: [BtnFollowComponent],
-  entryComponents: [BtnFollowComponent],
+    declarations: [BtnFollowComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, MatBadgeModule],
+    exports: [BtnFollowComponent]
 })
 export class BtnFollowModule { }

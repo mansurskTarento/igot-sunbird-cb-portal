@@ -8,15 +8,14 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnContentMailMeComponent, BtnContentMailMeDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatDialogModule,
-  ],
-  exports: [BtnContentMailMeComponent],
-  entryComponents: [BtnContentMailMeComponent, BtnContentMailMeDialogComponent],
+    declarations: [BtnContentMailMeComponent, BtnContentMailMeDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+    ],
+    exports: [BtnContentMailMeComponent]
 })
 export class BtnContentMailMeModule { }

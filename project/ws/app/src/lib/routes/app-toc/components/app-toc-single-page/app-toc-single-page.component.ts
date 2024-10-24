@@ -15,7 +15,7 @@ import { NsContent, NsAutoComplete } from '@sunbird-cb/collection/src/public-api
 // import { IdiscussionConfig } from '@project-sunbird/discussions-ui-v8'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { FormGroup, FormControl } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { RatingService } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/rating.service'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
@@ -62,7 +62,7 @@ export class AppTocSinglePageComponent implements OnInit, OnChanges, OnDestroy {
   showDiscussionForum: any
   competencies: any
   howerUser!: any
-  searchForm: FormGroup | undefined
+  searchForm: UntypedFormGroup | undefined
   private unsubscribe = new Subject<void>()
   // TODO: TO be removed important
   progress = 50
@@ -135,9 +135,9 @@ export class AppTocSinglePageComponent implements OnInit, OnChanges, OnDestroy {
     this.batchSubscription = this.tocSharedSvc.getSelectedBatch.subscribe(batchData => {
       this.selectedBatchData = batchData
     })
-    this.searchForm = new FormGroup({
-      sortByControl: new FormControl(this.sortReviewValues[0]),
-      searchKey: new FormControl(''),
+    this.searchForm = new UntypedFormGroup({
+      sortByControl: new UntypedFormControl(this.sortReviewValues[0]),
+      searchKey: new UntypedFormControl(''),
     })
 
     // if (this.route && this.route.parent) {

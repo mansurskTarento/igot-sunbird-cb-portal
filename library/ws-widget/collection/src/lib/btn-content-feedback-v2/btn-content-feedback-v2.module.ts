@@ -17,30 +17,29 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [
-    BtnContentFeedbackV2Component,
-    BtnContentFeedbackDialogV2Component,
-    FeedbackSnackbarComponent,
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    EditorQuillModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSnackBarModule,
-  ],
-  exports: [
-    BtnContentFeedbackV2Component,
-    BtnContentFeedbackDialogV2Component,
-    FeedbackSnackbarComponent,
-  ],
-  entryComponents: [BtnContentFeedbackDialogV2Component, FeedbackSnackbarComponent],
+    declarations: [
+        BtnContentFeedbackV2Component,
+        BtnContentFeedbackDialogV2Component,
+        FeedbackSnackbarComponent,
+    ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        EditorQuillModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSnackBarModule,
+    ],
+    exports: [
+        BtnContentFeedbackV2Component,
+        BtnContentFeedbackDialogV2Component,
+        FeedbackSnackbarComponent,
+    ]
 })
 export class BtnContentFeedbackV2Module { }

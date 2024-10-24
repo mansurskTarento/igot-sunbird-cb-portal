@@ -10,18 +10,17 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 
 @NgModule({
-  declarations: [AvatarPhotoComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatRippleModule,
-    WidgetResolverModule,
-    PipeCertificateImageURLModule,
-],
-  exports: [AvatarPhotoComponent],
-  entryComponents: [AvatarPhotoComponent],
+    declarations: [AvatarPhotoComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatRippleModule,
+        WidgetResolverModule,
+        PipeCertificateImageURLModule,
+    ],
+    exports: [AvatarPhotoComponent]
 })
 export class AvatarPhotoModule { }

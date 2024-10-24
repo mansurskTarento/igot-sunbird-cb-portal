@@ -10,10 +10,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [ProfileCretificationsComponent],
-  imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule],
-  entryComponents: [ProfileCretificationsComponent],
+    declarations: [ProfileCretificationsComponent],
+    imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
+        MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule]
 })
 export class ProfileCretificationsModule {
 

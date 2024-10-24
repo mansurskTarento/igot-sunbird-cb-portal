@@ -18,27 +18,25 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnKbComponent, BtnKbDialogComponent, BtnKbConfirmComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatProgressSpinnerModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatTooltipModule,
-    MarkAsCompleteModule,
-    MatDividerModule,
-
-  ],
-  exports: [BtnKbComponent],
-  entryComponents: [BtnKbDialogComponent, BtnKbConfirmComponent],
+    declarations: [BtnKbComponent, BtnKbDialogComponent, BtnKbConfirmComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatProgressSpinnerModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatExpansionModule,
+        MatTooltipModule,
+        MarkAsCompleteModule,
+        MatDividerModule,
+    ],
+    exports: [BtnKbComponent]
 })
 export class BtnKbModule { }

@@ -12,13 +12,12 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [ProfileCareerComponent],
-  imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule,
-    PipeRelativeTimeModule,
-    TranslateModule,
-  ],
-  entryComponents: [ProfileCareerComponent],
+    declarations: [ProfileCareerComponent],
+    imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
+        MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule,
+        PipeRelativeTimeModule,
+        TranslateModule,
+    ]
 })
 export class ProfileCareerModule {
 

@@ -17,7 +17,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { BtnSettingsService } from '@sunbird-cb/collection'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { Router, ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -41,10 +41,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   themes: NsInstanceConfig.ITheme[] = []
   fonts: NsInstanceConfig.IFontSize[] = []
   allowedLangCode: { [langCode: string]: NsInstanceConfig.ILocalsConfig } = {}
-  contentLangForm: FormControl = new FormControl()
+  contentLangForm: UntypedFormControl = new UntypedFormControl()
   showContentLang = false
-  intranetContentForm = new FormControl(false)
-  darkModeForm = new FormControl(false)
+  intranetContentForm = new UntypedFormControl(false)
+  darkModeForm = new UntypedFormControl(false)
   activeThemeKey = ''
   activeFontClass = ''
   activeLocaleClass = ''

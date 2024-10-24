@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
-import { FormGroup, FormControl } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { BrowseCompetencyService } from '../../services/browse-competency.service'
 import { NSBrowseCompetency } from '../../models/competencies.model'
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
@@ -22,7 +22,7 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   defaultThumbnail = ''
   allCompetencies!: NSBrowseCompetency.ICompetencie[]
   competencyAreas: any
-  searchForm: FormGroup | undefined
+  searchForm: UntypedFormGroup | undefined
   appliedFilters: any = []
   searchQuery = ''
   sortBy: any
@@ -57,9 +57,9 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.displayLoader = this.browseCompServ.isLoading()
     this.stateData = { param: '', path: 'all-competencies' }
-    this.searchForm = new FormGroup({
-      sortByControl: new FormControl(''),
-      searchKey: new FormControl(''),
+    this.searchForm = new UntypedFormGroup({
+      sortByControl: new UntypedFormControl(''),
+      searchKey: new UntypedFormControl(''),
     })
     const instanceConfig = this.configSvc.instanceConfig
     if (instanceConfig) {

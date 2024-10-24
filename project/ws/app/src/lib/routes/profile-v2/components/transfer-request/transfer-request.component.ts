@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, Output, EventEmitter } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { HttpErrorResponse } from '@angular/common/http'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
@@ -20,10 +20,10 @@ import { Subject } from 'rxjs'
 export class TransferRequestComponent implements OnInit, OnDestroy {
 
   @Output() enableWithdraw = new EventEmitter<boolean>()
-  transferRequestForm = new FormGroup({
-    organization: new FormControl('', [Validators.required]),
-    group: new FormControl('', [Validators.required]),
-    designation: new FormControl('', [Validators.required]),
+  transferRequestForm = new UntypedFormGroup({
+    organization: new UntypedFormControl('', [Validators.required]),
+    group: new UntypedFormControl('', [Validators.required]),
+    designation: new UntypedFormControl('', [Validators.required]),
   })
   departmentData: any[] = []
   otherDetails = false

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core'
-import { FormGroup, FormControl } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { BrowseCompetencyService } from '../../services/browse-competency.service'
 import { NSBrowseCompetency } from '../../models/competencies.model'
@@ -16,7 +16,7 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 })
 export class CompetencyFiltersComponent implements OnInit, OnDestroy {
   @Output() appliedFilter = new EventEmitter<any>()
-  filterForm: FormGroup | undefined
+  filterForm: UntypedFormGroup | undefined
   private subscription: Subscription = new Subscription
   userFilters: any = []
   myFilterArray: any = []
@@ -47,10 +47,10 @@ export class CompetencyFiltersComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.filterForm = new FormGroup({
-      filterControl: new FormControl(''),
+    this.filterForm = new UntypedFormGroup({
+      filterControl: new UntypedFormControl(''),
       // competencyAreas: new FormControl(''),
-      searchCompArea: new FormControl(''),
+      searchCompArea: new UntypedFormControl(''),
     })
     this.getAllCompetencyAreas()
 

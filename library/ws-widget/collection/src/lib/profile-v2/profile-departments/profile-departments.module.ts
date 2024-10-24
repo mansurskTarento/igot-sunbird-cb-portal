@@ -11,10 +11,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [ProfileDepartmentsComponent],
-  imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
-    MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule],
-  entryComponents: [ProfileDepartmentsComponent],
+    declarations: [ProfileDepartmentsComponent],
+    imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule,
+        MatDividerModule, MatExpansionModule, MatIconModule, MatProgressSpinnerModule]
 })
 export class ProfileDepartmentsModule {
 

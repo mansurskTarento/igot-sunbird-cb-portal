@@ -9,19 +9,18 @@ import { DiscussionsComponent } from './discussions.component'
 import { TranslateModule } from '@ngx-translate/core'
 
 @NgModule({
-  declarations: [DiscussionsComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    SkeletonLoaderModule,
-    PipeRelativeTimeModule,
-    TranslateModule,
-  ],
-  exports: [
-    DiscussionsComponent,
-  ],
-  entryComponents: [DiscussionsComponent],
+    declarations: [DiscussionsComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatIconModule,
+        SkeletonLoaderModule,
+        PipeRelativeTimeModule,
+        TranslateModule,
+    ],
+    exports: [
+        DiscussionsComponent,
+    ]
 })
 
 export class DiscussionsModule { }

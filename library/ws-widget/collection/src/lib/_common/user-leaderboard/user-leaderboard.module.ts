@@ -14,27 +14,26 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [UserLeaderboardComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-    AvatarPhotoModule,
-    SlidersDynamicModule,
-    PipeDurationTransformModule,
-    WeeklyClapsModule,
-    TranslateModule,
-    MatTooltipModule,
-    SkeletonLoaderModule,
-    AvatarPhotoModule,
-    PipeOrdinalModule,
-  ],
-  exports: [
-    UserLeaderboardComponent,
-  ],
-  providers: [UserProfileService],
-  entryComponents: [UserLeaderboardComponent],
+    declarations: [UserLeaderboardComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+        AvatarPhotoModule,
+        SlidersDynamicModule,
+        PipeDurationTransformModule,
+        WeeklyClapsModule,
+        TranslateModule,
+        MatTooltipModule,
+        SkeletonLoaderModule,
+        AvatarPhotoModule,
+        PipeOrdinalModule,
+    ],
+    exports: [
+        UserLeaderboardComponent,
+    ],
+    providers: [UserProfileService]
 })
 export class UserLeaderboardModule { }

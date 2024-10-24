@@ -16,24 +16,23 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 @NgModule({
-  declarations: [HandsOnComponent, HandsOnDialogComponent],
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatExpansionModule,
-    MatButtonModule,
-    MatDialogModule,
-    AceEditorModule,
-    MatProgressSpinnerModule,
-    PipeSafeSanitizerModule,
-    PipeDurationTransformModule,
-    CompletionSpinnerModule,
-  ],
-  exports: [
-    HandsOnComponent,
-  ],
-  entryComponents: [HandsOnDialogComponent],
+    declarations: [HandsOnComponent, HandsOnDialogComponent],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatIconModule,
+        MatProgressBarModule,
+        MatExpansionModule,
+        MatButtonModule,
+        MatDialogModule,
+        AceEditorModule,
+        MatProgressSpinnerModule,
+        PipeSafeSanitizerModule,
+        PipeDurationTransformModule,
+        CompletionSpinnerModule,
+    ],
+    exports: [
+        HandsOnComponent,
+    ]
 })
 export class HandsOnModule { }

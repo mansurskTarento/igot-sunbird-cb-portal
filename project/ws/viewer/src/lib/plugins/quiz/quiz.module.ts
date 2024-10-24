@@ -24,27 +24,26 @@ import { MatTableModule } from '@angular/material/table'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [QuizComponent, OverviewComponent, QuestionComponent, SubmitQuizDialogComponent],
-  entryComponents: [SubmitQuizDialogComponent],
-  imports: [
-    CommonModule,
-    PipeDurationTransformModule,
-    PipeLimitToModule,
-    MatCardModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatListModule,
-    MatRadioModule,
-    MatSidenavModule,
-    MatTableModule,
-    MatButtonModule,
-    BtnFullscreenModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-  ],
-  exports: [
-    QuizComponent,
-  ],
+    declarations: [QuizComponent, OverviewComponent, QuestionComponent, SubmitQuizDialogComponent],
+    imports: [
+        CommonModule,
+        PipeDurationTransformModule,
+        PipeLimitToModule,
+        MatCardModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatListModule,
+        MatRadioModule,
+        MatSidenavModule,
+        MatTableModule,
+        MatButtonModule,
+        BtnFullscreenModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
+    ],
+    exports: [
+        QuizComponent,
+    ]
 })
 export class QuizModule { }

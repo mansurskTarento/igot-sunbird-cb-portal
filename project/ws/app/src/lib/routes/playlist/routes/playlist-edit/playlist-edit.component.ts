@@ -3,7 +3,7 @@ import { NsPlaylist, BtnPlaylistService, NsContent } from '@sunbird-cb/collectio
 import { TFetchStatus, NsPage, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { FormGroup, FormBuilder, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { PLAYLIST_TITLE_MIN_LENGTH, PLAYLIST_TITLE_MAX_LENGTH } from '../../constants/playlist.constant'
 @Component({
   selector: 'ws-app-playlist-edit',
@@ -17,7 +17,7 @@ export class PlaylistEditComponent implements OnInit {
 
   @ViewChild('playlistForm', { static: true }) playlistForm!: ElementRef<any>
 
-  editPlaylistForm: FormGroup
+  editPlaylistForm: UntypedFormGroup
   createPlaylistStatus: TFetchStatus = 'none'
 
   playlist: NsPlaylist.IPlaylist = this.route.snapshot.data.playlist.data
@@ -30,7 +30,7 @@ export class PlaylistEditComponent implements OnInit {
   pageNavbar: Partial<NsPage.INavBackground> = this.configurationSvc.pageNavBar
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: ActivatedRoute,
     public router: Router,
     private playlistSvc: BtnPlaylistService,

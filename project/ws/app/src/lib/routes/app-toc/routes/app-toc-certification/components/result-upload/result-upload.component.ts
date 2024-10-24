@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
-  FormGroup,
+  UntypedFormGroup,
   Validators,
-  FormControl,
+  UntypedFormControl,
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms'
@@ -35,7 +35,7 @@ export class ResultUploadComponent implements OnInit, OnDestroy {
   @Input() certification!: ICertificationMeta
   @ViewChild('fileInput', { static: true }) fileInput!: ElementRef<HTMLInputElement>
 
-  resultForm!: FormGroup
+  resultForm!: UntypedFormGroup
   formData: FormData
   certPrivileges: ICertificationUserPrivileges
   currentDate: Date
@@ -75,16 +75,16 @@ export class ResultUploadComponent implements OnInit, OnDestroy {
       manager: '',
     }
 
-    this.resultForm = new FormGroup({
-      resultType: new FormControl(null, [Validators.required]),
-      result: new FormControl(null, [Validators.required, this.validateResult.bind(this)]),
-      examDate: new FormControl(null, [Validators.required]),
-      verifierEmail: new FormControl(null, [Validators.required]),
-      file: new FormControl('', [
+    this.resultForm = new UntypedFormGroup({
+      resultType: new UntypedFormControl(null, [Validators.required]),
+      result: new UntypedFormControl(null, [Validators.required, this.validateResult.bind(this)]),
+      examDate: new UntypedFormControl(null, [Validators.required]),
+      verifierEmail: new UntypedFormControl(null, [Validators.required]),
+      file: new UntypedFormControl('', [
         this.validateFileType.bind(this),
         this.validateFileSize.bind(this),
       ]),
-      fileName: new FormControl(),
+      fileName: new UntypedFormControl(),
     })
 
     this.fetchStatus = 'none'

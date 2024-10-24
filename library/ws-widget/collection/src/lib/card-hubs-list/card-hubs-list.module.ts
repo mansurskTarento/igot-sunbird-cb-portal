@@ -17,19 +17,18 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
-  declarations: [CardHubsListComponent,
-    ClickOutsideDirective],
-  imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule,
-    MatExpansionModule, MatIconModule, MatProgressSpinnerModule, AvatarPhotoModule,
-    HorizontalScrollerModule, PipeNameTransformModule, PipeOrderByModule, RouterModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    })],
-  entryComponents: [CardHubsListComponent],
+    declarations: [CardHubsListComponent,
+        ClickOutsideDirective],
+    imports: [BrowserModule, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule,
+        MatExpansionModule, MatIconModule, MatProgressSpinnerModule, AvatarPhotoModule,
+        HorizontalScrollerModule, PipeNameTransformModule, PipeOrderByModule, RouterModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        })]
 })
 export class CardHubsListModule {
 

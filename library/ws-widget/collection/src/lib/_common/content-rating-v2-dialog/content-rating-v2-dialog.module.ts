@@ -17,32 +17,31 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [ContentRatingV2DialogComponent],
-  imports: [
-      CommonModule,
-      FormsModule,
-      ReactiveFormsModule,
-      EditorQuillModule,
-      MatButtonModule,
-      MatIconModule,
-      MatTooltipModule,
-      MatDialogModule,
-      MatProgressSpinnerModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatSnackBarModule,
-      MatCheckboxModule,
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient],
-        },
-      }),
-  ],
-  exports: [
-    ContentRatingV2DialogComponent,
-  ],
-  entryComponents: [ContentRatingV2DialogComponent],
+    declarations: [ContentRatingV2DialogComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        EditorQuillModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatCheckboxModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+    ],
+    exports: [
+        ContentRatingV2DialogComponent,
+    ]
 })
 export class ContentRatingV2DialogModule { }

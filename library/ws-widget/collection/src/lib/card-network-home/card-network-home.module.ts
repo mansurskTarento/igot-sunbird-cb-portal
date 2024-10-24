@@ -23,29 +23,28 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 // import { TooltipDirective } from '../_directives/tooltip.directive'
 
 @NgModule({
-  declarations: [CardNetworkHomeComponent],
-  imports: [
-    CommonModule,
-    AvatarPhotoModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    HorizontalScrollerModule,
-    ActivityCardModule,
-    TourModule,
-    PipeNameTransformModule,
-    ChallengeModule,
-    MatInputModule,
-    MatGridListModule,
-    FormsModule,
-    ConnectionNameModule,
-  ],
-  entryComponents: [CardNetworkHomeComponent],
-  providers: [],
+    declarations: [CardNetworkHomeComponent],
+    imports: [
+        CommonModule,
+        AvatarPhotoModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        HorizontalScrollerModule,
+        ActivityCardModule,
+        TourModule,
+        PipeNameTransformModule,
+        ChallengeModule,
+        MatInputModule,
+        MatGridListModule,
+        FormsModule,
+        ConnectionNameModule,
+    ],
+    providers: []
 })
 export class CardNetworkHomeModule {
 

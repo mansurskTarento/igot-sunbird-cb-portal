@@ -64,7 +64,6 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     ],
     exports: [PublicTocComponent],
     providers: [AppTocService],
-    entryComponents: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PublicTocModule { }

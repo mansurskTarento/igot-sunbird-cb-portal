@@ -9,7 +9,7 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core'
-import { FormBuilder, FormGroup } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 import {
@@ -44,7 +44,7 @@ export class FileUploadComponent implements OnInit {
   @ViewChild('errorFile') errorFile!: TemplateRef<HTMLElement>
   @ViewChild('selectFile') selectFile!: TemplateRef<HTMLElement>
 
-  fileUploadForm!: FormGroup
+  fileUploadForm!: UntypedFormGroup
   iprAccepted = false
   file!: File | null
   mimeType = ''
@@ -71,7 +71,7 @@ export class FileUploadComponent implements OnInit {
   @Output() data = new EventEmitter<any>()
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private contentService: EditorContentService,

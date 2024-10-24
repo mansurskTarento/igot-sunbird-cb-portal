@@ -15,23 +15,21 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardBrowseCourseComponent],
-  imports: [
-    CommonModule,
-    UserImageModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatCardModule,
-    HorizontalScrollerModule,
-    ActivityCardModule,
-    TourModule,
-    ChallengeModule,
-  ],
-  entryComponents: [CardBrowseCourseComponent],
-  schemas: [NO_ERRORS_SCHEMA],
-  // providers: [ActivitiesService],
+    declarations: [CardBrowseCourseComponent],
+    imports: [
+        CommonModule,
+        UserImageModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatCardModule,
+        HorizontalScrollerModule,
+        ActivityCardModule,
+        TourModule,
+        ChallengeModule,
+    ],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class CardBrowseCourseModule { }

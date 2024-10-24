@@ -7,17 +7,16 @@ import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardChannelV2Component],
-  imports: [
-    CommonModule,
-    RouterModule,
-    PipeDurationTransformModule,
-    DefaultThumbnailModule,
-    // Material Imports
-    MatCardModule,
-    MatIconModule,
-  ],
-  exports: [CardChannelV2Component],
-  entryComponents: [CardChannelV2Component],
+    declarations: [CardChannelV2Component],
+    imports: [
+        CommonModule,
+        RouterModule,
+        PipeDurationTransformModule,
+        DefaultThumbnailModule,
+        // Material Imports
+        MatCardModule,
+        MatIconModule,
+    ],
+    exports: [CardChannelV2Component]
 })
 export class CardChannelModuleV2 { }

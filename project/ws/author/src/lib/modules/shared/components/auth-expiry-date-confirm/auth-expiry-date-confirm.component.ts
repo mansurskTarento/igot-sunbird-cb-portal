@@ -1,7 +1,7 @@
 import { NotificationService } from '@ws/author/src/lib/services/notification.service'
 import { ErrorParserComponent } from './../error-parser/error-parser.component'
 import { Component, OnInit, Inject } from '@angular/core'
-import { FormGroup, FormBuilder, Validators } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { ISearchContent } from '@ws/author/src/lib/interface/search'
 import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
@@ -21,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
   styleUrls: ['./auth-expiry-date-confirm.component.scss'],
 })
 export class AuthExpiryDateConfirmComponent implements OnInit {
-  userActionForm!: FormGroup
+  userActionForm!: UntypedFormGroup
   isSubmitPressed = false
   minDate = new Date()
   onAction = false
@@ -29,7 +29,7 @@ export class AuthExpiryDateConfirmComponent implements OnInit {
 
   constructor(
     private accessService: AccessControlService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public dialogRef: MatDialogRef<AuthExpiryDateConfirmComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ISearchContent,
     private snackBar: MatSnackBar,

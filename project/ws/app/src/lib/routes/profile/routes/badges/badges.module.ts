@@ -17,25 +17,22 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BadgesComponent, BadgesCardComponent, BadgesNotEarnedComponent, BadgesShareDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    MatProgressBarModule,
-    HorizontalScrollerModule,
-    DefaultThumbnailModule,
-    MatMenuModule,
-    BtnLinkedinShareModule,
-    BtnFacebookShareModule,
-    BtnTwitterShareModule,
-  ],
-  entryComponents: [
-    BadgesShareDialogComponent,
-  ],
+    declarations: [BadgesComponent, BadgesCardComponent, BadgesNotEarnedComponent, BadgesShareDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatTabsModule,
+        MatToolbarModule,
+        MatTooltipModule,
+        MatProgressBarModule,
+        HorizontalScrollerModule,
+        DefaultThumbnailModule,
+        MatMenuModule,
+        BtnLinkedinShareModule,
+        BtnFacebookShareModule,
+        BtnTwitterShareModule,
+    ]
 })
 export class BadgesModule { }

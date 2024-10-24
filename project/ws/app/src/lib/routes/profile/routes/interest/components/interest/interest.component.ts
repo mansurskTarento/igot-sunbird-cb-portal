@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService, EventService, IResolveResponse, WsEvents } from '@sunbird-cb/utils-v2'
@@ -34,7 +34,7 @@ export class InterestComponent implements OnInit {
 
   autocompleteInterests: string[] = []
 
-  interestControl = new FormControl('')
+  interestControl = new UntypedFormControl('')
 
   filteredOptions$: Observable<string[]> = of([])
   appName!: string

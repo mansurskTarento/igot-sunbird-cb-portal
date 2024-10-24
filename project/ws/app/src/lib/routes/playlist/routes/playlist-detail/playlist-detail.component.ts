@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
   BtnPlaylistService,
@@ -55,7 +55,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
       errorType: 'internalServer',
     },
   }
-  editPlaylistForm!: FormGroup
+  editPlaylistForm!: UntypedFormGroup
   changeName!: boolean
   defaultThumbnail: string | undefined = ''
   deletedContents = new Set()
@@ -66,7 +66,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
   screenSizeSubscription: Subscription | null = null
 
   constructor(
-    fb: FormBuilder,
+    fb: UntypedFormBuilder,
     private snackBar: MatSnackBar,
     public configSvc: ConfigurationsService,
     public contentSvc: WidgetContentService,

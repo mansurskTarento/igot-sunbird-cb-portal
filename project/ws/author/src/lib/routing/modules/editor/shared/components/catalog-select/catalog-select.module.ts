@@ -9,17 +9,16 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
 
 @NgModule({
-  declarations: [CatalogSelectComponent],
-  imports: [
-    CommonModule,
-    MatTreeModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-  ],
-  exports: [CatalogSelectComponent],
-  entryComponents: [CatalogSelectComponent],
+    declarations: [CatalogSelectComponent],
+    imports: [
+        CommonModule,
+        MatTreeModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+    ],
+    exports: [CatalogSelectComponent]
 })
 export class CatalogSelectModule { }

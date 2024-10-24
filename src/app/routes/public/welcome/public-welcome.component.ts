@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subscription, Observable, interval } from 'rxjs'
-import { FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { WelcomeUsersService } from './public-welcome.service'
 import { SignupService } from '../public-signup/signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
@@ -89,7 +89,7 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
 })
 
 export class PublicWelcomeComponent implements OnInit, OnDestroy {
-    registrationForm!: FormGroup
+    registrationForm!: UntypedFormGroup
     namePatern = `^[a-zA-Z\\s\\']{1,32}$`
     emailWhitelistPattern = `^[a-zA-Z0-9._-]{3,}\\b@\\b[a-zA-Z0-9]*|\\b(.gov|.nic)\b\\.\\b(in)\\b$`
     telemetryConfig: NsInstanceConfig.ITelemetryConfig | null = null
@@ -167,19 +167,19 @@ export class PublicWelcomeComponent implements OnInit, OnDestroy {
           this.isMobileVerified = true
           mobileDisabled = true
         }
-        this.registrationForm = new FormGroup({
-            firstname: new FormControl(fullname || '', [Validators.required, Validators.pattern(this.namePatern)]),
+        this.registrationForm = new UntypedFormGroup({
+            firstname: new UntypedFormControl(fullname || '', [Validators.required, Validators.pattern(this.namePatern)]),
             // lastname: new FormControl(_.get(this.usr, 'lastName') || '', [Validators.required, Validators.pattern(this.namePatern)]),
             // tslint:disable-next-line:max-line-length
-            group: new FormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterGroup)]),
-            email: new FormControl({ value: _.get(this.usr, 'email') || '', disabled: true }, [Validators.required, Validators.pattern(this.emailWhitelistPattern)]),
+            group: new UntypedFormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterGroup)]),
+            email: new UntypedFormControl({ value: _.get(this.usr, 'email') || '', disabled: true }, [Validators.required, Validators.pattern(this.emailWhitelistPattern)]),
             // department: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterDepartments)]),
-            mobile: new FormControl({ value: _.get(this.usr, 'phone') || '', disabled: mobileDisabled }, [Validators.required, Validators.pattern(this.phoneNumberPattern)]),
-            confirmBox: new FormControl(false, [Validators.required]),
-            type: new FormControl('ministry', [Validators.required]),
+            mobile: new UntypedFormControl({ value: _.get(this.usr, 'phone') || '', disabled: mobileDisabled }, [Validators.required, Validators.pattern(this.phoneNumberPattern)]),
+            confirmBox: new UntypedFormControl(false, [Validators.required]),
+            type: new UntypedFormControl('ministry', [Validators.required]),
             // ministry: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterMinisteries)]),
             // department: new FormControl('', [forbiddenNamesValidator(this.masterDepartments)]),
-            organisation: new FormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
+            organisation: new UntypedFormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
             // recaptchaReactive: new FormControl(null, [Validators.required]),
         })
         // tslint:enable
@@ -267,7 +267,7 @@ export class PublicWelcomeComponent implements OnInit, OnDestroy {
     orgClicked(event: any) {
       if (event) {
         if (event.option && event.option.value && event.option.value.orgName) {
-          const frmctr = this.registrationForm.get('organisation') as FormControl
+          const frmctr = this.registrationForm.get('organisation') as UntypedFormControl
           frmctr.setValue(_.get(event, 'option.value.orgName') || '')
           // frmctr.patchValue(_.get(event, 'option.value') || '')
           this.heirarchyObject = _.get(event, 'option.value')

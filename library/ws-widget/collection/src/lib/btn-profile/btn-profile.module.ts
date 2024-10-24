@@ -16,22 +16,21 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 // import { TreeCatalogModule } from '../tree-catalog/tree-catalog.module'
 
 @NgModule({
-  declarations: [BtnProfileComponent, WidgetUrlResolverDirective],
-  imports: [
-    AvatarPhotoModule,
-    CommonModule,
-    LogoutModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatSlideToggleModule,
-    RouterModule,
-    WidgetResolverModule,
-    TranslateModule,
-  ],
-  exports: [BtnProfileComponent],
-  entryComponents: [BtnProfileComponent],
+    declarations: [BtnProfileComponent, WidgetUrlResolverDirective],
+    imports: [
+        AvatarPhotoModule,
+        CommonModule,
+        LogoutModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatSlideToggleModule,
+        RouterModule,
+        WidgetResolverModule,
+        TranslateModule,
+    ],
+    exports: [BtnProfileComponent]
 })
 export class BtnProfileModule { }

@@ -11,18 +11,17 @@ import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CourseCompletionDialogComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatCardModule,
-    ContentRatingV2DialogModule,
-    TranslateModule.forChild(),
-    MatIconModule,
-  ],
-  exports: [CourseCompletionDialogComponent],
-  entryComponents: [CourseCompletionDialogComponent],
+    declarations: [CourseCompletionDialogComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatDividerModule,
+        MatCardModule,
+        ContentRatingV2DialogModule,
+        TranslateModule.forChild(),
+        MatIconModule,
+    ],
+    exports: [CourseCompletionDialogComponent]
 })
 export class CourseCompletionDialogModule { }

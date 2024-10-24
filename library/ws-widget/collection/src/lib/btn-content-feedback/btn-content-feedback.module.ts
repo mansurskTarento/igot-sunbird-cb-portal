@@ -11,18 +11,17 @@ import { MatInputModule } from '@angular/material/input'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
-  declarations: [BtnContentFeedbackComponent, BtnContentFeedbackDialogComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatTooltipModule,
-    MatDialogModule,
-    MatFormFieldModule,
-  ],
-  exports: [BtnContentFeedbackComponent],
-  entryComponents: [BtnContentFeedbackComponent, BtnContentFeedbackDialogComponent],
+    declarations: [BtnContentFeedbackComponent, BtnContentFeedbackDialogComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatFormFieldModule,
+    ],
+    exports: [BtnContentFeedbackComponent]
 })
 export class BtnContentFeedbackModule { }

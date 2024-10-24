@@ -14,23 +14,22 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 @NgModule({
-  declarations: [ProfileDetailComponent, ViewUsersComponent],
-  imports: [
-    CommonModule,
-    CardDetailsModule,
-    MatIconModule,
-    MatButtonModule,
-    RouterModule,
-    MatCardModule,
-    MatDividerModule,
-    MatDialogModule,
-    MatInputModule,
-    MatFormFieldModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  entryComponents: [ViewUsersComponent],
-  exports: [ProfileDetailComponent],
+    declarations: [ProfileDetailComponent, ViewUsersComponent],
+    imports: [
+        CommonModule,
+        CardDetailsModule,
+        MatIconModule,
+        MatButtonModule,
+        RouterModule,
+        MatCardModule,
+        MatDividerModule,
+        MatDialogModule,
+        MatInputModule,
+        MatFormFieldModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    exports: [ProfileDetailComponent]
 })
 
 export class ProfileDetailModule { }
