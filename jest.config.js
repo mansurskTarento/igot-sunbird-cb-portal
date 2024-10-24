@@ -5,9 +5,5 @@ module.exports = {
       '^.+\\.tsx?$': 'ts-jest',
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    transformIgnorePatterns: ['/node_modules/'],
-    moduleNameMapper: {
-      '^src/(.*)$': '/home/sujithsojan/Desktop/igot-jest/sunbird-cb-adminportal/src/$1',
-    },
-    setupFiles: ['/home/sujithsojan/Desktop/igot-jest/sunbird-cb-adminportal/src/jest.setup.ts'],
+    transformIgnorePatterns: ['/node_modules/']
   }
