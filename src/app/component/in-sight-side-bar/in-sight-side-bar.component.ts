@@ -170,7 +170,7 @@ export class InsightSideBarComponent implements OnInit {
       const daysPassed = currentDate.diff(endDate, 'days')
       if (daysPassed === 0) {
         this.canShowNlwCard = true
-        this.daysCompleted = 6
+        this.daysCompleted = this.totlaDays
       }
     }
   }
