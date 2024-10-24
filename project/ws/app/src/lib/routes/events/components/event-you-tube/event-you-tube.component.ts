@@ -56,6 +56,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   intervalStarted = false
   isEnrolled = false
   resumeEventStatus = 0
+  rateToFire = 180
   private player: videoJs.Player | null = null
   private dispose: (() => void) | null = null
   constructor(private route: ActivatedRoute, private eventService: EventService, private configSvc: ConfigurationsService) {
@@ -166,7 +167,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
             let currentDateTimeStamp = new Date().getTime()
             if(currentDateTimeStamp >= eventDateTimeStamp) {
-              if(timeSpent && timeSpent % 60 === 0) {
+              if(timeSpent && timeSpent % this.rateToFire === 0) {
                 this.startInterval(timeSpent, lastTimeAccessed)
               }
                 this.intervalStarted = true
@@ -237,7 +238,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startInterval(timeSpent: any, lastTimeAccessed: any) {
-    this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed)
+    this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed, true)
     // if (!this.intervalStarted) {
       // this.progressInterval = setInterval(() => {
       //   if (this.progressInterval) {
@@ -266,7 +267,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${date} ${hour}${min}`
   }
 
-  saveProgressUpdate(progress: any, timeSpent: any, lastTimeAccessed: any) {
+  saveProgressUpdate(progress: any, timeSpent: any, lastTimeAccessed: any, normalUpdate?: boolean) {
        let userId = ''
        let completionPercentage: any = 0
        const batchId = this.getBatchId()
@@ -274,7 +275,10 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         userId = this.configSvc.userProfile.userId || ''
       }
       if (timeSpent) {
-        completionPercentage = (timeSpent / (this.eventData.duration * 60)) * 100
+        // completionPercentage = (timeSpent / (this.eventData.duration * 60)) * 100
+        completionPercentage = normalUpdate ?
+        (this.eventData.duration * 60 / (this.eventData.duration * 60)) * 100 :
+        (timeSpent / (this.eventData.duration * 60)) * 100
       }
 
     if (this.eventData) {
@@ -292,7 +296,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
                     'current': [ // current state
                       progress,
                     ],
-                    'duration': timeSpent, // watch time
+                    'duration': normalUpdate ? this.eventData.duration * 60 : timeSpent, // watch time
                     'mimeType': 'application/html',
                     'stateMetaData': timeSpent, // last state
                 },
@@ -301,11 +305,18 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         ],
       },
     }
+    if (completionPercentage > 50) {
+      this.rateToFire = 300
+    }
     if (this.resumeEventStatus !== 2) {
       /* tslint:disable */
       console.log('req', req)
       /* tslint:enable */
-        this.eventService.saveEventProgressUpdate(req).subscribe(() => {})
+        this.eventService.saveEventProgressUpdate(req).subscribe((_res: any) => {
+          if (completionPercentage > 50) {
+            this.resumeEventStatus =  2
+          }
+        })
     } else {
       /* tslint:disable */
       console.log('Already completed ', req)

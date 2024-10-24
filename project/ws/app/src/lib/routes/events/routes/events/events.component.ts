@@ -40,6 +40,7 @@ export class EventsComponent implements OnInit {
     maxWidgets: 2,
   }
   eventWidgetData: any
+  todaysEventWidgetData: any
   todaysLiveEvents: any = []
 
   constructor(
@@ -65,6 +66,7 @@ export class EventsComponent implements OnInit {
       this.translate.use(lang)
     }
     this.eventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.eventStrips) || []
+    this.todaysEventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.todaysEventStrips) || []
   }
 
   ngOnInit() {
@@ -292,11 +294,44 @@ export class EventsComponent implements OnInit {
 
     if (this.allEvents['karmayogiSaptahEvents'] && this.allEvents['karmayogiSaptahEvents'].length > 0) {
       this.allEvents['karmayogiSaptahEvents'].forEach((event: any) => {
+        event['isEventPast'] = false
+        event['isEventLive'] = false
+        event['isEventFuture'] = false
         this.addCustomDateAndTime(event)
+        const now = new Date()
+        const today = moment(now).format('YYYY-MM-DD HH:mm')
+        if (moment(today).isBetween(event.eventCustomStartDate, event.eventCustomEndDate)) {
+          event['isEventLive'] = true
+          if (today >= event.eventCustomStartDate) {
+            if (event.recordedLinks && event.recordedLinks.length > 0) {
+              event['isEventLive']  = false
+            }
+          }
+        } else if (today >= event.eventCustomEndDate) {
+          event['isEventLive']  = false
+          if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
+            event['isEventPast'] = true
+          }
+        } else {
+          if (moment(today).isBefore(event.eventCustomStartDate) && moment(today).isBefore(event.eventCustomEndDate)) {
+            event['isEventFuture'] = true
+          }
+        }
         karmayogiSaptahEvents.push(event)
       })
 
-      karmayogiSaptahEvents = this.sortEvents(karmayogiSaptahEvents)
+      let liveEvents: any = []
+      let pastEvents: any = []
+      let futureEvents: any = []
+
+      liveEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventLive)
+      pastEvents = karmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventPast)
+      futureEvents = karmayogiSaptahEvents.filter((futureEvent: any) => futureEvent.isEventFuture)
+      liveEvents = this.sortEventsAsc(liveEvents)
+      futureEvents = this.sortEventsAsc(futureEvents)
+      pastEvents = this.sortEvents(pastEvents)
+      karmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      // karmayogiSaptahEvents = this.sortEvents(karmayogiSaptahEvents)
 
     }
 
@@ -328,6 +363,13 @@ export class EventsComponent implements OnInit {
       const firstDate: any = new Date(a.eventCustomStartDate)
       const secondDate: any = new Date(b.eventCustomStartDate)
       return  secondDate > firstDate  ? 1 : -1
+    })
+  }
+  sortEventsAsc(eventData: any) {
+    return eventData.sort((a: any, b: any) => {
+      const firstDate: any = new Date(a.eventCustomStartDate)
+      const secondDate: any = new Date(b.eventCustomStartDate)
+      return  secondDate < firstDate  ? 1 : -1
     })
   }
 

@@ -207,7 +207,7 @@
             </div>
           </div>
         </ng-container>
-        <div class="flex flex-1 flex-column mb-2">
+        <div class="flex flex-1 flex-column mb-2 mt-4">
           <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
         </div>
         <div class="flex flex-wrap">
@@ -240,16 +240,15 @@
         </div>
       </ng-container>
     </mat-tab>
-    <mat-tab label="{{'discuss.comments' | translate}}">
-      <!-- <h1>Comment Section - Coming Soon</h1> -->
+    <!-- <mat-tab label="{{'discuss.comments' | translate}}">
+      <h1>Comment Section - Coming Soon</h1>
       <ng-container *ngIf="!skeletonLoader">
-        <!-- discussion v2 comments implmentation -->
-        <!-- <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="showReviews && discussWidgetData"> -->
-        <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="discussWidgetData">
+        discussion v2 comments implmentation
+        <div class="flex flex-col ratings-div gap-10 mt-4" id="ratingsDiv" *ngIf="discussWidgetData">
             <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
         </div>
     </ng-container>
-    </mat-tab>
+    </mat-tab> -->
   </mat-tab-group>
 
 

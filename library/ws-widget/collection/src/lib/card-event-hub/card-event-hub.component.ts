@@ -45,7 +45,8 @@ export class CardEventHubComponent extends WidgetBaseComponent
       this.defaultThumbnail = instanceConfig.logos.defaultContent || ''
     }
 
-    if (this.widgetData && this.widgetData.context && this.widgetData.context.pageSection === 'todaysevents') {
+    if (this.widgetData && this.widgetData.context && (this.widgetData.context.pageSection === 'todaysevents' 
+      ||this.widgetData.context.pageSection === 'liveEvents')) {
       if (this.widgetData.content) {
         const eventDate = this.events.customDateFormat(this.widgetData.content.event.startDate, this.widgetData.content.event.startTime)
         const eventendDate = this.events.customDateFormat(this.widgetData.content.event.endDate, this.widgetData.content.event.endTime)
