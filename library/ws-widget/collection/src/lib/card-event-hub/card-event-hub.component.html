@@ -11,7 +11,7 @@
 
 <ng-template #cardEvents>
     <mat-card class="event-card-portrait cursor-pointer mr-5 mt-4"
-        [routerLink]="['/app/event-hub/home/' + widgetData?.content?.event.identifier]">
+        [routerLink]="['/app/event-hub/home/' + widgetData?.content?.event?.identifier]">
         <div class="flex pt-1">
             <div class="margin-right-s">
                 <ng-container>
@@ -24,10 +24,10 @@
             </div>
             <div class="width-1-1">
                 <div class="event-type mat-body-2 mat-card-subtitle">
-                    <mat-icon>event</mat-icon> {{widgetData?.content?.event.resourceType}}
+                    <mat-icon>event</mat-icon> {{widgetData?.content?.event?.resourceType}}
                 </div>
                 <div class="portrait-subheading mat-subheading-1 event-text">
-                    <span class="mt-2">{{widgetData?.content.eventName}} </span>
+                    <span class="mt-2">{{widgetData?.content?.eventName}} </span>
                 </div>
                 <div class="portrait-subheading mat-subheading-1 event-text min-height-0">
                     <span class="portrait-org-name mat-body-2">{{widgetData?.content?.eventStartTime}} -
@@ -35,8 +35,8 @@
                 </div>
                 <div class="flex w-full flex-middle" *ngIf="isEventLive && !isEventRecording">
                     <span class="light-font livecss mr-2 no-box-shadow"><span class="dot"></span>
-                        {{widgetData?.content?.event.status}} </span>
-                    <button *ngIf="widgetData?.content?.event.resourceType === 'Karmayogi Saptah'" mat-raised-button type="button"
+                        {{widgetData?.content?.event?.status}} </span>
+                    <button *ngIf="widgetData?.content?.event?.resourceType === 'Karmayogi Saptah'" mat-raised-button type="button"
                         class="ws-mat-primary-background mr-1 no-box-shadow join-event">Join event</button>
                 </div>
                 <div class="flex w-full flex-middle" *ngIf="!isEventLive && isEventRecording">
