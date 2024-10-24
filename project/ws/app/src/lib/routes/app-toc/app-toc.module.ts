@@ -112,6 +112,8 @@ import { AppTocCohortsDirective } from './routes/app-toc-cohorts/app-toc-cohorts
 import { AppTocSinglePageDirective } from './routes/app-toc-single-page/app-toc-single-page.directive'
 import { AppTocCiosHomeComponent } from './components/app-toc-cios-home/app-toc-cios-home.component'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
+import { UserProfileService } from '../user-profile/services/user-profile.service'
+import { OtpService } from '../user-profile/services/otp.services'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -254,6 +256,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     TocKpiValuesModule,
     KarmaPointsModule,
     TipsForLearnerModule,
+    ReactiveFormsModule,
   ],
   providers: [
     AppTocResolverService,
@@ -270,6 +273,8 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     ActionService,
     MultilingualTranslationsService,
     CommonMethodsService,
+    UserProfileService,
+    OtpService,
   ],
   exports: [
     AppTocDiscussionComponent,

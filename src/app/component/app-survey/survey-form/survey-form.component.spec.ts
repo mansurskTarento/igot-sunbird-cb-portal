@@ -1,25 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { SurveyFormComponent } from './survey-form.component';
+import { SurveyFormComponent } from './survey-form.component'
 
 describe('SurveyFormComponent', () => {
-  let component: SurveyFormComponent;
-  let fixture: ComponentFixture<SurveyFormComponent>;
+  let component: SurveyFormComponent
+  let fixture: ComponentFixture<SurveyFormComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SurveyFormComponent ]
+      declarations: [SurveyFormComponent],
     })
-    .compileComponents();
-  }));
+    .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SurveyFormComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(SurveyFormComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

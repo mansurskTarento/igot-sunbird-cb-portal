@@ -1,6 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "esModuleInterop": false,
+    "skipLibCheck": true,
+    "types": ["jest"],
     "alwaysStrict": true,
     "baseUrl": "./",
     "declaration": false,

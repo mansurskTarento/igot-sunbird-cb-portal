@@ -207,15 +207,15 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       this.content['subTheme'] = this.getSubThemes()
     }
 
-    if(this.config && this.config.discussWidgetData) {
+    if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
-      if (this.content && this.content.identifier ) {
+      if (this.content && this.content.identifier) {
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
-        if(this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
         }
       }
-      this.discussWidgetData = {...this.discussWidgetData}
+      this.discussWidgetData = { ...this.discussWidgetData }
     }
   }
 

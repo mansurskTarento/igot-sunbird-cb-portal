@@ -33,7 +33,7 @@
     "@types/chart.js": "^2.9.30",
     "@types/hammerjs": "^2.0.39",
     "@types/lodash": "^4.14.168",
-    "@types/video.js": "^7.3.14",
+    "@types/video.js": "^7.2.12",
     "ts-node": "~8.3.0",
     "tsickle": "^0.36.0",
     "tslint": "~5.18.0",

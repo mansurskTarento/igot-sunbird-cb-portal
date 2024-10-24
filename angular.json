@@ -51,16 +51,18 @@
               "src/styles/mat-typography.scss",
               "src/styles/styles.scss",
               "node_modules/shepherd.js/dist/css/shepherd.css",
-              {"inject":false,
+              {
+                "inject":true,
                 "input": "src/themes/theme-igot.scss",
                 "bundleName": "theme-igot"
-},
+              },
               "node_modules/pdfjs-dist/web/pdf_viewer.css",
               "src/fusion-assets/fonts/lato/stylesheet.css",
               "src/fusion-assets/fonts/montserrat/stylesheet.css",
               "node_modules/@sunbird-cb/discussions-ui-v8/assets/styles/global.scss",
               "src/dashboard-assets/fonts/lato/stylesheet.css",
-              "src/dashboard-assets/fonts/montserrat/stylesheet.css"              
+              "src/dashboard-assets/fonts/montserrat/stylesheet.css",
+              "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss"             
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

@@ -457,6 +457,10 @@
                 <div class="label">{{ 'profileInfo.eHRMSId' | translate }}</div>
                 <div class="info-value">{{ portalProfile?.additionalProperties?.externalSystemId || 'NA' }}</div>
               </div>
+              <div class="info-div">
+                <div class="label">{{ 'profileInfo.dor' | translate }}</div>
+                <div class="info-value">{{ portalProfile?.additionalProperties?.externalSystemDor || 'NA' }}</div>
+              </div>
               <div class="info-div" *ngIf="noCadreDetails">
                 <div class="label">
                   {{ 'profileInfo.isCadre' | translate }}

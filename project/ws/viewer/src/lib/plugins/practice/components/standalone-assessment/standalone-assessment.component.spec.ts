@@ -1,25 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { StandaloneAssessmentComponent } from './standalone-assessment.component';
+import { StandaloneAssessmentComponent } from './standalone-assessment.component'
 
 describe('StandaloneAssessmentComponent', () => {
-  let component: StandaloneAssessmentComponent;
-  let fixture: ComponentFixture<StandaloneAssessmentComponent>;
+  let component: StandaloneAssessmentComponent
+  let fixture: ComponentFixture<StandaloneAssessmentComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StandaloneAssessmentComponent ]
+      declarations: [StandaloneAssessmentComponent],
     })
-    .compileComponents();
-  }));
+    .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StandaloneAssessmentComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(StandaloneAssessmentComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

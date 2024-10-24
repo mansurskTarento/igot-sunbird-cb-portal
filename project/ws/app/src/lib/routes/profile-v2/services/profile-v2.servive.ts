@@ -16,6 +16,7 @@ const API_END_POINTS = {
   // getUserdetailsV2FromRegistry: '/apis/protected/v8/user/profileRegistry/getUserRegistryByUser',
   getUserdetailsV2FromRegistry: '/apis/proxies/v8/api/user/v2/read',
   getCadreDetails: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig',
+  approvalDetails: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch',
 }
 
 @Injectable({
@@ -41,5 +42,12 @@ constructor(private http: HttpClient) { }
 
   fetchCadre(): Observable<any> {
     return this.http.get<any>(`${API_END_POINTS.getCadreDetails}`)
+  }
+
+  fetchApprovalDetails() {
+    return this.http.post<any>(API_END_POINTS.approvalDetails, {
+      serviceName: 'profile',
+      applicationStatus: 'SEND_FOR_APPROVAL',
+    })
   }
 }

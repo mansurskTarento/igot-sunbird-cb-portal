@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core'
 import { Resolve, Router } from '@angular/router'
-// import { Observable, of } from 'rxjs';
-// import { catchError } from 'rxjs/operators';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Injectable({

@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core'
-// import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'cb-tour-guide'
+import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'igot-cb-tour-guide'
 import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import { TranslateService } from '@ngx-translate/core'
@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core'
 })
 
 export class AppTourComponent {
-  // progressIndicatorLocation = ProgressIndicatorLocation.TopOfTourBlock
+  progressIndicatorLocation = ProgressIndicatorLocation.TopOfTourBlock
   currentWindow: any
   videoProgressTime = 114
   tourStatus: any = { visited: true, skipped: false }
@@ -28,139 +28,139 @@ export class AppTourComponent {
     }
   }
   // tslint:disable-next-line
-  // private readonly TOUR: GuidedTour = {
-  //   tourId: 'purchases-tour',
-  //   useOrb: false,
-  //   completeCallback: () => this.completeTour(),
-  //   nextCallback: (currentStep, stepObject) => this.nextCb(currentStep, stepObject),
-  //   prevCallback: (currentStep, stepObject) => this.prevCb(currentStep, stepObject),
-  //   closeModalCallback: () => setTimeout(() => {
-  //     this.closeModal()
-  //     // tslint:disable-next-line
-  //   }, 500),
-  //   steps: [
-  //     {
-  //       icon: 'school',
-  //       connectorDirection: 'left',
-  //       title: this.translateTo('stepLearn'),
-  //       selector: '#Learn',
-  //       class: 'tour_learn',
-  //       containerClass: 'tour_learn_container',
-  //       content: this.translateTo('learnContnet'),
-  //       orientation: Orientation.BottomLeft,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'forum',
-  //       connectorDirection: 'left',
-  //       title: this.translateTo('stepDiscuss'),
-  //       selector: '#Discuss',
-  //       class: 'tour_discuss',
-  //       containerClass: 'tour_discuss_container',
-  //       content: this.translateTo('discussContent'),
-  //       orientation: Orientation.BottomLeft,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'search',
-  //       connectorDirection: 'left',
-  //       title: this.translateTo('stepSearch'),
-  //       selector: '#app-search-bar',
-  //       class: 'tour_search',
-  //       containerClass: 'tour_search_container',
-  //       content: this.translateTo('searchContent'),
-  //       orientation: Orientation.BottomLeft,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'person',
-  //       connectorDirection: 'right',
-  //       title: this.translateTo('stepMyProfile'),
-  //       selector: '#user_icon',
-  //       class: 'tour_profile',
-  //       containerClass: 'tour_profile_container',
-  //       content: this.translateTo('myProfileContent'),
-  //       orientation: Orientation.BottomRight,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //   ],
-  //   preventBackdropFromAdvancing: true,
-  // }
+  private readonly TOUR: GuidedTour = {
+    tourId: 'purchases-tour',
+    useOrb: false,
+    completeCallback: () => this.completeTour(),
+    nextCallback: (currentStep, stepObject) => this.nextCb(currentStep, stepObject),
+    prevCallback: (currentStep, stepObject) => this.prevCb(currentStep, stepObject),
+    // closeModalCallback: () => setTimeout(() => {
+    //   this.closeModal()
+    //   // tslint:disable-next-line
+    // }, 500),
+    steps: [
+      {
+        icon: 'school',
+        connectorDirection: 'left',
+        title: this.translateTo('stepLearn'),
+        selector: '#Learn',
+        class: 'tour_learn',
+        containerClass: 'tour_learn_container',
+        content: this.translateTo('learnContnet'),
+        orientation: Orientation.BottomLeft,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'forum',
+        connectorDirection: 'left',
+        title: this.translateTo('stepDiscuss'),
+        selector: '#Discuss',
+        class: 'tour_discuss',
+        containerClass: 'tour_discuss_container',
+        content: this.translateTo('discussContent'),
+        orientation: Orientation.BottomLeft,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'search',
+        connectorDirection: 'left',
+        title: this.translateTo('stepSearch'),
+        selector: '#app-search-bar',
+        class: 'tour_search',
+        containerClass: 'tour_search_container',
+        content: this.translateTo('searchContent'),
+        orientation: Orientation.BottomLeft,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'person',
+        connectorDirection: 'right',
+        title: this.translateTo('stepMyProfile'),
+        selector: '#user_icon',
+        class: 'tour_profile',
+        containerClass: 'tour_profile_container',
+        content: this.translateTo('myProfileContent'),
+        orientation: Orientation.BottomRight,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+    ],
+    preventBackdropFromAdvancing: true,
+  }
   // tslint:disable-next-line
-  // private readonly MOBILE_TOUR: GuidedTour = {
-  //   tourId: 'purchases-tour',
-  //   useOrb: false,
-  //   completeCallback: () => this.completeTour(),
-  //   steps: [
-  //     {
-  //       icon: 'school',
-  //       isMobile: true,
-  //       connectorDirection: 'top',
-  //       title: this.translateTo('stepLearn'),
-  //       selector: '#Learn',
-  //       class: 'tour_learn_mobile',
-  //       containerClass: 'tour_learn_mobile_container',
-  //       content: this.translateTo('learnContnet'),
-  //       orientation: Orientation.BottomLeft,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'forum',
-  //       isMobile: true,
-  //       connectorDirection: 'top',
-  //       title: this.translateTo('stepDiscuss'),
-  //       selector: '#Discuss',
-  //       class: 'tour_discuss_mobile',
-  //       containerClass: 'tour_discuss_mobile_container',
-  //       content: 'Discuss new ideas with colleagues and experts in the government.',
-  //       orientation: Orientation.Bottom,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'search',
-  //       isMobile: true,
-  //       connectorDirection: 'bottom',
-  //       title: 'Search',
-  //       selector: '#feature_mobile_search',
-  //       class: 'tour_search_mobile',
-  //       containerClass: 'tour_search_mobile_container',
-  //       content: 'Find the perfect course and program tailor-made for you.',
-  //       orientation: Orientation.TopRight,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //     {
-  //       icon: 'person',
-  //       isMobile: true,
-  //       connectorDirection: 'top',
-  //       title: 'My Profile',
-  //       selector: '#user_icon',
-  //       class: 'tour_profile_mobile',
-  //       containerClass: 'tour_profile_mobile_container',
-  //       content: 'Update your information to get the best-suited courses and programs.',
-  //       orientation: Orientation.BottomLeft,
-  //       nextBtnClass: 'action-orange mat-button',
-  //       backBtnClass: 'back',
-  //       skipBtnClass: 'skip',
-  //     },
-  //   ],
-  // }
+  private readonly MOBILE_TOUR: GuidedTour = {
+    tourId: 'purchases-tour',
+    useOrb: false,
+    completeCallback: () => this.completeTour(),
+    steps: [
+      {
+        icon: 'school',
+        isMobile: true,
+        connectorDirection: 'top',
+        title: this.translateTo('stepLearn'),
+        selector: '#Learn',
+        class: 'tour_learn_mobile',
+        containerClass: 'tour_learn_mobile_container',
+        content: this.translateTo('learnContnet'),
+        orientation: Orientation.BottomLeft,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'forum',
+        isMobile: true,
+        connectorDirection: 'top',
+        title: this.translateTo('stepDiscuss'),
+        selector: '#Discuss',
+        class: 'tour_discuss_mobile',
+        containerClass: 'tour_discuss_mobile_container',
+        content: 'Discuss new ideas with colleagues and experts in the government.',
+        orientation: Orientation.Bottom,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'search',
+        isMobile: true,
+        connectorDirection: 'bottom',
+        title: 'Search',
+        selector: '#feature_mobile_search',
+        class: 'tour_search_mobile',
+        containerClass: 'tour_search_mobile_container',
+        content: 'Find the perfect course and program tailor-made for you.',
+        orientation: Orientation.TopRight,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+      {
+        icon: 'person',
+        isMobile: true,
+        connectorDirection: 'top',
+        title: 'My Profile',
+        selector: '#user_icon',
+        class: 'tour_profile_mobile',
+        containerClass: 'tour_profile_mobile_container',
+        content: 'Update your information to get the best-suited courses and programs.',
+        orientation: Orientation.BottomLeft,
+        nextBtnClass: 'action-orange mat-button',
+        backBtnClass: 'back',
+        skipBtnClass: 'skip',
+      },
+    ],
+  }
 
   constructor(
-    // private guidedTourService: GuidedTourService,
+    private guidedTourService: GuidedTourService,
     private utilitySvc: UtilityService,
     private configSvc: ConfigurationsService,
     private events: EventService,
@@ -202,11 +202,11 @@ export class AppTourComponent {
     if (this.isMobile) {
       // @ts-ignore
       setTimeout(() => {
-        // this.guidedTourService.startTour(this.MOBILE_TOUR)
+        this.guidedTourService.startTour(this.MOBILE_TOUR)
         // tslint:disable-next-line: align
       }, 2000)
     } else {
-     // this.guidedTourService.startTour(this.TOUR)
+     this.guidedTourService.startTour(this.TOUR)
       setTimeout(() => {
         // @ts-ignore
         const _left = parseFloat(document.getElementsByClassName('tour_learn')[0]['style']['left'].split('px')[0])
@@ -241,14 +241,14 @@ export class AppTourComponent {
     this.closePopupIcon = false
     setTimeout(() => {
       // tslint:disable-next-line
-      // this.guidedTourService && this.guidedTourService.skipTour()
+      this.guidedTourService && this.guidedTourService.skipTour()
       // tslint:disable-next-line: align
     }, 2000)
     if (this.isMobile) {
       // tslint:disable-next-line: align
        // @ts-ignore
        setTimeout(() => {
-        //  this.guidedTourService.startTour(this.MOBILE_TOUR)
+         this.guidedTourService.startTour(this.MOBILE_TOUR)
          // tslint:disable-next-line: align
        }, 2000)
     }
@@ -268,7 +268,7 @@ export class AppTourComponent {
 
   onCongrats(): void {
     this.showCompletePopup = false
-    // localStorage.setItem('tourGuide',JSON.stringify({'disable': true}) )
+    localStorage.setItem('tourGuide', JSON.stringify({ 'disable': true }))
     this.configSvc.updateTourGuideMethod(true)
   }
 
@@ -282,15 +282,15 @@ export class AppTourComponent {
   }
 
   nextCb(currentStep: number, stepObject: any) {
-    // if (stepObject.title == 'My Profile') {
-    //   this.hideCloseBtn = true
-    // }
+    if (stepObject.title === 'My Profile') {
+      this.hideCloseBtn = true
+    }
     // tslint:disable-next-line
     console.log('currentStep', currentStep)
     this.currentWindow = stepObject
-    // const currentStepObj: any = this.TOUR.steps[currentStep - 1]
+    const currentStepObj: any = this.TOUR.steps[currentStep - 1]
     // // tslint:disable-next-line: max-line-length
-    // this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-next`, currentStepObj.title.toLowerCase())
+    this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-next`, currentStepObj.title.toLowerCase())
   }
 
   prevCb(currentStep: number, stepObject: any) {
@@ -298,9 +298,9 @@ export class AppTourComponent {
     console.log('currentStep', currentStep)
     this.hideCloseBtn = false
     this.currentWindow = stepObject
-    // const currentStepObj: any = this.TOUR.steps[currentStep +  1]
+    const currentStepObj: any = this.TOUR.steps[currentStep +  1]
     // // tslint:disable-next-line: max-line-length
-    // this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-previous`, currentStepObj.title.toLowerCase())
+    this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-previous`, currentStepObj.title.toLowerCase())
   }
 
   raiseGetStartedStartTelemetry() {
