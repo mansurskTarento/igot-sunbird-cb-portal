@@ -102,10 +102,12 @@
         <ws-widget-karma-points [data]="kparray" [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent, 
           pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
       </div>
-      <div class="certificate-info" *ngIf="(isEnrolled && pastEvent && enrolledEvent?.status > 1 &&
-              enrolledEvent?.issuedCertificates?.length === 0) || !completedAfterExpiry" >
-        <p class="">{{ 'eventDetailsRightCard.certificateInfo' | translate }}</p>
-      </div>
+      <!-- <ng-container *ngIf="!completedAfterExpiry"> -->
+        <div class="certificate-info" *ngIf="(isEnrolled && pastEvent && enrolledEvent?.status > 1 &&
+                enrolledEvent?.issuedCertificates?.length === 0)" >
+          <p class="">{{ 'eventDetailsRightCard.certificateInfo' | translate }}</p>
+        </div>
+      <!-- </ng-container> -->
      
       <div class="margin-top-m">
         <span class="mat-subheading-2 ws-mat-accent-text" role="link" tabindex="0">{{ 'eventDetailsRightCard.eventType' | translate }}</span>
