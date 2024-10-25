@@ -10,7 +10,7 @@
         
         <ng-container *ngIf="!enrollBtnLoading">
           <!--Not enrolled -->
-          <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent)">
+          <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent || pastEvent)">
             <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId">
               <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
                 <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
@@ -36,13 +36,13 @@
               </p>
             </div>
           </ng-container>
-          <ng-container>
+          <!-- <ng-container>
             <div class="ml-4 mt-2 mr-6 mb-2 view-more  view-all" *ngIf="!isEnrolled && pastEvent">
                 <a class="action-button"  [href]="getLink()" target="_blank" (click)="raiseTelemetry('view-recording')">
                   <span i18n>{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
                 </a>
             </div>
-          </ng-container>
+          </ng-container> -->
         </ng-container>
         <ng-container *ngIf="enrollBtnLoading">
           <ws-widget-skeleton-loader [width]="'100%'" [height]="'36px'"
