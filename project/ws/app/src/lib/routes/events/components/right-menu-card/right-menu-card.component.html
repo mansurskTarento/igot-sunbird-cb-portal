@@ -100,10 +100,10 @@
       </div>
       <div class="margin-top-m karma-points-div" *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) ">
         <ws-widget-karma-points [data]="kparray" [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent, 
-          pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent }"></ws-widget-karma-points>
+          pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
       </div>
-      <div class="certificate-info" *ngIf="isEnrolled && pastEvent && enrolledEvent?.status > 0 &&
-              enrolledEvent?.issuedCertificates?.length === 0">
+      <div class="certificate-info" *ngIf="(isEnrolled && pastEvent && enrolledEvent?.status > 1 &&
+              enrolledEvent?.issuedCertificates?.length === 0) || !completedAfterExpiry" >
         <p class="">{{ 'eventDetailsRightCard.certificateInfo' | translate }}</p>
       </div>
      
