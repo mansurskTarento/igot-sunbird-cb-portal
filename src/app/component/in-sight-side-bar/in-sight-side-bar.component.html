@@ -58,8 +58,15 @@
         <ng-container [ngTemplateOutlet]="loadNewStrips"></ng-container>
         <ng-template #loadNewStrips>
             <ng-container *ngFor="let newStrip of assessmentStrip">
-                <sb-uic-content-strip-with-tabs [widgetData]="newStrip">
-                </sb-uic-content-strip-with-tabs>
+                <ng-container *ngIf="newStrip?.stripType !== 'withPils'">
+                    <sb-uic-content-strip-with-tabs [widgetData]="newStrip">
+                    </sb-uic-content-strip-with-tabs>
+                </ng-container>
+
+                <ng-container *ngIf="newStrip?.stripType === 'withPils'">
+                    <sb-uic-content-strip-with-tabs-pills [widgetData]="newStrip">
+                    </sb-uic-content-strip-with-tabs-pills>
+                </ng-container>
             </ng-container>
         </ng-template>
     </div>
