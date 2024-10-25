@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
 import { MatTabGroup, MatTabChangeEvent } from '@angular/material/tabs'
+import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 
 @Component({
   selector: 'ws-widget-content-toc',
@@ -38,6 +39,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   menuPosition: any
   isMobile = false
   selectedTabIndex = 0
+  discussWidgetData!: NsDiscussionV2.ICommentWidgetData
 
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +50,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit() {
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
       this.config = this.route.snapshot.data.pageData.data
+    }
+    if (this.config && this.config.discussWidgetData) {
+      this.discussWidgetData = this.config.discussWidgetData
+      if (this.content && this.content.identifier) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
+        }
+      }
+      this.discussWidgetData = { ...this.discussWidgetData }
     }
     const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
@@ -64,6 +76,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
+    }
+    if (this.config && this.config.discussWidgetData) {
+      this.discussWidgetData = this.config.discussWidgetData
+      if (this.content && this.content.identifier) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
+        }
+      }
+      this.discussWidgetData = { ...this.discussWidgetData }
     }
   }
 
