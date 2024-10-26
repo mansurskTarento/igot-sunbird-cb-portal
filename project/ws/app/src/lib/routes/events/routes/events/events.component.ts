@@ -68,9 +68,7 @@ export class EventsComponent implements OnInit {
     }
     this.eventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.eventStrips) || []
     this.todaysEventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.todaysEventStrips) || []
-    
-    
-    
+
   }
 
   ngOnInit() {
@@ -437,86 +435,86 @@ export class EventsComponent implements OnInit {
   }
 
   getKeySpeakerEventList() {
-    let orgId:any = ''
-    if(environment && environment.spvorgID) {
+    let orgId: any = ''
+    if (environment && environment.spvorgID) {
       orgId = environment.spvorgID
     }
-    let widgetData:any =  {
-      "order": 1,
-      "strips": [
+    const widgetData: any =  {
+      'order': 1,
+      'strips': [
         {
-          "active": true,
-          "key": "keySpeakersEvents",
-          "logo": "school",
-          "title": "keySpeakersEvents",
-          "stripTitleLink": {
-            "link": "",
-            "icon": ""
+          'active': true,
+          'key': 'keySpeakersEvents',
+          'logo': 'school',
+          'title': 'keySpeakersEvents',
+          'stripTitleLink': {
+            'link': '',
+            'icon': '',
           },
-          "sliderConfig": {
-            "showNavs": true,
-            "showDots": false,
-            "maxWidgets": 30
+          'sliderConfig': {
+            'showNavs': true,
+            'showDots': false,
+            'maxWidgets': 30,
           },
-          "loader": true,
-          "loaderConfig": {
-            "cardSubType": "card-events-skeleton"
+          'loader': true,
+          'loaderConfig': {
+            'cardSubType': 'card-events-skeleton',
           },
-          "stripBackground": "",
-          "titleDescription": "Key Speackers Events",
-          "stripConfig": {
-            "cardSubType": "card-events"
+          'stripBackground': '',
+          'titleDescription': 'Key Speackers Events',
+          'stripConfig': {
+            'cardSubType': 'card-events',
           },
-          "tabs": [],
-          "filters": [],
-          "data": [],
-          "request": {
-            "searchV6": {
-              "request": {
-                "filters": {
-                  "status": [
-                    "Live"
+          'tabs': [],
+          'filters': [],
+          'data': [],
+          'request': {
+            'searchV6': {
+              'request': {
+                'filters': {
+                  'status': [
+                    'Live',
                   ],
-                  "contentType": "Event",
-                  "category": "Event",
-                  "onBehalfOf": orgId
+                  'contentType': 'Event',
+                  'category': 'Event',
+                  'onBehalfOf': orgId,
                 },
-                "query": "",
-                "sort_by": {
-                  "startDate": "desc"
+                'query': '',
+                'sort_by': {
+                  'startDate': 'desc',
                 },
-                "fields": [
-                  "name",
-                  "instructions",
-                  "description",
-                  "mimeType",
-                  "identifier",
-                  "resourceType",
-                  "contentType",
-                  "channel",
-                  "organisation",
-                  "duration",
-                  "version",
-                  "startDate",
-                  "endDate",
-                  "startTime",
-                  "endTime",
-                  "status",
-                  "createdOn",
-                  "eventType",
-                  "expiryDate",
-                  "creatorDetails",
-                  "appIcon",
-                  "recordedLinks"
-                ]
-              }
-            }
-          }
-        }
-      ]
-    };
+                'fields': [
+                  'name',
+                  'instructions',
+                  'description',
+                  'mimeType',
+                  'identifier',
+                  'resourceType',
+                  'contentType',
+                  'channel',
+                  'organisation',
+                  'duration',
+                  'version',
+                  'startDate',
+                  'endDate',
+                  'startTime',
+                  'endTime',
+                  'status',
+                  'createdOn',
+                  'eventType',
+                  'expiryDate',
+                  'creatorDetails',
+                  'appIcon',
+                  'recordedLinks',
+                ],
+              },
+            },
+          },
+        },
+      ],
+    }
     this.keySpeakerEvents = widgetData || []
-    if(this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
+    if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
       this.keySpeakerEventWidget = this.keySpeakerEvents.strips.length
     }
   }
