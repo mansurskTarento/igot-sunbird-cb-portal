@@ -535,6 +535,7 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
                 response.viewMoreUrl,
               )
             } else if (response.results.result.Event) {
+              console.log('response.results.result.Event',response.results.result.Event)
               this.processStrip(
                 strip,
                 this.transformEventsToWidgets(response.results.result.Event, strip),
@@ -765,7 +766,10 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     strip: NsContentStripWithTabs.IContentStripUnit,
   ) {
     this.eventSvc.setEventListData(contents)
-    const eventData = strip.key === 'liveEvents' ? this.eventSvc.todaysLiveEvents : this.eventSvc.todaysEvents
+    let eventData = strip.key === 'liveEvents' ? this.eventSvc.todaysLiveEvents :  this.eventSvc.todaysEvents
+    if(strip.key === 'keySpeakersEvents') {
+      eventData = this.eventSvc.keySpeakerEvents
+    }
     return (eventData || []).map((content: any, idx: any) => (content ? {
       widgetType: 'card',
       widgetSubType: 'eventHubCard',
