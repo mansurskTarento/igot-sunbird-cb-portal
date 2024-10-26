@@ -9,9 +9,9 @@ import { AppTocService } from '../../services/app-toc.service'
 import {
   UserAutocompleteService,
 } from '@sunbird-cb/collection'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 @Component({
   selector: 'ws-app-share-toc',
   templateUrl: './share-toc.component.html',

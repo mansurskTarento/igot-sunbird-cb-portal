@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { UntypedFormControl } from '@angular/forms'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService, EventService, IResolveResponse, WsEvents } from '@sunbird-cb/utils-v2'
 // import { startWith, map } from 'rxjs/operators'

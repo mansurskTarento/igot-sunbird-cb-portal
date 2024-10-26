@@ -16,9 +16,9 @@ import { CompetencySearchComponent } from './competency-search/competency-search
 import { TranslateModule } from '@ngx-translate/core'
 import { DialogComponentsModule } from '@sunbird-cb/consumption'
 import { MatIconModule } from '@angular/material/icon'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatTabsModule } from '@angular/material/tabs'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 
 @NgModule({
   declarations: [

@@ -6,7 +6,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { Observable, of, timer, throwError, noop, Subscription } from 'rxjs'
 import { finalize, startWith, map, switchMap, catchError } from 'rxjs/operators'
 

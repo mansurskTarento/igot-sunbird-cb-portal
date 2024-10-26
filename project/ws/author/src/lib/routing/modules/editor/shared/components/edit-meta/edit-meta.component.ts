@@ -13,9 +13,9 @@ import {
   Inject,
 } from '@angular/core'
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacyDialog as MatDialog, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { ConfigurationsService, ImageCropComponent } from '@sunbird-cb/utils-v2'
 import { CONTENT_BASE_STATIC, CONTENT_BASE_STREAM } from '@ws/author/src/lib/constants/apiEndpoints'
@@ -43,7 +43,7 @@ import {
   switchMap,
   map,
 } from 'rxjs/operators'
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
+import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
 // import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 
 export interface IUsersData {

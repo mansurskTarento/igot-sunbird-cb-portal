@@ -29,13 +29,13 @@ import { PracticeModule as PracticeViewContainerModule } from '../../route-view-
 
 import { PracticeTestComponent } from './practice-test.component'
 import { PracticeRoutingModule } from './practice-routing.module'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatChipsModule } from '@angular/material/chips'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({

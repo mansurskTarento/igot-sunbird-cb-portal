@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 
 @Injectable({
     providedIn: 'root',
 })
-export class CbpResolverService implements Resolve<Observable<any>> {
+export class CbpResolverService  {
 
     constructor(private http: HttpClient) { }
     resolve(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<any> {

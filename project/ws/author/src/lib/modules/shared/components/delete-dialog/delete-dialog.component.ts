@@ -2,7 +2,7 @@ import { NotificationService } from '@ws/author/src/lib/services/notification.se
 import { ErrorParserComponent } from './../error-parser/error-parser.component'
 import { Component, OnInit, Inject } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { ISearchContent } from '@ws/author/src/lib/interface/search'
 import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
@@ -13,7 +13,7 @@ import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { mergeMap, catchError } from 'rxjs/operators'
 import { of } from 'rxjs'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-auth-delete-dialog',

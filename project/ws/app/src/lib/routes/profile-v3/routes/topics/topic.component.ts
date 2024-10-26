@@ -8,8 +8,8 @@ import { AddTopicDialogComponent } from '../../components/add-topic/add-topic.co
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import { TopicService } from '../../services/topics.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-topic',

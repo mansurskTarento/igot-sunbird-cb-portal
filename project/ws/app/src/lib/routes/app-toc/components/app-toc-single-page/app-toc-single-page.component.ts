@@ -19,8 +19,8 @@ import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { RatingService } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/rating.service'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
-import { MatDialog } from '@angular/material/dialog'
-import { MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 @Component({
   selector: 'ws-app-app-toc-single-page',
   templateUrl: './app-toc-single-page.component.html',

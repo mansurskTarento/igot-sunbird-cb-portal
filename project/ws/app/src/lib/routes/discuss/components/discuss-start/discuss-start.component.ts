@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { DiscussService } from '../../services/discuss.service'
 import { NSDiscussData } from '../../models/discuss.model'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 export interface IDialogData {
   animal: string
   name: string

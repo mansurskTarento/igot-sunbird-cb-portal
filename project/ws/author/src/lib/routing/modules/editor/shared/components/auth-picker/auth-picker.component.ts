@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core'
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { SEARCH_V6_AUTH } from '@ws/author/src/lib/constants/apiEndpoints'
 import { NSContent } from '@ws/author/src/lib/interface/content'

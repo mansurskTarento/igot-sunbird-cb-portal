@@ -1,7 +1,7 @@
 import { Component, Input, Self, Optional, ElementRef, SimpleChanges, OnChanges, DoCheck, OnDestroy } from '@angular/core'
 import { NgControl, NgForm, FormGroupDirective, UntypedFormControl } from '@angular/forms'
 import { ErrorStateMatcher, CanUpdateErrorState } from '@angular/material/core'
-import { MatFormFieldControl } from '@angular/material/form-field'
+import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field'
 import { Subject } from 'rxjs'
 import { QuillComponent } from './quill.component'
 

@@ -33,11 +33,11 @@ import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import { RequestDialogComponent } from '../request-dialog/request-dialog.component'
 import { USER_PROFILE_MSG_CONFIG } from './user-profile-constant'
-import { MatChipInputEvent } from '@angular/material/chips'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 
 /* tslint:enable */
 

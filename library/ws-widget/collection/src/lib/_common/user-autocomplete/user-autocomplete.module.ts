@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { UserAutocompleteComponent } from './user-autocomplete.component'
 import { UserImageModule } from '../user-image/user-image.module'
-import { MatAutocompleteModule } from '@angular/material/autocomplete'
-import { MatChipsModule } from '@angular/material/chips'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 
 @NgModule({
   declarations: [UserAutocompleteComponent],

@@ -3,10 +3,10 @@ import { UntypedFormControl } from '@angular/forms'
 import { NsContent } from '@sunbird-cb/collection'
 import { ViewSubmissionComponent } from './components/view-submission/view-submission.component'
 import { ResourceCollectionService } from './resource-collection.service'
-import { MatDialog } from '@angular/material/dialog'
-import { MatPaginator } from '@angular/material/paginator'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatTableDataSource } from '@angular/material/table'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
 
 @Component({
   selector: 'viewer-plugin-resource-collection',

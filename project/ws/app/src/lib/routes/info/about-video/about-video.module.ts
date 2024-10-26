@@ -4,8 +4,8 @@ import { AboutVideoComponent } from './about-video.component'
 import { LocaleTranslatorModule, BtnPageBackModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { RouterModule } from '@angular/router'
-import { MatButtonModule } from '@angular/material/button'
-import { MatRadioModule } from '@angular/material/radio'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({

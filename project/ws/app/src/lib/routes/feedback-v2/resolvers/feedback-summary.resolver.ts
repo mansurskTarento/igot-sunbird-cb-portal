@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve } from '@angular/router'
+
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 
@@ -7,7 +7,7 @@ import { FeedbackService, IFeedbackSummary } from '@sunbird-cb/collection'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 
 @Injectable()
-export class FeedbackSummaryResolver implements Resolve<IResolveResponse<IFeedbackSummary>> {
+export class FeedbackSummaryResolver  {
   constructor(private feedbackApi: FeedbackService) {}
 
   resolve(): Observable<IResolveResponse<IFeedbackSummary>> {

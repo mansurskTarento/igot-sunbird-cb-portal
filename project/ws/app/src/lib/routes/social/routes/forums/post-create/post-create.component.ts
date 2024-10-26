@@ -8,8 +8,8 @@ import { Observable } from 'rxjs'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { WsSocialService } from '../../../services/ws-social.service'
 import { SocialForum } from '../models/SocialForumposts.model'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-post-create',

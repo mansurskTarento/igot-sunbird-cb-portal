@@ -11,7 +11,7 @@ import { CompetencyPassbookService } from '../competency-passbook.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 
 @Component({

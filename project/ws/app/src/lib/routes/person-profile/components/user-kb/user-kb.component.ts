@@ -4,8 +4,8 @@ import { NsContent } from '@sunbird-cb/collection'
 import { NSProfileData } from '../../../profile/models/profile.model'
 import { UserdetailallComponent } from '../userdetailall/userdetailall.component'
 import { PersonProfileService } from '../../services/person-profile.service'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-user-kb',

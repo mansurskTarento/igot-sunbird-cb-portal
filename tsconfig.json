@@ -3,14 +3,19 @@
   "compilerOptions": {
     "esModuleInterop": false,
     "skipLibCheck": true,
-    "types": ["jest"],
+    "types": [
+      "jest"
+    ],
     "alwaysStrict": true,
     "baseUrl": "./",
     "declaration": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
-    "lib": ["es2018", "dom"],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "module": "es2020",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -21,18 +26,42 @@
     "noUnusedParameters": true,
     "outDir": "./dist/out-tsc",
     "paths": {
-      "@ws/app": ["project/ws/app"],
-      "@ws/app/*": ["project/ws/app/*"],
-      "@ws/author": ["project/ws/author"],
-      "@ws/author/*": ["project/ws/author/*"],
-      "@ws/viewer": ["project/ws/viewer"],
-      "@ws/viewer/*": ["project/ws/viewer/*"],
-      "@ws/learning-hub": ["project/ws/learning-hub"],
-      "@ws/learning-hub/*": ["project/ws/learning-hub/*"],
-      "@sunbird-cb/collection": ["library/ws-widget/collection"],
-      "@sunbird-cb/collection/*": ["library/ws-widget/collection/*"],
-      "@sunbird-cb/resolver": ["library/ws-widget/resolver"],
-      "@sunbird-cb/resolver/*": ["library/ws-widget/resolver/*"]
+      "@ws/app": [
+        "project/ws/app"
+      ],
+      "@ws/app/*": [
+        "project/ws/app/*"
+      ],
+      "@ws/author": [
+        "project/ws/author"
+      ],
+      "@ws/author/*": [
+        "project/ws/author/*"
+      ],
+      "@ws/viewer": [
+        "project/ws/viewer"
+      ],
+      "@ws/viewer/*": [
+        "project/ws/viewer/*"
+      ],
+      "@ws/learning-hub": [
+        "project/ws/learning-hub"
+      ],
+      "@ws/learning-hub/*": [
+        "project/ws/learning-hub/*"
+      ],
+      "@sunbird-cb/collection": [
+        "library/ws-widget/collection"
+      ],
+      "@sunbird-cb/collection/*": [
+        "library/ws-widget/collection/*"
+      ],
+      "@sunbird-cb/resolver": [
+        "library/ws-widget/resolver"
+      ],
+      "@sunbird-cb/resolver/*": [
+        "library/ws-widget/resolver/*"
+      ]
     },
     "removeComments": true,
     "sourceMap": false,
@@ -41,9 +70,13 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "es2020",
-    "typeRoots": ["node_modules/@types", "./custom_typings"],
-    "plugins": [{
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types",
+      "./custom_typings"
+    ],
+    "plugins": [
+      {
         "name": "@angular/language-service"
       },
       {
@@ -53,6 +86,7 @@
         "configFile": "./tslint.json",
         "suppressWhileTypeErrorsPresent": false
       }
-    ]
+    ],
+    "useDefineForClassFields": false
   }
 }

@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { BtnGoalsService, NsGoal } from '@sunbird-cb/collection'
 import { SelectionModel } from '@angular/cdk/collections'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatTableDataSource } from '@angular/material/table'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
 // import { BtnGoalsService } from "@sunbird-cb/collection";
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
-import { MatSelectChange } from '@angular/material/select'
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select'
 import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 @Component({
   selector: 'ws-widget-language-selector',

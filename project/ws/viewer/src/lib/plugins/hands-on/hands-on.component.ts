@@ -6,7 +6,7 @@ import { NSHandsOnModels } from './hands-on.model'
 import { NSHandsOnConstants } from './hands-on.constants'
 import { LoggerService, EventService } from '@sunbird-cb/utils-v2'
 import { HandsOnService } from './hands-on.service'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { HandsOnDialogComponent } from './components/hands-on-dialog/hands-on-dialog.component'
 
 // import 'brace'

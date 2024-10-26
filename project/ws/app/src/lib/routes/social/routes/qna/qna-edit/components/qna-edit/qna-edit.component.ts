@@ -8,8 +8,8 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NsError, ROOT_WIDGET_CONFIG, NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { WsSocialService } from '../../../../../services/ws-social.service'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-qna-edit',

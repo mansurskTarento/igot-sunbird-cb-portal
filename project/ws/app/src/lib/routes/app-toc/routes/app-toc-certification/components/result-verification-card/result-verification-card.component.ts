@@ -12,8 +12,8 @@ import { ICertificationMeta, TCertificationRequestType } from '../../models/cert
 import { FileDownloadService } from '../../services/file-download.service'
 import { RequestCancelDialogComponent } from '../request-cancel-dialog/request-cancel-dialog.component'
 import { SnackbarComponent } from '../snackbar/snackbar.component'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-toc-certification-result-verification-card',

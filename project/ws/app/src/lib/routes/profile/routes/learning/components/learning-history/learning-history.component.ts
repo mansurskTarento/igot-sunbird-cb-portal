@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { PageEvent } from '@angular/material/paginator'
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator'
 import { ActivatedRoute } from '@angular/router'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, ValueService, TFetchStatus } from '@sunbird-cb/utils-v2'

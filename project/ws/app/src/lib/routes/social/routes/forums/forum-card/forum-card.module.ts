@@ -5,7 +5,7 @@ import { BtnSocialVoteModule, BtnSocialLikeModule } from '@sunbird-cb/collection
 import { ForumCardComponent } from './forum-card.component'
 import { BtnFlagModule } from '../widgets/buttons/btn-flag/btn-flag.module'
 import { BtnFlagComponent } from '../widgets/buttons/btn-flag/btn-flag.component'
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 

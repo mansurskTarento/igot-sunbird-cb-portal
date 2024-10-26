@@ -1,7 +1,7 @@
 import { Router } from '@angular/router'
 import { DashBoardService } from './dashboard.service'
 import { Component, OnInit } from '@angular/core'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { Observable } from 'rxjs'
 import { UntypedFormControl } from '@angular/forms'
 import { map, startWith } from 'rxjs/operators'

@@ -15,7 +15,7 @@ import {
 } from './grid-layout.model'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 const API_END_POINTS = {
   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,

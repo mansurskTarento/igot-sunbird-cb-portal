@@ -8,7 +8,7 @@ import { SlidersDynamicComponent } from './sliders-dynamic.component'
 // tslint:disable-next-line
 import  Hammer from 'hammerjs'
 import { MatIconModule } from '@angular/material/icon'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig {
   buildHammer(element: HTMLElement) {

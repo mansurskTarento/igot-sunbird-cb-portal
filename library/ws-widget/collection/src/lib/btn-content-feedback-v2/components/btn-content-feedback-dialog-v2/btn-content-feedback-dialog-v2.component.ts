@@ -5,8 +5,8 @@ import { NsContent } from '../../../_services/widget-content.model'
 import { FeedbackService } from '../../services/feedback.service'
 import { EFeedbackType, EFeedbackRole, IFeedbackConfig } from '../../models/feedback.model'
 import { FeedbackSnackbarComponent } from '../feedback-snackbar/feedback-snackbar.component'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-content-feedback-dialog-v2',

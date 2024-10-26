@@ -4,10 +4,10 @@ import { RouterModule } from '@angular/router'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { AvatarPhotoComponent } from './avatar-photo.component'
 import { PipeCertificateImageURLModule } from '@sunbird-cb/utils-v2'
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatRippleModule } from '@angular/material/core'
 import { MatIconModule } from '@angular/material/icon'
-import { MatMenuModule } from '@angular/material/menu'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 
 @NgModule({
     declarations: [AvatarPhotoComponent],

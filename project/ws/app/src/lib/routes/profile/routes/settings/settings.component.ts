@@ -21,9 +21,9 @@ import { UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { Router, ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatSelectChange } from '@angular/material/select'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 
 @Component({
   selector: 'ws-app-settings',

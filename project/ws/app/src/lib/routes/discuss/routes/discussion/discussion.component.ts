@@ -6,7 +6,7 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { CONTENT_BASE_STREAM } from '@ws/author/src/lib/constants/apiEndpoints'
 import { LoaderService } from '../../../../../../../author/src/public-api'
 import { DiscussService } from '../../services/discuss.service'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { DiscussUtilsService } from '../../services/discuss-utils.service'
 
 @Component({

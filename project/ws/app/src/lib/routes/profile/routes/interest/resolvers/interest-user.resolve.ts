@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve } from '@angular/router'
+
 
 import { Observable, of } from 'rxjs'
 import { InterestService } from '../services/interest.service'
@@ -8,7 +8,7 @@ import { IResolveResponse } from '@sunbird-cb/utils-v2'
 
 @Injectable()
 export class InterestUserResolve
-  implements Resolve<Observable<IResolveResponse<string[]>> | IResolveResponse<string[]>> {
+   {
   constructor(private interestSvc: InterestService) {}
 
   resolve(): Observable<IResolveResponse<string[]>> | IResolveResponse<string[]> {

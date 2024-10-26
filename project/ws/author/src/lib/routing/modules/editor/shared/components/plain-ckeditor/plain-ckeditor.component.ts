@@ -11,7 +11,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import {
   AUTHORING_CONTENT_BASE,
   CONTENT_BASE_STATIC,

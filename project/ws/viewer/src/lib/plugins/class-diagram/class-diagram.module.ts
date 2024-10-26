@@ -9,13 +9,13 @@ import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 
 import { ClassDiagramComponent } from './class-diagram.component'
 import { ClassDiagramResultComponent } from './components/class-diagram-result/class-diagram-result.component'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatIconModule } from '@angular/material/icon'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { MatSelectModule } from '@angular/material/select'
-import { MatTableModule } from '@angular/material/table'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 
 @NgModule({
   declarations: [ClassDiagramComponent, ClassDiagramResultComponent],

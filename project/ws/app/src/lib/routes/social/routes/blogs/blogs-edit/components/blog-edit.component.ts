@@ -7,8 +7,8 @@ import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunb
 import { Observable } from 'rxjs'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { WsSocialService } from '../../../../services/ws-social.service'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-blog-edit',

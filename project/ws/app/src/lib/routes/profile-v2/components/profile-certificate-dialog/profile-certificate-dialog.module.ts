@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common'
 import { ProfileCertificateDialogComponent } from './profile-certificate-dialog.component'
 
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatIconModule } from '@angular/material/icon'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
     declarations: [ProfileCertificateDialogComponent],

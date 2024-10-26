@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 import { BtnGoalsService, NsGoal } from '@sunbird-cb/collection'
@@ -7,8 +7,7 @@ import { IResolveResponse } from '@sunbird-cb/utils-v2'
 
 @Injectable()
 export class GoalsUserResolve
-  implements
-    Resolve<Observable<IResolveResponse<NsGoal.IUserGoals>> | IResolveResponse<NsGoal.IUserGoals>> {
+   {
   constructor(private goalSvc: BtnGoalsService) {}
 
   resolve(

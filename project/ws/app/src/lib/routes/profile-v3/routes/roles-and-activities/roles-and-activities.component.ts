@@ -10,9 +10,9 @@ import { DialogConfirmComponent } from 'src/app/component/dialog-confirm/dialog-
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatDialogRef, MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 @Component({
     selector: 'ws-app-roles-and-activities',
     templateUrl: './roles-and-activities.component.html',

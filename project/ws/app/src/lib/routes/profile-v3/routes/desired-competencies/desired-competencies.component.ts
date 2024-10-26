@@ -3,7 +3,7 @@ import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
