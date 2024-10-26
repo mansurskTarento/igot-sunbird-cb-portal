@@ -55,7 +55,7 @@
         "@sunbird-cb/micro-surveys": "^2.0.20",
         "@sunbird-cb/rain-dashboards": "0.4.33",
         "@sunbird-cb/resolver-v2": "0.0.7",
-        "@sunbird-cb/utils-v2": "0.0.21",
+        "@sunbird-cb/utils-v2": "0.0.22",
         "@types/file-saver": "^2.0.1",
         "@types/uuid": "^8.3.1",
         "bootstrap": "5.1.2",
