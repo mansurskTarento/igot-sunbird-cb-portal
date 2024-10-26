@@ -535,7 +535,6 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
                 response.viewMoreUrl,
               )
             } else if (response.results.result.Event) {
-              console.log('response.results.result.Event', response.results.result.Event)
               this.processStrip(
                 strip,
                 this.transformEventsToWidgets(response.results.result.Event, strip),
