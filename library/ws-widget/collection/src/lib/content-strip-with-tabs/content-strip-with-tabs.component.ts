@@ -765,7 +765,10 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     strip: NsContentStripWithTabs.IContentStripUnit,
   ) {
     this.eventSvc.setEventListData(contents)
-    const eventData = strip.key === 'liveEvents' ? this.eventSvc.todaysLiveEvents : this.eventSvc.todaysEvents
+    let eventData = strip.key === 'liveEvents' ? this.eventSvc.todaysLiveEvents :  this.eventSvc.todaysEvents
+    if (strip.key === 'keySpeakersEvents') {
+      eventData = this.eventSvc.keySpeakerEvents
+    }
     return (eventData || []).map((content: any, idx: any) => (content ? {
       widgetType: 'card',
       widgetSubType: 'eventHubCard',
