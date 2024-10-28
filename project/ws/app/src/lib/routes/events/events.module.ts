@@ -48,6 +48,7 @@ import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/ske
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
 import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
+import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
     SkeletonLoaderModule,
     ContentProgressModule,
     DiscussionV2Module,
+    InfiniteScrollModule
   ],
   providers: [
     LoaderService,
