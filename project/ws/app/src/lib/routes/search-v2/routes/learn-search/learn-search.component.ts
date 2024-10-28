@@ -410,12 +410,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
               modifiedDataCount = modifiedDataCount + 1
             }
         })
-        
+
         this.searchResults = response.result.content
-        
+
       }
-      if( response.result.Event && response.result.Event.length > 0) {
-        this.searchResults = this.searchResults.concat(response.result.Event)  
+      if (response.result.Event && response.result.Event.length > 0) {
+        this.searchResults = this.searchResults.concat(response.result.Event)
       }
       this.extSearchRequestObject.searchString = data.request.query
       const resExtSearch = await this.searchSrvc.fetchSearchDataforCios(this.extSearchRequestObject).toPromise().catch(_error => {})
@@ -475,11 +475,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchSrvc.fetchSearchDataByCategory(queryparam).subscribe((response: any) => {
         const array2 = response.result.content
         this.searchResults = this.searchResults.concat(array2)
-        if(response && response.result && response.result.Event) {
-          let eventArray = response.result.Event
+        if (response && response.result && response.result.Event) {
+          const eventArray = response.result.Event
           this.searchResults = this.searchResults.concat(eventArray)
         }
-        
+
       })
     }
   }
@@ -493,9 +493,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
   }
-  async getRedirectUrlData(content: any) {    
-    
-    if(content && content.objectType === 'Event' && content.identifier) {
+  async getRedirectUrlData(content: any) {
+
+    if (content && content.objectType === 'Event' && content.identifier) {
       this.router.navigate(
         [`app/event-hub/home/${content.identifier}`])
     } else {

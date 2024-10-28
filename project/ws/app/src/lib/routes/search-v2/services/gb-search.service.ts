@@ -32,7 +32,6 @@ export class GbSearchService {
     return this.http.post<any>(API_END_POINTS.SEARCH_V6, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
-    console.log('request', request)
     return this.http.post<any>(API_END_POINTS.SEARCH_V4, request)
   }
   fetchSearchDataforCios(request: any): Observable<any> {

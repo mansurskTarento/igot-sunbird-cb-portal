@@ -66,11 +66,11 @@ export class EventsComponent implements OnInit {
         startDate: 'desc',
       },
       limit: 20,
-      offset: 0
+      offset: 0,
     },
   }
   newQueryParam: any
-  allEventData:any = []
+  allEventData: any = []
   showLoading = true
   constructor(
     private route: ActivatedRoute,
@@ -166,7 +166,7 @@ export class EventsComponent implements OnInit {
           startDate: 'desc',
         },
         limit: 20,
-        offset: 0
+        offset: 0,
       },
     }
     this.eventSvc.getEventsList(this.eventRequestObj).subscribe((events: any) => {

@@ -102,7 +102,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
     SkeletonLoaderModule,
     ContentProgressModule,
     DiscussionV2Module,
-    InfiniteScrollModule
+    InfiniteScrollModule,
   ],
   providers: [
     LoaderService,
