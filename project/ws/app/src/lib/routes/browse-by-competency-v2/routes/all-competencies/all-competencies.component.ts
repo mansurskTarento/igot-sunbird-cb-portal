@@ -5,11 +5,14 @@ import { BrowseCompetencyService } from '../../services/browse-competency.servic
 import { NSBrowseCompetency } from '../../models/competencies.model'
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
 import { Subject, Observable } from 'rxjs'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
+
 // tslint:disable
 import _ from 'lodash'
 // tslint:enable
 import { LocalDataService } from '../../services/localService'
 import { TranslateService } from '@ngx-translate/core'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-all-competencies',
@@ -36,6 +39,7 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   ]
 
   compentency = 'some-competency'
+  compentencyKey!: NsContent.ICompentencyKeys
 
   constructor(
     private configSvc: ConfigurationsService,
@@ -55,6 +59,8 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
+    this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
+
     this.displayLoader = this.browseCompServ.isLoading()
     this.stateData = { param: '', path: 'all-competencies' }
     this.searchForm = new FormGroup({
@@ -85,7 +91,12 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
     // }
 
     // Fetch initial data
-    this.searchCompetency('')
+
+    if (this.compentencyKey.vKey === 'competencies_v5') {
+      this.searchCompetency('')
+    } else {
+      this.searchCompetencyV2('')
+    }
 
   }
 
@@ -121,6 +132,89 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
       && this.localDataService.compentecies.getValue().length > 0)) {
       this.browseCompServ
         .searchCompetency(req)
+        .subscribe((reponse: NSBrowseCompetency.ICompetencie[]) => {
+          // if (reponse.statusInfo && reponse.statusInfo.statusCode === 200) {
+          //   this.allCompetencies = reponse.responseData
+          // }
+          if (reponse) {
+            // this.allCompetencies
+            if (req && req.filter && req.filter.length > 0) {
+              _.each(reponse, r => {
+                _.each(req.filter, f => {
+                  if (_.includes(f.values, _.get(r, f.field))) {
+                    this.allCompetencies.push(r)
+                  }
+                })
+              })
+              // this.allCompetencies = _.orderBy(this.allCompetencies, ['name'], [req.sort === 'Descending'])
+            } else {
+              this.allCompetencies = reponse
+            }
+            this.localDataService.initData(reponse)
+          }
+        })
+    } else {
+      const data = this.localDataService.compentecies.getValue()
+      if (data && req && req.filter && req.filter.length > 0) {
+        _.each(data, r => {
+          _.each(req.filter, f => {
+            if (_.includes(f.values, _.get(r, f.field))) {
+              this.allCompetencies.push(r)
+            }
+          })
+        })
+        if (req.sort) {
+          this.allCompetencies = _.orderBy(this.allCompetencies, ['name'], [req.sort === 'Descending' ? 'desc' : 'asc'])
+        }
+      } else {
+        const fData: NSBrowseCompetency.ICompetencie[] = []
+        if (req.searches && req.searches.length > 0) {
+          _.each(data, (d: NSBrowseCompetency.ICompetencie) => {
+            let found = false
+            _.each(_.initial(req.searches), s => {
+              found = found || _.includes(_.lowerCase(_.get(d, s.field)), _.lowerCase(s.keyword))
+            })
+            if (found) {
+              fData.push(d)
+            }
+          })
+          this.allCompetencies = fData
+        }
+        if (req.sort) {
+          this.allCompetencies = _.orderBy(fData || data, ['name'], [req.sort === 'Descending' ? 'desc' : 'asc'])
+        } else {
+          this.allCompetencies = fData || data
+        }
+      }
+    }
+  }
+
+  searchCompetencyV2(searchQuery: any, filters?: any) {
+    this.allCompetencies = []
+    const searchJson = [
+      { type: 'COMPETENCY', field: 'name', keyword: searchQuery ? searchQuery : '' },
+      { type: 'COMPETENCY', field: 'description', keyword: searchQuery ? searchQuery : '' },
+      { type: 'COMPETENCY', field: 'status', keyword: 'VERIFIED' },
+    ]
+    const filterJson = []
+    if (filters && filters.length) {
+      const groups = _.groupBy(filters, 'mainType')
+      for (const key of Object.keys(groups)) {
+        const filter: { field: string, values: string[] } = { field: key, values: [''] }
+        const keywords = groups[key].map(x => x.name)
+        filter.values = keywords
+        filterJson.push(filter)
+      }
+    }
+    const req = {
+      searches: searchJson,
+      filter: filterJson,
+      sort: this.sortBy,
+    }
+    if (!(this.localDataService.compentecies.value
+      && this.localDataService.compentecies.getValue().length > 0)) {
+      this.browseCompServ
+        .searchCompetencyV2(req)
         .subscribe(async (reponse: any) => {
           // if (reponse.statusInfo && reponse.statusInfo.statusCode === 200) {
           //   this.allCompetencies = reponse.responseData
@@ -231,12 +325,20 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
 
   updateQuery(key: string) {
     this.searchQuery = key
-    this.searchCompetency(this.searchQuery, this.appliedFilters)
+    if (this.compentencyKey.vKey === 'competencies_v5') {
+      this.searchCompetency(this.searchQuery, this.appliedFilters)
+    } else {
+      this.searchCompetencyV2(this.searchQuery, this.appliedFilters)
+    }
   }
 
   reset() {
     // this.searchForm.setValue('searchKey') = ''
-    this.searchCompetency('')
+    if (this.compentencyKey.vKey === 'competencies_v5') {
+      this.searchCompetency('')
+    } else {
+      this.searchCompetencyV2('')
+    }
   }
 
   raiseTelemetry(content: any) {
@@ -268,7 +370,11 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
     if (filter) {
       this.appliedFilters = filter
 
-      this.searchCompetency(this.searchQuery, this.appliedFilters)
+      if (this.compentencyKey.vKey === 'competencies_v5') {
+        this.searchCompetency(this.searchQuery, this.appliedFilters)
+      } else {
+        this.searchCompetencyV2(this.searchQuery, this.appliedFilters)
+      }
       // const queryparam = this.searchRequestObject
     }
     // console.log('Filter', filter)

@@ -143,24 +143,26 @@ export class KarmaPointsComponent implements OnInit, OnChanges {
         }
     } else {
       // For event karma points
-      if (this.condition && this.condition.isEnrolled) {
-        if (this.condition.currentEvent) {
-          this.getKPData('Complete')
+      if (this.condition && !this.condition.completedAfterExpiry) {
+        if (this.condition && this.condition.isEnrolled) {
+          if (this.condition.currentEvent) {
+            this.getKPData('Complete')
+          }
+
+          if (this.condition.pastEvent && this.condition.enrolledEvent) {
+            if (this.condition.enrolledEvent.status < 2) {
+              this.getKPData('')
+            }
+            if (this.condition.enrolledEvent.status === 2) {
+              this.getKPData('completed')
+            }
+          }
         }
 
-        if (this.condition.pastEvent) {
-          if (this.condition.enrolledEvent.status < 2) {
-            this.getKPData('')
+        if (this.condition && !this.condition.isEnrolled) {
+          if (this.condition.currentEvent) {
+            this.getKPData('Complete')
           }
-          if (this.condition.enrolledEvent.status === 2) {
-            this.getKPData('completed')
-          }
-        }
-      }
-
-      if (this.condition && !this.condition.isEnrolled) {
-        if (this.condition.currentEvent) {
-          this.getKPData('Complete')
         }
       }
     }
