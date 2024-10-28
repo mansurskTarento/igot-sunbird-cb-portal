@@ -473,8 +473,6 @@ export class EventsComponent implements OnInit {
       orgId = environment.spvorgID
     }
     const widgetData: any =  await this.eventSvc.getKeySpeakerJson().catch(_error => {})
-    console.log('orgId--',orgId)
-    console.log('widgetData--', widgetData)
     this.keySpeakerEvents = widgetData && widgetData['keySpeakersEvents'] || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
       if(this.keySpeakerEvents.strips[0] && 
