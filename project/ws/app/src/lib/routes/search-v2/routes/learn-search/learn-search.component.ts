@@ -26,7 +26,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         mimeType: [],
         source: [],
         mediaType: [],
-        contentType: ['Course'],
+        contentType: ['Course', 'Event'],
         status: ['Live'],
         topics: [],
       },
@@ -225,7 +225,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         'query': this.param ? this.param : '',
         'filters': {
           'courseCategory': [],
-          'contentType': ['Course'],
+          'contentType': ['Course', 'Event'],
           'status': ['Live'] },
           'sort_by': { 'lastUpdatedOn': 'desc' },
           'facets': ['mimeType'],
@@ -390,11 +390,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.searchResults = []
     this.searchSrvc.fetchSearchDataByCategory(data).subscribe(async (response: any) => {
-      if (response && response.result && response.result.count) {
+      if (response && response.result && response.result.content && response.result.count) {
         response.result.content.forEach((res: any) => {
           if (res.courseCategory === NsContent.ECourseCategory.MODERATED_COURSE ||
             res.courseCategory === NsContent.ECourseCategory.MODERATED_ASSESSEMENT ||
-            res.courseCategory === NsContent.ECourseCategory.MODERATED_PROGRAM) {
+            res.courseCategory === NsContent.ECourseCategory.MODERATED_PROGRAM
+            ) {
               if (this.veifiedKarmayogi) {
                 this.searchResults.push(res)
                 modifiedDataCount = modifiedDataCount + 1
@@ -409,7 +410,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
               modifiedDataCount = modifiedDataCount + 1
             }
         })
+
         this.searchResults = response.result.content
+
+      }
+      if (response.result.Event && response.result.Event.length > 0) {
+        this.searchResults = this.searchResults.concat(response.result.Event)
       }
       this.extSearchRequestObject.searchString = data.request.query
       const resExtSearch = await this.searchSrvc.fetchSearchDataforCios(this.extSearchRequestObject).toPromise().catch(_error => {})
@@ -469,6 +475,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchSrvc.fetchSearchDataByCategory(queryparam).subscribe((response: any) => {
         const array2 = response.result.content
         this.searchResults = this.searchResults.concat(array2)
+        if (response && response.result && response.result.Event) {
+          const eventArray = response.result.Event
+          this.searchResults = this.searchResults.concat(eventArray)
+        }
+
       })
     }
   }
@@ -483,12 +494,18 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     return this.langtranslations.translateLabel(label, type, '')
   }
   async getRedirectUrlData(content: any) {
-    const urlData = await this.contSvc.getResourseLink(content)
-    this.router.navigate(
-      [urlData.url],
-      {
-        queryParams: urlData.queryParams,
-      })
+
+    if (content && content.objectType === 'Event' && content.identifier) {
+      this.router.navigate(
+        [`app/event-hub/home/${content.identifier}`])
+    } else {
+      const urlData = await this.contSvc.getResourseLink(content)
+      this.router.navigate(
+        [urlData.url],
+        {
+          queryParams: urlData.queryParams,
+        })
+    }
   }
 
   checkForCiosDuration(item: any) {

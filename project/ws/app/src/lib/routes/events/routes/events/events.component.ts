@@ -44,6 +44,34 @@ export class EventsComponent implements OnInit {
   todaysLiveEvents: any = []
   keySpeakerEvents: any = []
   keySpeakerEventWidget = false
+  totalResults: any
+  throttle = 20
+  scrollDistance = 0.2
+  limit = 20
+  page = 0
+  totalpages!: number | 0
+  eventRequestObj = {
+    locale: [
+      'en',
+    ],
+    query: '',
+    request: {
+      query: '',
+      filters: {
+        status: ['Live'],
+        contentType: 'Event',
+        category: 'Event',
+      },
+      sort_by: {
+        startDate: 'desc',
+      },
+      limit: 20,
+      offset: 0,
+    },
+  }
+  newQueryParam: any
+  allEventData: any = []
+  showLoading = true
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -122,7 +150,7 @@ export class EventsComponent implements OnInit {
   }
 
   getEventsList() {
-    const requestObj = {
+    this.eventRequestObj = {
       locale: [
         'en',
       ],
@@ -137,10 +165,14 @@ export class EventsComponent implements OnInit {
         sort_by: {
           startDate: 'desc',
         },
+        limit: 20,
+        offset: 0,
       },
     }
-    this.eventSvc.getEventsList(requestObj).subscribe((events: any) => {
-      this.setEventListData(events)
+    this.eventSvc.getEventsList(this.eventRequestObj).subscribe((events: any) => {
+      this.totalResults = events.result.count
+      this.allEventData = events.result.Event
+      this.setEventListData(this.allEventData)
     })
   }
 
@@ -151,7 +183,7 @@ export class EventsComponent implements OnInit {
 
   setEventListData(eventObj: any) {
     if (eventObj !== undefined) {
-      const data = eventObj.result.Event
+      const data = this.allEventData
       this.allEvents['all'] = []
       this.allEvents['todayEvents'] = []
       this.allEvents['featuredEvents'] = []
@@ -225,6 +257,7 @@ export class EventsComponent implements OnInit {
       this.filter('curatedEvents')
       this.filter('karmayogiSaptahEvents')
     }
+    this.totalpages = Math.ceil(this.totalResults / 20)
   }
 
   customDateFormat(date: any, time: any) {
@@ -516,6 +549,22 @@ export class EventsComponent implements OnInit {
     this.keySpeakerEvents = widgetData || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
       this.keySpeakerEventWidget = this.keySpeakerEvents.strips.length
+    }
+  }
+
+  onScrollEnd() {
+    this.showLoading = true
+    this.page += 1
+    if (this.page <= this.totalpages && this.alltypeEvents.length < this.totalResults) {
+      const queryparam = this.eventRequestObj
+      queryparam.request.offset += 20
+      this.eventSvc.getEventsList(queryparam).subscribe((events: any) => {
+        this.showLoading = false
+        this.allEventData = this.allEventData.concat(events.result.Event)
+        this.setEventListData(this.allEventData)
+      })
+    } else {
+      this.showLoading = false
     }
   }
 }
