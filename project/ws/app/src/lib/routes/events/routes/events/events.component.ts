@@ -467,87 +467,23 @@ export class EventsComponent implements OnInit {
     )
   }
 
-  getKeySpeakerEventList() {
+  async getKeySpeakerEventList() {
     let orgId: any = ''
     if (environment && environment.spvorgID) {
       orgId = environment.spvorgID
     }
-    const widgetData: any =  {
-      'order': 1,
-      'strips': [
-        {
-          'active': true,
-          'key': 'keySpeakersEvents',
-          'logo': 'school',
-          'title': 'keySpeakersEvents',
-          'stripTitleLink': {
-            'link': '',
-            'icon': '',
-          },
-          'sliderConfig': {
-            'showNavs': true,
-            'showDots': false,
-            'maxWidgets': 30,
-          },
-          'loader': true,
-          'loaderConfig': {
-            'cardSubType': 'card-events-skeleton',
-          },
-          'stripBackground': '',
-          'titleDescription': 'Key Speackers Events',
-          'stripConfig': {
-            'cardSubType': 'card-events',
-          },
-          'tabs': [],
-          'filters': [],
-          'data': [],
-          'request': {
-            'searchV6': {
-              'request': {
-                'filters': {
-                  'status': [
-                    'Live',
-                  ],
-                  'contentType': 'Event',
-                  'category': 'Event',
-                  'onBehalfOf': orgId,
-                },
-                'query': '',
-                'sort_by': {
-                  'startDate': 'desc',
-                },
-                'fields': [
-                  'name',
-                  'instructions',
-                  'description',
-                  'mimeType',
-                  'identifier',
-                  'resourceType',
-                  'contentType',
-                  'channel',
-                  'organisation',
-                  'duration',
-                  'version',
-                  'startDate',
-                  'endDate',
-                  'startTime',
-                  'endTime',
-                  'status',
-                  'createdOn',
-                  'eventType',
-                  'expiryDate',
-                  'creatorDetails',
-                  'appIcon',
-                  'recordedLinks',
-                ],
-              },
-            },
-          },
-        },
-      ],
-    }
-    this.keySpeakerEvents = widgetData || []
+    const widgetData: any =  await this.eventSvc.getKeySpeakerJson().catch(_error => {})
+    this.keySpeakerEvents = widgetData && widgetData['keySpeakersEvents'] || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
+      if(this.keySpeakerEvents.strips[0] && 
+        this.keySpeakerEvents.strips[0]['request'] && 
+        this.keySpeakerEvents.strips[0]['request']['searchV6'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters']['onBehalfOf']
+      ) {
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters']['onBehalfOf'] = orgId
+      }
       this.keySpeakerEventWidget = this.keySpeakerEvents.strips.length
     }
   }
