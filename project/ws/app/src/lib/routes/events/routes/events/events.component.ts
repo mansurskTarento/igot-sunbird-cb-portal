@@ -169,7 +169,7 @@ export class EventsComponent implements OnInit {
             'startDate',
             'endDate',
             'startTime',
-            'endTime'
+            'endTime',
           ],
           'query': key ? key : '',
           'filters': {
@@ -206,17 +206,17 @@ export class EventsComponent implements OnInit {
               const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
               const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
               const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
-      
+
               const stime = obj.startTime.split('+')[0]
               const hour = stime.substr(0, 2)
               const min = stime.substr(2, 3)
               const starttime = `${hour}${min}`
-      
+
               const etime = obj.endTime.split('+')[0]
               const ehour = etime.substr(0, 2)
               const emin = etime.substr(2, 3)
               const endtime = `${ehour}${emin}`
-      
+
               const eventDataObj = {
                 event: obj,
                 eventName: obj.name,
@@ -247,7 +247,7 @@ export class EventsComponent implements OnInit {
               if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
                 karmayogiSaptahEvents.push(eventDataObj)
               }
-              
+
             })
             this.alltypeEvents = filterData
             this.karmayogiSaptahEvents = karmayogiSaptahEvents
