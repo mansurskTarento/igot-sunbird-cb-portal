@@ -27,10 +27,10 @@ export class EventsCardComponent implements OnInit {
   }
 
   translateLabels(label: string, type: any) {
-    if(label) {
+    if (label) {
       return this.langtranslations.translateLabel(label, type, '')
     }
-    
+
   }
 
 }

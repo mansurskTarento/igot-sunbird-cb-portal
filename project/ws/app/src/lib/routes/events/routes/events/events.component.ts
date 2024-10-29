@@ -75,7 +75,7 @@ export class EventsComponent implements OnInit {
   allEventData: any = []
   showLoading = true
   currentQuery = ''
-  public debounce: number = 500;
+  public debounce = 500
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -112,15 +112,15 @@ export class EventsComponent implements OnInit {
     this.queryControl.valueChanges
       .pipe(debounceTime(this.debounce), distinctUntilChanged())
       .subscribe(query => {
-        if(query) {
+        if (query) {
           this.currentQuery = query
           this.updateQuery(query)
         } else {
           this.currentQuery = ''
           this.getEventsList()
         }
-        
-      });
+
+      })
     this.getKeySpeakerEventList()
     this.getEventsList()
   }
@@ -165,13 +165,13 @@ export class EventsComponent implements OnInit {
             'avgRating',
             'courseCategory',
             'secureSettings',
-            'createdFor'
+            'createdFor',
           ],
           'query': key ? key : '',
           'filters': {
             'courseCategory': [],
             'contentType': ['Event'],
-            'status': ['Live'] 
+            'status': ['Live'],
           },
             'sort_by': { 'lastUpdatedOn': 'desc' },
             'facets': ['mimeType'],
@@ -180,14 +180,14 @@ export class EventsComponent implements OnInit {
           },
       }
       this.searchSrvc.fetchSearchDataByCategory(requestPayload).subscribe((response: any) => {
-        if(response && response.result && response.result.Event && response.result.Event.length) {
-          let allFilteredEvent = response.result.Event
-          
+        if (response && response.result && response.result.Event && response.result.Event.length) {
+          const allFilteredEvent = response.result.Event
+
             const data = allFilteredEvent
-            let filterData:any = []
-            let featuredEvents:any = []
-            let curatedEvents:any = []
-            let karmayogiSaptahEvents:any = []
+            const filterData: any = []
+            const featuredEvents: any = []
+            const curatedEvents: any = []
+            const karmayogiSaptahEvents: any = []
             Object.keys(data).forEach((index: any) => {
               const obj = data[index]
               // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
@@ -200,9 +200,7 @@ export class EventsComponent implements OnInit {
               const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
               const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
               const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
-      
-           
-      
+
               const eventDataObj = {
                 event: obj,
                 eventName: obj.name,
@@ -224,16 +222,16 @@ export class EventsComponent implements OnInit {
               if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
                 karmayogiSaptahEvents.push(eventDataObj)
               }
-            })   
+            })
             this.alltypeEvents = filterData
             this.karmayogiSaptahEvents = karmayogiSaptahEvents
             this.featuredEvents = featuredEvents
             this.curatedEvents = curatedEvents
-          }    
-        
-      });
+          }
+
+      })
     }
-   
+
   }
 
   // refreshData(page: any) {
@@ -591,8 +589,8 @@ export class EventsComponent implements OnInit {
     const widgetData: any =  await this.eventSvc.getKeySpeakerJson().catch(_error => {})
     this.keySpeakerEvents = widgetData && widgetData['keySpeakersEvents'] || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
-      if(this.keySpeakerEvents.strips[0] && 
-        this.keySpeakerEvents.strips[0]['request'] && 
+      if (this.keySpeakerEvents.strips[0] &&
+        this.keySpeakerEvents.strips[0]['request'] &&
         this.keySpeakerEvents.strips[0]['request']['searchV6'] &&
         this.keySpeakerEvents.strips[0]['request']['searchV6']['request'] &&
         this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters'] &&
@@ -605,7 +603,7 @@ export class EventsComponent implements OnInit {
   }
 
   onScrollEnd() {
-    if(!this.currentQuery) {
+    if (!this.currentQuery) {
       this.showLoading = true
       this.page += 1
       if (this.page <= this.totalpages && this.alltypeEvents.length < this.totalResults) {
@@ -622,6 +620,6 @@ export class EventsComponent implements OnInit {
     } else {
       this.showLoading = false
     }
-    
+
   }
 }
