@@ -166,6 +166,10 @@ export class EventsComponent implements OnInit {
             'courseCategory',
             'secureSettings',
             'createdFor',
+            'startDate',
+            'endDate',
+            'startTime',
+            'endTime'
           ],
           'query': key ? key : '',
           'filters': {
@@ -191,6 +195,8 @@ export class EventsComponent implements OnInit {
             Object.keys(data).forEach((index: any) => {
               const obj = data[index]
               // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+              const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
+              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
               const floor = Math.floor
               const hours = floor(obj.duration / 60)
               const minutes = obj.duration % 60
@@ -200,16 +206,35 @@ export class EventsComponent implements OnInit {
               const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
               const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
               const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
-
+      
+              const stime = obj.startTime.split('+')[0]
+              const hour = stime.substr(0, 2)
+              const min = stime.substr(2, 3)
+              const starttime = `${hour}${min}`
+      
+              const etime = obj.endTime.split('+')[0]
+              const ehour = etime.substr(0, 2)
+              const emin = etime.substr(2, 3)
+              const endtime = `${ehour}${emin}`
+      
               const eventDataObj = {
                 event: obj,
                 eventName: obj.name,
+                eventStartTime: starttime,
+                eventEndTime: endtime,
+                eventStartDate: obj.startDate,
+                eventCreatedOn: this.allEventDateFormat(obj.createdOn),
                 eventDuration: duration,
                 eventjoined: creatorDetails.length,
                 eventThumbnail: obj.appIcon && (obj.appIcon !== null || obj.appIcon !== undefined) ?
                   this.eventSvc.getPublicUrl(obj.appIcon) :
                   '/assets/icons/Events_default.png',
                 pastevent: false,
+              }
+              const now = new Date()
+              const today = moment(now).format('YYYY-MM-DD HH:mm')
+              if (expiryStartTimeFormat < today) {
+                eventDataObj.pastevent = true
               }
               filterData.push(eventDataObj)
               if (obj.createdFor && obj.createdFor[0] === this.departmentID) {
@@ -222,6 +247,7 @@ export class EventsComponent implements OnInit {
               if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
                 karmayogiSaptahEvents.push(eventDataObj)
               }
+              
             })
             this.alltypeEvents = filterData
             this.karmayogiSaptahEvents = karmayogiSaptahEvents
