@@ -84,11 +84,11 @@
         <span class="f-medium mat-title">{{ 'event.labelAllEvents' | translate }} </span>
     </div>
     <div class="flex flex-1 flex-column margin-fix search">
-        <form (submit)="updateQuery(queryControl.value)">
+        <form>
             <mat-form-field appearance="outline" class="autocomplete-form mat-body-2" color="primary"
                 [floatLabel]="'never'">
                 <mat-icon matPrefix class="py-5 flex items-center justify-center">search</mat-icon>
-                <input type="search" #searchInput class="ml-2" i18n-placeholder="search content"
+                <input (onChange)="updateQuery(queryControl.value)" type="search" #searchInput class="ml-2" i18n-placeholder="search content"
                     [placeholder]="'common.search' | translate" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
                     accesskey="F" maxlength="50" />
             </mat-form-field>
@@ -115,7 +115,7 @@
                     [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
                     (scrolled)="onScrollEnd()">
                         <ng-container
-                            *ngFor="let event of alltypeEvents |  pipeFilterV2:'eventName': searchInput.value">
+                            *ngFor="let event of alltypeEvents">
                             <ws-app-events-card class="" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -129,7 +129,7 @@
                     <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
                     [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
                     (scrolled)="onScrollEnd()">
-                        <ng-container *ngFor="let event of karmayogiSaptahEvents | pipeFilterV2:'eventName': searchInput.value">
+                        <ng-container *ngFor="let event of karmayogiSaptahEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -143,7 +143,7 @@
                     <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
                     [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
                     (scrolled)="onScrollEnd()">
-                        <ng-container *ngFor="let event of featuredEvents |  pipeFilterV2:'eventName': searchInput.value">
+                        <ng-container *ngFor="let event of featuredEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -157,7 +157,7 @@
                     <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
                     [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
                     (scrolled)="onScrollEnd()">
-                        <ng-container *ngFor="let event of curatedEvents | pipeFilterV2:'eventName': searchInput.value">
+                        <ng-container *ngFor="let event of curatedEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
