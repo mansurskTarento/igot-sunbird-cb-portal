@@ -101,7 +101,14 @@ const routes: Routes = [
   {
     path: 'ext/:id',
     component: AppTocCiosHomeComponent,
+    data: {
+      pageType: 'feature',
+      pageKey: 'tocExt',
+      pageId: 'ext/:do_ID',
+      module: 'Learn',
+    },
     resolve: {
+      pageData: PageResolve,
       extContent: AppTocCiosResolverService,
       userEnrollContent: AppTocCiosUserEnrollResolverService,
     },
