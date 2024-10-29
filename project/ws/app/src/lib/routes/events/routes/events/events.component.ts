@@ -9,6 +9,8 @@ import { MatTabChangeEvent } from '@angular/material'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
+import { GbSearchService } from '../../../search-v2/services/gb-search.service'
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
   selector: 'ws-app-events',
@@ -72,6 +74,8 @@ export class EventsComponent implements OnInit {
   newQueryParam: any
   allEventData: any = []
   showLoading = true
+  currentQuery = ''
+  public debounce: number = 500;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -79,6 +83,7 @@ export class EventsComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private eventService: EventServiceGlobal,
     private translate: TranslateService,
+    private searchSrvc: GbSearchService,
   ) {
 
     this.data = this.route.snapshot.data.topics.data
@@ -104,6 +109,18 @@ export class EventsComponent implements OnInit {
     //   this.currentActivePage = x.page || 1
     //   this.refreshData(this.currentActivePage)
     // })
+    this.queryControl.valueChanges
+      .pipe(debounceTime(this.debounce), distinctUntilChanged())
+      .subscribe(query => {
+        if(query) {
+          this.currentQuery = query
+          this.updateQuery(query)
+        } else {
+          this.currentQuery = ''
+          this.getEventsList()
+        }
+        
+      });
     this.getKeySpeakerEventList()
     this.getEventsList()
   }
@@ -116,8 +133,107 @@ export class EventsComponent implements OnInit {
   // }
   updateQuery(key: string) {
     if (key) {
-
+      const requestPayload = {
+        'request': {
+          'fields' : [
+            'name',
+            'appIcon',
+            'instructions',
+            'description',
+            'purpose',
+            'mimeType',
+            'gradeLevel',
+            'identifier',
+            'medium',
+            'pkgVersion',
+            'board',
+            'subject',
+            'resourceType',
+            'primaryCategory',
+            'contentType',
+            'channel',
+            'organisation',
+            'trackable',
+            'license',
+            'posterImage',
+            'idealScreenSize',
+            'learningMode',
+            'creatorLogo',
+            'duration',
+            'version',
+            'programDuration',
+            'avgRating',
+            'courseCategory',
+            'secureSettings',
+            'createdFor'
+          ],
+          'query': key ? key : '',
+          'filters': {
+            'courseCategory': [],
+            'contentType': ['Event'],
+            'status': ['Live'] 
+          },
+            'sort_by': { 'lastUpdatedOn': 'desc' },
+            'facets': ['mimeType'],
+            'limit': 1000,
+            'offset': 0,
+          },
+      }
+      this.searchSrvc.fetchSearchDataByCategory(requestPayload).subscribe((response: any) => {
+        if(response && response.result && response.result.Event && response.result.Event.length) {
+          let allFilteredEvent = response.result.Event
+          
+            const data = allFilteredEvent
+            let filterData:any = []
+            let featuredEvents:any = []
+            let curatedEvents:any = []
+            let karmayogiSaptahEvents:any = []
+            Object.keys(data).forEach((index: any) => {
+              const obj = data[index]
+              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+              const floor = Math.floor
+              const hours = floor(obj.duration / 60)
+              const minutes = obj.duration % 60
+              const duration = (hours === 0) ? ((minutes === 0) ? '---' : `${minutes} minutes`) : (minutes === 0) ? (hours === 1) ?
+                `${hours} hour` : `${hours} hours` : (hours === 1) ? `${hours} hour ${minutes} minutes` :
+                `${hours} hours ${minutes} minutes`
+              const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
+              const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
+              const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
+      
+           
+      
+              const eventDataObj = {
+                event: obj,
+                eventName: obj.name,
+                eventDuration: duration,
+                eventjoined: creatorDetails.length,
+                eventThumbnail: obj.appIcon && (obj.appIcon !== null || obj.appIcon !== undefined) ?
+                  this.eventSvc.getPublicUrl(obj.appIcon) :
+                  '/assets/icons/Events_default.png',
+                pastevent: false,
+              }
+              filterData.push(eventDataObj)
+              if (obj.createdFor && obj.createdFor[0] === this.departmentID) {
+                featuredEvents.push(eventDataObj)
+              }
+              this.spvOrgId = environment.spvorgID
+              if (obj.createdFor && obj.createdFor[0] === this.spvOrgId) {
+                curatedEvents.push(eventDataObj)
+              }
+              if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
+                karmayogiSaptahEvents.push(eventDataObj)
+              }
+            })   
+            this.alltypeEvents = filterData
+            this.karmayogiSaptahEvents = karmayogiSaptahEvents
+            this.featuredEvents = featuredEvents
+            this.curatedEvents = curatedEvents
+          }    
+        
+      });
     }
+   
   }
 
   // refreshData(page: any) {
@@ -489,18 +605,23 @@ export class EventsComponent implements OnInit {
   }
 
   onScrollEnd() {
-    this.showLoading = true
-    this.page += 1
-    if (this.page <= this.totalpages && this.alltypeEvents.length < this.totalResults) {
-      const queryparam = this.eventRequestObj
-      queryparam.request.offset += 20
-      this.eventSvc.getEventsList(queryparam).subscribe((events: any) => {
+    if(!this.currentQuery) {
+      this.showLoading = true
+      this.page += 1
+      if (this.page <= this.totalpages && this.alltypeEvents.length < this.totalResults) {
+        const queryparam = this.eventRequestObj
+        queryparam.request.offset += 20
+        this.eventSvc.getEventsList(queryparam).subscribe((events: any) => {
+          this.showLoading = false
+          this.allEventData = this.allEventData.concat(events.result.Event)
+          this.setEventListData(this.allEventData)
+        })
+      } else {
         this.showLoading = false
-        this.allEventData = this.allEventData.concat(events.result.Event)
-        this.setEventListData(this.allEventData)
-      })
+      }
     } else {
       this.showLoading = false
     }
+    
   }
 }
