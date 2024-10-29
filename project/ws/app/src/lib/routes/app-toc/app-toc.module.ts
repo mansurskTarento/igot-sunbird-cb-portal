@@ -137,6 +137,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
 
 @NgModule({
   declarations: [
@@ -257,6 +258,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     KarmaPointsModule,
     TipsForLearnerModule,
     ReactiveFormsModule,
+    DiscussionV2Module
   ],
   providers: [
     AppTocResolverService,
