@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
-import { NSProfileDataV3 } from '../models/profile-v3.models'
 import { TopicService } from '../services/topics.service'
 import { catchError, map } from 'rxjs/operators'
 

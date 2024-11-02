@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { NgModule } from '@angular/core'
 
-import { AceEditorModule } from 'ng2-ace-editor'
+// import { AceEditorModule } from 'ng2-ace-editor'
 
 import { DbmsBestPracticeComponent } from './components/dbms-best-practice/dbms-best-practice.component'
 import { DbmsConceptCreateComponent } from './components/dbms-concept-create/dbms-concept-create.component'
@@ -54,7 +54,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
         MatDialogModule,
         MatSnackBarModule,
         MatExpansionModule,
-        AceEditorModule,
+        // AceEditorModule,
     ],
     exports: [
         RdbmsHandsOnComponent,

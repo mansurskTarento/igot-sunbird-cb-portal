@@ -42,7 +42,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 import { ViewerSecondaryTopBarModule } from './components/viewer-secondary-top-bar/viewer-secondary-top-bar.module'
-import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module'
+
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
@@ -58,6 +58,8 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTreeModule } from '@angular/material/tree'
+
+import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module'
 @NgModule({
   declarations: [ViewerComponent, ViewerTocComponent],
   imports: [

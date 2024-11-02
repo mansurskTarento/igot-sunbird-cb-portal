@@ -4,7 +4,7 @@ import { PublicContactComponent } from './public-contact.component'
 import { BtnPageBackModule, LeftMenuModule } from '@sunbird-cb/collection'
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { FormsModule } from '@angular/forms'
-import { Ng2SearchPipeModule } from 'ng2-search-filter'
+// import { Ng2SearchPipeModule } from 'ng2-search-filter'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
@@ -29,7 +29,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    Ng2SearchPipeModule,
+    // Ng2SearchPipeModule,
     TranslateModule,
   ],
   exports: [PublicContactComponent, TranslateModule],

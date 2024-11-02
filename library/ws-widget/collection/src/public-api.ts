@@ -264,3 +264,8 @@ export * from './lib/btn-twitter-share/btn-twitter-share.module'
 // breadcrumbs
 export * from './lib/breadcrumbs-org/breadcrumbs-org.module'
 export * from './lib/breadcrumbs-org/breadcrumbs-org.service'
+
+export * from './lib/_common/content-toc/content-toc.module'
+export * from './lib/_common/content-toc/app-toc-about/app-toc-about.component'
+export * from './lib/_common/content-toc/karma-points/karma-points.module'
+export * from './lib/_common/content-toc/karma-points/karma-points.component'

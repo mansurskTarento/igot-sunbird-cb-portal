@@ -31,8 +31,9 @@ export class FileDownloadService {
   saveBlobToDevice(blob: Blob, documentName: string): boolean {
     try {
       // IE Download
-      if (this.window.navigator && this.window.navigator.msSaveOrOpenBlob) {
-        this.window.navigator.msSaveOrOpenBlob(blob, documentName)
+      let windowNavigator:any = this.window.navigator
+      if (windowNavigator && windowNavigator.msSaveOrOpenBlob) {
+        windowNavigator.msSaveOrOpenBlob(blob, documentName)
         return true
       }
 

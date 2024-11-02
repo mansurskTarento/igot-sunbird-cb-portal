@@ -7,7 +7,6 @@ import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-l
 import { RouterModule } from '@angular/router'
 import { BtnPageBackModule, BtnSocialLikeModule, BtnSocialVoteModule } from '@sunbird-cb/collection'
 import { BtnModeratorModule } from '../widgets/buttons/btn-moderator/btn-moderator.module'
-import { DialogBoxModeratorComponent } from '../widgets/Dialog-Box/dialog-box-moderator/dialog-box-moderator.component'
 import { DialogBoxModeratorModule } from '../widgets/Dialog-Box/dialog-box-moderator/dialog-box-moderator.module'
 import { ModeratorTimelineComponent } from './components/moderator-timeline.component'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'

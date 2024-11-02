@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot } from '@angular/router'
 import { Observable } from 'rxjs'
 import { AssessmentService } from '../services/competency.service'
 import { take } from 'rxjs/operators'
-import { NSCompetency } from '../models/competency.model'
 
 @Injectable()
 export class CompetencyResolverService

@@ -469,7 +469,10 @@
     }
   },
   "cli": {
-    "analytics": "0960077c-cd40-4a38-a76c-e63878df5326"
+    "analytics": "0960077c-cd40-4a38-a76c-e63878df5326",
+    "cache": {
+      "enabled": false
+    }
   }
   
 }

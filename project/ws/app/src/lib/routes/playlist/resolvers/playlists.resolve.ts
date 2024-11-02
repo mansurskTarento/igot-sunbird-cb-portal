@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs'
 import { map, catchError, first } from 'rxjs/operators'
 
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
-import { NsPlaylist, BtnPlaylistService } from '@sunbird-cb/collection'
+import { BtnPlaylistService } from '@sunbird-cb/collection'
 
 @Injectable()
 export class PlaylistsResolve

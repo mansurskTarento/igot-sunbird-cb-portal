@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import { DialogBoxModeratorComponent } from '../../Dialog-Box/dialog-box-moderator/dialog-box-moderator.component'
 import { DialogBoxModeratorModule } from '../../Dialog-Box/dialog-box-moderator/dialog-box-moderator.module'
 import { BtnModeratorComponent } from './btn-moderator.component'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'

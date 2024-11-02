@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
-import { AceEditorModule } from 'ng2-ace-editor'
+// import { AceEditorModule } from 'ng2-ace-editor'
 
 import { HtmlPickerComponent } from './html-picker.component'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
@@ -13,7 +13,7 @@ import { MatExpansionModule } from '@angular/material/expansion'
     CommonModule,
     MatExpansionModule,
     MatButtonModule,
-    AceEditorModule,
+    // AceEditorModule,
   ],
   exports: [
     HtmlPickerComponent,

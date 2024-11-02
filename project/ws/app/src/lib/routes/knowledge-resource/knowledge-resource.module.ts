@@ -12,7 +12,7 @@ import { KnowledgeSavedComponent } from './routes/knowledge-saved/knowledge-save
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { KnowledgeDetailComponent } from './routes/knowledge-detail/knowledge-detail.component'
-import { Ng2SearchPipeModule } from 'ng2-search-filter'
+// import { Ng2SearchPipeModule } from 'ng2-search-filter'
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
@@ -53,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatCardModule,
     BtnPageBackModule,
     WidgetResolverModule,
-    Ng2SearchPipeModule,
+    // Ng2SearchPipeModule,
     PipeSafeSanitizerModule,
     MatExpansionModule,
     TranslateModule.forChild({

@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core'
 // import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { ActivatedRoute } from '@angular/router'
 // import { MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 // import { DiscussService } from '../../../discuss/services/discuss.service'
 /* tslint:disable */

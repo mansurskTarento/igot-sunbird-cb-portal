@@ -283,6 +283,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         AppTocHomeRootComponent,
         AppTocHomeComponent,
         ShareTocModule,
+        KarmaPointsModule
     ]
 })
 export class AppTocModule { }

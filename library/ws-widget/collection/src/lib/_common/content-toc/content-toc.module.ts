@@ -96,6 +96,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         AppTocAboutComponent,
         AppTocContentComponent,
         ReviewsContentComponent,
+        AppTocContentCardV2SkeletonComponent,
+        KarmaPointsModule
     ]
 })
 

@@ -61,12 +61,12 @@
     <ng-container [ngSwitch]="requestType">
       <div *ngSwitchCase="'KB'">
         <ng-container *ngIf="editorMode === 'advanced'">
-          <ws-auth-ace-editor
+          <!-- <ws-auth-ace-editor
             [mode]="'json'"
             [content]="getPath('request', 'knowledgeBoard').value || {}"
             (data)="update('knowledgeBoard', $event)"
           >
-          </ws-auth-ace-editor>
+          </ws-auth-ace-editor> -->
         </ng-container>
         <ng-container *ngIf="editorMode === 'basic'">
           <mat-card>
@@ -93,12 +93,12 @@
       </div>
       <div *ngSwitchCase="'Collections'">
         <ng-container *ngIf="editorMode === 'advanced'">
-          <ws-auth-ace-editor
+          <!-- <ws-auth-ace-editor
             [mode]="'json'"
             [content]="getPath('request', 'searchV6').value || {}"
             (data)="update('searchV6', $event)"
           >
-          </ws-auth-ace-editor>
+          </ws-auth-ace-editor> -->
         </ng-container>
         <ng-container *ngIf="editorMode === 'basic'">
           <mat-card>
@@ -124,28 +124,28 @@
         </ng-container>
       </div>
       <div *ngSwitchCase="'search'">
-        <ws-auth-ace-editor
+        <!-- <ws-auth-ace-editor
           [mode]="'json'"
           [content]="getPath('request', 'search').value || {}"
           (data)="update('api', $event)"
         >
-        </ws-auth-ace-editor>
+        </ws-auth-ace-editor> -->
       </div>
       <div *ngSwitchCase="'api'">
-        <ws-auth-ace-editor
+        <!-- <ws-auth-ace-editor
           [mode]="'json'"
           [content]="getPath('request', 'api').value || {}"
           (data)="update('api', $event)"
         >
-        </ws-auth-ace-editor>
+        </ws-auth-ace-editor> -->
       </div>
       <div *ngSwitchCase="'searchRegionRecommendation'">
-        <ws-auth-ace-editor
+        <!-- <ws-auth-ace-editor
           [mode]="'json'"
           [content]="getPath('request', 'searchRegionRecommendation').value || {}"
           (data)="update('searchRegionRecommendation', $event)"
         >
-        </ws-auth-ace-editor>
+        </ws-auth-ace-editor> -->
       </div>
       <div *ngSwitchCase="'ids'">
         <mat-card>

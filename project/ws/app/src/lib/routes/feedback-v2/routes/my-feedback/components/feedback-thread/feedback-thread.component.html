@@ -18,7 +18,7 @@
         <form [formGroup]="replyForm" (ngSubmit)="submitReply()">
           <div class="mat-body">
             <mat-form-field class="w-full">
-              <textarea matInput [matTextareaAutosize] [matAutosizeMaxRows]="10" [matAutosizeMinRows]="3"
+              <textarea matInput [cdkTextareaAutosize] [cdkAutosizeMaxRows]="10" [cdkAutosizeMinRows]="3"
                 formControlName="reply" placeholder="Type your text here" i18n-placeholder required></textarea>
               <mat-hint >
                 Limit to 2000 characters.

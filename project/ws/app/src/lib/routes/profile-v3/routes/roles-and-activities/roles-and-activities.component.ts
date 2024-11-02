@@ -48,7 +48,8 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private router: Router,
         private snackBar: MatSnackBar,
-        private translate: TranslateService) {
+        private translate: TranslateService,
+        ) {
         this.updateRoles()
         if (localStorage.getItem('websiteLanguage')) {
             this.translate.setDefaultLang('en')
@@ -229,9 +230,9 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
             })
             // this.textBoxActive = true
             this.selectedActivity = []
-            _.each(role.activities, a => {
-                this.addActivity({ input: this.act, value: a.name })
-            })
+            // _.each(role.activities, a => {
+            //    // this.addActivity({ input: this.act, value: a.name, this.matChipInput })
+            // })
             // this.selectedActivity=role.activities
             this.router.navigate(['app', 'setup', 'roles'], { fragment: 'maindiv' })
         }

@@ -138,9 +138,9 @@
           "blue" {{'}'}}
         </span>
       </h3>
-      <ws-auth-ace-editor [mode]="'json'" [content]="widget.widgetHostStyle || {}"
+      <!-- <ws-auth-ace-editor [mode]="'json'" [content]="widget.widgetHostStyle || {}"
         (data)="widget.widgetHostStyle = $event">
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </mat-expansion-panel>
     <mat-expansion-panel *ngIf="canShowEdit" [expanded]="true">
       <mat-expansion-panel-header>
@@ -312,8 +312,8 @@
               "blue" {{'}'}}
             </span>
           </h3>
-          <ws-auth-ace-editor [mode]="'json'" [content]="widget.styles || {}" (data)="widget.styles = $event">
-          </ws-auth-ace-editor>
+          <!-- <ws-auth-ace-editor [mode]="'json'" [content]="widget.styles || {}" (data)="widget.styles = $event">
+          </ws-auth-ace-editor> -->
         </ng-container>
         <ng-container *ngSwitchCase="'selectorResponsive'">
           <div class="flex">
@@ -378,9 +378,9 @@
           Change this if you know the required JSON structure. Incorrect syntax or data will not load properly.
         </span>
       </h3>
-      <ws-auth-ace-editor [mode]="'json'" [content]="widget.data || {}"
+      <!-- <ws-auth-ace-editor [mode]="'json'" [content]="widget.data || {}"
         (data)="widget.data = $event; directEdit = true">
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </mat-expansion-panel>
   </mat-accordion>
 </mat-dialog-content>

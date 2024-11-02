@@ -51,7 +51,6 @@ import 'zone.js' // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 import 'hammerjs'
-import 'typeface-roboto'
 import '@angular/localize/init'
 // these changes are for SVG Preview
 (window as any).global = window

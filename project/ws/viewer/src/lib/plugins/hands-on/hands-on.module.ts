@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
-import { AceEditorModule } from 'ng2-ace-editor'
+// import { AceEditorModule } from 'ng2-ace-editor'
 
 import { PipeSafeSanitizerModule, PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { CompletionSpinnerModule } from '@sunbird-cb/collection'
@@ -25,7 +25,7 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
         MatExpansionModule,
         MatButtonModule,
         MatDialogModule,
-        AceEditorModule,
+        // AceEditorModule,
         MatProgressSpinnerModule,
         PipeSafeSanitizerModule,
         PipeDurationTransformModule,

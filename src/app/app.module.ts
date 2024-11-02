@@ -76,7 +76,7 @@ import { SbUiResolverModule } from '@sunbird-cb/resolver-v2'
 import { LoggerService, PipeSafeSanitizerModule, ConfigurationsService, PipeOrderByModule, NPSGridService } from '@sunbird-cb/utils-v2'
 import { SearchModule } from '@ws/app/src/public-api'
 import 'hammerjs'
-import { KeycloakAngularModule } from 'keycloak-angular'
+// import { KeycloakAngularModule } from 'keycloak-angular'
 import { AppRoutingModule } from './app-routing.module'
 import { InitService } from './services/init.service'
 import { GlobalErrorHandlingService } from './services/global-error-handling.service'
@@ -161,7 +161,6 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -226,7 +225,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         HttpClientJsonpModule,
         BrowserModule,
         BrowserAnimationsModule,
-        KeycloakAngularModule,
+        // KeycloakAngularModule,
         AppRoutingModule,
         AvatarPhotoModule,
         BtnAppsModule,
