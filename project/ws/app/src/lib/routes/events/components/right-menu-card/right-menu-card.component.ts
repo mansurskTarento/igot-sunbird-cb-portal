@@ -58,6 +58,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
   ngOnInit(): void {
     this.loadEnrolledEventData()
+
     this.kparray = (this.route.parent && this.route.parent.snapshot.data.pageData.data.karmaPoints) || []
     if (this.eventData) {
 
@@ -291,6 +292,21 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         this.batchId = this.eventData.batches[0].batchId || ''
         this.navigateToSamePagewithBatchId(this.batchId)
       }
+    }
+  }
+
+  get completedAfterExpiry() {
+    if(this.eventData && this.enrolledEvent) {
+      console.log('completedAfterExpiry :: ')
+      const eventEndTimestamp = new Date(this.eventData.endDate).getTime()
+      const completedTimestamp = new Date(this.enrolledEvent.completedOn).getTime()
+     if(eventEndTimestamp < completedTimestamp) {
+      return true
+     } else {
+      return false
+     }
+    } else {
+      return false
     }
   }
 
