@@ -4,12 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy/localhost.proxy.json -o",
-    "prebuild": "export NODE_OPTIONS=--openssl-legacy-provider && npm run lint:fix",
-    "build-dev": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=dev --outputPath=dist/www/en --baseHref=/ --subresource-integrity",
-    "build-np": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=np --outputPath=dist/www/en --baseHref=/ --subresource-integrity",
-    "build-preprod": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=preprod --outputPath=dist/www/en --baseHref=/ --subresource-integrity",
-    "build-benchmark": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=benchmark --outputPath=dist/www/en --baseHref=/ --subresource-integrity",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --outputPath=dist/www/en --baseHref=/ --subresource-integrity",
+    
+    "build-dev": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=dev --output-path=dist/www/en --base-href=/ --subresource-integrity",
+    "build-np": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=np --output-path=dist/www/en --base-href=/ --subresource-integrity",
+    "build-preprod": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=preprod --output-path=dist/www/en --base-href=/ --subresource-integrity",
+    "build-benchmark": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=benchmark --output-path=dist/www/en --base-href=/ --subresource-integrity",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --output-path=dist/www/en --base-href=/ --subresource-integrity",
     "postbuild": "export NODE_OPTIONS=--openssl-legacy-provider && npm run compress:gzip && npm run compress:brotli",
     "compress:brotli": "gzipper --brotli --gzip-level=9 --verbose ./dist/www",
     "compress:gzip": "gzipper --verbose --gzip-level=9 ./dist/www",
