@@ -3327,13 +3327,6 @@
   dependencies:
     tslib "^2.0.0"
 
-"@sunbird-cb/rain-dashboards@0.4.15-ang-9-12":
-  version "0.4.15-ang-9-12"
-  resolved "https://registry.yarnpkg.com/@sunbird-cb/rain-dashboards/-/rain-dashboards-0.4.15-ang-9-12.tgz#1cef9b1c4ec1d9027fcc4c77493db553061b0eea"
-  integrity sha512-jqav56hs7wlDjFGq9jI7kx0Nusp9Jvnk4p3cCVDmXNw8zo+ZPkuz6O79K12Iz/nmUaUnXt1SbYo4b2x3GhEqmw==
-  dependencies:
-    tslib "^2.0.0"
-
 "@sunbird-cb/resolver-v2@0.0.7-ang-13-16":
   version "0.0.7-ang-13-16"
   resolved "https://registry.yarnpkg.com/@sunbird-cb/resolver-v2/-/resolver-v2-0.0.7-ang-13-16.tgz#960f518e6d0f7b96d9bba61f3a530e5036160894"
@@ -3419,7 +3412,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/chart.js@^2.7.56", "@types/chart.js@^2.9.24":
+"@types/chart.js@^2.7.56":
   version "2.9.41"
   resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.41.tgz#4148cdc87d4f98fad44b2883271cd0fa57f05e0d"
   integrity sha512-3dvkDvueckY83UyUXtJMalYoH6faOLkWQoaTlJgB4Djde3oORmNP0Jw85HtzTuXyliUHcdp704s0mZFQKio/KQ==
@@ -3957,9 +3950,9 @@
     moment ">=2.13.0"
 
 "@types/ws@^8.5.5":
-  version "8.5.12"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.12.tgz#619475fe98f35ccca2a2f6c137702d85ec247b7e"
-  integrity sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.13.tgz#6414c280875e2691d0d1e080b05addbf5cb91e20"
+  integrity sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==
   dependencies:
     "@types/node" "*"
 
@@ -5177,9 +5170,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001464, caniuse-lite@^1.0.30001646, caniuse-lite@^1.0.30001669:
-  version "1.0.30001676"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001676.tgz#fe133d41fe74af8f7cc93b8a714c3e86a86e6f04"
-  integrity sha512-Qz6zwGCiPghQXGJvgQAem79esjitvJ+CxSbSQkW9H/UX5hg8XM88d4lp2W+MEQ81j+Hip58Il+jGVdazk1z9cw==
+  version "1.0.30001677"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001677.tgz#27c2e2c637e007cfa864a16f7dfe7cde66b38b5f"
+  integrity sha512-fmfjsOlJUpMWu+mAAtZZZHz7UEwsUxIIvu1TJfO1HqFQvB/B+ii0xr9B5HpbZY/mC4XZ8SvjHJqtAY6pDPQEog==
 
 canvg@^3.0.6:
   version "3.0.10"
@@ -5255,7 +5248,7 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chart.js@^2.9.4:
+chart.js@^2.8.0:
   version "2.9.4"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.4.tgz#0827f9563faffb2dc5c06562f8eb10337d5b9684"
   integrity sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==
@@ -10396,14 +10389,13 @@ ng-recaptcha@^10.0.0:
     "@types/grecaptcha" "^3.0.3"
     tslib "^2.2.0"
 
-ng2-charts@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-2.4.3.tgz#e1de6cb55fe04248a5f92d342cf6423507fa532d"
-  integrity sha512-tPrhHSS2DfVyipXQ0gykOPc8zFNnj2b7sAebUVty392vHnEGYCwsP6YbFfpr1iXu4yBSRm4Gt5lffR5w0uyYSw==
+ng2-charts@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-4.1.1.tgz#699bee539030b093caf54ab6111c6dea9e8e7ed3"
+  integrity sha512-iHwXDbmX86lfeH8VRcsaW2tJATsuAZo4kvvC/Yk2l35zOHjevja1qBvO6BAibiDazi9r9aS6ZRJOqWPsz1pP2w==
   dependencies:
-    "@types/chart.js" "^2.9.24"
     lodash-es "^4.17.15"
-    tslib "^2.0.0"
+    tslib "^2.3.0"
 
 ng2-ckeditor@^1.2.6:
   version "1.3.7"
@@ -10437,12 +10429,12 @@ ngx-chips@2.2.2:
     ng2-material-dropdown ">=0.11.0"
     tslib "^1.10.0"
 
-ngx-image-cropper@^3.0.3:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-3.3.5.tgz#39f636e3989c5c84241f5130d0124ded6631fbeb"
-  integrity sha512-0yRVKG5XAbVo3rOaj/iFDlekGsxEqXKU9iXFbjyvHvRT2DFs+AjwtyvINsHCWw+4ed9yA4Y+wLIUNqzA0bfxLw==
+ngx-image-cropper@^6.3.4:
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-6.3.4.tgz#f56065f029c544c0860678ad531fdaa98be4cf30"
+  integrity sha512-zLJ5eDtHbQ58Q3cma5OfEgSUuCeIx/1G2ix3ZrRBXydPchJXLqnBEAq5r/PgjN/pwZ1S2+gDboPDjIqTvqwc6A==
   dependencies:
-    tslib "^1.9.0"
+    tslib "^2.3.0"
 
 ngx-infinite-scroll@^16.0.0:
   version "16.0.0"
@@ -11942,14 +11934,15 @@ sass@1.64.1:
     source-map-js ">=0.6.2 <2.0.0"
 
 sass@^1.55.0:
-  version "1.80.5"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.80.5.tgz#0ba965223d44df22497f2966b498cf5c453fae8f"
-  integrity sha512-TQd2aoQl/+zsxRMEDSxVdpPIqeq9UFc6pr7PzkugiTx3VYCFPUaa3P4RrBQsqok4PO200Vkz0vXQBNlg7W907g==
+  version "1.80.6"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.80.6.tgz#5d0aa55763984effe41e40019c9571ab73e6851f"
+  integrity sha512-ccZgdHNiBF1NHBsWvacvT5rju3y1d/Eu+8Ex6c21nHp2lZGLBEtuwc415QfiI1PJa1TpCo3iXwwSRjRpn2Ckjg==
   dependencies:
-    "@parcel/watcher" "^2.4.1"
     chokidar "^4.0.0"
     immutable "^4.0.0"
     source-map-js ">=0.6.2 <2.0.0"
+  optionalDependencies:
+    "@parcel/watcher" "^2.4.1"
 
 saucelabs@^1.5.0:
   version "1.5.0"
