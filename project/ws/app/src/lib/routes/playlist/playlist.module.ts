@@ -1,24 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import {
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatProgressBarModule,
-  MatDialogModule,
-  MatIconModule,
-  MatInputModule,
-  MatMenuModule,
-  MatProgressSpinnerModule,
-  MatRippleModule,
-  MatSelectModule,
-  MatSnackBarModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatTooltipModule,
-} from '@angular/material'
+
 import {
   BtnPageBackModule,
   BtnPlaylistModule,
@@ -50,6 +33,22 @@ import { PlaylistEditComponent } from './routes/playlist-edit/playlist-edit.comp
 import { PlaylistHomeComponent } from './routes/playlist-home/playlist-home.component'
 import { PlaylistNotificationComponent } from './routes/playlist-notification/playlist-notification.component'
 import { DragDropModule } from '@angular/cdk/drag-drop'
+import { MatButtonModule } from '@angular/material/button'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatRippleModule } from '@angular/material/core'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
   declarations: [
     PlaylistCardComponent,

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { NSCompetencie } from '../../models/competencies.model'
 import { CompetenceViewComponent } from '../competencies-view/competencies-view.component'
 

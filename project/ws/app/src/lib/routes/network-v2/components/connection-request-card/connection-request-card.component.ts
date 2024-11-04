@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter }
 import { Router, ActivatedRoute } from '@angular/router'
 // import { NSNetworkDataV2 } from '../../models/network-v2.model'
 import { NetworkV2Service } from '../../services/network-v2.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsUser } from '@sunbird-cb/utils-v2'
 // import { ConnectionHoverService } from '../connection-name/connection-hover.servive'
 

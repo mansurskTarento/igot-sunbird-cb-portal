@@ -52,7 +52,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
     }
   }
   // tslint: enable
-  @ViewChild('scrollMe', { static: false }) private myScrollContainer: ElementRef | undefined
+  @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
 
   constructor(

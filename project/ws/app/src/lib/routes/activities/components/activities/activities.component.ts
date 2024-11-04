@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { ActivitiesService } from '../../services/activities.service'
 import { IActivity, IActivityCard, IChallenges } from '../../interfaces/activities.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute } from '@angular/router'
 
 export interface IActivityProgress {

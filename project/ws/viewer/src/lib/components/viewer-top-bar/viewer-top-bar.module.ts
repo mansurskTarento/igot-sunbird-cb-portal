@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import {
-  MatToolbarModule,
-  MatIconModule,
-  MatButtonModule,
-  MatTooltipModule,
-  MatProgressBarModule,
-} from '@angular/material'
 import { ViewerTopBarComponent } from './viewer-top-bar.component'
 import { BtnFullscreenModule, BtnPageBackNavModule, ContentProgressModule } from '@sunbird-cb/collection'
 import { RouterModule } from '@angular/router'
@@ -15,6 +8,11 @@ import { CourseCompletionDialogModule } from '../course-completion-dialog/course
 import { TranslateModule } from '@ngx-translate/core'
 import { ShareTocModule } from '@ws/app/src/lib/routes/app-toc/share-toc/share-toc.module'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
   declarations: [ViewerTopBarComponent],
   imports: [

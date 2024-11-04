@@ -20,7 +20,7 @@ import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.s
   styleUrls: ['./html.component.scss'],
 })
 export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
-  @ViewChild('mobileOpenInNewTab', { read: ElementRef, static: false }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>
+  @ViewChild('mobileOpenInNewTab', { read: ElementRef }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>
   @Input() htmlContent: NsContent.IContent | null = null
   iframeUrl: SafeResourceUrl | null = null
   iframeName = `piframe_${Date.now()}`

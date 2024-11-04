@@ -135,25 +135,37 @@
 </ng-container>
 <div class="flex flex-row gap-6 fixed-width">
     <div class="toc-content" [ngClass]="isMobile ? '':'mt-8 mb-8'">
-        <div class="flex flex-col" [ngClass]="isMobile ? '':'mt-8 mb-8'">
-            <ng-container *ngIf="skeletonLoader">
-                <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
-                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                <div class="flex flex-col gap-2 mt-4">
-                    <ws-widget-skeleton-loader [width]="'80%'" [height]="'16px'"
-                        [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                    <ws-widget-skeleton-loader [width]="'95%'" [height]="'16px'"
-                        [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                    <ws-widget-skeleton-loader [width]="'65%'" [height]="'16px'"
-                        [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+        <mat-tab-group>
+            <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
+                <div class="flex flex-col" [ngClass]="isMobile ? '':'mt-5 mb-5'">
+                    <ng-container *ngIf="skeletonLoader">
+                        <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
+                            [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                        <div class="flex flex-col gap-2 mt-4">
+                            <ws-widget-skeleton-loader [width]="'80%'" [height]="'16px'"
+                                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                            <ws-widget-skeleton-loader [width]="'95%'" [height]="'16px'"
+                                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                            <ws-widget-skeleton-loader [width]="'65%'" [height]="'16px'"
+                                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!skeletonLoader">
+                        <ws-widget-app-toc-about [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length >  0 
+                        && userExtCourseEnroll?.progress === 100" [content]="extContentReadData" [fromMarketPlace]="true" [skeletonLoader]="skeletonLoader"></ws-widget-app-toc-about>
+                    </ng-container>
+                    
                 </div>
+            </mat-tab>
+            <ng-container *ngIf="config?.commentsTab">
+                <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+                    <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
+                        <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
+                    </div>
+                </mat-tab>
             </ng-container>
-            <ng-container *ngIf="!skeletonLoader">
-                <ws-widget-app-toc-about [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length >  0 
-                && userExtCourseEnroll?.progress === 100" [content]="extContentReadData" [fromMarketPlace]="true" [forPreview]="forPreview" [skeletonLoader]="skeletonLoader"></ws-widget-app-toc-about>
-            </ng-container>
-            
-        </div>
+        </mat-tab-group>
+        
     </div>
     <div class="right-container">
         <div class="right-content" #rightContainer>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '@ws/author/src/lib/constants/apiEndpoints'
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'

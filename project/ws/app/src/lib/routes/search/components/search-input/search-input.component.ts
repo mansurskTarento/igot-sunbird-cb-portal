@@ -26,7 +26,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
     distinctUntilChanged(),
     switchMap(() => []),
   )
-  @ViewChild('searchInput', { static: false }) searchInputElem: ElementRef<any> = {} as ElementRef<
+  @ViewChild('searchInput') searchInputElem: ElementRef<any> = {} as ElementRef<
     any
   >
   autoCompleteResults: ISearchAutoComplete[] = []

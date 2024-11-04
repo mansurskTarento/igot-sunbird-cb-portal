@@ -1,15 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import {
-  MatButtonModule,
-  MatIconModule,
-  MatTooltipModule,
-  MatFormFieldModule,
-  MatChipsModule,
-  MatDialogModule,
-  MatProgressSpinnerModule,
-  MatInputModule,
-} from '@angular/material'
 
 import { UserAutocompleteModule } from '../_common/user-autocomplete/user-autocomplete.module'
 
@@ -18,6 +8,14 @@ import { BtnContentShareDialogComponent } from './btn-content-share-dialog/btn-c
 import { BtnLinkedinShareModule } from '../btn-linkedin-share/btn-linkedin-share.module'
 import { BtnFacebookShareModule } from '../btn-facebook-share/btn-facebook-share.module'
 import { BtnTwitterShareModule } from '../btn-twitter-share/btn-twitter-share.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [BtnContentShareComponent, BtnContentShareDialogComponent],
@@ -40,7 +38,7 @@ import { BtnTwitterShareModule } from '../btn-twitter-share/btn-twitter-share.mo
   entryComponents: [BtnContentShareComponent, BtnContentShareDialogComponent],
 })
 export class BtnContentShareModule {
-  public static forRoot(environment: any): ModuleWithProviders {
+  public static forRoot(environment: any): ModuleWithProviders<BtnContentShareModule> {
     return {
       ngModule: BtnContentShareModule,
       providers: [

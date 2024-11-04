@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { NgForm } from '@angular/forms'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
 import { NsFeedback, BtnContentFeedbackService } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'

@@ -1,25 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { MicrosotesComponent } from './microsotes.component';
+import { MicrosotesComponent } from './microsotes.component'
 
 describe('MicrosotesComponent', () => {
-  let component: MicrosotesComponent;
-  let fixture: ComponentFixture<MicrosotesComponent>;
+  let component: MicrosotesComponent
+  let fixture: ComponentFixture<MicrosotesComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MicrosotesComponent ]
+      declarations: [MicrosotesComponent],
     })
-    .compileComponents();
-  }));
+    .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MicrosotesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(MicrosotesComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

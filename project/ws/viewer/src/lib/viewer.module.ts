@@ -1,22 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
-import {
-  MatCardModule,
-  MatSidenavModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatButtonModule,
-  MatDividerModule,
-  MatSlideToggleModule,
-  MatListModule,
-  MatTreeModule,
-  MatProgressSpinnerModule,
-  MatSnackBarModule,
-  MatTabsModule,
-  MatProgressBarModule,
-} from '@angular/material'
-
 import { ViewerRoutingModule } from './viewer-routing.module'
 
 import {
@@ -61,6 +45,19 @@ import { ViewerSecondaryTopBarModule } from './components/viewer-secondary-top-b
 import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTreeModule } from '@angular/material/tree'
 @NgModule({
   declarations: [ViewerComponent, ViewerTocComponent],
   imports: [

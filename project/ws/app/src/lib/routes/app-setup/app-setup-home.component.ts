@@ -1,4 +1,4 @@
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
@@ -42,11 +42,11 @@ export class AppSetupHomeComponent implements OnInit, AfterViewInit {
     },
   }
 
-  @ViewChild('userInterest', { static: false }) interestCompRef:
+  @ViewChild('userInterest') interestCompRef:
     | InterestComponent
     | undefined = undefined
 
-  @ViewChild('userSettings', { static: false }) settingsCompRef:
+  @ViewChild('userSettings') settingsCompRef:
     | SettingsComponent
     | undefined = undefined
 

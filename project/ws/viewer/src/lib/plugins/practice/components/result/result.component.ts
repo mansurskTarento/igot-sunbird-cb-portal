@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild } 
 import { NsContent, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { NSPractice } from '../../practice.model'
 import { MatAccordion } from '@angular/material/expansion'
-import { MatTableDataSource } from '@angular/material'
+import { MatTableDataSource } from '@angular/material/table'
 import * as _ from 'lodash'
 @Component({
   selector: 'viewer-result',

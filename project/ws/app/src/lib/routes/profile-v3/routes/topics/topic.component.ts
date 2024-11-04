@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
@@ -9,6 +8,8 @@ import { AddTopicDialogComponent } from '../../components/add-topic/add-topic.co
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import { TopicService } from '../../services/topics.service'
 import { TranslateService } from '@ngx-translate/core'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-topic',

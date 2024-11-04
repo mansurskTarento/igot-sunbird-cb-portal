@@ -66,7 +66,7 @@ export class AddWebPagesComponent implements OnInit, OnDestroy {
   showAudioCard = false
   imagesUrlbase = ''
 
-  @ViewChild(PlainCKEditorComponent, { static: false }) ckEditor!: PlainCKEditorComponent
+  @ViewChild(PlainCKEditorComponent) ckEditor!: PlainCKEditorComponent
 
   constructor(
     public dialog: MatDialog,

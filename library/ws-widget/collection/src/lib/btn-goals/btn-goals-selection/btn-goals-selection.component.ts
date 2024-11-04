@@ -10,8 +10,9 @@ import {
 import { TFetchStatus, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { NsGoal } from '../btn-goals.model'
 import { BtnGoalsService } from '../btn-goals.service'
-import { MatSnackBar, MatListOption } from '@angular/material'
 import { BtnGoalsErrorComponent } from '../btn-goals-error/btn-goals-error.component'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatListOption } from '@angular/material/list'
 
 @Component({
   selector: 'ws-widget-btn-goals-selection',

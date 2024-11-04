@@ -13,7 +13,6 @@ import {
   Inject,
 } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms'
-import { MatAutocompleteSelectedEvent } from '@angular/material'
 import { MatChipInputEvent } from '@angular/material/chips'
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -44,6 +43,7 @@ import {
   switchMap,
   map,
 } from 'rxjs/operators'
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
 // import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 
 export interface IUsersData {
@@ -122,15 +122,15 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
   file?: File
 
-  @ViewChild('creatorContactsView', { static: false }) creatorContactsView!: ElementRef
-  @ViewChild('trackContactsView', { static: false }) trackContactsView!: ElementRef
-  @ViewChild('publisherDetailsView', { static: false }) publisherDetailsView!: ElementRef
-  @ViewChild('editorsView', { static: false }) editorsView!: ElementRef
-  @ViewChild('creatorDetailsView', { static: false }) creatorDetailsView!: ElementRef
-  @ViewChild('audienceView', { static: false }) audienceView!: ElementRef
-  @ViewChild('jobProfileView', { static: false }) jobProfileView!: ElementRef
-  @ViewChild('regionView', { static: false }) regionView!: ElementRef
-  @ViewChild('accessPathsView', { static: false }) accessPathsView!: ElementRef
+  @ViewChild('creatorContactsView') creatorContactsView!: ElementRef
+  @ViewChild('trackContactsView') trackContactsView!: ElementRef
+  @ViewChild('publisherDetailsView') publisherDetailsView!: ElementRef
+  @ViewChild('editorsView') editorsView!: ElementRef
+  @ViewChild('creatorDetailsView') creatorDetailsView!: ElementRef
+  @ViewChild('audienceView') audienceView!: ElementRef
+  @ViewChild('jobProfileView') jobProfileView!: ElementRef
+  @ViewChild('regionView') regionView!: ElementRef
+  @ViewChild('accessPathsView') accessPathsView!: ElementRef
   @ViewChild('keywordsSearch', { static: true }) keywordsSearch!: ElementRef<any>
   @ViewChild('competencyView', { static: true }) competencyView!: ElementRef<any>
 
@@ -528,6 +528,7 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
     )
   }
   assignFields() {
+    const authConfig: any = this.authInitService.authConfig
     if (!this.contentForm) {
       this.createForm()
     }
@@ -536,7 +537,7 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
       try {
         if (
           this.contentMeta[v as keyof NSContent.IContentMeta] ||
-          (this.authInitService.authConfig[v as keyof IFormMeta].type === 'boolean' &&
+          (authConfig[v as keyof IFormMeta].type === 'boolean' &&
             this.contentMeta[v as keyof NSContent.IContentMeta] === false)
         ) {
           this.contentForm.controls[v].setValue(this.contentMeta[v as keyof NSContent.IContentMeta])
@@ -549,7 +550,7 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
             this.contentForm.controls[v].setValue(
               JSON.parse(
                 JSON.stringify(
-                  this.authInitService.authConfig[v as keyof IFormMeta].defaultValue[
+                  authConfig[v as keyof IFormMeta].defaultValue[
                     this.contentMeta.contentType
                     // tslint:disable-next-line: ter-computed-property-spacing
                   ][0].value,
@@ -644,8 +645,13 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   storeData() {
+    const authConfig: any = this.authInitService.authConfig
     try {
-      const originalMeta = this.contentService.getOriginalMeta(this.contentMeta.identifier)
+      let originalMeta: any
+      if (this.contentMeta.identifier) {
+        originalMeta = this.contentService.getOriginalMeta(this.contentMeta.identifier)
+      }
+
       if (originalMeta && this.isEditEnabled) {
         const expiryDate = this.contentForm.value.expiryDate
         const currentMeta: NSContent.IContentMeta = JSON.parse(JSON.stringify(this.contentForm.value))
@@ -669,14 +675,14 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
           ) {
             if (
               currentMeta[v as keyof NSContent.IContentMeta] ||
-              (this.authInitService.authConfig[v as keyof IFormMeta].type === 'boolean' &&
+              (authConfig[v as keyof IFormMeta].type === 'boolean' &&
                 currentMeta[v as keyof NSContent.IContentMeta] === false)
             ) {
               meta[v as keyof NSContent.IContentMeta] = currentMeta[v as keyof NSContent.IContentMeta]
             } else {
               meta[v as keyof NSContent.IContentMeta] = JSON.parse(
                 JSON.stringify(
-                  this.authInitService.authConfig[v as keyof IFormMeta].defaultValue[
+                  authConfig[v as keyof IFormMeta].defaultValue[
                     originalMeta.contentType
                     // tslint:disable-next-line: ter-computed-property-spacing
                   ][0].value,
@@ -723,7 +729,10 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
         //   delete meta.keywords
         //   delete meta.catalogPaths
         // }
-        this.contentService.setUpdatedMeta(meta, this.contentMeta.identifier)
+        if (this.contentMeta.identifier) {
+          this.contentService.setUpdatedMeta(meta, this.contentMeta.identifier)
+        }
+
       }
     } catch (ex) {
       this.snackBar.open('Please Save Parent first and refresh page.')
@@ -732,7 +741,9 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateContentService(meta: string, value: any, event = false) {
     this.contentForm.controls[meta].setValue(value, { events: event })
-    this.contentService.setUpdatedMeta({ [meta]: value } as any, this.contentMeta.identifier)
+    if (this.contentMeta.identifier) {
+      this.contentService.setUpdatedMeta({ [meta]: value } as any, this.contentMeta.identifier)
+    }
   }
 
   formNext(index: number) {
@@ -1010,7 +1021,7 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showError(meta: string) {
-    if (
+    if (this.contentMeta.identifier &&
       this.contentService.checkCondition(this.contentMeta.identifier, meta, 'required') &&
       !this.contentService.isPresent(meta, this.contentMeta.identifier)
     ) {
@@ -1151,10 +1162,11 @@ export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkCondition(meta: string, type: 'show' | 'required' | 'disabled'): boolean {
+    const metaIdentifier: any = this.contentMeta.identifier
     if (type === 'disabled' && !this.isEditEnabled) {
       return true
     }
-    return this.contentService.checkCondition(this.contentMeta.identifier, meta, type)
+    return this.contentService.checkCondition(metaIdentifier, meta, type)
   }
 
   createForm() {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
+import { MatSelectChange } from '@angular/material/select'
 import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
-import { MatSelectChange } from '@angular/material'
-
 @Component({
   selector: 'ws-widget-language-selector',
   templateUrl: './language-selector.component.html',

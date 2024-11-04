@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Subscription } from 'rxjs'
 import { TSendStatus } from '@sunbird-cb/utils-v2'
 import {

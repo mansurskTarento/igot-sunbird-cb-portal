@@ -10,7 +10,7 @@ import { EditorContentV2Service } from '@ws/author/src/lib/routing/modules/edito
 import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { StatusTrackComponent } from '../../../../../modules/shared/components/status-track/status-track.component'
 

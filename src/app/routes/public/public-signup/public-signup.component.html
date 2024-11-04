@@ -120,7 +120,7 @@
                 <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
                   <button *ngIf="!otpEmailSend" mat-raised-button type="button" (click)="sendOtpEmail()"
                     class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive" [disabled]="registrationForm?.email?.invalid">
-                    <a class="text-white" i18n>
+                    <a class="text-white" >
                       {{ 'publicsignup.sendOTP' | translate }}
                     </a>
                   </button>
@@ -140,7 +140,7 @@
                         <button mat-raised-button type="button" (click)="verifyOtpEmail(emailotp)"
                           class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
                           [disabled]="registrationForm?.email?.invalid">
-                          <span class="text-white" i18n>
+                          <span class="text-white" >
                             {{ 'publicsignup.verifyOTP' | translate }}
                           </span>
                         </button>
@@ -177,7 +177,7 @@
                 <div *ngIf="!isMobileVerified" class="flex flex-1 margin-top-s justify-end">
                   <button *ngIf="!otpSend" mat-raised-button type="button" (click)="sendOtp()"
                     class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive" [disabled]="registrationForm?.mobile?.invalid">
-                    <a class="text-white" i18n>
+                    <a class="text-white" >
                       {{ 'publicsignup.sendOTP' | translate }}
                     </a>
                   </button>
@@ -200,7 +200,7 @@
                         <button mat-raised-button type="button" (click)="verifyOtp(otp)"
                           class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
                           [disabled]="registrationForm?.mobile?.invalid || disableVerifyBtn">
-                          <span class="text-white" i18n>
+                          <span class="text-white" >
                             {{ 'publicsignup.verifyOTP' | translate }}
                           </span>
                         </button>

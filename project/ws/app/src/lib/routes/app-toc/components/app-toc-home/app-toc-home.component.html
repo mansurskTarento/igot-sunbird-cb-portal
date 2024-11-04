@@ -18,7 +18,7 @@
             [queryParams]="(resumeData && !certData) ? generateQuery('RESUME') : generateQuery('START')"
             class="flex action-button justify-center">
             <ng-container *ngIf="(!content.completionPercentage || content.completionPercentage < 100) && !certData">
-              <ng-container *ngIf="!forPreview || isInIFrame; else authView" i18n>
+              <ng-container *ngIf="!forPreview || isInIFrame; else authView" >
                 {{ resumeData ? translateLabels('resume', 'apptochome') : translateLabels('resume', 'apptochome') }}
               </ng-container>
             </ng-container>
@@ -29,7 +29,7 @@
 
           <button *ngIf="isPostAssessment && showTakeAssessment?.post_assessment"  (click)="raiseTelemetryForPublic()" [routerLink]="firstResourceLink?.url"
             class="flex action-button justify-center">
-            <ng-container *ngIf="!forPreview || isInIFrame; else authView" i18n>{{ 'apptochome.takeAssessment' | translate }}</ng-container>
+            <ng-container *ngIf="!forPreview || isInIFrame; else authView" >{{ 'apptochome.takeAssessment' | translate }}</ng-container>
           </button>
 
           <!-- <div
@@ -67,7 +67,7 @@
                       !(content?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL)">
           <ng-container *ngIf="content?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading">
             <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"  (click)="handleAutoBatchAssign()">
-              <ng-container i18n>
+              <ng-container >
                 {{ 'apptochome.enroll' | translate }}
               </ng-container>
             </a>
@@ -88,7 +88,7 @@
           <ng-container *ngIf="(courseCategory?.MODERATED_PROGRAM === contentReadData?.courseCategory) && (contentReadData?.batches && !batchData?.enrolled)">
             <ng-container *ngIf="((content?.primaryCategory !== primaryCategory.RESOURCE)  && !enrollBtnLoading) && !contentReadData?.batches[0].endDate">
               <a class="flex action-button justify-center resume" (click)="handleAutoBatchAssign()">
-                <ng-container *ngIf="!forPreview || isInIFrame" i18n>
+                <ng-container *ngIf="!forPreview || isInIFrame" >
                   {{'apptochome.enroll' | translate}}
                 </ng-container>
               </a>
@@ -114,18 +114,18 @@
           <ng-container *ngIf="courseCategory?.MODERATED_PROGRAM !== contentReadData?.courseCategory && !enrollBtnLoading">
             <ng-container
               *ngIf="!(content?.primaryCategory === primaryCategory.PROGRAM && currentCourseBatchId) && content?.primaryCategory !== primaryCategory.MANDATORY_COURSE_GOAL">
-              <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.youAreNotInvited' | translate }} </span>
+              <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.youAreNotInvited' | translate }} </span>
             </ng-container>
             <ng-container *ngIf="!isBatchInProgress && !!currentCourseBatchId && getStartDate === 'NA'">
-              <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.noActiveBatches' | translate }}</span>
+              <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.noActiveBatches' | translate }}</span>
             </ng-container>
             <ng-container *ngIf="!isBatchInProgress && currentCourseBatchId && getStartDate !== 'NA'">
-              <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
+              <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
             </ng-container>
           </ng-container>
           <ng-container *ngIf="!isBatchInProgress && courseCategory?.MODERATED_PROGRAM === contentReadData?.courseCategory && !enrollBtnLoading">
             <ng-container *ngIf="!isBatchInProgress && currentCourseBatchId && getStartDate !== 'NA'">
-              <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
+              <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
             </ng-container>
           </ng-container>
           <ng-container *ngIf="isBatchInProgress &&
@@ -139,7 +139,7 @@
               [queryParams]="resumeData ? generateQuery('RESUME') : generateQuery('START')"
               class="flex action-button justify-center resume">
               <ng-container *ngIf="!content.completionPercentage || content.completionPercentage < 100">
-                <ng-container *ngIf="!forPreview || isInIFrame" i18n>
+                <ng-container *ngIf="!forPreview || isInIFrame" >
                   {{ resumeData && (content.completionPercentage < 100 && content.completionPercentage> 0) ? translateLabels('resume', 'apptochome') :
                     translateLabels('start', 'apptochome') }}
                 </ng-container>
@@ -150,7 +150,7 @@
             </a>
             <a *ngIf="isPostAssessment && showTakeAssessment?.post_assessment" [routerLink]="firstResourceLink?.url"
               class="flex action-button justify-center resume">
-              <ng-container *ngIf="!forPreview || isInIFrame" i18n>{{ 'apptochome.takeAssessment' | translate }}</ng-container>
+              <ng-container *ngIf="!forPreview || isInIFrame" >{{ 'apptochome.takeAssessment' | translate }}</ng-container>
             </a>
             <!-- <div *ngIf="!isPostAssessment && (!content.completionPercentage || content.completionPercentage < 100)">
               <ng-container *ngIf="isAcbpClaim">
@@ -186,7 +186,7 @@
           [queryParams]="resumeData ? generateQuery('RESUME') : generateQuery('START')"
           class="flex action-button justify-center resume">
           <ng-container *ngIf="!content.completionPercentage || content.completionPercentage < 100">
-            <ng-container *ngIf="!forPreview || isInIFrame; else authView" i18n>
+            <ng-container *ngIf="!forPreview || isInIFrame; else authView" >
               {{ resumeData && (content.completionPercentage < 100 && content.completionPercentage> 0) ? translateLabels('resume', 'apptochome') :
                 translateLabels('resume', 'apptochome') }}
             </ng-container>
@@ -206,7 +206,7 @@
       <ng-container
         *ngIf="content?.primaryCategory === primaryCategory.CURATED_PROGRAM && !batchData?.enrolled && !enrollBtnLoading">
         <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"(click)="handleAutoBatchAssign()">
-          <ng-container  i18n>
+          <ng-container >
             {{ 'apptochome.enroll' | translate }}
           </ng-container>
         </a>
@@ -215,7 +215,7 @@
       <ng-container
         *ngIf="content?.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT && !batchData?.enrolled && !enrollBtnLoading && content?.courseCategory !== 'Invite-Only Assessment'">
         <a class="flex action-button justify-center resume" (click)="handleAutoBatchAssign()" *ngIf="!forPreview || isInIFrame">
-          <ng-container  i18n>
+          <ng-container >
             {{ 'apptochome.enroll' | translate }} 
           </ng-container>
         </a>
@@ -224,8 +224,8 @@
       <ng-container
         *ngIf="content?.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT && !batchData?.enrolled && !enrollBtnLoading && content?.courseCategory === 'Invite-Only Assessment'">
     
-          <ng-container *ngIf="!forPreview || isInIFrame; else authViewForInviteOnlyAssessment" i18n>
-            <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.youAreNotInvitedForAssessment' | translate }} </span>
+          <ng-container *ngIf="!forPreview || isInIFrame; else authViewForInviteOnlyAssessment" >
+            <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.youAreNotInvitedForAssessment' | translate }} </span>
           </ng-container>
       </ng-container>
       <ng-container
@@ -237,10 +237,10 @@
         </a>
       </ng-container>
       <ng-container *ngIf="!isBatchInProgress && !!currentCourseBatchId && getStartDate === 'NA' && content?.courseCategory === 'Invite-Only Assessment'">
-        <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.noActiveBatches' | translate }}</span>
+        <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.noActiveBatches' | translate }}</span>
       </ng-container>
       <ng-container *ngIf="!isBatchInProgress && currentCourseBatchId && getStartDate !== 'NA' && content?.courseCategory === 'Invite-Only Assessment'">
-        <span class="font-bold shadow-lg text-info-div" i18n>{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
+        <span class="font-bold shadow-lg text-info-div" >{{ 'apptochome.batchWillStart' | translate }} {{getStartDate}}!</span>
       </ng-container>
       
       <!-- STANDALONE_ASSESSMENT enrolled black -->
@@ -268,7 +268,7 @@
             [queryParams]="isBatchInProgress ? (resumeData && !certData) ? generateQuery('RESUME') : generateQuery('START') : '' "
             class="flex action-button justify-center resume" [ngClass]="{'disable-start-btn': !isBatchInProgress}">
             <ng-container *ngIf="(!content.completionPercentage || content.completionPercentage < 100) && !certData">
-              <ng-container *ngIf="!forPreview || isInIFrame; else authView" i18n>
+              <ng-container *ngIf="!forPreview || isInIFrame; else authView" >
                 {{ resumeData && (content.completionPercentage < 100 && content.completionPercentage> 0) ? translateLabels('resume', 'apptochome') :
                   translateLabels('start', 'apptochome') }}
               </ng-container>
@@ -281,7 +281,7 @@
       </ng-container>
 
       <ng-container *ngIf="actionBtnStatus == 'reject' && content?.registrationUrl">
-        <a [href]="content?.registrationUrl" target="_blank" class="flex action-button justify-center" i18n>{{ 'apptochome.register' | translate }}</a>
+        <a [href]="content?.registrationUrl" target="_blank" class="flex action-button justify-center" >{{ 'apptochome.register' | translate }}</a>
       </ng-container>
 
     </div>
@@ -550,15 +550,15 @@
             <div class="flex flex-col gap-4">
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="content?.isInIntranet && showIntranetMsg">
                 <mat-icon>info</mat-icon>
-                <ng-container i18n>{{ 'apptochome.viewedInIntranet' | translate }}</ng-container>
+                <ng-container >{{ 'apptochome.viewedInIntranet' | translate }}</ng-container>
               </div>
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="showInstructorLedMsg">
                 <mat-icon>info</mat-icon>&nbsp;
-                <ng-container i18n>{{ 'apptochome.notAvailableOnline' | translate }}</ng-container>
+                <ng-container >{{ 'apptochome.notAvailableOnline' | translate }}</ng-container>
               </div>
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="showStart.msg === 'youtubeForbidden'">
                 <mat-icon>info</mat-icon>&nbsp;
-                <ng-container i18n>{{ 'apptochome.youtubeContentBlocked' | translate }}</ng-container>
+                <ng-container >{{ 'apptochome.youtubeContentBlocked' | translate }}</ng-container>
               </div>
               <div *ngIf="showBtn">
                 <a href="{{ cscmsUrl }}" target="_blank" class="flex action-button justify-center">
@@ -717,19 +717,19 @@
 <ng-template #noDataFound>
   <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
     <div class="error-logo">
-      <div class="error-message ws-mat-primary-text font-weight-bold" i18n>
+      <div class="error-message ws-mat-primary-text font-weight-bold" >
         The page you requested cannot be found
       </div>
     </div>
     <!-- <div class="error-support">
-      <div class="support-message" i18n>We have updated our web site and many URLs have changed.</div>
-      <div class="support-message" i18n>You might want to:</div>
+      <div class="support-message" >We have updated our web site and many URLs have changed.</div>
+      <div class="support-message" >You might want to:</div>
     </div> -->
   </div>
 
 </ng-template>
 
-<ng-template #authView i18n>{{'apptochome.view' | translate}}</ng-template>
+<ng-template #authView >{{'apptochome.view' | translate}}</ng-template>
 
 <ng-template #authViewBtn i18n>
   <a (click)="raiseTelemetryForPublic()" [routerLink]="(resumeData && !certData) ? resumeDataLink?.url : firstResourceLink?.url" [queryParams]="(resumeData && !certData) ? generateQuery('RESUME') : generateQuery('START')"
@@ -737,7 +737,7 @@
     {{'apptochome.view' | translate}}
   </a>
 </ng-template>
-<ng-template #authViewForInviteOnlyAssessment i18n>
+<ng-template #authViewForInviteOnlyAssessment >
   <ng-container
         *ngIf="forPreview && content?.courseCategory === 'Invite-Only Assessment'">        
         <a class="flex action-button justify-center resume" [routerLink]="firstResourceLink?.url"

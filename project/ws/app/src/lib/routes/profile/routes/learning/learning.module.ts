@@ -4,24 +4,7 @@ import { CommonModule } from '@angular/common'
 import { LearningTimeComponent } from './components/learning-time/learning-time.component'
 import { LearningHistoryComponent } from './components/learning-history/learning-history.component'
 import { LearningHomeComponent } from './components/learning-home/learning-home.component'
-import {
-  MatButtonModule,
-  MatIconModule,
-  MatTabsModule,
-  MatDatepickerModule,
-  MatFormFieldModule,
-  MatSelectModule,
-  MatOptionModule,
-  MatProgressSpinnerModule,
-  MatListModule,
-  MatCardModule,
-  MatToolbarModule,
-  MatSlideToggleModule,
-  MatCheckboxModule,
-  MatInputModule,
-  MatGridListModule,
-  MatPaginatorModule,
-} from '@angular/material'
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { LearningTimeResolver } from './resolvers/learning-time.resolver'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
@@ -35,6 +18,22 @@ import { HistoryCardComponent } from './components/history-card/history-card.com
 import { AnalyticsModule } from '../analytics/analytics.module'
 import { BubbleChartComponent } from './components/bubble-chart/bubble-chart.component'
 import { HistoryTileComponent } from './components/history-tile/history-tile.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatOptionModule } from '@angular/material/core'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatGridListModule } from '@angular/material/grid-list'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
   declarations: [
     LearningTimeComponent,

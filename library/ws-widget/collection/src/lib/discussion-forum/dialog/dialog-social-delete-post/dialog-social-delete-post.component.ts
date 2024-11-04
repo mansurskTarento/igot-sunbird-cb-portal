@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { WsDiscussionForumService } from '../../ws-discussion-forum.services'
 export interface IDialogueData { postId: string }

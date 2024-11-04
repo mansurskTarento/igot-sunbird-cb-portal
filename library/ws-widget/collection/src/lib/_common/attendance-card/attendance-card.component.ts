@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 // import { ActivatedRoute } from '@angular/router'
 import { AttendanceHelperComponent } from '@sunbird-cb/collection/src/public-api'
 import { NsContent } from '@sunbird-cb/utils-v2'

@@ -34,10 +34,10 @@
 </mat-toolbar>
 <ng-container *ngIf="!error" [wsResolverWidget]="pageData?.pageLayout"></ng-container>
 <h2 *ngIf="error" class="mat-error margin-top-m text-center">
-  <ng-container *ngIf="error === 'NoContent'" i18n>
+  <ng-container *ngIf="error === 'NoContent'" >
     Page not found. Check the url.
   </ng-container>
-  <ng-container *ngIf="error !== 'NoContent'" i18n>
+  <ng-container *ngIf="error !== 'NoContent'" >
     Check your network connection and reload the page.
   </ng-container>
 </h2>

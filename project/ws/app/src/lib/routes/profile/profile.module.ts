@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import { MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule, MatTooltipModule } from '@angular/material'
+
 import { RouterModule } from '@angular/router'
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 import { LogoutModule } from '@sunbird-cb/utils-v2'
@@ -20,6 +20,12 @@ import { LearningHistoryResolver } from './routes/learning/resolvers/learning-hi
 import { LearningTimeResolver } from './routes/learning/resolvers/learning-time.resolver'
 import { SettingsModule } from './routes/settings/settings.module'
 import { BadgesModule } from './routes/badges/badges.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatListModule } from '@angular/material/list'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 // import { BadgesModule } from '../gamification/routes/badges/badges.module'
 
 @NgModule({

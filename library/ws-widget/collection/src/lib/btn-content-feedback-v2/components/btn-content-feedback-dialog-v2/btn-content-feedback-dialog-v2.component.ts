@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MAT_DIALOG_DATA, MatSnackBar, MatDialogRef } from '@angular/material'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TSendStatus, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { NsContent } from '../../../_services/widget-content.model'
 import { FeedbackService } from '../../services/feedback.service'
 import { EFeedbackType, EFeedbackRole, IFeedbackConfig } from '../../models/feedback.model'
 import { FeedbackSnackbarComponent } from '../feedback-snackbar/feedback-snackbar.component'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-content-feedback-dialog-v2',

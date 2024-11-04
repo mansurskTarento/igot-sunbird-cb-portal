@@ -22,27 +22,6 @@ import { GoalTrackComponent } from './routes/goal-track/goal-track.component'
 import { GoalHomeComponent } from './routes/goal-home/goal-home.component'
 import { GoalNotificationComponent } from './routes/goal-notification/goal-notification.component'
 
-import {
-  MatProgressSpinnerModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatExpansionModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatMenuModule,
-  MatProgressBarModule,
-  MatRadioModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatInputModule,
-  MatTooltipModule,
-  MatDialogModule,
-  MatListModule,
-  MatChipsModule,
-  MatCheckboxModule,
-  MatTableModule,
-} from '@angular/material'
 import { GoalMeComponent } from './routes/goal-me/goal-me.component'
 import { GoalOthersComponent } from './routes/goal-others/goal-others.component'
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
@@ -58,6 +37,25 @@ import { GoalShareDialogComponent } from './components/goal-share-dialog/goal-sh
 import { GoalSharedDeleteDialogComponent } from './components/goal-shared-delete-dialog/goal-shared-delete-dialog.component'
 import { GoalTrackPendingComponent } from './components/goal-track-pending/goal-track-pending.component'
 import { NoAccessDialogComponent } from './components/no-access-dialog/no-access-dialog.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatTableModule } from '@angular/material/table'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [

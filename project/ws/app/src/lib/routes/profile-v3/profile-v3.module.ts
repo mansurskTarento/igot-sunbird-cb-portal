@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { TopicCardComponent } from './components/topic-card/topic-card.component'
 import { ProfileHomeComponent } from './routes/profile-home/profile-home.component'
-import { MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSnackBarModule } from '@angular/material'
+
 import { MatListModule } from '@angular/material/list'
 import { CurrentCompetenciesComponent } from './routes/current-competencies/current-competencies.component'
 import { MatSidenavModule } from '@angular/material/sidenav'
@@ -30,6 +30,16 @@ import { DialogBoxComponent } from './components/dialog-box/dialog-box.component
 import { DesiredcomptencyCardComponent } from './components/desiredcomptency-card/desiredcomptency-card.component'
 import { CompLocalService } from './services/comp.service'
 import { TranslateModule } from '@ngx-translate/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [

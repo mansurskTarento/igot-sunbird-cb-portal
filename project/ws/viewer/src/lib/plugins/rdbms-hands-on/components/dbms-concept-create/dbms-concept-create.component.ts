@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { RdbmsHandsOnService } from '../../rdbms-hands-on.service'
 import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'viewer-dbms-concept-create',

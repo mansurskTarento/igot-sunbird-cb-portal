@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { BtnPlaylistService, NsPlaylist } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'

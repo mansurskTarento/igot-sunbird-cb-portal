@@ -11,7 +11,7 @@
 
     <form [formGroup]="feedbackForm" >
         <section class="mb-5">
-            <h3 class="mat-h3 margin-bottom-xs required" i18n>{{ 'ratingdialog.rateThis' | translate}} {{ content?.primaryCategory | lowercase }}</h3>
+            <h3 class="mat-h3 margin-bottom-xs required" >{{ 'ratingdialog.rateThis' | translate}} {{ content?.primaryCategory | lowercase }}</h3>
             <div class="" (click)="$event.stopPropagation();">
                 <ng-container *ngFor="let start of [1, 2, 3, 4, 5]; let i = index">
                     <button i18n-aria-label aria-label="Rating" aria-labelledby="rate-heading"
@@ -27,7 +27,7 @@
         </section>
 
         <section class="w-full mb-5" *ngIf="!formDisabled">
-            <h3 class="mat-h3 margin-bottom-xs" i18n>{{ 'ratingdialog.giveReview' | translate }}</h3>
+            <h3 class="mat-h3 margin-bottom-xs" >{{ 'ratingdialog.giveReview' | translate }}</h3>
             <div class="mat-body-2">
                 <mat-form-field appearance="outline" class="textarea-container">
                     <textarea id="review" matInput [matTextareaAutosize] [matAutosizeMaxRows]="10"
@@ -39,7 +39,7 @@
                         aria-label="review error | Explains review is required">
                         {{ 'ratingdialog.addReview' | translate }} {{ content?.primaryCategory | lowercase }} {{ 'ratingdialog.optional' | translate }}
                     </mat-error>
-                    <mat-error i18n *ngIf="feedbackForm?.controls['review'].errors?.maxlength" i18n-aria-label
+                    <mat-error *ngIf="feedbackForm?.controls['review'].errors?.maxlength" i18n-aria-label
                         aria-label="review error | You have exceeded 200 characters">
                         {{ 'ratingdialog.exceededCharacters' | translate }}
                     </mat-error>
@@ -48,20 +48,20 @@
         </section>
 
         <section class="w-full mb-5" *ngIf="!formDisabled">
-            <mat-checkbox [color]="primary" class="profane-radio-button mat-body-2" formControlName="recommend" i18n>{{'ratingdialog.recommendCourse' | translate}}</mat-checkbox>
+            <mat-checkbox [color]="primary" class="profane-radio-button mat-body-2" formControlName="recommend" >{{'ratingdialog.recommendCourse' | translate}}</mat-checkbox>
         </section>
 
         <mat-dialog-actions class="custom margin-remove-bottom no-padding" align="end">
             <ng-container *ngIf="!isEditMode">
                 <button mat-stroked-button type="submit" class="text-white ws-mat-primary-background flex-auto-display"
                     [disabled]="feedbackForm?.invalid || formDisabled" (click)="submitRating(feedbackForm)">
-                    <span class="text-white" i18n>{{ 'ratingdialog.submit' | translate }}</span>
+                    <span class="text-white" >{{ 'ratingdialog.submit' | translate }}</span>
                 </button>
             </ng-container>
             <ng-container *ngIf="isEditMode">
                 <button mat-stroked-button type="submit" class="text-white ws-mat-primary-background flex-auto-display"
                     [disabled]="feedbackForm?.invalid ||  !isEdited || formDisabled" (click)="submitRating(feedbackForm)">
-                    <span class="text-white" i18n>{{ 'ratingdialog.update' | translate }}</span>
+                    <span class="text-white" >{{ 'ratingdialog.update' | translate }}</span>
                 </button>
             </ng-container>
         </mat-dialog-actions>

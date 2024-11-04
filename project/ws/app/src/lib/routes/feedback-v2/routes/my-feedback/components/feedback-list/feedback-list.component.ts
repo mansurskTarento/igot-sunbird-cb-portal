@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { FormGroup, FormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { noop, Subscription } from 'rxjs'
 
 import {

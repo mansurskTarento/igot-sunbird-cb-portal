@@ -4,7 +4,7 @@ import {
     OnInit,
 } from '@angular/core'
 
-import { MatDialogRef } from '@angular/material'
+import { MatDialogRef } from '@angular/material/dialog'
 import { RootService } from '../root/root.service'
 
 @Component({

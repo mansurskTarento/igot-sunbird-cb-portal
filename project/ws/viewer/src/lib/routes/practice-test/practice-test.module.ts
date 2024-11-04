@@ -2,18 +2,6 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatSnackBarModule,
-  MatChipsModule,
-  MatProgressSpinnerModule,
-
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -41,6 +29,14 @@ import { PracticeModule as PracticeViewContainerModule } from '../../route-view-
 
 import { PracticeTestComponent } from './practice-test.component'
 import { PracticeRoutingModule } from './practice-routing.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({
   declarations: [PracticeTestComponent],

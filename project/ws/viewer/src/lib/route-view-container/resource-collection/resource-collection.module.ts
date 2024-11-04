@@ -1,15 +1,5 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatDialogModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatTabsModule,
-  MatFormFieldModule,
-  MatInputModule,
-} from '@angular/material'
 import { ResourceCollectionRoutingModule } from './resource-collection-routing.module'
 import { ResourceCollectionComponent } from './resource-collection.component'
 
@@ -36,6 +26,14 @@ import {
 } from '@sunbird-cb/utils-v2'
 
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatTableModule } from '@angular/material/table'
+import { MatTabsModule } from '@angular/material/tabs'
 
 @NgModule({
   declarations: [ResourceCollectionComponent],

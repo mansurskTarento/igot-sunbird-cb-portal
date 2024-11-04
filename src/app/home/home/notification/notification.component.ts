@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core'
 import { Router } from '@angular/router'
-import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material'
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-notification',

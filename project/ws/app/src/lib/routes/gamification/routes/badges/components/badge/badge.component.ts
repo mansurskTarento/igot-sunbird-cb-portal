@@ -19,7 +19,7 @@ export class BadgeComponent implements OnInit {
   userName: string | undefined
   objectKeys = Object.keys
 
-  @ViewChild('cardContents', { read: ElementRef, static: false }) public cardContents:
+  @ViewChild('cardContents', { read: ElementRef }) public cardContents:
     | ElementRef
     | undefined
 

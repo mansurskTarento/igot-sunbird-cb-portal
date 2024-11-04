@@ -47,7 +47,7 @@ export class CommentsDialogComponent implements OnInit {
 
   submitData() {
     if (
-      this.commentsForm.controls.comments.value &&
+      this.commentsForm.controls.comments.value && this.contentMeta.status &&
       ((!['Draft', 'Live'].includes(this.contentMeta.status) &&
         this.commentsForm.controls.action.value) ||
         ['Draft', 'Live'].includes(this.contentMeta.status))

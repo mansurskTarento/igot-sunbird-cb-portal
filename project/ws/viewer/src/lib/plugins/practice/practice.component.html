@@ -15,7 +15,7 @@
       <mat-spinner [diameter]="150"></mat-spinner>
     </div>
     <div>
-      <span class="mat-heading" i18n>{{'playerbrief.calculateResult' | translate}}</span>
+      <span class="mat-heading" >{{'playerbrief.calculateResult' | translate}}</span>
     </div>
   </div>
 
@@ -175,7 +175,7 @@
                       </div>
                     </ng-container>
                 
-                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
                       <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate | titlecase}})</span>
                     </div>
                   </div>
@@ -312,13 +312,13 @@
         <div class="flex flex-1 flex-column margin-top-l margin-left-xs bottom_box margin-bottom-xs">
           <div class="flex flex-start margin-left-m  cen">
             <mat-icon class="flex margin-top-xs margin-bottom-xs">warning</mat-icon>
-            <span class="flex mat-body-2 padding-xs font-weight-700" i18n>Instructions </span>
-            <span class="flex mat-body-2 font-weight-700" i18n>:</span>
+            <span class="flex mat-body-2 padding-xs font-weight-700" >Instructions </span>
+            <span class="flex mat-body-2 font-weight-700" >:</span>
             <span [innerHtml]="formate(selectedSection.additionalInstructions)"></span>
           </div>
           <div class="flex flex-start margin-left-m  cen">
             <mat-icon class="flex margin-top-xs margin-bottom-xs">info_outline</mat-icon>
-            <span class="flex mat-body-2 padding-xs" i18n>Attempt all questions to finish assessment</span>
+            <span class="flex mat-body-2 padding-xs" >Attempt all questions to finish assessment</span>
           </div>          
         </div>
       </ng-container>
@@ -407,7 +407,7 @@
                       </div>
                     </ng-container>
 
-                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
                       <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate | titlecase}})</span>
                     </div>
                   </div>
@@ -447,7 +447,7 @@
                             </div>
                           </ng-container>
 
-                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
                             <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate | titlecase}})</span>
                           </div>
                         </div>
@@ -1243,7 +1243,7 @@
                           &nbsp;&nbsp;
                             <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform: 'hms2H'
                               }}</span>
-                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
                             <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' | translate}})</span>
                           </div>
                         </div>
@@ -1791,7 +1791,7 @@
                           &nbsp;&nbsp;
                             <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform: 'hms2H'
                               }}</span>
-                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
                             <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' | translate}})</span>
                           </div>
                         </div>
@@ -2240,7 +2240,7 @@
         <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2M' }}</span>
       </div>
     </ng-container>
-    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" i18n>
+    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
       <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate}})</span>
     </div>
   </div>

@@ -146,7 +146,7 @@
                     <mat-tab-group animationDuration="0ms" class="mat-tab-labels mytabs w-full "
                         [selectedIndex]="selectedIndex" (selectedTabChange)="selectedIndex = $event.index; tabClicked($event)">
                         <mat-tab label="Content" >
-                            <ng-template mat-tab-label i18n>
+                            <ng-template mat-tab-label >
                                 Content
                             </ng-template>
                             <ng-container *ngIf="data.tabSection.contentTab.length === contentTabEmptyResponseCount">
@@ -164,7 +164,7 @@
                             </div>
                         </mat-tab>
                         <mat-tab label="Core Areas">
-                            <ng-template mat-tab-label i18n>
+                            <ng-template mat-tab-label >
                                 Core Areas
                             </ng-template>
                             <div>

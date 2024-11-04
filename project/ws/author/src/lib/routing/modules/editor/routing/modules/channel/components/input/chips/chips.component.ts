@@ -15,7 +15,7 @@ import { MatChipInputEvent } from '@angular/material/chips'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
 import { ISortEvent } from '../../../../../../../../../directives/draggable/sortable-list.directive'
 

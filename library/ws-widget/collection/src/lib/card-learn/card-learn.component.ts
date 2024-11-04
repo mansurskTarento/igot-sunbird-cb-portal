@@ -9,7 +9,7 @@ import * as _ from 'lodash'
 
 // import { ActivitiesService } from '@ws/app/src/lib/routes/activities/services/activities.service'
 // import { IActivity, IActivityCard, IChallenges } from '@ws/app/src/lib/routes/activities/interfaces/activities.model'
-// import { MatSnackBar } from '@angular/material'
+// import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-card-learn',

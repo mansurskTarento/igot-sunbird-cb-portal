@@ -9,7 +9,7 @@ import { PracticeService } from '../../practice.service'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NsContent } from '@sunbird-cb/utils-v2'
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material'
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'
 @Component({
   selector: 'viewer-question',
   templateUrl: './question.component.html',

@@ -5,24 +5,7 @@ import { PipeContentRouteModule } from '@sunbird-cb/collection'
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import {
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCheckboxModule,
-  MatChipsModule,
-  MatDialogModule,
-  MatDialogRef,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSlideToggleModule,
-  MatTooltipModule,
-  MAT_DIALOG_DATA,
-} from '@angular/material'
+
 import { MatCardModule } from '@angular/material/card'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatExpansionModule } from '@angular/material/expansion'
@@ -63,6 +46,20 @@ import { StatusContentDisplayComponent } from './components/status-content-displ
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { HttpLoaderFactory } from 'src/app/app.module'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatButtonModule } from '@angular/material/button'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatNativeDateModule } from '@angular/material/core'
+import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [

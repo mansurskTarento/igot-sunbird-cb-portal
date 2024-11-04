@@ -2,22 +2,6 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { ReactiveFormsModule } from '@angular/forms'
-import {
-  MatCardModule,
-  MatButtonModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatSelectModule,
-  MatButtonToggleModule,
-  MatDatepickerModule,
-  MatChipsModule,
-  MatIconModule,
-  MatDialogModule,
-  MatAutocompleteModule,
-  MatNativeDateModule,
-  MatProgressSpinnerModule,
-  MatTooltipModule,
-} from '@angular/material'
 
 import { CtrlFileUploadModule } from '@sunbird-cb/collection'
 import { PipeDateConcatModule } from '@sunbird-cb/utils-v2'
@@ -43,6 +27,20 @@ import { ResultVerificationCardComponent } from './components/result-verificatio
 import { HomeComponent } from './components/home/home.component'
 import { AppTocCertificationRoutingModule } from './app-toc-certification-routing.module'
 import { SnackbarComponent } from './components/snackbar/snackbar.component'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatButtonModule } from '@angular/material/button'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatNativeDateModule } from '@angular/material/core'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [

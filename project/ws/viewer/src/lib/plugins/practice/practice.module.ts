@@ -9,26 +9,6 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/utils-v2'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import {
-  MatCardModule,
-  MatDialogModule,
-  MatInputModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatListModule,
-  MatRadioModule,
-  MatSidenavModule,
-  MatTableModule,
-  MatButtonModule,
-  MatProgressSpinnerModule,
-  MatProgressBarModule,
-  MatExpansionModule,
-  MatTooltipModule,
-  MatChipsModule,
-  MatCheckboxModule,
-  MatMenuModule,
-  MatSelectModule,
-} from '@angular/material'
-import {
   BtnFullscreenModule,
 } from '@sunbird-cb/collection'
 import { ResultComponent } from './components/result/result.component'
@@ -46,6 +26,24 @@ import { AssessmentPerformanceSummaryComponent } from './components/assessment-p
 import { AssessmentPerformanceInsightSummaryComponent } from './components/assessment-performance-insight-summary/assessment-performance-insight-summary.component'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
 import { QuestionSafeUrlPipe } from './question-safe-pipe.pipe'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatTableModule } from '@angular/material/table'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
 @NgModule({
   declarations: [

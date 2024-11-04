@@ -1,11 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { ActivatedRoute, ParamMap, Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { IWsEmailUserId, IWsUserFollow } from '../../model/leadership-email.model'
 import { IWsLeaderData } from '../../model/leadership.model'
 import { LeadershipService } from '../../services/leadership.service'
 import { SendMailDialogComponent } from '../send-mail-dialog/send-mail-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-landing',

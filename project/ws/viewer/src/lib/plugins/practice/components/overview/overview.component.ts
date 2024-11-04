@@ -5,7 +5,8 @@ import { ActivatedRoute } from '@angular/router'
 import { ViewerHeaderSideBarToggleService } from './../../../../viewer-header-side-bar-toggle.service'
 import { PracticeService } from '../../practice.service'
 import { FinalAssessmentPopupComponent } from './../final-assessment-popup/final-assessment-popup.component'
-import { MatDialog, MatSnackBar } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
   selector: 'viewer-overview',
   templateUrl: './overview.component.html',

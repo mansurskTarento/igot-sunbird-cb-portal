@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'

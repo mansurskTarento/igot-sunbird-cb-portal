@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { FormControl, Validators } from '@angular/forms'
-import { MatListOption, MatSnackBar } from '@angular/material'
 import { EventService, TFetchStatus, WsEvents } from '@sunbird-cb/utils-v2'
 import { NsPlaylist } from '../btn-playlist.model'
 import { BtnPlaylistService } from '../btn-playlist.service'
+import { MatListOption } from '@angular/material/list'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-playlist-selection',

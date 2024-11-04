@@ -51,7 +51,7 @@ export class WebModuleComponent implements OnInit, OnChanges, OnDestroy {
   iframeLoadingInProgress = true
   isCompleted = false
   slideAudioUrl: SafeUrl = ''
-  @ViewChild('iframeElem', { static: false }) iframeElem: ElementRef<HTMLIFrameElement>
+  @ViewChild('iframeElem') iframeElem: ElementRef<HTMLIFrameElement>
   current: string[] = []
   counter = false
   isScrolled = false

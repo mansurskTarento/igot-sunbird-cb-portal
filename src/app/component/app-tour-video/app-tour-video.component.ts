@@ -18,7 +18,7 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   environment: any
   videoUrl: any
   // tslint:disable-next-line
-  @ViewChild('tourVideoTag', { static: false }) tourVideoTag!: ElementRef<HTMLVideoElement>
+  @ViewChild('tourVideoTag') tourVideoTag!: ElementRef<HTMLVideoElement>
 
   constructor(private eventService: EventService, private translate: TranslateService) {
     if (localStorage.getItem('websiteLanguage')) {

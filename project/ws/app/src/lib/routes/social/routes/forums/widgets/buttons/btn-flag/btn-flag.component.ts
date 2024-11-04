@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { SocialForum } from '../../../models/SocialForumposts.model'
 import { DialogBoxModeratorComponent } from '../../Dialog-Box/dialog-box-moderator/dialog-box-moderator.component'
 import { BtnFlagService } from './btn-flag.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-btn-flag',

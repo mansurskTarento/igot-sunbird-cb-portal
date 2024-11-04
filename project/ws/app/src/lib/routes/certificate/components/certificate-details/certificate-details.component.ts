@@ -43,7 +43,7 @@ export class CertificateDetailsComponent implements OnInit {
     HIERARCHY: 'course/v1/hierarchy',
     LEARNER_PREFIX: '/learner/',
   }
-  @ViewChild('codeInputField', { static: false }) codeInputField!: ElementRef
+  @ViewChild('codeInputField') codeInputField!: ElementRef
 
   constructor(
     public activatedRoute: ActivatedRoute,

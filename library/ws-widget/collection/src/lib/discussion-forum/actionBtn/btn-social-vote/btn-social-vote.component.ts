@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { MatSnackBar, MatDialog } from '@angular/material'
 import { DialogSocialActivityUserComponent } from '../../dialog/dialog-social-activity-user/dialog-social-activity-user.component'
 import { WsDiscussionForumService } from '../../ws-discussion-forum.services'
 import { NsDiscussionForum } from '../../ws-discussion-forum.model'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-social-vote',

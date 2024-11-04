@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -20,7 +20,7 @@ import { UserProfileService } from '../../../user-profile/services/user-profile.
 export class VerifyOtpComponent implements OnInit, OnDestroy {
 
   private destroySubject$ = new Subject()
-  @ViewChild('timerDiv', { static: false }) timerDiv !: any
+  @ViewChild('timerDiv') timerDiv !: any
   @Output() resendOTP = new EventEmitter<string>()
   @Output() otpVerified = new EventEmitter<any>()
   timeLeft = 150

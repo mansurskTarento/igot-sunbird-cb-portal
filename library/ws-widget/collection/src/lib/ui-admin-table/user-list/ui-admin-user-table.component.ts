@@ -4,7 +4,6 @@ import {
 } from '@angular/core'
 import { SelectionModel } from '@angular/cdk/collections'
 import { MatTableDataSource } from '@angular/material/table'
-import { MatDialog, MatPaginator, MatSnackBar } from '@angular/material'
 import { MatSort } from '@angular/material/sort'
 import * as _ from 'lodash'
 
@@ -12,6 +11,9 @@ import { ITableData, IColums } from '../interface/interfaces'
 import { Router, ActivatedRoute } from '@angular/router'
 import { UserPopupComponent } from '../user-popup/user-popup'
 import { CreateMDOService } from '../create-mdo.services'
+import { MatDialog } from '@angular/material/dialog'
+import { MatPaginator } from '@angular/material/paginator'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-ui-user-table',

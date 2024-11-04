@@ -1,23 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import {
-  MatButtonModule,
-  MatIconModule,
-  MatListModule,
-  MatChipsModule,
-  MatSidenavModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatCardModule,
-  MatDividerModule,
-  MatProgressSpinnerModule,
-  MatDialogModule,
-  MatTabsModule,
-  MatPaginatorModule,
-  MatSlideToggleModule,
-  MatExpansionModule,
-  MatSnackBarModule,
-} from '@angular/material'
+
 import { PersonProfileRoutingModule } from './person-profile-routing.module'
 import { PersonProfileComponent } from './components/person-profile/person-profile.component'
 import { UserDetailsComponent } from './components/user-details/user-details.component'
@@ -39,6 +22,22 @@ import { ContentAuthoredComponent } from './components/content-authored/content-
 import { AuthInitService } from '../../../../../author/src/lib/services/init.service'
 import { ApiService, AccessControlService } from '../../../../../author/src/public-api'
 import { FollowingListComponent } from './components/following-list/following-list.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatIconModule } from '@angular/material/icon'
+import { MatListModule } from '@angular/material/list'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [

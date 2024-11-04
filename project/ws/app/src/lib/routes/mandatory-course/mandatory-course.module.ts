@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
 import { RouterModule } from '@angular/router'
 import { BtnPageBackModule, CardContentModule } from '@sunbird-cb/collection/src/public-api'
-import { MatCardModule } from '@angular/material'
+import { MatCardModule } from '@angular/material/card'
 import { MandatoryCourseStatsComponent } from './components/mandatory-course-stats/mandatory-course-stats.component'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 

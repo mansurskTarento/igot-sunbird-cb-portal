@@ -10,15 +10,15 @@
   <mat-card-actions class="flex flex-row-reverse responsive">
     <div class="mb-2 ws-mat-accent-text view-all ws-mat-primary-lite-background-important wid-auro">
       <a href="javascript:void(0)" mat-button mat-dialog-close i18n-aria-label class="flex">
-        <span i18n>&nbsp; {{ 'competenceView.cancel' | translate }}</span>
+        <span >&nbsp; {{ 'competenceView.cancel' | translate }}</span>
       </a>
     </div>
     <div class="mb-2 ml-2 mr-2 flex view-more text-white others">
       <a href="javascript:void(0)" mat-button i18n-aria-label *ngIf="isUpdate" (click)="remove()">
-        <span i18n>{{ 'competenceView.remove' | translate }}</span>
+        <span >{{ 'competenceView.remove' | translate }}</span>
       </a>
       <a href="javascript:void(0)" mat-button i18n-aria-label *ngIf="!isUpdate" (click)="add()">
-        <span i18n>{{ 'competenceView.add' | translate }}</span>
+        <span >{{ 'competenceView.add' | translate }}</span>
       </a>
     </div>
   </mat-card-actions>
@@ -65,25 +65,25 @@
       </div>
     </ng-container>
 
-    <!-- <p class="mat-body-2 margin-top-x" i18n>	<mat-icon class="mat-icon text_icon margin-right-m ws-mat-black60-text">info</mat-icon> You can take a <a (click)="test()" role="button" class="ws-mat-default-text cursor-pointer">competency assessment</a> to have higher credibility</p> -->
+    <!-- <p class="mat-body-2 margin-top-x" >	<mat-icon class="mat-icon text_icon margin-right-m ws-mat-black60-text">info</mat-icon> You can take a <a (click)="test()" role="button" class="ws-mat-default-text cursor-pointer">competency assessment</a> to have higher credibility</p> -->
   </mat-card-content>
   <mat-card-actions class="flex flex-row-reverse responsive card_actions">
     <!-- <div class="mb-2 ws-mat-accent-text view-all ws-mat-primary-lite-background-important wid-auro">
       <a href="javascript:void(0)" mat-button mat-dialog-close i18n-aria-label class="flex">
-        <span i18n>&nbsp; {{'Cancel'}}</span>
+        <span >&nbsp; {{'Cancel'}}</span>
       </a>
     </div> -->
     <div class="justify-between flex flex-1  margin-left-l">
       <!-- <a href="javascript:void(0)" mat-button i18n-aria-label *ngIf="isUpdate" (click)="remove()">
-        <span i18n>{{'Remove from your list'}}</span>
+        <span >{{'Remove from your list'}}</span>
       </a> -->
       <a href="javascript:void(0)" class="text-white others" mat-button i18n-aria-label *ngIf="!isUpdate"
         (click)="add()">
-        <span i18n>{{ 'competenceView.addToYourCompetencies' | translate }}</span>
+        <span >{{ 'competenceView.addToYourCompetencies' | translate }}</span>
       </a>
       <button class="text-white others" [disabled]="!assessmentId" (click)="test()" mat-button
         i18n-aria-label *ngIf="!isUpdate">
-        <span i18n>{{ 'competenceView.takeAssessment' | translate }} {{assessmentId}}</span>
+        <span >{{ 'competenceView.takeAssessment' | translate }} {{assessmentId}}</span>
     </button>
     </div>
   </mat-card-actions>
@@ -102,12 +102,12 @@
   <mat-card-actions class="flex flex-row-reverse responsive">
     <div class="mb-2 ws-mat-accent-text view-all ws-mat-primary-lite-background-important wid-auro">
       <a href="javascript:void(0)" mat-button mat-dialog-close i18n-aria-label class="flex">
-        <span i18n>&nbsp; {{ 'competenceView.cancel' | translate }}</span>
+        <span >&nbsp; {{ 'competenceView.cancel' | translate }}</span>
       </a>
     </div>
     <div class="mb-2 ml-2 mr-2 flex view-more text-white others">
       <a href="javascript:void(0)" mat-button i18n-aria-label (click)="navigateTo()">
-        <span i18n>{{ 'competenceView.add' | translate }}</span>
+        <span >{{ 'competenceView.add' | translate }}</span>
       </a>
     </div>
   </mat-card-actions>

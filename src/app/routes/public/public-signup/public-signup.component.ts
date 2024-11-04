@@ -5,7 +5,6 @@ import { SignupService } from './signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { startWith, map, pairwise } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
-import { MatSnackBar, MatDialog } from '@angular/material'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
 import { DOCUMENT, isPlatformBrowser } from '@angular/common'
@@ -17,6 +16,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {

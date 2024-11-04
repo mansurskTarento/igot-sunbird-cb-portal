@@ -10,7 +10,7 @@ import {
 import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus, EventService, ConfigurationsService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-goal-common-card',

@@ -3,7 +3,7 @@ import { ISearchContent } from '../../../../../../../author/src/lib/interface/se
 import { Subscription } from 'rxjs'
 // import { MyContentService } from '../../../../../../../author/src/lib/routing/modules/my-content/services/my-content.service'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
-// import { MatSnackBar } from '@angular/material'
+// import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-content-reviewed',

@@ -3,8 +3,8 @@
   {{ data.body }}
 </div>
 <div mat-dialog-actions class="flex-row-reverse">
-  <button mat-flat-button color="primary" (click)="confirmed()" i18n>
+  <button mat-flat-button color="primary" (click)="confirmed()" >
     {{"dialogconfirm.yes" | translate }}
   </button>
-  <button mat-button class="margin-right-xs" mat-dialog-close cdkFocusInitial i18n>{{"dialogconfirm.no" | translate }}</button>
+  <button mat-button class="margin-right-xs" mat-dialog-close cdkFocusInitial >{{"dialogconfirm.no" | translate }}</button>
 </div>

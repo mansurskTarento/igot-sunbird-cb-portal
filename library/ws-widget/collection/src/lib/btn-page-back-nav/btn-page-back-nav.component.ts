@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { BtnPageBackNavService } from './btn-page-back-nav.service'

@@ -1,14 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
-import {
-  MatCardModule,
-  MatDividerModule,
-  MatIconModule,
-  MatSnackBarModule,
-  MatButtonModule,
-  MatChipsModule,
-} from '@angular/material'
 
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 
@@ -37,6 +29,12 @@ import {
 import { AudioNativeModule as AudioNativePluginModule } from '../../plugins/audio-native/audio-native.module'
 
 import { AudioNativeComponent } from './audio-native.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [AudioNativeComponent],

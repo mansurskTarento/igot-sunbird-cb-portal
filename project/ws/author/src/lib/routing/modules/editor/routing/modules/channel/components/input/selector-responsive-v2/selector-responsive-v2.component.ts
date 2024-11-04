@@ -16,7 +16,7 @@ export class SelectorResponsiveV2Component implements OnInit {
     isValid: boolean
   }>()
 
-  @ViewChild(ImageMapComponent, { static: false }) imageMapComponent!: ImageMapComponent
+  @ViewChild(ImageMapComponent) imageMapComponent!: ImageMapComponent
 
   @Input() content!: ISelectorResponsive
   @Input() identifier = ''

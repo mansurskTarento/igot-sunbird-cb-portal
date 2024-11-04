@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { MatIconModule } from '@angular/material'
+import { MatIconModule } from '@angular/material/icon'
 import { HttpClient } from '@angular/common/http'
 import { HttpLoaderFactory } from 'src/app/app.module'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'

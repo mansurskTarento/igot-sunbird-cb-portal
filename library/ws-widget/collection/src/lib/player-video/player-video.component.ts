@@ -47,8 +47,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   OnDestroy,
   NsWidgetResolver.IWidgetData<IWidgetsPlayerMediaData> {
   @Input() widgetData!: IWidgetsPlayerMediaData
-  @ViewChild('videoTag', { static: false }) videoTag!: ElementRef<HTMLVideoElement>
-  @ViewChild('realvideoTag', { static: false }) realvideoTag!: ElementRef<HTMLVideoElement>
+  @ViewChild('videoTag') videoTag!: ElementRef<HTMLVideoElement>
+  @ViewChild('realvideoTag') realvideoTag!: ElementRef<HTMLVideoElement>
   @HostBinding('id')
   public id = 'v-player'
   private player: videoJs.Player | null = null

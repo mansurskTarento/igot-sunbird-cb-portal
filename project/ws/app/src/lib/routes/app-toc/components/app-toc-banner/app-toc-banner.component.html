@@ -112,18 +112,18 @@
         </p>
         <ng-container>
           <button class="withdraw-batch" (click)="!disableWithdrawnBtn && requestToWithdrawDialog()" [disabled]="disableWithdrawnBtn" [ngClass]="{ 'disable-btn': disableWithdrawnBtn }" >
-              <ng-container i18n> {{ 'apptocbanner.withDrawYourRequest' | translate }} </ng-container>
+              <ng-container > {{ 'apptocbanner.withDrawYourRequest' | translate }} </ng-container>
           </button>
         </ng-container>
       </ng-container>
       <ng-container *ngIf="batchData && batchData?.enrolled && batchData?.content?.length">
-        <h3 class="margin-remove-bottom p-4 bg-white mat-body-1" i18n *ngFor="let batch of batchData.content">
+        <h3 class="margin-remove-bottom p-4 bg-white mat-body-1" *ngFor="let batch of batchData.content">
           {{batch?.name}} ({{batch?.startDate | date: 'dd-MM-yyyy' }} - {{batch?.endDate | date: 'dd-MM-yyyy' || 'present'}})
         </h3>
         <ng-container [ngTemplateOutlet]="statusMsg"></ng-container>
       </ng-container>
       <ng-container *ngIf="batchData && !batchData?.enrolled && !batchData?.content?.length">
-        <h3 class="margin-remove-bottom mat-body-2 ws-default-text" i18n>
+        <h3 class="margin-remove-bottom mat-body-2 ws-default-text" >
           No batches
         </h3>
       </ng-container>
@@ -184,7 +184,7 @@
     [widgetData]="content | pipePartialContent: ['identifier', 'name']">
   </ws-widget-btn-content-feedback-v2>
 </ng-template>
-<ng-template #authView i18n>{{'apptocbanner.view' | translate}}</ng-template>
+<ng-template #authView >{{'apptocbanner.view' | translate}}</ng-template>
 <ng-template #statusMsg>
   <div class="status-container mt-2 mb-2" *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM && batchData?.workFlow?.wfInitiated">
     <div class="flex" *ngIf="showMsg">
@@ -317,14 +317,14 @@
           </div>
           <div class="flex flex-row justify-center items-center">
             <button class="enroll-button" [ngClass]="{ 'disable-btn': disableEnrollBtn || batchControl.hasError('required') || !handleEnrollmentEndDate(selectedBatch) }" [disabled]="disableEnrollBtn || batchControl.hasError('required')|| !handleEnrollmentEndDate(selectedBatch)" (click)="requestToEnrollDialog()">
-              <ng-container i18n>
+              <ng-container >
                 Request to enroll
               </ng-container>
             </button>
           </div>
         </ng-container>
         <ng-container *ngIf="showRejected && content?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
-          <h3 class="margin-remove-bottom mat-body-2 ws-default-text" i18n>
+          <h3 class="margin-remove-bottom mat-body-2 ws-default-text" >
             Your enrollment request is {{batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REMOVED ?'removed':'rejected'}}.</h3>
         </ng-container>
       </div>

@@ -1,17 +1,17 @@
-<h2 mat-dialog-title i18n>{{ 'practiceoverview.submitQuiz' | translate }}</h2>
+<h2 mat-dialog-title >{{ 'practiceoverview.submitQuiz' | translate }}</h2>
 <mat-dialog-content>
-  <ng-container i18n *ngIf="submissionState === 'answered'">
+  <ng-container *ngIf="submissionState === 'answered'">
     {{ 'practiceoverview.answeredMsg' | translate }}
   </ng-container>
-  <ng-container i18n *ngIf="submissionState === 'unanswered'">
+  <ng-container *ngIf="submissionState === 'unanswered'">
     <!-- You have not answered all the questions! Do you still want to submit? -->
     {{ 'practiceoverview.unansweredMsg' | translate }}
   </ng-container>
-  <ng-container i18n *ngIf="submissionState === 'marked'">
+  <ng-container *ngIf="submissionState === 'marked'">
     {{ 'practiceoverview.markedMsg' | translate }}
   </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions class="flex-row">
-  <button class="secondary-blue-border-btn" mat-button mat-dialog-close i18n>{{ 'dialogconfirm.no' | translate }}</button>
-  <button class="primary-blue-btn" mat-button [mat-dialog-close]="true" i18n>{{ 'dialogconfirm.yes' | translate }}</button>
+  <button class="secondary-blue-border-btn" mat-button mat-dialog-close >{{ 'dialogconfirm.no' | translate }}</button>
+  <button class="primary-blue-btn" mat-button [mat-dialog-close]="true" >{{ 'dialogconfirm.yes' | translate }}</button>
 </mat-dialog-actions>

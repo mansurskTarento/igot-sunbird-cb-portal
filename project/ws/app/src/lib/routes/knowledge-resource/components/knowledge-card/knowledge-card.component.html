@@ -9,15 +9,15 @@
     <div class="p-3">
 
         <mat-card-title>
-            <div class="mat-h4 fixed-title" i18n role="heading">{{ resource?.name }}</div>
+            <div class="mat-h4 fixed-title" role="heading">{{ resource?.name }}</div>
         </mat-card-title>
 
-        <p class="mat-body-2 ws-mat-black60-text margin-bottom-s whitespace-pre-line description" i18n>
+        <p class="mat-body-2 ws-mat-black60-text margin-bottom-s whitespace-pre-line description" >
             {{ resource?.description }}
         </p>
 
         <!-- <span class="attach_links margin-right-m" *ngIf="resource.totalFiles.pdf || resource.totalFiles.pdf >0">
-            <p class="mat-body-2" i18n>  <img src="assets/icons/pdf.svg" class="pdfIcon margin-right-xs">
+            <p class="mat-body-2" >  <img src="assets/icons/pdf.svg" class="pdfIcon margin-right-xs">
                 {{ resource?.totalFiles?.pdf }}
             </p>
         </span> -->
@@ -44,13 +44,13 @@
             </p>
         </span>
         <!-- <span class="attach_links margin-right-m" *ngIf="resource.totalFiles.images>0" >
-            <p class="mat-body-2" i18n>
+            <p class="mat-body-2" >
                 <mat-icon class="material-icons-outlined align-bottom ws-mat-default-text margin-right-xs">image</mat-icon>
                 {{ resource?.totalFiles?.images }}
             </p>
         </span> -->
         <!-- <span class="attach_links margin-right-m" *ngIf="resource.totalFiles.doc>0">
-            <p class="mat-body-2" i18n>
+            <p class="mat-body-2" >
                 <mat-icon class="material-icons-outlined align-bottom ws-mat-default-text margin-right-xs">description</mat-icon>
                 {{ resource?.totalFiles?.doc }}
             </p>

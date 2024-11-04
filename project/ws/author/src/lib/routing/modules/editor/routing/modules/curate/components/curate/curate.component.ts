@@ -43,7 +43,7 @@ export class CurateComponent implements OnInit, OnDestroy {
   isChanged = false
   mimeTypeRoute = ''
 
-  @ViewChild(UrlUploadComponent, { static: false }) urlComponent!: UrlUploadComponent
+  @ViewChild(UrlUploadComponent) urlComponent!: UrlUploadComponent
   constructor(
     private contentService: EditorContentService,
     private snackBar: MatSnackBar,

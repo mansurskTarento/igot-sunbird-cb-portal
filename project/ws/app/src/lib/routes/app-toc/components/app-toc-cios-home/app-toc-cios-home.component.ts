@@ -4,8 +4,9 @@ import { TranslateService } from '@ngx-translate/core'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
 import { ConfigurationsService, MultilingualTranslationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { CertificateService } from '../../../certificate/services/certificate.service'
+import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 
 @Component({
   selector: 'ws-app-app-toc-cios-home',
@@ -23,10 +24,12 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     offSetTop: 0,
     BottomPos: 0,
   }
-  @ViewChild('rightContainer', { static: false }) rcElement!: ElementRef
+  @ViewChild('rightContainer') rcElement!: ElementRef
   scrollLimit: any
   scrolled: boolean | undefined
   isMobile = false
+  config: any
+  discussWidgetData!: NsDiscussionV2.ICommentWidgetData
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
 
@@ -82,10 +85,27 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
+      this.config = this.route.snapshot.data.pageData.data
+      this.initializeDiscussData()
+    }
     if (window.innerWidth <= 1200) {
       this.isMobile = true
     } else {
       this.isMobile = false
+    }
+  }
+
+  initializeDiscussData() {
+    if (this.config && this.config.discussWidgetData) {
+      this.discussWidgetData = this.config.discussWidgetData
+      if (this.extContentReadData && this.extContentReadData.contentId) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.extContentReadData.contentId
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.extContentReadData.contentId
+        }
+      }
+      this.discussWidgetData = { ...this.discussWidgetData }
     }
   }
 

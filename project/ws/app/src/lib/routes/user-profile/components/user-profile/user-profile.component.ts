@@ -3,7 +3,6 @@ import { FormGroup, FormControl, Validators, FormArray, FormBuilder, AbstractCon
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { Subscription, Observable, interval, forkJoin } from 'rxjs'
 import { startWith, map, debounceTime, distinctUntilChanged, pairwise } from 'rxjs/operators'
-import { MatSnackBar, MatChipInputEvent, DateAdapter, MAT_DATE_FORMATS, MatDialog, MatTabChangeEvent } from '@angular/material'
 import { AppDateAdapter, APP_DATE_FORMATS, changeformat } from '../../services/format-datepicker'
 import { ImageCropComponent, ConfigurationsService, WsEvents, EventService, PipeCertificateImageURL, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
@@ -34,6 +33,11 @@ import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import { RequestDialogComponent } from '../request-dialog/request-dialog.component'
 import { USER_PROFILE_MSG_CONFIG } from './user-profile-constant'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 /* tslint:enable */
 

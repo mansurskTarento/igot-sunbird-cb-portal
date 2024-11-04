@@ -1,5 +1,4 @@
 import { Component, OnDestroy, Input, EventEmitter, Output } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { throwError, Subject } from 'rxjs'
 import { takeWhile, switchMap, tap, takeUntil } from 'rxjs/operators'
 
@@ -14,6 +13,8 @@ import {
   ICertificationSendResponse,
 } from '../../models/certification.model'
 import { RequestCancelDialogComponent } from '../request-cancel-dialog/request-cancel-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-toc-certification-booking-card',

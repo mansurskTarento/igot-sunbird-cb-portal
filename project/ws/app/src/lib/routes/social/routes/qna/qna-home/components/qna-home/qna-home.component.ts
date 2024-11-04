@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs'
 import { TFetchStatus, ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NsError, ROOT_WIDGET_CONFIG, NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
-import { MatButtonToggleChange } from '@angular/material'
+import { MatButtonToggleChange } from '@angular/material/button-toggle'
 
 @Component({
   selector: 'ws-app-qna-home',
@@ -63,7 +63,7 @@ export class QnaHomeComponent implements OnInit, OnDestroy {
     }
   }
   onTabChange(event: MatButtonToggleChange) {
-    this.router.navigate([], { queryParams: { tab: event.value }, preserveQueryParams: false })
+    this.router.navigate([], { queryParams: { tab: event.value }, queryParamsHandling: 'merge' })
   }
   fetchTimeLine() {
     if (this.fetchStatus === 'fetching') {

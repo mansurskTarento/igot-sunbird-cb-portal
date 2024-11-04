@@ -2,8 +2,9 @@ import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { FormGroup, FormBuilder } from '@angular/forms'
-import { MatChipInputEvent, MatSnackBar } from '@angular/material'
 import { InterestService } from '../../../../../../../../../app/src/lib/routes/profile/routes/interest/services/interest.service'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatSnackBar } from '@angular/material/snack-bar'
 export interface IDialogData {
   animal: string
   name: string

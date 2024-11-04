@@ -7,18 +7,7 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import {
-  MatIconModule,
-  MatListModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatInputModule,
-  MatButtonModule,
-  MatSidenavModule,
-  MatChipsModule,
-  MatProgressSpinnerModule,
-} from '@angular/material'
+
 import { MatCardModule } from '@angular/material/card'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { AvatarPhotoModule, BtnPageBackModule, CardContentModule } from '@sunbird-cb/collection'
@@ -32,6 +21,16 @@ import { CuratedCollectionService } from './services/curated-collection.service'
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { TranslateModule } from '@ngx-translate/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
 
 @NgModule({
   declarations: [

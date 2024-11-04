@@ -7,8 +7,12 @@ import { UserContentRatingModule } from '../user-content-rating/user-content-rat
 import { UserImageModule } from '../user-image/user-image.module'
 import { BtnMailUserModule } from '../../btn-mail-user/btn-mail-user.module'
 import { MarkAsCompleteModule } from '../mark-as-complete/mark-as-complete.module'
-import { MatDividerModule, MatChipsModule, MatIconModule, MatCardModule, MatButtonModule } from '@angular/material'
 import { TranslateModule } from '@ngx-translate/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
   declarations: [PlayerBriefComponent],

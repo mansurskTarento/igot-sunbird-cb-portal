@@ -2,17 +2,6 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { CbpRoutingModule } from './cbp-routing.module'
-
-import {
-  MatIconModule,
-  MatCardModule,
-  MatExpansionModule,
-  MatCheckboxModule,
-  MatTabsModule,
-  MatBottomSheetModule,
-  MatMenuModule,
-  MatRadioModule,
-} from '@angular/material'
 import { HeaderModule } from '../header/header.module'
 import {
   GridLayoutModule,  SlidersModule,  ContentStripWithTabsModule, AvatarPhotoModule,
@@ -36,6 +25,14 @@ import { FilterComponent } from '../component/filter/filter.component'
 import { FilterSearchPipeModule } from '../pipes/filter-search/filter-search.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatTabsModule } from '@angular/material/tabs'
 @NgModule({
   declarations: [CbpPlanComponent, CbpPlanStatsComponent, MyCompetencyPassbookComponent,
     UpcomingTimelineComponent,

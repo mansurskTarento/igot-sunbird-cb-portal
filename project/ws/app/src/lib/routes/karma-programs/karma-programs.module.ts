@@ -4,7 +4,7 @@ import { KarmaProgramsMicrositeV1Component } from './karma-programs-microsite-v1
 import { KarmaProgramsRoutingModule } from './karma-programs-routing.module'
 import { CardsModule, CommonMethodsService, SlidersLibModule } from '@sunbird-cb/consumption'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, MatProgressSpinnerModule, MatSelectModule, MatSidenavModule } from '@angular/material'
+
 import { KarmaProgramsService } from './service/karma-programs.service'
 import { ImageResponsiveModule, PipeFilterV2Module, PipeOrderByModule } from '@sunbird-cb/utils-v2'
 import { BtnPageBackModule } from '@sunbird-cb/collection/src/public-api'
@@ -14,6 +14,14 @@ import { HttpLoaderFactory } from 'src/app/app.module'
 import { KarmaProgramDataService } from './service/karma-program-data.service'
 import { KarmaProgramsComponent } from './karma-programs/karma-programs.component'
 import { KarmaProgramsMicrositeV2Component } from './karma-programs-microsite-v2/karma-programs-microsite-v2.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
 
 @NgModule({
   declarations: [

@@ -1,15 +1,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "esModuleInterop": false,
+    "skipLibCheck": true,
+    "types": ["jest"],
     "alwaysStrict": true,
     "baseUrl": "./",
     "declaration": false,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "lib": ["es2018", "dom"],
-    "module": "ESNext",
+    "module": "es2020",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
@@ -30,7 +32,7 @@
       "@sunbird-cb/collection": ["library/ws-widget/collection"],
       "@sunbird-cb/collection/*": ["library/ws-widget/collection/*"],
       "@sunbird-cb/resolver": ["library/ws-widget/resolver"],
-      "@sunbird-cb/resolver/*": ["library/ws-widget/resolver/*"],
+      "@sunbird-cb/resolver/*": ["library/ws-widget/resolver/*"]
     },
     "removeComments": true,
     "sourceMap": false,

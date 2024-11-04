@@ -1,10 +1,12 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
 import { NsContent } from '../../_services/widget-content.model'
-import { MatListOption, MAT_DIALOG_DATA, MatSnackBar, MatDialogRef, MatDialog } from '@angular/material'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { BtnKbService } from '../btn-kb.service'
 import { Router } from '@angular/router'
 import { BtnKbConfirmComponent } from '../btn-kb-confirm/btn-kb-confirm.component'
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatListOption } from '@angular/material/list'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-kb-dialog',

@@ -13,13 +13,13 @@
   <div class="flex flex-1 mb-4">
     <mat-expansion-panel class="w-full mat-elevation-z" [expanded]="true" hideToggle *ngIf="!enableFeature">
       <mat-expansion-panel-header>
-        <mat-panel-title i18n>{{ 'network.userSearch' | translate }}</mat-panel-title>
+        <mat-panel-title >{{ 'network.userSearch' | translate }}</mat-panel-title>
 
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div>
           <h4 class="w-full text-center ws-mat-black60-text"
-            *ngIf="searchResultUserArray.length === 0 && !this.searchSpinner" i18n>
+            *ngIf="searchResultUserArray.length === 0 && !this.searchSpinner" >
             {{ 'network.noSearchResultFound' | translate }}
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-gap-4">
@@ -64,7 +64,7 @@
         <span class="spacer"></span>
         <mat-card-actions align="center" *ngIf="connectionRequests && connectionRequests.length > 3">
           <button mat-button color="default" type="button" class=" flex-auto-display" (click)="goToConnectionRequests()">
-            <span class="ws-mat-default-text" i18n>Show all</span>
+            <span class="ws-mat-default-text" >Show all</span>
           </button>
         </mat-card-actions>
       </mat-card-header> -->
@@ -79,7 +79,7 @@
 
         <ng-container *ngIf="connectionRequests && connectionRequests.length > 3">
         <button mat-button color="default" type="button" class=" flex-auto-display see_all_btn" (click)="goToConnectionRequests()">
-          <span class="ws-mat-default-text" i18n>{{ 'network.showAll'| translate }} </span>
+          <span class="ws-mat-default-text" >{{ 'network.showAll'| translate }} </span>
           <mat-icon  class="ws-mat-default-text mr-3 mat-icon notranslate material-icons mat-icon-no-color" role="img" aria-hidden="true">navigate_next </mat-icon>
         </button>
       </ng-container>
@@ -113,7 +113,7 @@
         </mat-card-title>
         <span class="spacer"></span>
         <button mat-button color="default" type="button" class=" flex-auto-display see_all_btn" (click)="goToMyMdo()">
-          <span class="ws-mat-default-text" i18n>{{ 'network.showAll'| translate }} </span>
+          <span class="ws-mat-default-text" >{{ 'network.showAll'| translate }} </span>
           <mat-icon  class="ws-mat-default-text mr-3 mat-icon notranslate material-icons mat-icon-no-color" role="img" aria-hidden="true">navigate_next </mat-icon>
         </button>
       </mat-card-header>

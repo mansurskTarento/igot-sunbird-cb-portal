@@ -9,7 +9,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
 // import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'

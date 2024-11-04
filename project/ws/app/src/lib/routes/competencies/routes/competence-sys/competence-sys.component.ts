@@ -7,7 +7,7 @@ import { CompetenceService } from '../../services/competence.service'
 import _ from 'lodash';
 import { FormControl } from '@angular/forms';
 import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 /* tslint:enable */

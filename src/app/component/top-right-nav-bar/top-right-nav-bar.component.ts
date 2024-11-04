@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'

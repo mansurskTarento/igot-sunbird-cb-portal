@@ -15,8 +15,8 @@
                 <div class="flex flex-row">
                     <div class="flex flex-1">
                         <p class="mat-body-2 ws-mat-black60-text">
-                            <span class="mdo_name margin-right-s" i18n>{{ resource?.source}}</span>
-                            <!-- <span class="post_timing" i18n *ngIf="resource.createdDate">{{ getFormathours(resource.createdDate) }}</span> -->
+                            <span class="mdo_name margin-right-s" >{{ resource?.source}}</span>
+                            <!-- <span class="post_timing" *ngIf="resource.createdDate">{{ getFormathours(resource.createdDate) }}</span> -->
                         </p>
                     </div>
 
@@ -33,26 +33,26 @@
                 </div>
 
                 <mat-card-title>
-                    <a class="mat-h4" i18n role="heading" [routerLink]="['/app/knowledge-resource/all', resource?.id, resource?.type]">{{ resource?.name }}</a>
+                    <a class="mat-h4" role="heading" [routerLink]="['/app/knowledge-resource/all', resource?.id, resource?.type]">{{ resource?.name }}</a>
                 </mat-card-title>
 
                 <mat-card-subtitle>
-                    <p class="mat-body-2 ws-mat-black60-text margin-bottom-s" i18n>{{ resource?.id }}</p>
+                    <p class="mat-body-2 ws-mat-black60-text margin-bottom-s" >{{ resource?.id }}</p>
                 </mat-card-subtitle>
 
-                <p class="mat-body-2 ws-mat-black60-text margin-bottom-s whitespace-pre-line" i18n>
+                <p class="mat-body-2 ws-mat-black60-text margin-bottom-s whitespace-pre-line" >
                     {{ resource?.description }}
                 </p>
                 <!-- <span class="attach_links margin-right-s" *ngIf="resource?.additionalProperties?.krFiles?.length > 0">
                     <ng-container *ngIf="getNbOccur('PDF', resource.additionalProperties.krFiles ) || 0">
-                        <p class="mat-body-2" i18n> <img src="assets/icons/pdf.svg" class="pdfIcon margin-right-xs">  {{ getNbOccur('PDF', resource.additionalProperties.krFiles ) || 0 }} PDF</p>
+                        <p class="mat-body-2" > <img src="assets/icons/pdf.svg" class="pdfIcon margin-right-xs">  {{ getNbOccur('PDF', resource.additionalProperties.krFiles ) || 0 }} PDF</p>
                     </ng-container>
                 </span> -->
                 <!-- {{ resource.additionalProperties.totalFiles.length }} //
                 {{ resource.additionalProperties.totalFiles.images }} //
                 {{ resource.additionalProperties.totalFiles.pdf }} // -->
                 <span class="attach_links margin-right-m" *ngIf="resource.additionalProperties.totalFiles.pdf || resource.additionalProperties.totalFiles.pdf > 0">
-                    <p class="mat-body-2" i18n>
+                    <p class="mat-body-2" >
                         <img src="assets/icons/pdf.svg" class="pdfIcon margin-right-xs">
                         {{ resource?.additionalProperties?.totalFiles?.pdf }}
                     </p>
@@ -70,14 +70,14 @@
                 </span>
 
                 <span class="attach_links margin-right-m" *ngIf="resource.additionalProperties.totalFiles.images || resource.additionalProperties.totalFiles.images>0" >
-                    <p class="mat-body-2" i18n>
+                    <p class="mat-body-2" >
                         <mat-icon class="material-icons-outlined align-bottom ws-mat-default-text margin-right-xs">image</mat-icon>
                         {{ resource?.additionalProperties?.totalFiles?.images }}
                     </p>
                 </span>
 
                 <span class="attach_links margin-right-m" *ngIf="resource.additionalProperties.totalFiles.doc || resource.additionalProperties.totalFiles.doc>0">
-                    <p class="mat-body-2" i18n>
+                    <p class="mat-body-2" >
                         <mat-icon class="material-icons-outlined align-bottom ws-mat-default-text margin-right-xs">description</mat-icon>
                         {{ resource?.additionalProperties?.totalFiles?.doc }}
                     </p>
@@ -90,7 +90,7 @@
                         <mat-expansion-panel  class="padding-m mat-card margin-bottom-s w-full">
                             <mat-expansion-panel-header>
                                 <mat-panel-title class="flex justify-start">
-                                    <a class="flex mat-h3 margin-remove-bottom" i18n role="title">
+                                    <a class="flex mat-h3 margin-remove-bottom" role="title">
                                         <mat-icon class="material-icons-outlined align-bottom ws-mat-default-text margin-right-xs">link</mat-icon>{{item.name}}
                                     </a>
                                 </mat-panel-title>

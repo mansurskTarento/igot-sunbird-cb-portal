@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { environment } from 'src/environments/environment'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
@@ -14,6 +13,8 @@ import { v4 as uuid } from 'uuid'
 import { Location } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {

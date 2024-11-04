@@ -1,13 +1,14 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { FormControl } from '@angular/forms'
-import { MatAutocomplete, MatAutocompleteSelectedEvent, MatSnackBar } from '@angular/material'
 import { ActivatedRoute, Router } from '@angular/router'
 import { NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
 import { Observable } from 'rxjs'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { WsSocialService } from '../../../../services/ws-social.service'
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-blog-edit',

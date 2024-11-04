@@ -53,11 +53,11 @@
 
   <!-- <mat-divider *ngIf="collection" class="margin-bottom-xs"></mat-divider> -->
   <!-- <div *ngIf="collection" class="flex flex-middle">
-    <div i18n class="padding-left-m" *ngIf="tocMode === 'TREE'">{{ 'viewertoc.structure' | translate }}</div>
-    <div i18n class="padding-left-m" *ngIf="tocMode === 'FLAT'">{{ 'viewertoc.queue' | translate }}</div>
+    <div class="padding-left-m" *ngIf="tocMode === 'TREE'">{{ 'viewertoc.structure' | translate }}</div>
+    <div class="padding-left-m" *ngIf="tocMode === 'FLAT'">{{ 'viewertoc.queue' | translate }}</div>
     <span class="spacer"></span>
     <div class="margin-right-m">
-      <mat-slide-toggle [checked]="tocMode === 'FLAT'" (change)="changeTocMode()"><span i18n accesskey="T">
+      <mat-slide-toggle [checked]="tocMode === 'FLAT'" (change)="changeTocMode()"><span accesskey="T">
           <mat-icon>view_list</mat-icon>
         </span></mat-slide-toggle>
     </div>
@@ -68,7 +68,7 @@
   </section>
   <mat-card *ngIf="collection && pathSet && !pathSet.has(resourceId)">
     <mat-card-content>
-      <span class="width-expand flex flex-middle mat-error" i18n>
+      <span class="width-expand flex flex-middle mat-error" >
         {{ 'viewertoc.resourceNotPartOfCollection' | translate }}
       </span>
     </mat-card-content>
@@ -132,7 +132,7 @@
     <mat-spinner></mat-spinner>
   </div>
   <div *ngIf="isErrorOccurred" class="flex flex-center">
-    <h2 i18n class="mat-sub-heading">
+    <h2 class="mat-sub-heading">
       {{ 'viewertoc.unsupportedType' | translate }}
     </h2>
   </div>

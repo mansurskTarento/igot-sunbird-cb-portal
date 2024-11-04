@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { KnowledgeResourceRoutingModule } from './knowledge-resource-routing.module'
 import { KnowledgeAllComponent } from './routes/knowledge-all/knowledge-all.component'
 import { KnowledgeHomeComponent } from './routes/knowledge-home/knowledge-home.component'
-import { MatCardModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatSidenavModule } from '@angular/material'
+
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
 import { KnowledgeCardComponent } from './components/knowledge-card/knowledge-card.component'
 import { KnowledgeSavedComponent } from './routes/knowledge-saved/knowledge-saved.component'
@@ -19,6 +19,12 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 // import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { MatCardModule } from '@angular/material/card'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatSidenavModule } from '@angular/material/sidenav'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {

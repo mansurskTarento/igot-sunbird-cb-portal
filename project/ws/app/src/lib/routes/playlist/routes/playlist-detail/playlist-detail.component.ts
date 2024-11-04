@@ -1,7 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
   BtnPlaylistService,
@@ -25,6 +24,8 @@ import {
   PLAYLIST_TITLE_MAX_LENGTH,
   PLAYLIST_TITLE_MIN_LENGTH,
 } from '../../constants/playlist.constant'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-playlist-detail',

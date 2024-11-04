@@ -1,12 +1,5 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import {
-  MatToolbarModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatRippleModule,
-  MatIconModule,
-} from '@angular/material'
 
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 
@@ -15,6 +8,11 @@ import { HomeComponent } from './components/home/home.component'
 import { NotificationService } from './services/notification.service'
 import { NotificationApiService } from './services/notification-api.service'
 import { NotificationEventComponent } from './components/notification-event/notification-event.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatRippleModule } from '@angular/material/core'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({
   declarations: [HomeComponent, NotificationEventComponent],

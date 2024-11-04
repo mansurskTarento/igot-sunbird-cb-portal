@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import { MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatIconModule, MatMenuModule, MatTooltipModule, MatExpansionModule } from '@angular/material'
 import { RouterModule } from '@angular/router'
 import { DefaultThumbnailModule, PipeCountTransformModule, PipeDurationTransformModule, PipeHtmlTagRemovalModule, PipePartialContentModule, PipePublicURLModule } from '@sunbird-cb/utils-v2'
 import { BtnChannelAnalyticsModule } from '../btn-channel-analytics/btn-channel-analytics.module'
@@ -25,6 +24,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { HttpLoaderFactory } from 'src/app/app.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
   declarations: [CardContentV2Component],
   imports: [

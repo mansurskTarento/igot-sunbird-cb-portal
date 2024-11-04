@@ -2,17 +2,6 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatSnackBarModule,
-  MatChipsModule,
-
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -37,6 +26,13 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { PracticePlModule as PracticePluginModule } from '../../plugins/practice/practice.module'
 import { PracticeComponent } from './practice.component'
 import { PracticeRoutingModule } from './practice-routing.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({
   declarations: [PracticeComponent],

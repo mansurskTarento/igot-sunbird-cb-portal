@@ -2,13 +2,6 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatIconModule,
-  MatSnackBarModule,
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -33,6 +26,10 @@ import { SurveyComponent } from './survey.component'
 
 import { SurveyModule as SurveyViewContainerModule } from '../../route-view-container/survey/survey.module'
 import { SurveyRoutingModule } from './survey-routing.module'
+import { MatCardModule } from '@angular/material/card'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [SurveyComponent],

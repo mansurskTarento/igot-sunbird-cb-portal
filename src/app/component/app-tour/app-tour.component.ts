@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core'
-import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'cb-tour-guide'
+import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'igot-cb-tour-guide'
 import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import { TranslateService } from '@ngx-translate/core'
@@ -34,10 +34,10 @@ export class AppTourComponent {
     completeCallback: () => this.completeTour(),
     nextCallback: (currentStep, stepObject) => this.nextCb(currentStep, stepObject),
     prevCallback: (currentStep, stepObject) => this.prevCb(currentStep, stepObject),
-    closeModalCallback: () => setTimeout(() => {
-      this.closeModal()
-      // tslint:disable-next-line
-    }, 500),
+    // closeModalCallback: () => setTimeout(() => {
+    //   this.closeModal()
+    //   // tslint:disable-next-line
+    // }, 500),
     steps: [
       {
         icon: 'school',
@@ -206,7 +206,7 @@ export class AppTourComponent {
         // tslint:disable-next-line: align
       }, 2000)
     } else {
-      this.guidedTourService.startTour(this.TOUR)
+     this.guidedTourService.startTour(this.TOUR)
       setTimeout(() => {
         // @ts-ignore
         const _left = parseFloat(document.getElementsByClassName('tour_learn')[0]['style']['left'].split('px')[0])
@@ -268,7 +268,7 @@ export class AppTourComponent {
 
   onCongrats(): void {
     this.showCompletePopup = false
-    // localStorage.setItem('tourGuide',JSON.stringify({'disable': true}) )
+    localStorage.setItem('tourGuide', JSON.stringify({ 'disable': true }))
     this.configSvc.updateTourGuideMethod(true)
   }
 
@@ -282,20 +282,24 @@ export class AppTourComponent {
   }
 
   nextCb(currentStep: number, stepObject: any) {
-    // if (stepObject.title == 'My Profile') {
-    //   this.hideCloseBtn = true
-    // }
+    if (stepObject.title === 'My Profile') {
+      this.hideCloseBtn = true
+    }
+    // tslint:disable-next-line
+    console.log('currentStep', currentStep)
     this.currentWindow = stepObject
     const currentStepObj: any = this.TOUR.steps[currentStep - 1]
-    // tslint:disable-next-line: max-line-length
+    // // tslint:disable-next-line: max-line-length
     this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-next`, currentStepObj.title.toLowerCase())
   }
 
   prevCb(currentStep: number, stepObject: any) {
+    // tslint:disable-next-line
+    console.log('currentStep', currentStep)
     this.hideCloseBtn = false
     this.currentWindow = stepObject
     const currentStepObj: any = this.TOUR.steps[currentStep +  1]
-    // tslint:disable-next-line: max-line-length
+    // // tslint:disable-next-line: max-line-length
     this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-previous`, currentStepObj.title.toLowerCase())
   }
 

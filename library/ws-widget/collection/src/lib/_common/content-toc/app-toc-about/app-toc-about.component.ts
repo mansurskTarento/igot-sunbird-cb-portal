@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
 import { Router } from '@angular/router'
 import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
@@ -108,11 +108,11 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() selectedTabValue = 0
   @Input() fromMarketPlace ? = false
   @Input() showMarketPlaceCertificate = false
-  @ViewChild('summaryElem', { static: false }) summaryElem !: ElementRef
-  @ViewChild('objectivesElem', { static: false }) objectivesElem !: ElementRef
-  @ViewChild('descElem', { static: false }) descElem !: ElementRef
-  @ViewChild('tagsElem', { static: false }) tagsElem !: ElementRef
-  @ViewChild('searchTagElem', { static: false }) searchTagElem !: ElementRef
+  @ViewChild('summaryElem') summaryElem !: ElementRef
+  @ViewChild('objectivesElem') objectivesElem !: ElementRef
+  @ViewChild('descElem') descElem !: ElementRef
+  @ViewChild('tagsElem') tagsElem !: ElementRef
+  @ViewChild('searchTagElem') searchTagElem !: ElementRef
 
   primaryCategory = NsContent.EPrimaryCategory
   stripsResultDataMap!: { [key: string]: IStripUnitContentData }
@@ -186,7 +186,6 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   compentencyKey!: NsContent.ICompentencyKeys
 
   ngOnInit() {
-
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     if (window.innerWidth <= 1200) {
       this.isMobile = true

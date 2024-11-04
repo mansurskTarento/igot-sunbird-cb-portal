@@ -4,7 +4,7 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar'
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout'
 import { map, mergeMap, tap, catchError } from 'rxjs/operators'
 import { forkJoin, of, Observable, Subscription } from 'rxjs'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute, Router } from '@angular/router'
 
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'

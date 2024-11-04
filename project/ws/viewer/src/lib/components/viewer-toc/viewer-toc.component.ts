@@ -1,6 +1,5 @@
 import { NestedTreeControl } from '@angular/cdk/tree'
 import { Component, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angular/core'
-import { MatTreeNestedDataSource } from '@angular/material'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationExtras, Params } from '@angular/router'
 import {
@@ -22,6 +21,7 @@ import { of, Subscription } from 'rxjs'
 import { delay } from 'rxjs/operators'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
+import { MatTreeNestedDataSource } from '@angular/material/tree'
 // import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 export interface IViewerTocCard {
   identifier: string

@@ -15,7 +15,7 @@ import { share } from 'rxjs/operators'
 import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
 import { AccessControlService } from '@ws/author/src/public-api'
 // import { FormControl, Validators } from '@angular/forms'
-import { MatDialog } from '@angular/material'
+import { MatDialog } from '@angular/material/dialog'
 import { MobileAppsService } from 'src/app/services/mobile-apps.service'
 import dayjs from 'dayjs'
 // tslint:disable-next-line
@@ -197,7 +197,7 @@ export class PublicTocComponent implements OnInit, OnDestroy, AfterViewChecked, 
             })
         }
         this.currentFragment = 'overview'
-        this.route.fragment.subscribe((fragment: string) => {
+        this.route.fragment.subscribe((fragment: any) => {
             this.currentFragment = fragment || 'overview'
         })
         this.batchSubscription = this.tocSvc.batchReplaySubject.subscribe(

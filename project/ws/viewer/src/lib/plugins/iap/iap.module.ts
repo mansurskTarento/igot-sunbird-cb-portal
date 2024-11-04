@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { IapComponent } from './iap.component'
-import {
-  MatCardModule,
-  MatButtonModule,
-} from '@angular/material'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
 @NgModule({
   declarations: [IapComponent],
   imports: [

@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, Inject } from '@angular/core'
 import { DOCUMENT } from '@angular/common'
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatTabChangeEvent, MatSnackBar } from '@angular/material'
 // RxJS imports
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -14,6 +13,8 @@ import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
   selector: 'ws-competency-list',

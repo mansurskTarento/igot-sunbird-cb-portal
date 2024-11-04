@@ -19,18 +19,7 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import {
-  MatIconModule,
-  MatListModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatInputModule,
-  MatButtonModule,
-  MatSidenavModule,
-  MatChipsModule,
-  MatProgressSpinnerModule,
-} from '@angular/material'
+
 import { MatCardModule } from '@angular/material/card'
 import { DiscussAllComponent } from './routes/discuss-all/discuss-all.component'
 import { DiscussStartComponent } from './components/discuss-start/discuss-start.component'
@@ -45,6 +34,16 @@ import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { InitResolver } from './resolvers/init-resolve.service'
 // import { CKEditorService } from 'library/ws-widget/collection/src/lib/_common/ck-editor/ck-editor.service'
 import { PaginationComponent } from './components/pagination/pagination.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
 
 @NgModule({
   declarations: [

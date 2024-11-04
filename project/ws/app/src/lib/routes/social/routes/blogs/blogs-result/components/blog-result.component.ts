@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { DialogSocialDeletePostComponent, WsDiscussionForumService, NsDiscussionForum } from '@sunbird-cb/collection'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-blog-result',

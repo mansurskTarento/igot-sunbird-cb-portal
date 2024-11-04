@@ -39,4 +39,7 @@ export class NPSGridService {
   deleteFeed(req: any) {
     return this.http.post<any>(API_END_POINTS.deleteFeed, req)
   }
+  submitBpFormWithProfileDetails(req: any) {
+    return this.http.post<any>(API_END_POINTS.submitForm, req)
+  }
 }

@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms'
 import { EventService } from '../../services/events.service'
 import moment from 'moment'
 import { ConfigurationsService, WsEvents, EventService as EventServiceGlobal } from '@sunbird-cb/utils-v2'
-import { MatTabChangeEvent } from '@angular/material'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
@@ -42,7 +42,8 @@ export class EventsComponent implements OnInit {
   eventWidgetData: any
   todaysEventWidgetData: any
   todaysLiveEvents: any = []
-
+  keySpeakerEvents: any = []
+  keySpeakerEventWidget = false
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -67,6 +68,7 @@ export class EventsComponent implements OnInit {
     }
     this.eventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.eventStrips) || []
     this.todaysEventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.todaysEventStrips) || []
+
   }
 
   ngOnInit() {
@@ -74,6 +76,7 @@ export class EventsComponent implements OnInit {
     //   this.currentActivePage = x.page || 1
     //   this.refreshData(this.currentActivePage)
     // })
+    this.getKeySpeakerEventList()
     this.getEventsList()
   }
 
@@ -429,5 +432,90 @@ export class EventsComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
       }
     )
+  }
+
+  getKeySpeakerEventList() {
+    let orgId: any = ''
+    if (environment && environment.spvorgID) {
+      orgId = environment.spvorgID
+    }
+    const widgetData: any =  {
+      'order': 1,
+      'strips': [
+        {
+          'active': true,
+          'key': 'keySpeakersEvents',
+          'logo': 'school',
+          'title': 'keySpeakersEvents',
+          'stripTitleLink': {
+            'link': '',
+            'icon': '',
+          },
+          'sliderConfig': {
+            'showNavs': true,
+            'showDots': false,
+            'maxWidgets': 30,
+          },
+          'loader': true,
+          'loaderConfig': {
+            'cardSubType': 'card-events-skeleton',
+          },
+          'stripBackground': '',
+          'titleDescription': 'Key Speackers Events',
+          'stripConfig': {
+            'cardSubType': 'card-events',
+          },
+          'tabs': [],
+          'filters': [],
+          'data': [],
+          'request': {
+            'searchV6': {
+              'request': {
+                'filters': {
+                  'status': [
+                    'Live',
+                  ],
+                  'contentType': 'Event',
+                  'category': 'Event',
+                  'onBehalfOf': orgId,
+                },
+                'query': '',
+                'sort_by': {
+                  'startDate': 'desc',
+                },
+                'fields': [
+                  'name',
+                  'instructions',
+                  'description',
+                  'mimeType',
+                  'identifier',
+                  'resourceType',
+                  'contentType',
+                  'channel',
+                  'organisation',
+                  'duration',
+                  'version',
+                  'startDate',
+                  'endDate',
+                  'startTime',
+                  'endTime',
+                  'status',
+                  'createdOn',
+                  'eventType',
+                  'expiryDate',
+                  'creatorDetails',
+                  'appIcon',
+                  'recordedLinks',
+                ],
+              },
+            },
+          },
+        },
+      ],
+    }
+    this.keySpeakerEvents = widgetData || []
+    if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
+      this.keySpeakerEventWidget = this.keySpeakerEvents.strips.length
+    }
   }
 }

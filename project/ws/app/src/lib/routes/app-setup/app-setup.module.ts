@@ -3,22 +3,7 @@ import { CommonModule } from '@angular/common'
 
 import { AppSetupRoutingModule } from './app-setup-routing.module'
 import { AppSetupHomeComponent } from './app-setup-home.component'
-import {
-  MatStepperModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatCardModule,
-  MatIconModule,
-  MatButtonModule,
-  MatRadioModule,
-  MatSelectModule,
-  MatExpansionModule,
-  MatMenuModule,
-  MatToolbarModule,
-  MatCheckboxModule,
-  MatDividerModule,
-  MatDialogModule,
-} from '@angular/material'
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { SettingsModule } from '../profile/routes/settings/settings.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
@@ -39,6 +24,20 @@ import { SetupDoneComponent } from './components/setup-done/setup-done.component
 import { InterestModules } from './module/interest/interest.module'
 import { Globals } from './globals'
 import { InterestModule } from '../profile/routes/interest/interest.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
+import { MatStepperModule } from '@angular/material/stepper'
+import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({
   declarations: [

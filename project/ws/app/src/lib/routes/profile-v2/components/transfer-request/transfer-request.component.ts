@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, OnDestroy, Output, EventEmitter } from '@ang
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 // import { Observable, Subject } from 'rxjs'
 import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'

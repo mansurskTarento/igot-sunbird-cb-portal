@@ -40,39 +40,39 @@
         <div *ngIf="errorWidgetData?.widgetData?.errorType" [wsResolverWidget]="errorWidgetData"></div>
         <div *ngIf="error.errorType === errorType.mimeTypeMismatch">
           <mat-card>
-            <mat-card-title i18n>{{ 'viewercomponent.issueInContent' | translate }}</mat-card-title>
+            <mat-card-title >{{ 'viewercomponent.issueInContent' | translate }}</mat-card-title>
             <mat-card-content>
               <div class="mat-caption">
-                <ng-container i18n>
+                <ng-container >
                   {{ 'viewercomponent.differentMimetype' | translate }} (
                 </ng-container>
                 <ng-container>
                   {{ error?.mimeType }}
                 </ng-container>
-                <ng-container i18n>
+                <ng-container >
                   )
                 </ng-container>
               </div>
               <div>
-                <strong i18n>{{ 'viewercomponent.possibleLink' | translate }} </strong>
+                <strong >{{ 'viewercomponent.possibleLink' | translate }} </strong>
                 <a [routerLink]="error.probableUrl">
                   {{ error.probableUrl }}
                 </a>
               </div>
               <div class="margin-top-m text-center">
-                <a class="ws-mat-primary-text" [routerLink]="'/feedback/bug'" i18n>{{ 'viewercomponent.reportToUs' | translate }}</a>
-                <span i18n> {{ 'viewercomponent.weWillMakeItWork' | translate }}</span>
+                <a class="ws-mat-primary-text" [routerLink]="'/feedback/bug'" >{{ 'viewercomponent.reportToUs' | translate }}</a>
+                <span > {{ 'viewercomponent.weWillMakeItWork' | translate }}</span>
               </div>
             </mat-card-content>
           </mat-card>
         </div>
         <div *ngIf="error.errorType === errorType.previewUnAuthorised">
           <mat-card class="margin-m">
-            <mat-card-title i18n>{{ 'viewercomponent.notAuthorizedToPreview' | translate }}</mat-card-title>
+            <mat-card-title >{{ 'viewercomponent.notAuthorizedToPreview' | translate }}</mat-card-title>
             <mat-card-content>
               <div>
-                <a class="ws-mat-primary-text" [routerLink]="'/feedback/bug'" i18n>{{ 'viewercomponent.reportToUs' | translate }}</a>
-                <span i18n> {{ 'viewercomponent.weWillMakeItWork' | translate }}</span>
+                <a class="ws-mat-primary-text" [routerLink]="'/feedback/bug'" >{{ 'viewercomponent.reportToUs' | translate }}</a>
+                <span > {{ 'viewercomponent.weWillMakeItWork' | translate }}</span>
               </div>
             </mat-card-content>
           </mat-card>
@@ -95,18 +95,18 @@
           <a class="padding-right-s padding-top-xs cheight" *ngIf="!show" role="button" (click)="show=true">
             <mat-icon class="cursor-pointer ws-mat-primary-text">visibility</mat-icon>
           </a>
-          <span *ngIf="show" i18n class="flex flex-1 flex-center padding-xs ws-mat-primary-text mat-subheading-1 margin-0">
+          <span *ngIf="show" class="flex flex-1 flex-center padding-xs ws-mat-primary-text mat-subheading-1 margin-0">
             {{ 'viewercomponent.ifGovtOfficial' | translate }}</span>
         </div>
         <div class="flex flex-1 flex-column" *ngIf="show">
           <div class="flex flex-1 flex-row-c">
             
             <div class="flex flex-1 flex-center">
-              <a i18n mat-button [href]="'/protected/v8/resource?redirect_uri=/app/toc/'+ collectionId +'/overview'"
+              <a mat-button [href]="'/protected/v8/resource?redirect_uri=/app/toc/'+ collectionId +'/overview'"
                 class="flex text-center margin-right-s flex-end  ws-mat-default-text ws-mat-accent-border-active">
                 {{ 'common.signIn' | translate }}</a>
-              <span i18n class="flex ws-mat-default-text margin-left-s margin-right-s margin-top-xs-2">{{ 'common.or' | translate }}</span>
-              <a mat-button i18n routerLink="/public/signup"
+              <span class="flex ws-mat-default-text margin-left-s margin-right-s margin-top-xs-2">{{ 'common.or' | translate }}</span>
+              <a mat-button routerLink="/public/signup"
                 class="btn btn-primary flex text-center text-white-b margin-left-s flex-end">{{ 'common.register' | translate }}</a>
             </div>
           </div>

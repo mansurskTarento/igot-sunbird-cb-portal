@@ -4,8 +4,10 @@ import { CommonModule } from '@angular/common'
 import { ChannelsRoutingModule } from './channels-routing.module'
 import { ChannelsHomeComponent } from './routes/channels-home/channels-home.component'
 import { CardChannelModule, CardChannelModuleV2, CardContentModule, BtnPageBackModule } from '@sunbird-cb/collection'
-import { MatToolbarModule, MatExpansionModule, MatProgressSpinnerModule } from '@angular/material'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
   declarations: [ChannelsHomeComponent],
   imports: [

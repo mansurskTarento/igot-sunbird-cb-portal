@@ -257,7 +257,7 @@
       <a mat-menu-item (click)="raiseTelemetry(); $event.stopPropagation()" [routerLink]="(widgetData.content | pipeContentRoute).url"
         [queryParams]="(widgetData.content | pipeContentRoute).queryParams" role="link" class="flex flex-middle">
         <mat-icon>toc</mat-icon>
-        <h3 class="margin-remove" i18n>
+        <h3 class="margin-remove" >
           View details
         </h3>
       </a>
@@ -488,7 +488,7 @@
               widgetData.content?.complexityLevel
               }}</span>
 
-            <span i18n *ngIf="widgetData.content?.subTitle">
+            <span *ngIf="widgetData.content?.subTitle">
               |
             </span>
             <span matTooltipPosition="right" [matTooltip]="widgetData.content?.subTitle">
@@ -627,7 +627,7 @@
       </ng-container>
       <ng-container *ngIf="isCardFlipped">
         <div class="flex items-center">
-          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" i18n>Description</h2>
+          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" >Description</h2>
           <button mat-icon-button (click)="isCardFlipped = false">
             <mat-icon>close</mat-icon>
           </button>
@@ -873,7 +873,7 @@
               <!-- <div *ngIf="widgetData.content.complexityLevel" i18n-title title="Complexity Level">
                 {{ widgetData.content.complexityLevel }}
               </div> -->
-              <div *ngIf="showIsMode" i18n i18n-title title="Newly Added"
+              <div *ngIf="showIsMode" i18n-title title="Newly Added"
                 class="mode-tag px-2 ws-mat-accent-background">
                 Newly Added
               </div>
@@ -989,7 +989,7 @@
       </ng-container>
       <ng-container *ngIf="isCardFlipped">
         <div class="flex items-center">
-          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" i18n>Reason</h2>
+          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" >Reason</h2>
           <button mat-icon-button (click)="isCardFlipped = false">
             <mat-icon>close</mat-icon>
           </button>
@@ -1066,7 +1066,7 @@
               <!-- <div *ngIf="widgetData.content.complexityLevel" i18n-title title="Complexity Level">
                 {{ widgetData.content.complexityLevel }}
               </div> -->
-              <div *ngIf="showIsMode" i18n i18n-title title="Newly Added"
+              <div *ngIf="showIsMode" i18n-title title="Newly Added"
                 class="mode-tag px-2 ws-mat-accent-background">
                 Newly Added
               </div>
@@ -1167,7 +1167,7 @@
       </ng-container>
       <ng-container *ngIf="isCardFlipped">
         <div class="flex items-center">
-          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" i18n>Reason</h2>
+          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" >Reason</h2>
           <button mat-icon-button (click)="isCardFlipped = false">
             <mat-icon>close</mat-icon>
           </button>
@@ -1343,7 +1343,7 @@
           <a (click)="raiseTelemetry(); $event.stopPropagation()" [routerLink]="widgetData?.content?.linkUrl" [state]="widgetData?.stateData"
             role="link" i18n-aria-label>
             <div class="text-gray-time complexity flex-between flex-center">
-              <div *ngIf="showIsMode" i18n i18n-title title="Newly Added"
+              <div *ngIf="showIsMode" i18n-title title="Newly Added"
                 class="mode-tag px-2 ws-mat-accent-background">
                 Newly Added
               </div>
@@ -1410,7 +1410,7 @@
       </ng-container>
       <ng-container *ngIf="isCardFlipped">
         <div class="flex items-center">
-          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" i18n>Reason</h2>
+          <h2 class="mat-subheading-2 flex-1 min-w-0 margin-remove-bottom" >Reason</h2>
           <button mat-icon-button (click)="isCardFlipped = false">
             <mat-icon>close</mat-icon>
           </button>
@@ -1503,7 +1503,7 @@
           [widgetData]="widgetData?.content | pipePartialContent: ['identifier']" [likesCount]="widgetData?.likes">
         </ws-widget-btn-content-like>
 
-        <div *ngIf="showContentTag || false" i18n class="mode-tag px-2 ws-mat-primary-background">
+        <div *ngIf="showContentTag || false" class="mode-tag px-2 ws-mat-primary-background">
           {{ widgetData.contentTags.tag }}
         </div>
       </div>

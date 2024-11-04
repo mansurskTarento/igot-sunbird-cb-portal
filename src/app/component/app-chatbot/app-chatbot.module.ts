@@ -3,10 +3,11 @@ import { ClickOutsideDirective } from './clickoutside.directive'
 import { AppChatbotComponent } from './app-chatbot.component'
 import { ChatbotService } from './chatbot.service'
 import { FormsModule } from '@angular/forms'
-import { MatIconModule, MatProgressSpinnerModule } from '@angular/material'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { CommonModule } from '@angular/common'
+import { MatIconModule } from '@angular/material/icon'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
   declarations: [

@@ -75,7 +75,7 @@ export class WebModuleEditorComponent implements OnInit, OnDestroy {
   mode$ = this.mediumSizeBreakpoint$.pipe(map(isMedium => (isMedium ? 'over' : 'side')))
   showAudioCard = false
   imagesUrlbase = ''
-  @ViewChild(PlainCKEditorComponent, { static: false }) ckEditor!: PlainCKEditorComponent
+  @ViewChild(PlainCKEditorComponent) ckEditor!: PlainCKEditorComponent
   // @ViewChild('editor', { static: false }) ckEditor!: any
   // downloadRegex = new RegExp(`(/content-store/.*?)(\\\)?\\\\?['"])`, 'gm')
 

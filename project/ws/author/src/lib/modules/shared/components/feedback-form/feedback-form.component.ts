@@ -1,11 +1,5 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core'
-import {
-  MAT_DIALOG_DATA,
-  MatSnackBar,
-  MatDialogRef,
-  MatAutocompleteSelectedEvent,
-  MatChipInputEvent,
-} from '@angular/material'
+
 import { FormControl } from '@angular/forms'
 import {
   NsAutoComplete,
@@ -26,6 +20,10 @@ import {
   catchError,
 } from 'rxjs/operators'
 import { of } from 'rxjs'
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 const NOTIFICATION_TIME = 5
 
@@ -42,7 +40,7 @@ export class FeedbackFormComponent implements OnInit {
   userMessage = ''
   fetchTagsStatus: 'done' | 'fetching' | null = null
   hasError = false
-  @ViewChild('publisherDetailsView', { static: false }) publisherDetailsView!: ElementRef
+  @ViewChild('publisherDetailsView') publisherDetailsView!: ElementRef
   onAction = false
 
   constructor(

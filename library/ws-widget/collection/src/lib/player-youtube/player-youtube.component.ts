@@ -54,8 +54,8 @@ export class PlayerYoutubeComponent extends WidgetBaseComponent
   screenSubscription: Subscription | null = null
   screenHeight: string | null = null
   // @Input() data!: IWidgetsPlayerMediaData
-  @ViewChild('videoTag', { static: false }) videoTag!: ElementRef<HTMLVideoElement>
-  @ViewChild('youtubeTag', { static: false }) youtubeTag!: ElementRef<HTMLElement>
+  @ViewChild('videoTag') videoTag!: ElementRef<HTMLVideoElement>
+  @ViewChild('youtubeTag') youtubeTag!: ElementRef<HTMLElement>
   private player: videoJs.Player | null = null
   private dispose: (() => void) | null = null
   constructor(

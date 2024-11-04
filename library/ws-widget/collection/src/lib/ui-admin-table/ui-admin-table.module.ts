@@ -16,10 +16,12 @@ import { BtnContentLikeModule } from '../btn-content-like/btn-content-like.modul
 import { BtnContentMailMeModule } from '../btn-content-mail-me/btn-content-mail-me.module'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { UserPopupComponent } from './user-popup/user-popup'
-import { MatDialogModule, MatButtonModule, MatCheckboxModule } from '@angular/material'
 import { FormsModule } from '@angular/forms'
 import { MatRadioModule } from '@angular/material/radio'
 import { BtnPageBackModule } from '../btn-page-back/btn-page-back.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDialogModule } from '@angular/material/dialog'
 @NgModule({
   declarations: [UIAdminUserTableComponent, UIDirectoryTableComponent, UserPopupComponent, UIUserTablePopUpComponent],
   imports: [

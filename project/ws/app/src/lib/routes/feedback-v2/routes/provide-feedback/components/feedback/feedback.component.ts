@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TSendStatus, IResolveResponse, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import {

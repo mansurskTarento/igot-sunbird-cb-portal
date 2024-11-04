@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { IActivityCard, IChallenges } from '../../interfaces/activities.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 
 @Component({

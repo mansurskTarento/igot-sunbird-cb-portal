@@ -1,5 +1,6 @@
 import { Component, ElementRef, Inject, TemplateRef, ViewChild, OnInit } from '@angular/core'
-import { MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { BtnPlaylistService, NsAutoComplete } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 

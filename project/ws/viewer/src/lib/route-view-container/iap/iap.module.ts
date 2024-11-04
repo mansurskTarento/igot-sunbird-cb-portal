@@ -6,15 +6,6 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { IapModule as IapPluginModule } from '../../plugins/iap/iap.module'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatSnackBarModule,
-  MatChipsModule,
-  MatIconModule,
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -33,6 +24,12 @@ import {
   PipeLimitToModule,
   PipePartialContentModule,
 } from '@sunbird-cb/utils-v2'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 @NgModule({
   declarations: [IapComponent],
   imports: [

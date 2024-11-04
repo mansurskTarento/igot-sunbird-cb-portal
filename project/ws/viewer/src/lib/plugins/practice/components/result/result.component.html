@@ -81,14 +81,14 @@
           <div class="flex flex-1 flex-column flex-wrap margin-top-m">
             <!-- <ng-container *ngIf="!(quizResponse)">
               <div class="flex flex-1 flex-center text-center flex-middle">
-                <span class="mat-heading" i18n>{{ 'quizresult.bePatienWhileWeCalculate' | translate }}</span>
+                <span class="mat-heading" >{{ 'quizresult.bePatienWhileWeCalculate' | translate }}</span>
                 <mat-spinner></mat-spinner>
               </div>
             </ng-container> -->
             <ng-container *ngIf="quizResponse && quizResponse?.isInProgress">
               <div class="flex flex-row flex-center text-center flex-middle margin-top-xl">
-                <!-- <span class="mat-heading" i18n>We are not able to fetch the result</span> -->
-                <span class="mat-heading" i18n>{{ 'quizresult.submittedSucessfull' | translate }}</span>
+                <!-- <span class="mat-heading" >We are not able to fetch the result</span> -->
+                <span class="mat-heading" >{{ 'quizresult.submittedSucessfull' | translate }}</span>
               </div>
               <div class="flex flex-row flex-center text-center flex-middle margin-top-xl">
                 <button mat-button  class="ws-mat-primary-background text-white m-w padding-xs" (click)="retryResult()">
@@ -97,13 +97,13 @@
             </ng-container>
             <ng-container *ngIf="checkRes()">
               <div class="flex flex-row flex-center text-center flex-middle margin-top-xl">
-                <span class="mat-heading" i18n><mat-icon class="font-size-50">warning</mat-icon></span>
+                <span class="mat-heading" ><mat-icon class="font-size-50">warning</mat-icon></span>
               </div>
               <div class="flex flex-row flex-center text-center flex-middle margin-top-m padding-left-l">
-                <span class="mat-heading" i18n>{{quizResponse}}</span>
+                <span class="mat-heading" >{{quizResponse}}</span>
               </div>
               <div class="flex flex-row flex-center text-center flex-middle margin-top-m padding-left-l">
-                <span class="mat-heading" i18n>{{ 'quizresult.pleaseContactSystemAdmin' | translate }}</span>
+                <span class="mat-heading" >{{ 'quizresult.pleaseContactSystemAdmin' | translate }}</span>
               </div>
             </ng-container>
             <ng-container>

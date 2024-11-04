@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSProfileDataV3 } from '../../models/profile-v3.models'

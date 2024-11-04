@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import { MatButtonModule, MatCardModule, MatIconModule } from '@angular/material'
 import { RouterModule } from '@angular/router'
 import { HorizontalScrollerModule } from '@sunbird-cb/utils-v2'
 import { FracComponent } from './components/frac/frac.component'
 import { FracRoutingModule } from './frac-routing.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
   declarations: [FracComponent],

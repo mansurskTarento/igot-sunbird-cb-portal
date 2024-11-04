@@ -15,7 +15,7 @@ import {
 } from './grid-layout.model'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 const API_END_POINTS = {
   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
@@ -118,7 +118,7 @@ export class GridLayoutComponent extends WidgetBaseComponent
   fullMenuHeight = false
   isMobile = false
   reviewCommentLength = 0
-  @ViewChild('textArea', { static: false }) textArea!: ElementRef
+  @ViewChild('textArea') textArea!: ElementRef
   noHtmlCharacter = new RegExp(/<[^>]*>|(function[^\s]+)|(javascript:[^\s]+)/i)
   disableMenu = false
   ngOnInit() {

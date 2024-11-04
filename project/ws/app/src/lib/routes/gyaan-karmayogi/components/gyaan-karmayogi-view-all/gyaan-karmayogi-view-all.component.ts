@@ -7,7 +7,7 @@ import { gyaanConstants } from '../../models/gyaan-contants.model'
 import { TitleCasePipe } from '@angular/common'
 import { FormControl } from '@angular/forms'
 
-import { MatBottomSheet } from '@angular/material'
+import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { GyaanFilterComponent } from '../gyaan-filter/gyaan-filter.component'
 
 @Component({

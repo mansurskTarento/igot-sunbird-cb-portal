@@ -1,9 +1,12 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core'
 import { FormControl } from '@angular/forms'
-import { MatDialog, MatPaginator, MatSnackBar, MatTableDataSource } from '@angular/material'
 import { NsContent } from '@sunbird-cb/collection'
 import { ViewSubmissionComponent } from './components/view-submission/view-submission.component'
 import { ResourceCollectionService } from './resource-collection.service'
+import { MatDialog } from '@angular/material/dialog'
+import { MatPaginator } from '@angular/material/paginator'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTableDataSource } from '@angular/material/table'
 
 @Component({
   selector: 'viewer-plugin-resource-collection',

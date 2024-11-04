@@ -1,14 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
-
-import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatSnackBarModule,
-} from '@angular/material'
-
 import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
@@ -36,6 +28,10 @@ import { HtmlModule as HtmlViewContainerModule } from '../../route-view-containe
 import { HtmlMobileComponent } from './html-mobile.component'
 
 import { AccessControlService } from '@ws/author'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 @NgModule({
   declarations: [HtmlMobileComponent],
   imports: [

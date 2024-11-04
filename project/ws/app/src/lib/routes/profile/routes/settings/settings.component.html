@@ -39,49 +39,49 @@
            <mat-option value="de" *ngIf="isLocaleAvailable('de')" [disabled]="!isLocaleEnabled('de')">
              <a mat-line>
                <ng-container>Deutsch&nbsp;&nbsp;</ng-container>
-               <ng-container i18n> German (de)</ng-container>
+               <ng-container > German (de)</ng-container>
              </a>
            </mat-option>
            <mat-option value="ar" *ngIf="isLocaleAvailable('ar')" [disabled]="!isLocaleEnabled('ar')">
              <a mat-line>
                <ng-container>عربى&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>Arabic (ar)</ng-container>
+               <ng-container >Arabic (ar)</ng-container>
              </a>
            </mat-option>
            <mat-option value="zh-CN" *ngIf="isLocaleAvailable('zh-CN')" [disabled]="!isLocaleEnabled('zh-CN')">
              <a mat-line>
                <ng-container>中文&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>Chinese (zh-CN)</ng-container>
+               <ng-container >Chinese (zh-CN)</ng-container>
              </a>
            </mat-option>
            <mat-option value="fr" *ngIf="isLocaleAvailable('fr')" [disabled]="!isLocaleEnabled('fr')">
              <a mat-line>
                <ng-container>Français&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>French (fr)</ng-container>
+               <ng-container >French (fr)</ng-container>
              </a>
            </mat-option>
            <mat-option value="fr-ca" *ngIf="isLocaleAvailable('fr-ca')" [disabled]="!isLocaleEnabled('fr-ca')">
              <a mat-line>
                <ng-container>Français-Canada&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>French Canada (fr-ca)</ng-container>
+               <ng-container >French Canada (fr-ca)</ng-container>
              </a>
            </mat-option>
            <mat-option value="nl" *ngIf="isLocaleAvailable('nl')" [disabled]="!isLocaleEnabled('nl')">
              <a mat-line>
                <ng-container>Dutch&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>Dutch (nl)</ng-container>
+               <ng-container >Dutch (nl)</ng-container>
              </a>
            </mat-option>
            <mat-option value="ja" *ngIf="isLocaleAvailable('ja')" [disabled]="!isLocaleEnabled('ja')">
              <a mat-line>
                <ng-container>日本人&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>Japanese (ja)</ng-container>
+               <ng-container >Japanese (ja)</ng-container>
              </a>
            </mat-option>
            <mat-option value="es" *ngIf="isLocaleAvailable('es')" [disabled]="!isLocaleEnabled('es')">
              <a mat-line>
                <ng-container>Español&nbsp;&nbsp;</ng-container>
-               <ng-container i18n>Spanish (es)</ng-container>
+               <ng-container >Spanish (es)</ng-container>
              </a>
            </mat-option>
          </mat-select>
@@ -89,7 +89,7 @@
       <!-- <div class="flex flex-middle mt-8" (click)="showContentLang = !showContentLang"> -->
         <!-- <mat-icon *ngIf="showContentLang">keyboard_arrow_down</mat-icon>
          <mat-icon *ngIf="!showContentLang">chevron_right</mat-icon> -->
-        <!-- <span i18n>{{ 'settings.contentLanguage' | translate }}</span>
+        <!-- <span >{{ 'settings.contentLanguage' | translate }}</span>
       </div> -->
       <!-- <mat-selection-list class="flex flex-wrapped mt-4" [formControl]="contentLangForm"
         (selectionChange)="contentLangChanged()">
@@ -134,28 +134,28 @@
           [disabled]="!isLocaleEnabled('nl') || isPrimary('nl')" [value]="'nl'" [selected]="isPrimary('nl')"
           class="width-content-lang">
           <h4 mat-line>Dutch</h4>
-          <p mat-line i18n>Dutch (nl)</p>
+          <p mat-line >Dutch (nl)</p>
         </mat-list-option>
         <mat-list-option [ngStyle]="{ opacity: !isLocaleEnabled('ja') || isPrimary('ja') ? 0.4 : 1 }"
           [checkboxPosition]="'before'" *ngIf="isLocaleAvailable('ja')"
           [disabled]="!isLocaleEnabled('ja') || isPrimary('ja')" [value]="'ja'" [selected]="isPrimary('ja')"
           class="width-content-lang">
           <h4 mat-line>日本人</h4>
-          <p mat-line i18n>Japanese (ja)</p>
+          <p mat-line >Japanese (ja)</p>
         </mat-list-option>
         <mat-list-option [ngStyle]="{ opacity: !isLocaleEnabled('es') || isPrimary('es') ? 0.4 : 1 }"
           [checkboxPosition]="'before'" [selected]="isPrimary('es')" *ngIf="isLocaleAvailable('es')"
           [disabled]="!isLocaleEnabled('es') || isPrimary('es')" [value]="'es'" class="width-content-lang">
           <h4 mat-line>Español</h4>
-          <p mat-line i18n>Spanish (es)</p>
+          <p mat-line >Spanish (es)</p>
         </mat-list-option>
       </mat-selection-list> -->
       <!-- <div class="flex flex-middle flex-between mt-4">
-         <span *ngIf="mode === 'settings'" i18n class="ws-mat-primary-text">After changing the application language,
+         <span *ngIf="mode === 'settings'" class="ws-mat-primary-text">After changing the application language,
            the
            application will reload</span>
          <div *ngIf="mode === 'settings'">
-           <a mat-raised-button type="button" color="primary" (click)="applyChanges()" i18n>
+           <a mat-raised-button type="button" color="primary" (click)="applyChanges()" >
              Apply
            </a>
          </div>
@@ -190,7 +190,7 @@
             activeFontClass === font.fontClass ? 'radio_button_checked' : 'radio_button_unchecked'
             }}</mat-icon>
           <span [style.fontSize]="font.baseFontSize">
-            <span i18n>{{ 'settings.baseFontSize' | translate }}</span>
+            <span >{{ 'settings.baseFontSize' | translate }}</span>
             ({{ font.baseFontSize }})
           </span>
         </button>
@@ -228,14 +228,14 @@
         <mat-slide-toggle class="mode-toggle" color="primary" [formControl]="darkModeForm" labelPosition="before">
           <div class="flex flex-middle">
             <mat-icon>brightness_medium</mat-icon>
-            <span i18n class="padding-left-s">Dark Mode</span>
+            <span class="padding-left-s">Dark Mode</span>
           </div>
         </mat-slide-toggle>
         <mat-slide-toggle *ngIf="showIntranetSettings" class="mode-toggle" color="primary"
           [formControl]="intranetContentForm" labelPosition="before">
           <div class="flex flex-middle">
             <mat-icon>link</mat-icon>
-            <span i18n class="padding-left-s">Show intranet Content</span>
+            <span class="padding-left-s">Show intranet Content</span>
           </div>
 
         </mat-slide-toggle>

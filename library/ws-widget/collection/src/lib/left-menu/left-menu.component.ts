@@ -34,7 +34,7 @@ export class LeftMenuComponent extends WidgetBaseComponent
   }
 
   ngOnInit(): void {
-    this.activatedRoute.fragment.subscribe((fragment: string) => {
+    this.activatedRoute.fragment.subscribe((fragment: any) => {
       this.currentFragment = fragment
     })
   }

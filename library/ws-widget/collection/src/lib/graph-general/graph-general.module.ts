@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { GraphGeneralComponent } from './graph-general.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { MatSelectModule, MatFormFieldModule } from '@angular/material'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatSelectModule } from '@angular/material/select'
 
 @NgModule({
   declarations: [GraphGeneralComponent],

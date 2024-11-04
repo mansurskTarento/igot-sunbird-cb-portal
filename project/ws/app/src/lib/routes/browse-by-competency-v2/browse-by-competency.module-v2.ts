@@ -12,31 +12,7 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { AvatarPhotoModule, BtnPageBackModule, CardContentModule } from '@sunbird-cb/collection'
-import {
-  MatIconModule,
-  MatListModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatInputModule,
-  MatButtonModule,
-  MatSidenavModule,
-  MatChipsModule,
-  MatProgressSpinnerModule,
-  MatCardModule,
-  MatExpansionModule,
-  MatAutocompleteModule,
-  MatCheckboxModule,
-  MatMenuModule,
-  MatOptionModule,
-  MatRippleModule,
-  MatSlideToggleModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatDividerModule,
 
-} from '@angular/material'
 import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { AllCompetenciesComponent } from './routes/all-competencies/all-competencies.component'
 import { CompetencyDetailsComponent } from './routes/competency-details/competency-details.component'
@@ -47,6 +23,27 @@ import { LocalDataService } from './services/localService'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { BrowseByCompetencyRoutingModuleV2 } from './browse-by-competency-routing-v2.module'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatOptionModule, MatRippleModule } from '@angular/material/core'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [

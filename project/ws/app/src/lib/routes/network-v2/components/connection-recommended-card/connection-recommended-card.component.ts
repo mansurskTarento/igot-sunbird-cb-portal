@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core'
 import { NSNetworkDataV2 } from '../../models/network-v2.model'
 import { NetworkV2Service } from '../../services/network-v2.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'

@@ -10,7 +10,7 @@
       <span class="mat-headline margin-bottom-xl">{{learningObjective | pipeLimitTo: 300 }}</span>
       <a *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed" mat-button (click)="overviewed('start')"
         [class.spinner]="loading" [disabled]="loading" class="ws-mat-primary-background text-white m-w padding-xs">
-        <span class="padding-xs" i18n>{{ 'practiceoverview.startAssesmentNow' | translate }}</span>
+        <span class="padding-xs" >{{ 'practiceoverview.startAssesmentNow' | translate }}</span>
       </a>
       <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed">You have exceeded the
         maximum allowed attempt</mat-hint>
@@ -84,7 +84,7 @@
       <div>
         <div class="ml-5 start-assessment-cta-standalone block md:hidden" *ngIf="selectedAssessmentCompatibilityLevel >= 7">
           <button [disabled]="!consentGiven ? 'disabled': null" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || forPreview || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary-standalone text-standalone-black'" class=" text-sm font-semibold  py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
-            <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
+            <span class="padding-xs" >{{'playerbrief.startAssessment' | translate}}</span>
           </button>
           <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed && !forPreview && questionTYP.FINAL_ASSESSMENT === primaryCategory">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
         </div>
@@ -92,13 +92,13 @@
       </div>
       <div class="start-assessment-cta hidden md:block" *ngIf="selectedAssessmentCompatibilityLevel >= 7">
         <button [disabled]="!consentGiven ? 'disabled': null" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || forPreview || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary-standalone text-standalone-black'" class="text-sm font-semibold py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
-          <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
+          <span class="padding-xs" >{{'playerbrief.startAssessment' | translate}}</span>
         </button>
         <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed && !forPreview && questionTYP.FINAL_ASSESSMENT === primaryCategory">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
       </div>
       <div class="start-assessment-cta hidden md:block" *ngIf="selectedAssessmentCompatibilityLevel < 7">
         <button *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || forPreview || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" [disabled]="loading" (click)="overviewed('start')" class="bg-blue-800 text-white text-sm font-semibold py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
-          <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
+          <span class="padding-xs" >{{'playerbrief.startAssessment' | translate}}</span>
         </button>
         <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed && !forPreview && questionTYP.FINAL_ASSESSMENT === primaryCategory">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
       </div>
@@ -163,7 +163,7 @@
 </div>
 <div class="start-assessment-cta block md:hidden" *ngIf="selectedAssessmentCompatibilityLevel < 7">
   <button *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" [disabled]="loading" (click)="overviewed('start')" class="bg-blue-800 text-sm font-semibold text-white py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
-    <span class="padding-xs" i18n>{{'playerbrief.startAssessment' | translate}}</span>
+    <span class="padding-xs" >{{'playerbrief.startAssessment' | translate}}</span>
   </button>
   <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed && questionTYP.FINAL_ASSESSMENT === primaryCategory">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
 </div>

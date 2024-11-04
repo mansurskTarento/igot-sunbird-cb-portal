@@ -1,37 +1,75 @@
 import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay'
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
 import { HttpClient, HttpClientJsonpModule, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
-import { APP_INITIALIZER, Injectable, NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
-import {
-  GestureConfig,
-  MatButtonModule,
-  MatCardModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatExpansionModule,
-  MatIconModule,
-  MatMenuModule,
-  MatProgressBarModule,
-  MatRippleModule,
-  MatSliderModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS,
-  MAT_SNACK_BAR_DEFAULT_OPTIONS,
-  MatInputModule,
-  MatFormFieldModule,
-  MatCheckboxModule,
-  MatTabsModule,
-  MatSelectModule,
-  MatTableModule,
-  MatProgressSpinnerModule,
-  MatSidenavModule,
-} from '@angular/material'
-import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
+// Injectable
+import { APP_INITIALIZER, NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+// HAMMER_GESTURE_CONFIG
+import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import {
-  BtnFeatureModule, ErrorResolverModule, TourModule, WIDGET_REGISTERED_MODULES, WIDGET_REGISTRATION_CONFIG, PipeContentRoutePipe,
+  ErrorResolverModule, TourModule, WIDGET_REGISTRATION_CONFIG, PipeContentRoutePipe,
   StickyHeaderModule,
+  AvatarPhotoModule,
+  BtnAppsModule,
+  BtnCallModule,
+  BtnCatalogModule,
+  BtnChannelAnalyticsModule,
+  BtnContentDownloadModule,
+  BtnContentFeedbackModule,
+  BtnContentLikeModule,
+  BtnContentMailMeModule,
+  BtnContentShareModule,
+  BtnFullscreenModule,
+  BtnGoalsModule,
+  BtnMailUserModule,
+  BtnPageBackNavModule,
+  BtnPageBackModule,
+  BtnPlaylistModule,
+  BtnPreviewModule,
+  BtnSettingsModule,
+  CardBreadcrumbModule,
+  CardChannelModule,
+  CardContentModule,
+  CardWelcomeModule,
+  CardNetworkModule,
+  CardHomeTopModule,
+  CardBrowseCourseModule,
+  ChannelHubModule,
+  ContentStripMultipleModule,
+  ContentStripSingleModule,
+  DiscussionForumModule,
+  ElementHtmlModule,
+  EmbeddedPageModule,
+  GalleryViewModule,
+  GraphGeneralModule,
+  GridLayoutModule,
+  ImageMapResponsiveModule,
+  IntranetSelectorModule,
+  LayoutLinearModule,
+  LayoutTabModule,
+  PageModule,
+  PickerContentModule,
+  PlayerAmpModule,
+  PlayerAudioModule,
+  PlayerPdfModule,
+  PlayerSlidesModule,
+  PlayerVideoModule,
+  PlayerWebPagesModule,
+  PlayerYoutubeModule,
+  ReleaseNotesModule,
+  SelectorResponsiveModule,
+  SlidersMobModule,
+  SlidersModule,
+  TreeCatalogModule,
+  TreeModule,
+  CardHubsListModule,
+  CardNetworkHomeModule,
+  CardActivityModule,
+  BtnFeatureModule,
+  UIAdminTableModule,
+  LeftMenuModule,
+  UIORGTableModule,
+  BreadcrumbsOrgModule,
 } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { SbUiResolverModule } from '@sunbird-cb/resolver-v2'
@@ -80,7 +118,7 @@ import { WelcomeUserResolverService } from './services/welcome-user-resolver.ser
 import { PublicTocModule } from './routes/public/public-toc/public-toc.module'
 import { PublicRequestModule } from './routes/public/public-request/public-request.module'
 import { AppTourComponent } from './component/app-tour/app-tour.component'
-import { GuidedTourModule, GuidedTourService } from 'cb-tour-guide'
+import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
 import { AppChatbotModule } from './component/app-chatbot/app-chatbot.module'
 import { AppHierarchyResolverService } from './services/app-hierarchy-resolver.service'
@@ -98,18 +136,39 @@ import { ProfileV3Module } from '@ws/app/src/lib/routes/profile-v3/profile-v3.mo
 import { NoDataComponent } from './component/no-data/no-data.component'
 import { SurveyShikshaComponent } from './component/survey-shiksha/survey-shiksha.component'
 import {
-WIDGET_REGISTERED_LIB_MODULES, WIDGET_REGISTRATION_LIB_CONFIG,
+  CardsModule, WIDGET_REGISTRATION_LIB_CONFIG,
 } from '@sunbird-cb/consumption'
 import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
 import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
 import { PublicExtTocModule } from './routes/public/public-ext-toc/public-ext-toc.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatRippleModule } from '@angular/material/core'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule, MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSliderModule } from '@angular/material/slider'
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar'
+import { MatTableModule } from '@angular/material/table'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
-@Injectable()
-export class HammerConfig extends GestureConfig {
-  buildHammer(element: HTMLElement) {
-    return new GestureConfig({ touchAction: 'pan-y' }).buildHammer(element)
-  }
-}
+// @Injectable()
+// export class HammerConfig extends GestureConfig {
+//   buildHammer(element: HTMLElement) {
+//     return new GestureConfig({ touchAction: 'pan-y' }).buildHammer(element)
+//   }
+// }
 const appInitializer = (initSvc: InitService, logger: LoggerService) => async () => {
   try {
     await initSvc.init()
@@ -170,8 +229,68 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserAnimationsModule,
     KeycloakAngularModule,
     AppRoutingModule,
-    ...WIDGET_REGISTERED_MODULES,
-    ...WIDGET_REGISTERED_LIB_MODULES,
+    AvatarPhotoModule,
+  BtnAppsModule,
+  BtnCallModule,
+  BtnCatalogModule,
+  BtnChannelAnalyticsModule,
+  BtnContentDownloadModule,
+  BtnContentFeedbackModule,
+  BtnContentLikeModule,
+  BtnContentMailMeModule,
+  BtnContentShareModule,
+  BtnFullscreenModule,
+  BtnGoalsModule,
+  BtnMailUserModule,
+  BtnPageBackNavModule,
+  BtnPageBackModule,
+  BtnPlaylistModule,
+  BtnPreviewModule,
+  BtnSettingsModule,
+  CardBreadcrumbModule,
+  CardChannelModule,
+  CardContentModule,
+  CardWelcomeModule,
+  CardNetworkModule,
+  CardHomeTopModule,
+  CardBrowseCourseModule,
+  ChannelHubModule,
+  ContentStripMultipleModule,
+  ContentStripSingleModule,
+  DiscussionForumModule,
+  ElementHtmlModule,
+  EmbeddedPageModule,
+  GalleryViewModule,
+  GraphGeneralModule,
+  GridLayoutModule,
+  ImageMapResponsiveModule,
+  IntranetSelectorModule,
+  LayoutLinearModule,
+  LayoutTabModule,
+  PageModule,
+  PickerContentModule,
+  PlayerAmpModule,
+  PlayerAudioModule,
+  PlayerPdfModule,
+  PlayerSlidesModule,
+  PlayerVideoModule,
+  PlayerWebPagesModule,
+  PlayerYoutubeModule,
+  ReleaseNotesModule,
+  SelectorResponsiveModule,
+  SlidersMobModule,
+  SlidersModule,
+  TreeCatalogModule,
+  TreeModule,
+  CardHubsListModule,
+  CardNetworkHomeModule,
+  CardActivityModule,
+  BtnFeatureModule,
+  UIAdminTableModule,
+  LeftMenuModule,
+  UIORGTableModule,
+  BreadcrumbsOrgModule,
+  CardsModule,
     WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG]),
     SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG]),
     StickyHeaderModule,
@@ -278,7 +397,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       deps: [HttpClient],
     },
     { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
-    { provide: HAMMER_GESTURE_CONFIG, useClass: HammerConfig },
+    // { provide: HAMMER_GESTURE_CONFIG, useClass: HammerConfig },
     { provide: ErrorHandler, useClass: GlobalErrorHandlingService },
     { provide: 'environment', useValue: environment },
     GuidedTourService,

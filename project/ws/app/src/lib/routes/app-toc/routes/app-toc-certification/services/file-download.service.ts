@@ -42,7 +42,8 @@ export class FileDownloadService {
       const downloadLink = this.document.createElement('a')
       downloadLink.style.display = 'none'
       this.document.body.appendChild(downloadLink)
-      downloadLink.setAttribute('href', this.window.URL.createObjectURL(file))
+      const  window: any = this.window
+      downloadLink.setAttribute('href', window.URL.createObjectURL(file))
       downloadLink.setAttribute('download', documentName)
       downloadLink.click()
       this.document.body.removeChild(downloadLink)

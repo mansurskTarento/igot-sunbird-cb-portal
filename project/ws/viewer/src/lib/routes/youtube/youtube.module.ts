@@ -3,14 +3,6 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatIconModule,
-  MatSnackBarModule,
-  MatProgressSpinnerModule,
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -34,6 +26,11 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { YoutubeComponent } from './youtube.component'
 
 import { YoutubeModule as YoutubeViewContainerModule } from '../../route-view-container/youtube/youtube.module'
+import { MatCardModule } from '@angular/material/card'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [YoutubeComponent],

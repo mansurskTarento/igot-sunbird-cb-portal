@@ -7,7 +7,7 @@ import { ROOT_WIDGET_CONFIG } from '../collection.config'
 // import { NsContent } from '../_services/widget-content.model'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { WidgetContentService } from '@sunbird-cb/collection'
 

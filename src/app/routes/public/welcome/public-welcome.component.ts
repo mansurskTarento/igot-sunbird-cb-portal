@@ -5,7 +5,7 @@ import { WelcomeUsersService } from './public-welcome.service'
 import { SignupService } from '../public-signup/signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, startWith, map, pairwise } from 'rxjs/operators'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import { ReCaptchaV3Service } from 'ng-recaptcha'
 // import { DOCUMENT, isPlatformBrowser } from '@angular/common'
 // tslint:disable-next-line: import-name

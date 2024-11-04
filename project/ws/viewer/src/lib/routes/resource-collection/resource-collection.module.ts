@@ -1,11 +1,5 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatSnackBarModule,
-} from '@angular/material'
 
 import {
   BtnContentDownloadModule,
@@ -35,6 +29,10 @@ import { ResourceCollectionComponent } from './resource-collection.component'
 import {
   ResourceCollectionModule as ResourceCollectionViewContainerModule,
 } from '../../route-view-container/resource-collection/resource-collection.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [ResourceCollectionComponent],

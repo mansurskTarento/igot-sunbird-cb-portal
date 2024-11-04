@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core'
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material'
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import { TranslateService } from '@ngx-translate/core'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
 

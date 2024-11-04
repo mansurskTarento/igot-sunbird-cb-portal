@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common'
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core'
-import { MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatExpansionModule, MatIconModule } from '@angular/material'
 import { HorizontalScrollerModule } from '@sunbird-cb/utils-v2'
 // import { ActivitiesService } from '../../../../../../project/ws/app/src/lib/routes/activities/services/activities.service'
 import { ActivityCardModule } from '../activity-card/activity-card.module'
@@ -12,6 +11,12 @@ import { RouterModule } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { HttpLoaderFactory } from 'src/app/app.module'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
   declarations: [CardLearnComponent],

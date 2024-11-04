@@ -7,7 +7,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Observable, timer, throwError, of, Subscription } from 'rxjs'
 import { map, switchMap, catchError } from 'rxjs/operators'

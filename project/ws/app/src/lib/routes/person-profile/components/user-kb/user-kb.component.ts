@@ -3,8 +3,9 @@ import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 import { NSProfileData } from '../../../profile/models/profile.model'
 import { UserdetailallComponent } from '../userdetailall/userdetailall.component'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { PersonProfileService } from '../../services/person-profile.service'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-user-kb',

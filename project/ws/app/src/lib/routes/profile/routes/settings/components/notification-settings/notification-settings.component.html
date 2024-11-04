@@ -1,13 +1,13 @@
-<h1 i18n>{{ 'notificationSettings.notificationHeader' | translate }}</h1>
+<h1 >{{ 'notificationSettings.notificationHeader' | translate }}</h1>
 <h4>{{ 'notificationSettings.comingSoon' | translate }}</h4>
 <!-- <div *ngIf="notificationsFetchStatus === 'fetching'" class="mt-4 text-center">
   <mat-spinner></mat-spinner>
 </div> -->
-<!-- <h2 *ngIf="notificationsFetchStatus === 'error'" class="ws-mat-primary-text text-center margin-top-l" i18n>
+<!-- <h2 *ngIf="notificationsFetchStatus === 'error'" class="ws-mat-primary-text text-center margin-top-l" >
   Unable to fetch notification settings. Please try after sometime.
 </h2> -->
 <!--<div *ngIf="notificationsFetchStatus === 'done'">
-  <p class="ws-mat-primary-text" i18n>Use the slider to enable or disable the email notifications.</p>
+  <p class="ws-mat-primary-text" >Use the slider to enable or disable the email notifications.</p>
    <div class="notifications-container mat-card w-full">
     <div class="flex flex-column justify-between ">
       <ng-container *ngFor="let n of notificationPrefList">
@@ -16,8 +16,8 @@
           <span class="flex flex-1"></span>
           <mat-slide-toggle [labelPosition]="'before'" [checked]="n.status"
             [color]="primary" (change)="updateStatus(n)">
-            <ng-container i18n *ngIf="n.status">On</ng-container>
-            <ng-container i18n *ngIf="!n.status">Off</ng-container>
+            <ng-container *ngIf="n.status">On</ng-container>
+            <ng-container *ngIf="!n.status">Off</ng-container>
           </mat-slide-toggle>
 
         </div>
@@ -29,7 +29,7 @@
           </ng-container>
           <button mat-stroked-button type="submit" class="text-white ws-mat-primary-background flex-auto-display"
               (click)="submitUserPref()" [disabled]="disableBtn">
-              <span class="text-white" i18n>Save preferences</span>
+              <span class="text-white" >Save preferences</span>
           </button>
         </div>
       </ng-container>

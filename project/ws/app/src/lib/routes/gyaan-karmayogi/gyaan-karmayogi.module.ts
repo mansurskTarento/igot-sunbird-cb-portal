@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core'
 import { CommonModule, TitleCasePipe } from '@angular/common'
 
-import { MatFormFieldModule, MatIconModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSidenavModule, MatBottomSheetModule, MatRadioModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material'
 import { GyaanKarmayogiRoutingModule } from './gyaan-karmayogi-routing.module'
 import { GyaanKarmayogiHomeComponent } from './components/gyaan-karmayogi-home/gyaan-karmayogi-home.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
@@ -31,6 +30,14 @@ import { YoutubeModule } from '@ws/viewer/src/lib/routes/youtube/youtube.module'
 import { GyaanYoutubeComponent } from './components/players/gyaan-youtube/gyaan-youtube.component'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { ReplaceNbspTextPipe } from './pipes/replace-nbsp-text.pipe'
+import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {

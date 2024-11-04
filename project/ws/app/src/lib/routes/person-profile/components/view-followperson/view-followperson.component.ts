@@ -4,7 +4,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { PersonProfileService } from '../../services/person-profile.service'
 import { IFollowDetails } from '../../person-profile.model'
 import { Router } from '@angular/router'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-view-followperson',

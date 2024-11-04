@@ -10,7 +10,7 @@ import {
   TemplateRef,
 } from '@angular/core'
 import { FormBuilder, FormGroup } from '@angular/forms'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 import {
   CONTENT_BASE_STATIC,
@@ -40,9 +40,9 @@ import { ProfanityPopUpComponent } from '../profanity-popup/profanity-popup'
   styleUrls: ['./file-upload.component.scss'],
 })
 export class FileUploadComponent implements OnInit {
-  @ViewChild('guideline', { static: false }) guideline!: TemplateRef<HTMLElement>
-  @ViewChild('errorFile', { static: false }) errorFile!: TemplateRef<HTMLElement>
-  @ViewChild('selectFile', { static: false }) selectFile!: TemplateRef<HTMLElement>
+  @ViewChild('guideline') guideline!: TemplateRef<HTMLElement>
+  @ViewChild('errorFile') errorFile!: TemplateRef<HTMLElement>
+  @ViewChild('selectFile') selectFile!: TemplateRef<HTMLElement>
 
   fileUploadForm!: FormGroup
   iprAccepted = false

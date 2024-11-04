@@ -1,19 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatExpansionModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatInputModule,
-  MatMenuModule,
-  MatRadioModule,
-  MatRippleModule,
-  MatListModule,
-  MatDividerModule,
-} from '@angular/material'
+
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
 import { MatCardModule } from '@angular/material/card'
 // import { RecentForumPostComponent } from './recent-forum-post/components/recent-forum-post.component'
@@ -45,6 +33,17 @@ import { PostCreateModule } from './post-create/post-create.module'
 import { AdminTimelineModule } from './forum-admin/admin-timeline.module'
 import { ForumEditModule } from './forum-edit/forum-edit.module'
 import { EditForumService } from '../../resolvers/edit-forum.service'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatRippleModule } from '@angular/material/core'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatRadioModule } from '@angular/material/radio'
 
 @NgModule({
   declarations: [ForumHomeComponent, FilterDispalyComponent],

@@ -3,15 +3,6 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 
 import {
-  MatCardModule,
-  MatDividerModule,
-  MatButtonModule,
-  MatSnackBarModule,
-  MatIconModule,
-  MatChipsModule,
-} from '@angular/material'
-
-import {
   BtnContentDownloadModule,
   BtnContentFeedbackModule,
   BtnContentLikeModule,
@@ -40,6 +31,12 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { HtmlModule as HtmlPluginModule } from '../../plugins/html/html.module'
 
 import { HtmlComponent } from './html.component'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 // import { ViewerCourseInfoModule } from '../../plugins/viewer-course-info/viewer-course-info.module'
 
 @NgModule({

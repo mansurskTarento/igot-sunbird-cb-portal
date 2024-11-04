@@ -4,12 +4,14 @@ import { ENTER } from '@angular/cdk/keycodes'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
-import { MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent, MatSnackBar } from '@angular/material'
 import { AppTocService } from '../../services/app-toc.service'
 
 import {
   UserAutocompleteService,
 } from '@sunbird-cb/collection'
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
   selector: 'ws-app-share-toc',
   templateUrl: './share-toc.component.html',
@@ -33,8 +35,8 @@ export class ShareTocComponent implements OnInit {
    @Input() rootOrgId: any
    @Input() content: any
    @Input() contentLink: any = ''
-   @ViewChild('userInput', { static: false }) userInput: ElementRef<HTMLInputElement> | undefined
-   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete | undefined
+   @ViewChild('userInput') userInput: ElementRef<HTMLInputElement> | undefined
+   @ViewChild('auto') matAutocomplete: MatAutocomplete | undefined
    @Output() resetEnableShare: any = new EventEmitter()
   constructor(private userAutoComplete: UserAutocompleteService,
               private langtranslations: MultilingualTranslationsService,

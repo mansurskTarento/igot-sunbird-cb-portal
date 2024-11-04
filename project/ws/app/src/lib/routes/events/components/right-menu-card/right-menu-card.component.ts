@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { EventService } from '../../services/events.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import { ActivatedRoute } from '@angular/router'
 // import { ConfigurationsService } from '@ws-widget/utils'
 // import { NSProfileDataV2 } from '../../models/profile-v2.model'
@@ -58,6 +58,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
   ngOnInit(): void {
     this.loadEnrolledEventData()
+
     this.kparray = (this.route.parent && this.route.parent.snapshot.data.pageData.data.karmaPoints) || []
     if (this.eventData) {
 
@@ -291,6 +292,21 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         this.batchId = this.eventData.batches[0].batchId || ''
         this.navigateToSamePagewithBatchId(this.batchId)
       }
+    }
+  }
+
+  get completedAfterExpiry() {
+    if(this.eventData && this.enrolledEvent) {
+      console.log('completedAfterExpiry :: ')
+      const eventEndTimestamp = new Date(this.eventData.endDate).getTime()
+      const completedTimestamp = new Date(this.enrolledEvent.completedOn).getTime()
+     if(eventEndTimestamp < completedTimestamp) {
+      return true
+     } else {
+      return false
+     }
+    } else {
+      return false
     }
   }
 

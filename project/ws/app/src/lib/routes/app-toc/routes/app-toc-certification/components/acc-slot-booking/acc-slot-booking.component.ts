@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Observable, Subscription } from 'rxjs'
 import { finalize, startWith, map, tap, switchMap } from 'rxjs/operators'
 
@@ -26,7 +26,7 @@ import { SnackbarComponent } from '../snackbar/snackbar.component'
 export class AccSlotBookingComponent implements OnInit {
   content?: NsContent.IContent
   certification?: ICertificationMeta
-  @ViewChild('locationInput', { static: false }) locationInput!: ElementRef<
+  @ViewChild('locationInput') locationInput!: ElementRef<
     HTMLInputElement
   >
 

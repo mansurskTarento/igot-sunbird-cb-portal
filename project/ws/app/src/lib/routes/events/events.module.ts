@@ -3,19 +3,7 @@ import { CommonModule } from '@angular/common'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
-import {
-  MatIconModule,
-  MatListModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatInputModule,
-  MatButtonModule,
-  MatSidenavModule,
-  MatChipsModule,
-  MatProgressSpinnerModule,
-  MatTabsModule,
-} from '@angular/material'
+
 import { MatCardModule } from '@angular/material/card'
 import { EventsRoutingModule } from './events-routing.module'
 import { EventsHomeComponent } from './routes/events-home/events-home.component'
@@ -40,6 +28,17 @@ import { RightMenuCardComponent } from './components/right-menu-card/right-menu-
 import { PresenterCardComponent } from './components/presenter-card/presenter-card.component'
 import { EventService } from './services/events.service'
 import { TranslateModule } from '@ngx-translate/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatTabsModule } from '@angular/material/tabs'
 import { KarmaPointsModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/karma-points/karma-points.module'
 import { EventPlayerComponent } from './routes/event-player/event-player.component'
 import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf-player.component'

@@ -6,7 +6,6 @@ import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
 import { ActivatedRoute, Event, Data, Router, NavigationEnd } from '@angular/router'
 import { FormControl, Validators } from '@angular/forms'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { TranslateService } from '@ngx-translate/core'
 import { Subscription, Observable, Subject } from 'rxjs'
 import { share, takeUntil } from 'rxjs/operators'
@@ -46,6 +45,8 @@ import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection/src/lib/_
 import { NsCardContent } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.model'
 import { environment } from 'src/environments/environment'
 import { TimerService } from '../../services/timer.service'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -190,9 +191,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   endDate: any
   startDateDifference: any
   endDateDifference: any
-  @ViewChild('rightContainer', { static: false }) rcElement!: ElementRef
+  @ViewChild('rightContainer') rcElement!: ElementRef
   @ViewChild('bannerDetails', { static: true }) bannerElem!: ElementRef
-  @ViewChild('contentSource', { static: false }) contentSource!: ElementRef
+  @ViewChild('contentSource') contentSource!: ElementRef
   sourceEllipsis = false
   scrollLimit = 0
   rcElem = {
@@ -384,7 +385,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
 
     this.currentFragment = 'overview'
-    this.route.fragment.subscribe((fragment: string) => {
+    this.route.fragment.subscribe((fragment: any) => {
       this.currentFragment = fragment || 'overview'
     })
 

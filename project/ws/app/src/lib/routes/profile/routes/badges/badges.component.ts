@@ -4,7 +4,7 @@ import { IBadgeResponse } from './badges.model'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription, fromEvent } from 'rxjs'
 import { BadgesService } from './badges.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { debounceTime, throttleTime } from 'rxjs/operators'
 
 @Component({
@@ -23,7 +23,7 @@ export class BadgesComponent implements OnInit {
   disablePrev: boolean
   scrollObserver: Subscription | undefined
 
-  @ViewChild('cardContents', { read: ElementRef, static: false }) public cardContents:
+  @ViewChild('cardContents', { read: ElementRef }) public cardContents:
     | ElementRef
     | undefined
 

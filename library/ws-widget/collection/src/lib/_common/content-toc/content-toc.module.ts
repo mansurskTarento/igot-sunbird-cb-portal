@@ -3,17 +3,6 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
-import {
-  MatIconModule,
-  MatTabsModule,
-  MatProgressBarModule,
-  MatExpansionModule,
-  MatMenuModule,
-  MatProgressSpinnerModule,
-  MatSnackBarModule,
-  MatRadioModule ,
-  MatTooltipModule,
-} from '@angular/material'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { NgCircleProgressModule } from 'ng-circle-progress'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
@@ -21,6 +10,7 @@ import { HttpLoaderFactory } from 'src/app/app.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
 import { PipeDurationTransformModule, HorizontalScrollerV2Module,
   PipeRelativeTimeModule, PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
+import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
 import { AvatarPhotoModule } from '../avatar-photo/avatar-photo.module'
 import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
 import { RatingSummaryModule } from '../rating-summary/rating-summary.module'
@@ -40,6 +30,15 @@ import { AppTocSessionsNewComponent } from './app-toc-sessions-new/app-toc-sessi
 import { AppTocContentCardV2SkeletonComponent } from './app-toc-content-card-v2-skeleton/app-toc-content-card-v2-skeleton.component'
 import { TruncatePipe } from './pipes/truncate.pipe'
 import { ReplaceNbspPipe } from './pipes/replace-nbsp.pipe'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [
@@ -90,6 +89,7 @@ import { ReplaceNbspPipe } from './pipes/replace-nbsp.pipe'
       },
     }),
     PipeSafeSanitizerModule,
+    DiscussionV2Module,
   ],
   exports: [
     ContentTocComponent,

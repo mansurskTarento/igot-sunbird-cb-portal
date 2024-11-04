@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core'
+import { NgModule, Injectable } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SlidersComponent } from './sliders.component'
 import { RouterModule } from '@angular/router'
@@ -7,6 +7,7 @@ import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-br
 /* tslint:disable */
 import  Hammer from 'hammerjs'
 /* tslint:enable */
+@Injectable()
 export class MyHammerConfig extends HammerGestureConfig {
   buildHammer(element: HTMLElement) {
     const mc = new Hammer(element, {

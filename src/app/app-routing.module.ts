@@ -6,7 +6,7 @@ import { LearningGuard } from '../../project/ws/app/src/lib/routes/my-learning/g
 import { InvalidUserComponent } from './component/invalid-user/invalid-user.component'
 import { LoginRootComponent } from './component/login-root/login-root.component'
 import { ETopBar } from './constants/topBar.constants'
-import { EmptyRouteGuard } from './guards/empty-route.guard'
+// import { EmptyRouteGuard } from './guards/empty-route.guard'
 import { ExternalUrlResolverService } from './guards/external-url-resolver.service'
 import { GeneralGuard } from './guards/general.guard'
 import { LoginGuard } from './guards/login.guard'
@@ -57,7 +57,7 @@ const routes: Routes = [
     path: '',
     redirectTo: 'page/home',
     pathMatch: 'full',
-    canActivate: [EmptyRouteGuard],
+    // canActivate: [EmptyRouteGuard],
     data: {
       pageType: 'feature',
       pageKey: 'home',
