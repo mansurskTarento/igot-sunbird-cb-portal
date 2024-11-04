@@ -9,6 +9,8 @@ import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
+import { GbSearchService } from '../../../search-v2/services/gb-search.service'
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
   selector: 'ws-app-events',
@@ -44,6 +46,36 @@ export class EventsComponent implements OnInit {
   todaysLiveEvents: any = []
   keySpeakerEvents: any = []
   keySpeakerEventWidget = false
+  totalResults: any
+  throttle = 20
+  scrollDistance = 0.2
+  limit = 20
+  page = 0
+  totalpages!: number | 0
+  eventRequestObj = {
+    locale: [
+      'en',
+    ],
+    query: '',
+    request: {
+      query: '',
+      filters: {
+        status: ['Live'],
+        contentType: 'Event',
+        category: 'Event',
+      },
+      sort_by: {
+        startDate: 'desc',
+      },
+      limit: 20,
+      offset: 0,
+    },
+  }
+  newQueryParam: any
+  allEventData: any = []
+  showLoading = true
+  currentQuery = ''
+  public debounce = 500
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -51,6 +83,7 @@ export class EventsComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private eventService: EventServiceGlobal,
     private translate: TranslateService,
+    private searchSrvc: GbSearchService,
   ) {
 
     this.data = this.route.snapshot.data.topics.data
@@ -76,6 +109,18 @@ export class EventsComponent implements OnInit {
     //   this.currentActivePage = x.page || 1
     //   this.refreshData(this.currentActivePage)
     // })
+    this.queryControl.valueChanges
+      .pipe(debounceTime(this.debounce), distinctUntilChanged())
+      .subscribe(query => {
+        if (query) {
+          this.currentQuery = query
+          this.updateQuery(query)
+        } else {
+          this.currentQuery = ''
+          this.getEventsList()
+        }
+
+      })
     this.getKeySpeakerEventList()
     this.getEventsList()
   }
@@ -88,8 +133,131 @@ export class EventsComponent implements OnInit {
   // }
   updateQuery(key: string) {
     if (key) {
+      const requestPayload = {
+        'request': {
+          'fields' : [
+            'name',
+            'appIcon',
+            'instructions',
+            'description',
+            'purpose',
+            'mimeType',
+            'gradeLevel',
+            'identifier',
+            'medium',
+            'pkgVersion',
+            'board',
+            'subject',
+            'resourceType',
+            'primaryCategory',
+            'contentType',
+            'channel',
+            'organisation',
+            'trackable',
+            'license',
+            'posterImage',
+            'idealScreenSize',
+            'learningMode',
+            'creatorLogo',
+            'duration',
+            'version',
+            'programDuration',
+            'avgRating',
+            'courseCategory',
+            'secureSettings',
+            'createdFor',
+            'startDate',
+            'endDate',
+            'startTime',
+            'endTime',
+          ],
+          'query': key ? key : '',
+          'filters': {
+            'courseCategory': [],
+            'contentType': ['Event'],
+            'status': ['Live'],
+          },
+            'sort_by': { 'lastUpdatedOn': 'desc' },
+            'facets': ['mimeType'],
+            'limit': 1000,
+            'offset': 0,
+          },
+      }
+      this.searchSrvc.fetchSearchDataByCategory(requestPayload).subscribe((response: any) => {
+        if (response && response.result && response.result.Event && response.result.Event.length) {
+          const allFilteredEvent = response.result.Event
 
+            const data = allFilteredEvent
+            const filterData: any = []
+            const featuredEvents: any = []
+            const curatedEvents: any = []
+            const karmayogiSaptahEvents: any = []
+            Object.keys(data).forEach((index: any) => {
+              const obj = data[index]
+              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+              const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
+              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+              const floor = Math.floor
+              const hours = floor(obj.duration / 60)
+              const minutes = obj.duration % 60
+              const duration = (hours === 0) ? ((minutes === 0) ? '---' : `${minutes} minutes`) : (minutes === 0) ? (hours === 1) ?
+                `${hours} hour` : `${hours} hours` : (hours === 1) ? `${hours} hour ${minutes} minutes` :
+                `${hours} hours ${minutes} minutes`
+              const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
+              const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
+              const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
+
+              const stime = obj.startTime.split('+')[0]
+              const hour = stime.substr(0, 2)
+              const min = stime.substr(2, 3)
+              const starttime = `${hour}${min}`
+
+              const etime = obj.endTime.split('+')[0]
+              const ehour = etime.substr(0, 2)
+              const emin = etime.substr(2, 3)
+              const endtime = `${ehour}${emin}`
+
+              const eventDataObj = {
+                event: obj,
+                eventName: obj.name,
+                eventStartTime: starttime,
+                eventEndTime: endtime,
+                eventStartDate: obj.startDate,
+                eventCreatedOn: this.allEventDateFormat(obj.createdOn),
+                eventDuration: duration,
+                eventjoined: creatorDetails.length,
+                eventThumbnail: obj.appIcon && (obj.appIcon !== null || obj.appIcon !== undefined) ?
+                  this.eventSvc.getPublicUrl(obj.appIcon) :
+                  '/assets/icons/Events_default.png',
+                pastevent: false,
+              }
+              const now = new Date()
+              const today = moment(now).format('YYYY-MM-DD HH:mm')
+              if (expiryStartTimeFormat < today) {
+                eventDataObj.pastevent = true
+              }
+              filterData.push(eventDataObj)
+              if (obj.createdFor && obj.createdFor[0] === this.departmentID) {
+                featuredEvents.push(eventDataObj)
+              }
+              this.spvOrgId = environment.spvorgID
+              if (obj.createdFor && obj.createdFor[0] === this.spvOrgId) {
+                curatedEvents.push(eventDataObj)
+              }
+              if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
+                karmayogiSaptahEvents.push(eventDataObj)
+              }
+
+            })
+            this.alltypeEvents = filterData
+            this.karmayogiSaptahEvents = karmayogiSaptahEvents
+            this.featuredEvents = featuredEvents
+            this.curatedEvents = curatedEvents
+          }
+
+      })
     }
+
   }
 
   // refreshData(page: any) {
@@ -122,7 +290,7 @@ export class EventsComponent implements OnInit {
   }
 
   getEventsList() {
-    const requestObj = {
+    this.eventRequestObj = {
       locale: [
         'en',
       ],
@@ -137,10 +305,14 @@ export class EventsComponent implements OnInit {
         sort_by: {
           startDate: 'desc',
         },
+        limit: 20,
+        offset: 0,
       },
     }
-    this.eventSvc.getEventsList(requestObj).subscribe((events: any) => {
-      this.setEventListData(events)
+    this.eventSvc.getEventsList(this.eventRequestObj).subscribe((events: any) => {
+      this.totalResults = events.result.count
+      this.allEventData = events.result.Event
+      this.setEventListData(this.allEventData)
     })
   }
 
@@ -151,7 +323,7 @@ export class EventsComponent implements OnInit {
 
   setEventListData(eventObj: any) {
     if (eventObj !== undefined) {
-      const data = eventObj.result.Event
+      const data = this.allEventData
       this.allEvents['all'] = []
       this.allEvents['todayEvents'] = []
       this.allEvents['featuredEvents'] = []
@@ -225,6 +397,7 @@ export class EventsComponent implements OnInit {
       this.filter('curatedEvents')
       this.filter('karmayogiSaptahEvents')
     }
+    this.totalpages = Math.ceil(this.totalResults / 20)
   }
 
   customDateFormat(date: any, time: any) {
@@ -434,88 +607,45 @@ export class EventsComponent implements OnInit {
     )
   }
 
-  getKeySpeakerEventList() {
+  async getKeySpeakerEventList() {
     let orgId: any = ''
     if (environment && environment.spvorgID) {
       orgId = environment.spvorgID
     }
-    const widgetData: any =  {
-      'order': 1,
-      'strips': [
-        {
-          'active': true,
-          'key': 'keySpeakersEvents',
-          'logo': 'school',
-          'title': 'keySpeakersEvents',
-          'stripTitleLink': {
-            'link': '',
-            'icon': '',
-          },
-          'sliderConfig': {
-            'showNavs': true,
-            'showDots': false,
-            'maxWidgets': 30,
-          },
-          'loader': true,
-          'loaderConfig': {
-            'cardSubType': 'card-events-skeleton',
-          },
-          'stripBackground': '',
-          'titleDescription': 'Key Speackers Events',
-          'stripConfig': {
-            'cardSubType': 'card-events',
-          },
-          'tabs': [],
-          'filters': [],
-          'data': [],
-          'request': {
-            'searchV6': {
-              'request': {
-                'filters': {
-                  'status': [
-                    'Live',
-                  ],
-                  'contentType': 'Event',
-                  'category': 'Event',
-                  'onBehalfOf': orgId,
-                },
-                'query': '',
-                'sort_by': {
-                  'startDate': 'desc',
-                },
-                'fields': [
-                  'name',
-                  'instructions',
-                  'description',
-                  'mimeType',
-                  'identifier',
-                  'resourceType',
-                  'contentType',
-                  'channel',
-                  'organisation',
-                  'duration',
-                  'version',
-                  'startDate',
-                  'endDate',
-                  'startTime',
-                  'endTime',
-                  'status',
-                  'createdOn',
-                  'eventType',
-                  'expiryDate',
-                  'creatorDetails',
-                  'appIcon',
-                  'recordedLinks',
-                ],
-              },
-            },
-          },
-        },
-      ],
-    }
-    this.keySpeakerEvents = widgetData || []
+    const widgetData: any =  await this.eventSvc.getKeySpeakerJson().catch(_error => {})
+    this.keySpeakerEvents = widgetData && widgetData['keySpeakersEvents'] || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
+      if (this.keySpeakerEvents.strips[0] &&
+        this.keySpeakerEvents.strips[0]['request'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters'] &&
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters']['onBehalfOf']
+      ) {
+        this.keySpeakerEvents.strips[0]['request']['searchV6']['request']['filters']['onBehalfOf'] = orgId
+      }
       this.keySpeakerEventWidget = this.keySpeakerEvents.strips.length
     }
+  }
+
+  onScrollEnd() {
+    if (!this.currentQuery) {
+      this.showLoading = true
+      this.page += 1
+      if (this.page <= this.totalpages && this.alltypeEvents.length < this.totalResults) {
+        const queryparam = this.eventRequestObj
+        queryparam.request.offset += 20
+        this.eventSvc.getEventsList(queryparam).subscribe((events: any) => {
+          this.showLoading = false
+          this.allEventData = this.allEventData.concat(events.result.Event)
+          this.setEventListData(this.allEventData)
+        })
+      } else {
+        this.showLoading = false
+      }
+    } else {
+      this.showLoading = false
+    }
+
   }
 }

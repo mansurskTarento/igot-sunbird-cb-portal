@@ -84,11 +84,11 @@
         <span class="f-medium mat-title">{{ 'event.labelAllEvents' | translate }} </span>
     </div>
     <div class="flex flex-1 flex-column margin-fix search">
-        <form (submit)="updateQuery(queryControl.value)">
+        <form>
             <mat-form-field appearance="outline" class="autocomplete-form mat-body-2" color="primary"
                 [floatLabel]="'never'">
                 <mat-icon matPrefix class="py-5 flex items-center justify-center">search</mat-icon>
-                <input type="search" #searchInput class="ml-2" i18n-placeholder="search content"
+                <input (onChange)="updateQuery(queryControl.value)" type="search" #searchInput class="ml-2" i18n-placeholder="search content"
                     [placeholder]="'common.search' | translate" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
                     accesskey="F" maxlength="50" />
             </mat-form-field>
@@ -107,12 +107,15 @@
         </div>
     </div> -->
     <mat-tab-group [selectedIndex]="0" class="custom-tabgroup" (selectedTabChange)="tabClicked($event)">
+       
         <mat-tab label="{{ 'event.all' | translate }}" *ngIf="alltypeEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
-                    <div class="w-full margin-top-xl margin-bottom-m event_card_box">
+                    <div class="w-full margin-top-xl margin-bottom-m event_card_box" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
                         <ng-container
-                            *ngFor="let event of alltypeEvents |  pipeFilterV2:'eventName': searchInput.value">
+                            *ngFor="let event of alltypeEvents">
                             <ws-app-events-card class="" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -123,8 +126,10 @@
         <mat-tab label="{{ 'event.karmayogiSaptah' | translate }}" *ngIf="karmayogiSaptahEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
-                    <div class="w-full margin-top-xl margin-bottom-m">
-                        <ng-container *ngFor="let event of karmayogiSaptahEvents | pipeFilterV2:'eventName': searchInput.value">
+                    <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+                        <ng-container *ngFor="let event of karmayogiSaptahEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -135,8 +140,10 @@
         <mat-tab label="{{ 'event.mdoEvents' | translate }}" *ngIf="featuredEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
-                    <div class="w-full margin-top-xl margin-bottom-m">
-                        <ng-container *ngFor="let event of featuredEvents |  pipeFilterV2:'eventName': searchInput.value">
+                    <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+                        <ng-container *ngFor="let event of featuredEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -147,8 +154,10 @@
         <mat-tab label="{{ 'event.curatedEvents' | translate }}" *ngIf="curatedEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
-                    <div class="w-full margin-top-xl margin-bottom-m">
-                        <ng-container *ngFor="let event of curatedEvents | pipeFilterV2:'eventName': searchInput.value">
+                    <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+                        <ng-container *ngFor="let event of curatedEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>
@@ -158,4 +167,7 @@
         </mat-tab>       
         
     </mat-tab-group>
+    <div class="flex flex-row justify-center align-center" *ngIf="showLoading && alltypeEvents.length < totalResults">
+        <p> Loading more... </p>
+    </div>
 </div>
