@@ -255,6 +255,40 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
               label: gyaanConstants.singleCategory,
               values: 'values',
             },
+            year: {
+              name: gyaanConstants.year,
+              label: gyaanConstants.yearlable,
+              values: [
+                {name: 'Andhra Pradesh', count: 0},
+                {name: 'Arunachal Pradesh', count: 0},
+                {name: 'Delhi', count: 0},
+                {name: 'Uttar Pradesh', count: 0},
+                {name: 'Haryana', count: 0},
+              ]
+            },
+            states: {
+              name: gyaanConstants.states,
+              label: gyaanConstants.statesLable,
+              values: [                 
+                {name: 'Andhra Pradesh', count: 0},
+                {name: 'Arunachal Pradesh', count: 0},
+                {name: 'Delhi', count: 0},
+                {name: 'Uttar Pradesh', count: 0},
+                {name: 'Haryana', count: 0},
+                {name: 'Karnataka', count: 0},
+                {name: 'Telengana', count: 0},
+              ],
+            },
+            sdGolals: {
+              name: gyaanConstants.sustainableDevelopment,
+              label: gyaanConstants.sustainableDevelopmentLabel,
+              values: [
+                {name: 'No Poverty', count: 0},
+                {name: 'Zero Hunger', count: 0},
+                {name: 'Good health and wealth being', count: 0},
+                {name: 'Quality Eduction', count: 0},
+              ],
+            }
           }
           response.result.facets.forEach((facet: any) => {
             if (localFacetData[facet.name]) {
@@ -303,6 +337,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
 
           this.facetsDataCopy = { ...localFacetData }
           this.facetsData = localFacetData
+          console.log("facetsData ", this.facetsData)
           if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
             if (this.selectedSector === gyaanConstants.allSectors)  {
               this.selectedFilter[gyaanConstants.sectorName]  = this.sectorNames

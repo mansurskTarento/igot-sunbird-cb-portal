@@ -29,17 +29,31 @@
             <ng-container *ngFor="let facet of localFilterData  | keyvalue:returnZero">
                 <div class="individual-block">
                     <p class="title mb-4">{{facet.value.name}}</p>
-                    <div class="search-filter mb-2">
+                    <div class="search-filter mb-2" *ngIf="facet.value.name !== 'Year' ">
                         <input type="text" (keyup)="getSearch($event?.target?.value, facet?.key)" placeholder="Search {{facet?.value?.label}}">
                         <mat-icon>search</mat-icon>
                     </div>
                     <div class="list mb-4">
                         <ng-container *ngIf="facet?.value?.values?.length;else noData">
-                            <ng-container  *ngIf="facet?.key !== 'resourceCategory'">
+                            <ng-container  *ngIf="facet?.key !== 'resourceCategory' && facet?.key !== 'year'">
                                 <ng-container *ngFor="let sectors of facet?.value?.values">
                                     <div class="check-list">
                                         <mat-checkbox [checked]="sectors?.checked" (change)="changeSelection($event?.checked,facet?.key, sectors)" class="mat-gyaan-filter text-capitalize">{{sectors.name}}</mat-checkbox>
                                     </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container  *ngIf="facet?.key === 'year'">
+                                <ng-container>
+                                    <!-- <mat-slider min="2020" max="2025" step="1" thumbLabel tickInterval="1" [(ngModel)]="year" (change)="onSliderChange($event)"></mat-slider> -->
+
+                                    <div class="slider-container">
+                                        <div class="range-label label-left" id="labelLeft">2000</div>
+                                        <div class="range-label label-right" id="labelRight">2001</div>
+                                        <div class="range-progress" id="rangeProgress"></div>
+                                        <input type="range" min="2000" max="2020" value="2000" class="range-slider" id="sliderLeft">
+                                        <input type="range" min="2000" max="2020" value="2001" class="range-slider" id="sliderRight">
+                                    </div>
+
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngIf="facet?.key === 'resourceCategory'">

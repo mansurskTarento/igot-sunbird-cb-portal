@@ -9,6 +9,12 @@ export const gyaanConstants = {
     singleCategory: 'Categories',
     subSectorName: 'subSectorName',
     resourceCategory: 'resourceCategory',
+    states: "States and UTs",
+    year: "Year",
+    yearlable: "Year",
+    statesLable: "States and UTs",
+    sustainableDevelopmentLabel: "sustainable Development Goals",
+    sustainableDevelopment: "sustainable Development Goals",
     timeOutDuration: 700,
     limitCount: 4,
     colorConstants: [

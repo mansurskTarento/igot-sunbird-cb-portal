@@ -34,9 +34,9 @@
         <div class="container-balanced w-full">
             <div class="flex items-center justify-between sector-headding">
                 <p>{{'gyaanKarmayogi.sectors'| translate}}</p>
-                <p *ngIf="sectorsList?.length > 9" (click)="viewAllSector()" class="flex items-center view-all cursor-pointer">{{'gyaanKarmayogi.viewAll'| translate}}
+                <!-- <p *ngIf="sectorsList?.length > 9" (click)="viewAllSector()" class="flex items-center view-all cursor-pointer">{{'gyaanKarmayogi.viewAll'| translate}}
                     <mat-icon>chevron_right</mat-icon>
-                </p>
+                </p> -->
             </div>
           <div class="flex sector-section  justify-start items-start gap-2">
             <div class="flex all-sector-wrapper col-span-2">
@@ -93,6 +93,10 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
+                            <button class="filters-btn mt-4 md:mt-0"  (click)="viewAllSector()" >
+                                {{'gyaanKarmayogi.moreFilters'| translate}}
+                                <mat-icon class="filter-dots">more_vert</mat-icon>
+                            </button>
                             <button class="apply-btn mt-4 md:mt-0" type="submit" >{{'gyaanKarmayogi.applyNow'| translate}}</button>
                     </div>
                 </form>

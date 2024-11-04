@@ -38,6 +38,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatRadioModule } from '@angular/material/radio'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSliderModule } from '@angular/material/slider'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
@@ -72,6 +73,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatBottomSheetModule,
     MatRadioModule,
     InfiniteScrollModule,
+    MatSliderModule,
    TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

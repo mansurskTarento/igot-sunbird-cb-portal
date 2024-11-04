@@ -132,4 +132,8 @@ export class GyaanFilterComponent implements OnInit {
       })
       this.localFilterData[keyData].values = filteredValue
     }
+
+    onSliderChange(event: any) {
+      console.log(event)
+    }
 }
