@@ -46,6 +46,7 @@ export class EventDetailComponent implements OnInit {
   batchId = ''
   isEnrolled = false
   downloadCertificateBool = false
+  pageData!: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
   constructor(
     public dialog: MatDialog,
@@ -130,6 +131,7 @@ export class EventDetailComponent implements OnInit {
       }
 
       this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
+      this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
       if (this.discussWidgetData) {
         if (this.eventData && this.eventData.identifier) {
           this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier

@@ -30,7 +30,7 @@
                 <div *ngFor="let n of [].constructor(totlaDays); let i = index">
                     <div class="flex items-center">
                         <div class="dot {{daysCompleted > i ? 'active' : ''}}" ></div>
-                        <div class="line {{daysCompleted > i ? 'active' : ''}}"></div>
+                        <div class="line {{daysCompleted > i ? 'active' : ''}}" [ngStyle]="{'width': nwlConfiguration?.width}"></div>
                         <div class="dot" *ngIf="(totlaDays - 1) === i"></div>
                     </div>                    
                 </div>
