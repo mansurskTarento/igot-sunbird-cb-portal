@@ -39,7 +39,7 @@ export class KarmaPointsComponent implements OnInit, OnChanges {
     this.condition = changes.condition && changes.condition.currentValue || null
 
     if (!this.condition) { return }
-    if (!this.condition && !this.condition.event) {
+    if (this.condition && !this.condition.event) {
       // For TOC karma points
       if (!this.condition.isPostAssessment && (this.condition.content && this.condition.content.hasOwnProperty('completionPercentage')
         && !this.condition.content.completionPercentage
