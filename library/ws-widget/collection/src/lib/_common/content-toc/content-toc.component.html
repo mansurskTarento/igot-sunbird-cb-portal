@@ -10,7 +10,7 @@
         </mat-tab>
     </ng-container>
     <ng-container *ngIf="config?.commentsTab">
-        <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+        <mat-tab label="{{ 'apptocsinglepage.discussions' | translate }}">
             <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
                 <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
             </div>

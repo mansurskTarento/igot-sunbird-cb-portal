@@ -240,7 +240,7 @@
         </div>
       </ng-container>
     </mat-tab>
-    <mat-tab label="{{'discuss.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
+    <mat-tab label="{{'apptocsinglepage.discussions' | translate}}" *ngIf="pageData && pageData?.commentsTab">
       <ng-container *ngIf="!skeletonLoader">
         <div class="flex flex-col ratings-div gap-10 mt-4" id="ratingsDiv" *ngIf="discussWidgetData">
             <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
