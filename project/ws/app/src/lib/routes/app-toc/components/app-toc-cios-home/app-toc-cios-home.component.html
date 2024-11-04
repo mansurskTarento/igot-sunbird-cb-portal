@@ -82,7 +82,7 @@
 <ng-container *ngIf="!forPreview">
 
     <div *ngIf="isMobile">
-        <ng-container  *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length ===  0 
+        <ng-container  *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length ===  0 
         && userExtCourseEnroll?.progress <= 100">
         <div class="no-certificate-found mt-6 mb-4 mx-2">
          <div> 
@@ -93,10 +93,10 @@
             <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}'">
                 <div class="flex flex-row justify-end w-full ws-mat-black-text">
                     <span class="mat-body-2  ws-mat-black-text">
-                        {{userExtCourseEnroll.progress}}%</span>
+                        {{userExtCourseEnroll?.progress}}%</span>
                 </div>
-                <ws-widget-content-progress [contentId]="userExtCourseEnroll.progress"
-                                            [progress]="userExtCourseEnroll.progress"
+                <ws-widget-content-progress [contentId]="userExtCourseEnroll?.progress"
+                                            [progress]="userExtCourseEnroll?.progress"
                                             [progressType]="'percentage'" [customClassName]="'viewer-progress'">
                                         </ws-widget-content-progress>
               </ng-container>   -->
@@ -113,8 +113,8 @@
                   </ng-container>
                 </a>
               </ng-container>
-              <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length > 0 
-                && userExtCourseEnroll.progress === 100">
+              <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length > 0 
+                && userExtCourseEnroll?.progress === 100">
                 <button class="flex action-button justify-center flex-middle resume" type="button" (click)="downloadCert()">
                      <img src="fusion-assets/images/certificate-ico.svg" width="24" height="24"> 
                     <span>Certificate</span>
@@ -151,7 +151,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="!skeletonLoader">
-                        <ws-widget-app-toc-about [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length >  0 
+                        <ws-widget-app-toc-about [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length >  0 
                         && userExtCourseEnroll?.progress === 100" [content]="extContentReadData" [fromMarketPlace]="true" [skeletonLoader]="skeletonLoader"></ws-widget-app-toc-about>
                     </ng-container>
                     
@@ -203,10 +203,10 @@
                 <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}'">
                     <div class="flex flex-row justify-end w-full ws-mat-black-text">
                         <span class="mat-body-2  ws-mat-black-text">
-                            {{userExtCourseEnroll.progress}}%</span>
+                            {{userExtCourseEnroll?.progress}}%</span>
                     </div>
-                    <ws-widget-content-progress [contentId]="userExtCourseEnroll.progress"
-                                                [progress]="userExtCourseEnroll.progress"
+                    <ws-widget-content-progress [contentId]="userExtCourseEnroll?.progress"
+                                                [progress]="userExtCourseEnroll?.progress"
                                                 [progressType]="'percentage'" [customClassName]="'viewer-progress'">
                                             </ws-widget-content-progress>
                 </ng-container>   -->
@@ -224,15 +224,15 @@
                         </ng-container>
                         </a>
                     </ng-container>
-                    <ng-container  *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length ===  0 
+                    <ng-container  *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length ===  0 
                     && userExtCourseEnroll?.progress <= 100">
                     <div class="no-certificate-found">
                     <div> 
                         <span>Progress and certificates for Cornell courses are visible only after you complete the course and pass the assessment.</span></div>
                     </div>
                     </ng-container>
-                <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll.issued_certificates?.length > 0 
-                    && userExtCourseEnroll.progress === 100">
+                <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length > 0 
+                    && userExtCourseEnroll?.progress === 100">
                     <button class="flex action-button justify-center flex-middle resume" type="button" (click)="downloadCert()">
                         <img src="fusion-assets/images/certificate-ico.svg" width="24" height="24"> 
                         <span>Certificate</span>
