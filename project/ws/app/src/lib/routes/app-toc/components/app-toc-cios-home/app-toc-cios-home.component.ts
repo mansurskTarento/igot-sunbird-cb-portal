@@ -18,6 +18,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   extContentReadData: any = {}
   userExtCourseEnroll: any = {}
   downloadCertificateLoading = false
+  forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('?editMode=true')
 
   rcElem = {
     offSetTop: 0,

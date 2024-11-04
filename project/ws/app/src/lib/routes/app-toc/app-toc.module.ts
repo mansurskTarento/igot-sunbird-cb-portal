@@ -285,6 +285,7 @@ import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
     AppTocHomeRootComponent,
     AppTocHomeComponent,
     ShareTocModule,
+    AppTocCiosHomeComponent
   ],
   entryComponents: [
     AppTocDialogIntroVideoComponent,

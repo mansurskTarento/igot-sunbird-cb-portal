@@ -140,6 +140,7 @@ import {
 } from '@sunbird-cb/consumption'
 import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
 import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
+import { PublicExtTocModule } from './routes/public/public-ext-toc/public-ext-toc.module'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -322,6 +323,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PublicRequestModule,
     PublicWelcomeModule,
     PublicTocModule,
+    PublicExtTocModule,
     MobileAppModule,
     PipeSafeSanitizerModule,
     TourModule,
