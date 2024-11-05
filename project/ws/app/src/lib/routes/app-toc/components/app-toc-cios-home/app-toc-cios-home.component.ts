@@ -19,7 +19,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   userExtCourseEnroll: any = {}
   downloadCertificateLoading = false
   forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('?editMode=true')
-
+  extContentAvailable = true
   rcElem = {
     offSetTop: 0,
     BottomPos: 0,
@@ -30,6 +30,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   isMobile = false
   config: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
+
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
 
@@ -65,7 +66,12 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           data: {},
         }
         this.skeletonLoader = false
+
+      } else {
+        this.extContentAvailable = false
+        this.skeletonLoader = false
       }
+
       if (data && data.userEnrollContent && data.userEnrollContent.data && data.userEnrollContent.data.result &&
         Object.keys(data.userEnrollContent.data.result).length > 0
       ) {
