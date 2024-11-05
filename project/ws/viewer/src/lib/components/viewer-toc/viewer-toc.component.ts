@@ -4,7 +4,7 @@ import { MatTreeNestedDataSource } from '@angular/material'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationExtras, Params } from '@angular/router'
 import {
-  ContentProgressService,
+  // ContentProgressService,
   NsContent,
   VIEWER_ROUTE_FROM_MIME,
   WidgetContentService,
@@ -81,7 +81,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     private viewerDataSvc: ViewerDataService,
     private viewSvc: ViewerUtilService,
     private configSvc: ConfigurationsService,
-    private contentProgressSvc: ContentProgressService,
+    // private contentProgressSvc: ContentProgressService,
     private userSvc: WidgetUserServiceLib
     // private tocSvc: AppTocService,
   ) {
