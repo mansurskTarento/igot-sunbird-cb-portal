@@ -205,22 +205,21 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     })
   }
   // tslint:disable
-  private getContentProgressHash() {
-    if (this.collection && this.batchId && this.configSvc.userProfile) {
-      if (this.resourceId) {
-        console.log('progress data from viewer component', this.contentData)
-        const requestCourse = this.viewSvc.getBatchIdAndCourseId(this.collection.identifier, this.batchId, this.resourceId)
-        this.contentProgressSvc
-        .getProgressHash(requestCourse.courseId, requestCourse.batchId , this.configSvc.userProfile.userId)
-        .subscribe((progressHash:  any) => {
-          this.contentProgressHash = progressHash
-          if(this.collection && this.collection.identifier) {
-            // this.updateProgressBasedOnHash(progressHash)
-          }
-        })
-      }
-    }
-  }
+  // private getContentProgressHash() {
+  //   if (this.collection && this.batchId && this.configSvc.userProfile) {
+  //     if (this.resourceId) {
+  //       const requestCourse = this.viewSvc.getBatchIdAndCourseId(this.collection.identifier, this.batchId, this.resourceId)
+  //       this.contentProgressSvc
+  //       .getProgressHash(requestCourse.courseId, requestCourse.batchId , this.configSvc.userProfile.userId)
+  //       .subscribe((progressHash:  any) => {
+  //         this.contentProgressHash = progressHash
+  //         if(this.collection && this.collection.identifier) {
+  //           // this.updateProgressBasedOnHash(progressHash)
+  //         }
+  //       })
+  //     }
+  //   }
+  // }
 
   // private updateProgressBasedOnHash(progressHash: any) {
   //     if(
