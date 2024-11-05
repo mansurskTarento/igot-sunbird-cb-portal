@@ -991,7 +991,7 @@ const routes: Routes = [
       module: 'Learn',
     },
     resolve: {
-      extContent: AppTocExtPublicResolverService
+      extContent: AppTocExtPublicResolverService,
     },
   },
   {
