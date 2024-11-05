@@ -259,10 +259,14 @@ export class WidgetContentService {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
     )
-    data.subscribe((subscribeData: any) => {
-          this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
-        })
+    // data.subscribe((subscribeData: any) => {
+    //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
+    //     })
     return data
+  }
+
+  setProgramChildResumeData(contentList: any,courseId: any ) {
+    this.programChildCourseResumeData.next({ resumeData: contentList, courseId: courseId })
   }
 
   async continueLearning(id: string, collectionId?: string, collectionType?: string): Promise<any> {
