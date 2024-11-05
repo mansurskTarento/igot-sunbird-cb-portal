@@ -153,15 +153,19 @@ export class GridLayoutComponent extends WidgetBaseComponent
       this.fullMenuHeight = data
     })
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
-      this.fetchProfileById(this.configSvc.unMappedUser.id).subscribe(x => {
+      // this.fetchProfileById(this.configSvc.unMappedUser.id).subscribe(x => {
         // console.log(x.profileDetails, "x.profileDetails====")
         // if (x.profileDetails.mandatoryFieldsExists) {
         //   this.isNudgeOpen = false
         // }
-        if (x && x.profileDetails && x.profileDetails.personalDetails && x.profileDetails.personalDetails.phoneVerified) {
+        if (this.configSvc.unMappedUser &&
+        this.configSvc.unMappedUser.profileDetails &&
+        this.configSvc.unMappedUser.profileDetails.personalDetails && 
+        this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified &&
+        this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified === 'true') {
           this.isNudgeOpen = false
         }
-      })
+      // })
     }
 
     if (this.npsCategory === 'NPS') {
