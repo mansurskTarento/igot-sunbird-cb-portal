@@ -364,7 +364,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   async manipulateHierarchyData() {
     if (!this.forPreview) {
       this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses)
-      
+
     } else {
       this.loadAllHierarchyData = true
       this.tocSvc.contentLoader.next(true)

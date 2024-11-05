@@ -114,7 +114,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
               if (this.contentProgressHash && this.contentProgressHash.length > 0) {
                 this.progressStatus = this.contentProgressHash[0].status
               }
-              this.widgetServ.setProgramChildResumeData(data.result.contentList,resData.courseId)
+              this.widgetServ.setProgramChildResumeData(data.result.contentList, resData.courseId)
               // console.log(this.progressStatus)
           })
         }

@@ -243,7 +243,6 @@ export class PdfComponent implements OnInit, OnDestroy {
         }
         this.contentSvc.fetchContentHistoryV2(req).subscribe(
           data => {
-            console.log('pdf', data)
             if (data && data.result && data.result.contentList.length) {
               this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
               for (const content of data.result.contentList) {
