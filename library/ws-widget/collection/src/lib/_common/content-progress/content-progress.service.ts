@@ -48,6 +48,7 @@ export class ContentProgressService {
         fields: ['progressdetails'],
       },
     }).subscribe(data => {
+      console.log('progress data from contentalert(1)', data)
       // this.http.get<{ [id: string]: number }>(API_END_POINTS.PROGRESS_HASH).subscribe(data => {
       this.progressHash = data
       this.isFetchingProgress = false

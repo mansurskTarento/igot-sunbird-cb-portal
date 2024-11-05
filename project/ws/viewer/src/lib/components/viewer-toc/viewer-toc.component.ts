@@ -208,6 +208,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   private getContentProgressHash() {
     if (this.collection && this.batchId && this.configSvc.userProfile) {
       if (this.resourceId) {
+        console.log('progress data from viewer component', this.contentData)
         const requestCourse = this.viewSvc.getBatchIdAndCourseId(this.collection.identifier, this.batchId, this.resourceId)
         this.contentProgressSvc
         .getProgressHash(requestCourse.courseId, requestCourse.batchId , this.configSvc.userProfile.userId)
@@ -288,7 +289,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.processCollectionForTree()
       this.expandThePath()
       // if (next && next.viewerUrl === '0') { // temp
-        this.getContentProgressHash()
+       // this.getContentProgressHash()
       // }
     }
   }

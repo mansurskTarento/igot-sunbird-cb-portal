@@ -559,6 +559,7 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
+      console.log('content.children.length', content.children.length)
       for (let i = 0; i < content.children.length; i += 1) {
       // content.children.forEach(async (parentChild,index) => {
         const parentChild = content.children[i]
@@ -603,6 +604,7 @@ export class AppTocService {
               !firstUncompleteCourse ? parentChild : firstUncompleteCourse
               inprogressDataCheck = inprogressDataCheck
               await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+                console.log('app toc service', progressdata)
                 const data: any  = progressdata
                 if (data.result && data.result.contentList.length > 0) {
                   const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
@@ -638,6 +640,7 @@ export class AppTocService {
                 },
               }
               await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+                console.log('app toc service', progressdata)
                 const data: any  = progressdata
                 if (data.result && data.result.contentList.length > 0) {
                   const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
@@ -671,6 +674,7 @@ export class AppTocService {
           },
         }
         await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+          console.log('app toc service', progressdata)
           const data: any  = progressdata
           if (data.result && data.result.contentList.length > 0) {
             const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
