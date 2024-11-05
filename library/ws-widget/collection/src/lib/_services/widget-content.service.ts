@@ -452,7 +452,7 @@ export class WidgetContentService {
     return this.http.get<NsContent.IContent[]>(API_END_POINTS.EXT_CONTENT_READ(contentId))
   }
 
-  fetchExternalPublicContent(partenerName: any, contentId: string[]): Observable<NsContent.IContent[]> {
+  fetchExternalPublicContent(partenerName: any, contentId: any): Observable<NsContent.IContent[]> {
     return this.http.get<NsContent.IContent[]>(API_END_POINTS.EXT_PUBLIC_CONTENT(partenerName, contentId))
   }
 
