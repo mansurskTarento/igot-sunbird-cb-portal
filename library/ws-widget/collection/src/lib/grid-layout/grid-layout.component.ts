@@ -160,7 +160,7 @@ export class GridLayoutComponent extends WidgetBaseComponent
         // }
         if (this.configSvc.unMappedUser &&
         this.configSvc.unMappedUser.profileDetails &&
-        this.configSvc.unMappedUser.profileDetails.personalDetails && 
+        this.configSvc.unMappedUser.profileDetails.personalDetails &&
         this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified &&
         this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified === 'true') {
           this.isNudgeOpen = false

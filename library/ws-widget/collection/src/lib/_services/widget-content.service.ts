@@ -265,8 +265,10 @@ export class WidgetContentService {
     return data
   }
 
-  setProgramChildResumeData(contentList: any,courseId: any ) {
-    this.programChildCourseResumeData.next({ resumeData: contentList, courseId: courseId })
+  setProgramChildResumeData(contentList: any, courseId: any) {
+    /* tslint:disable */
+    this.programChildCourseResumeData.next({ resumeData: contentList, courseId })
+    /* tslint:enable */
   }
 
   async continueLearning(id: string, collectionId?: string, collectionType?: string): Promise<any> {
