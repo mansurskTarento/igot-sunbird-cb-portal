@@ -559,104 +559,106 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
-      for (let i = 0; i < content.children.length; i += 1) {
-      // content.children.forEach(async (parentChild,index) => {
-        const parentChild = content.children[i]
-        if (parentChild.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
-          const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === parentChild.identifier)
-          // tslint:disable-next-line: max-line-length
-          // totalCount = foundContent && foundContent.completionPercentage ? totalCount + foundContent.completionPercentage : totalCount + 0
-          // content.completionPercentage = Math.round(totalCount / leafnodeCount)
-          if (foundContent && foundContent.completionPercentage === 100) {
-            this.contentLoader.next(true)
-            totalCount = totalCount += parentChild.leafNodesCount
-            completedLeafNodes = [...completedLeafNodes, ...parentChild.leafNodes]
-            if (foundContent.issuedCertificates.length > 0) {
-              const certId: any = foundContent.issuedCertificates[0].identifier
-              parentChild.issuedCertificatesId = certId
-              // const certData: any = await this.dowonloadCertificate(certId).toPromise().catch(_error => {
-              //   this.contentLoader.next(false)
-              // })
-              // if (certData && certData.result) {
-              //   parentChild.issuedCertificatesSVG = certData.result.printUri
-              // }
-              this.contentLoader.next(false)
-            }
-            parentChild.completionPercentage = 100
-            parentChild.completionStatus = 2
-            this.mapCompletionChildPercentageProgram(parentChild)
-          } else {
-            if (foundContent) {
-              this.contentLoader.next(true)
-              const req = {
-                request: {
-                  batchId: foundContent.batch.batchId,
-                  userId: foundContent.userId,
-                  courseId: foundContent.collectionId,
-                  contentIds: [],
-                  fields: [
-                    'progressdetails',
-                  ],
-                },
-              }
-              firstUncompleteCourse = (parentChild.completionPercentage === 0 || !parentChild.completionPercentage) &&
-              !firstUncompleteCourse ? parentChild : firstUncompleteCourse
-              inprogressDataCheck = inprogressDataCheck
-              await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-                const data: any  = progressdata
-                if (data.result && data.result.contentList.length > 0) {
-                  const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-                  this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-                  totalCount = completedLeafNodes.length
-                  inprogressDataCheck = [...inprogressDataCheck, ...data.result.contentList]
-                  // inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-                  this.updateResumaData(inprogressDataCheck)
-                  this.mapCompletionPercentage(parentChild, data.result.contentList)
-                  this.mapModuleCount(parentChild)
-                } else {
-                    this.mapModuleCount(parentChild)
+      if(content.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
+        for (let i = 0; i < content.children.length; i += 1) {
+          // content.children.forEach(async (parentChild,index) => {
+            const parentChild = content.children[i]
+            if (parentChild.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+              const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === parentChild.identifier)
+              // tslint:disable-next-line: max-line-length
+              // totalCount = foundContent && foundContent.completionPercentage ? totalCount + foundContent.completionPercentage : totalCount + 0
+              // content.completionPercentage = Math.round(totalCount / leafnodeCount)
+              if (foundContent && foundContent.completionPercentage === 100) {
+                this.contentLoader.next(true)
+                totalCount = totalCount += parentChild.leafNodesCount
+                completedLeafNodes = [...completedLeafNodes, ...parentChild.leafNodes]
+                if (foundContent.issuedCertificates.length > 0) {
+                  const certId: any = foundContent.issuedCertificates[0].identifier
+                  parentChild.issuedCertificatesId = certId
+                  // const certData: any = await this.dowonloadCertificate(certId).toPromise().catch(_error => {
+                  //   this.contentLoader.next(false)
+                  // })
+                  // if (certData && certData.result) {
+                  //   parentChild.issuedCertificatesSVG = certData.result.printUri
+                  // }
+                  this.contentLoader.next(false)
                 }
-                return progressdata
-              })
-              this.contentLoader.next(false)
-            }
-          }
-        } else {
-          if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-            this.contentLoader.next(true)
-            const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
-            if (foundContent) {
-              const req = {
-                request: {
-                  batchId: foundContent.batch.batchId,
-                  userId: foundContent.userId,
-                  courseId: foundContent.collectionId,
-                  contentIds: [],
-                  fields: [
-                    'progressdetails',
-                  ],
-                },
+                parentChild.completionPercentage = 100
+                parentChild.completionStatus = 2
+                this.mapCompletionChildPercentageProgram(parentChild)
+              } else {
+                if (foundContent) {
+                  this.contentLoader.next(true)
+                  const req = {
+                    request: {
+                      batchId: foundContent.batch.batchId,
+                      userId: foundContent.userId,
+                      courseId: foundContent.collectionId,
+                      contentIds: [],
+                      fields: [
+                        'progressdetails',
+                      ],
+                    },
+                  }
+                  firstUncompleteCourse = (parentChild.completionPercentage === 0 || !parentChild.completionPercentage) &&
+                  !firstUncompleteCourse ? parentChild : firstUncompleteCourse
+                  inprogressDataCheck = inprogressDataCheck
+                  await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+                    const data: any  = progressdata
+                    if (data.result && data.result.contentList.length > 0) {
+                      const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+                      this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+                      totalCount = completedLeafNodes.length
+                      inprogressDataCheck = [...inprogressDataCheck, ...data.result.contentList]
+                      // inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+                      this.updateResumaData(inprogressDataCheck)
+                      this.mapCompletionPercentage(parentChild, data.result.contentList)
+                      this.mapModuleCount(parentChild)
+                    } else {
+                        this.mapModuleCount(parentChild)
+                    }
+                    return progressdata
+                  })
+                  this.contentLoader.next(false)
+                }
               }
-              await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-                const data: any  = progressdata
-                if (data.result && data.result.contentList.length > 0) {
-                  const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-                  this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-                  totalCount = completedLeafNodes.length
-                  inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-                  this.updateResumaData(inprogressDataCheck)
-                  this.mapCompletionPercentage(content, data.result.contentList)
+            } else {
+              if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+                this.contentLoader.next(true)
+                const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
+                if (foundContent) {
+                  const req = {
+                    request: {
+                      batchId: foundContent.batch.batchId,
+                      userId: foundContent.userId,
+                      courseId: foundContent.collectionId,
+                      contentIds: [],
+                      fields: [
+                        'progressdetails',
+                      ],
+                    },
+                  }
+                  await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+                    const data: any  = progressdata
+                    if (data.result && data.result.contentList.length > 0) {
+                      const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+                      this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+                      totalCount = completedLeafNodes.length
+                      inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+                      this.updateResumaData(inprogressDataCheck)
+                      this.mapCompletionPercentage(content, data.result.contentList)
+                    }
+                    this.contentLoader.next(false)
+                    return progressdata
+                  })
                 }
                 this.contentLoader.next(false)
-                return progressdata
-              })
+              }
             }
             this.contentLoader.next(false)
           }
-        }
-        this.contentLoader.next(false)
       }
-      if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+      if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM || content.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
         // this.mapCompletionPercentage(content, this.resumeData)
         const foundParentContent = enrolmentList.find((el: any) => el.collectionId === content.identifier)
         const req = {
