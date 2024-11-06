@@ -559,7 +559,7 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
-      if(content.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
+      if (content.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
         for (let i = 0; i < content.children.length; i += 1) {
           // content.children.forEach(async (parentChild,index) => {
             const parentChild = content.children[i]
@@ -658,7 +658,8 @@ export class AppTocService {
             this.contentLoader.next(false)
           }
       }
-      if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM || content.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+      if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM
+        || content.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
         // this.mapCompletionPercentage(content, this.resumeData)
         const foundParentContent = enrolmentList.find((el: any) => el.collectionId === content.identifier)
         const req = {
