@@ -2,6 +2,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import { TranslateService } from '@ngx-translate/core'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
+import { ActivatedRoute } from '@angular/router'
 
 @Component({
   selector: 'ws-app-gyaan-filter',
@@ -17,9 +18,12 @@ export class GyaanFilterComponent implements OnInit {
   @Input() facetsData: any
   @Input() private facetsDataCopy: any
   @Output() filterChange = new EventEmitter<any>()
+  selectedContent = 'all'
+  gConstants: any
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     public translate: TranslateService,
+    private route: ActivatedRoute,
     private bottomSheetRef: MatBottomSheetRef<any>) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -29,6 +33,12 @@ export class GyaanFilterComponent implements OnInit {
      }
 
   ngOnInit() {
+
+    this.gConstants = gyaanConstants
+
+    this.route.queryParams.subscribe((res: any) => {
+      this.selectedContent = res.content
+    })
 
     if (this.data && this.data.facetsDataCopy) {
       this.facetsData = this.data.facetsData
@@ -100,7 +110,7 @@ export class GyaanFilterComponent implements OnInit {
   }
   // changeSelection method will trigger on
   // selection of sectors and subsectors
-  changeSelection(event: any, key: any, keyData: any) {
+  changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
     if (window.innerWidth < 768) {
       if (key === 'resourceCategory') {
         this.mobileSelectedFilter[key] = keyData.name
@@ -119,10 +129,27 @@ export class GyaanFilterComponent implements OnInit {
     }
   } else {
       keyData['checked'] = event
+      if (key === gyaanConstants.sectorName || key === gyaanConstants.subSectorName) {
+        if (keyData.name === 'All' && keyData.checked) {
+          allKeyData.forEach((filter: any) => {
+            filter['checked'] = true
+          })
+        }
+        if (keyData.name === 'All' && !keyData.checked) {
+          allKeyData.forEach((filter: any) => {
+            filter['checked'] = false
+          })
+        }
+        if (keyData.name !== 'All') {
+          const allKey = allKeyData.filter((_filter: any) => _filter.name === 'All')
+          if (allKey.length) {
+            allKey[0]['checked'] = false
+          }
+        }
+      }
       this.filterChange.emit({ event, key, keyData })
-
     }
-    }
+  }
 
     getSearch(searchValue: any, keyData: any) {
       const facetCopy: any = { ...this.facetsDataCopy }
@@ -135,5 +162,13 @@ export class GyaanFilterComponent implements OnInit {
 
     onSliderChange(event: any) {
       console.log(event)
+    }
+
+    onContentChange(event: any) {
+      this.selectedContent = event.value
+    }
+
+    formatLabel(value: number): string {
+      return `${value}`
     }
 }
