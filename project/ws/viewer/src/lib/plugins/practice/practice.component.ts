@@ -147,6 +147,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   charactersPerPage = 1300
   showQuestionMarks = 'No'
   questionParagraph = ''
+  resCollectionId = ''
+  resBatchId = ''
   forPreview = (window.location.href.includes('public') || window.location.href.includes('author') ||
                 window.location.href.includes('editMode') || window.location.href.includes('preview=true'))
   forCreatorMode = window.location.href.includes('editMode=true')
@@ -1228,9 +1230,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId,
       this.identifier)
-      
-    const collectionId =  requestCourse.courseId ? requestCourse.courseId : ''
-    const batchId = requestCourse.batchId ? requestCourse.batchId : ''
+    if (requestCourse && requestCourse.batchId && requestCourse.courseId) {
+      this.resCollectionId =  requestCourse.courseId ? requestCourse.courseId : ''
+      this.resBatchId = requestCourse.batchId ? requestCourse.batchId : ''
+      }
+
     //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
     //   this.activatedRoute.snapshot.queryParams.collectionId : ''
     // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
@@ -1247,10 +1251,10 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.quizSvc.mtfSrc.getValue() as any ,
     )
     const request: NSPractice.IQuizSubmit = {
-      batchId,
+      batchId: this.resBatchId,
       identifier: this.identifier,
       primaryCategory: this.primaryCategory,
-      courseId: collectionId,
+      courseId: this.resCollectionId,
       isAssessment: true,
       objectType: 'QuestionSet',
       timeLimit: this.quizJson.timeLimit,
