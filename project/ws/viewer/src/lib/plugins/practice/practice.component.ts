@@ -1224,10 +1224,17 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
   get generateRequest(): NSPractice.IQuizSubmit {
     const submitQuizJson = JSON.parse(JSON.stringify(this.quizJson))
-    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-      this.activatedRoute.snapshot.queryParams.collectionId : ''
-    const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
-      this.activatedRoute.snapshot.queryParams.batchId : ''
+    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
+      this.activatedRoute.snapshot.queryParams.collectionId,
+      this.activatedRoute.snapshot.queryParams.batchId,
+      this.identifier)
+      
+    const collectionId =  requestCourse.courseId ? requestCourse.courseId : ''
+    const batchId = requestCourse.batchId ? requestCourse.batchId : ''
+    //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
+    //   this.activatedRoute.snapshot.queryParams.collectionId : ''
+    // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
+    //   this.activatedRoute.snapshot.queryParams.batchId : ''
 
     const req = this.quizSvc.createAssessmentSubmitRequest(
       this.identifier,
