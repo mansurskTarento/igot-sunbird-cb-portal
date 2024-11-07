@@ -1279,3 +1279,9 @@ ngx-guided-tour {
     right:178px !important;
   }}
 }
+
+.mat-tooltip {
+  &.reportComment {
+    margin: 2px !important;
+  }
+}

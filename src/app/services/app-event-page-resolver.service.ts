@@ -36,7 +36,7 @@ resolve(
         }),
         catchError((_error: any) => {
           const baseUrl = this.configSvc.sitePath
-          return this.http.get(`${baseUrl}/page/event.json`).pipe(
+          return this.http.get(`${baseUrl}/feature/event.json`).pipe(
             map(data => ({ data, error: null })),
             catchError(err => of({ data: null, error: err })),
           )
