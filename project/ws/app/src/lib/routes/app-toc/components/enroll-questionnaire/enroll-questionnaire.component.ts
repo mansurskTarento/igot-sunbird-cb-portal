@@ -627,7 +627,6 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
-      debugger
       return this.userProfileObject.profileDetails.cadreDetails &&
         (this.userProfileObject.profileDetails.cadreDetails.civilServiceName || 
         this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
