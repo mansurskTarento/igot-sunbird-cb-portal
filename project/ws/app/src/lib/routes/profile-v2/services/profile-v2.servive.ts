@@ -17,6 +17,7 @@ const API_END_POINTS = {
   getUserdetailsV2FromRegistry: '/apis/proxies/v8/api/user/v2/read',
   getCadreDetails: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig',
   approvalDetails: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch',
+  withDrawRequest: '/apis/protected/v8/workflowhandler/transition',
 }
 
 @Injectable({
@@ -49,5 +50,20 @@ constructor(private http: HttpClient) { }
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     })
+  }
+
+  withDrawApprovalRequest(userId: string, wfId: string): Observable<any> {
+    const payload = {
+      'action': 'WITHDRAW',
+      'state': 'SEND_FOR_APPROVAL',
+      'userId': userId,
+      'applicationId': userId,
+      'actorUserId': userId,
+      'wfId': wfId,
+      'serviceName': 'profile',
+      'updateFieldValues': [],
+      'comment': '',
+    }
+    return this.http.post<any>(API_END_POINTS.withDrawRequest, payload)
   }
 }
