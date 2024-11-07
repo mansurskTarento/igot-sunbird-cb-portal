@@ -110,6 +110,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                 this.contentSvc.fetchContentHistoryV2(req).subscribe(
                     data => {
                         if (data && data.result && data.result.contentList.length) {
+                            this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
                             for (const content of data.result.contentList) {
                                 if (content.contentId === identifier && content.progressdetails) {
                                     try {

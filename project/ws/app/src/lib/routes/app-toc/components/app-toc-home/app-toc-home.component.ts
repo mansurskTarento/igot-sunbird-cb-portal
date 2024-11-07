@@ -1367,6 +1367,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             this.tocSvc.callHirarchyProgressHashmap(this.content)
             this.tocSvc.contentLoader.next(false)
           }
+
+          this.contentSvc.setProgramChildResumeData(this.resumeData, contentId)
         },
         (error: any) => {
           this.loggerSvc.error('CONTENT HISTORY FETCH ERROR >', error)

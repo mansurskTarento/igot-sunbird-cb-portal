@@ -138,13 +138,11 @@
   </div>
 </ng-template>
 <!-- Template -->
-<ng-template let-content #TocContentCard>
+<!-- <ng-template let-content #TocContentCard>
   <a class="width-expand flat-list-content pad-ztb" [ngClass]="{ 'content-active': pathSet.has(content.identifier) }"
     matRipple (click)="minimizenav()" [routerLink]="content.viewerUrl" [queryParams]="getParams(content)?.queryParams"
     queryParamsHandling="">
     <span class="width-expand flex flex-middle margin-xs">
-      <!-- <img i18n-alt alt="thumbnail" class="viewer-toc-thumbnail align-self-start margin-auto mat-app-background"
-        [src]="content.thumbnailUrl" [wsUtilsDefaultThumbnail]="defaultThumbnail" /> -->
       <ws-widget-display-content-type-icon class="flex margin-left-xs" [mimeType]="content?.mimeType">
       </ws-widget-display-content-type-icon>
       <span class="width-1-1 margin-left-m flex flex-wrapped align-self-start">
@@ -161,26 +159,6 @@
               check_circle_outline</mat-icon>
           </div>
         </div>
-        <!--  <span class="mat-body-2">
-          <span>{{ content.type | pipeLimitTo: 300 }}</span>
-        </span> -->
-        <!-- <span class="mat-body-1 margin-left-xxs" *ngIf="content?.complexity"><span> {{ content?.complexity |
-            pipeLimitTo: 300 }}</span>
-        </span> -->
-        <!-- <div class="width-1-1">
-              <btn-content-download></btn-content-download>
-              <btn-content-like></btn-content-like>
-              <btn-content-share></btn-content-share>
-              <btn-goals></btn-goals>
-              <btn-playlists></btn-playlists>
-              <button mat-icon-button matTooltip="Watch List" i18n-matTooltip>
-                <mat-icon>watch_later</mat-icon>
-              </button>
-              <btn-content-feedback></btn-content-feedback>
-              <ws-widget-btn-content-feedback-v2
-                [widgetData]="content | pipePartialContent: ['identifier', 'name']"
-              ></ws-widget-btn-content-feedback-v2>
-            </div> -->
       </span>
       <span>
         <div class="mat-body-1 content-duration mat-caption width-max-content">
@@ -189,7 +167,7 @@
       </span>
     </span>
   </a>
-</ng-template>
+</ng-template> -->
 
 <ng-template let-content #TocContentList>
   <!-- <div class="resource-container margin-left-xl"> -->

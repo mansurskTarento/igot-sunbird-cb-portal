@@ -330,6 +330,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         this.widgetServ.fetchContentHistoryV2(req).subscribe(
           (data: any) => {
             this.contentProgressHash = data.result.contentList
+            this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
             if (this.content && ![
               NsContent.ECourseCategory.MODERATED_COURSE,
               NsContent.ECourseCategory.MODERATED_ASSESSEMENT,
