@@ -223,7 +223,6 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
                     completedOn: [eachCourse.completedOn],
                   }
                 }
-
                 // Sub theme mapping logic...
                 if (subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]) {
                   if (subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]
@@ -297,7 +296,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
       this.leftCardDetails.forEach((_lObj: any) => {
         if (_lObj.type === allObj[this.compentencyKey.vCompetencyArea]) {
-          _lObj[this.compentencyKey.vCompetencySubTheme] += allObj.subTheme.length
+          _lObj.competencySubTheme += allObj.subTheme.length
           _lObj.contentConsumed += allObj.contentConsumed.length
         }
       })
