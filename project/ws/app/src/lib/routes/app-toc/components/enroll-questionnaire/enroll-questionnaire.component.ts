@@ -541,6 +541,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           }
         }
       }
+
       if (this.findAttr(customAttr, 'cadreDetails')) {
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
@@ -597,10 +598,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
     }
     if (attr === 'group') {
-      return this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED'
+      return (!this.userProfileObject.profileDetails.profileGroupStatus ) ||
+        this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED'
     }
     if (attr === 'designation') {
-      return this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED'
+      return (!this.userProfileObject.profileDetails.profileDesignationStatus) ||
+        this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED'
     }
     if (attr === 'employeeCode') {
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
@@ -624,7 +627,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
-      return this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeName
+      debugger
+      return this.userProfileObject.profileDetails.cadreDetails &&
+        (this.userProfileObject.profileDetails.cadreDetails.civilServiceName || 
+        this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
     }
     
   }
