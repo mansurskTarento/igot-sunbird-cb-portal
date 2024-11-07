@@ -84,6 +84,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
   showCadreDetails = false
   updateProfile = false
   pendingFileds: any
+  pGroup: any
+  pDesignation: any
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -114,8 +116,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
     })
-    this.getUserDetails()
     this.getPendingDetails()
+    setTimeout(() => {
+      this.getUserDetails()
+    }, 300)
+    
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
     })
@@ -292,11 +297,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
       fieldControl1.setValidators([Validators.required]);
       fieldControl1.updateValueAndValidity()
     }
-    const fieldControl2 = this.userDetailsForm.get('cadreName')
-    if (fieldControl2) {
-      fieldControl2.setValidators([Validators.required]);
-      fieldControl2.updateValueAndValidity()
-    }
+    // const fieldControl2 = this.userDetailsForm.get('cadreName')
+    // if (fieldControl2) {
+    //   fieldControl2.setValidators([Validators.required]);
+    //   fieldControl2.updateValueAndValidity()
+    // }
     const fieldControl3 = this.userDetailsForm.get('cadreBatch')
     if (fieldControl3) {
       fieldControl3.setValidators([Validators.required]);
@@ -410,11 +415,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.pendingFileds.forEach((user: any) => {
             if (user['group']) {
               this.userDetailsForm.patchValue({group: user['group']})
+              this.pGroup = user['group']
             }
             if (user['designation']) {
               this.userDetailsForm.patchValue({designation: user['designation']})
+              this.pDesignation = user['designation']
             }
-            console.log("userDetailsForm ", this.userDetailsForm)
           })
         }
       }
@@ -599,11 +605,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
     if (attr === 'group') {
       return (!this.userProfileObject.profileDetails.profileGroupStatus ) ||
-        this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED'
+        this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED' || (this.pGroup ? true : false)
     }
     if (attr === 'designation') {
       return (!this.userProfileObject.profileDetails.profileDesignationStatus) ||
-        this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED'
+        this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED' || (this.pDesignation ? true : false)
     }
     if (attr === 'employeeCode') {
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
@@ -627,11 +633,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
-      return this.userProfileObject.profileDetails.cadreDetails &&
-        (this.userProfileObject.profileDetails.cadreDetails.civilServiceName || 
-        this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
+      return Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')
     }
-    
   }
 
   getGroupData(): void {
@@ -685,7 +688,35 @@ export class EnrollQuestionnaireComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-     if (this.updateProfile) {
+    if (this.showDesignation || this.showGroup) {
+      if (this.pendingFileds) {
+        this.pendingFileds.forEach((_obj: any) => {
+          if (Object.keys(_obj).includes('designation')) {
+            this.userProfileService.withDrawRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+              if (resp && resp.result) {
+                /* tslint:disable */
+                console.log(resp.result.message)
+              }
+            })
+          }
+          if (Object.keys(_obj).includes('group')) {
+            this.userProfileService.withDrawRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+              if (resp && resp.result) {
+                /* tslint:disable */
+                console.log(resp.result.message)
+              }
+            })
+          }
+        })
+        this.submitProfile(payload)
+      }
+    } else {
+      this.submitProfile(payload)
+    }
+  }
+
+  submitProfile(payload: any) {
+    if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
         }
@@ -695,7 +726,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.snackBar.open("something went wrong!")
       })
       this.submitSurevy()
-     }
+    }
   }
 
   submitSurevy() {
