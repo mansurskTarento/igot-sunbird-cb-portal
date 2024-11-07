@@ -692,7 +692,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {
           if (Object.keys(_obj).includes('designation')) {
-            this.userProfileService.withDrawRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+            this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
                 /* tslint:disable */
                 console.log(resp.result.message)
@@ -700,7 +700,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
             })
           }
           if (Object.keys(_obj).includes('group')) {
-            this.userProfileService.withDrawRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+            this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
                 /* tslint:disable */
                 console.log(resp.result.message)
