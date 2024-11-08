@@ -102,7 +102,7 @@
                                             </ws-widget-content-progress>
                   </ng-container>   -->
                 <ng-container *ngIf="(userExtCourseEnroll | json) === '{}'">
-                    <button class="flex action-button justify-center flex-middle resume" type="button" (click)="enRollToExtCourse(extContentReadData?.contentId)">
+                    <button class="flex action-button justify-center flex-middle resume" type="button" (click)="enRollToExtCourse(extContentReadData)">
                       <ng-container >{{ 'apptochome.enroll' | translate }}
                       </ng-container>
                     </button>
@@ -213,7 +213,7 @@
                     </ng-container>   -->
     
                         <ng-container *ngIf="(userExtCourseEnroll | json) === '{}'">
-                            <button class="flex action-button justify-center flex-middle resume" type="button" (click)="enRollToExtCourse(extContentReadData?.contentId)">
+                            <button class="flex action-button justify-center flex-middle resume" type="button" (click)="enRollToExtCourse(extContentReadData)">
                             <ng-container >{{ 'apptochome.enroll' | translate }}
                             </ng-container>
                             </button>
