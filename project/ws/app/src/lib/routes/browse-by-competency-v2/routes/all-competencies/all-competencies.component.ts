@@ -247,6 +247,9 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
             }
           })
         })
+
+        this.allCompetencies = _.uniqBy(this.allCompetencies, 'id')
+
         if (req.sort) {
           this.allCompetencies = _.orderBy(this.allCompetencies, ['name'], [req.sort === 'Descending' ? 'desc' : 'asc'])
         }
