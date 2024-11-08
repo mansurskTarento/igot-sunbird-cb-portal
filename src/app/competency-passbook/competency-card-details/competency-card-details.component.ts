@@ -9,10 +9,11 @@ import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { CompetencyPassbookService } from '../competency-passbook.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService  } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { MatDialog } from '@angular/material/dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
 
 @Component({
   selector: 'ws-competency-card-details',
@@ -31,7 +32,7 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
   isMobile = false
   detailsData: any
   @ViewChildren('courseName') courseNameDiv!: QueryList<ElementRef>
-
+  compentencyKey!: NsContent.ICompentencyKeys
   constructor(
     private actRouter: ActivatedRoute,
     private router: Router,
@@ -40,6 +41,7 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
     private langtranslations: MultilingualTranslationsService,
     private events: EventService,
     private dialog: MatDialog,
+    private configSvc: ConfigurationsService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -71,7 +73,9 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
+  }
 
   ngAfterViewInit(): void {
     this.courseNameDiv.forEach((_elem: ElementRef, index: number) => {
