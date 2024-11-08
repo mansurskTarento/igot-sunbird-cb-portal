@@ -134,10 +134,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
     })
-    this.getPendingDetails()
-    setTimeout(() => {
-      this.getUserDetails()
-    }, 300)
+    this.getUserDetails()
     
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
@@ -432,16 +429,23 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (this.pendingFileds.length > 0) {
           this.pendingFileds.forEach((user: any) => {
             if (user['group']) {
-              this.userDetailsForm.patchValue({group: user['group']})
-              this.pGroup = user['group']
+              if(this.userProfileObject.profileDetails.profileGroupStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({group: user['group']})
+                this.pGroup = user['group']
+              }
             }
             if (user['designation']) {
-              this.userDetailsForm.patchValue({designation: user['designation']})
-              this.pDesignation = user['designation']
+              if(this.userProfileObject.profileDetails.profileDesignationStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({designation: user['designation']})
+                this.pDesignation = user['designation']
+              }
             }
           })
+
+          
         }
       }
+      this.defineFormAttributes()
     })
   }
 
@@ -449,7 +453,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.profileV2Svc.fetchProfile(this.configSrc.unMappedUser.identifier).subscribe((resp: any) => {
       if (resp && resp.result && resp.result.response) {
         this.userProfileObject = resp.result.response
-        this.defineFormAttributes()
+        this.getPendingDetails()
       }      
     })
   }
@@ -472,6 +476,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('group')
           if (fieldControl) {
+            if(this.userProfileObject.profileDetails.professionalDetails.length &&
+              this.userProfileObject.profileDetails.professionalDetails[0].group
+            ){
+              fieldControl.setValue(this.pGroup ? this.pGroup :this.userProfileObject.profileDetails.professionalDetails[0].group)
+            }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -483,6 +492,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('designation')
           if (fieldControl) {
+            fieldControl.setValue(this.pDesignation ? this.pDesignation :this.userProfileObject.profileDetails.professionalDetails[0].designation)
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
