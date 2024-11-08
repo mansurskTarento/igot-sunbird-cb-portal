@@ -17,9 +17,9 @@ import {
 import _ from 'lodash'
 import { MatSnackBar } from '@angular/material'
 
-const API_END_POINTS = {
-  fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
-}
+// const API_END_POINTS = {
+//   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
+// }
 
 @Component({
   selector: 'ws-widget-grid-layout',
@@ -338,12 +338,12 @@ export class GridLayoutComponent extends WidgetBaseComponent
     return item
   }
 
-  fetchProfileById(id: any): Observable<any> {
-    return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
-      .pipe(map((res: any) => {
-        return _.get(res, 'result.response')
-      }))
-  }
+  // fetchProfileById(id: any): Observable<any> {
+  //   return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
+  //     .pipe(map((res: any) => {
+  //       return _.get(res, 'result.response')
+  //     }))
+  // }
   fetchProfile() {
     this.router.navigate(['/app/user-profile/details'])
   }
