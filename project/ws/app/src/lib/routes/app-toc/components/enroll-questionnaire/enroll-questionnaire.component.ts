@@ -13,7 +13,21 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
+import { MomentDateAdapter } from '@angular/material-moment-adapter'
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'DD-MM-YYYY',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY',
+  },
+}
 
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
@@ -23,6 +37,10 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
   selector: 'ws-app-enroll-questionnaire',
   templateUrl: './enroll-questionnaire.component.html',
   styleUrls: ['./enroll-questionnaire.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
 export class EnrollQuestionnaireComponent implements OnInit {
   public afterSubmitAction = this.checkAfterSubmit.bind(this)
@@ -94,7 +112,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private profileV2Svc: ProfileV2Service,
     private otpService: OtpService,
     private npsSvc: NPSGridService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) { 
 
     this.batchDetails = this.data.batchData
@@ -755,24 +773,27 @@ export class EnrollQuestionnaireComponent implements OnInit {
       request: {
         userId: this.userProfileObject.identifier,
         profileDetails: {
-          professionalDetails: [],
           employmentDetails: {},
           personalDetails: {},
           cadreDetails: {},
-          //additionalProperties: {}
         }
       }
     }
     let _professionalDetails: any = {}
+    let updateProfessionalDetails : boolean = false
     if(this.showGroup && this.userDetailsForm.controls['group'].value) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
+      updateProfessionalDetails = true
     }
     if(this.showDesignation && this.userDetailsForm.controls['designation'].value) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
+      updateProfessionalDetails = true
     }
-    payload.request.profileDetails.professionalDetails.push(_professionalDetails)
+    if (updateProfessionalDetails) {
+      payload.request.profileDetails['professionalDetails'] = [_professionalDetails]
+    }
     if(this.showEmployeeCode && this.userDetailsForm.controls['employeeCode'].value) {
       payload.request.profileDetails.employmentDetails['employeeCode'] = this.userDetailsForm.controls['employeeCode'].value
       this.updateProfile = true
@@ -806,15 +827,17 @@ export class EnrollQuestionnaireComponent implements OnInit {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
-      _cadreDetails['civilServiceType'] = this.userDetailsForm.controls['typeOfCivilService'].value
-      _cadreDetails['civilServiceName'] = this.userDetailsForm.controls['serviceType'].value
-      _cadreDetails['cadreName'] = this.userDetailsForm.controls['cadreName'].value
-      _cadreDetails['cadreBatch'] = this.userDetailsForm.controls['cadreBatch'].value
-      _cadreDetails['cadreControllingAuthorityName'] = this.cadreControllingAuthority
-      _cadreDetails['cadreId'] = this.cadreId
-      _cadreDetails['civilServiceId'] = this.civilServiceId
-      _cadreDetails['civilServiceTypeId'] = this.serviceId
-      payload.request.profileDetails.cadreDetails = _cadreDetails
+      if (this.userDetailsForm.controls['isCadre'].value) {
+        _cadreDetails['civilServiceType'] = this.userDetailsForm.controls['typeOfCivilService'].value
+        _cadreDetails['civilServiceName'] = this.userDetailsForm.controls['serviceType'].value
+        _cadreDetails['cadreName'] = this.userDetailsForm.controls['cadreName'].value
+        _cadreDetails['cadreBatch'] = this.userDetailsForm.controls['cadreBatch'].value
+        _cadreDetails['cadreControllingAuthorityName'] = this.cadreControllingAuthority
+        _cadreDetails['cadreId'] = this.cadreId
+        _cadreDetails['civilServiceId'] = this.civilServiceId
+        _cadreDetails['civilServiceTypeId'] = this.serviceId
+        payload.request.profileDetails.cadreDetails = _cadreDetails
+      }
     }
     return payload
   }
