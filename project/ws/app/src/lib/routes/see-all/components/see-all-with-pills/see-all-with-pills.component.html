@@ -23,7 +23,7 @@
                     <span *ngIf="tab?.showTabDataCount">({{tab?.widgets?.length}})</span>
                 </ng-template>
                 <div class="flex flex-row flex-wrap content-container mt-4 mb-10">
-                    <div>
+                    <div class="w-full">
                         <ng-container >
                           <mat-chip-list  class="content-pill" aria-label="Fish selection">
                               <ng-container *ngFor="let pill of tab?.pillsData;let p = index">
@@ -33,10 +33,17 @@
                           </mat-chip-list>
                         </ng-container>
                       </div>
-                      <div class="flex flex-row flex-wrap content-container mt-4 mb-10" *ngIf=" tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets?.length">
+                      <div class="flex flex-row flex-wrap justify-around content-container mt-4 mb-10" *ngIf=" tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets?.length">
+                        <ng-container *ngIf="seeAllPageConfig?.key === 'continueLearning'">
+                            <div class="mr-2 mb-5" *ngFor="let c of tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets">
+                                <sb-uic-cards [widgetData]="c.widgetData"> </sb-uic-cards>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllPageConfig?.key !== 'continueLearning'">
                             <div class="mr-2 mb-5" *ngFor="let c of tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets">
                                 <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
                             </div>
+                        </ng-container>
                       </div>
                 </div>
             </mat-tab>
