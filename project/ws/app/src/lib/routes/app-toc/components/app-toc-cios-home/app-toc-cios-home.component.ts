@@ -138,14 +138,15 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     return str.replaceAll(replaceTxt, '')
   }
 
-  async enRollToExtCourse(contentId: any) {
+  async enRollToExtCourse(content: any) {
     this.loader.changeLoad.next(true)
     const reqbody = {
-      courseId: contentId,
+      courseId: content.contentId,
+      partnerId: content.contentPartner.id
     }
     const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => {})
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
-      this.getUserContentEnroll(contentId)
+      this.getUserContentEnroll(content.contentId)
     } else {
       this.loader.changeLoad.next(false)
       this.snackBar.open('Unable to enroll to the content')
