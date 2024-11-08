@@ -1,18 +1,18 @@
 import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core'
-import { HttpClient, HttpErrorResponse } from '@angular/common/http'
+import {  HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material'
 /* tslint:disable */
 import _ from 'lodash'
 /* tslint:enable */
-import { Observable, Subject } from 'rxjs'
-import { map, takeUntil } from 'rxjs/operators'
+import { Subject } from 'rxjs'
+import { takeUntil } from 'rxjs/operators'
 
 import { ConfigurationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
-import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
+// import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 
 // import { NotificationComponent } from './notification/notification.component'
@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private configSvc: ConfigurationsService,
     public btnSettingsSvc: BtnSettingsService,
-    private http: HttpClient,
+    // private http: HttpClient,
     public mobileAppsService: MobileAppsService,
     private router: Router,
     private translate: TranslateService,
