@@ -114,16 +114,8 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
     },
   }]
 
-  filterObjData: any = {
-    primaryCategory: [],
-    status: [],
-    timeDuration: [],
-    competencyArea: [],
-    competencyTheme: [],
-    competencySubTheme: [],
-    providers: [],
-  }
-  filterObjData2 = { ...this.filterObjData }
+  filterObjData: any
+  filterObjData2: any
   tabValue = ''
   certificateMappedObject: any = {}
   compentencyKey!: NsContent.ICompentencyKeys
@@ -154,6 +146,18 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
+
+    this.filterObjData = {
+      primaryCategory: [],
+      status: [],
+      timeDuration: [],
+      [this.compentencyKey.vCompetencyArea]: [],
+      [this.compentencyKey.vCompetencyTheme]: [],
+      [this.compentencyKey.vCompetencySubTheme]: [],
+      providers: [],
+    }
+    this.filterObjData2 = { ...this.filterObjData }
+
     this.getUserEnrollmentList()
   }
 
