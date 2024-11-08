@@ -116,10 +116,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
     })
-    this.getPendingDetails()
-    setTimeout(() => {
-      this.getUserDetails()
-    }, 300)
+    this.getUserDetails()
     
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
@@ -426,8 +423,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
               }
             }
           })
+
+          
         }
       }
+      this.defineFormAttributes()
     })
   }
 
@@ -435,7 +435,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.profileV2Svc.fetchProfile(this.configSrc.unMappedUser.identifier).subscribe((resp: any) => {
       if (resp && resp.result && resp.result.response) {
         this.userProfileObject = resp.result.response
-        this.defineFormAttributes()
+        this.getPendingDetails()
       }      
     })
   }
@@ -452,14 +452,17 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
         }
       }
-      debugger
       if (this.findAttr(customAttr, 'group')) {
         if (this.findInProfile('group')) {
           this.showGroup = true
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('group')
           if (fieldControl) {
-            fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
+            if(this.userProfileObject.profileDetails.professionalDetails.length &&
+              this.userProfileObject.profileDetails.professionalDetails[0].group
+            ){
+              fieldControl.setValue(this.pGroup ? this.pGroup :this.userProfileObject.profileDetails.professionalDetails[0].group)
+            }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -471,7 +474,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('designation')
           if (fieldControl) {
-            fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
+            fieldControl.setValue(this.pDesignation ? this.pDesignation :this.userProfileObject.profileDetails.professionalDetails[0].designation)
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
