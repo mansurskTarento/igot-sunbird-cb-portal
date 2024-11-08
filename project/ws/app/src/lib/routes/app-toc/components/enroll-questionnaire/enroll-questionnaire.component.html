@@ -252,11 +252,10 @@
             <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
                 <button
                   class="save-button"
-                  [disabled]="userDetailsForm?.invalid"
+                  [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
                   (click)="onSubmitForm(userDetailsForm)">
                   {{ 'profileInfo.saveChanges' | translate }}
                 </button> 
-                <!-- || (showMobile && !mVerified) -->
             </div>
         </form>
       </div>
