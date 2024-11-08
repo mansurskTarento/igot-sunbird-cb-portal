@@ -103,12 +103,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
       designation: new FormControl(''),
       employeeCode: new FormControl(''),
       // primaryEmail: new FormControl('', ),
-      mobile: new FormControl('', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]),
+      mobile: new FormControl(''),
       gender: new FormControl('', []),
       dob: new FormControl('', []),
       domicileMedium: new FormControl(''),
       category: new FormControl('', []),
-      pincode: new FormControl('', [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]),
+      pincode: new FormControl(''),
       isCadre: new FormControl(false),
       typeOfCivilService: new FormControl(''),
       serviceType: new FormControl(''),
@@ -540,9 +540,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('pinCode')
+          const fieldControl = this.userDetailsForm.get('pincode')
           if (fieldControl) {
-            fieldControl.setValidators([Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
+            fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
             fieldControl.updateValueAndValidity()
           }
         }
@@ -802,9 +802,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pincode'].value
       this.updateProfile = true
     }
-    if(this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+    if(this.showCadreDetails) {
       let _cadreDetails: any = {}
-      payload.request.profileDetails.personalDetails['isCadre'] = true
+      payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
       _cadreDetails['civilServiceType'] = this.userDetailsForm.controls['typeOfCivilService'].value
       _cadreDetails['civilServiceName'] = this.userDetailsForm.controls['serviceType'].value
