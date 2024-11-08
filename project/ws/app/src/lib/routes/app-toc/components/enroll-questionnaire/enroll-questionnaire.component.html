@@ -260,7 +260,7 @@
         </form>
       </div>
    </div>
-   <div *ngIf ="!customForm">
+   <div *ngIf ="!customForm && !isLoading">
        <lib-micro-survey class="course-survey"
            [apiData]="data?.apiData"
            [afterSubmitAction]="afterSubmitAction"

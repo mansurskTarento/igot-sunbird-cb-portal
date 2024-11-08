@@ -104,6 +104,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   pendingFileds: any
   pGroup: any
   pDesignation: any
+  isLoading: boolean = false
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -127,7 +128,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       domicileMedium: new FormControl(''),
       category: new FormControl('', []),
       pincode: new FormControl(''),
-      isCadre: new FormControl(false),
+      isCadre: new FormControl(),
       typeOfCivilService: new FormControl(''),
       serviceType: new FormControl(''),
       cadreName: new FormControl(''),
@@ -302,6 +303,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   addValidators() {
+    const fieldControl0 = this.userDetailsForm.get('isCadre')
+    if (fieldControl0) {
+      fieldControl0.setValidators([Validators.required]);
+      fieldControl0.updateValueAndValidity()
+    }
     const fieldControl = this.userDetailsForm.get('typeOfCivilService')
     if (fieldControl) {
       fieldControl.setValidators([Validators.required]);
@@ -450,10 +456,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   getUserDetails(){
+    this.isLoading = true
     this.profileV2Svc.fetchProfile(this.configSrc.unMappedUser.identifier).subscribe((resp: any) => {
       if (resp && resp.result && resp.result.response) {
         this.userProfileObject = resp.result.response
         this.getPendingDetails()
+        this.isLoading = false
       }      
     })
   }
@@ -476,10 +484,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('group')
           if (fieldControl) {
-            if(this.userProfileObject.profileDetails.professionalDetails.length &&
+            if(this.userProfileObject.profileDetails.professionalDetails &&
+              this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].group
             ){
-              fieldControl.setValue(this.pGroup ? this.pGroup :this.userProfileObject.profileDetails.professionalDetails[0].group)
+              fieldControl.setValue(
+                this.pGroup ? this.pGroup : this.userProfileObject.profileDetails.professionalDetails[0].group
+              )
             }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
@@ -492,7 +503,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('designation')
           if (fieldControl) {
-            fieldControl.setValue(this.pDesignation ? this.pDesignation :this.userProfileObject.profileDetails.professionalDetails[0].designation)
+            if(this.userProfileObject.profileDetails.professionalDetails &&
+              this.userProfileObject.profileDetails.professionalDetails.length &&
+              this.userProfileObject.profileDetails.professionalDetails[0].designation){
+              fieldControl.setValue(
+                this.pDesignation ? this.pDesignation : this.userProfileObject.profileDetails.professionalDetails[0].designation
+              )
+            }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -504,7 +521,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('employeeCode')
           if (fieldControl) {
-            fieldControl.setValidators([Validators.pattern(EMP_ID_PATTERN)]);
+            fieldControl.setValidators([Validators.required, Validators.pattern(EMP_ID_PATTERN)]);
             fieldControl.updateValueAndValidity()
           }
         }
@@ -580,7 +597,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('cadreDetails')
+          const fieldControl = this.userDetailsForm.get('isCadre')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
@@ -622,7 +639,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.pinCode') 
     }
     if(fName === 'cadreDetails') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.cadreDetails.civilServiceTypeName') 
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.cadreDetails.civilServiceType')
     }
     
   }
@@ -957,7 +974,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           dataObject[_field.displayName] = this.userProfileObject.profileDetails && this.userProfileObject.profileDetails.cadreDetails ? 'yes' : 'No'
         }
       }
-      if(_field.field === 'profileDetails.cadreDetails.civilServiceTypeName') {
+      if(_field.field === 'profileDetails.cadreDetails.civilServiceType') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.displayName] = this.userDetailsForm.controls['typeOfCivilService'].value
         } else {
