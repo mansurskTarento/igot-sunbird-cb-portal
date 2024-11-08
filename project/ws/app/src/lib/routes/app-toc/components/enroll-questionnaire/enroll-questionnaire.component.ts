@@ -414,12 +414,16 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (this.pendingFileds.length > 0) {
           this.pendingFileds.forEach((user: any) => {
             if (user['group']) {
-              this.userDetailsForm.patchValue({group: user['group']})
-              this.pGroup = user['group']
+              if(this.userProfileObject.profileDetails.profileGroupStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({group: user['group']})
+                this.pGroup = user['group']
+              }
             }
             if (user['designation']) {
-              this.userDetailsForm.patchValue({designation: user['designation']})
-              this.pDesignation = user['designation']
+              if(this.userProfileObject.profileDetails.profileDesignationStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({designation: user['designation']})
+                this.pDesignation = user['designation']
+              }
             }
           })
         }
@@ -448,12 +452,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
         }
       }
+      debugger
       if (this.findAttr(customAttr, 'group')) {
         if (this.findInProfile('group')) {
           this.showGroup = true
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('group')
           if (fieldControl) {
+            fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -465,6 +471,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('designation')
           if (fieldControl) {
+            fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
