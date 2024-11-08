@@ -142,7 +142,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     this.loader.changeLoad.next(true)
     const reqbody = {
       courseId: content.contentId,
-      partnerId: content.contentPartner.id
+      partnerId: content.contentPartner.id,
     }
     const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => {})
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
