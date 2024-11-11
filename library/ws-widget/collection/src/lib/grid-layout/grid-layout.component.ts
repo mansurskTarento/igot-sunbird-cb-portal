@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http'
+// import { HttpClient } from '@angular/common/http'
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, EventService, WsEvents, NPSGridService  } from '@sunbird-cb/utils-v2'
-import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
-import { Observable, Subscription } from 'rxjs'
-import { map } from 'rxjs/operators'
+// import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
+import { Subscription } from 'rxjs'
+// import { map } from 'rxjs/operators'
 import { Router } from '@angular/router'
 import {
   IGridLayoutData,
@@ -17,9 +17,9 @@ import {
 import _ from 'lodash'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
-const API_END_POINTS = {
-  fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
-}
+// const API_END_POINTS = {
+//   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
+// }
 
 @Component({
   selector: 'ws-widget-grid-layout',
@@ -33,7 +33,7 @@ export class GridLayoutComponent extends WidgetBaseComponent
     private router: Router,
     private events: EventService,
     private configSvc: ConfigurationsService,
-    private http: HttpClient,
+    // private http: HttpClient,
     private npsService: NPSGridService,
     private snackBar: MatSnackBar,
   ) {
@@ -338,12 +338,12 @@ export class GridLayoutComponent extends WidgetBaseComponent
     return item
   }
 
-  fetchProfileById(id: any): Observable<any> {
-    return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
-      .pipe(map((res: any) => {
-        return _.get(res, 'result.response')
-      }))
-  }
+  // fetchProfileById(id: any): Observable<any> {
+  //   return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
+  //     .pipe(map((res: any) => {
+  //       return _.get(res, 'result.response')
+  //     }))
+  // }
   fetchProfile() {
     this.router.navigate(['/app/user-profile/details'])
   }
