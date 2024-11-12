@@ -13,21 +13,21 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
-import { MomentDateAdapter } from '@angular/material-moment-adapter'
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
+// import { MomentDateAdapter } from '@angular/material-moment-adapter'
+// import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
 
-export const MY_FORMATS = {
-  parse: {
-    dateInput: 'LL',
-  },
-  display: {
-    dateInput: 'DD-MM-YYYY',
-    monthYearLabel: 'YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'YYYY',
-  },
-}
+// export const MY_FORMATS = {
+//   parse: {
+//     dateInput: 'LL',
+//   },
+//   display: {
+//     dateInput: 'DD-MM-YYYY',
+//     monthYearLabel: 'YYYY',
+//     dateA11yLabel: 'LL',
+//     monthYearA11yLabel: 'YYYY',
+//   },
+// }
 
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
@@ -38,8 +38,8 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
   templateUrl: './enroll-questionnaire.component.html',
   styleUrls: ['./enroll-questionnaire.component.scss'],
   providers: [
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    // { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    // { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
 export class EnrollQuestionnaireComponent implements OnInit {
@@ -761,6 +761,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   submitProfile(payload: any) {
+    if(payload && payload['request'] && payload['request']['profileDetails'] && payload['request']['profileDetails']['personalDetails'] && payload['request']['profileDetails']['personalDetails']['dob']) {
+      let dobFormat = payload['request']['profileDetails']['personalDetails']['dob'];
+      let dob = `${new Date(dobFormat).getDate()}-${new Date(dobFormat).getMonth() + 1}-${new Date(dobFormat).getFullYear()}`
+      payload['request']['profileDetails']['personalDetails']['dob'] = dob
+    }    
     if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
@@ -870,12 +875,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const [day, month, year] = dateString.split('-')
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    const formattedDay = String(date.getDate()).padStart(2, '0')
-    const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
-    const formattedYear = date.getFullYear()
-    return `${formattedYear}-${formattedMonth}-${formattedDay}`
+    // const [day, month, year] = dateString.split('-')
+    // const date = new Date(Number(year), Number(month) - 1, Number(day))
+    // const formattedDay = String(date.getDate()).padStart(2, '0')
+    // const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
+    // const formattedYear = date.getFullYear()
+    // return `${formattedYear}-${formattedMonth}-${formattedDay}`
+    return  `${new Date(dateString).getFullYear()}-${new Date(dateString).getMonth()+1}-${new Date(dateString).getDate()}`
   }
 
   genereateSurveyPayload() {
@@ -969,7 +975,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
-        if (this.showCategory) {
+        if (this.showPinCode) {
           dataObject[_field.name] = this.userDetailsForm.controls['pincode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
