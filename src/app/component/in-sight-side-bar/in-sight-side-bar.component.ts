@@ -80,6 +80,7 @@ export class InsightSideBarComponent implements OnInit {
   randomlearnAdvisoryObj: any
   learnAdvisoryDataLength: any
   surveyForm: any
+  surveyPopup: any
   isNotMyUser = false
   isIgotOrg = false
   nwlConfiguration: any
@@ -118,6 +119,7 @@ export class InsightSideBarComponent implements OnInit {
       this.homePageData = this.activatedRoute.snapshot.data.pageData.data
       this.learnAdvisoryData = this.activatedRoute.snapshot.data.pageData.data.learnerAdvisory
       this.surveyForm = this.activatedRoute.snapshot.data.pageData.data.surveyForm
+      this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
