@@ -1,25 +1,25 @@
 import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core'
-import { HttpClient, HttpErrorResponse } from '@angular/common/http'
+import {  HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 /* tslint:disable */
 import _ from 'lodash'
 /* tslint:enable */
-import { Observable, Subject } from 'rxjs'
-import { map, takeUntil } from 'rxjs/operators'
+import { Subject } from 'rxjs'
+import { takeUntil } from 'rxjs/operators'
 
 import { ConfigurationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
-import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
+// import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 
 // import { NotificationComponent } from './notification/notification.component'
 
-const API_END_POINTS = {
-  fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
-}
+// const API_END_POINTS = {
+//   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
+// }
 @Component({
   selector: 'ws-home',
   templateUrl: './home.component.html',
@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private configSvc: ConfigurationsService,
     public btnSettingsSvc: BtnSettingsService,
-    private http: HttpClient,
+    // private http: HttpClient,
     public mobileAppsService: MobileAppsService,
     private router: Router,
     private translate: TranslateService,
@@ -296,15 +296,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     .pipe(takeUntil(this.destroySubject$))
     .subscribe((res: any) => {
       this.pendingApprovalList = res.result.data
-
       // TODO...
       // this.matSnackBar.openFromComponent(NotificationComponent, {
       //   data: { type: 'pending' },
       // ...this.configSuccess,
       // })
-      if ((this.pendingApprovalList && this.pendingApprovalList.length)) {
-
-      } else {
+      if (!(this.pendingApprovalList && this.pendingApprovalList.length)) {
         this.handleUpdateMobileNudge()
       }
 
@@ -317,29 +314,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleUpdateMobileNudge() {
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
-      this.fetchProfileById(this.configSvc.unMappedUser.id).subscribe((_obj: any) => {
-        const profilePopUp = sessionStorage.getItem('hideUpdateProfilePopUp')
-
-        if (_obj.profileDetails) {
-          if (!(_obj.profileDetails.profileStatus === 'VERIFIED')
-            && (profilePopUp === 'true' || profilePopUp === null)) {
-            this.isNudgeOpen = true
-          } else {
-            this.isNudgeOpen = false
-          }
-        } else {
+      const profilePopUp = sessionStorage.getItem('hideUpdateProfilePopUp')
+      if (this.configSvc.unMappedUser.profileDetails) {
+        if (!(this.configSvc.unMappedUser.profileDetails.profileStatus === 'VERIFIED')
+          && (profilePopUp === 'true' || profilePopUp === null)) {
           this.isNudgeOpen = true
+        } else {
+          this.isNudgeOpen = false
         }
-      })
+      } else {
+        this.isNudgeOpen = true
+      }
+      // this.fetchProfileById(this.configSvc.unMappedUser.id).subscribe((_obj: any) => {
+      //   const profilePopUp = sessionStorage.getItem('hideUpdateProfilePopUp')
+
+      //   if (_obj.profileDetails) {
+      //     if (!(_obj.profileDetails.profileStatus === 'VERIFIED')
+      //       && (profilePopUp === 'true' || profilePopUp === null)) {
+      //       this.isNudgeOpen = true
+      //     } else {
+      //       this.isNudgeOpen = false
+      //     }
+      //   } else {
+      //     this.isNudgeOpen = true
+      //   }
+      // })
     }
   }
 
-  fetchProfileById(id: any): Observable<any> {
-    return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
-      .pipe(map((res: any) => {
-        return _.get(res, 'result.response')
-      }))
-  }
+  // fetchProfileById(id: any): Observable<any> {
+  //   return this.http.get<[IUserProfileDetailsFromRegistry]>(API_END_POINTS.fetchProfileById(id))
+  //     .pipe(map((res: any) => {
+  //       return _.get(res, 'result.response')
+  //     }))
+  // }
 
   handleDefaultFontSetting() {
     const fontClass = localStorage.getItem('setting')

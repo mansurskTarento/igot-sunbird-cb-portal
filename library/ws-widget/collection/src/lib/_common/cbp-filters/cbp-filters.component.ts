@@ -5,7 +5,9 @@ import { MAT_BOTTOM_SHEET_DATA, MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, MatBottomSheet
 import { AppCbpPlansService } from 'src/app/services/app-cbp-plans.service'
 // tslint:disable
 import _ from 'lodash'
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { environment } from 'src/environments/environment'
 
 @Component({
 	selector: 'ws-widget-cbp-filters',
@@ -61,25 +63,18 @@ export class CbpFiltersComponent implements OnInit {
 	competencySubThemeList: any[] = []
 	competencyThemeOriginalList: any[] = []
 	competencySubThemeOriginalList: any[] = []
-	filterObjEmpty: any = {
-		primaryCategory: [],
-		status: [],
-		timeDuration: [],
-		competencyArea: [],
-		competencyTheme: [],
-		competencySubTheme: [],
-		providers: [],
-	}
-
-	searchThemeControl = new UntypedFormControl()
+	filterObjEmpty: any
+	searchThemeControl = new FormControl()
 	@ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
+	compentencyKey!: NsContent.ICompentencyKeys
 
 	constructor(
 		@Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
 		private bottomSheetRef: MatBottomSheetRef<CbpFiltersComponent>,
 		private appCbpPlansService: AppCbpPlansService,
 		private translate: TranslateService,
-		private langtranslations: MultilingualTranslationsService,) {
+		private langtranslations: MultilingualTranslationsService,
+		private configSvc: ConfigurationsService,) {
 		if (this.data) {
 			this.filterObj = this.data.filterObj
 		}
@@ -93,6 +88,18 @@ export class CbpFiltersComponent implements OnInit {
 	}
 
 	ngOnInit() {
+		this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
+
+		this.filterObjEmpty = {
+		primaryCategory: [],
+		status: [],
+		timeDuration: [],
+		[this.compentencyKey.vCompetencyArea]: [],
+		[this.compentencyKey.vCompetencyTheme]: [],
+		[this.compentencyKey.vCompetencySubTheme]: [],
+		providers: [],
+		}
+
 		this.getFilterEntity()
 		this.getProviders()
 		this.bindFilter()
@@ -165,8 +172,8 @@ export class CbpFiltersComponent implements OnInit {
 					citem.children.map((themechild: any) => {
 						themechild['parent'] = ctype.id
 					})
-					if (this.filterObj['competencyArea'] && pushValue) {
-						this.filterObj['competencyArea'].push(citem.name)
+					if (this.filterObj[this.compentencyKey.vCompetencyArea] && pushValue) {
+						this.filterObj[this.compentencyKey.vCompetencyArea].push(citem.name)
 					}
 					this.competencyThemeList = this.competencyThemeList.concat(citem.children)
 					this.competencyThemeOriginalList = this.competencyThemeList
@@ -175,9 +182,9 @@ export class CbpFiltersComponent implements OnInit {
 		} else {
 			this.competencyThemeList = this.competencyThemeList.filter((sitem: any) => {
 				if (sitem.parent === ctype.id) {
-					const index = this.filterObj['competencyTheme'].indexOf(sitem.name)
+					const index = this.filterObj[this.compentencyKey.vCompetencyTheme].indexOf(sitem.name)
 					if (index > -1) { // only splice array when item is found
-						this.filterObj['competencyTheme'].splice(index, 1) // 2nd parameter means remove one item only
+						this.filterObj[this.compentencyKey.vCompetencyTheme].splice(index, 1) // 2nd parameter means remove one item only
 					}
 					sitem.checked = false
 					this.getCompetencySubTheme({ checked: false }, sitem)
@@ -185,9 +192,9 @@ export class CbpFiltersComponent implements OnInit {
 				return sitem.parent !== ctype.id
 			})
 			this.competencyThemeOriginalList = this.competencyThemeList
-			if (this.filterObj['competencyArea'].indexOf(ctype.id) > -1) {
-				const index = this.filterObj['competencyArea'].findIndex((x: any) => x === ctype.id)
-				this.filterObj['competencyArea'].splice(index, 1)
+			if (this.filterObj[this.compentencyKey.vCompetencyArea].indexOf(ctype.id) > -1) {
+				const index = this.filterObj[this.compentencyKey.vCompetencyArea].findIndex((x: any) => x === ctype.id)
+				this.filterObj[this.compentencyKey.vCompetencyArea].splice(index, 1)
 			}
 		}
 		this.bindCompetencyTheme()
@@ -205,16 +212,16 @@ export class CbpFiltersComponent implements OnInit {
 					this.competencySubThemeList = this.competencySubThemeList.concat(csitem.children);
 					this.competencySubThemeOriginalList = this.competencySubThemeList
 					if (pushValue) {
-						this.filterObj['competencyTheme'].push(cstype.name)
+						this.filterObj[this.compentencyKey.vCompetencyTheme].push(cstype.name)
 					}
 				}
 			})
 		} else {
 			this.competencySubThemeList = this.competencySubThemeList.filter((sitem: any) => {
 				if (sitem.parent === cstype.name) {
-					const index = this.filterObj['competencySubTheme'].indexOf(sitem.name)
+					const index = this.filterObj[this.compentencyKey.vCompetencySubTheme].indexOf(sitem.name)
 					if (index > -1) { // only splice array when item is found
-						this.filterObj['competencySubTheme'].splice(index, 1) // 2nd parameter means remove one item only
+						this.filterObj[this.compentencyKey.vCompetencySubTheme].splice(index, 1) // 2nd parameter means remove one item only
 					}
 					sitem.checked = false
 					// this.getCompetencySubTheme({checked: false},sitem)
@@ -222,9 +229,9 @@ export class CbpFiltersComponent implements OnInit {
 				return sitem.parent !== cstype.name
 			})
 			this.competencySubThemeOriginalList = this.competencySubThemeList
-			if (this.filterObj['competencyTheme'].indexOf(cstype.name) > -1) {
-				const index = this.filterObj['competencyTheme'].findIndex((x: any) => x === cstype.name)
-				this.filterObj['competencyTheme'].splice(index, 1)
+			if (this.filterObj[this.compentencyKey.vCompetencyTheme].indexOf(cstype.name) > -1) {
+				const index = this.filterObj[this.compentencyKey.vCompetencyTheme].findIndex((x: any) => x === cstype.name)
+				this.filterObj[this.compentencyKey.vCompetencyTheme].splice(index, 1)
 			}
 		}
 		this.bindCompetencySubTheme()
@@ -233,11 +240,11 @@ export class CbpFiltersComponent implements OnInit {
 
 	manageCompetencySubTheme(event: any, csttype: any) {
 		if (event.checked) {
-			this.filterObj['competencySubTheme'].push(csttype.name);
+			this.filterObj[this.compentencyKey.vCompetencySubTheme].push(csttype.name);
 		} else {
-			if (this.filterObj['competencySubTheme'].indexOf(csttype.name) > -1) {
-				const index = this.filterObj['competencySubTheme'].findIndex((x: any) => x === csttype.name)
-				this.filterObj['competencySubTheme'].splice(index, 1)
+			if (this.filterObj[this.compentencyKey.vCompetencySubTheme].indexOf(csttype.name) > -1) {
+				const index = this.filterObj[this.compentencyKey.vCompetencySubTheme].findIndex((x: any) => x === csttype.name)
+				this.filterObj[this.compentencyKey.vCompetencySubTheme].splice(index, 1)
 			}
 		}
 	}
@@ -304,10 +311,10 @@ export class CbpFiltersComponent implements OnInit {
 				})
 			}
 
-			if (this.filterObj['competencyArea'].length) {
+			if (this.filterObj[this.compentencyKey.vCompetencyArea].length) {
 				this.competencyTypeList.forEach((content: any) => {
-					content.checked = this.filterObj['competencyArea'].includes(content.id)
-					if (this.filterObj['competencyArea'].includes(content.id)) {
+					content.checked = this.filterObj[this.compentencyKey.vCompetencyArea].includes(content.id)
+					if (this.filterObj[this.compentencyKey.vCompetencyArea].includes(content.id)) {
 						this.getCompetencyTheme({ checked: true }, content, false)
 					}
 				})
@@ -316,10 +323,10 @@ export class CbpFiltersComponent implements OnInit {
 	}
 
 	bindCompetencyTheme() {
-		if (this.filterObj['competencyTheme'].length) {
+		if (this.filterObj[this.compentencyKey.vCompetencyTheme].length) {
 			this.competencyThemeList.forEach((content: any) => {
-				content.checked = this.filterObj['competencyTheme'].includes(content.name)
-				if (this.filterObj['competencyTheme'].includes(content.name)) {
+				content.checked = this.filterObj[this.compentencyKey.vCompetencyTheme].includes(content.name)
+				if (this.filterObj[this.compentencyKey.vCompetencyTheme].includes(content.name)) {
 					this.getCompetencySubTheme({ checked: true }, content, false)
 				}
 			})
@@ -327,9 +334,9 @@ export class CbpFiltersComponent implements OnInit {
 	}
 
 	bindCompetencySubTheme() {
-		if (this.filterObj['competencySubTheme'].length) {
+		if (this.filterObj[this.compentencyKey.vCompetencySubTheme].length) {
 			this.competencySubThemeList.forEach((content: any) => {
-				content.checked = this.filterObj['competencySubTheme'].includes(content.name)
+				content.checked = this.filterObj[this.compentencyKey.vCompetencySubTheme].includes(content.name)
 			})
 		}
 	}
@@ -368,9 +375,9 @@ export class CbpFiltersComponent implements OnInit {
 		if (this.filterObj['primaryCategory'].length ||
 			this.filterObj['status'].length ||
 			this.filterObj['timeDuration'].length ||
-			this.filterObj['competencyArea'].length ||
-			this.filterObj['competencyTheme'].length ||
-			this.filterObj['competencySubTheme'].length ||
+			this.filterObj[this.compentencyKey.vCompetencyArea].length ||
+			this.filterObj[this.compentencyKey.vCompetencyTheme].length ||
+			this.filterObj[this.compentencyKey.vCompetencySubTheme].length ||
 			this.filterObj['providers'].length
 		) {
 			this.filterEmpty = false

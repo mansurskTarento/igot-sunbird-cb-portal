@@ -342,7 +342,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           (data:  any) => {
 
           this.contentProgressHash = data.result.contentList
-
+          this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
           if (this.leafNodesCount === this.contentProgressHash.length) {
             const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
 

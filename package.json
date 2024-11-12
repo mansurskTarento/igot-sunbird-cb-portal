@@ -17,7 +17,7 @@
     "build:stats": "ng build --stats-json",
     "analyse": "webpack-bundle-analyzer ./dist/www/fusion/stats-es5.json",
     "test": "jest",
-    "test-coverage": "./node_modules/jest/bin/jest.js --clearCache && node --max_old_space_size=1024 ./node_modules/jest/bin/jest.js --silent --ci --collectCoverage=true --coverageReporters=lcov --detectOpenHandles --forceExit=true",
+    "test-coverage": "./node_modules/jest/bin/jest.js --clearCache && node --max_old_space_size=8000 ./node_modules/jest/bin/jest.js --silent --ci --collectCoverage=true --coverageReporters=lcov --detectOpenHandles --forceExit=true",
     "lint": "ng lint",
     "lint:fix": "ng lint @ws/app --fix",
     "e2e": "ng e2e",
@@ -25,7 +25,8 @@
     "tailwind": "./node_modules/.bin/tailwind build ./src/tailwind-build.scss  -o ./src/styles.scss",
     "prestart": "npm run tailwind",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
-    "tt": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --configuration=nb"
+    "tt": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --configuration=nb",
+    "sonar": "sonar-scanner"
   },
   "private": true,
   "dependencies": {
@@ -140,6 +141,7 @@
     "gzipper": "^2.8.1",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
+    "jest-sonar-reporter": "^2.0.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",
@@ -147,6 +149,7 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "ng-packagr": "^16.2.3",
     "protractor": "~7.0.0",
+    "sonarqube-scanner": "^4.2.5",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "tslint-angular": "^3.0.2",

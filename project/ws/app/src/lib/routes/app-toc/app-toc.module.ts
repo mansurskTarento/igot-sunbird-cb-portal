@@ -258,7 +258,7 @@ import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
     KarmaPointsModule,
     TipsForLearnerModule,
     ReactiveFormsModule,
-    DiscussionV2Module
+    DiscussionV2Module,
   ],
   providers: [
     AppTocResolverService,
@@ -285,7 +285,7 @@ import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
     AppTocHomeRootComponent,
     AppTocHomeComponent,
     ShareTocModule,
-    AppTocCiosHomeComponent
+    AppTocCiosHomeComponent,
   ]
 })
 export class AppTocModule { }

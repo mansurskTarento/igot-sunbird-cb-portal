@@ -12,7 +12,7 @@ import { BtnPageBackNavModule } from '@sunbird-cb/collection/src/public-api'
         CommonModule,
         RouterModule,
         AppTocModule,
-        BtnPageBackNavModule
+        BtnPageBackNavModule,
     ],
     exports: [PublicExtTocComponent],
     providers: [AppTocService],

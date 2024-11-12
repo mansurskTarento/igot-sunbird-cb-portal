@@ -10,12 +10,12 @@
         <div class="flex flex-row items-center">
             <div class="flex-1">
                 <div class="flex flex-col gap-2 justify-center">
-                    <div class="text-2xl font-semibold header text-primary">{{ themeDetails?.competencyTheme }}</div>
+                    <div class="text-2xl font-semibold header text-primary">{{ themeDetails?.[compentencyKey.vCompetencyTheme] }}</div>
                     <div class="text-sm" *ngIf="updatedTime">{{'competencyCardDetails.lastUpdatedOn' | translate}} {{ updatedTime | date: 'MMM yyyy' }} </div>
                 </div>
             </div>
             <div class="flex justify-center items-center">
-                <img alt='' src="assets/icons/competency/{{ (themeDetails?.competencyArea.toLowerCase() === 'behavioral' ? 'behavioural' :  themeDetails?.competencyArea.toLowerCase()) }}-light.svg" class="stamp-img" alt="{{ themeDetails?.competencyArea.toLowerCase() }} image" />
+                <img alt='' src="assets/icons/competency/{{ (themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral' ? 'behavioural' :  themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase()) }}-light.svg" class="stamp-img" alt="{{ themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() }} image" />
             </div>
         </div>
 

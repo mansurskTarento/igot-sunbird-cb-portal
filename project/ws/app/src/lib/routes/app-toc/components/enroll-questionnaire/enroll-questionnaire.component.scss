@@ -35,6 +35,10 @@
 
 }
 
+.profile-form-field .mat-select {
+    border: none;
+}
+
 .customForm {
     padding-right: 0 !important;
     padding-bottom: 1rem !important;
@@ -50,7 +54,7 @@
     padding: 14px 0px;
     text-align: center;
     width: 60px;
-    height: 28px;
+    height: 19px;
     display: block !important;
     position: relative;
     top: -3px;

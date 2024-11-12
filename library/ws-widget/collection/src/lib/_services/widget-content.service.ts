@@ -58,6 +58,7 @@ const API_END_POINTS = {
   EXT_CONTENT_READ: (contentId: any) => `/apis/proxies/v8/cios/v1/content/read/${contentId}`,
   EXT_USER_COURSE_ENROLL : (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
   EXT_CONTENT_EROLL: `/apis/proxies/v8/cios-enroll/v1/create`,
+  EXT_PUBLIC_CONTENT: (partent: any, contentId: any) => `/apis/proxies/v8/ciosIntegration/v1/read/content/${partent}/${contentId}`,
 }
 
 @Injectable({
@@ -259,10 +260,16 @@ export class WidgetContentService {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
     )
-    data.subscribe((subscribeData: any) => {
-          this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
-        })
+    // data.subscribe((subscribeData: any) => {
+    //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
+    //     })
     return data
+  }
+
+  setProgramChildResumeData(contentList: any, courseId: any) {
+    /* tslint:disable */
+    this.programChildCourseResumeData.next({ resumeData: contentList, courseId })
+    /* tslint:enable */
   }
 
   async continueLearning(id: string, collectionId?: string, collectionType?: string): Promise<any> {
@@ -449,6 +456,10 @@ export class WidgetContentService {
   }
   fetchExternalContent(contentId: string[]): Observable<NsContent.IContent[]> {
     return this.http.get<NsContent.IContent[]>(API_END_POINTS.EXT_CONTENT_READ(contentId))
+  }
+
+  fetchExternalPublicContent(partenerName: any, contentId: any): Observable<NsContent.IContent[]> {
+    return this.http.get<NsContent.IContent[]>(API_END_POINTS.EXT_PUBLIC_CONTENT(partenerName, contentId))
   }
 
   fetchExtUserContentEnroll(contentId: string) {

@@ -19,7 +19,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   userExtCourseEnroll: any = {}
   downloadCertificateLoading = false
   forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('?editMode=true')
-
+  extContentAvailable = true
   rcElem = {
     offSetTop: 0,
     BottomPos: 0,
@@ -30,6 +30,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   isMobile = false
   config: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
+
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
 
@@ -65,7 +66,12 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           data: {},
         }
         this.skeletonLoader = false
+
+      } else {
+        this.extContentAvailable = false
+        this.skeletonLoader = false
       }
+
       if (data && data.userEnrollContent && data.userEnrollContent.data && data.userEnrollContent.data.result &&
         Object.keys(data.userEnrollContent.data.result).length > 0
       ) {
@@ -132,14 +138,15 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     return str.replaceAll(replaceTxt, '')
   }
 
-  async enRollToExtCourse(contentId: any) {
+  async enRollToExtCourse(content: any) {
     this.loader.changeLoad.next(true)
     const reqbody = {
-      courseId: contentId,
+      courseId: content.contentId,
+      partnerId: content.contentPartner.id,
     }
     const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => {})
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
-      this.getUserContentEnroll(contentId)
+      this.getUserContentEnroll(content.contentId)
     } else {
       this.loader.changeLoad.next(false)
       this.snackBar.open('Unable to enroll to the content')

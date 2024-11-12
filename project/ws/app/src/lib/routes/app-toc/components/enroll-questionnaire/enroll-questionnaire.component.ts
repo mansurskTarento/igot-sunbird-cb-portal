@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core'
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
+import { FormGroup, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
@@ -13,7 +13,21 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
+import { MomentDateAdapter } from '@angular/material-moment-adapter'
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'DD-MM-YYYY',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY',
+  },
+}
 
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
@@ -23,6 +37,10 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
   selector: 'ws-app-enroll-questionnaire',
   templateUrl: './enroll-questionnaire.component.html',
   styleUrls: ['./enroll-questionnaire.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
 export class EnrollQuestionnaireComponent implements OnInit {
   public afterSubmitAction = this.checkAfterSubmit.bind(this)
@@ -84,6 +102,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
   showCadreDetails = false
   updateProfile = false
   pendingFileds: any
+  pGroup: any
+  pDesignation: any
+  isLoading: boolean = false
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -92,7 +113,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private profileV2Svc: ProfileV2Service,
     private otpService: OtpService,
     private npsSvc: NPSGridService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) { 
 
     this.batchDetails = this.data.batchData
@@ -107,7 +128,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       domicileMedium: new UntypedFormControl(''),
       category: new UntypedFormControl('', []),
       pincode: new UntypedFormControl(''),
-      isCadre: new UntypedFormControl(false),
+      isCadre: new UntypedFormControl(),
       typeOfCivilService: new UntypedFormControl(''),
       serviceType: new UntypedFormControl(''),
       cadreName: new UntypedFormControl(''),
@@ -115,14 +136,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
       cadreControllingAuthority: new UntypedFormControl(''),
     })
     this.getUserDetails()
-    this.getPendingDetails()
+    
     this.otpForm = new UntypedFormGroup({
       otp: new UntypedFormControl('', Validators.required)
     })
 
     if (this.userDetailsForm.get('mobile')) {
       this.userDetailsForm.get('mobile')!.valueChanges
-        .subscribe(res => {
+        .subscribe((res:any) => {
           if (res && !this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
             if (MOBILE_PATTERN.test(res)) {
               this.verifyMobile = true
@@ -282,6 +303,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   addValidators() {
+    const fieldControl0 = this.userDetailsForm.get('isCadre')
+    if (fieldControl0) {
+      fieldControl0.setValidators([Validators.required]);
+      fieldControl0.updateValueAndValidity()
+    }
     const fieldControl = this.userDetailsForm.get('typeOfCivilService')
     if (fieldControl) {
       fieldControl.setValidators([Validators.required]);
@@ -292,11 +318,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
       fieldControl1.setValidators([Validators.required]);
       fieldControl1.updateValueAndValidity()
     }
-    const fieldControl2 = this.userDetailsForm.get('cadreName')
-    if (fieldControl2) {
-      fieldControl2.setValidators([Validators.required]);
-      fieldControl2.updateValueAndValidity()
-    }
+    // const fieldControl2 = this.userDetailsForm.get('cadreName')
+    // if (fieldControl2) {
+    //   fieldControl2.setValidators([Validators.required]);
+    //   fieldControl2.updateValueAndValidity()
+    // }
     const fieldControl3 = this.userDetailsForm.get('cadreBatch')
     if (fieldControl3) {
       fieldControl3.setValidators([Validators.required]);
@@ -409,23 +435,33 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (this.pendingFileds.length > 0) {
           this.pendingFileds.forEach((user: any) => {
             if (user['group']) {
-              this.userDetailsForm.patchValue({group: user['group']})
+              if(this.userProfileObject.profileDetails.profileGroupStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({group: user['group']})
+                this.pGroup = user['group']
+              }
             }
             if (user['designation']) {
-              this.userDetailsForm.patchValue({designation: user['designation']})
+              if(this.userProfileObject.profileDetails.profileDesignationStatus !== 'VERIFIED' ) {
+                this.userDetailsForm.patchValue({designation: user['designation']})
+                this.pDesignation = user['designation']
+              }
             }
-            console.log("userDetailsForm ", this.userDetailsForm)
           })
+
+          
         }
       }
+      this.defineFormAttributes()
     })
   }
 
   getUserDetails(){
+    this.isLoading = true
     this.profileV2Svc.fetchProfile(this.configSrc.unMappedUser.identifier).subscribe((resp: any) => {
       if (resp && resp.result && resp.result.response) {
         this.userProfileObject = resp.result.response
-        this.defineFormAttributes()
+        this.getPendingDetails()
+        this.isLoading = false
       }      
     })
   }
@@ -448,6 +484,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('group')
           if (fieldControl) {
+            if(this.userProfileObject.profileDetails.professionalDetails &&
+              this.userProfileObject.profileDetails.professionalDetails.length &&
+              this.userProfileObject.profileDetails.professionalDetails[0].group
+            ){
+              fieldControl.setValue(
+                this.pGroup ? this.pGroup : this.userProfileObject.profileDetails.professionalDetails[0].group
+              )
+            }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -459,6 +503,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('designation')
           if (fieldControl) {
+            if(this.userProfileObject.profileDetails.professionalDetails &&
+              this.userProfileObject.profileDetails.professionalDetails.length &&
+              this.userProfileObject.profileDetails.professionalDetails[0].designation){
+              fieldControl.setValue(
+                this.pDesignation ? this.pDesignation : this.userProfileObject.profileDetails.professionalDetails[0].designation
+              )
+            }
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
@@ -470,7 +521,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.customForm = true
           const fieldControl = this.userDetailsForm.get('employeeCode')
           if (fieldControl) {
-            fieldControl.setValidators([Validators.pattern(EMP_ID_PATTERN)]);
+            fieldControl.setValidators([Validators.required, Validators.pattern(EMP_ID_PATTERN)]);
             fieldControl.updateValueAndValidity()
           }
         }
@@ -534,18 +585,19 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('pinCode')
+          const fieldControl = this.userDetailsForm.get('pincode')
           if (fieldControl) {
-            fieldControl.setValidators([Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
+            fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
             fieldControl.updateValueAndValidity()
           }
         }
       }
+
       if (this.findAttr(customAttr, 'cadreDetails')) {
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('cadreDetails')
+          const fieldControl = this.userDetailsForm.get('isCadre')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
@@ -587,7 +639,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.pinCode') 
     }
     if(fName === 'cadreDetails') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.cadreDetails.civilServiceTypeName') 
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.cadreDetails.civilServiceType')
     }
     
   }
@@ -597,10 +649,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
     }
     if (attr === 'group') {
-      return this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED'
+      return (!this.userProfileObject.profileDetails.profileGroupStatus ) ||
+        this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED' || (this.pGroup ? true : false)
     }
     if (attr === 'designation') {
-      return this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED'
+      return (!this.userProfileObject.profileDetails.profileDesignationStatus) ||
+        this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED' || (this.pDesignation ? true : false)
     }
     if (attr === 'employeeCode') {
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
@@ -624,9 +678,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
-      return this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeName
+      return Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')
     }
-    
   }
 
   getGroupData(): void {
@@ -680,7 +733,35 @@ export class EnrollQuestionnaireComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-     if (this.updateProfile) {
+    if (this.showDesignation || this.showGroup) {
+      if (this.pendingFileds) {
+        this.pendingFileds.forEach((_obj: any) => {
+          if (Object.keys(_obj).includes('designation')) {
+            this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+              if (resp && resp.result) {
+                /* tslint:disable */
+                console.log(resp.result.message)
+              }
+            })
+          }
+          if (Object.keys(_obj).includes('group')) {
+            this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
+              if (resp && resp.result) {
+                /* tslint:disable */
+                console.log(resp.result.message)
+              }
+            })
+          }
+        })
+        this.submitProfile(payload)
+      }
+    } else {
+      this.submitProfile(payload)
+    }
+  }
+
+  submitProfile(payload: any) {
+    if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
         }
@@ -690,13 +771,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.snackBar.open("something went wrong!")
       })
       this.submitSurevy()
-     }
+    }
   }
 
   submitSurevy() {
     let surevyPayload = {
       dataObject: this.genereateSurveyPayload(),
-        formId: this.data.surveyId,
+        formId: this.data.batchData.batchAttributes.profileSurveyId,
         timestamp: new Date().getTime(),
     }
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
@@ -719,24 +800,27 @@ export class EnrollQuestionnaireComponent implements OnInit {
       request: {
         userId: this.userProfileObject.identifier,
         profileDetails: {
-          professionalDetails: [],
           employmentDetails: {},
           personalDetails: {},
           cadreDetails: {},
-          //additionalProperties: {}
         }
       }
     }
     let _professionalDetails: any = {}
+    let updateProfessionalDetails : boolean = false
     if(this.showGroup && this.userDetailsForm.controls['group'].value) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
+      updateProfessionalDetails = true
     }
     if(this.showDesignation && this.userDetailsForm.controls['designation'].value) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
+      updateProfessionalDetails = true
     }
-    payload.request.profileDetails.professionalDetails.push(_professionalDetails)
+    if (updateProfessionalDetails) {
+      payload.request.profileDetails['professionalDetails'] = [_professionalDetails]
+    }
     if(this.showEmployeeCode && this.userDetailsForm.controls['employeeCode'].value) {
       payload.request.profileDetails.employmentDetails['employeeCode'] = this.userDetailsForm.controls['employeeCode'].value
       this.updateProfile = true
@@ -766,168 +850,180 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pincode'].value
       this.updateProfile = true
     }
-    if(this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+    if(this.showCadreDetails) {
       let _cadreDetails: any = {}
-      payload.request.profileDetails.personalDetails['isCadre'] = true
+      payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
-      _cadreDetails['civilServiceType'] = this.userDetailsForm.controls['typeOfCivilService'].value
-      _cadreDetails['civilServiceName'] = this.userDetailsForm.controls['serviceType'].value
-      _cadreDetails['cadreName'] = this.userDetailsForm.controls['cadreName'].value
-      _cadreDetails['cadreBatch'] = this.userDetailsForm.controls['cadreBatch'].value
-      _cadreDetails['cadreControllingAuthorityName'] = this.cadreControllingAuthority
-      _cadreDetails['cadreId'] = this.cadreId
-      _cadreDetails['civilServiceId'] = this.civilServiceId
-      _cadreDetails['civilServiceTypeId'] = this.serviceId
-      payload.request.profileDetails.cadreDetails = _cadreDetails
+      if (this.userDetailsForm.controls['isCadre'].value) {
+        _cadreDetails['civilServiceType'] = this.userDetailsForm.controls['typeOfCivilService'].value
+        _cadreDetails['civilServiceName'] = this.userDetailsForm.controls['serviceType'].value
+        _cadreDetails['cadreName'] = this.userDetailsForm.controls['cadreName'].value
+        _cadreDetails['cadreBatch'] = this.userDetailsForm.controls['cadreBatch'].value
+        _cadreDetails['cadreControllingAuthorityName'] = this.cadreControllingAuthority
+        _cadreDetails['cadreId'] = this.cadreId
+        _cadreDetails['civilServiceId'] = this.civilServiceId
+        _cadreDetails['civilServiceTypeId'] = this.serviceId
+        payload.request.profileDetails.cadreDetails = _cadreDetails
+      }
     }
     return payload
+  }
+
+  formatDate(dateString: string): string {
+    const [day, month, year] = dateString.split('-')
+    const date = new Date(Number(year), Number(month) - 1, Number(day))
+    const formattedDay = String(date.getDate()).padStart(2, '0')
+    const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
+    const formattedYear = date.getFullYear()
+    return `${formattedYear}-${formattedMonth}-${formattedDay}`
   }
 
   genereateSurveyPayload() {
     let dataObject: any = {}
     this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields.forEach((_field: any)  => {
       if(_field.field === 'profileDetails.personalDetails.firstname') {
-        dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
+        dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
       }
       if(_field.field === 'profileDetails.employmentDetails.departmentName') {
-        dataObject[_field.displayName] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.departmentName ? 
+        dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.departmentName ?
           this.userProfileObject.profileDetails.employmentDetails.departmentName : "N/A"
       }
       if(_field.field === 'profileDetails.professionalDetails.group') {
         if (this.showGroup) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['group'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['group'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].group ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].group ?
             this.userProfileObject.profileDetails.professionalDetails[0].group : "N/A"
         }
       }
       if(_field.field === 'profileDetails.professionalDetails.designation') {
         if (this.showDesignation) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['designation'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].designation ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].designation ?
             this.userProfileObject.profileDetails.professionalDetails[0].designation : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.employmentDetails.employeeCode') {
         if (this.showEmployeeCode) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['employeeCode'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['employeeCode'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.employeeCode?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.employeeCode?
             this.userProfileObject.profileDetails.employmentDetails.employeeCode : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.personalDetails.primaryEmail') {
-        dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails.primaryEmail
+        dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails.primaryEmail
       }
 
       if(_field.field === 'profileDetails.personalDetails.mobile') {
         if (this.showMobile) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['mobile'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['mobile'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.mobile?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.mobile?
             this.userProfileObject.profileDetails.personalDetails.mobile : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.personalDetails.dob') {
         if (this.showDob) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['dob'].value
+          let _dob: any = this.userDetailsForm.controls['dob'].value
+          dataObject[_field.name] = this.formatDate(_dob)
         } else {
           if (this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.dob) {
-            let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
-            dataObject[_field.displayName] = `${new Date(_dob).getDate()}-${new Date(_dob).getMonth() + 1}-${new Date(_dob).getFullYear()}`
+             let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
+            dataObject[_field.name] = this.formatDate(_dob)
           } else {
-            dataObject[_field.displayName] = "N/A"
+            dataObject[_field.name] = "1950-06-01"
           }
         }
       }
 
       if(_field.field === 'profileDetails.personalDetails.gender') {
         if (this.showGender) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['gender'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['gender'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.gender ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.gender ?
             this.userProfileObject.profileDetails.personalDetails.gender : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.personalDetails.domicileMedium') {
         if (this.showDecimalMedium) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['domicileMedium'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['domicileMedium'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.domicileMedium ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.domicileMedium ?
             this.userProfileObject.profileDetails.personalDetails.domicileMedium : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.personalDetails.category') {
         if (this.showCategory) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['category'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['category'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.category ? 
+          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.category ?
           this.userProfileObject.profileDetails.personalDetails.category : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
         if (this.showCategory) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['pincode'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['pincode'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
           this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
         }
       }
 
       if(_field.field === 'profileDetails.cadreDetails') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['isCadre'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['isCadre'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails && this.userProfileObject.profileDetails.cadreDetails ? 'yes' : 'No'
+          dataObject[_field.name] = this.userProfileObject.profileDetails && this.userProfileObject.profileDetails.cadreDetails ? 'yes' : 'No'
         }
       }
-      if(_field.field === 'profileDetails.cadreDetails.civilServiceTypeName') {
+      if(_field.field === 'profileDetails.cadreDetails.civilServiceType') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['typeOfCivilService'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['typeOfCivilService'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceType ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceType ?
             this.userProfileObject.profileDetails.cadreDetails.civilServiceType : 'N/A'
         }
       }
 
       if(_field.field === 'profileDetails.cadreDetails.civilServiceName') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['serviceType'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['serviceType'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceName ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceName ?
             this.userProfileObject.profileDetails.cadreDetails.civilServiceName : 'N/A'
         }
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreName') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['cadreName'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['cadreName'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.cadreDetails  && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails  && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
             this.userProfileObject.profileDetails.cadreDetails.cadreName : 'N/A'
         }
       }
       if(_field.field === 'profileDetails.cadreDetails.cadreBatch') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.userDetailsForm.controls['cadreBatch'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
             this.userProfileObject.profileDetails.cadreDetails.cadreBatch : 'N/A'
         }
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreControllingAuthorityName') {
         if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
-          dataObject[_field.displayName] = this.cadreControllingAuthority
+          dataObject[_field.name] = this.cadreControllingAuthority
         } else {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName ?
             this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName : 'N/A'
         }
       }
@@ -935,20 +1031,20 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if(_field.field === 'profileDetails.additionalProperties.externalSystemId') {
         if (this.userProfileObject.profileDetails.additionalProperties && 
             this.userProfileObject.profileDetails.additionalProperties.externalSystemId) {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemId
+          dataObject[_field.name] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemId
             ? this.userProfileObject.profileDetails.additionalProperties.externalSystemId : "N/A"
         } else {
-          dataObject[_field.displayName] = 'N/A'
+          dataObject[_field.name] = 'N/A'
         }
       }
 
       if(_field.field === 'profileDetails.additionalProperties.externalSystemDor') {
         if (this.userProfileObject.profileDetails.additionalProperties &&
             this.userProfileObject.profileDetails.additionalProperties.externalSystemDor) {
-          dataObject[_field.displayName] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemDor
+          dataObject[_field.name] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemDor
             ? this.userProfileObject.profileDetails.additionalProperties.externalSystemDor : "N/A"
         } else {
-          dataObject[_field.displayName] = 'N/A'
+          dataObject[_field.name] = 'N/A'
         }
       }
     })

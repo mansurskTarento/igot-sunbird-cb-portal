@@ -118,7 +118,7 @@
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker" readonly
-                  formControlName="dob" placeholder="Select data of birth" />
+                  formControlName="dob" placeholder="Select date of birth" />
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -131,7 +131,7 @@
                 <mat-form-field appearance="outline" class="w-full">
                     <div class="flex flex-row auto-complete-row">
                       <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput 
-                        formControlName="domicileMedium" [matAutocomplete]="languageAuto" placeholder="select mother tongue" />
+                        formControlName="domicileMedium" [matAutocomplete]="languageAuto" placeholder="Select mother tongue" />
                       <mat-icon>arrow_drop_down</mat-icon>
                     </div>
                     <mat-autocomplete #languageAuto="matAutocomplete">
@@ -144,7 +144,7 @@
               <div class="w-full" *ngIf="showCategory">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  category
+                  Category
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <mat-select formControlName="category" placeholder="Select category">
@@ -252,16 +252,15 @@
             <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
                 <button
                   class="save-button"
-                  [disabled]="userDetailsForm?.invalid"
+                  [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
                   (click)="onSubmitForm(userDetailsForm)">
                   {{ 'profileInfo.saveChanges' | translate }}
                 </button> 
-                <!-- || (showMobile && !mVerified) -->
             </div>
         </form>
       </div>
    </div>
-   <div *ngIf ="!customForm">
+   <div *ngIf ="!customForm && !isLoading">
        <lib-micro-survey class="course-survey"
            [apiData]="data?.apiData"
            [afterSubmitAction]="afterSubmitAction"

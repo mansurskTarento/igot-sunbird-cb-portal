@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angu
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationExtras, Params } from '@angular/router'
 import {
-  ContentProgressService,
+  // ContentProgressService,
   NsContent,
   VIEWER_ROUTE_FROM_MIME,
   WidgetContentService,
@@ -81,7 +81,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     private viewerDataSvc: ViewerDataService,
     private viewSvc: ViewerUtilService,
     private configSvc: ConfigurationsService,
-    private contentProgressSvc: ContentProgressService,
+    // private contentProgressSvc: ContentProgressService,
     private userSvc: WidgetUserServiceLib
     // private tocSvc: AppTocService,
   ) {
@@ -205,21 +205,21 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     })
   }
   // tslint:disable
-  private getContentProgressHash() {
-    if (this.collection && this.batchId && this.configSvc.userProfile) {
-      if (this.resourceId) {
-        const requestCourse = this.viewSvc.getBatchIdAndCourseId(this.collection.identifier, this.batchId, this.resourceId)
-        this.contentProgressSvc
-        .getProgressHash(requestCourse.courseId, requestCourse.batchId , this.configSvc.userProfile.userId)
-        .subscribe((progressHash:  any) => {
-          this.contentProgressHash = progressHash
-          if(this.collection && this.collection.identifier) {
-            // this.updateProgressBasedOnHash(progressHash)
-          }
-        })
-      }
-    }
-  }
+  // private getContentProgressHash() {
+  //   if (this.collection && this.batchId && this.configSvc.userProfile) {
+  //     if (this.resourceId) {
+  //       const requestCourse = this.viewSvc.getBatchIdAndCourseId(this.collection.identifier, this.batchId, this.resourceId)
+  //       this.contentProgressSvc
+  //       .getProgressHash(requestCourse.courseId, requestCourse.batchId , this.configSvc.userProfile.userId)
+  //       .subscribe((progressHash:  any) => {
+  //         this.contentProgressHash = progressHash
+  //         if(this.collection && this.collection.identifier) {
+  //           // this.updateProgressBasedOnHash(progressHash)
+  //         }
+  //       })
+  //     }
+  //   }
+  // }
 
   // private updateProgressBasedOnHash(progressHash: any) {
   //     if(
@@ -288,7 +288,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.processCollectionForTree()
       this.expandThePath()
       // if (next && next.viewerUrl === '0') { // temp
-        this.getContentProgressHash()
+       // this.getContentProgressHash()
       // }
     }
   }
