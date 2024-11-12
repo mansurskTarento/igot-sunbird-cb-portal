@@ -64,7 +64,7 @@ export class CbpFiltersComponent implements OnInit {
 	competencyThemeOriginalList: any[] = []
 	competencySubThemeOriginalList: any[] = []
 	filterObjEmpty: any
-	searchThemeControl = new FormControl()
+	searchThemeControl = new UntypedFormControl()
 	@ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
 	compentencyKey!: NsContent.ICompentencyKeys
 
