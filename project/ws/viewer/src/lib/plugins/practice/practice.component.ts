@@ -29,10 +29,10 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatSidenav } from '@angular/material/sidenav'
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 // import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
@@ -155,7 +155,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
                 window.location.href.includes('editMode') || window.location.href.includes('preview=true'))
   forCreatorMode = window.location.href.includes('editMode=true')
 
-  public publicUserInfoForm!: FormGroup
+  public publicUserInfoForm!: UntypedFormGroup
   public submitted = false
   emailLengthVal = false
 
@@ -169,7 +169,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private valueSvc: ValueService,
     // private vws: ViewerDataService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public snackbar: MatSnackBar,
     private sanitized: DomSanitizer,
     private viewerDataSvc: ViewerDataService,

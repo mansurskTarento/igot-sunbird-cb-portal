@@ -16,7 +16,6 @@ import { BtnPageBackNavModule } from '@sunbird-cb/collection/src/public-api'
     ],
     exports: [PublicExtTocComponent],
     providers: [AppTocService],
-    entryComponents: [],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PublicExtTocModule { }

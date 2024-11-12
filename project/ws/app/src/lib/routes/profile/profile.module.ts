@@ -20,12 +20,12 @@ import { LearningHistoryResolver } from './routes/learning/resolvers/learning-hi
 import { LearningTimeResolver } from './routes/learning/resolvers/learning-time.resolver'
 import { SettingsModule } from './routes/settings/settings.module'
 import { BadgesModule } from './routes/badges/badges.module'
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatIconModule } from '@angular/material/icon'
-import { MatListModule } from '@angular/material/list'
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 // import { BadgesModule } from '../gamification/routes/badges/badges.module'
 
 @NgModule({

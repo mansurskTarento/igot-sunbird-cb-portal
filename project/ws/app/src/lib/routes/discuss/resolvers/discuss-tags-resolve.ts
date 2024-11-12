@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 import { } from '@sunbird-cb/collection'
@@ -9,8 +9,7 @@ import { NSDiscussData } from '../models/discuss.model'
 
 @Injectable()
 export class DiscussTagsResolve
-  implements
-  Resolve<Observable<IResolveResponse<NSDiscussData.ITag[]>> | IResolveResponse<NSDiscussData.ITag[]>> {
+   {
   constructor(private discussionSvc: DiscussService) { }
 
   resolve(

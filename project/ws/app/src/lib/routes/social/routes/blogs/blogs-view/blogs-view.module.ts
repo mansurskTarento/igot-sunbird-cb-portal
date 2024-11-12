@@ -12,13 +12,13 @@ import {
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { BlogsReplyModule } from '../blogs-reply/blogs-reply.module'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
-import { MatButtonModule } from '@angular/material/button'
-import { MatChipsModule } from '@angular/material/chips'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
   declarations: [BlogViewComponent],

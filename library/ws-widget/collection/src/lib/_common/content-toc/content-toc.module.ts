@@ -32,74 +32,73 @@ import { TruncatePipe } from './pipes/truncate.pipe'
 import { ReplaceNbspPipe } from './pipes/replace-nbsp.pipe'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatRadioModule } from '@angular/material/radio'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatTabsModule } from '@angular/material/tabs'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
-  declarations: [
-    ContentTocComponent,
-    AppTocAboutComponent,
-    AppTocContentComponent,
-    AppTocContentCardV2Component,
-    ReviewsContentComponent,
-    AppTocSessionCardNewComponent,
-    AppTocSessionsNewComponent,
-    AppTocContentCardV2SkeletonComponent,
-    TruncatePipe,
-    ReplaceNbspPipe,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    MatIconModule,
-    MatTabsModule,
-    MatRadioModule,
-    MatProgressBarModule,
-    MatExpansionModule,
-    MatMenuModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    SkeletonLoaderModule,
-    AvatarPhotoModule,
-    RatingSummaryModule,
-    PipeDurationTransformModule,
-    ContentProgressModule,
-    NgCircleProgressModule.forRoot({}),
-    PipeRelativeTimeModule,
-    InfiniteScrollModule,
-    CardCompetencyModule,
-    HorizontalScrollerV2Module,
-    WidgetResolverModule,
-    AttendanceCardModule,
-    MatTooltipModule,
-    TocKpiValuesModule,
-    KarmaPointsModule,
-    TranslateModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-    PipeSafeSanitizerModule,
-    DiscussionV2Module,
-  ],
-  exports: [
-    ContentTocComponent,
-    AppTocAboutComponent,
-    AppTocContentComponent,
-    ReviewsContentComponent,
-  ],
-  entryComponents: [
-    ReviewsContentComponent,
-  ],
+    declarations: [
+        ContentTocComponent,
+        AppTocAboutComponent,
+        AppTocContentComponent,
+        AppTocContentCardV2Component,
+        ReviewsContentComponent,
+        AppTocSessionCardNewComponent,
+        AppTocSessionsNewComponent,
+        AppTocContentCardV2SkeletonComponent,
+        TruncatePipe,
+        ReplaceNbspPipe,
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        MatIconModule,
+        MatTabsModule,
+        MatRadioModule,
+        MatProgressBarModule,
+        MatExpansionModule,
+        MatMenuModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        SkeletonLoaderModule,
+        AvatarPhotoModule,
+        RatingSummaryModule,
+        PipeDurationTransformModule,
+        ContentProgressModule,
+        NgCircleProgressModule.forRoot({}),
+        PipeRelativeTimeModule,
+        InfiniteScrollModule,
+        CardCompetencyModule,
+        HorizontalScrollerV2Module,
+        WidgetResolverModule,
+        AttendanceCardModule,
+        MatTooltipModule,
+        TocKpiValuesModule,
+        KarmaPointsModule,
+        TranslateModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+        PipeSafeSanitizerModule,
+        DiscussionV2Module,
+    ],
+    exports: [
+        ContentTocComponent,
+        AppTocAboutComponent,
+        AppTocContentComponent,
+        ReviewsContentComponent,
+        AppTocContentCardV2SkeletonComponent,
+        KarmaPointsModule
+    ]
 })
 
 export class ContentTocModule { }

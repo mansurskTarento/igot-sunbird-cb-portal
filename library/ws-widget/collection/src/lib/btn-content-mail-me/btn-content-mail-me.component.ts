@@ -9,8 +9,8 @@ import {
   IWidgetMailMeDialogComponentResponse,
 } from './btn-content-mail-me-dialog/btn-content-mail-me-dialog.component'
 import { WidgetContentShareService } from '../_services/widget-content-share.service'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 enum TMailMeResponse {
   NONE,

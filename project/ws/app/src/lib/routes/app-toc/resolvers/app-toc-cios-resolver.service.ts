@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
@@ -8,10 +8,7 @@ import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/w
 @Injectable({
   providedIn: 'root',
 })
-export class AppTocCiosResolverService implements
-Resolve<
-Observable<IResolveResponse<any>> | IResolveResponse<any>
-> {
+export class AppTocCiosResolverService  {
 constructor(private contentSvc: WidgetContentService) {}
 
 resolve(

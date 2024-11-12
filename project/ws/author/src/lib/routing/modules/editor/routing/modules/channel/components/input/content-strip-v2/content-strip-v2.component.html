@@ -145,20 +145,20 @@
       <ng-container *ngTemplateOutlet="collectionCommon"> </ng-container>
     </div>
     <div *ngSwitchCase="'search'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="getPath('request', 'search').value || {}"
         (data)="update('api', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
     <div *ngSwitchCase="'api'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="getPath('request', 'api').value || {}"
         (data)="update('api', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
     <div *ngSwitchCase="'ids'">
       <mat-card>

@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { EventService, LoggerService, WsEvents, ValueService } from '@sunbird-cb/utils-v2'
@@ -39,8 +39,8 @@ export class PlayerPdfComponent extends WidgetBaseComponent
   MIN_SCALE = 0.2
   CSS_UNITS = 96 / 72
   totalPages = 0
-  currentPage = new FormControl(0)
-  zoom = new FormControl(this.DEFAULT_SCALE)
+  currentPage = new UntypedFormControl(0)
+  zoom = new UntypedFormControl(this.DEFAULT_SCALE)
   isSmallViewPort = false
   realTimeProgressRequest = {
     content_type: 'Resource',

@@ -4,7 +4,7 @@ import {
 } from '@angular/core'
 import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
 import { ActivatedRoute, Event, Data, Router, NavigationEnd } from '@angular/router'
-import { FormControl, Validators } from '@angular/forms'
+import { UntypedFormControl, Validators } from '@angular/forms'
 import { HttpErrorResponse } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core'
 import { Subscription, Observable, Subject } from 'rxjs'
@@ -45,8 +45,8 @@ import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection/src/lib/_
 import { NsCardContent } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.model'
 import { environment } from 'src/environments/environment'
 import { TimerService } from '../../services/timer.service'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -136,7 +136,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   batchDataSubscription: Subscription | null = null
   resumeDataSubscription: Subscription | null = null
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef
-  batchControl = new FormControl('', Validators.required)
+  batchControl = new UntypedFormControl('', Validators.required)
   contentProgress = 0
   bannerUrl: SafeStyle | null = null
   routePath = 'overview'

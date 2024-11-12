@@ -8,11 +8,11 @@ import { CourseCompletionDialogModule } from '../course-completion-dialog/course
 import { TranslateModule } from '@ngx-translate/core'
 import { ShareTocModule } from '@ws/app/src/lib/routes/app-toc/share-toc/share-toc.module'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatIconModule } from '@angular/material/icon'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 @NgModule({
   declarations: [ViewerTopBarComponent],
   imports: [

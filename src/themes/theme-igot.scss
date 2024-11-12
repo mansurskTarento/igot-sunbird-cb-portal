@@ -1,4 +1,4 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @import './theme-mixins';
 // Plus imports for other components in your app.
 // @include mat-core();
@@ -94,7 +94,7 @@ $theme-background: mat.define-palette(mat.$blue-palette);
         // @include mat-checkbox-theme($candy-app-theme);
         // @include mat-core($custom-typography);
         // @include angular-material-typography($custom-typography);
-        @include mat.all-component-themes($theme);
+        @include mat.all-legacy-component-themes($theme);
         @include theme-based-configurations($theme);
         $background: $background-color;
     }
@@ -107,7 +107,7 @@ $theme-background: mat.define-palette(mat.$blue-palette);
         $background: map_merge($background, (background: $custom-background-color));
         $theme: map_merge($theme, (background: $background));
         // @include angular-material-typography($custom-typography);
-        @include mat.all-component-themes($theme);
+        @include mat.all-legacy-component-themes($theme);
         @include theme-based-configurations($theme);
         $background: $background-color;
     }

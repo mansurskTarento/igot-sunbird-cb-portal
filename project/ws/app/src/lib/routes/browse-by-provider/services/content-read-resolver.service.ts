@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
@@ -9,10 +9,7 @@ import { environment } from 'src/environments/environment'
 @Injectable({
   providedIn: 'root',
 })
-export class ContentReadResolverService implements
-  Resolve<
-  Observable<IResolveResponse<any>> | IResolveResponse<any>
-  > {
+export class ContentReadResolverService  {
   constructor(private contentSvc: WidgetContentService) {}
 
   resolve(

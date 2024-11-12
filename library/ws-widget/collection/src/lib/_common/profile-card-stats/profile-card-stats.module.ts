@@ -7,27 +7,26 @@ import { SlidersDynamicModule } from './../../sliders-dynamic/sliders-dynamic.mo
 import { PipeDurationTransformModule, PipeOrdinalModule } from '@sunbird-cb/utils-v2'
 import { WeeklyClapsModule } from '../weekly-claps/weekly-claps.module'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [ProfileCardStatsComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatIconModule,
-    AvatarPhotoModule,
-    SlidersDynamicModule,
-    PipeDurationTransformModule,
-    WeeklyClapsModule,
-    TranslateModule,
-    PipeOrdinalModule,
-  ],
-  exports: [
-    ProfileCardStatsComponent,
-  ],
-  entryComponents: [ProfileCardStatsComponent],
+    declarations: [ProfileCardStatsComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatIconModule,
+        AvatarPhotoModule,
+        SlidersDynamicModule,
+        PipeDurationTransformModule,
+        WeeklyClapsModule,
+        TranslateModule,
+        PipeOrdinalModule,
+    ],
+    exports: [
+        ProfileCardStatsComponent,
+    ]
 })
 export class ProfileCardStatsModule { }

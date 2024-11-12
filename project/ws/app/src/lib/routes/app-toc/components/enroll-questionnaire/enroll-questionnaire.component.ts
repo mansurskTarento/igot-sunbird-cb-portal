@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
@@ -47,7 +47,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   isReadOnly = false
   batchDetails: any
   customForm: boolean = false
-  userDetailsForm: FormGroup
+  userDetailsForm: UntypedFormGroup
   groupData: any | undefined
   private destroySubject$ = new Subject()
   designationsMeta: any
@@ -88,7 +88,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   timeLeft = 150
   interval: any
   showResendOTP = false
-  otpForm: FormGroup
+  otpForm: UntypedFormGroup
   showname = false
   showDesignation = false
   showGroup = false
@@ -117,33 +117,33 @@ export class EnrollQuestionnaireComponent implements OnInit {
   ) { 
 
     this.batchDetails = this.data.batchData
-    this.userDetailsForm = new FormGroup({
-      group: new FormControl(''),
-      designation: new FormControl(''),
-      employeeCode: new FormControl(''),
+    this.userDetailsForm = new UntypedFormGroup({
+      group: new UntypedFormControl(''),
+      designation: new UntypedFormControl(''),
+      employeeCode: new UntypedFormControl(''),
       // primaryEmail: new FormControl('', ),
-      mobile: new FormControl(''),
-      gender: new FormControl('', []),
-      dob: new FormControl('', []),
-      domicileMedium: new FormControl(''),
-      category: new FormControl('', []),
-      pincode: new FormControl(''),
-      isCadre: new FormControl(),
-      typeOfCivilService: new FormControl(''),
-      serviceType: new FormControl(''),
-      cadreName: new FormControl(''),
-      cadreBatch: new FormControl(''),
-      cadreControllingAuthority: new FormControl(''),
+      mobile: new UntypedFormControl(''),
+      gender: new UntypedFormControl('', []),
+      dob: new UntypedFormControl('', []),
+      domicileMedium: new UntypedFormControl(''),
+      category: new UntypedFormControl('', []),
+      pincode: new UntypedFormControl(''),
+      isCadre: new UntypedFormControl(),
+      typeOfCivilService: new UntypedFormControl(''),
+      serviceType: new UntypedFormControl(''),
+      cadreName: new UntypedFormControl(''),
+      cadreBatch: new UntypedFormControl(''),
+      cadreControllingAuthority: new UntypedFormControl(''),
     })
     this.getUserDetails()
     
-    this.otpForm = new FormGroup({
-      otp: new FormControl('', Validators.required)
+    this.otpForm = new UntypedFormGroup({
+      otp: new UntypedFormControl('', Validators.required)
     })
 
     if (this.userDetailsForm.get('mobile')) {
       this.userDetailsForm.get('mobile')!.valueChanges
-        .subscribe(res => {
+        .subscribe((res:any) => {
           if (res && !this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
             if (MOBILE_PATTERN.test(res)) {
               this.verifyMobile = true

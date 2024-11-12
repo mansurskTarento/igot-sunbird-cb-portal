@@ -6,18 +6,18 @@ import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
-import { MatRadioModule } from '@angular/material/radio'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatStepperModule } from '@angular/material/stepper'
-import { MatTabsModule } from '@angular/material/tabs'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTreeModule } from '@angular/material/tree'
 import { ImageCropModule, PipeOrderByModule } from '@sunbird-cb/utils-v2'
@@ -46,164 +46,150 @@ import { StatusContentDisplayComponent } from './components/status-content-displ
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { HttpLoaderFactory } from 'src/app/app.module'
-import { MatAutocompleteModule } from '@angular/material/autocomplete'
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
-import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatChipsModule } from '@angular/material/chips'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
 import { MatNativeDateModule } from '@angular/material/core'
-import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatSelectModule } from '@angular/material/select'
+import { MatLegacyDialogModule as MatDialogModule, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatSlideToggleModule } from '@angular/material/slide-toggle'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
-  declarations: [
-    RelativeUrlPipe,
-    CommentsComponent,
-    NotificationComponent,
-    CommentsDialogComponent,
-    IprDialogComponent,
-    ConfirmDialogComponent,
-    AuthEditorStepsComponent,
-    ErrorParserComponent,
-    AuthExpiryDateConfirmComponent,
-    StatusDisplayComponent,
-    LastUpdateDisplayComponent,
-    ExpiryDateDisplayComponent,
-    DeleteDialogComponent,
-    RestoreDialogComponent,
-    UnpublishDialogComponent,
-    DraftDialogComponent,
-    ShowHideToolTipDirective,
-    StatusTrackComponent,
-    FeedbackFormComponent,
-    StatusContentDisplayComponent,
-  ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatGridListModule,
-    MatStepperModule,
-    MatTabsModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatMenuModule,
-    MatCheckboxModule,
-    MatSidenavModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatDialogModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatListModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatChipsModule,
-    MatDialogModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule,
-    MatTreeModule,
-    MatRadioModule,
-    MatProgressBarModule,
-    ImageCropModule,
-    PipeContentRouteModule,
-    PipeOrderByModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-  ],
-  exports: [
-    MatIconModule,
-    MatToolbarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatGridListModule,
-    MatCardModule,
-    MatStepperModule,
-    MatTabsModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    RelativeUrlPipe,
-    MatTooltipModule,
-    CommentsComponent,
-    MatAutocompleteModule,
-    MatDialogModule,
-    MatTooltipModule,
-    MatMenuModule,
-    MatSidenavModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatExpansionModule,
-    MatListModule,
-    MatSnackBarModule,
-    NotificationComponent,
-    CommentsDialogComponent,
-    ConfirmDialogComponent,
-    MatSelectModule,
-    MatChipsModule,
-    MatDialogModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule,
-    MatTreeModule,
-    MatRadioModule,
-    MatProgressBarModule,
-    IprDialogComponent,
-    ImageCropModule,
-    AuthEditorStepsComponent,
-    ErrorParserComponent,
-    PipeContentRouteModule,
-    StatusDisplayComponent,
-    LastUpdateDisplayComponent,
-    DeleteDialogComponent,
-    RestoreDialogComponent,
-    UnpublishDialogComponent,
-    DraftDialogComponent,
-    ShowHideToolTipDirective,
-    StatusTrackComponent,
-    FeedbackFormComponent,
-    StatusContentDisplayComponent,
-    TranslateModule,
-  ],
-  providers: [
-    ApiService,
-    AccessControlService,
-    ConditionCheckService,
-    WorkFlowService,
-    NotificationService,
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} },
-  ],
-  entryComponents: [
-    AuthExpiryDateConfirmComponent,
-    NotificationComponent,
-    IprDialogComponent,
-    CommentsDialogComponent,
-    ConfirmDialogComponent,
-    ErrorParserComponent,
-    DeleteDialogComponent,
-    RestoreDialogComponent,
-    UnpublishDialogComponent,
-    DraftDialogComponent,
-    StatusTrackComponent,
-    FeedbackFormComponent,
-  ],
+    declarations: [
+        RelativeUrlPipe,
+        CommentsComponent,
+        NotificationComponent,
+        CommentsDialogComponent,
+        IprDialogComponent,
+        ConfirmDialogComponent,
+        AuthEditorStepsComponent,
+        ErrorParserComponent,
+        AuthExpiryDateConfirmComponent,
+        StatusDisplayComponent,
+        LastUpdateDisplayComponent,
+        ExpiryDateDisplayComponent,
+        DeleteDialogComponent,
+        RestoreDialogComponent,
+        UnpublishDialogComponent,
+        DraftDialogComponent,
+        ShowHideToolTipDirective,
+        StatusTrackComponent,
+        FeedbackFormComponent,
+        StatusContentDisplayComponent,
+    ],
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatGridListModule,
+        MatStepperModule,
+        MatTabsModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatCardModule,
+        MatMenuModule,
+        MatCheckboxModule,
+        MatSidenavModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatDialogModule,
+        MatTooltipModule,
+        MatExpansionModule,
+        MatListModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatChipsModule,
+        MatDialogModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatProgressSpinnerModule,
+        MatSlideToggleModule,
+        MatTreeModule,
+        MatRadioModule,
+        MatProgressBarModule,
+        ImageCropModule,
+        PipeContentRouteModule,
+        PipeOrderByModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+    ],
+    exports: [
+        MatIconModule,
+        MatToolbarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatGridListModule,
+        MatCardModule,
+        MatStepperModule,
+        MatTabsModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        RelativeUrlPipe,
+        MatTooltipModule,
+        CommentsComponent,
+        MatAutocompleteModule,
+        MatDialogModule,
+        MatTooltipModule,
+        MatMenuModule,
+        MatSidenavModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatExpansionModule,
+        MatListModule,
+        MatSnackBarModule,
+        NotificationComponent,
+        CommentsDialogComponent,
+        ConfirmDialogComponent,
+        MatSelectModule,
+        MatChipsModule,
+        MatDialogModule,
+        MatCheckboxModule,
+        MatDatepickerModule,
+        MatProgressSpinnerModule,
+        MatSlideToggleModule,
+        MatTreeModule,
+        MatRadioModule,
+        MatProgressBarModule,
+        IprDialogComponent,
+        ImageCropModule,
+        AuthEditorStepsComponent,
+        ErrorParserComponent,
+        PipeContentRouteModule,
+        StatusDisplayComponent,
+        LastUpdateDisplayComponent,
+        DeleteDialogComponent,
+        RestoreDialogComponent,
+        UnpublishDialogComponent,
+        DraftDialogComponent,
+        ShowHideToolTipDirective,
+        StatusTrackComponent,
+        FeedbackFormComponent,
+        StatusContentDisplayComponent,
+        TranslateModule,
+    ],
+    providers: [
+        ApiService,
+        AccessControlService,
+        ConditionCheckService,
+        WorkFlowService,
+        NotificationService,
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MatDialogRef, useValue: {} },
+    ]
 })
 export class SharedModule { }

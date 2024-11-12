@@ -5,7 +5,7 @@ import { NSBrowseCompetency } from '../../models/competencies.model'
 import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { LocalDataService } from '../../services/localService';
 
@@ -26,7 +26,7 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   mimeType: any = []
   sourceType: any = []
   mediaType: any = []
-  filterForm: FormGroup | undefined
+  filterForm: UntypedFormGroup | undefined
   facets: any
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school' },
@@ -58,8 +58,8 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.displayLoader = this.browseCompServ.isLoading()
-    this.filterForm = new FormGroup({
-      filters: new FormControl(''),
+    this.filterForm = new UntypedFormGroup({
+      filters: new UntypedFormControl(''),
     })
     this.paramSubscription = this.activatedRoute.params.subscribe(async params => {
       this.competencyName = _.get(params, 'competency')

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, Input } from '@angular/core'
-import { FormGroup, FormControl } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { GbSearchService } from '../../services/gb-search.service'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -18,7 +18,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy {
   @Input() urlparamFilters!: any
   @Output() appliedFilter = new EventEmitter<any>()
   @Input() karmayogiBadge: any
-  filterForm: FormGroup | undefined
+  filterForm: UntypedFormGroup | undefined
   filteroptions: any = []
   userFilters: any = []
   myFilterArray: any = []
@@ -190,8 +190,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy {
     //   })
     // }
 
-    this.filterForm = new FormGroup({
-      filters: new FormControl(''),
+    this.filterForm = new UntypedFormGroup({
+      filters: new UntypedFormControl(''),
     })
     this.subscription = this.searchSrvc.notifyObservable$.subscribe((res: any) => {
       const fil = {

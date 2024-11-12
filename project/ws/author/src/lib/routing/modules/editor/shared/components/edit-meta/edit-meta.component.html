@@ -323,7 +323,7 @@
                     <mat-form-field appearance="outline" class="margin-top-xs"
                       [ngClass]="{ 'mat-form-field-invalid': showError('description') }">
                       <textarea cdkTextareaAutosize name="description" #description class="resize-none"
-                        [matTextareaAutosize]="true" maxlength="2000" matInput rows="3" formControlName="description"
+                        [cdkTextareaAutosize]="true" maxlength="2000" matInput rows="3" formControlName="description"
                         i18n-placeholder placeholder="Description will appear on card"
                         [required]="checkCondition('description', 'required') ? true : null">
                   </textarea>

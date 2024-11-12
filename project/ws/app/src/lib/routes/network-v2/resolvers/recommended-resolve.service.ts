@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 import { } from '@sunbird-cb/collection'
@@ -13,9 +13,7 @@ import { NSNetworkDataV2 } from '../models/network-v2.model'
 @Injectable({
   providedIn: 'root',
 })
-export class RecommendedResolveService implements
-  Resolve<Observable<IResolveResponse<NSNetworkDataV2.IRecommendedUserResponse>> |
-  IResolveResponse<NSNetworkDataV2.IRecommendedUserResponse>> {
+export class RecommendedResolveService  {
   constructor(
     private networkV2Service: NetworkV2Service,
     // private configSvc: ConfigurationsService

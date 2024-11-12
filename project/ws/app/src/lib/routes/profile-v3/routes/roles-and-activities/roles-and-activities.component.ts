@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
 // tslint:disable-next-line
@@ -10,9 +10,9 @@ import { DialogConfirmComponent } from 'src/app/component/dialog-confirm/dialog-
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatDialogRef, MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 @Component({
     selector: 'ws-app-roles-and-activities',
     templateUrl: './roles-and-activities.component.html',
@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
     /* tslint:enable */
 })
 export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
-    createRole!: FormGroup
+    createRole!: UntypedFormGroup
     public selectedActivity: any[] = []
     separatorKeysCodes: number[] = [ENTER, COMMA]
     userRoles: NSProfileDataV3.IRolesAndActivities[] = []
@@ -48,7 +48,8 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private router: Router,
         private snackBar: MatSnackBar,
-        private translate: TranslateService) {
+        private translate: TranslateService,
+        ) {
         this.updateRoles()
         if (localStorage.getItem('websiteLanguage')) {
             this.translate.setDefaultLang('en')
@@ -61,9 +62,9 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
         this.userRoles = _.get(this.configSvc.unMappedUser, 'profileDetails.userRoles') || []
     }
     ngOnInit(): void {
-        this.createRole = new FormGroup({
-            roleName: new FormControl('', [Validators.required]),
-            activity: new FormControl('', [Validators.required]),
+        this.createRole = new UntypedFormGroup({
+            roleName: new UntypedFormControl('', [Validators.required]),
+            activity: new UntypedFormControl('', [Validators.required]),
         })
     }
     ngOnDestroy(): void {
@@ -229,9 +230,9 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
             })
             // this.textBoxActive = true
             this.selectedActivity = []
-            _.each(role.activities, a => {
-                this.addActivity({ input: this.act, value: a.name })
-            })
+            // _.each(role.activities, a => {
+            //    // this.addActivity({ input: this.act, value: a.name, this.matChipInput })
+            // })
             // this.selectedActivity=role.activities
             this.router.navigate(['app', 'setup', 'roles'], { fragment: 'maindiv' })
         }

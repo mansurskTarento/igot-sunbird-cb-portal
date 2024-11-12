@@ -1,6 +1,6 @@
 // tslint:disable-next-line: max-line-length
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_STATIC, CONTENT_BASE_STREAM, CONTENT_BASE_WEBHOST, CONTENT_BASE_WEBHOST_ASSETS } from './constants/apiEndpoints'
 import { NOTIFICATION_TIME } from './constants/constant'
 import { Notify } from './constants/notificationMessage'

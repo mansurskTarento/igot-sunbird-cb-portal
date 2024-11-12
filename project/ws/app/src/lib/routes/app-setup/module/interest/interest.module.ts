@@ -5,11 +5,11 @@ import { HorizontalScrollerModule, PipePublicURLModule } from '@sunbird-cb/utils
 
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 import { InterestService } from '../../../profile/routes/interest/services/interest.service'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import { MatIconModule } from '@angular/material/icon'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatToolbarModule } from '@angular/material/toolbar'
 
 @NgModule({

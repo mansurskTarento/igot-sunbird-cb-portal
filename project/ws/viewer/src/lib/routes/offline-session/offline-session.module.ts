@@ -27,10 +27,10 @@ import { OfflineSessionComponent } from './offline-session.component'
 import { RouterModule, Routes } from '@angular/router'
 import { ViewerResolve } from '../../viewer.resolve'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 
 const routes: Routes = [
   {

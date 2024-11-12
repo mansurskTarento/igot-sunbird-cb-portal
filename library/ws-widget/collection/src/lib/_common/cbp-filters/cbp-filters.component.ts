@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core'
 import { Component, Input, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren, Inject } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { MAT_BOTTOM_SHEET_DATA, MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import { AppCbpPlansService } from 'src/app/services/app-cbp-plans.service'
 // tslint:disable
@@ -64,7 +64,7 @@ export class CbpFiltersComponent implements OnInit {
 	competencyThemeOriginalList: any[] = []
 	competencySubThemeOriginalList: any[] = []
 	filterObjEmpty: any
-	searchThemeControl = new FormControl()
+	searchThemeControl = new UntypedFormControl()
 	@ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
 	compentencyKey!: NsContent.ICompentencyKeys
 

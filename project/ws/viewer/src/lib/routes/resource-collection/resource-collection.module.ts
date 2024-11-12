@@ -29,10 +29,10 @@ import { ResourceCollectionComponent } from './resource-collection.component'
 import {
   ResourceCollectionModule as ResourceCollectionViewContainerModule,
 } from '../../route-view-container/resource-collection/resource-collection.module'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 
 @NgModule({
   declarations: [ResourceCollectionComponent],

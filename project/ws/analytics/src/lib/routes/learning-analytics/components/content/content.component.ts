@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 import { PageEvent } from '@angular/material'
 import { LearningAnalyticsService } from '../../services/learning-analytics.service'
-import { MatPaginator } from '@angular/material/paginator'
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
 import { NsAnalytics } from '../../models/learning-analytics.model'
 import { TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'

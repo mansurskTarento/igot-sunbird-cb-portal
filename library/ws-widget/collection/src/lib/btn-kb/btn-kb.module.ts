@@ -6,39 +6,37 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MarkAsCompleteModule } from '../_common/mark-as-complete/mark-as-complete.module'
 import { BtnKbConfirmComponent } from './btn-kb-confirm/btn-kb-confirm.component'
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatSelectModule } from '@angular/material/select'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
-  declarations: [BtnKbComponent, BtnKbDialogComponent, BtnKbConfirmComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatProgressSpinnerModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatTooltipModule,
-    MarkAsCompleteModule,
-    MatDividerModule,
-
-  ],
-  exports: [BtnKbComponent],
-  entryComponents: [BtnKbDialogComponent, BtnKbConfirmComponent],
+    declarations: [BtnKbComponent, BtnKbDialogComponent, BtnKbConfirmComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatProgressSpinnerModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatExpansionModule,
+        MatTooltipModule,
+        MarkAsCompleteModule,
+        MatDividerModule,
+    ],
+    exports: [BtnKbComponent]
 })
 export class BtnKbModule { }

@@ -1,5 +1,5 @@
 import { AfterViewChecked, ChangeDetectorRef, OnDestroy, Component, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { Subscription } from 'rxjs'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'

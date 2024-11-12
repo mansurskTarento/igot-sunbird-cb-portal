@@ -4,9 +4,8 @@ import { NsContent, UtilityService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
-import { MatTabGroup, MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacyTabGroup as MatTabGroup, MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
-
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',

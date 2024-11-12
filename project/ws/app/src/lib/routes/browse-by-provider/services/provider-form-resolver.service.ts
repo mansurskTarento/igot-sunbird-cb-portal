@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
@@ -9,8 +9,7 @@ import { FormExtService } from 'src/app/services/form-ext.service'
   providedIn: 'root',
 })
 export class ProviderFormResolverService
-implements
-Resolve<Observable<IResolveResponse<any>> | IResolveResponse<any>> {
+ {
 constructor(
 private router: Router,
 private formSvc: FormExtService) {}

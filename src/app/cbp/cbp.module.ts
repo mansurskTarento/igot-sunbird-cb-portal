@@ -26,57 +26,53 @@ import { FilterSearchPipeModule } from '../pipes/filter-search/filter-search.mod
 import { TranslateModule } from '@ngx-translate/core'
 import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet'
-import { MatCardModule } from '@angular/material/card'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatRadioModule } from '@angular/material/radio'
-import { MatTabsModule } from '@angular/material/tabs'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 @NgModule({
-  declarations: [CbpPlanComponent, CbpPlanStatsComponent, MyCompetencyPassbookComponent,
-    UpcomingTimelineComponent,
-    OverduePlanComponent,
-    CbpPlanFeedComponent,
-    FilterComponent,
-     CbpSideBarComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CbpRoutingModule,
-    MatExpansionModule,
-    GridLayoutModule,
-    SlidersModule,
-    ContentStripWithTabsModule,
-    MatBottomSheetModule,
-    MatCardModule,
-    MatIconModule,
-    MatCheckboxModule,
-    SharedModule,
-    MatTabsModule,
-    ProfileCardStatsModule,
-    UserLeaderboardModule,
-    MatIconModule,
-    SkeletonLoaderModule,
-    PipeRelativeTimeModule,
-    AvatarPhotoModule,
-    CardContentV2Module,
-    FilterSearchPipeModule,
-    MatMenuModule,
-    MatRadioModule,
-    TranslateModule,
-  ],
-  exports: [
-    HeaderModule,
-    MatCardModule,
-    SharedModule,
-  ],
-  providers: [
-  ],
-  entryComponents: [
-    FilterComponent,
-  ],
+    declarations: [CbpPlanComponent, CbpPlanStatsComponent, MyCompetencyPassbookComponent,
+        UpcomingTimelineComponent,
+        OverduePlanComponent,
+        CbpPlanFeedComponent,
+        FilterComponent,
+        CbpSideBarComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        CbpRoutingModule,
+        MatExpansionModule,
+        GridLayoutModule,
+        SlidersModule,
+        ContentStripWithTabsModule,
+        MatBottomSheetModule,
+        MatCardModule,
+        MatIconModule,
+        MatCheckboxModule,
+        SharedModule,
+        MatTabsModule,
+        ProfileCardStatsModule,
+        UserLeaderboardModule,
+        MatIconModule,
+        SkeletonLoaderModule,
+        PipeRelativeTimeModule,
+        AvatarPhotoModule,
+        CardContentV2Module,
+        FilterSearchPipeModule,
+        MatMenuModule,
+        MatRadioModule,
+        TranslateModule,
+    ],
+    exports: [
+        HeaderModule,
+        MatCardModule,
+        SharedModule,
+    ],
+    providers: []
 })
 export class CbpModule { }

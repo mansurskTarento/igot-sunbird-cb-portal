@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { Chart, ChartOptions } from 'chart.js'
 import { IWidgetGraphData, TChartJsGraphType, TChartJsColorPalette } from './graph-general.model'
@@ -29,14 +29,14 @@ export class GraphGeneralComponent extends WidgetBaseComponent
   @Input() widgetData!: IWidgetGraphData
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef<HTMLDivElement>
   generalChart: Chart | null = null
-  customizeForm: FormGroup
+  customizeForm: UntypedFormGroup
   graphPalettes = COLOR_PALETTE
   itemObj: any
   graphTypes = GRAPH_TYPES
   graphDataType: TChartJsGraphType = ''
   graphPalette: TChartJsColorPalette = 'default'
   graphOptions = {}
-  constructor(private _formBuilder: FormBuilder, private graphGeneralSvc: GraphGeneralService) {
+  constructor(private _formBuilder: UntypedFormBuilder, private graphGeneralSvc: GraphGeneralService) {
     super()
     this.customizeForm = this._formBuilder.group({
       colorPalette: ['', Validators.required],

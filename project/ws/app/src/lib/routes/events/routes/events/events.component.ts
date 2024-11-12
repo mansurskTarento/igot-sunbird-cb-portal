@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { EventService } from '../../services/events.service'
 import moment from 'moment'
 import { ConfigurationsService, WsEvents, EventService as EventServiceGlobal } from '@sunbird-cb/utils-v2'
-import { MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
@@ -19,7 +19,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 })
 export class EventsComponent implements OnInit {
   data!: NSDiscussData.IDiscussionData
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   currentFilter = 'timestamp'
   pager = {}
   paginationData!: any

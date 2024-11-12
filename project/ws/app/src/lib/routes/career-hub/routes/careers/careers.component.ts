@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { DiscussService } from '../../../discuss/services/discuss.service'
 import { WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
@@ -14,7 +14,7 @@ import * as _ from 'lodash'
 })
 export class CareersComponent implements OnInit {
   data!: NSDiscussData.IDiscussionData
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   currentFilter = 'timestamp'
   pager = {}
   paginationData!: any

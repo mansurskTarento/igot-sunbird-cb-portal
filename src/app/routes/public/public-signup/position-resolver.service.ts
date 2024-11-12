@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
@@ -7,10 +7,7 @@ import { SignupService } from './signup.service'
 
 @Injectable()
 export class AppPublicPositionResolverService
-    implements
-    Resolve<
-    Observable<IResolveResponse<any>> | IResolveResponse<any>
-    > {
+     {
     constructor(
         private signupService: SignupService,
     ) { }

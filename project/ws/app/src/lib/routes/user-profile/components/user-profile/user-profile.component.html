@@ -653,8 +653,8 @@
                       {{'userProfile.postalAddress' | translate }}
                     </label>
                     <mat-form-field appearance="outline" class="w-full margin-top-xs">
-                      <textarea id="postalAddress" class="postal-address" matInput [matTextareaAutosize]="true"
-                        [matAutosizeMaxRows]="10" [matAutosizeMinRows]="3" maxlength="200"
+                      <textarea id="postalAddress" class="postal-address" matInput [cdkTextareaAutosize]="true"
+                        [cdkAutosizeMaxRows]="10" [cdkAutosizeMinRows]="3" maxlength="200"
                         formControlName="residenceAddress" placeholder="{{'userProfile.rAddressPlaceholder' | translate }}"
                         i18n-placeholder #residenceAddress i18n-aria-label
                         aria-label="Postal Address textarea input"></textarea>
@@ -941,8 +941,8 @@
                       {{'userProfile.description' | translate }}
                     </label>
                     <mat-form-field appearance="outline" class="margin-top-xs full-width">
-                      <textarea id="description" matInput [matTextareaAutosize] [matAutosizeMaxRows]="10"
-                        [matAutosizeMinRows]="4" maxlength="500" formControlName="orgDesc"
+                      <textarea id="description" matInput [cdkTextareaAutosize] [cdkAutosizeMaxRows]="10"
+                        [cdkAutosizeMinRows]="4" maxlength="500" formControlName="orgDesc"
                         placeholder="{{'userProfile.orgDescriptionPlaceholder' | translate }}" i18n-placeholder #orgDesc
                         [attr.disabled]="!isAllowed('description')"></textarea>
                       <mat-hint align="end">{{ orgDesc.value.length }} / 500 {{'userProfile.characters' | translate }}</mat-hint>
@@ -1392,8 +1392,8 @@
                       Description
                     </label>
                     <mat-form-field appearance="outline" class="margin-top-xs full-width">
-                      <textarea id="skillDesc" matInput [matTextareaAutosize] [matAutosizeMaxRows]="10"
-                        [matAutosizeMinRows]="4" formControlName="skillAquiredDesc"
+                      <textarea id="skillDesc" matInput [cdkTextareaAutosize] [cdkAutosizeMaxRows]="10"
+                        [cdkAutosizeMinRows]="4" formControlName="skillAquiredDesc"
                         placeholder="Skills acquired or courses completed" i18n-placeholder
                         #skillAquiredDesc></textarea> -->
         <!-- <mat-hint align="end">{{ skillAquiredDesc.value.length }} /200 characters</mat-hint>
@@ -1409,8 +1409,8 @@
                       Description
                     </label>
                     <mat-form-field appearance="outline" class="margin-top-xs full-width">
-                      <textarea id="certDetail" matInput [matTextareaAutosize] [matAutosizeMaxRows]="10"
-                        [matAutosizeMinRows]="4" formControlName="certificationDesc"
+                      <textarea id="certDetail" matInput [cdkTextareaAutosize] [cdkAutosizeMaxRows]="10"
+                        [cdkAutosizeMinRows]="4" formControlName="certificationDesc"
                         placeholder="Provide certification details" i18n-placeholder #certificationDesc></textarea> -->
         <!-- <mat-hint align="end">{{ certificationDesc.value.length }} /200 characters</mat-hint>
                       <mat-error >

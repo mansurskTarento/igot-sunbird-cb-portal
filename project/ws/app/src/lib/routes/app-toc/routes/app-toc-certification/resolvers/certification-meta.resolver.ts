@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
@@ -9,7 +9,7 @@ import { CertificationApiService } from '../apis/certification-api.service'
 import { map, catchError } from 'rxjs/operators'
 
 @Injectable()
-export class CertificationMetaResolver implements Resolve<IResolveResponse<ICertificationMeta>> {
+export class CertificationMetaResolver  {
   constructor(private certificationApi: CertificationApiService) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IResolveResponse<ICertificationMeta>> {

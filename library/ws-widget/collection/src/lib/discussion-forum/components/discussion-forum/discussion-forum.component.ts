@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from '@angular/core'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { EditorQuillComponent } from '../../editor-quill/editor-quill.component'

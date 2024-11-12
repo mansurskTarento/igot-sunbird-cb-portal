@@ -76,7 +76,7 @@ import { SbUiResolverModule } from '@sunbird-cb/resolver-v2'
 import { LoggerService, PipeSafeSanitizerModule, ConfigurationsService, PipeOrderByModule, NPSGridService } from '@sunbird-cb/utils-v2'
 import { SearchModule } from '@ws/app/src/public-api'
 import 'hammerjs'
-import { KeycloakAngularModule } from 'keycloak-angular'
+// import { KeycloakAngularModule } from 'keycloak-angular'
 import { AppRoutingModule } from './app-routing.module'
 import { InitService } from './services/init.service'
 import { GlobalErrorHandlingService } from './services/global-error-handling.service'
@@ -140,29 +140,28 @@ import {
 } from '@sunbird-cb/consumption'
 import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
 import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import { PublicExtTocModule } from './routes/public/public-ext-toc/public-ext-toc.module'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatRippleModule } from '@angular/material/core'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { MatProgressSpinnerModule, MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material/progress-spinner'
-import { MatSelectModule } from '@angular/material/select'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule, MAT_LEGACY_PROGRESS_SPINNER_DEFAULT_OPTIONS as MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material/legacy-progress-spinner'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatSliderModule } from '@angular/material/slider'
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar'
-import { MatTableModule } from '@angular/material/table'
-import { MatTabsModule } from '@angular/material/tabs'
+import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider'
+import { MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/legacy-snack-bar'
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatTooltipModule } from '@angular/material/tooltip'
-
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -227,70 +226,69 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientJsonpModule,
     BrowserModule,
     BrowserAnimationsModule,
-    KeycloakAngularModule,
     AppRoutingModule,
     AvatarPhotoModule,
-  BtnAppsModule,
-  BtnCallModule,
-  BtnCatalogModule,
-  BtnChannelAnalyticsModule,
-  BtnContentDownloadModule,
-  BtnContentFeedbackModule,
-  BtnContentLikeModule,
-  BtnContentMailMeModule,
-  BtnContentShareModule,
-  BtnFullscreenModule,
-  BtnGoalsModule,
-  BtnMailUserModule,
-  BtnPageBackNavModule,
-  BtnPageBackModule,
-  BtnPlaylistModule,
-  BtnPreviewModule,
-  BtnSettingsModule,
-  CardBreadcrumbModule,
-  CardChannelModule,
-  CardContentModule,
-  CardWelcomeModule,
-  CardNetworkModule,
-  CardHomeTopModule,
-  CardBrowseCourseModule,
-  ChannelHubModule,
-  ContentStripMultipleModule,
-  ContentStripSingleModule,
-  DiscussionForumModule,
-  ElementHtmlModule,
-  EmbeddedPageModule,
-  GalleryViewModule,
-  GraphGeneralModule,
-  GridLayoutModule,
-  ImageMapResponsiveModule,
-  IntranetSelectorModule,
-  LayoutLinearModule,
-  LayoutTabModule,
-  PageModule,
-  PickerContentModule,
-  PlayerAmpModule,
-  PlayerAudioModule,
-  PlayerPdfModule,
-  PlayerSlidesModule,
-  PlayerVideoModule,
-  PlayerWebPagesModule,
-  PlayerYoutubeModule,
-  ReleaseNotesModule,
-  SelectorResponsiveModule,
-  SlidersMobModule,
-  SlidersModule,
-  TreeCatalogModule,
-  TreeModule,
-  CardHubsListModule,
-  CardNetworkHomeModule,
-  CardActivityModule,
-  BtnFeatureModule,
-  UIAdminTableModule,
-  LeftMenuModule,
-  UIORGTableModule,
-  BreadcrumbsOrgModule,
-  CardsModule,
+    BtnAppsModule,
+    BtnCallModule,
+    BtnCatalogModule,
+    BtnChannelAnalyticsModule,
+    BtnContentDownloadModule,
+    BtnContentFeedbackModule,
+    BtnContentLikeModule,
+    BtnContentMailMeModule,
+    BtnContentShareModule,
+    BtnFullscreenModule,
+    BtnGoalsModule,
+    BtnMailUserModule,
+    BtnPageBackNavModule,
+    BtnPageBackModule,
+    BtnPlaylistModule,
+    BtnPreviewModule,
+    BtnSettingsModule,
+    CardBreadcrumbModule,
+    CardChannelModule,
+    CardContentModule,
+    CardWelcomeModule,
+    CardNetworkModule,
+    CardHomeTopModule,
+    CardBrowseCourseModule,
+    ChannelHubModule,
+    ContentStripMultipleModule,
+    ContentStripSingleModule,
+    DiscussionForumModule,
+    ElementHtmlModule,
+    EmbeddedPageModule,
+    GalleryViewModule,
+    GraphGeneralModule,
+    GridLayoutModule,
+    ImageMapResponsiveModule,
+    IntranetSelectorModule,
+    LayoutLinearModule,
+    LayoutTabModule,
+    PageModule,
+    PickerContentModule,
+    PlayerAmpModule,
+    PlayerAudioModule,
+    PlayerPdfModule,
+    PlayerSlidesModule,
+    PlayerVideoModule,
+    PlayerWebPagesModule,
+    PlayerYoutubeModule,
+    ReleaseNotesModule,
+    SelectorResponsiveModule,
+    SlidersMobModule,
+    SlidersModule,
+    TreeCatalogModule,
+    TreeModule,
+    CardHubsListModule,
+    CardNetworkHomeModule,
+    CardActivityModule,
+    BtnFeatureModule,
+    UIAdminTableModule,
+    LeftMenuModule,
+    UIORGTableModule,
+    BreadcrumbsOrgModule,
+    CardsModule,
     WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG]),
     SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG]),
     StickyHeaderModule,
@@ -349,12 +347,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule,
   ],
   bootstrap: [RootComponent],
-  entryComponents: [
-    DialogConfirmComponent,
-    LoginComponent,
-    AppIntroComponent,
-    DialogBoxComponent,
-  ],
   providers: [
     {
       deps: [InitService, LoggerService],

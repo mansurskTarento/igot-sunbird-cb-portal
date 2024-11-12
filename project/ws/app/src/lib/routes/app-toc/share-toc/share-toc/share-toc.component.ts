@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output } from '@angular/core'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { ENTER } from '@angular/cdk/keycodes'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -9,21 +9,21 @@ import { AppTocService } from '../../services/app-toc.service'
 import {
   UserAutocompleteService,
 } from '@sunbird-cb/collection'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 @Component({
   selector: 'ws-app-share-toc',
   templateUrl: './share-toc.component.html',
   styleUrls: ['./share-toc.component.scss'],
 })
 export class ShareTocComponent implements OnInit {
-   shareForm: FormGroup | undefined
+   shareForm: UntypedFormGroup | undefined
    selectable = true
    removable = true
    addOnBlur = true
    separatorKeysCodes: number[] = [ENTER]
-   userCtrl = new FormControl('')
+   userCtrl = new UntypedFormControl('')
    filteredUsers: any []| undefined
    users: any[] = []
    allUsers: any[] = []
@@ -52,8 +52,8 @@ export class ShareTocComponent implements OnInit {
         this.translate.use(lang)
       }
     })
-    this.shareForm = new FormGroup({
-      review: new FormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
+    this.shareForm = new UntypedFormGroup({
+      review: new UntypedFormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
     })
     this.userCtrl.valueChanges.pipe(
       debounceTime(200),

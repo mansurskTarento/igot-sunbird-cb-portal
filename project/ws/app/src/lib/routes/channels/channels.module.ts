@@ -6,7 +6,7 @@ import { ChannelsHomeComponent } from './routes/channels-home/channels-home.comp
 import { CardChannelModule, CardChannelModuleV2, CardContentModule, BtnPageBackModule } from '@sunbird-cb/collection'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatToolbarModule } from '@angular/material/toolbar'
 @NgModule({
   declarations: [ChannelsHomeComponent],

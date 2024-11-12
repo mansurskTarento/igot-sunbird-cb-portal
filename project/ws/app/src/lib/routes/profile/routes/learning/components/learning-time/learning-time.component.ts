@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 // tslint:disable-next-line: max-line-length
 import {
@@ -102,7 +102,7 @@ export class LearningTimeComponent implements OnInit, AfterViewInit, OnDestroy {
   totalLearningHours = -1
   timeSpent = 0
   graphFetchStatus: TFetchStatus | null = null
-  monthForm: FormGroup
+  monthForm: UntypedFormGroup
   selectedMonth = 'April'
   selectedYear = '2019'
   viewTime = false
@@ -171,7 +171,7 @@ export class LearningTimeComponent implements OnInit, AfterViewInit, OnDestroy {
     .charts
   constructor(
     private router: Router,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: UntypedFormBuilder,
     private profileSvc: ProfileService,
     private valuesSvc: ValueService,
     private route: ActivatedRoute,

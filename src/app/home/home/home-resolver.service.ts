@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core'
-import { Resolve, Router } from '@angular/router'
+import { Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Injectable({
   providedIn: 'root',
 })
-export class HomeResolverService implements Resolve<any> {
+export class HomeResolverService  {
   constructor(private configSvc: ConfigurationsService,  private router: Router) {}
   resolve(): any {
     let isNotMyUser = false

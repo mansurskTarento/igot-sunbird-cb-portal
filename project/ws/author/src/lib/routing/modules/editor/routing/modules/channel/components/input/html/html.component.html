@@ -45,8 +45,8 @@
       </div>
       <div>
         <p >Enter Template Data</p>
-        <ws-auth-ace-editor [mode]="'json'" [content]="content.templateData || {}" (data)="update('templateData',$event)">
-        </ws-auth-ace-editor>
+        <!-- <ws-auth-ace-editor [mode]="'json'" [content]="content.templateData || {}" (data)="update('templateData',$event)">
+        </ws-auth-ace-editor> -->
       </div>
     </div>
     <div *ngSwitchCase="'templateUrl'">
@@ -89,6 +89,6 @@
       Enter proper css properties in key value pair inside the curly braces. e.g. {{'{'}} "background-color" : "blue" {{'}'}}
     </span>
   </h3>
-  <ws-auth-ace-editor [mode]="'json'" [content]="content.containerStyle || {}" (data)="update('containerStyle',$event)">
-  </ws-auth-ace-editor>
+  <!-- <ws-auth-ace-editor [mode]="'json'" [content]="content.containerStyle || {}" (data)="update('containerStyle',$event)">
+  </ws-auth-ace-editor> -->
 </div>

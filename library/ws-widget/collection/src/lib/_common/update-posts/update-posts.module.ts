@@ -10,25 +10,23 @@ import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 
 @NgModule({
-  declarations: [UpdatePostsComponent],
-
-  imports: [
-    CommonModule,
-    SkeletonLoaderModule,
-    MatIconModule,
-    RouterModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-  ],
-  exports: [
-    UpdatePostsComponent,
-  ],
-  entryComponents: [UpdatePostsComponent],
+    declarations: [UpdatePostsComponent],
+    imports: [
+        CommonModule,
+        SkeletonLoaderModule,
+        MatIconModule,
+        RouterModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+    ],
+    exports: [
+        UpdatePostsComponent,
+    ]
 })
 
 export class UpdatePostsModule { }
