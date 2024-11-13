@@ -52,7 +52,7 @@
                     </div>
                     <div class="list mb-4">
                         <ng-container *ngIf="facet?.value?.values?.length;else noData">
-                            <ng-container  *ngIf="facet?.key !== 'resourceCategory' && facet?.key !== 'years'">
+                            <ng-container  *ngIf="facet?.key !== 'resourceCategory' && facet?.key !== 'contextYear'">
                                 <ng-container  *ngIf="!facet.viewMore">
                                     <ng-container *ngFor="let sectors of facet?.value?.values; index as i">
                                         <div class="check-list" *ngIf="i <= 3">
@@ -79,7 +79,7 @@
                                     </div>
                                 </ng-container>
                             </ng-container>
-                            <ng-container  *ngIf="facet?.key === 'years'">
+                            <ng-container  *ngIf="facet?.key === 'contextYear'">
                                 <ng-container>
                                     <mat-slider min="2020" max="2024" showTickMarks discrete >
                                         <input matSliderThumb>
