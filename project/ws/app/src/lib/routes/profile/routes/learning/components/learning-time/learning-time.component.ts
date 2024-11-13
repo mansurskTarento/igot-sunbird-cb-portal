@@ -13,7 +13,7 @@ import {
   TChartJsGraphType,
 } from '@sunbird-cb/collection'
 import { ConfigurationsService, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
-import { Chart } from 'chart.js'
+// import { Chart } from 'chart.js'
 import { Subscription } from 'rxjs'
 import { NSProfileData } from '../../../../models/profile.model'
 import { ProfileService } from '../../../../services/profile.service'
@@ -681,7 +681,7 @@ export class LearningTimeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async createChart() {
-    const barThickness = 24
+    // const barThickness = 24
     if (
       this.chartContainer &&
       this.timeSpentData &&
@@ -694,148 +694,148 @@ export class LearningTimeComponent implements OnInit, AfterViewInit, OnDestroy {
       const canvas = document.createElement('canvas')
       canvas.id = 'userStatChartId'
       this.chartContainer.nativeElement.appendChild(canvas)
-      const data = {
-        labels: this.timeSpentData.org.map(
-          u => `${this.monthArray[new Date(u.day).getMonth()]} ${new Date(u.day).getDate()}`,
-        ),
-        datasets: [
-          {
-            label: this.labelUserAvg.nativeElement.value,
-            data: this.timeSpentData.user.map(u => Number((u.duration / 60).toFixed(1))),
-            borderColor: this.configSvc.activeThemeObject
-              ? this.configSvc.activeThemeObject.color.primary
-              : '',
-            fill: false,
-            backgroundColor: Array(this.timeSpentData.user.length).fill(
-              this.configSvc.activeThemeObject
-                ? this.configSvc.activeThemeObject.color.primary
-                : '',
-            ),
-          },
-          {
-            label: this.labelOrgAvg.nativeElement.value,
-            data: this.timeSpentData.org.map(u => Number((u.duration / 60).toFixed(1))),
-            borderColor: this.configSvc.activeThemeObject
-              ? this.configSvc.activeThemeObject.color.accent
-              : '',
-            fill: false,
-            backgroundColor: Array(this.timeSpentData.org.length).fill(
-              this.configSvc.activeThemeObject ? this.configSvc.activeThemeObject.color.accent : '',
-            ),
-          },
-          {
-            label: this.labelUserOverPeriod.nativeElement.value,
-            data: Array(this.timeSpentData.user.length).fill(
-              Number((this.timeSpentData.userAvg / 60).toFixed(1)),
-            ),
-            borderColor: Array(this.timeSpentData.user.length).fill(
-              this.configSvc.activeThemeObject
-                ? this.configSvc.activeThemeObject.color.primary
-                : '',
-            ),
-            type: 'line',
-            lineTension: 1,
-            borderDash: [5, 2],
-          },
-        ],
-      }
-      const options = {
-        legend: {
-          display: true,
-          position: this.legendPosition,
-          labels: {
-            fontColor: this.configSvc.activeThemeObject
-              ? this.configSvc.activeThemeObject.color.primary
-              : '',
-            boxWidth: 10,
-          },
-        },
-        scales: {
-          xAxes: [
-            {
-              maxBarThickness: barThickness,
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: this.labelX.nativeElement.value,
-              },
-              gridLines: {
-                offsetGridLines: false,
-              },
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-          yAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: this.labelY.nativeElement.value,
-              },
-              gridLines: {
-                offsetGridLines: false,
-              },
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      }
-      const optionsForMobile = {
-        legend: {
-          display: true,
-          position: this.legendPosition,
-          labels: {
-            fontColor: this.configSvc.activeThemeObject
-              ? this.configSvc.activeThemeObject.color.primary
-              : '',
-            boxWidth: 10,
-          },
-        },
-        scales: {
-          xAxes: [
-            {
-              maxBarThickness: barThickness,
-              display: true,
-              ticks: {
-                display: false,
-                beginAtZero: true,
-              },
-              gridLines: {
-                offsetGridLines: false,
-              },
-            },
-          ],
-          yAxes: [
-            {
-              display: true,
-              ticks: {
-                display: true,
-                beginAtZero: true,
-              },
-              gridLines: {
-                offsetGridLines: false,
-              },
-            },
-          ],
-        },
-      }
-      if (this.isSmall) {
-        this.userStatChart = new Chart('userStatChartId', {
-          data,
-          type: this.isBarChart ? 'bar' : 'line',
-          options: optionsForMobile,
-        })
-      } else {
-        this.userStatChart = new Chart('userStatChartId', {
-          data,
-          options,
-          type: this.isBarChart ? 'bar' : 'line',
-        })
-      }
+      // const data = {
+      //   labels: this.timeSpentData.org.map(
+      //     u => `${this.monthArray[new Date(u.day).getMonth()]} ${new Date(u.day).getDate()}`,
+      //   ),
+      //   datasets: [
+      //     {
+      //       label: this.labelUserAvg.nativeElement.value,
+      //       data: this.timeSpentData.user.map(u => Number((u.duration / 60).toFixed(1))),
+      //       borderColor: this.configSvc.activeThemeObject
+      //         ? this.configSvc.activeThemeObject.color.primary
+      //         : '',
+      //       fill: false,
+      //       backgroundColor: Array(this.timeSpentData.user.length).fill(
+      //         this.configSvc.activeThemeObject
+      //           ? this.configSvc.activeThemeObject.color.primary
+      //           : '',
+      //       ),
+      //     },
+      //     {
+      //       label: this.labelOrgAvg.nativeElement.value,
+      //       data: this.timeSpentData.org.map(u => Number((u.duration / 60).toFixed(1))),
+      //       borderColor: this.configSvc.activeThemeObject
+      //         ? this.configSvc.activeThemeObject.color.accent
+      //         : '',
+      //       fill: false,
+      //       backgroundColor: Array(this.timeSpentData.org.length).fill(
+      //         this.configSvc.activeThemeObject ? this.configSvc.activeThemeObject.color.accent : '',
+      //       ),
+      //     },
+      //     {
+      //       label: this.labelUserOverPeriod.nativeElement.value,
+      //       data: Array(this.timeSpentData.user.length).fill(
+      //         Number((this.timeSpentData.userAvg / 60).toFixed(1)),
+      //       ),
+      //       borderColor: Array(this.timeSpentData.user.length).fill(
+      //         this.configSvc.activeThemeObject
+      //           ? this.configSvc.activeThemeObject.color.primary
+      //           : '',
+      //       ),
+      //       type: 'line',
+      //       lineTension: 1,
+      //       borderDash: [5, 2],
+      //     },
+      //   ],
+      // }
+      // const options = {
+      //   legend: {
+      //     display: true,
+      //     position: this.legendPosition,
+      //     labels: {
+      //       fontColor: this.configSvc.activeThemeObject
+      //         ? this.configSvc.activeThemeObject.color.primary
+      //         : '',
+      //       boxWidth: 10,
+      //     },
+      //   },
+      //   scales: {
+      //     xAxes: [
+      //       {
+      //         maxBarThickness: barThickness,
+      //         display: true,
+      //         scaleLabel: {
+      //           display: true,
+      //           labelString: this.labelX.nativeElement.value,
+      //         },
+      //         gridLines: {
+      //           offsetGridLines: false,
+      //         },
+      //         ticks: {
+      //           beginAtZero: true,
+      //         },
+      //       },
+      //     ],
+      //     yAxes: [
+      //       {
+      //         display: true,
+      //         scaleLabel: {
+      //           display: true,
+      //           labelString: this.labelY.nativeElement.value,
+      //         },
+      //         gridLines: {
+      //           offsetGridLines: false,
+      //         },
+      //         ticks: {
+      //           beginAtZero: true,
+      //         },
+      //       },
+      //     ],
+      //   },
+      // }
+      // const optionsForMobile = {
+      //   legend: {
+      //     display: true,
+      //     position: this.legendPosition,
+      //     labels: {
+      //       fontColor: this.configSvc.activeThemeObject
+      //         ? this.configSvc.activeThemeObject.color.primary
+      //         : '',
+      //       boxWidth: 10,
+      //     },
+      //   },
+      //   scales: {
+      //     xAxes: [
+      //       {
+      //         maxBarThickness: barThickness,
+      //         display: true,
+      //         ticks: {
+      //           display: false,
+      //           beginAtZero: true,
+      //         },
+      //         gridLines: {
+      //           offsetGridLines: false,
+      //         },
+      //       },
+      //     ],
+      //     yAxes: [
+      //       {
+      //         display: true,
+      //         ticks: {
+      //           display: true,
+      //           beginAtZero: true,
+      //         },
+      //         gridLines: {
+      //           offsetGridLines: false,
+      //         },
+      //       },
+      //     ],
+      //   },
+      // }
+      // if (this.isSmall) {
+      //   this.userStatChart = new Chart('userStatChartId', {
+      //     data,
+      //     type: this.isBarChart ? 'bar' : 'line',
+      //     options: optionsForMobile,
+      //   })
+      // } else {
+      //   this.userStatChart = new Chart('userStatChartId', {
+      //     data,
+      //     options,
+      //     type: this.isBarChart ? 'bar' : 'line',
+      //   })
+      // }
     }
   }
   ngOnDestroy() {
