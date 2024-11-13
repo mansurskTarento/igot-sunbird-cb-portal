@@ -1,1 +1,23 @@
-<h1>testing....</h1>
+<div class="flex justify-between">
+  <div class="teachers-note-header pt-2">{{ 'apptocsinglepage.teachersNoteHeading' | translate }}</div>
+  <div class="download-all">{{ 'apptocsinglepage.downaloadAllPdfs' | translate }}</div>
+</div>
+
+<div class="guide-container">
+  <div class="guide-card flex gap-4 justify-between" *ngFor="let note of teacherNotes">
+    <div>
+      <div class="note-title">{{note.title}}</div>
+      <div class="flex gap-2 pt-2">
+        <mat-icon class="material-symbols-outlined">
+          visibility
+        </mat-icon>
+          <span class="view-pdf">{{ 'apptocsinglepage.viewPDF' | translate }}</span>
+        </div>
+    </div>
+    <div>
+      <div class="download-ind">
+        <a target=”_blank” download href="{{note.url}}">{{ 'apptocsinglepage.downloadPdf' | translate }}</a>
+      </div>
+    </div>
+  </div>
+</div>
