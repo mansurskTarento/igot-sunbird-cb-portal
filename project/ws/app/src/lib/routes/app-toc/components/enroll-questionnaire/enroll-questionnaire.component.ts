@@ -1026,7 +1026,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
-            this.userProfileObject.profileDetails.cadreDetails.cadreBatch : 'N/A'
+          JSON.stringify(this.userProfileObject.profileDetails.cadreDetails.cadreBatch) : 'N/A'
         }
       }
 
