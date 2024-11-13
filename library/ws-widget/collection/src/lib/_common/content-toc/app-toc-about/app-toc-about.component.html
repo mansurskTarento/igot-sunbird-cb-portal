@@ -368,13 +368,25 @@
         </div>
     </ng-container>
     <ng-container *ngIf="!skeletonLoader">
-        <div class="flex flex-col" *ngIf="content?.keywords?.length">
+        <!-- {{content|json}} -->
+        <ng-container *ngIf="content?.keywords?.length" >
+            <ng-container [ngTemplateOutlet]="tagsList"
+            [ngTemplateOutletContext]="{ tagData: content?.keywords }"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="content?.searchTags?.length > 1" >
+            <ng-container *ngIf="content?.searchTags?.length" [ngTemplateOutlet]="tagsList"
+            [ngTemplateOutletContext]="{ tagData: content?.searchTags?.slice(1,content?.searchTags?.length) }"></ng-container>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #tagsList let-tagData="tagData">
+        <div class="flex flex-col" *ngIf="tagData?.length">
             <div class="mat-subheading-1">{{ 'userProfile.tags' | translate }}</div>
-            <ng-container *ngIf="content?.keywords?.length">
+            <ng-container *ngIf="tagData?.length">
                 <div class="flex flex-wrap gap-2" [ngClass]="{'tags-ellipsis': tagsEllipsis && !viewMoreTags}" #tagsElem>
-                    <ng-container *ngFor="let tag of content?.keywords; let i = index">
+                    <ng-container *ngFor="let tag of tagData; let i = index">
                         <div class="text-xs mob-text" >{{ handleCapitalize(tag) }}</div>
-                        <div class="flex items-center" *ngIf="content?.keywords?.length > (i + 1)">
+                        <div class="flex items-center" *ngIf="tagData?.length > (i + 1)">
                             <span class="period"></span>
                         </div>
                     </ng-container>
@@ -383,11 +395,11 @@
                 <div class="flex items-center ws-mat-default-text underline cursor-pointer text-xs mt-1" *ngIf="viewMoreTags"
                 (click)="viewMoreTags = !viewMoreTags">{{ 'apptocsinglepage.viewLess' | translate }}</div>
             </ng-container>
-            <div class="flex flex-wrap gap-2" *ngIf="!content?.keywords?.length">
+            <div class="flex flex-wrap gap-2" *ngIf="!tagData?.length">
                 {{ 'userProfile.noTags' | translate }}
             </div>
         </div>
-    </ng-container>
+    </ng-template>
 
     <!-- <ng-container *ngIf="!skeletonLoader && content?.searchTags">
         <div class="flex flex-col" *ngIf="content?.searchTags.length">

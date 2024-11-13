@@ -41,6 +41,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
   extSearchRequestObject = {
     filterCriteriaMap: {
+      'isActive': true,
     },
     requestedFields: [],
     pageNumber: 0,
