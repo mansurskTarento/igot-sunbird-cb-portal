@@ -258,35 +258,22 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
               values: 'values',
               viewMore: false,
             },
-            years: {
+            contextYear: {
               name: gyaanConstants.year,
               label: gyaanConstants.yearlable,
               values: [2020, 2021, 2022, 2023, 2024],
               viewMore: false,
             },
-            stateAndUts: {
+            contextStateOrUTs: {
               name: gyaanConstants.statesAndUts,
               label: gyaanConstants.statesLable,
-              values: [
-                { name: 'Andhra Pradesh', count: 0 },
-                { name: 'Arunachal Pradesh', count: 0 },
-                { name: 'Delhi', count: 0 },
-                { name: 'Uttar Pradesh', count: 0 },
-                { name: 'Haryana', count: 0 },
-                { name: 'Karnataka', count: 0 },
-                { name: 'Telengana', count: 0 },
-              ],
+              values: 'values',
               viewMore: false,
             },
-            sdgs: {
+            contextSDGs: {
               name: gyaanConstants.sdgs,
               label: gyaanConstants.sustainableDevelopmentLabel,
-              values: [
-                { name: 'No Poverty', count: 0 },
-                { name: 'Zero Hunger', count: 0 },
-                { name: 'Good health and wealth being', count: 0 },
-                { name: 'Quality Eduction', count: 0 },
-              ],
+              values: 'values',
               viewMore: false,
             },
           }
