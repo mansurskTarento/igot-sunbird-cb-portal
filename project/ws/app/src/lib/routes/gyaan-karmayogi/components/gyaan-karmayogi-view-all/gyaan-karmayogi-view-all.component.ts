@@ -48,7 +48,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       const breadCrumb = this.keyData ? this.titleCasePipe.transform(this.keyData) :
       this.titleCasePipe.transform(this.selectedSector)
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
         { title: breadCrumb, url: `none`, icon: '' },
       ]
   })
@@ -113,6 +113,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         gyaanConstants.resourceCategory,
         gyaanConstants.subSectorName,
         gyaanConstants.sectorName,
+        gyaanConstants.year,
     ],
     }
     // const addFilter = {
@@ -249,11 +250,31 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
               name: gyaanConstants.subSectors,
               label: gyaanConstants.subSectors,
               values: 'values',
+              viewMore: false,
             },
             resourceCategory: {
               name: gyaanConstants.category,
               label: gyaanConstants.singleCategory,
               values: 'values',
+              viewMore: false,
+            },
+            contextYear: {
+              name: gyaanConstants.year,
+              label: gyaanConstants.yearlable,
+              values: [2020, 2021, 2022, 2023, 2024],
+              viewMore: false,
+            },
+            contextStateOrUTs: {
+              name: gyaanConstants.statesAndUts,
+              label: gyaanConstants.statesLable,
+              values: 'values',
+              viewMore: false,
+            },
+            contextSDGs: {
+              name: gyaanConstants.sdgs,
+              label: gyaanConstants.sustainableDevelopmentLabel,
+              values: 'values',
+              viewMore: false,
             },
           }
           response.result.facets.forEach((facet: any) => {
@@ -295,10 +316,15 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                   }
                   localFacetData[facet.name].values = catFinalList
               } else {
-                localFacetData[facet.name].values = facet.values
+                if (facet.values.length > 0) {
+                  localFacetData[facet.name].values = [{
+                    name: 'All', count: 1, checked: facet.name === gyaanConstants.sectorName && this.selectedFilter[gyaanConstants.sectorName].length === facet.values.length,
+                  }, ...facet.values]
+                } else {
+                  localFacetData[facet.name].values = facet.values
+                }
               }
             }
-
           })
 
           this.facetsDataCopy = { ...localFacetData }
@@ -326,6 +352,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
 
   // the below method is used to get emitted value from filter component
   filterChange(event: any) {
+    console.log('event', event)
     this.changeSelection(event.event, event.key, event.keyData)
   }
 
@@ -335,18 +362,31 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
     if (key === gyaanConstants.resourceCategory) {
       this.selectedFilter[key] = keyData.name
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
         { title: this.titleCasePipe.transform(keyData.name), url: `none`, icon: '' },
       ]
     } else {
-      if (this.selectedFilter && this.selectedFilter[key] && this.selectedFilter[key].includes(keyData.name)) {
-        const index = this.selectedFilter[key].findIndex((x: any) => x === keyData.name)
-        this.selectedFilter[key].splice(index, 1)
+      if (keyData.name === 'All' && !keyData.checked) {
+        if (this.selectedFilter && this.selectedFilter[key]) {
+          this.selectedFilter[key] = []
+        }
+      } else if (keyData.name === 'All' && keyData.checked) {
+        this.selectedFilter[key] = []
+        this.facetsDataCopy[key].values.forEach((_section: any) => {
+          if (_section.name !== 'All') {
+            this.selectedFilter[key].push(_section.name)
+          }
+        })
       } else {
-        if (this.selectedFilter[key] && this.selectedFilter[key].length) {
-          this.selectedFilter[key].push(keyData.name)
+        if (this.selectedFilter && this.selectedFilter[key] && this.selectedFilter[key].includes(keyData.name)) {
+          const index = this.selectedFilter[key].findIndex((x: any) => x === keyData.name)
+          this.selectedFilter[key].splice(index, 1)
         } else {
-          this.selectedFilter[key] = [keyData.name]
+          if (this.selectedFilter[key] && this.selectedFilter[key].length) {
+            this.selectedFilter[key].push(keyData.name)
+          } else {
+            this.selectedFilter[key] = [keyData.name]
+          }
         }
       }
     }
@@ -370,7 +410,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
    if (result) {
     const filter = result.filter
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
         { title: this.titleCasePipe.transform(filter[gyaanConstants.resourceCategory] ?
            filter[gyaanConstants.resourceCategory] : ''), url: `none`, icon: '' },
       ]

@@ -34,9 +34,9 @@
         <div class="container-balanced w-full">
             <div class="flex items-center justify-between sector-headding">
                 <p>{{'gyaanKarmayogi.sectors'| translate}}</p>
-                <p *ngIf="sectorsList?.length > 9" (click)="viewAllSector()" class="flex items-center view-all cursor-pointer">{{'gyaanKarmayogi.viewAll'| translate}}
+                <!-- <p *ngIf="sectorsList?.length > 9" (click)="viewAllSector()" class="flex items-center view-all cursor-pointer">{{'gyaanKarmayogi.viewAll'| translate}}
                     <mat-icon>chevron_right</mat-icon>
-                </p>
+                </p> -->
             </div>
           <div class="flex sector-section  justify-start items-start gap-2">
             <div class="flex all-sector-wrapper col-span-2">
@@ -93,6 +93,10 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
+                            <button class="filters-btn mt-4 md:mt-0"  (click)="viewAllSector()" >
+                                {{'gyaanKarmayogi.moreFilters'| translate}}
+                                <mat-icon class="filter-dots">more_vert</mat-icon>
+                            </button>
                             <button class="apply-btn mt-4 md:mt-0" type="submit" >{{'gyaanKarmayogi.applyNow'| translate}}</button>
                     </div>
                 </form>
@@ -103,26 +107,51 @@
 
 <div class="flex flex-center filter-section  pb-4 bg-primary">
     <div class="container-balanced w-full">
-        <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between">  
-           <ng-container *ngIf="!hideAllStrip">
-                <ng-container *ngIf="stripData?.length; else noData">
-                    <ng-container *ngFor="let strip of stripData">
-                        <div class="w-full">
-                            <ws-widget-content-strip-with-tabs [widgetData]="strip"></ws-widget-content-strip-with-tabs>
-                        </div>
+        <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky" [selectedIndex]="selectedTabIndex">
+            <mat-tab label="{{ 'gyaanKarmayogi.tabAll' | translate }}">
+                <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 0">
+                    <ng-container *ngIf="!hideAllStrip">
+                         <ng-container *ngIf="stripData?.length; else noData">
+                             <ng-container *ngFor="let strip of stripData">
+                                 <div class="w-full">
+                                     <ws-widget-content-strip-with-tabs [widgetData]="strip"></ws-widget-content-strip-with-tabs>
+                                 </div>
+                             </ng-container>
+                         </ng-container>
                     </ng-container>
-                </ng-container>
-           </ng-container>
-           <ng-template #noData>
-            <div class="flex justify-center w-full">
-                <div class="margin-xl text-center" >
-                    <img src="/assets/common/error-pages/empty_search.svg" wsUtilsImageResponsive alt="No results"
-                        class="margin-top-l margin-bottom-s">
-                    <h2 class="mat-h2" i18n="search route no result">{{'learnsearch.noResults' | translate}}</h2>
-                </div>
-            </div>
-        </ng-template>
-        </div>
+                    <ng-template #noData>
+                         <div class="flex justify-center w-full">
+                             <div class="margin-xl text-center" >
+                                 <img src="/assets/common/error-pages/empty_search.svg" wsUtilsImageResponsive alt="No results"
+                                     class="margin-top-l margin-bottom-s">
+                                 <h2 class="mat-h2" i18n="search route no result">{{'learnsearch.noResults' | translate}}</h2>
+                             </div>
+                         </div>
+                     </ng-template>
+                 </div>
+            </mat-tab>
+            <mat-tab label="{{ 'gyaanKarmayogi.tabCBC' | translate }}">
+                <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 1">
+                    <ng-container *ngIf="!hideAllStrip">
+                         <ng-container *ngIf="stripData?.length; else noData">
+                             <ng-container *ngFor="let strip of stripData">
+                                 <div class="w-full">
+                                     <ws-widget-content-strip-with-tabs [widgetData]="strip"></ws-widget-content-strip-with-tabs>
+                                 </div>
+                             </ng-container>
+                         </ng-container>
+                    </ng-container>
+                    <ng-template #noData>
+                         <div class="flex justify-center w-full">
+                             <div class="margin-xl text-center" >
+                                 <img src="/assets/common/error-pages/empty_search.svg" wsUtilsImageResponsive alt="No results"
+                                     class="margin-top-l margin-bottom-s">
+                                 <h2 class="mat-h2" i18n="search route no result">{{'learnsearch.noResults' | translate}}</h2>
+                             </div>
+                         </div>
+                     </ng-template>
+                 </div>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>
-<!--{{translateLetMenuName('title')}} -->

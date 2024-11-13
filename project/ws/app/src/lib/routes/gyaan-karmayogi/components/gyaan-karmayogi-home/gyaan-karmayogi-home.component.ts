@@ -36,6 +36,8 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
 
   gyaanForm: FormGroup | undefined
 
+  selectedTabIndex = 0
+
   constructor(public translate: TranslateService,
               private route: ActivatedRoute,
               private router: Router,
@@ -108,6 +110,13 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
               data.strips[0].request.searchV6.request.filters = {
                 ...data.strips[0].request.searchV6.request.filters,
                 ...addFilters,
+              }
+            }
+            if (this.selectedTabIndex === 1) {
+              data.strips[0].request.searchV6.request.filters = {
+                ...data.strips[0].request.searchV6.request.filters,
+                ...addFilters,
+                createdFor: '0140788510336040962',
               }
             }
             if (this.searchControl && this.searchControl.value) {
@@ -319,7 +328,13 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
       queryParams : {
         sector: this.selectedSector,
         // preview: true
+        content: this.selectedTabIndex === 0 ? 'all' : 'cbc',
       },
     })
+  }
+
+  handleTabChange(event: any) {
+    this.selectedTabIndex = event.index
+    this.callStrips()
   }
 }
