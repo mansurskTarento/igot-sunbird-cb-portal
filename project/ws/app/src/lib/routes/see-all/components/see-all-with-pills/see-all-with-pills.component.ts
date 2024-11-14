@@ -612,10 +612,15 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       userId = this.configSvc.userProfile.userId
     }
     this.userSvc.fetchEventEnrollData(userId).subscribe((res: any) => {
+      if(strip.tabs){
+        strip.tabs[tabIndex].pillsData[0].fetchTabStatus = 'done'
+      }
       if (res && res.result && res.result.events && res.result.events.length) {
         this.formatEnrollmentData(strip, tabIndex, [], content, contentNew , tabResults, calculateParentStatus)
-
       }
+       else {
+        
+       }
     },                                                  (_err: any) => {
     })
   }
@@ -656,6 +661,10 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         }
 
       )
+    } else {
+      if(strip.tabs){
+        strip.tabs[tabIndex].pillsData[0].fetchTabStatus = 'done'
+      }
     }
   }
 
