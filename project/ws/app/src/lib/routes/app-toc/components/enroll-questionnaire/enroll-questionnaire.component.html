@@ -159,8 +159,8 @@
                     Office Pin Code
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
-                    <input type="email" class="input-text" matInput maxlength="6" formControlName="pincode" placeholder="Enter pincode"/>
-                    <mat-error class="text-xs" *ngIf="userDetailsForm.get('pincode').hasError('pattern')">
+                    <input type="email" class="input-text" matInput maxlength="6" formControlName="pinCode" placeholder="Enter pincode"/>
+                    <mat-error class="text-xs" *ngIf="userDetailsForm.get('pinCode').hasError('pattern')">
                         {{ 'profileInfo.invalidPinCode' | translate }}
                         </mat-error>
                 </mat-form-field>                    
