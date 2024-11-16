@@ -853,6 +853,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
     if(this.showPinCode && this.userDetailsForm.controls['pinCode'].value) {
       payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pinCode'].value
+      payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
     if(this.showCadreDetails) {
