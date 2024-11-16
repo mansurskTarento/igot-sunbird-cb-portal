@@ -127,7 +127,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       dob: new FormControl('', []),
       domicileMedium: new FormControl(''),
       category: new FormControl('', []),
-      pincode: new FormControl(''),
+      pinCode: new FormControl(''),
       isCadre: new FormControl(),
       typeOfCivilService: new FormControl(''),
       serviceType: new FormControl(''),
@@ -585,7 +585,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('pincode')
+          const fieldControl = this.userDetailsForm.get('pinCode')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
             fieldControl.updateValueAndValidity()
@@ -851,8 +851,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.personalDetails['category'] = this.userDetailsForm.controls['category'].value
       this.updateProfile = true
     }
-    if(this.showPinCode && this.userDetailsForm.controls['pincode'].value) {
-      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pincode'].value
+    if(this.showPinCode && this.userDetailsForm.controls['pinCode'].value) {
+      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
     if(this.showCadreDetails) {
@@ -981,7 +981,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
         if (this.showPinCode) {
-          dataObject[_field.name] = this.userDetailsForm.controls['pincode'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['pinCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
           this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
