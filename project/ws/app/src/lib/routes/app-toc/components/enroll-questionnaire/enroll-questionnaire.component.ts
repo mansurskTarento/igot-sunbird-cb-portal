@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
-import { takeUntil } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -51,6 +51,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   groupData: any | undefined
   private destroySubject$ = new Subject()
   designationsMeta: any
+  filterDesignationsMeta: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   currentDate = new Date()
   masterLanguages: any[] | undefined
@@ -249,6 +250,22 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.loadDesignations()
     this.getMasterLanguage()
     this.fetchCadreData()
+    this.userDetailsForm.get('designation')!.valueChanges
+    .pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      startWith(''),
+    )
+    .subscribe(res => {
+      console.log(res)
+      if (res) {
+        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+        )
+      } else {
+        this.filterDesignationsMeta =  this.designationsMeta
+      }
+    })
   }
 
   fetchCadreData(){
@@ -702,6 +719,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
       })
@@ -769,13 +787,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
     if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
+          this.submitSurevy()
         }
       }, error => {
         /* tslint:disable */
         console.log(error)
         this.snackBar.open("something went wrong!")
       })
-      this.submitSurevy()
     }
   }
 
