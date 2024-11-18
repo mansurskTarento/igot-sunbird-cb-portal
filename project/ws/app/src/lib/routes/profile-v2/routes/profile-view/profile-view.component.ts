@@ -1015,7 +1015,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleTransferRequest(): void {
     const dialogRef = this.dialog.open(TransferRequestComponent, {
-      data: { portalProfile: this.portalProfile, groupData: this.groupData, designationsMeta: this.filterDesignationsMeta },
+      data: { portalProfile: this.portalProfile, groupData: this.groupData, designationsMeta: this.designationsMeta },
       disableClose: true,
       panelClass: 'common-modal',
     })
