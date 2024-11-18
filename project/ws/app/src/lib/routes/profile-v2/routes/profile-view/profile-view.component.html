@@ -101,7 +101,7 @@
                 <ng-container *ngIf="editProfile">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="group">
-                      <mat-option value="" disabled>{{ 'profileInfo.chooseAGroup' | translate }}</mat-option>
+                      <mat-option class="abc" value="" disabled>{{ 'profileInfo.chooseAGroup' | translate }}</mat-option>
                       <mat-option *ngFor="let group of groupData" value="{{group}}">{{ group }}</mat-option>
                     </mat-select>
                   </mat-form-field>
