@@ -362,7 +362,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       startWith(''),
     )
     .subscribe(res => {
-      console.log(res)
       if (res) {
         this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
           val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
