@@ -110,7 +110,7 @@
     <div class="container-balanced w-full">
         <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu  [selectedIndex]="selectedTabIndex">
             <mat-tab label="{{ 'gyaanKarmayogi.agkCaseStudies' | translate }}">
-                <p class="margin-top-xs">{{pageConfigData?.agkContentInfo}}</p>
+                <p class="margin-top-xs">{{pageConfigData?.agkContentInfo |translate}}</p>
                 <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 0">
                     <ng-container *ngIf="!hideAllStrip">
                          <ng-container *ngIf="stripData?.length; else noData">
@@ -158,7 +158,7 @@
                  </div>
             </mat-tab>
             <mat-tab label="{{ 'gyaanKarmayogi.otherResources' | translate }}">
-                <p class="margin-top-xs">{{pageConfigData?.otherContentInfo}}</p>
+                <p class="margin-top-xs">{{pageConfigData?.otherContentInfo |translate}}</p>
                 <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 1">
                     <ng-container *ngIf="!hideAllStrip">
                          <ng-container *ngIf="stripData?.length; else noData">
