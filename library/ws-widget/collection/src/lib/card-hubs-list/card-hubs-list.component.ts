@@ -116,8 +116,8 @@ export class CardHubsListComponent extends WidgetBaseComponent
             this.activeRoute = 'Competencies'
           } else if (event.url.includes('app/event-hub')) {
             this.activeRoute = 'Events'
-          } else if (event.url.includes('/app/gyaan-karmayogi')) {
-            this.activeRoute = 'Gyaan Karmayogi'
+          } else if (event.url.includes('/app/amrit-gyan-kosh')) {
+            this.activeRoute = 'Amrit Gyan Kosh'
           } else if (event.url.includes('/app/jan-karmayogi')) {
             this.activeRoute = 'Jan Karmayogi'
           }

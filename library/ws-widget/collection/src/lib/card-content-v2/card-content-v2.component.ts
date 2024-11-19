@@ -421,13 +421,20 @@ export class CardContentV2Component extends WidgetBaseComponent
   }
   async getRedirectUrlData(content: any,contentType?:any){
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
-    if(contentType) {
-      this.router.navigate([`/app/gyaan-karmayogi/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
-        queryParams : {
-          primaryCategory: this.primaryCategory.RESOURCE
-          // preview: true
-        }
-      })
+    
+    if(contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
+      // if(content.primaryCategory === this.primaryCategory.COURSE) {
+      //   this.router.navigate([`app/toc/${content.identifier}/overview`],{
+      //     queryParams : { }
+      //   })
+      // } else {
+        this.router.navigate([`/app/amrit-gyan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
+          queryParams : {
+            primaryCategory: this.primaryCategory.RESOURCE
+            // preview: true
+          }
+        })
+      // }
     } else {
       // if (content && content.status && content.status.toLowerCase() !== 'retired') {
         let urlData = await this.contSvc.getResourseLink(content)

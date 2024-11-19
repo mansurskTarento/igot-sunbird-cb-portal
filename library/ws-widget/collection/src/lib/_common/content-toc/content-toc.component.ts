@@ -40,7 +40,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobile = false
   selectedTabIndex = 0
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
-  isMentor: boolean = false
+  displayTeachersContent = false
 
   constructor(
     private route: ActivatedRoute,
@@ -70,8 +70,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
     if (this.configService && this.configService.userRoles) {
       // tslint:disable-next-line:max-line-length
-    this.isMentor = (this.configService.userRoles.has('MENTOR') || this.configService.userRoles.has('mentor') || this.configService.userRoles.has('Mentor')) ? true : false
-  }
+      this.displayTeachersContent = (this.configService.userRoles.has('MENTOR') || this.configService.userRoles.has('mentor') || this.configService.userRoles.has('Mentor')) ? true : false
+      if (!this.displayTeachersContent) {
+        this.displayTeachersContent = this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
+      }
+    }
   }
 
   ngAfterViewInit() {

@@ -14,6 +14,9 @@ export const gyaanConstants = {
     yearlable: 'Year',
     statesAndUts: 'States and UTs',
     statesLable: 'States and UTs',
+    contextStateOrUTs: 'contextStateOrUTs',
+    contextSDGs: 'contextSDGs',
+    contextYear: 'contextYear',
     sdgs: 'Sustainable Development Goals',
     sustainableDevelopmentLabel: 'Sustainable Development Goals',
     sustainableDevelopment: 'Sustainable Development Goals',
@@ -29,5 +32,8 @@ export const gyaanConstants = {
         'rgba(58, 131, 207, 0.16)',
         'rgba(91, 58, 27, 0.16)',
     ],
+    contentType: 'content',
+    contentLabel: 'Content',
     emptyArray: [1, 2, 3, 4, 5, 6, 7, 7, 8, 9, 10],
+    placeHolderSdgs: 'SDGs',
 }

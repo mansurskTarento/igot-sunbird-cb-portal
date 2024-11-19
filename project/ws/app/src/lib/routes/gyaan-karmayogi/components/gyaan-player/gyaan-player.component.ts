@@ -18,6 +18,8 @@ export class GyaanPlayerComponent implements OnInit {
   resourceLink: any = ''
   pageConfig: any
   relatedContentStrip: any
+  displayContents = true
+  collectionId: any = ''
 
   constructor(private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
@@ -27,6 +29,9 @@ export class GyaanPlayerComponent implements OnInit {
       && this.route.parent.snapshot.data.pageData.data
       && this.route.parent.snapshot.data.pageData.data.stripConfig) {
         this.pageConfig = JSON.parse(JSON.stringify(this.route.parent && this.route.parent.snapshot.data.pageData.data))
+        this.displayContents = this.route.parent.snapshot.queryParams.playerPreview ? false :  true
+        this.collectionId = this.route.parent.snapshot.queryParams.collectionId ?
+        this.route.parent.snapshot.queryParams.collectionId :  ''
       }
     this.router.events.subscribe(val => {
         // see also
@@ -50,12 +55,21 @@ export class GyaanPlayerComponent implements OnInit {
   ngOnInit() {
     this.resourceData = this.viewerDataSvc.resource
     this.getRelatedContent()
-    this.titles = [
-      { title: 'Gyaan Karmayogi', url: '/app/gyaan-karmayogi/all', icon: 'school' },
-      { title: this.resourceData.resourceCategory, disableTranslate: true,
-        queryParams: { key: this.resourceData.resourceCategory }, url: `/app/gyaan-karmayogi/view-all`, icon: '' },
-      { title: this.resourceData.name, url: `none`, icon: '' },
-    ]
+    if (!this.displayContents) {
+      this.titles = [
+        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyan-kosh/all', icon: 'menu_book' },
+        { title: 'Toc page', disableTranslate: true,
+          queryParams: {  }, url: `/app/toc/${this.collectionId}/overview`, icon: '' },
+        { title: this.resourceData.name, url: `none`, icon: '' },
+      ]
+    } else {
+      this.titles = [
+        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyan-kosh/all', icon: 'menu_book' },
+        { title: this.resourceData.resourceCategory, disableTranslate: true,
+          queryParams: { key: this.resourceData.resourceCategory }, url: `/app/amrit-gyan-kosh/view-all`, icon: '' },
+        { title: this.resourceData.name, url: `none`, icon: '' },
+      ]
+    }
   }
   // this method is used to close the share popup
   resetEnableShare() {

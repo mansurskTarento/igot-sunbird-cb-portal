@@ -10,7 +10,7 @@
         
         // background-image: url('assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg');
         .section{
-            padding: 54px;
+            padding: 30px;
             background-image: url(/assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg);
             background-position: right bottom; /*Positioning*/
             background-repeat: no-repeat;
@@ -307,4 +307,31 @@
             border: 2px solid #f3972e;
         }
       }
+}
+
+.more-info-form {
+    background: linear-gradient(106.94deg, #3A70CF 3.96%, #1146A2 39.76%);
+    padding: 24px;
+    border-radius: 96px;
+    position: relative;
+    .karmayogi-info {
+        position: absolute;
+        bottom: 0;
+    }
+    .btn-info {
+        background: #F3962F;
+        //styleName: Button;
+        font-family: Lato;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 16.8px;
+        text-align: center;
+        text-underline-position: from-font;
+        text-decoration-skip-ink: none;
+        border-radius: 52px;
+        border: 1px;
+        padding: 8px;
+        cursor: pointer;
+
+    }
 }

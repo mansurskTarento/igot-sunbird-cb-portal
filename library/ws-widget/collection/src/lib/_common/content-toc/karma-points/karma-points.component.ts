@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-widget-karma-points',
@@ -22,6 +22,7 @@ export class KarmaPointsComponent implements OnInit, OnChanges {
     }
   }
 
+  @Input() content: NsContent.IContent | null = null
   @Input() data: any = []
   @Input() pCategory = ''
   @Input() condition: any
@@ -30,9 +31,14 @@ export class KarmaPointsComponent implements OnInit, OnChanges {
   @Input() btnCategory = ''
   karmaPointsSlider: any
   btnKPData: any
+  disableKarmaPoints = false
 
   ngOnInit() {
     this.constructNudgeData()
+
+    if (this.content && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) {
+      this.disableKarmaPoints = true
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

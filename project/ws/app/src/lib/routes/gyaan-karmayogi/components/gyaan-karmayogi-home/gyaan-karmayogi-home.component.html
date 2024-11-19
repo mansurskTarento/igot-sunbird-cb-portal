@@ -14,14 +14,15 @@
                             </div>
                         </div>
     
-                        <div class="img-container flex justify-end gap-8">
-                            <img class="img1" src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-1.jpg" alt="">
+                        <div class="w-full img-container flex justify-end gap-8">
+                            <ws-widget-sliders class="w-full m-8 mb-0 mt-0" [widgetData]="pageConfigData?.sliderData"></ws-widget-sliders>
+                            <!-- <img class="img1" src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-1.jpg" alt="">
                             <div class="flex gap-4 flex-col">
     
                             <img class="img2"  src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-2.jpg" alt="">
     
                             <img  class="img3" src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-3.jpg" alt="">
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -49,7 +50,7 @@
                 <ng-container *ngFor="let sector of sectorsList|slice: 1:9">
                    <div class="each-sector flex items-center justify-start  {{sector?.name === selectedSector? 'selected-sector': ''}}"
                     (click)="sectorFilter(sector)" [style.background]="sector?.bgColor">
-                    <img class="mr-3" width="24px" height="25px" src="{{sector?.imgUrl}}" [alt]="sector?.name">
+                    <img class="mr-3" width="24px" height="25px" src="{{sector?.imgUrl | pipePublicURL}}" [alt]="sector?.name">
                     {{sector?.name  | titlecase}}
                    </div> 
                 </ng-container>
@@ -95,7 +96,7 @@
                             </div>
                             <button class="filters-btn mt-4 md:mt-0"  (click)="viewAllSector()" >
                                 {{'gyaanKarmayogi.moreFilters'| translate}}
-                                <mat-icon class="filter-dots">more_vert</mat-icon>
+                                <!-- <mat-icon class="filter-dots">more_vert</mat-icon> -->
                             </button>
                             <button class="apply-btn mt-4 md:mt-0" type="submit" >{{'gyaanKarmayogi.applyNow'| translate}}</button>
                     </div>
@@ -107,8 +108,9 @@
 
 <div class="flex flex-center filter-section  pb-4 bg-primary">
     <div class="container-balanced w-full">
-        <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky" [selectedIndex]="selectedTabIndex">
-            <mat-tab label="{{ 'gyaanKarmayogi.tabAll' | translate }}">
+        <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu  [selectedIndex]="selectedTabIndex">
+            <mat-tab label="{{ 'gyaanKarmayogi.agkCaseStudies' | translate }}">
+                <p class="margin-top-xs">{{pageConfigData?.agkContentInfo}}</p>
                 <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 0">
                     <ng-container *ngIf="!hideAllStrip">
                          <ng-container *ngIf="stripData?.length; else noData">
@@ -130,7 +132,8 @@
                      </ng-template>
                  </div>
             </mat-tab>
-            <mat-tab label="{{ 'gyaanKarmayogi.tabCBC' | translate }}">
+            <mat-tab label="{{ 'gyaanKarmayogi.otherResources' | translate }}">
+                <p class="margin-top-xs">{{pageConfigData?.otherContentInfo}}</p>
                 <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between pt-4" *ngIf="selectedTabIndex === 1">
                     <ng-container *ngIf="!hideAllStrip">
                          <ng-container *ngIf="stripData?.length; else noData">
@@ -153,5 +156,30 @@
                  </div>
             </mat-tab>
         </mat-tab-group>
+    </div>
+</div>
+<div class="flex flex-center filter-section  pb-4 bg-primary">
+    <div class="container-balanced mt-24 w-full">
+        <div class="more-info-form ">
+            
+            <div class="grid grid-cols-12 gap-4">
+                <!-- <div class="col-span-4"> -->
+                    <img class="karmayogi-info" src="assets/instances/eagle/banners/hubs/knowledgeresource/karmayogi-info.svg" alt="">
+                <!-- </div> -->
+                <div class="col-span-12 flex items-center justify-center">
+                    <div class="flex items-center justify-center flex-wrap text-white">
+                        <div class="w-full flex items-center justify-center">
+                            <mat-icon class="mat-icon material-icons-outlined">{{pageConfigData?.knowMoreInfo?.iconName}}</mat-icon>
+                        </div>
+                        <div class="w-full flex items-center justify-center">
+                            <p>{{pageConfigData?.knowMoreInfo?.helpTextKey | translate}}</p>
+                        </div>
+                        <div class="w-full flex items-center justify-center">
+                            <button (click)="openForm()" class="btn btn-info">{{pageConfigData?.knowMoreInfo?.btnName | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        </div>
     </div>
 </div>

@@ -1,94 +1,96 @@
 <ng-template #certificateCard>
-    <div class="certificate-outer-div">        
-        <div class="certificate-card">
-            <div class="flex flex-col certificate-info p-4 gap-3">
-                <div class="flex flex-row">
+    <ng-container *ngIf="!disableCertificate">
+        <div class="certificate-outer-div">        
+            <div class="certificate-card">
+                <div class="flex flex-col certificate-info p-4 gap-3">
+                    <div class="flex flex-row">
+                        <div class="flex-1">
+                            <ng-container *ngIf="skeletonLoader">
+                                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'200px'"
+                                    [height]="'24px'"></ws-widget-skeleton-loader>
+                            </ng-container>
+                            <ng-container *ngIf="!skeletonLoader">
+                                <div class="text-sm font-semibold cursor-pointer truncate-3">{{ content?.name }}</div>
+                                <div class="text-xs font-light" *ngIf="content?.completedOn">{{ 'apptocsinglepage.completedCourse' | translate }} {{ content?.completedOn ?
+                                    (content?.completedOn | date: 'd MMM, y') : 'NA' }}</div>
+                            </ng-container>
+                        </div>
+                        <div class="flex justify-center download-section">
+                            <ng-container *ngIf="skeletonLoader">
+                                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'24px'"
+                                    [height]="'24px'"></ws-widget-skeleton-loader>
+                            </ng-container>
+                            <ng-container >
+                                <mat-icon class="icon cursor-pointer " *ngIf="!downloadCertificateBool"
+                                    (click)="handleOpenCertificateDialog()">arrow_downward</mat-icon>
+                                <mat-spinner *ngIf="downloadCertificateBool" strokeWidth="2" [diameter]="20"></mat-spinner>
+                            </ng-container>
+                        </div>
+                    </div>
                     <div class="flex-1">
                         <ng-container *ngIf="skeletonLoader">
-                            <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'200px'"
-                                [height]="'24px'"></ws-widget-skeleton-loader>
+                            <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'280px'"
+                                [height]="'148px'"></ws-widget-skeleton-loader>
                         </ng-container>
                         <ng-container *ngIf="!skeletonLoader">
-                            <div class="text-sm font-semibold cursor-pointer truncate-3">{{ content?.name }}</div>
-                            <div class="text-xs font-light" *ngIf="content?.completedOn">{{ 'apptocsinglepage.completedCourse' | translate }} {{ content?.completedOn ?
-                                (content?.completedOn | date: 'd MMM, y') : 'NA' }}</div>
-                        </ng-container>
-                    </div>
-                    <div class="flex justify-center download-section">
-                        <ng-container *ngIf="skeletonLoader">
-                            <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'24px'"
-                                [height]="'24px'"></ws-widget-skeleton-loader>
-                        </ng-container>
-                        <ng-container >
-                            <mat-icon class="icon cursor-pointer " *ngIf="!downloadCertificateBool"
-                                (click)="handleOpenCertificateDialog()">arrow_downward</mat-icon>
-                            <mat-spinner *ngIf="downloadCertificateBool" strokeWidth="2" [diameter]="20"></mat-spinner>
-                        </ng-container>
-                    </div>
-                </div>
-                <div class="flex-1">
-                    <ng-container *ngIf="skeletonLoader">
-                        <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'280px'"
-                            [height]="'148px'"></ws-widget-skeleton-loader>
-                    </ng-container>
-                    <ng-container *ngIf="!skeletonLoader">
-                        <div class="certificate_box" *ngIf="!content?.certificateObj?.certId">
-                            <img *ngIf="!fromMarketPlace" src="/assets/icons/toc/no-certificate.svg" alt="No certificate image" />
-                            <img *ngIf="fromMarketPlace" src="/assets/icons/toc/no-certificate-market-place.svg" alt="No certificate image" />
-                            <div class="flex items-center certificate_overlay">
-                                <div class="flex flex-col text-center gap-1 p-4 text-white mt-4">
-                                    <div>{{'apptochome.certificationTakesTime' | translate }}</div>
-                                    <!-- <div>{{'apptochome.issuePersistsMailus' | translate }} mission.karmayogi@gov.in -->
-                                    <div>{{'apptochome.issuePersistsMailus' | translate }} <a href="mailto:mission.karmayogi@gov.in" class="emailDefault"> mission.karmayogi@gov.in</a>
+                            <div class="certificate_box" *ngIf="!content?.certificateObj?.certId">
+                                <img *ngIf="!fromMarketPlace" src="/assets/icons/toc/no-certificate.svg" alt="No certificate image" />
+                                <img *ngIf="fromMarketPlace" src="/assets/icons/toc/no-certificate-market-place.svg" alt="No certificate image" />
+                                <div class="flex items-center certificate_overlay">
+                                    <div class="flex flex-col text-center gap-1 p-4 text-white mt-4">
+                                        <div>{{'apptochome.certificationTakesTime' | translate }}</div>
+                                        <!-- <div>{{'apptochome.issuePersistsMailus' | translate }} mission.karmayogi@gov.in -->
+                                        <div>{{'apptochome.issuePersistsMailus' | translate }} <a href="mailto:mission.karmayogi@gov.in" class="emailDefault"> mission.karmayogi@gov.in</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <ng-container *ngIf="content?.certificateObj?.certId">
-                            <div class="img-container">
-                                <img class="celebration-animation" src="assets/images/animation/leaderboard_animation.gif"/>
-                            <img *ngIf="!fromMarketPlace" class="ceritificate-image"
-                                [src]="'/assets/icons/toc/no-certificate.svg'"
-                                alt="certificate image" />
-                                <img *ngIf="fromMarketPlace" class="ceritificate-image"
-                                [src]="'/assets/icons/toc/no-certificate-market-place.svg'"
-                                alt="certificate image" />
-                                
-                                <div [ngClass]="{'view-certificate': downloadCertificateBool, 'view-cert': !downloadCertificateBool}">
-                                    <button type="button" (click)="handleOpenCertificateDialog()">
-                                        <span *ngIf="!downloadCertificateBool">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
-                                        <div *ngIf="downloadCertificateBool" class="uploader-status">
-                                            <mat-spinner></mat-spinner>
-                                        </div>
-                                    </button>
+                            <ng-container *ngIf="content?.certificateObj?.certId">
+                                <div class="img-container">
+                                    <img class="celebration-animation" src="assets/images/animation/leaderboard_animation.gif"/>
+                                <img *ngIf="!fromMarketPlace" class="ceritificate-image"
+                                    [src]="'/assets/icons/toc/no-certificate.svg'"
+                                    alt="certificate image" />
+                                    <img *ngIf="fromMarketPlace" class="ceritificate-image"
+                                    [src]="'/assets/icons/toc/no-certificate-market-place.svg'"
+                                    alt="certificate image" />
+                                    
+                                    <div [ngClass]="{'view-certificate': downloadCertificateBool, 'view-cert': !downloadCertificateBool}">
+                                        <button type="button" (click)="handleOpenCertificateDialog()">
+                                            <span *ngIf="!downloadCertificateBool">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
+                                            <div *ngIf="downloadCertificateBool" class="uploader-status">
+                                                <mat-spinner></mat-spinner>
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </ng-container>
+                            <!-- <ng-container *ngIf="content?.certificateObj?.certData">
+                                <img class="celebration-animation" src="assets/images/animation/leaderboard_animation.gif"/>
+                                <img class="ceritificate-image"
+                                    [src]="content?.certificateObj?.certData | pipeSafeSanitizer: 'url'"
+                                    alt="certificate image" />
+                            </ng-container> -->
                         </ng-container>
-                        <!-- <ng-container *ngIf="content?.certificateObj?.certData">
-                            <img class="celebration-animation" src="assets/images/animation/leaderboard_animation.gif"/>
-                            <img class="ceritificate-image"
-                                [src]="content?.certificateObj?.certData | pipeSafeSanitizer: 'url'"
-                                alt="certificate image" />
-                        </ng-container> -->
-                    </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3 chips-card">
+                <ng-container *ngFor="let subTheme of content?.subTheme; let j = index">
+                    <div class="chip rounded-full p-2 text-xs"
+                        [ngClass]="{'hidden': (j > 1 && !content?.viewMore), 'chip-ellipsis': !content?.viewMore && content?.subTheme?.length > 1 }"
+                        [title]="subTheme">{{ subTheme }}</div>
+                </ng-container>
+                <div class="flex items-center text-primary underline cursor-pointer text-xs"
+                    *ngIf="content?.subTheme?.length > 2 && !content?.viewMore" (click)="content.viewMore = !content.viewMore">
+                    {{'competencyCardDetails.viewMore' | translate}}
+                </div>
+                <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="content?.viewMore"
+                    (click)="content.viewMore = !content.viewMore">{{'competencyCardDetails.viewLess' | translate}}
                 </div>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3 chips-card">
-            <ng-container *ngFor="let subTheme of content?.subTheme; let j = index">
-                <div class="chip rounded-full p-2 text-xs"
-                    [ngClass]="{'hidden': (j > 1 && !content?.viewMore), 'chip-ellipsis': !content?.viewMore && content?.subTheme?.length > 1 }"
-                    [title]="subTheme">{{ subTheme }}</div>
-            </ng-container>
-            <div class="flex items-center text-primary underline cursor-pointer text-xs"
-                *ngIf="content?.subTheme?.length > 2 && !content?.viewMore" (click)="content.viewMore = !content.viewMore">
-                {{'competencyCardDetails.viewMore' | translate}}
-            </div>
-            <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="content?.viewMore"
-                (click)="content.viewMore = !content.viewMore">{{'competencyCardDetails.viewLess' | translate}}
-            </div>
-        </div>
-    </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #competencyLabel>
@@ -100,7 +102,7 @@
 </ng-template>
 
 <div class="flex flex-col my-4 px-4" [class.mt60]="sticky" [ngClass]="isMobile ? '' : 'gap-10'">
-    <ng-container *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace">
+    <ng-container *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace && !disableCertificate">
         <div class="certificate-container" *ngIf="!skeletonLoader">
             <div class="flex flex-row earned-certificate-container">
                 <div class="ribbon"></div>
@@ -129,7 +131,7 @@
         </div>
     </ng-container>
     <ng-container *ngIf="showMarketPlaceCertificate && fromMarketPlace">
-        <div class="certificate-container" *ngIf="!skeletonLoader">
+    <div class="certificate-container" *ngIf="!skeletonLoader && !disableCertificate">
             <div class="flex flex-row earned-certificate-container">
                 <div class="ribbon"></div>
                 <div class="certificate-background">
@@ -424,7 +426,7 @@
     </ng-container> -->
 
     <div class="mobile-karma-points">
-        <ws-widget-karma-points [btnCategory]="" [condition]="condition" (clickClaimKarmaPoints)="handleClickOfClaim($event)" [data]="kparray">
+        <ws-widget-karma-points [content] = "content" [btnCategory]="" [condition]="condition" (clickClaimKarmaPoints)="handleClickOfClaim($event)" [data]="kparray">
         </ws-widget-karma-points>
     </div>
 

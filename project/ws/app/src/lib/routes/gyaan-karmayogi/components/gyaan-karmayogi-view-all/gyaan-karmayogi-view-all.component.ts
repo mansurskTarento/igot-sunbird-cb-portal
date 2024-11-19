@@ -35,7 +35,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   newQueryParam: any
   throttle = 100
   scrollDistance = 0.2
-
+  selectedContent: any
   constructor(private bottomSheet: MatBottomSheet,
               private route: ActivatedRoute,
               private seeAllSvc: GyaanKarmayogiService,
@@ -44,11 +44,12 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   async ngOnInit() {
     this.route.queryParams.subscribe((res: any) => {
       this.keyData = (res.key) ? res.key : ''
+      this.selectedContent = res.content || ''
       this.selectedSector = res.sector ? res.sector : ''
       const breadCrumb = this.keyData ? this.titleCasePipe.transform(this.keyData) :
       this.titleCasePipe.transform(this.selectedSector)
       this.titles = [
-        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
         { title: breadCrumb, url: `none`, icon: '' },
       ]
   })
@@ -124,6 +125,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         strip.request.searchV6 &&
         strip.request.searchV6.request &&
         strip.request.searchV6.request.filters) {
+          delete strip.request.searchV6.request.filters.createdFor
         strip.request.searchV6.request.filters = {
           ...strip.request.searchV6.request.filters,
           // ...addFilter,
@@ -133,7 +135,19 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-
+        if (this.selectedFilter[gyaanConstants.resourceCategory] === 'case study' &&
+          this.selectedContent
+        ) {
+          strip.request.searchV6.request.filters.contentType = [
+            'Resource',
+            'Course',
+          ]
+        }  else {
+          strip.request.searchV6.request.filters.contentType = [
+            'Resource',
+          ]
+          delete strip.request.searchV6.request.filters.contextYear
+        }
         strip.request.searchV6.request.query = this.searchControl && this.searchControl.value
         if (!(this.selectedFilter[gyaanConstants.sectorName] &&
           this.selectedFilter[gyaanConstants.sectorName].length)) {
@@ -241,42 +255,73 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       if (response &&  response.result &&
          response.result.facets) {
           const localFacetData: any = {
+            contentType: {
+              name: gyaanConstants.contentType,
+              displayName: gyaanConstants.contentType,
+              label: gyaanConstants.contentLabel,
+              placeHolder: gyaanConstants.contentLabel,
+              values: [
+                {
+                  name: 'agkCaseStudies',
+                  key: 'gyaanKarmayogi.agkCaseStudies',
+                  count: 1,
+                },
+                {
+                  name: 'otherResources',
+                  key: 'gyaanKarmayogi.otherResources',
+                  count: 1,
+                },
+              ],
+            },
             sectorName: {
               name: gyaanConstants.sectors,
+              displayName: gyaanConstants.sectors,
               label: gyaanConstants.sectors,
+              placeHolder:  gyaanConstants.sectors,
               values: 'values',
             },
             subSectorName: {
               name: gyaanConstants.subSectors,
+              displayName: gyaanConstants.subSectors,
               label: gyaanConstants.subSectors,
+              placeHolder:  gyaanConstants.subSectors,
               values: 'values',
               viewMore: false,
             },
             resourceCategory: {
               name: gyaanConstants.category,
+              displayName: gyaanConstants.category,
               label: gyaanConstants.singleCategory,
+              placeHolder:  gyaanConstants.singleCategory,
               values: 'values',
               viewMore: false,
             },
             contextYear: {
               name: gyaanConstants.year,
+              displayName: gyaanConstants.yearlable,
               label: gyaanConstants.yearlable,
-              values: [2020, 2021, 2022, 2023, 2024],
+              placeHolder: gyaanConstants.yearlable,
+              values: 'values',
               viewMore: false,
             },
             contextStateOrUTs: {
               name: gyaanConstants.statesAndUts,
+              displayName: gyaanConstants.statesAndUts,
               label: gyaanConstants.statesLable,
+              placeHolder: gyaanConstants.statesLable,
               values: 'values',
               viewMore: false,
             },
             contextSDGs: {
               name: gyaanConstants.sdgs,
+              displayName: gyaanConstants.sdgs,
               label: gyaanConstants.sustainableDevelopmentLabel,
+              placeHolder: gyaanConstants.placeHolderSdgs,
               values: 'values',
               viewMore: false,
             },
           }
+
           response.result.facets.forEach((facet: any) => {
             if (localFacetData[facet.name]) {
               if (facet.name === gyaanConstants.sectorName) {
@@ -304,7 +349,6 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                     }
                   }
                 }
-
               })
               if (facet.name === gyaanConstants.resourceCategory) {
                 const pageConfigData = this.route.snapshot.data
@@ -317,9 +361,15 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                   localFacetData[facet.name].values = catFinalList
               } else {
                 if (facet.values.length > 0) {
-                  localFacetData[facet.name].values = [{
-                    name: 'All', count: 1, checked: facet.name === gyaanConstants.sectorName && this.selectedFilter[gyaanConstants.sectorName].length === facet.values.length,
-                  }, ...facet.values]
+                  if (facet.name !== gyaanConstants.contextYear) {
+                    localFacetData[facet.name].values = [{
+                      name: 'All', count: 1, checked: facet.name === gyaanConstants.sectorName
+                      && (this.selectedFilter[gyaanConstants.sectorName]
+                      && this.selectedFilter[gyaanConstants.sectorName].length) === facet.values.length,
+                    }, ...facet.values]
+                  } else {
+                    localFacetData[facet.name].values = [..._.orderBy(facet.values, ['name'], ['asc'])]
+                  }
                 } else {
                   localFacetData[facet.name].values = facet.values
                 }
@@ -338,6 +388,9 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             if (this.keyData)  {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
             }
+            if (this.selectedContent && this.keyData === 'case study') {
+              this.selectedFilter['createdFor'] = '01376822290813747263'
+            }
             this.fetchFromSearchV6(this.seeAllPageConfig)
             this.seeAllPageConfig.request.searchV6.request.filters = {
               ...this.seeAllPageConfig.request.searchV6.request.filters,
@@ -352,47 +405,70 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
 
   // the below method is used to get emitted value from filter component
   filterChange(event: any) {
-    console.log('event', event)
     this.changeSelection(event.event, event.key, event.keyData)
   }
 
   // the below method used to form the filters and call api
   changeSelection(event: any, key: any, keyData: any) {
     keyData['checked'] = event
-    if (key === gyaanConstants.resourceCategory) {
-      this.selectedFilter[key] = keyData.name
-      this.titles = [
-        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
-        { title: this.titleCasePipe.transform(keyData.name), url: `none`, icon: '' },
-      ]
-    } else {
-      if (keyData.name === 'All' && !keyData.checked) {
-        if (this.selectedFilter && this.selectedFilter[key]) {
-          this.selectedFilter[key] = []
-        }
-      } else if (keyData.name === 'All' && keyData.checked) {
-        this.selectedFilter[key] = []
-        this.facetsDataCopy[key].values.forEach((_section: any) => {
-          if (_section.name !== 'All') {
-            this.selectedFilter[key].push(_section.name)
-          }
-        })
+    if (keyData.name) {
+      if (key === gyaanConstants.resourceCategory) {
+        this.selectedFilter[key] = keyData.name
+        this.titles = [
+          { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
+          { title: this.titleCasePipe.transform(keyData.name), url: `none`, icon: '' },
+        ]
       } else {
-        if (this.selectedFilter && this.selectedFilter[key] && this.selectedFilter[key].includes(keyData.name)) {
-          const index = this.selectedFilter[key].findIndex((x: any) => x === keyData.name)
-          this.selectedFilter[key].splice(index, 1)
-        } else {
-          if (this.selectedFilter[key] && this.selectedFilter[key].length) {
-            this.selectedFilter[key].push(keyData.name)
-          } else {
-            this.selectedFilter[key] = [keyData.name]
+        if (keyData.name === 'All' && !keyData.checked) {
+          if (this.selectedFilter && this.selectedFilter[key]) {
+            this.selectedFilter[key] = []
           }
+        } else if (keyData.name === 'All' && keyData.checked) {
+          this.selectedFilter[key] = []
+          this.facetsDataCopy[key].values.forEach((_section: any) => {
+            if (_section.name !== 'All') {
+              this.selectedFilter[key].push(_section.name)
+            }
+          })
+        } else {
+            if (this.selectedFilter && this.selectedFilter[key] && this.selectedFilter[key].includes(keyData.name)) {
+              const index = this.selectedFilter[key].findIndex((x: any) => x === keyData.name)
+              this.selectedFilter[key].splice(index, 1)
+            } else {
+              if (this.selectedFilter[key] && this.selectedFilter[key].length) {
+                if (key === 'contentType') {
+                  this.contentTypeSelection(this.selectedFilter , key, keyData)
+                } else {
+                  this.selectedFilter[key].push(keyData.name)
+                }
+              } else {
+                if (key === 'contentType') {
+                  this.contentTypeSelection(this.selectedFilter , key, keyData)
+                } else {
+                  this.selectedFilter[key] = [keyData.name]
+                }
+              }
+            }
         }
+      }
+    } else {
+      if (key === gyaanConstants.contextYear) {
+        this.selectedFilter[key] = keyData
       }
     }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
     if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
       this.fetchFromSearchV6(this.seeAllPageConfig)
+    }
+  }
+  contentTypeSelection(selectedFilter: any , _key: any, keyData: any) {
+
+    if (keyData.name === 'otherResources') {
+      this.selectedContent = ''
+      delete selectedFilter.createdFor
+    } else {
+      this.selectedContent = keyData.name
+      selectedFilter['createdFor'] = '01376822290813747263'
     }
   }
 
@@ -410,7 +486,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
    if (result) {
     const filter = result.filter
       this.titles = [
-        { title: 'Amrit Gyan Kosh', url: '/app/gyaan-karmayogi/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
         { title: this.titleCasePipe.transform(filter[gyaanConstants.resourceCategory] ?
            filter[gyaanConstants.resourceCategory] : ''), url: `none`, icon: '' },
       ]
