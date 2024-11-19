@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/utils-v2'
+import * as fileSaver from 'file-saver'
 
 @Component({
   selector: 'ws-widget-app-toc-teachers-notes',
@@ -8,34 +12,36 @@ import { Component, OnInit } from '@angular/core'
 
 export class AppTocTeachersNotesComponent implements OnInit {
 
-  teacherNotes: any = [
-    {
-      title: "W3schools PDF 1",
-      url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-    },
-    {
-      title: "Antennahouse PDF 2",
-      url: "https://www.antennahouse.com/hubfs/xsl-fo-sample/pdf/basic-link-1.pdf"
-    },
-    {
-      title: "Adobe PDF sample file",
-      url: "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf"
-    }
-  ]
-  constructor(
+  @Input() content!: NsContent.IContent
+  primaryCategory = NsContent.EPrimaryCategory
+
+
+  constructor(public router: Router,
   ) {
 
-    
   }
 
   ngOnInit() {}
 
-  downloadPDF(object: any) {
-    console.log("Object", object)
-    const link = document.createElement('a')
-    link.href = object.url
-    link.download = `${object.title}.pdf`
-    link.click()
+  downloadPDF(contentData: any) {
+    fileSaver.saveAs(contentData.artifactUrl, contentData.name)
+  }
+
+  previewContent(contentData: any) {
+    this.router.navigate([`/app/amrit-gyan-kosh/player/${VIEWER_ROUTE_FROM_MIME(contentData.mimeType)}/${contentData.identifier}`], {
+      queryParams : {
+        primaryCategory: this.primaryCategory.RESOURCE,
+        playerPreview: true,
+        collectionId: this.content.identifier,
+      },
+    })
+
+  }
+  downloadAllContent() {
+
+    this.content?.referenceNodes.forEach((ele: any) => {
+      fileSaver.saveAs(ele.artifactUrl, ele.name)
+    })
   }
 
 }

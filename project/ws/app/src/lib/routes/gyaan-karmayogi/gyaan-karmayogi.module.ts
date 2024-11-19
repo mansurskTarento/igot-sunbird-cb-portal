@@ -6,14 +6,14 @@ import { GyaanKarmayogiHomeComponent } from './components/gyaan-karmayogi-home/g
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { BtnPageBackModule, ContentStripWithTabsModule } from '@sunbird-cb/collection/src/public-api'
+import { BtnPageBackModule, ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
 import { PdfModule } from '@ws/viewer/src/lib/routes/pdf/pdf.module'
 import { GyaanPlayerComponent } from './components/gyaan-player/gyaan-player.component'
 import { GyaanKarmayogiComponent } from './gyaan-karmayogi.component'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
 import { PdfScormDataService } from '@ws/viewer/src/lib/pdf-scorm-data-service'
 import { GyaanKarmayogiViewAllComponent } from './components/gyaan-karmayogi-view-all/gyaan-karmayogi-view-all.component'
-import { DefaultThumbnailModule } from '@sunbird-cb/utils-v2'
+import { DefaultThumbnailModule, PipePublicURLModule } from '@sunbird-cb/utils-v2'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { GyaanKarmayogiService } from './services/gyaan-karmayogi.service'
 import { PdfComponent } from './components/players/pdf/pdf.component'
@@ -41,6 +41,8 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatSliderModule } from '@angular/material/slider'
 import { MatTabsModule } from '@angular/material/tabs'
 
+import { NgxSliderModule } from '@angular-slider/ngx-slider'
+
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
@@ -50,7 +52,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [GyaanKarmayogiHomeComponent, GyaanPlayerComponent,
     GyaanKarmayogiComponent, GyaanKarmayogiViewAllComponent,
      PdfComponent, GyaanVideoComponent, GyaanFilterComponent, GyaanAudioComponent, GyaanYoutubeComponent, ReplaceNbspTextPipe],
-  imports: [
+  imports: [NgxSliderModule,
     CommonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -76,6 +78,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     InfiniteScrollModule,
     MatSliderModule,
     MatTabsModule,
+    SlidersModule,
+    PipePublicURLModule,
    TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
 import { GyaanKarmayogiService } from '../../services/gyaan-karmayogi.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-gyaan-karmayogi-home',
@@ -15,6 +16,7 @@ import { GyaanKarmayogiService } from '../../services/gyaan-karmayogi.service'
 export class GyaanKarmayogiHomeComponent implements OnInit {
   stripData: any
   pageConfig: any
+  pageConfigData: any
   facetsdata: any
   hideAllStrip = false
   sectorNames: any = []
@@ -56,6 +58,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
       category: new FormControl(''),
     })
     this.pageConfig = (this.route.parent && this.route.parent.snapshot.data)
+    this.pageConfigData = this.pageConfig.pageData.data
     this.stripData = JSON.parse(JSON.stringify((this.route.parent && this.route.parent.snapshot.data.pageData.data.stripConfig))) || []
     this.facetsdata = this.pageConfig.gyaanData.facets.data
     if (this.facetsdata && this.facetsdata.length) {
@@ -66,6 +69,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
       addFilters[gyaanConstants.sectorName] = this.sectorNames
     }
     if (this.sectorNames.length) {
+
       this.callStrips(addFilters)
     }
   }
@@ -94,10 +98,12 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
         if (this.route.parent && this.route.parent.snapshot.data.pageData.data.stripConfig) {
           const data = JSON.parse(JSON.stringify(this.route.parent &&
             this.route.parent.snapshot.data.pageData.data.stripConfig))
+
           if (data.strips.length) {
             data.strips[0].title = cat.name
             data.strips[0].key = cat.name
             data.strips[0].viewMoreUrl.queryParams.key = cat.name
+            data.strips[0].viewMoreUrl.queryParams.content = this.selectedTabIndex === 0 ? 'agkCaseStudies' : 'otherResources'
             data.strips[0].titleDescription = cat.name
             data.strips[0].request.searchV6.request['limit'] = gyaanConstants.limitCount
 
@@ -112,11 +118,24 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
                 ...addFilters,
               }
             }
-            if (this.selectedTabIndex === 1) {
-              data.strips[0].request.searchV6.request.filters = {
-                ...data.strips[0].request.searchV6.request.filters,
-                ...addFilters,
-                createdFor: '0140788510336040962',
+
+            if (this.selectedTabIndex === 0 && cat.name === 'case study') {
+              data.strips[0].request.searchV6.request.filters.contentType = [
+                'Resource',
+                'Course',
+              ]
+              data.strips[0].request.searchV6.request.filters.createdFor = environment.cbcOrg
+            }  else {
+              data.strips[0].request.searchV6.request.filters.contentType = [
+                'Resource',
+              ]
+              delete data.strips[0].request.searchV6.request.filters.createdFor
+              if (this.selectedTabIndex === 0) {
+                data.strips[0].request.searchV6.request.filters = {
+                  ...data.strips[0].request.searchV6.request.filters,
+                  ...addFilters,
+                  createdFor: environment.cbcOrg,
+                }
               }
             }
             if (this.searchControl && this.searchControl.value) {
@@ -324,11 +343,12 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   }
 // viewAllSector method is used to move to view all page
   viewAllSector() {
-    this.router.navigate([`/app/gyaan-karmayogi/view-all`], {
+    this.router.navigate([`/app/amrit-gyan-kosh/view-all`], {
       queryParams : {
         sector: this.selectedSector,
         // preview: true
-        content: this.selectedTabIndex === 0 ? 'all' : 'cbc',
+        key: 'case study',
+        content: this.selectedTabIndex === 0 ? 'agkCaseStudies' : 'otherResources',
       },
     })
   }
@@ -336,5 +356,8 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   handleTabChange(event: any) {
     this.selectedTabIndex = event.index
     this.callStrips()
+  }
+  openForm() {
+    window.open('https://forms.gle/J4hQoCTRovzuo1AdA')
   }
 }

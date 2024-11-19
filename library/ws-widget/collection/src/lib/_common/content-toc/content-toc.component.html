@@ -16,10 +16,10 @@
             </div>
         </mat-tab>
     </ng-container>
-    <ng-container *ngIf="isMentor">
+    <ng-container *ngIf="displayTeachersContent && content?.referenceNodes">
         <mat-tab label="{{ 'apptocsinglepage.teachersNote' | translate }}">
             <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
-                <ws-widget-app-toc-teachers-notes></ws-widget-app-toc-teachers-notes>
+                <ws-widget-app-toc-teachers-notes [content]="content"></ws-widget-app-toc-teachers-notes>
             </div>
         </mat-tab>
     </ng-container>

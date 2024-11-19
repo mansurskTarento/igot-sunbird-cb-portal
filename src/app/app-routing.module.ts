@@ -186,7 +186,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/gyaan-karmayogi',
+    path: 'app/amrit-gyan-kosh',
     loadChildren: () =>
       import('./routes/route-gyaan-karmayogi.module').then(u => u.RouteGyaanKarmayogiModule),
     canActivate: [GeneralGuard],

@@ -3,6 +3,7 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bott
 import { TranslateService } from '@ngx-translate/core'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
 import { ActivatedRoute } from '@angular/router'
+import { Options } from '@angular-slider/ngx-slider'
 
 @Component({
   selector: 'ws-app-gyaan-filter',
@@ -10,7 +11,14 @@ import { ActivatedRoute } from '@angular/router'
   styleUrls: ['./gyaan-filter.component.scss'],
 })
 export class GyaanFilterComponent implements OnInit {
-
+  minValue = 2000
+  maxValue = 2001
+  options: Options = {
+    floor: 2000,
+    ceil: 2012,
+    step: 1,
+    showTicks: false,
+  }
   categoryValue = ''
   mobileSelectedFilter: any = {}
   @Input()  filterDataLoading = false
@@ -18,6 +26,7 @@ export class GyaanFilterComponent implements OnInit {
   @Input() facetsData: any
   @Input() private facetsDataCopy: any
   @Output() filterChange = new EventEmitter<any>()
+  @Input() selectedFilter: any
   selectedContent = 'all'
   gConstants: any
   constructor(
@@ -35,7 +44,7 @@ export class GyaanFilterComponent implements OnInit {
   ngOnInit() {
 
     this.gConstants = gyaanConstants
-
+    let yearsData: any = {}
     this.route.queryParams.subscribe((res: any) => {
       this.selectedContent = res.content
     })
@@ -46,11 +55,22 @@ export class GyaanFilterComponent implements OnInit {
       this.filterDataLoading = this.data.filterDataLoading
       this.localFilterData = JSON.parse(JSON.stringify(Object.keys(this.data.selectedFilter).length ?
       this.data.facetsDataCopy : {}))
+      yearsData = this.localFilterData[gyaanConstants.contextYear]
       this.mobileSelectedFilter = JSON.parse(JSON.stringify(
         Object.keys(this.data.selectedFilter).length ? this.data.selectedFilter : {}))
       this.bindSelectedValue()
     } else {
       this.localFilterData = JSON.parse(JSON.stringify(this.facetsDataCopy))
+      yearsData = this.localFilterData[gyaanConstants.contextYear]
+    }
+
+    this.minValue = Number(yearsData.values[0].name)
+    this.maxValue = Number(yearsData.values[yearsData.values.length - 1].name)
+    this.options  = {
+      floor: Number(yearsData.values[0].name),
+      ceil: Number(yearsData.values[yearsData.values.length - 1].name),
+      step: 1,
+      showTicks: false,
     }
   }
 
@@ -111,6 +131,7 @@ export class GyaanFilterComponent implements OnInit {
   // changeSelection method will trigger on
   // selection of sectors and subsectors
   changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
+
     if (window.innerWidth < 768) {
       if (key === 'resourceCategory') {
         this.mobileSelectedFilter[key] = keyData.name
@@ -129,7 +150,9 @@ export class GyaanFilterComponent implements OnInit {
     }
   } else {
       keyData['checked'] = event
-      if (key === gyaanConstants.sectorName || key === gyaanConstants.subSectorName) {
+      if (key === gyaanConstants.sectorName || key === gyaanConstants.subSectorName
+        || key === gyaanConstants.contextStateOrUTs || key === gyaanConstants.contextSDGs
+      ) {
         if (keyData.name === 'All' && keyData.checked) {
           allKeyData.forEach((filter: any) => {
             filter['checked'] = true
@@ -147,6 +170,7 @@ export class GyaanFilterComponent implements OnInit {
           }
         }
       }
+
       this.filterChange.emit({ event, key, keyData })
     }
   }
@@ -160,15 +184,22 @@ export class GyaanFilterComponent implements OnInit {
       this.localFilterData[keyData].values = filteredValue
     }
 
-    onSliderChange(event: any) {
-      console.log(event)
-    }
-
     onContentChange(event: any) {
+
       this.selectedContent = event.value
+      this.filterChange.emit({ event: true, key: 'content', keyData: event.value })
     }
 
     formatLabel(value: number): string {
       return `${value}`
+    }
+
+    changeSlider(sliderData: any) {
+      const yearsList = []
+      for (let i = sliderData.value; i <= sliderData.highValue; i = i + 1) {
+        yearsList.push(i)
+      }
+
+      this.filterChange.emit({ event: true, key: gyaanConstants.contextYear, keyData: yearsList })
     }
 }

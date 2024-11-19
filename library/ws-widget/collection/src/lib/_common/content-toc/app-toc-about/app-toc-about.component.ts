@@ -113,6 +113,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @ViewChild('descElem') descElem !: ElementRef
   @ViewChild('tagsElem') tagsElem !: ElementRef
   @ViewChild('searchTagElem') searchTagElem !: ElementRef
+  disableCertificate = false
 
   primaryCategory = NsContent.EPrimaryCategory
   stripsResultDataMap!: { [key: string]: IStripUnitContentData }
@@ -203,6 +204,10 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
     if (this.content) {
       this.content['subTheme'] = this.getSubThemes()
+    }
+
+    if (this.content && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) {
+      this.disableCertificate = true
     }
   }
 
