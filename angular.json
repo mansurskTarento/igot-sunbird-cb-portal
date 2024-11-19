@@ -62,7 +62,8 @@
               "node_modules/@sunbird-cb/discussions-ui-v8/assets/styles/global.scss",
               "src/dashboard-assets/fonts/lato/stylesheet.css",
               "src/dashboard-assets/fonts/montserrat/stylesheet.css",
-              "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss"             
+              "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss",
+              "node_modules/@ctrl/ngx-emoji-mart/picker.css"      
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
