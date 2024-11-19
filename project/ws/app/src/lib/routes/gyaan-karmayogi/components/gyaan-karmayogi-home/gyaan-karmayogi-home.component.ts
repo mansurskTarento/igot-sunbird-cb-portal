@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
 import { GyaanKarmayogiService } from '../../services/gyaan-karmayogi.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-gyaan-karmayogi-home',
@@ -123,7 +124,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
                 'Resource',
                 'Course',
               ]
-              data.strips[0].request.searchV6.request.filters.createdFor = '01376822290813747263'
+              data.strips[0].request.searchV6.request.filters.createdFor = environment.cbcOrg
             }  else {
               data.strips[0].request.searchV6.request.filters.contentType = [
                 'Resource',
@@ -133,7 +134,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
                 data.strips[0].request.searchV6.request.filters = {
                   ...data.strips[0].request.searchV6.request.filters,
                   ...addFilters,
-                  createdFor: '01376822290813747263',
+                  createdFor: environment.cbcOrg,
                 }
               }
             }

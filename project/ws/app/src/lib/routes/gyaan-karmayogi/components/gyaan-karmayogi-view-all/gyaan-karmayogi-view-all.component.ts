@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms'
 
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { GyaanFilterComponent } from '../gyaan-filter/gyaan-filter.component'
-
+import { environment } from 'src/environments/environment'
 @Component({
   selector: 'ws-app-gyaan-karmayogi-view-all',
   templateUrl: './gyaan-karmayogi-view-all.component.html',
@@ -389,7 +389,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
             }
             if (this.selectedContent && this.keyData === 'case study') {
-              this.selectedFilter['createdFor'] = '01376822290813747263'
+              this.selectedFilter['createdFor'] = environment.cbcOrg
             }
             this.fetchFromSearchV6(this.seeAllPageConfig)
             this.seeAllPageConfig.request.searchV6.request.filters = {
@@ -468,7 +468,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       delete selectedFilter.createdFor
     } else {
       this.selectedContent = keyData.name
-      selectedFilter['createdFor'] = '01376822290813747263'
+      selectedFilter['createdFor'] = environment.cbcOrg
     }
   }
 
