@@ -48,6 +48,7 @@ import { AppEventPageResolverService } from './services/app-event-page-resolver.
 import { HomeResolverService } from './home/home/home-resolver.service'
 import { PublicExtTocComponent } from './routes/public/public-ext-toc/public-ext-toc.component'
 import { AppTocExtPublicResolverService } from '@ws/app/src/lib/routes/app-toc/resolvers/app-toc-ext-public-resolver.service'
+import { FormDataResolverService } from './services/form-data-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -196,7 +197,7 @@ const routes: Routes = [
       pageId: 'app/knowledge-resource',
     },
     resolve: {
-      pageData: PageResolve,
+      pageData: FormDataResolverService,
       gyaanData: AppGyaanKarmayogiService,
     },
   },
