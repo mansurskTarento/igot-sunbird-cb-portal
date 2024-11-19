@@ -1,6 +1,7 @@
 @import 'ws-vars';
 @import 'ws-mixins';
 @import './utility.scss';
+@import '@ctrl/ngx-emoji-mart/picker';
 
 @include print {
   * {
