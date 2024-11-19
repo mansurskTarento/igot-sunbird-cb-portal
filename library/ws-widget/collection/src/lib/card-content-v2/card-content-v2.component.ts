@@ -428,7 +428,7 @@ export class CardContentV2Component extends WidgetBaseComponent
       //     queryParams : { }
       //   })
       // } else {
-        this.router.navigate([`/app/amrit-gyan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
+        this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
           queryParams : {
             primaryCategory: this.primaryCategory.RESOURCE
             // preview: true
