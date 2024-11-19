@@ -57,16 +57,16 @@ export class GyaanPlayerComponent implements OnInit {
     this.getRelatedContent()
     if (!this.displayContents) {
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyan-kosh/all', icon: 'menu_book' },
+        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: 'Toc page', disableTranslate: true,
           queryParams: {  }, url: `/app/toc/${this.collectionId}/overview`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     } else {
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyan-kosh/all', icon: 'menu_book' },
+        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: this.resourceData.resourceCategory, disableTranslate: true,
-          queryParams: { key: this.resourceData.resourceCategory }, url: `/app/amrit-gyan-kosh/view-all`, icon: '' },
+          queryParams: { key: this.resourceData.resourceCategory.toLowerCase() }, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     }

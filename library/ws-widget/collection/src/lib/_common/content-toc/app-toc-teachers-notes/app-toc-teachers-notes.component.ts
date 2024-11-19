@@ -28,7 +28,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
   }
 
   previewContent(contentData: any) {
-    this.router.navigate([`/app/amrit-gyan-kosh/player/${VIEWER_ROUTE_FROM_MIME(contentData.mimeType)}/${contentData.identifier}`], {
+    this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(contentData.mimeType)}/${contentData.identifier}`], {
       queryParams : {
         primaryCategory: this.primaryCategory.RESOURCE,
         playerPreview: true,

@@ -121,6 +121,31 @@
                              </ng-container>
                          </ng-container>
                     </ng-container>
+                    <div class="w-full flex flex-center filter-section  pb-4 bg-primary">
+                        <div class="container-balanced mt-24 w-full">
+                            <div class="more-info-form ">
+                                
+                                <div class="grid grid-cols-12 gap-4">
+                                    <!-- <div class="col-span-4"> -->
+                                        <img class="karmayogi-info hidden md:block" src="assets/instances/eagle/banners/hubs/knowledgeresource/karmayogi-info.svg" alt="">
+                                    <!-- </div> -->
+                                    <div class="col-span-12 flex items-center justify-center">
+                                        <div class="flex items-center justify-center flex-wrap text-white">
+                                            <div class="w-full flex items-center justify-center">
+                                                <mat-icon class="mat-icon material-icons-outlined">{{pageConfigData?.knowMoreInfo?.iconName}}</mat-icon>
+                                            </div>
+                                            <div class="w-full flex items-center justify-center">
+                                                <p>{{pageConfigData?.knowMoreInfo?.helpTextKey | translate}}</p>
+                                            </div>
+                                            <div class="w-full flex items-center justify-center">
+                                                <button (click)="openForm()" class="btn btn-info">{{pageConfigData?.knowMoreInfo?.btnName | translate}}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <ng-template #noData>
                          <div class="flex justify-center w-full">
                              <div class="margin-xl text-center" >
@@ -156,30 +181,5 @@
                  </div>
             </mat-tab>
         </mat-tab-group>
-    </div>
-</div>
-<div class="flex flex-center filter-section  pb-4 bg-primary">
-    <div class="container-balanced mt-24 w-full">
-        <div class="more-info-form ">
-            
-            <div class="grid grid-cols-12 gap-4">
-                <!-- <div class="col-span-4"> -->
-                    <img class="karmayogi-info" src="assets/instances/eagle/banners/hubs/knowledgeresource/karmayogi-info.svg" alt="">
-                <!-- </div> -->
-                <div class="col-span-12 flex items-center justify-center">
-                    <div class="flex items-center justify-center flex-wrap text-white">
-                        <div class="w-full flex items-center justify-center">
-                            <mat-icon class="mat-icon material-icons-outlined">{{pageConfigData?.knowMoreInfo?.iconName}}</mat-icon>
-                        </div>
-                        <div class="w-full flex items-center justify-center">
-                            <p>{{pageConfigData?.knowMoreInfo?.helpTextKey | translate}}</p>
-                        </div>
-                        <div class="w-full flex items-center justify-center">
-                            <button (click)="openForm()" class="btn btn-info">{{pageConfigData?.knowMoreInfo?.btnName | translate}}</button>
-                        </div>
-                    </div>
-                </div>
-              </div>
-        </div>
     </div>
 </div>

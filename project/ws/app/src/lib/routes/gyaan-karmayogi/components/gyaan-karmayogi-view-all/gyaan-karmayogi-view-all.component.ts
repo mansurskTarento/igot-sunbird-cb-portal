@@ -44,12 +44,12 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   async ngOnInit() {
     this.route.queryParams.subscribe((res: any) => {
       this.keyData = (res.key) ? res.key : ''
-      this.selectedContent = res.content || ''
+      this.selectedContent = res.content || 'otherResources'
       this.selectedSector = res.sector ? res.sector : ''
       const breadCrumb = this.keyData ? this.titleCasePipe.transform(this.keyData) :
       this.titleCasePipe.transform(this.selectedSector)
       this.titles = [
-        { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
         { title: breadCrumb, url: `none`, icon: '' },
       ]
   })
@@ -135,8 +135,8 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-        if (this.selectedFilter[gyaanConstants.resourceCategory] === 'case study' &&
-          this.selectedContent
+        if (this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
+          this.selectedContent !== 'otherResources'
         ) {
           strip.request.searchV6.request.filters.contentType = [
             'Resource',
@@ -388,7 +388,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             if (this.keyData)  {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
             }
-            if (this.selectedContent && this.keyData === 'case study') {
+            if (this.selectedContent !== 'otherResources' && this.keyData === 'case study') {
               this.selectedFilter['createdFor'] = environment.cbcOrg
             }
             this.fetchFromSearchV6(this.seeAllPageConfig)
@@ -415,7 +415,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       if (key === gyaanConstants.resourceCategory) {
         this.selectedFilter[key] = keyData.name
         this.titles = [
-          { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
+          { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
           { title: this.titleCasePipe.transform(keyData.name), url: `none`, icon: '' },
         ]
       } else {
@@ -464,7 +464,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   contentTypeSelection(selectedFilter: any , _key: any, keyData: any) {
 
     if (keyData.name === 'otherResources') {
-      this.selectedContent = ''
+      this.selectedContent =  keyData.name
       delete selectedFilter.createdFor
     } else {
       this.selectedContent = keyData.name
@@ -486,7 +486,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
    if (result) {
     const filter = result.filter
       this.titles = [
-        { title: 'Amrit Gyan Kosh', url: '/app/amrit-gyan-kosh/all', disableTranslate: true, icon: 'school' },
+        { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
         { title: this.titleCasePipe.transform(filter[gyaanConstants.resourceCategory] ?
            filter[gyaanConstants.resourceCategory] : ''), url: `none`, icon: '' },
       ]

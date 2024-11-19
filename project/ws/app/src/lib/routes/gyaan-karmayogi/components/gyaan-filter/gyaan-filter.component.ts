@@ -46,7 +46,7 @@ export class GyaanFilterComponent implements OnInit {
     this.gConstants = gyaanConstants
     let yearsData: any = {}
     this.route.queryParams.subscribe((res: any) => {
-      this.selectedContent = res.content
+      this.selectedContent = res.content|| 'otherResources'
     })
 
     if (this.data && this.data.facetsDataCopy) {
