@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl } from '@angular/forms'
 import { EventService } from '../../services/events.service'
 import moment from 'moment'
-import { ConfigurationsService, WsEvents, EventService as EventServiceGlobal } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, WsEvents, EventService as EventServiceGlobal, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { MatTabChangeEvent } from '@angular/material/tabs'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
@@ -84,6 +84,7 @@ export class EventsComponent implements OnInit {
     private eventService: EventServiceGlobal,
     private translate: TranslateService,
     private searchSrvc: GbSearchService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
 
     this.data = this.route.snapshot.data.topics.data
@@ -93,10 +94,10 @@ export class EventsComponent implements OnInit {
     if (this.configSvc.userProfile) {
       this.departmentID = this.configSvc.userProfile.rootOrgId
     }
-
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
+      let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
+      lang = lang.replace(/\"/g, '')
       this.translate.use(lang)
     }
     this.eventWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.eventStrips) || []
@@ -647,5 +648,8 @@ export class EventsComponent implements OnInit {
       this.showLoading = false
     }
 
+  }
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 }
