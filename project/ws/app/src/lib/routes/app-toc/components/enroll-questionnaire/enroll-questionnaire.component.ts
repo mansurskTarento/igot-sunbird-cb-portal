@@ -13,6 +13,7 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
+import { TranslateService } from '@ngx-translate/core'
 // import { MomentDateAdapter } from '@angular/material-moment-adapter'
 // import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
@@ -114,8 +115,15 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private profileV2Svc: ProfileV2Service,
     private otpService: OtpService,
     private npsSvc: NPSGridService,
+    private translateService: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) { 
+  ) {
+
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
 
     this.batchDetails = this.data.batchData
     this.userDetailsForm = new FormGroup({
