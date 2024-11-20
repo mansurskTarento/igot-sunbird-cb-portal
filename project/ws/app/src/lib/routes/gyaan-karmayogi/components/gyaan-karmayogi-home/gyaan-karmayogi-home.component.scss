@@ -4,16 +4,24 @@
 .container-balanced {
   @extend %page-center;
 }
+.filters-container {
+    width: 50%;
+}
 .gyann-wrapper {
+    ::ng-deep.banner-image {
+        object-fit: cover;
+        object-position: center;
+        height: 300px!important;
+    }
     .headder-block {
-        background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
+        // background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
         
         // background-image: url('assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg');
         .section{
             padding: 30px;
-            background-image: url(/assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg);
-            background-position: right bottom; /*Positioning*/
-            background-repeat: no-repeat;
+            // background-image: url(/assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg);
+            // background-position: right bottom; /*Positioning*/
+            // background-repeat: no-repeat;
         }
         .title {
             color: var(--themes_envytheme_com_edali_remote-training__2056x1031_default-Nero, #FFF);
@@ -64,7 +72,7 @@
             }
         }
         .img-container {
-            padding-left: 24px;
+            
             .img1 {
                 width: 289px;
                 height: 304px;
@@ -93,6 +101,7 @@
             }
         }
     }
+
 }
 
 // ::ng-deep .mat-form-field-outline-start {
@@ -236,9 +245,17 @@
 
 }
 @media screen and (max-width: 768px) {
+    .filters-container {
+        width: 100%;
+    }
+    ::ng-deep.banner-image {
+        object-fit: cover; /* Scales and crops if needed */
+        object-position: center;
+        max-height: 230px!important;
+    }
     .gyann-wrapper {
         .headder-block {
-            background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
+            // background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
 
             .section{
                 padding: 16px;
@@ -270,8 +287,8 @@
                 line-height: normal;
             }
             .img-container {
-                display: none !important;
-                padding-left: 24px;
+                //display: none !important;
+                //padding-left: 24px;
             }
         }
     }

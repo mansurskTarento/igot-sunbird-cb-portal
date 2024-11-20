@@ -4,18 +4,18 @@
         <div class="flex flex-center headder-block">
             <div class="section w-full">
                 <div class="container-balanced ">
-                    <div class="grid 2 md:grid-cols-2">
-                        <div class="">
+                    <div class="grid 2">
+                        <!-- <div class="">
                             <p class="title mat-display-1 mb-2">{{'gyaanKarmayogi.title'| translate}}</p>
                             <p class="description mat-title">{{'gyaanKarmayogi.description'| translate}}</p>
                             <div class="flex search-block mt-16">
                                 <input type="text" placeholder="{{'gyaanKarmayogi.placeholder' | translate}}" (keyup.enter)="searchFilter()" [formControl]="searchControl"  class="flex-1">
                                 <button type="button" (click)="searchFilter()" class="btn cursor-pointer">{{'gyaanKarmayogi.search' | translate}}</button>
                             </div>
-                        </div>
+                        </div> -->
     
                         <div class="w-full img-container flex justify-end gap-8">
-                            <ws-widget-sliders class="w-full m-8 mb-0 mt-0" [widgetData]="pageConfigData?.sliderData"></ws-widget-sliders>
+                            <ws-widget-sliders class="w-full mb-0 mt-0" [widgetData]="pageConfigData?.sliderData"></ws-widget-sliders>
                             <!-- <img class="img1" src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-1.jpg" alt="">
                             <div class="flex gap-4 flex-col">
     
@@ -24,6 +24,12 @@
                             <img  class="img3" src="assets/instances/eagle/banners/hubs/knowledgeresource/banner-3.jpg" alt="">
                             </div> -->
                         </div>
+                        <div class="w-full filters-container">
+                            <div class="flex search-block">
+                                <input type="text" placeholder="{{'gyaanKarmayogi.placeholder' | translate}}" (keyup.enter)="searchFilter()" [formControl]="searchControl"  class="flex-1">
+                                <button type="button" (click)="searchFilter()" class="btn cursor-pointer">{{'gyaanKarmayogi.search' | translate}}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,7 +37,7 @@
     </div>
 
     
-    <div class="flex flex-center mt-8 mb-8 p-2 md:p-0" *ngIf="sectorsList?.length > 1">
+    <div class="flex flex-center mb-8 p-2 md:p-0" *ngIf="sectorsList?.length > 1">
         <div class="container-balanced w-full">
             <div class="flex items-center justify-between sector-headding">
                 <p>{{'gyaanKarmayogi.sectors'| translate}}</p>
