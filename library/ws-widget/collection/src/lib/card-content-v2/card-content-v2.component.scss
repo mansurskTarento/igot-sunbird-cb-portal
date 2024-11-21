@@ -1710,6 +1710,9 @@ $title-line-count: 2;
     -webkit-line-clamp: $title-line-count;
     -webkit-box-orient: vertical;
     min-height: $title-line-count * $title-line-height;
+    /* stylelint-disable */
+    font-family: 'Lato';
+    /* stylelint-enable */
   }
 
   $description-line-count: 2;
@@ -1722,6 +1725,9 @@ $title-line-count: 2;
     height: $description-line-count * $description-line-height;
     white-space: normal;
     text-overflow: ellipsis;
+    /* stylelint-disable */
+    font-family: 'Lato';
+    /* stylelint-enable */
     // line-height: $description-line-height;
   }
 

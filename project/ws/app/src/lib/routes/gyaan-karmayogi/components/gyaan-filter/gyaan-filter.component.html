@@ -148,7 +148,7 @@
 </ng-template>
 
 <ng-template #labelAndSearch let-facet="facet">
-    <p class="title mb-4">{{facet?.value?.displayName |titlecase}}</p>
+    <p class="title mb-4">{{facet?.value?.displayName}}</p>
     <div class="search-filter mb-2" *ngIf="facet?.value?.name !== 'years' && facet?.key !== 'contentType' ">
         <input type="text" (keyup)="getSearch($event?.target?.value, facet?.key)" placeholder="Search {{facet?.value?.placeHolder || facet?.value?.label}}">
         <mat-icon>search</mat-icon>
