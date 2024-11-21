@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 // tslint:disable-next-line
 import _ from 'lodash'
+import { environment } from 'src/environments/environment'
 @Component({
   selector: 'ws-public-logout',
   templateUrl: './public-logout.component.html',
@@ -18,6 +19,7 @@ export class PublicLogoutComponent implements OnInit, OnDestroy {
   message: null | string | undefined
   private subscriptionContact: Subscription | null = null
   private routerSubsc: Subscription | null = null
+  environment!: any
 
   constructor(
     private configSvc: ConfigurationsService,
@@ -62,5 +64,12 @@ export class PublicLogoutComponent implements OnInit, OnDestroy {
     const host = window.location.origin
     window.location.href = `${host}/protected/v8/resource`
     // window.location.reload()
+  }
+  mdoRedirect(){
+    this.environment = environment
+    const sitePath = this.environment.sitePath
+    const domain = sitePath.split(".").slice(1).join(".")
+    const newUrl = `https://${domain}/#/mdoList#mdoUserList`
+    window.location.href = newUrl
   }
 }
