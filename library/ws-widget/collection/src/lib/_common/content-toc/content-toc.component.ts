@@ -75,7 +75,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.displayTeachersContent = this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
       }
     } else {
-      this.displayTeachersContent = this.route.snapshot.queryParams.editMode && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
+      this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
+        this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
     }
   }
 
