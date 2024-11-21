@@ -227,7 +227,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   redirectToMyLearning() {
     this.raiseTelemetry('My Learning')
     // /app/seeAll?key=continueLearning
-    this.router.navigate(['/app/seeAll'], { queryParams: { key: 'continueLearning' } })
+    this.router.navigate(['/app/seeAll/new'], { queryParams: { key: 'continueLearning' } })
   }
 
   handleRedirectToCompetencyPassbook() {
