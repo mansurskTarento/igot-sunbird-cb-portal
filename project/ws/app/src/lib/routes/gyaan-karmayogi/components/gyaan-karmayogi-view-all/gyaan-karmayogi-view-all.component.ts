@@ -308,7 +308,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
               name: gyaanConstants.statesAndUts,
               displayName: gyaanConstants.statesAndUts,
               label: gyaanConstants.statesLable,
-              placeHolder: gyaanConstants.statesLable,
+              placeHolder: gyaanConstants.placeHolderStates,
               values: 'values',
               viewMore: false,
             },
