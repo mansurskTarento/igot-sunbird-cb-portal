@@ -616,12 +616,16 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         strip.tabs[tabIndex].pillsData[0].fetchTabStatus = 'done'
       }
       if (res && res.result && res.result.events && res.result.events.length) {
-        this.formatEnrollmentData(strip, tabIndex, [], content, contentNew , tabResults, calculateParentStatus)
+        this.formatEnrollmentData(strip, tabIndex, res.result.events, content,
+           contentNew , tabResults, calculateParentStatus)
       }
        else {
-        
+        this.formatEnrollmentData(strip, tabIndex, [], content, contentNew ,
+           tabResults, calculateParentStatus)
        }
     },                                                  (_err: any) => {
+      this.formatEnrollmentData(strip, tabIndex, [], content, contentNew ,
+         tabResults, calculateParentStatus)
     })
   }
 
