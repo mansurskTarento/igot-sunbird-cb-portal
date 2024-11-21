@@ -65,7 +65,7 @@ export class GyaanPlayerComponent implements OnInit {
     } else {
       const queryParams = { ...this.route.snapshot.queryParams }
       //delete queryParams['primaryCategory']
-      queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
+      //queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: this.resourceData.resourceCategory, disableTranslate: true,
