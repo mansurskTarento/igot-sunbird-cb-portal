@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
-import { takeUntil } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -13,6 +13,7 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
+import { TranslateService } from '@ngx-translate/core'
 // import { MomentDateAdapter } from '@angular/material-moment-adapter'
 // import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
@@ -51,6 +52,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   groupData: any | undefined
   private destroySubject$ = new Subject()
   designationsMeta: any
+  filterDesignationsMeta: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   currentDate = new Date()
   masterLanguages: any[] | undefined
@@ -113,8 +115,15 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private profileV2Svc: ProfileV2Service,
     private otpService: OtpService,
     private npsSvc: NPSGridService,
+    private translateService: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) { 
+  ) {
+
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
 
     this.batchDetails = this.data.batchData
     this.userDetailsForm = new FormGroup({
@@ -127,7 +136,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       dob: new FormControl('', []),
       domicileMedium: new FormControl(''),
       category: new FormControl('', []),
-      pincode: new FormControl(''),
+      pinCode: new FormControl(''),
       isCadre: new FormControl(),
       typeOfCivilService: new FormControl(''),
       serviceType: new FormControl(''),
@@ -249,6 +258,22 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.loadDesignations()
     this.getMasterLanguage()
     this.fetchCadreData()
+    this.userDetailsForm.get('designation')!.valueChanges
+    .pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      startWith(''),
+    )
+    .subscribe(res => {
+      console.log(res)
+      if (res) {
+        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+        )
+      } else {
+        this.filterDesignationsMeta =  this.designationsMeta
+      }
+    })
   }
 
   fetchCadreData(){
@@ -585,7 +610,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('pincode')
+          const fieldControl = this.userDetailsForm.get('pinCode')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
             fieldControl.updateValueAndValidity()
@@ -702,6 +727,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
       })
@@ -769,13 +795,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
     if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
+          this.submitSurevy()
         }
       }, error => {
         /* tslint:disable */
         console.log(error)
         this.snackBar.open("something went wrong!")
       })
-      this.submitSurevy()
     }
   }
 
@@ -851,8 +877,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.personalDetails['category'] = this.userDetailsForm.controls['category'].value
       this.updateProfile = true
     }
-    if(this.showPinCode && this.userDetailsForm.controls['pincode'].value) {
-      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pincode'].value
+    if(this.showPinCode && this.userDetailsForm.controls['pinCode'].value) {
+      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pinCode'].value
+      payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
     if(this.showCadreDetails) {
@@ -981,7 +1008,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
         if (this.showPinCode) {
-          dataObject[_field.name] = this.userDetailsForm.controls['pincode'].value
+          dataObject[_field.name] = this.userDetailsForm.controls['pinCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
           this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
@@ -1026,7 +1053,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
-            this.userProfileObject.profileDetails.cadreDetails.cadreBatch : 'N/A'
+          JSON.stringify(this.userProfileObject.profileDetails.cadreDetails.cadreBatch) : 'N/A'
         }
       }
 

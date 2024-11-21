@@ -45,6 +45,24 @@
                             </div>
                         </ng-container>
                       </div>
+
+                      <div class="w-full" *ngIf="((tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.fetchTabStatus && tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.fetchTabStatus === 'done') &&
+                        (!tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets || !tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.widgets?.length))">
+                        <ng-container *ngIf="tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.value === 'inprogress'; else msgTemp">
+                            <div class="w-full flex flex-col items-center justify-center">
+                            <img alt="" class="mt-4 mb-4" src="assets/icons/home/nodataDefault.svg">
+                            <div class="mat-subheading-1 text-center info-content">{{ translateLabels('get Ready For Learning Adventure','contentstripmultiple')   }} -
+                                <a class="click-here" [routerLink]="tab?.label === 'Events' ? '/app/event-hub/home':'/page/learn'">{{ translateLabels('click Here','contentstripmultiple') }}.</a> <span *ngIf=" tab?.label === 'Events'">{{translateLabels('to Enroll Next Events','contentstripmultiple') }}</span>
+                            <span *ngIf=" tab?.label !== 'Events'">{{ translateLabels('to Enroll Next Course','contentstripmultiple')  }}</span></div>
+                            </div>
+                        </ng-container>
+                        <ng-template #msgTemp>
+                            <div class="w-full flex flex-col items-center justify-center">
+                            <img alt="" class="mt-4 mb-4" src="assets/icons/home/nodataDefault.png">
+                            <div class="mat-subheading-1 text-center">{{ translateLabels(tab?.pillsData[getSelectedPillIndex(tab ,tabIndex)]?.nodataMsg, 'home') }}</div>
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
             </mat-tab>
         </mat-tab-group>

@@ -169,6 +169,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   designationApprovedTime = 0
   currentDate = new Date()
   designationsMeta: any
+  filterDesignationsMeta: any
   civilServiceTypes: any
   civilServiceData: any
   cadreControllingAuthority: any
@@ -354,6 +355,21 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isIgotOrg = this.configService.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
 
+    this.primaryDetailsForm.get('designation')!.valueChanges
+    .pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      startWith(''),
+    )
+    .subscribe(res => {
+      if (res) {
+        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+        )
+      } else {
+        this.filterDesignationsMeta =  this.designationsMeta
+      }
+    })
   }
 
   // Sujith
@@ -1061,6 +1077,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
       })

@@ -60,5 +60,10 @@
         "singleline": "never"
       }
     }
+  },
+  "linterOptions": {
+    "exclude": [
+      "**/*.spec.ts"
+    ]
   }
 }
