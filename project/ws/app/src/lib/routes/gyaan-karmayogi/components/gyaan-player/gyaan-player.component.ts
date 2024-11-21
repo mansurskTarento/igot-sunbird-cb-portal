@@ -63,10 +63,13 @@ export class GyaanPlayerComponent implements OnInit {
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     } else {
+      const queryParams = { ...this.route.snapshot.queryParams }
+      //delete queryParams['primaryCategory']
+      queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: this.resourceData.resourceCategory, disableTranslate: true,
-          queryParams: { key: this.resourceData.resourceCategory.toLowerCase() }, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
+          queryParams: queryParams, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     }
