@@ -12,7 +12,7 @@ import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -58,6 +58,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
+    private route: ActivatedRoute
 
   ) {
     super()
@@ -430,8 +431,8 @@ export class CardContentV2Component extends WidgetBaseComponent
       // } else {
         this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
           queryParams : {
-            primaryCategory: this.primaryCategory.RESOURCE
-            // preview: true
+            primaryCategory: this.primaryCategory.RESOURCE,
+            ...this.route.snapshot.queryParams
           }
         })
       // }

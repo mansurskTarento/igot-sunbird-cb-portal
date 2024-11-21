@@ -135,7 +135,8 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-        if (this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
+        if (this.selectedFilter[gyaanConstants.resourceCategory] && 
+            this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
           this.selectedContent !== 'otherResources'
         ) {
           strip.request.searchV6.request.filters.contentType = [
@@ -173,16 +174,34 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       this.newQueryParam = strip.request
       try {
         const response = await this.searchV6Request(strip, strip.request, calculateParentStatus)
-        if (response && response.results) {
+        if (response && response.results && response.results.result.content && response.results.result.content.length) {
+          let filteRespose: any = []
           if (this.contentDataList.length && this.contentDataList[0].widgetData.content) {
             this.contentDataList =
             _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
           } else {
-            this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
+            if (!this.selectedFilter.createdFor) {
+              response.results.result.content.forEach((content: any) => {
+                if(!content.createdFor.includes(environment.cbcOrg)) {
+                  filteRespose.push(content)
+                }
+              })
+              this.contentDataList = this.transformContentsToWidgets(filteRespose, strip)
+              this.totalCount = filteRespose.length
+              this.page = 0
+              this.totalPages = Math.ceil(filteRespose.length / strip.request.searchV6.request.limit)
+            } else {
+              this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
+              this.totalCount = response.results.result.count
+              this.page = 0
+              this.totalPages = Math.ceil(response.results.result.count / strip.request.searchV6.request.limit)
+            }
           }
           this.totalCount = response.results.result.count
           this.page = 0
           this.totalPages = Math.ceil(response.results.result.count / strip.request.searchV6.request.limit)
+        } else {
+          this.contentDataList = []
         }
       } catch (error) {}
 
