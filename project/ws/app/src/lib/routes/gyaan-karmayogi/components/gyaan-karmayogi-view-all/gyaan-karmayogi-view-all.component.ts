@@ -175,14 +175,14 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       try {
         const response = await this.searchV6Request(strip, strip.request, calculateParentStatus)
         if (response && response.results && response.results.result.content && response.results.result.content.length) {
-          let filteRespose: any = []
+          const filteRespose: any = []
           if (this.contentDataList.length && this.contentDataList[0].widgetData.content) {
             this.contentDataList =
             _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
           } else {
             if (!this.selectedFilter.createdFor) {
               response.results.result.content.forEach((content: any) => {
-                if(!content.createdFor.includes(environment.cbcOrg)) {
+                if (!content.createdFor.includes(environment.cbcOrg)) {
                   filteRespose.push(content)
                 }
               })

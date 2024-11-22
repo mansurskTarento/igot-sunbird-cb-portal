@@ -14,7 +14,7 @@ export const gyaanConstants = {
     yearlable: 'Year',
     statesAndUts: 'States and UTs',
     statesLable: 'States and UTs',
-    placeHolderStates: "States",
+    placeHolderStates: 'States',
     contextStateOrUTs: 'contextStateOrUTs',
     contextSDGs: 'contextSDGs',
     contextYear: 'contextYear',
