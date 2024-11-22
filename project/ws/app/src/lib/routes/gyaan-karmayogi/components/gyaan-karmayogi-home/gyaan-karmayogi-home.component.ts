@@ -39,6 +39,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   gyaanForm: FormGroup | undefined
 
   selectedTabIndex = 0
+  cbcOrg: any
 
   constructor(public translate: TranslateService,
               private route: ActivatedRoute,
@@ -52,6 +53,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.cbcOrg = environment.cbcOrg
     this.gyaanForm = new FormGroup({
       sectors: new FormControl(''),
       subSectors: new FormControl(''),

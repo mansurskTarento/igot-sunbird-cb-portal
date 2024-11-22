@@ -46,34 +46,26 @@
             <ng-container *ngFor="let facet of localFilterData  | keyvalue:returnZero">
                 <div class="individual-block">
                     <div class="list mb-4">
-                        <ng-container *ngIf="facet?.value?.values?.length;else noData">
+                        <ng-container>
                             <ng-container  *ngIf="facet?.key !== 'resourceCategory' && facet?.key !== 'contextYear' && facet?.key !== 'contentType'">
                                 <ng-container [ngTemplateOutlet]="labelAndSearch" [ngTemplateOutletContext]="{facet: facet}"></ng-container>
-                                <ng-container  *ngIf="!facet.viewMore">
-                                    <ng-container *ngFor="let sectors of facet?.value?.values; index as i">
-                                        <div class="check-list" *ngIf="i <= 3">
-                                            <mat-checkbox [checked]="sectors?.checked" (change)="changeSelection($event?.checked,facet?.key, sectors, facet?.value?.values)" class="mat-gyaan-filter text-capitalize">{{sectors.name}}</mat-checkbox>
-                                        </div>
-                                    </ng-container>
-                                    <ng-container *ngIf="facet.value?.values?.length > 4">
-                                        <div class="pt-3">
-                                            <span class="view-more" (click)="facet.viewMore = true">View All</span>
-                                        </div>
-                                    </ng-container>
-                                </ng-container>
-                                <ng-container  *ngIf="facet.viewMore">
-                                    <!-- <div class="check-list">
-                                        <mat-checkbox class="mat-gyaan-filter text-capitalize">All</mat-checkbox>
-                                    </div> -->
-                                    <ng-container *ngFor="let sectors of facet?.value?.values; index as i">
+                                <div *ngIf="facet?.value?.values?.length;else noData">
+                                    <ng-container *ngFor="let sectors of (!facet.viewMore ? facet?.value?.values.slice(0,4) : facet?.value?.values); index as i">
                                         <div class="check-list">
                                             <mat-checkbox [checked]="sectors?.checked" (change)="changeSelection($event?.checked,facet?.key, sectors, facet?.value?.values)" class="mat-gyaan-filter text-capitalize">{{sectors.name}}</mat-checkbox>
                                         </div>
                                     </ng-container>
-                                    <div class="pt-3">
-                                        <span class="view-more" (click)="facet.viewMore = false">View Less</span>
-                                    </div>
-                                </ng-container>
+                                    <ng-container *ngIf="!facet.viewMore && facet?.value?.values?.length > 4">
+                                        <div class="pt-3">
+                                            <span class="view-more" (click)="facet.viewMore = true">View All</span>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="facet.viewMore">
+                                        <div class="pt-3">
+                                            <span class="view-more" (click)="facet.viewMore = false">View Less</span>
+                                        </div>
+                                    </ng-container>
+                                </div>
                             </ng-container>
                             <ng-container  *ngIf="facet?.key === 'contextYear' && selectedFilter?.resourceCategory === 'case study' && selectedFilter?.createdFor">
                                 <ng-container [ngTemplateOutlet]="labelAndSearch" [ngTemplateOutletContext]="{facet: facet}"></ng-container>
@@ -85,10 +77,10 @@
                             </ng-container>
                             <ng-container *ngIf="facet?.key === 'resourceCategory' || facet?.key === 'contentType'">
                                 <ng-container [ngTemplateOutlet]="labelAndSearch" [ngTemplateOutletContext]="{facet: facet}"></ng-container>
-                                <ng-container  *ngIf="!facet.viewMore">
+                                <div *ngIf="facet?.value?.values?.length;else noData">
                                     <mat-radio-group aria-label="Select an option" >
-                                        <ng-container *ngFor="let sectors of facet?.value?.values; index as i">
-                                            <div class="check-list"  *ngIf="i <= 3">
+                                        <ng-container *ngFor="let sectors of (!facet.viewMore ? facet?.value?.values.slice(0,4) : facet?.value?.values); index as i">
+                                            <div class="check-list">
                                                 <mat-radio-button [value]="sectors?.name" class="text-capitalize"  [checked]="selectedContent === sectors?.name || sectors?.checked" 
                                                     (change)="changeSelection(true,facet?.key, sectors)">
                                                     <span *ngIf="facet?.key !== 'contentType'">{{sectors?.name}}</span>
@@ -96,28 +88,18 @@
                                                 </mat-radio-button>
                                             </div>
                                         </ng-container>
-                                        <ng-container *ngIf="facet.value?.values?.length > 4">
+                                        <ng-container *ngIf="!facet.viewMore && facet?.value?.values?.length > 4">
                                             <div class="pt-3">
                                                 <span class="view-more" (click)="facet.viewMore = true">View All</span>
                                             </div>
                                         </ng-container>
-                                    </mat-radio-group>
-                                </ng-container>
-                                <ng-container  *ngIf="facet.viewMore">
-                                    <mat-radio-group aria-label="Select an option" >
-                                        <ng-container *ngFor="let sectors of facet?.value?.values;  index as i">
-                                            <div class="check-list">
-                                                <mat-radio-button [value]="sectors?.name" class="text-capitalize"  [checked]="selectedContent === sectors?.name || sectors?.checked"
-                                                    (change)="changeSelection(true,facet?.key, sectors)">{{sectors?.name}}</mat-radio-button>
-                                            </div>
-                                        </ng-container>
-                                        <ng-container>
+                                        <ng-container *ngIf="facet.viewMore">
                                             <div class="pt-3">
                                                 <span class="view-more" (click)="facet.viewMore = false">View less</span>
                                             </div>
                                         </ng-container>
                                     </mat-radio-group>
-                                </ng-container>
+                                </div>
                             </ng-container>
                         </ng-container>
                         <ng-template #noData>
@@ -129,24 +111,7 @@
             </ng-container>
     
         </ng-container>
-        <!-- <div class="individual-block">
-            <p class="title">Sectors</p>
-            <div class="search-filter">
-                <input type="text" placeholder="Search sector">
-                <mat-icon>search</mat-icon>
-            </div>
-            <div class="list">
-                <ng-container *ngFor="let sectors of sectorsList">
-                    <div class="check-list">
-                        <mat-checkbox [checked]="sectors?.completed">{{sectors?.label}}</mat-checkbox>
-                    </div>
-                </ng-container>
-            </div>
-        </div> -->
-       
-    
 </ng-template>
-
 <ng-template #labelAndSearch let-facet="facet">
     <p class="title mb-4">{{facet?.value?.displayName}}</p>
     <div class="search-filter mb-2" *ngIf="facet?.value?.name !== 'years' && facet?.key !== 'contentType' ">
