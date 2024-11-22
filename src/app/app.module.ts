@@ -162,7 +162,7 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-import { PickerComponent } from '@ctrl/ngx-emoji-mart'
+import { PickerModule } from '@ctrl/ngx-emoji-mart'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -216,7 +216,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SurveyShikshaComponent,
     PrivacyPolicyComponent,
     LearnerAdvisoryComponent,
-    PickerComponent
   ],
   imports: [
     FormsModule,
@@ -341,7 +340,9 @@ export function HttpLoaderFactory(http: HttpClient) {
       },
     }),
     ProfileV3Module,
-    MatSidenavModule  ],
+    MatSidenavModule,
+    PickerModule
+  ],
   exports: [
     TncComponent,
     HeaderModule,
