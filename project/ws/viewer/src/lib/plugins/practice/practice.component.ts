@@ -33,6 +33,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSidenav } from '@angular/material/sidenav'
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 // import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
@@ -175,7 +176,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private viewerDataSvc: ViewerDataService,
     private viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
     private renderer: Renderer2,
-    private widgetContentService: WidgetContentService
+    private widgetContentService: WidgetContentService,
+    private tocSvc: AppTocService
 
   ) {
     if (environment.assessmentBuffer) {
@@ -2079,7 +2081,16 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   assignQuizResult(res: NSPractice.IQuizSubmitResponseV2) {
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
-    }
+     }  else {
+      if (this.tocSvc.hashmap[this.identifier] &&
+        (!this.tocSvc.hashmap[this.identifier]['completionStatus'] || this.tocSvc.hashmap[this.identifier]['completionStatus'] < 2)) {
+        const completionPercentage: number = 100
+        const completionStatus: number = 2
+        this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
+        this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
+        this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+      }
+     }
     this.finalResponse = res
     if (this.quizJson.isAssessment) {
       this.isIdeal = true
