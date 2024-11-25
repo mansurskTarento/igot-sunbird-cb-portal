@@ -35,9 +35,11 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { PublicCrpComponent } from '../public-crp/public-crp.component'
+import { AppPublicOrganizationResolver } from './organization.resolver'
 
 @NgModule({
-    declarations: [PublicSignupComponent, SignupSuccessDialogueComponent, TermsAndConditionComponent],
+    declarations: [PublicSignupComponent, SignupSuccessDialogueComponent, TermsAndConditionComponent, PublicCrpComponent],
     imports: [
         CommonModule,
         FormsModule,
@@ -71,11 +73,12 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         PipeDurationTransformModule,
         TranslateModule,
     ],
-    exports: [PublicSignupComponent],
+    exports: [PublicSignupComponent, PublicCrpComponent],
     providers: [
         SignupService,
         AppPublicPositionResolverService,
         AppPublicGroupResolverService,
+        AppPublicOrganizationResolver,
         {
             provide: RECAPTCHA_V3_SITE_KEY,
             useValue: environment.recaptchaKey,

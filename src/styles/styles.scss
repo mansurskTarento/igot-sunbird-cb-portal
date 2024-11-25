@@ -1286,3 +1286,48 @@ ngx-guided-tour {
     margin: 2px !important;
   }
 }
+
+.brand-color {
+  color: #1B4CA1;
+}
+
+
+.mat-btn-outline {
+  color: #1b4ca1 !important;
+  height: 40px !important;
+  display: flex !important;
+  padding: 12px 16px !important;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid !important;
+  border-color: #1b4ca1 !important;
+  border-radius: 9999px !important;
+  background-color: #fff !important;
+  font-weight: 700;
+
+  span,
+  mat-icon {
+    color: #1b4ca1;
+  }
+}
+
+.mat-btn-flat {
+  color: #fff !important;
+  height: 40px !important;
+  display: flex !important;
+  padding: 12px 16px !important;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid !important;
+  border-color: #1b4ca1 !important;
+  background-color: #1b4ca1 !important;
+  border-radius: 9999px !important;
+  font-weight: 700;
+  mat-icon {
+    color: #1b4ca1;
+  }
+}
+
+.mat-flat-button[disabled] {
+  opacity: 50% !important;
+}
