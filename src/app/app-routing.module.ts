@@ -879,7 +879,7 @@ const routes: Routes = [
     component: LearnerAdvisoryComponent,
     canActivate: [GeneralGuard],
     resolve: {
-      resolve: { home: HomeResolverService },
+     home: HomeResolverService,
     },
     // data: {
     //   module: 'learner-advisory',
