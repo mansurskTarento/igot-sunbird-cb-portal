@@ -2086,9 +2086,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         (!this.tocSvc.hashmap[this.identifier]['completionStatus'] || this.tocSvc.hashmap[this.identifier]['completionStatus'] < 2)) {
         const completionPercentage: number = 100
         const completionStatus: number = 2
-        this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
-        this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
-        this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+        if (this.tocSvc.hashmap[this.identifier] && this.tocSvc.hashmap[this.identifier]['completionPercentage'] &&
+          this.tocSvc.hashmap[this.identifier]['completionStatus']) {
+            this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
+            this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
+            this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+          }
       }
      }
     this.finalResponse = res
