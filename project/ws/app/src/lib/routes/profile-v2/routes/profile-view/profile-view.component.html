@@ -636,7 +636,7 @@
 <ng-template #activitySection>
   <div class="flex flex-col gap-4">
     <div class="flex flex-row gap-4 horizontal-strip mt-4">
-      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
+      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">{{ 'profileInfo.myKarmaPoints' | translate }}</div>
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/discussion-forum']" [queryParams]="{page: 'home'}">{{ 'profileInfo.myDiscussions' | translate }}</div>
     </div>
@@ -849,7 +849,7 @@
           {{ 'profileInfo.myKarmaPoints' | translate }}
           <mat-icon>chevron_right</mat-icon>
         </button>
-        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">
+        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">
           <img src="/assets/icons/home/certificate.svg" alt="certificate icon" />
           {{ 'profileInfo.viewMyCertificates' | translate }}
           <mat-icon>chevron_right</mat-icon>
