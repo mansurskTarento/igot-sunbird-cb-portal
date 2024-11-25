@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
+import { map, tap } from 'rxjs/operators'
+import _ from 'lodash'
 
 const API_END_POINTS = {
   // GET_DEPARTMENTS: `/api/user/registration/v1/getDeptDetails`,
@@ -16,6 +18,9 @@ const API_END_POINTS = {
   GET_POSITIONS: '/api/user/v1/positions',
   GET_GROUPS: '/api/user/v1/groups',
   SEARCH_ORG: '/api/org/ext/v2/signup/search',
+  ORG_READ: '/apis/proxies/v8/org/v1/read',
+  ORGANISATION_FW: (frameworkName: string) =>
+    `/apis/proxies/v8/framework/v1/read/${frameworkName}`,
 }
 
 @Injectable({
@@ -24,6 +29,7 @@ const API_END_POINTS = {
 export class SignupService {
   private signupData = new BehaviorSubject({})
   updateSignupDataObservable = this.signupData.asObservable()
+  list = new Map<string, any>()
 
   constructor(private http: HttpClient) { }
 
@@ -101,4 +107,82 @@ export class SignupService {
   updateSignUpData(state: any) {
     this.signupData.next(state)
   }
+
+  getOrgReadData(organisationId: string): Observable<any> {
+    const request = {
+      request: {
+        organisationId,
+      },
+    };
+    return this.http.post<any>(API_END_POINTS.ORG_READ, request).pipe(
+      map((res: any) => {
+        return _.get(res, 'result.response');
+      })
+    );
+  }
+
+  getFrameworkInfo(frameWorkName: string): Observable<any> {
+    return this.http
+      .get(`${API_END_POINTS.ORGANISATION_FW(frameWorkName)}`, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((response: any) => {
+          this.formateData(response);
+        })
+      );
+  }
+
+  formateData(response: any) {
+    _.get(response, 'result.framework.categories', []).forEach((a: any) => {
+      this.list.set(a.code, {
+        code: a.code,
+        identifier: a.identifier,
+        index: a.index,
+        name: a.name,
+        selected: a.selected,
+        status: a.status,
+        description: a.description,
+        translations: a.translations,
+        category: a.category,
+        associations: a.associations,
+        children: this.formateChildren(a.terms || []),
+      });
+    });
+
+    const allCategories: any = [];
+    this.list.forEach((a: any) => {
+      allCategories.push({
+        code: a.code,
+        identifier: a.identifier,
+        index: a.index,
+        name: a.name,
+        status: a.status,
+        description: a.description,
+        translations: a.translations,
+      });
+    });
+  }
+
+  formateChildren(terms: any[]): any[] {
+    return terms.map((c: any) => {
+      const associations = c.associations || [];
+      if (associations.length > 0) {
+        Object.assign(c, { children: associations });
+        this.formateChildren(c.associations);
+      } else {
+        Object.assign(c, { children: [] });
+      }
+      const importedBy =
+        _.get(c, 'additionalProperties.importedById', null) ===
+        _.get({}, 'userId', '')
+          ? 'You'
+          : _.get(c, 'additionalProperties.importedByName', null);
+      (c['importedByName'] = importedBy),
+        (c['importedOn'] = _.get(c, 'additionalProperties.importedOn')),
+        (c['importedById'] = _.get(c, 'additionalProperties.importedById'));
+      return c;
+    });
+  }
+
 }
