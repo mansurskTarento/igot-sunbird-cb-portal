@@ -141,7 +141,13 @@ export class EventDetailComponent implements OnInit {
             this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
           }
         }
-
+        if(this.isEnrolled) {
+          this.discussWidgetData.enrolledContent = true
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+        } else {
+          this.discussWidgetData.enrolledContent = false
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to comment…'
+        }
         this.discussWidgetData = { ...this.discussWidgetData }
       }
     })
