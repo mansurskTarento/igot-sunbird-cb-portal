@@ -135,7 +135,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-        if (this.selectedFilter[gyaanConstants.resourceCategory] && 
+        if (this.selectedFilter[gyaanConstants.resourceCategory] &&
             this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
           this.selectedContent !== 'otherResources'
         ) {
@@ -276,7 +276,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           const localFacetData: any = {
             contentType: {
               name: gyaanConstants.contentType,
-              displayName: gyaanConstants.contentType,
+              displayName: gyaanConstants.contentLabel,
               label: gyaanConstants.contentLabel,
               placeHolder: gyaanConstants.contentLabel,
               values: [
@@ -309,7 +309,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             },
             resourceCategory: {
               name: gyaanConstants.category,
-              displayName: gyaanConstants.category,
+              displayName: gyaanConstants.categoryDislayName,
               label: gyaanConstants.singleCategory,
               placeHolder:  gyaanConstants.singleCategory,
               values: 'values',

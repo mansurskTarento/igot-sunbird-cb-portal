@@ -18,6 +18,8 @@ export class GyaanFilterComponent implements OnInit {
     ceil: 2012,
     step: 1,
     showTicks: false,
+    draggableRange: true,
+    onlyBindHandles : true
   }
   categoryValue = ''
   mobileSelectedFilter: any = {}
@@ -46,7 +48,7 @@ export class GyaanFilterComponent implements OnInit {
     this.gConstants = gyaanConstants
     let yearsData: any = {}
     this.route.queryParams.subscribe((res: any) => {
-      this.selectedContent = res.content|| 'otherResources'
+      this.selectedContent = res.content || 'otherResources'
     })
 
     if (this.data && this.data.facetsDataCopy) {
@@ -76,16 +78,16 @@ export class GyaanFilterComponent implements OnInit {
 
   bindSelectedValue() {
     if (this.mobileSelectedFilter) {
+      this.selectedFilter = this.mobileSelectedFilter
       Object.keys(this.mobileSelectedFilter).forEach((ele: any) => {
-        this.localFilterData[ele].values.forEach((subEle: any) => {
-          if (this.mobileSelectedFilter[ele].includes(subEle.name)) {
-
-            subEle['checked'] = true
-          }
-
-        })
+        if (this.localFilterData[ele] && this.localFilterData[ele].values.length) {
+          this.localFilterData[ele].values.forEach((subEle: any) => {
+            if (this.mobileSelectedFilter[ele].includes(subEle.name)) {
+              subEle['checked'] = true
+            }
+          })
+        }
       })
-
     }
   }
 
@@ -131,7 +133,6 @@ export class GyaanFilterComponent implements OnInit {
   // changeSelection method will trigger on
   // selection of sectors and subsectors
   changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
-
     if (window.innerWidth < 768) {
       if (key === 'resourceCategory') {
         this.mobileSelectedFilter[key] = keyData.name
@@ -199,7 +200,8 @@ export class GyaanFilterComponent implements OnInit {
       for (let i = sliderData.value; i <= sliderData.highValue; i = i + 1) {
         yearsList.push(i)
       }
-
+      this.minValue = sliderData.value
+      this.maxValue = sliderData.highValue
       this.filterChange.emit({ event: true, key: gyaanConstants.contextYear, keyData: yearsList })
     }
 }

@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common'
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -24,6 +25,7 @@ export class GyaanPlayerComponent implements OnInit {
   constructor(private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
               private route: ActivatedRoute,
+              public titleCasePipe: TitleCasePipe,
               public translate: TranslateService, private router: Router) {
     if (this.route.parent && this.route.parent.snapshot.data.pageData
       && this.route.parent.snapshot.data.pageData.data
@@ -68,7 +70,7 @@ export class GyaanPlayerComponent implements OnInit {
       // queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
-        { title: this.resourceData.resourceCategory, disableTranslate: true,
+        { title: this.titleCasePipe.transform(this.resourceData.resourceCategory), disableTranslate: true,
           queryParams: this.route.snapshot.queryParams, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
