@@ -846,9 +846,12 @@ ul{
 }
 
 .no-certificate-found {
-  padding: 16px;
- 
   min-height: 56px;
+  ::ng-deep ws-widget-sliders-dynamic .banner-data  {
+    font-size: 16px !important;
+    font-family: lato, sans-serif !important;
+  }
+
 }
 
 .truncate-5 {
@@ -858,4 +861,8 @@ ul{
   display: -webkit-box;
   -webkit-box-orient: vertical;
   word-wrap: break-word;
+}
+.ext-info-slider {
+  // height: 67px;
+  padding: 8px;
 }

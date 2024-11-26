@@ -2,7 +2,7 @@
 [widgetData]="{ url: 'home', titles: titles  }">
 </ws-widget-btn-page-back>
 <div class="gyaan-player-wrapper">
-    <div class="flex player-header item-center justify-center" >
+    <div class="flex player-header item-center justify-center" *ngIf="displayContents">
         <div class="container-balanced w-full">
             <div class="flex grid grid-cols-2">
                 <div class="w-full">
@@ -78,12 +78,12 @@
         <div class=" player-wrapper">
             <router-outlet></router-outlet>
         </div>
-        <div class="mt-4">
+        <div class="mt-4" *ngIf="resourceData?.description">
             <p [innerText]="resourceData?.description"></p>
         </div>
     </div>
 </div>
-<div class="flex flex-center filter-section  pb-4 bg-primary">
+<div class="flex flex-center filter-section  pb-4 bg-primary"  *ngIf="displayContents">
     <div class="container-balanced w-full">
         <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between">  
            <ng-container *ngIf="relatedContentStrip">

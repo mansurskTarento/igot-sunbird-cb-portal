@@ -81,7 +81,9 @@
 
 <div class="w-full margin-top-l padding-top-xs event_card_main_box">
     <div class="flex flex-1 flex-column margin-fix mb-2">
-        <span class="f-medium mat-title">{{ 'event.labelAllEvents' | translate }} </span>
+        <span class="f-medium mat-title">
+            {{ translateLabels('labelAllEvents', 'event') }}
+        </span>
     </div>
     <div class="flex flex-1 flex-column margin-fix search">
         <form>
@@ -89,7 +91,7 @@
                 [floatLabel]="'never'">
                 <mat-icon matPrefix class="py-5 flex items-center justify-center">search</mat-icon>
                 <input (onChange)="updateQuery(queryControl.value)" type="search" #searchInput class="ml-2" i18n-placeholder="search content"
-                    [placeholder]="'common.search' | translate" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
+                    [placeholder]="translateLabels('search', 'common')" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
                     accesskey="F" maxlength="50" />
             </mat-form-field>
         </form>
@@ -108,7 +110,7 @@
     </div> -->
     <mat-tab-group [selectedIndex]="0" class="custom-tabgroup" (selectedTabChange)="tabClicked($event)">
        
-        <mat-tab label="{{ 'event.all' | translate }}" *ngIf="alltypeEvents?.length">
+        <mat-tab label="{{ translateLabels('all', 'event') }}" *ngIf="alltypeEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
                     <div class="w-full margin-top-xl margin-bottom-m event_card_box" infinite-scroll
@@ -123,7 +125,7 @@
                 </section>
             </ng-template>
         </mat-tab>
-        <mat-tab label="{{ 'event.karmayogiSaptah' | translate }}" *ngIf="karmayogiSaptahEvents?.length">
+        <mat-tab label="{{ translateLabels('karmayogiSaptah', 'event') }}" *ngIf="karmayogiSaptahEvents?.length">
             <ng-template matTabContent>
                 <section id="content">
                     <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll

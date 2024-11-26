@@ -3,7 +3,7 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDia
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
-import { takeUntil } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -13,21 +13,22 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
 /* tslint:disable */
 import _ from 'lodash'
-import { MomentDateAdapter } from '@angular/material-moment-adapter'
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
+import { TranslateService } from '@ngx-translate/core'
+// import { MomentDateAdapter } from '@angular/material-moment-adapter'
+// import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 
 
-export const MY_FORMATS = {
-  parse: {
-    dateInput: 'LL',
-  },
-  display: {
-    dateInput: 'DD-MM-YYYY',
-    monthYearLabel: 'YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'YYYY',
-  },
-}
+// export const MY_FORMATS = {
+//   parse: {
+//     dateInput: 'LL',
+//   },
+//   display: {
+//     dateInput: 'DD-MM-YYYY',
+//     monthYearLabel: 'YYYY',
+//     dateA11yLabel: 'LL',
+//     monthYearA11yLabel: 'YYYY',
+//   },
+// }
 
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
@@ -38,8 +39,8 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
   templateUrl: './enroll-questionnaire.component.html',
   styleUrls: ['./enroll-questionnaire.component.scss'],
   providers: [
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    // { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    // { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
 export class EnrollQuestionnaireComponent implements OnInit {
@@ -51,6 +52,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   groupData: any | undefined
   private destroySubject$ = new Subject()
   designationsMeta: any
+  filterDesignationsMeta: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   currentDate = new Date()
   masterLanguages: any[] | undefined
@@ -113,8 +115,15 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private profileV2Svc: ProfileV2Service,
     private otpService: OtpService,
     private npsSvc: NPSGridService,
+    private translateService: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) { 
+  ) {
+
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
 
     this.batchDetails = this.data.batchData
     this.userDetailsForm = new UntypedFormGroup({
@@ -249,6 +258,22 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.loadDesignations()
     this.getMasterLanguage()
     this.fetchCadreData()
+    this.userDetailsForm.get('designation')!.valueChanges
+    .pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      startWith(''),
+    )
+    .subscribe(res => {
+      console.log(res)
+      if (res) {
+        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+        )
+      } else {
+        this.filterDesignationsMeta =  this.designationsMeta
+      }
+    })
   }
 
   fetchCadreData(){
@@ -585,7 +610,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
-          const fieldControl = this.userDetailsForm.get('pincode')
+          const fieldControl = this.userDetailsForm.get('pinCode')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
             fieldControl.updateValueAndValidity()
@@ -702,6 +727,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
       })
@@ -761,16 +787,21 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   submitProfile(payload: any) {
+    if(payload && payload['request'] && payload['request']['profileDetails'] && payload['request']['profileDetails']['personalDetails'] && payload['request']['profileDetails']['personalDetails']['dob']) {
+      let dobFormat = payload['request']['profileDetails']['personalDetails']['dob'];
+      let dob = `${new Date(dobFormat).getDate()}-${new Date(dobFormat).getMonth() + 1}-${new Date(dobFormat).getFullYear()}`
+      payload['request']['profileDetails']['personalDetails']['dob'] = dob
+    }    
     if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
+          this.submitSurevy()
         }
       }, error => {
         /* tslint:disable */
         console.log(error)
         this.snackBar.open("something went wrong!")
       })
-      this.submitSurevy()
     }
   }
 
@@ -846,8 +877,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.personalDetails['category'] = this.userDetailsForm.controls['category'].value
       this.updateProfile = true
     }
-    if(this.showPinCode && this.userDetailsForm.controls['pincode'].value) {
-      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pincode'].value
+    if(this.showPinCode && this.userDetailsForm.controls['pinCode'].value) {
+      payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pinCode'].value
+      payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
     if(this.showCadreDetails) {
@@ -870,12 +902,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const [day, month, year] = dateString.split('-')
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    const formattedDay = String(date.getDate()).padStart(2, '0')
-    const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
-    const formattedYear = date.getFullYear()
-    return `${formattedYear}-${formattedMonth}-${formattedDay}`
+    // const [day, month, year] = dateString.split('-')
+    // const date = new Date(Number(year), Number(month) - 1, Number(day))
+    // const formattedDay = String(date.getDate()).padStart(2, '0')
+    // const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
+    // const formattedYear = date.getFullYear()
+    // return `${formattedYear}-${formattedMonth}-${formattedDay}`
+    return  `${new Date(dateString).getFullYear()}-${new Date(dateString).getMonth()+1}-${new Date(dateString).getDate()}`
   }
 
   genereateSurveyPayload() {
@@ -933,8 +966,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           dataObject[_field.name] = this.formatDate(_dob)
         } else {
           if (this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.dob) {
-             let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
-            dataObject[_field.name] = this.formatDate(_dob)
+            let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
+            const [day, month, year] = _dob.split('-')
+            const date = new Date(Number(year), Number(month) - 1, Number(day))
+            const formattedDay = String(date.getDate()).padStart(2, '0')
+            const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
+            const formattedYear = date.getFullYear()
+            dataObject[_field.name] = `${formattedYear}-${formattedMonth}-${formattedDay}`
           } else {
             dataObject[_field.name] = "1950-06-01"
           }
@@ -969,8 +1007,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
-        if (this.showCategory) {
-          dataObject[_field.name] = this.userDetailsForm.controls['pincode'].value
+        if (this.showPinCode) {
+          dataObject[_field.name] = this.userDetailsForm.controls['pinCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
           this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
@@ -1015,7 +1053,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
-            this.userProfileObject.profileDetails.cadreDetails.cadreBatch : 'N/A'
+          JSON.stringify(this.userProfileObject.profileDetails.cadreDetails.cadreBatch) : 'N/A'
         }
       }
 

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { NsContent, UtilityService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, NsContent, UtilityService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
@@ -40,11 +40,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobile = false
   selectedTabIndex = 0
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
+  displayTeachersContent = false
 
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
-    private loadCheckService: LoadCheckService
+    private loadCheckService: LoadCheckService,
+    private configService: ConfigurationsService,
   ) { }
 
   ngOnInit() {
@@ -65,6 +67,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.route.snapshot.queryParams.batchId : ''
     if (batchId) {
       this.selectedTabIndex = 1
+    }
+    if (this.configService && this.configService.userRoles) {
+      // tslint:disable-next-line:max-line-length
+      this.displayTeachersContent = (this.configService.userRoles.has('MENTOR') || this.configService.userRoles.has('mentor') || this.configService.userRoles.has('Mentor')) ? true : false
+      if (!this.displayTeachersContent) {
+        this.displayTeachersContent = this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
+      }
+    } else {
+      this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
+        this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
     }
   }
 

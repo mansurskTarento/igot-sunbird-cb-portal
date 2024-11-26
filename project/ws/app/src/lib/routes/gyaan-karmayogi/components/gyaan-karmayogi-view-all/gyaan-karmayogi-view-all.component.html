@@ -42,7 +42,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="!filterDataLoading">
-                        <ws-app-gyaan-filter (filterChange)="filterChange($event)" [filterDataLoading]="filterDataLoading" [facetsDataCopy]="facetsDataCopy"  [facetsData]="facetsData"></ws-app-gyaan-filter>
+                        <ws-app-gyaan-filter (filterChange)="filterChange($event)" [filterDataLoading]="filterDataLoading" [facetsDataCopy]="facetsDataCopy" [selectedFilter]="selectedFilter" [facetsData]="facetsData"></ws-app-gyaan-filter>
                     </ng-container>
                 </div>
             </div>

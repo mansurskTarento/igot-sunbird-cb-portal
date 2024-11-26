@@ -189,11 +189,14 @@ export class ShareTocComponent implements OnInit {
     let primaryCategory = ''
     let courseLink = ''
     if (this.content) {
-        courseProvider = this.content.organisation[0] || this.content.source
-        courseId = this.content.identifier,
+        courseProvider = this.content.organisation && this.content.organisation[0]
+        || this.content.contentPartner && this.content.contentPartner.partnerCode
+        || this.content.source
+        courseId = this.content.identifier || this.content.contentId,
         courseName = this.content.name,
-        coursePosterImageUrl = this.content.posterImage || 'assets/instances/eagle/app_logos/KarmayogiBharat_Logo.svg',
-        primaryCategory = this.content.primaryCategory,
+        coursePosterImageUrl = this.content.posterImage ||
+         this.content.appIcon ||  'assets/instances/eagle/app_logos/KarmayogiBharat_Logo.svg',
+        primaryCategory = this.content.primaryCategory || this.content.contentId ? 'External Course' : '',
         courseLink = this.contentLink || ''
     }
     const obj = {

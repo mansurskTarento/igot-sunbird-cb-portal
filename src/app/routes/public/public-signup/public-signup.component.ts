@@ -135,6 +135,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   emailPattern = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
+  environment!: any
 
   private subscriptionContact: Subscription | null = null
   private recaptchaSubscription!: Subscription
@@ -263,6 +264,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // tslint:disable-next-line: no-non-null-assertion
     this.registrationForm.get('organisation')!.setValue('')
     this.heirarchyObject = null
+  }
+  mdoRedirect(){
+    this.environment = environment
+    const sitePath = this.environment.sitePath
+    const domain = sitePath.split(".").slice(1).join(".")
+    const newUrl = `https://${domain}/#/mdoList#mdoUserList`
+    window.location.href = newUrl
   }
 
   // onPositionsChange() {

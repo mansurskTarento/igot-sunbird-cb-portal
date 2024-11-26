@@ -45,6 +45,7 @@ export const environment: IEnvironment = {
   mdoChannelsBookmarkId: (window as { [key: string]: any })['env']['mdoChannelsBookmarkId'] || '',
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
+  cbcOrg: (window as { [key: string]: any })['env']['cbcOrg'] || '',
 }
 interface IEnvironment {
   name: string,
@@ -85,6 +86,7 @@ interface IEnvironment {
   mdoChannelsBookmarkId: string
   providerDataKey: string,
   compentencyVersionKey: string
+  cbcOrg: string
 }
 
 // import { AnyCnameRecord } from 'dns'

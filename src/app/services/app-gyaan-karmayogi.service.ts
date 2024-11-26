@@ -27,6 +27,7 @@ resolve(
             'resourceCategory',
             'sectorName',
             'subSectorName',
+            'createdFor'
           ],
       },
   }

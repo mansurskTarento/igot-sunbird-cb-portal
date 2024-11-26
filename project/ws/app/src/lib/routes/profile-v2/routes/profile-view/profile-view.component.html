@@ -173,12 +173,21 @@
                 </ng-container>
                 <ng-container *ngIf="editProfile">
                   <div class="flex flex-col designation">
-                    <mat-form-field class="profile-form-field">
-                      <mat-select formControlName="designation">
+                    <mat-form-field class="profile-form-field" appearance="none">
+                      <!-- <mat-select formControlName="designation">
                         <mat-option value="" disabled>{{ 'profileInfo.chooseADesignation' | translate }}</mat-option>
                         <mat-option *ngFor="let designation of designationsMeta"
                           value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                      </mat-select>
+                      </mat-select> -->
+                    <div class="flex flex-row auto-complete-row">
+                        <input type="text" class="input-text" matInput formControlName="designation" 
+                         placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </div>
+                    <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete">
+                        <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                    </mat-autocomplete>
+
                     </mat-form-field>
                     <!-- Later I will delete it -->
                     <!-- <div class="flex justify-end primary-text" (click)="handleDesignationRequest()">{{ 'profileInfo.requestDesignation' | translate }}</div> -->
@@ -627,7 +636,7 @@
 <ng-template #activitySection>
   <div class="flex flex-col gap-4">
     <div class="flex flex-row gap-4 horizontal-strip mt-4">
-      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
+      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">{{ 'profileInfo.myKarmaPoints' | translate }}</div>
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/discussion-forum']" [queryParams]="{page: 'home'}">{{ 'profileInfo.myDiscussions' | translate }}</div>
     </div>
@@ -840,7 +849,7 @@
           {{ 'profileInfo.myKarmaPoints' | translate }}
           <mat-icon>chevron_right</mat-icon>
         </button>
-        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">
+        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">
           <img src="/assets/icons/home/certificate.svg" alt="certificate icon" />
           {{ 'profileInfo.viewMyCertificates' | translate }}
           <mat-icon>chevron_right</mat-icon>

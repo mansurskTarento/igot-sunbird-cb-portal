@@ -18,6 +18,7 @@ export class PublicLogoutComponent implements OnInit, OnDestroy {
   message: null | string | undefined
   private subscriptionContact: Subscription | null = null
   private routerSubsc: Subscription | null = null
+  environment!: any
 
   constructor(
     private configSvc: ConfigurationsService,
