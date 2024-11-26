@@ -40,6 +40,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
 
   selectedTabIndex = 0
   cbcOrg: any
+  nonCbcOrgids: any = []
 
   constructor(public translate: TranslateService,
               private route: ActivatedRoute,
@@ -126,18 +127,16 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
                 'Resource',
                 'Course',
               ]
-              data.strips[0].request.searchV6.request.filters.createdFor = environment.cbcOrg
+              data.strips[0].request.searchV6.request.filters.createdFor = this.selectedTabIndex === 0 
+                ? environment.cbcOrg : this.nonCbcOrgids
             }  else {
               data.strips[0].request.searchV6.request.filters.contentType = [
                 'Resource',
               ]
-              delete data.strips[0].request.searchV6.request.filters.createdFor
-              if (this.selectedTabIndex === 0) {
-                data.strips[0].request.searchV6.request.filters = {
-                  ...data.strips[0].request.searchV6.request.filters,
-                  ...addFilters,
-                  createdFor: environment.cbcOrg,
-                }
+              data.strips[0].request.searchV6.request.filters = {
+                ...data.strips[0].request.searchV6.request.filters,
+                ...addFilters,
+                createdFor: this.selectedTabIndex === 0 ? environment.cbcOrg : this.nonCbcOrgids
               }
             }
             if (this.searchControl && this.searchControl.value) {
@@ -316,6 +315,13 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   factesAssign(factesData: any) {
     if (factesData && factesData.length) {
       factesData.forEach((ele: any) => {
+        if(ele.name === 'createdFor') {
+          ele.values.map((item:any) => {
+            if (item.name !== this.cbcOrg) {
+              this.nonCbcOrgids.push(item.name)
+            }
+          })
+        }
         if (ele.name === gyaanConstants.subSectorName) {
           this.subSector = ele.values
         }
