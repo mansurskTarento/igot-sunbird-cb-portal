@@ -34,6 +34,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() selectedBatchData: any
   @Input() config: any
   @Input() componentName!: string
+  @Input() isEnrolled!: boolean
   sticky = false
   menuPosition: any
   isMobile = false
@@ -83,6 +84,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
         }
+      }
+      if(this.isEnrolled) {
+        this.discussWidgetData.enrolledContent = true
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+      } else {
+        this.discussWidgetData.enrolledContent = false
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to comment…'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
