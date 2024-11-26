@@ -40,7 +40,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
 
   selectedTabIndex = 0
   cbcOrg: any
-  nonCbcOrgids: any
+  nonCbcOrgids: any = []
 
   constructor(public translate: TranslateService,
               private route: ActivatedRoute,
@@ -318,7 +318,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
         if(ele.name === 'createdFor') {
           ele.values.map((item:any) => {
             if (item.name !== this.cbcOrg) {
-              this.nonCbcOrgids
+              this.nonCbcOrgids.push(item.name)
             }
           })
         }
