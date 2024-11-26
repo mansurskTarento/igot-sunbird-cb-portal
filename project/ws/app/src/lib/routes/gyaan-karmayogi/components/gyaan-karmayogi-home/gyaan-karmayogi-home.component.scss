@@ -4,16 +4,24 @@
 .container-balanced {
   @extend %page-center;
 }
+.filters-container {
+    width: 50%;
+}
 .gyann-wrapper {
+    ::ng-deep.banner-image {
+        object-fit: cover;
+        object-position: center;
+        height: 300px!important;
+    }
     .headder-block {
-        background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
+        // background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
         
         // background-image: url('assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg');
         .section{
-            padding: 54px;
-            background-image: url(/assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg);
-            background-position: right bottom; /*Positioning*/
-            background-repeat: no-repeat;
+            padding: 30px;
+            // background-image: url(/assets/instances/eagle/banners/hubs/knowledgeresource/graphics.svg);
+            // background-position: right bottom; /*Positioning*/
+            // background-repeat: no-repeat;
         }
         .title {
             color: var(--themes_envytheme_com_edali_remote-training__2056x1031_default-Nero, #FFF);
@@ -64,7 +72,7 @@
             }
         }
         .img-container {
-            padding-left: 24px;
+            
             .img1 {
                 width: 289px;
                 height: 304px;
@@ -93,6 +101,7 @@
             }
         }
     }
+
 }
 
 // ::ng-deep .mat-form-field-outline-start {
@@ -111,7 +120,7 @@
 
 .filter-section {
     ::ng-deep .filter-select {
-        width: 339px;
+        width: 300px;
         height: 48px;
       
         .mat-form-field-infix {
@@ -144,6 +153,33 @@
         cursor: pointer;
 
     }
+
+    .filters-btn {
+        width: Hug (99px)px;
+        height: Fixed (40px)px;
+        top: 832px;
+        left: 1209px;
+        padding: 12px 16px 12px 16px;
+        gap: 8px;
+        border-radius: 24px;
+        border: 1px solid rgba(27, 76, 161, 1);
+        background-color: transparent;
+        color: rgba(27, 76, 161, 1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .filter-dots {
+        width: 18px;
+        height: 18px;
+        font-size: 16px;
+    }
+
+    .filters-btn:hover {
+        background-color: rgba(27, 76, 161, 1);
+        color: white;
+      }
 }
 
 
@@ -209,9 +245,17 @@
 
 }
 @media screen and (max-width: 768px) {
+    .filters-container {
+        width: 100%;
+    }
+    ::ng-deep.banner-image {
+        object-fit: cover; /* Scales and crops if needed */
+        object-position: center;
+        max-height: 230px!important;
+    }
     .gyann-wrapper {
         .headder-block {
-            background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
+            // background: var(--Linear, linear-gradient(101deg, #3A83CF 4.01%, #1B4CA1 79.78%));
 
             .section{
                 padding: 16px;
@@ -243,8 +287,8 @@
                 line-height: normal;
             }
             .img-container {
-                display: none !important;
-                padding-left: 24px;
+                //display: none !important;
+                //padding-left: 24px;
             }
         }
     }
@@ -280,4 +324,31 @@
             border: 2px solid #f3972e;
         }
       }
+}
+
+.more-info-form {
+    background: linear-gradient(106.94deg, #3A70CF 3.96%, #1146A2 39.76%);
+    padding: 24px;
+    border-radius: 96px;
+    position: relative;
+    .karmayogi-info {
+        position: absolute;
+        bottom: 0;
+    }
+    .btn-info {
+        background: #F3962F;
+        //styleName: Button;
+        font-family: Lato;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 16.8px;
+        text-align: center;
+        text-underline-position: from-font;
+        text-decoration-skip-ink: none;
+        border-radius: 52px;
+        border: 1px;
+        padding: 8px;
+        cursor: pointer;
+
+    }
 }

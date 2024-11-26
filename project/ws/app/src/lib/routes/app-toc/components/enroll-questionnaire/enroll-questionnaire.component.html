@@ -10,10 +10,10 @@
             <div class="w-full" *ngIf="showGroup">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Group
+                  {{ 'profileInfo.group' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
-                    <mat-select formControlName="group" placeholder="Select group">
+                    <mat-select formControlName="group" placeholder="{{ 'profileInfo.chooseAGroup' | translate }}">
                       <mat-option *ngFor="let group of groupData" value="{{group}}">{{ group }}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -21,19 +21,31 @@
             <div class="w-full" *ngIf="showDesignation">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Designation
+                  {{ 'profileInfo.designation' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
-                    <mat-select formControlName="designation" placeholder="Select designation">
+                    <!-- <mat-select formControlName="designation" placeholder="Select designation">
                         <mat-option *ngFor="let designation of designationsMeta"
                           value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                      </mat-select>
+                      </mat-select> -->
+                      <div class="flex flex-row auto-complete-row">
+                        <input type="text" class="input-text" matInput formControlName="designation" 
+                         placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </div>
+                    <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete">
+                        <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="userDetailsForm.controls['designation'].invalid && userDetailsForm.controls['designation'].touched"
+                        class="mat-error">
+                        Please enter a valid designation.
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full" *ngIf="showEmployeeCode">
                 <div class="mat-subheading-2 margin-0 required"
                     i18n="Title label|Label which explains the user to enter title">
-                    Employee ID
+                    {{ 'profileInfo.employeeId' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <input type="text" class="input-text" matInput formControlName="employeeCode" placeholder="Enter employee code"/>
@@ -45,7 +57,7 @@
             <div class="w-full" *ngIf="showMobile">
               <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Mobile Number
+                  {{ 'profileInfo.mobileNumber' | translate }}
               </div>
               <div class="flex flex-row gap-4">
                 <div class="country-code" appearance="outline">
@@ -75,7 +87,7 @@
                     <div class="flex enter-otp">
                       <div class="mat-subheading-2 required"
                         i18n="Title label|Label which explains the user to enter title">
-                        Enter OTP
+                        {{ 'profileInfo.enterOTP' | translate }}
                       </div>
                       <div class="mb-3">Time Remaining: <span #timerDiv></span></div>
                     </div>
@@ -102,7 +114,7 @@
           <div class="w-full" *ngIf="showGender">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                Gender
+                {{ 'profileInfo.gender' | translate }}
               </div>
               <mat-form-field appearance="outline" class="w-full">
                   <mat-select formControlName="gender" placeholder="Select gender">
@@ -114,7 +126,7 @@
               <div class="w-full" *ngIf="showDob">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Date of Birth
+                  {{ 'profileInfo.dob' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker" readonly
@@ -126,7 +138,7 @@
             <div class="w-full" *ngIf="showDecimalMedium">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Mother Tongue
+                  {{ 'profileInfo.motherTongue' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <div class="flex flex-row auto-complete-row">
@@ -144,7 +156,7 @@
               <div class="w-full" *ngIf="showCategory">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Category
+                  {{ 'profileInfo.category' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
                     <mat-select formControlName="category" placeholder="Select category">
@@ -156,11 +168,11 @@
             <div class="w-full" *ngIf="showPinCode">
                 <div class="mat-subheading-2 margin-0 required"
                     i18n="Title label|Label which explains the user to enter title">
-                    Office Pin Code
+                    {{ 'userProfile.officePinCode' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="w-full">
-                    <input type="email" class="input-text" matInput maxlength="6" formControlName="pincode" placeholder="Enter pincode"/>
-                    <mat-error class="text-xs" *ngIf="userDetailsForm.get('pincode').hasError('pattern')">
+                    <input type="email" class="input-text" matInput maxlength="6" formControlName="pinCode" placeholder="Enter pincode"/>
+                    <mat-error class="text-xs" *ngIf="userDetailsForm.get('pinCode').hasError('pattern')">
                         {{ 'profileInfo.invalidPinCode' | translate }}
                         </mat-error>
                 </mat-form-field>                    
@@ -168,7 +180,7 @@
             <div class="w-full" *ngIf="showCadreDetails">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Are you a Cadre Employee?
+                  {{ 'profileInfo.isCadre' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="profile-form-field">
                     <mat-select formControlName="isCadre" (selectionChange)="getIsCadreStatus($event.value)" placeholder="Select cadre">
@@ -181,7 +193,7 @@
             <div class="w-full" *ngIf="showCadreDetails && isCadreStatus">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Type of Civil Service
+                  {{ 'profileInfo.typeOfCivilService' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="profile-form-field">
                     <mat-select formControlName="typeOfCivilService" (selectionChange)="getService($event.value)"  placeholder="Select type of civil service">
@@ -193,7 +205,7 @@
             <div class="w-full" *ngIf="showCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Service
+                  {{ 'profileInfo.serviceType' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="profile-form-field">
                     <mat-select formControlName="serviceType" (selectionChange)="onServiceSelect($event)" placeholder="Select service">
@@ -211,7 +223,7 @@
                   )">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Cadre
+                  {{ 'profileInfo.cadre' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="profile-form-field">
                     <mat-select formControlName="cadreName" (selectionChange)="onCadreSelect($event.value)" placeholder="Select cadre">
@@ -234,7 +246,7 @@
             ))) ? true : false">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Batch
+                  {{ 'profileInfo.batch' | translate }}
                 </div>
                 <mat-form-field appearance="outline" class="profile-form-field">
                     <mat-select formControlName="cadreBatch" placeholder="Select batch">
@@ -245,7 +257,7 @@
             <div class="w-full" *ngIf="showCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value">
                 <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
-                  Cadre Controlling Authority
+                  {{ 'profileInfo.cadreControllingAuthority' | translate }}
                 </div>
                 <span class="cadreControl-name">{{cadreControllingAuthority}}</span>
             </div>

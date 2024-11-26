@@ -11,7 +11,7 @@ import { EventsComponent } from './routes/events/events.component'
 import { LoaderService } from '@ws/author/src/public-api'
 import { InitResolver } from '@ws/author/src/lib/services/init-resolve.service'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
-import { BtnPageBackModule, BtnPageBackNavModule, ContentProgressModule, ContentStripWithTabsModule } from '@sunbird-cb/collection/src/public-api'
+import { BtnPageBackModule, BtnPageBackNavModule, ContentProgressModule, ContentStripWithTabsModule, HttpLoaderFactory } from '@sunbird-cb/collection/src/public-api'
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module'
 import { PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
   PipeFilterModule,
@@ -27,7 +27,7 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { RightMenuCardComponent } from './components/right-menu-card/right-menu-card.component'
 import { PresenterCardComponent } from './components/presenter-card/presenter-card.component'
 import { EventService } from './services/events.service'
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
@@ -48,6 +48,7 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
+import { HttpClient } from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -93,7 +94,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
     BtnPageBackModule,
     WidgetResolverModule,
     MatTabsModule,
-    TranslateModule,
     HorizontalScrollerV2Module,
     ContentStripWithTabsModule,
     KarmaPointsModule,
@@ -102,6 +102,13 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
     ContentProgressModule,
     DiscussionV2Module,
     InfiniteScrollModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    })
   ],
   providers: [
     LoaderService,

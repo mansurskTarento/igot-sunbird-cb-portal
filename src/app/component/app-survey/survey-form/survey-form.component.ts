@@ -15,6 +15,7 @@ export class SurveyFormComponent implements OnInit {
   userRead: any
   isTourDone: any
   localStorageFlag: any
+  languageFlag: any
   constructor(
     private activatedRoute: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -39,6 +40,12 @@ export class SurveyFormComponent implements OnInit {
       this.localStorageFlag = true
      } else if (localFlag === 'false') {
       this.localStorageFlag = false
+     }
+     const webLanguage = localStorage.getItem('websiteLanguage')
+     if (webLanguage === 'en') {
+      this.languageFlag = true
+     } else if (localFlag === 'hi') {
+      this.languageFlag = false
      }
   }
 

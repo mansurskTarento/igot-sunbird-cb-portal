@@ -50,6 +50,7 @@ import { PublicExtTocComponent } from './routes/public/public-ext-toc/public-ext
 import { AppTocExtPublicResolverService } from '@ws/app/src/lib/routes/app-toc/resolvers/app-toc-ext-public-resolver.service'
 import { PublicCrpComponent } from './routes/public/public-crp/public-crp.component'
 import { AppPublicOrganizationResolver } from './routes/public/public-signup/organization.resolver'
+import { FormDataResolverService } from './services/form-data-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -188,7 +189,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/gyaan-karmayogi',
+    path: 'app/amrit-gyaan-kosh',
     loadChildren: () =>
       import('./routes/route-gyaan-karmayogi.module').then(u => u.RouteGyaanKarmayogiModule),
     canActivate: [GeneralGuard],
@@ -198,7 +199,7 @@ const routes: Routes = [
       pageId: 'app/knowledge-resource',
     },
     resolve: {
-      pageData: PageResolve,
+      pageData: FormDataResolverService,
       gyaanData: AppGyaanKarmayogiService,
     },
   },

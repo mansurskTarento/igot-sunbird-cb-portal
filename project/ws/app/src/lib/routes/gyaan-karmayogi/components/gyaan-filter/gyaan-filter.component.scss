@@ -4,6 +4,7 @@
     border: 1px 0px 0px 0px;
     background: rgba(255, 255, 255, 1);
     padding: 16px;
+    margin-bottom: 16px;
 
     .mat-radio-checked {
         background-color: transparent !important;
@@ -165,3 +166,152 @@
         text-wrap: balance;
     }
 }
+
+
+//     ::ng-deep.mat-slider-track-fill {
+//         background-color: #1a237e!important; 
+//     }
+  
+//   ::ng-deep.mat-slider-thumb {
+//     background-color: #ff8c00 !important;
+
+//   }
+  
+//   ::ng-deep.mat-slider-thumb-label {
+//     background-color: #f5deb3 !important;
+//     color: #333 !important;
+//     border-radius: 0!important;
+//     transform: none !important
+//   }
+  
+  ::ng-deep.mat-slider-thumb-label-text {
+    font-weight: bold!important;
+  }
+  
+  ::ng-deep.mat-slider-thumb .mat-slider-thumb-label-text {
+    border: 2px solid #ff8c00!important;
+    padding: 4px!important;
+    border-radius: 4px!important;
+    background: #f5deb3!important;
+  }
+
+//   ::ng-deep.mat-slider-horizontal .mat-slider-thumb-label-text {
+//     transform: none !important
+//   }
+  ::ng-deep.mat-slider-horizontal {
+    width: 100%;
+  }
+
+
+//    /* Style the range input (slider) */
+//    .range-slider {
+//     -webkit-appearance: none;
+//     appearance: none;
+//     width: 100%;
+//     height: 8px;
+//     background: lightgray;
+//     border-radius: 5px;
+//     outline: none;
+//     position: relative;
+//     z-index: 1;
+// }
+
+// .range-slider::-webkit-slider-thumb {
+//     -webkit-appearance: none;
+//     appearance: none;
+//     width: 20px;
+//     height: 20px;
+//     background: orange;
+//     border-radius: 50%;
+//     cursor: pointer;
+//     position: relative;
+//     z-index: 2;
+// }
+
+// /* Range progress bar */
+// .range-progress {
+//     position: absolute;
+//     height: 8px;
+//     background: navy;
+//     top: 0;
+//     z-index: 0;
+//     border-radius: 5px;
+// }
+
+// /* Label style above each thumb */
+// .range-label {
+//     position: absolute;
+//     color: #333;
+//     background-color: #f0e68c;
+//     padding: 2px 5px;
+//     border-radius: 3px;
+//     font-size: 12px;
+//     text-align: center;
+// }
+
+// .label-left { left: 0; }
+// .label-right { right: 0; }
+
+.view-more {
+    color: #1b4ca1;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+::ng-deep {
+    .custom-slider .ngx-slider .ngx-slider-bar {
+      background: linear-gradient(180deg, #1B4CA1 0%, #0A1C3B 100%);
+      height: 4px;
+    }
+    .custom-slider .ngx-slider .ngx-slider-selection {
+      background: #0000;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-pointer {
+      width: 16px;
+      height: 16px;
+      bottom: 0;
+      background: linear-gradient(180deg, #F3962F 0%, #BC7423 100%);
+    }
+    .custom-slider .ngx-slider .ngx-slider-pointer.ngx-slider-pointer-min {
+        border-radius: 3px;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+        top: -6px;
+    }
+    .custom-slider .ngx-slider .ngx-slider-pointer.ngx-slider-pointer-max {
+        border-radius: 3px;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+        top: -6px;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-pointer:after {
+      display: none;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-bubble {
+      bottom: 14px;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit {
+      font-weight: bold;
+      color: orange;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-tick {
+      width: 1px;
+      height: 10px;
+      margin-left: 4px;
+      border-radius: 0;
+      background: #ffe4d1;
+      top: -1px;
+    }
+  
+    .custom-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+      background: orange;
+    }
+
+    
+  }

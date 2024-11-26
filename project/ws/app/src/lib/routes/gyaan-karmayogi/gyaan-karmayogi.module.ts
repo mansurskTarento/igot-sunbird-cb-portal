@@ -6,14 +6,14 @@ import { GyaanKarmayogiHomeComponent } from './components/gyaan-karmayogi-home/g
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { BtnPageBackModule, ContentStripWithTabsModule } from '@sunbird-cb/collection/src/public-api'
+import { BtnPageBackModule, ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
 import { PdfModule } from '@ws/viewer/src/lib/routes/pdf/pdf.module'
 import { GyaanPlayerComponent } from './components/gyaan-player/gyaan-player.component'
 import { GyaanKarmayogiComponent } from './gyaan-karmayogi.component'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
 import { PdfScormDataService } from '@ws/viewer/src/lib/pdf-scorm-data-service'
 import { GyaanKarmayogiViewAllComponent } from './components/gyaan-karmayogi-view-all/gyaan-karmayogi-view-all.component'
-import { DefaultThumbnailModule } from '@sunbird-cb/utils-v2'
+import { DefaultThumbnailModule, PipePublicURLModule } from '@sunbird-cb/utils-v2'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { GyaanKarmayogiService } from './services/gyaan-karmayogi.service'
 import { PdfComponent } from './components/players/pdf/pdf.component'
@@ -38,6 +38,10 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSliderModule } from '@angular/material/slider'
+import { MatTabsModule } from '@angular/material/tabs'
+
+import { NgxSliderModule } from '@angular-slider/ngx-slider'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
@@ -45,46 +49,50 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-    declarations: [GyaanKarmayogiHomeComponent, GyaanPlayerComponent,
-        GyaanKarmayogiComponent, GyaanKarmayogiViewAllComponent,
-        PdfComponent, GyaanVideoComponent, GyaanFilterComponent, GyaanAudioComponent, GyaanYoutubeComponent, ReplaceNbspTextPipe],
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatSelectModule,
-        FormsModule,
-        GyaanKarmayogiRoutingModule,
-        DefaultThumbnailModule,
-        ContentStripWithTabsModule,
-        MatCheckboxModule,
-        CardContentV2Module,
-        PdfModule,
-        VideoModule,
-        AudioModule,
-        YoutubeModule,
-        MatSidenavModule,
-        ReactiveFormsModule,
-        SkeletonLoaderModule,
-        BtnPageBackModule,
-        ShareTocModule,
-        MatBottomSheetModule,
-        MatRadioModule,
-        InfiniteScrollModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    providers: [{ provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
-        { provide: MatBottomSheetRef, useValue: {} },
-        ViewerResolve, TitleCasePipe,
-        PdfScormDataService, GyaanKarmayogiService,
-        ViewerDataService]
+  declarations: [GyaanKarmayogiHomeComponent, GyaanPlayerComponent,
+    GyaanKarmayogiComponent, GyaanKarmayogiViewAllComponent,
+     PdfComponent, GyaanVideoComponent, GyaanFilterComponent, GyaanAudioComponent, GyaanYoutubeComponent, ReplaceNbspTextPipe],
+  imports: [NgxSliderModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule,
+    GyaanKarmayogiRoutingModule,
+    DefaultThumbnailModule,
+    ContentStripWithTabsModule,
+    MatCheckboxModule,
+    CardContentV2Module,
+    PdfModule,
+    VideoModule,
+    AudioModule,
+    YoutubeModule,
+    MatSidenavModule,
+    ReactiveFormsModule,
+    SkeletonLoaderModule,
+    BtnPageBackModule,
+    ShareTocModule,
+    MatBottomSheetModule,
+    MatRadioModule,
+    InfiniteScrollModule,
+    MatSliderModule,
+    MatTabsModule,
+    SlidersModule,
+    PipePublicURLModule,
+   TranslateModule.forChild({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [{ provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
+     { provide: MatBottomSheetRef, useValue: {} },
+     ViewerResolve, TitleCasePipe,
+     PdfScormDataService, GyaanKarmayogiService,
+      ViewerDataService],
 })
 export class GyaanKarmayogiModule { }

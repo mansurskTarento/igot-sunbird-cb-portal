@@ -12,7 +12,7 @@ import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -58,6 +58,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
+    private route: ActivatedRoute
 
   ) {
     super()
@@ -421,13 +422,20 @@ export class CardContentV2Component extends WidgetBaseComponent
   }
   async getRedirectUrlData(content: any,contentType?:any){
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
-    if(contentType) {
-      this.router.navigate([`/app/gyaan-karmayogi/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
-        queryParams : {
-          primaryCategory: this.primaryCategory.RESOURCE
-          // preview: true
-        }
-      })
+    
+    if(contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
+      // if(content.primaryCategory === this.primaryCategory.COURSE) {
+      //   this.router.navigate([`app/toc/${content.identifier}/overview`],{
+      //     queryParams : { }
+      //   })
+      // } else {
+        this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
+          queryParams : {
+            primaryCategory: this.primaryCategory.RESOURCE,
+            ...this.route.snapshot.queryParams
+          }
+        })
+      // }
     } else {
       // if (content && content.status && content.status.toLowerCase() !== 'retired') {
         let urlData = await this.contSvc.getResourseLink(content)

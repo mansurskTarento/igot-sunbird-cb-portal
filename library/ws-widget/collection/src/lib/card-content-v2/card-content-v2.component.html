@@ -1600,7 +1600,7 @@
             : widgetData?.intranetMode === 'greyOut' && showIntranetContent
       }">
       <ng-container *ngIf="widgetData?.content">
-        <a (click)="raiseTelemetry();getRedirectUrlData(widgetData?.content,'resource'); $event.stopPropagation()" 
+        <a class="w-full" (click)="raiseTelemetry();getRedirectUrlData(widgetData?.content,'resource'); $event.stopPropagation()" 
             role="link" i18n-aria-label>
       <ng-container *ngIf="!isCardFlipped">
         <div class="status-danger" role="note" i18n-aria-label aria-label="Content expired or deleted" i18n-matTooltip
@@ -1637,10 +1637,12 @@
                   [alt]="(widgetData?.content?.sourceName + '_' + widgetData?.content?.identifier)" />
               </div>
               <span class="absolute resourse-type">
-                <img class="stats-icon " height="16" src="{{widgetData?.content?.mimeType === nsContentConstants?.EMimeTypes?.PDF ?  '/assets/icons/home/pdf.svg' :'/assets/icons/home/play.svg'}}" width="16">
-                <span *ngIf="widgetData?.content?.mimeType === nsContentConstants?.EMimeTypes?.PDF;else otherResource" class="uppercase">{{getMimeType}}</span>
+                <img *ngIf="!widgetData?.content?.mimeType?.includes('content-collection')" class="stats-icon " height="16" src="{{widgetData?.content?.mimeType === nsContentConstants?.EMimeTypes?.PDF ?  '/assets/icons/home/pdf.svg' :'/assets/icons/home/play.svg'}}" width="16">
+                <span *ngIf="widgetData?.content?.mimeType === nsContentConstants?.EMimeTypes?.PDF;else otherResource" class="uppercase">
+                  {{getMimeType}}</span>
                 <ng-template #otherResource>
-                  <span class="capitalize">{{getMimeType}}</span>
+                  <mat-icon  *ngIf="widgetData?.content?.mimeType?.includes('content-collection')" class="mat-icon main_icon  " style="width:16px;height:16px;font-size:16px">layers</mat-icon>
+                  <span class="capitalize">{{widgetData?.content?.mimeType?.includes('content-collection')? 'Collection':getMimeType}}</span>
                 </ng-template>
               </span>
             </div>

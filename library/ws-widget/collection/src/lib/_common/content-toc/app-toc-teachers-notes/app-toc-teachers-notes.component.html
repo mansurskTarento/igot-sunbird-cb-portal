@@ -1,0 +1,25 @@
+<div class="flex justify-between">
+  <div class="teachers-note-header pt-2">{{ 'apptocsinglepage.teachersNoteHeading' | translate }}</div>
+  <div class="download-all" (click)="downloadAllContent()">{{ 'apptocsinglepage.downaloadAllPdfs' | translate }}</div>
+</div>
+
+<div class="guide-container" *ngIf="content?.referenceNodes">
+  <div class="guide-card flex gap-4 justify-between" *ngFor="let note of content?.referenceNodes">
+    <div>
+      <div class="note-title">{{note?.name}}</div>
+      <div class="flex gap-2 pt-2">
+        <mat-icon class="material-symbols-outlined">
+          visibility
+        </mat-icon>
+        <a (click)="previewContent(note)">
+          <span class="view-pdf">{{ 'apptocsinglepage.viewPDF' | translate }}</span>
+        </a>
+        </div>
+    </div>
+    <div>
+      <div class="download-ind">
+        <a  download="{{note?.name}}" (click)="downloadPDF(note)">{{ 'apptocsinglepage.downloadPdf' | translate }}</a>
+      </div>
+    </div>
+  </div>
+</div>

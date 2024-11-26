@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild }
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { ConfigurationsService, MultilingualTranslationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, MultilingualTranslationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { CertificateService } from '../../../certificate/services/certificate.service'
@@ -24,11 +24,15 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     offSetTop: 0,
     BottomPos: 0,
   }
+  contentLink: any = ''
   @ViewChild('rightContainer') rcElement!: ElementRef
   scrollLimit: any
   scrolled: boolean | undefined
   isMobile = false
   config: any
+  enableShare = false
+  rootOrgId: any
+  currentLang: any = 'en'
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
 
   @HostListener('window:scroll', ['$event'])
@@ -53,11 +57,13 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
               private commonSvc: CommonMethodsService,
               private translate: TranslateService,
               private configSvc: ConfigurationsService,
+              private events: EventService,
               private langtranslations: MultilingualTranslationsService,
               private contentSvc: WidgetContentService,
               private certSvc: CertificateService,
               public loader: LoaderService,
-              public snackBar: MatSnackBar
+
+              public snackBar: MatSnackBar,
   ) {
     this.route.data.subscribe((data: any) => {
       if (data && data.extContent && data.extContent.data && data.extContent.data.content) {
@@ -81,13 +87,27 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.downloadCert()
         }
       }
+
     })
 
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
-        const lang = localStorage.getItem('websiteLanguage')!
-        this.translate.use(lang)
+        this.currentLang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(this.currentLang)
       }
+      this.configSvc.languageTranslationFlag.subscribe((data: any) => {
+        if (data) {
+          if (localStorage.getItem('websiteLanguage')) {
+            this.currentLang = localStorage.getItem('websiteLanguage')!
+            this.translate.use(this.currentLang)
+          }
+        }
+      })
+
+      if (this.configSvc.userProfile) {
+        this.rootOrgId = this.configSvc.userProfile.rootOrgId
+      }
+      this.contentLink = `${window.location.pathname.substring(1)}${window.location.search}`
   }
 
   ngOnInit() {
@@ -191,4 +211,34 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.downloadCertificateLoading = false
     }
   }
+  onClickOfShare() {
+    this.enableShare = true
+    this.raiseTelemetryForShare('shareContent')
+  }
+
+   /* tslint:disable */
+   raiseTelemetryForShare(subType: any) {
+    console.log(this.extContentReadData, this.events, subType)
+    // this.events.raiseInteractTelemetry(
+      // {
+      //   type: 'click',
+      //   subType,
+      //   id: this.content ? this.content.identifier : '',
+      // },
+      // {
+      //   id: this.content ? this.content.identifier : '',
+      //   type: this.content ? this.content.primaryCategory : '',
+      // },
+      // {
+      //   pageIdExt: `btn-${subType}`,
+      //   module: WsEvents.EnumTelemetrymodules.CONTENT,
+      // }
+    // )
+  }
+
+  resetEnableShare(_eventData: any) {
+    
+    this.enableShare = false
+  }
+
 }

@@ -138,6 +138,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
+import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dynamic/sliders-dynamic.module'
 
 @NgModule({
   declarations: [
@@ -259,6 +260,7 @@ import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
     TipsForLearnerModule,
     ReactiveFormsModule,
     DiscussionV2Module,
+    SlidersDynamicModule,
   ],
   providers: [
     AppTocResolverService,

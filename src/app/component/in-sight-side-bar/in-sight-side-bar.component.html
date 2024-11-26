@@ -49,6 +49,7 @@
         [profileData]="homePageData.profileCard" [insightsData]="insightsData"
         [isLoading]="profileDataLoading"></ws-widget-profile-card-stats>
 </div>
+ 
 <section class="hidden md:block" style="position: relative;" [ngClass]="{'':!collapsed, 'margin-bottom-m': collapsed}">
     <div class="assessment-box  collapsible" [@collapse]="collapsed"
         [ngClass]="{'margin-bottom-remove margin-top-remove':collapsed}">
@@ -175,3 +176,6 @@
     </div>
     
 </section>
+<div *ngIf="surveyPopup && surveyPopup?.active">
+    <ws-survey-form ></ws-survey-form>
+    </div>
