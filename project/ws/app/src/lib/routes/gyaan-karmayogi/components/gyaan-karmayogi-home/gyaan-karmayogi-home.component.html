@@ -57,7 +57,7 @@
                    <div class="each-sector flex items-center justify-start  {{sector?.name === selectedSector? 'selected-sector': ''}}"
                     (click)="sectorFilter(sector)" [style.background]="sector?.bgColor">
                     <img class="mr-3" width="24px" height="25px" src="{{sector?.imgUrl | pipePublicURL}}" [alt]="sector?.name">
-                    <span>{{sector?.name  | titlecase}}</span>
+                    <span class="sec-title">{{sector?.name  | titlecase}}</span>
                    </div> 
                 </ng-container>
             </div>
