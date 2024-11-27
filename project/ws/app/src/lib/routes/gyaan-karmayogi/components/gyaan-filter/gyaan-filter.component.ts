@@ -19,7 +19,7 @@ export class GyaanFilterComponent implements OnInit {
     step: 1,
     showTicks: false,
     draggableRange: true,
-    onlyBindHandles : true
+    onlyBindHandles : true,
   }
   categoryValue = ''
   mobileSelectedFilter: any = {}

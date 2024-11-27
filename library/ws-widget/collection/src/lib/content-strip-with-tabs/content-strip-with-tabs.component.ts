@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, HostBinding } from '@angular/core'
+import { Component, OnInit, Input, OnDestroy, HostBinding, EventEmitter, Output } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsContentStripWithTabs } from './content-strip-with-tabs.model'
 // import { HttpClient } from '@angular/common/http'
@@ -69,6 +69,7 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
   OnDestroy,
   NsWidgetResolver.IWidgetData<NsContentStripWithTabs.IContentStripMultiple> {
   @Input() widgetData!: NsContentStripWithTabs.IContentStripMultiple
+  @Output() emptyResponse = new EventEmitter<any>()
   @HostBinding('id')
   public id = `ws-strip-miltiple_${Math.random()}`
   stripsResultDataMap!: { [key: string]: IStripUnitContentData }
@@ -543,10 +544,12 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
                 response.viewMoreUrl,
               )
             } else {
+              this.emptyResponse.emit(true)
               this.processStrip(strip, [], 'error', calculateParentStatus, null)
             }
 
           } else {
+            this.emptyResponse.emit(true)
             this.processStrip(strip, [], 'error', calculateParentStatus, null)
           }
         } catch (error) {
