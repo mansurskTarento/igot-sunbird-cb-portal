@@ -12,7 +12,7 @@ export const gyaanConstants = {
     resourceCategory: 'resourceCategory',
     states: 'States and UTs',
     year: 'years',
-    yearlable: 'Year',
+    yearlable: 'Year of publishing',
     statesAndUts: 'States and UTs',
     statesLable: 'States and UTs',
     placeHolderStates: 'States',
