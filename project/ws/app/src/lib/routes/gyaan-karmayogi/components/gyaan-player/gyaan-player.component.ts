@@ -65,16 +65,15 @@ export class GyaanPlayerComponent implements OnInit {
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     } else {
-      const queryParams = { ...this.route.snapshot.queryParams }
-      // delete queryParams['primaryCategory']
-      if (!queryParams['content']) {
-        queryParams['content'] = 'agkCaseStudies'
+      const _queryParams = { ...this.route.snapshot.queryParams }
+      if (!_queryParams['content']) {
+        _queryParams['content'] = 'agkCaseStudies'
       }
-       queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
+      _queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: this.titleCasePipe.transform(this.resourceData.resourceCategory), disableTranslate: true,
-          queryParams: queryParams, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
+          queryParams: _queryParams, url: `/app/amrit-gyaan-kosh/view-all`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     }
