@@ -108,7 +108,7 @@ import { HttpClient } from '@angular/common/http'
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
-    })
+    }),
   ],
   providers: [
     LoaderService,
