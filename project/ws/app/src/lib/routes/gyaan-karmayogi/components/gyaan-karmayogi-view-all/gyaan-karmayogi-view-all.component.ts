@@ -407,9 +407,12 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             if (this.keyData)  {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
             }
-            if (this.selectedContent !== 'otherResources' && this.keyData === 'case study') {
+            if (this.selectedContent !== 'otherResources') {
               this.selectedFilter['createdFor'] = environment.cbcOrg
             }
+            if (this.selectedContent === 'otherResources') {
+              this.selectedFilter['createdFor'] = ''
+            } 
             this.fetchFromSearchV6(this.seeAllPageConfig)
             this.seeAllPageConfig.request.searchV6.request.filters = {
               ...this.seeAllPageConfig.request.searchV6.request.filters,

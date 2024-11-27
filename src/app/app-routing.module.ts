@@ -193,8 +193,8 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
-      pageKey: 'knowledge-resource',
-      pageId: 'app/knowledge-resource',
+      pageKey: 'amrit-gyaan-kosh',
+      pageId: 'app/amrit-gyaan-kosh',
     },
     resolve: {
       pageData: FormDataResolverService,
