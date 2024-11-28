@@ -107,6 +107,17 @@ export class EnrollQuestionnaireComponent implements OnInit {
   pGroup: any
   pDesignation: any
   isLoading: boolean = false
+  canShowEmployeeCode: boolean = false
+  canshowMobile: boolean = false
+  canShowGender: boolean = false
+  canShowDob: boolean = false
+  canShowDomicileMedium: boolean = false
+  canShowCategory: boolean = false
+  canShowpinCode: boolean = false
+  canShowshowCadreDetails: boolean = false
+  canShowGroup: boolean = false
+  canShowDesignation: boolean = false
+  selectedDate: any
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -265,7 +276,6 @@ export class EnrollQuestionnaireComponent implements OnInit {
       startWith(''),
     )
     .subscribe(res => {
-      console.log(res)
       if (res) {
         this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
           val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
@@ -460,20 +470,22 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (this.pendingFileds.length > 0) {
           this.pendingFileds.forEach((user: any) => {
             if (user['group']) {
-              if(this.userProfileObject.profileDetails.profileGroupStatus !== 'VERIFIED' ) {
-                this.userDetailsForm.patchValue({group: user['group']})
+              let ctrl = this.userDetailsForm.get('group')
+              if (ctrl) {
+                ctrl.patchValue({group: user['group']})
                 this.pGroup = user['group']
+                ctrl.disable()
               }
             }
             if (user['designation']) {
-              if(this.userProfileObject.profileDetails.profileDesignationStatus !== 'VERIFIED' ) {
-                this.userDetailsForm.patchValue({designation: user['designation']})
+              let ctrl = this.userDetailsForm.get('designation')
+              if (ctrl) {
+                ctrl.patchValue({designation: user['designation']})
                 this.pDesignation = user['designation']
+                ctrl.disable()
               }
             }
           })
-
-          
         }
       }
       this.defineFormAttributes()
@@ -504,46 +516,53 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'group')) {
-        if (this.findInProfile('group')) {
-          this.showGroup = true
-          this.customForm = true
-          const fieldControl = this.userDetailsForm.get('group')
-          if (fieldControl) {
-            if(this.userProfileObject.profileDetails.professionalDetails &&
+        this.canShowGroup = true
+        this.customForm = true
+        this.showGroup = true
+        const fieldControl = this.userDetailsForm.get('group')
+        if (fieldControl) {
+          if (this.pGroup) {
+            fieldControl.setValue(this.pGroup)
+            fieldControl.disable()
+          } else {
+            if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].group
             ){
-              fieldControl.setValue(
-                this.pGroup ? this.pGroup : this.userProfileObject.profileDetails.professionalDetails[0].group
-              )
+              fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
+              fieldControl.disable()
             }
-            fieldControl.setValidators([Validators.required]);
-            fieldControl.updateValueAndValidity()
           }
+          fieldControl.setValidators([Validators.required])
+          fieldControl.updateValueAndValidity()
         }
       }
       if (this.findAttr(customAttr, 'designation')) {
-        if (this.findInProfile('designation')) {
-          this.showDesignation = true
-          this.customForm = true
-          const fieldControl = this.userDetailsForm.get('designation')
-          if (fieldControl) {
-            if(this.userProfileObject.profileDetails.professionalDetails &&
+        this.canShowDesignation = true
+        this.customForm = true
+        this.showDesignation = true
+        const fieldControl = this.userDetailsForm.get('designation')
+        if (fieldControl) {
+          if (this.pDesignation) {
+            fieldControl.setValue(this.pDesignation)
+            fieldControl.disable()
+          } else {
+            if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].designation){
-              fieldControl.setValue(
-                this.pDesignation ? this.pDesignation : this.userProfileObject.profileDetails.professionalDetails[0].designation
-              )
+              fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
+              fieldControl.disable()
             }
-            fieldControl.setValidators([Validators.required]);
-            fieldControl.updateValueAndValidity()
           }
+          fieldControl.setValidators([Validators.required])
+          fieldControl.updateValueAndValidity()
         }
       }
       if (this.findAttr(customAttr, 'employeeCode')) {
+        this.canShowEmployeeCode = true
+        this.customForm = true
         if (!this.findInProfile('employeeCode')) {
           this.showEmployeeCode = true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('employeeCode')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required, Validators.pattern(EMP_ID_PATTERN)]);
@@ -552,9 +571,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'mobile')) {
+        this.canshowMobile = true
+        this.customForm = true
         if (!this.findInProfile('mobile')) {
           this.showMobile = true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('mobile')
           if (fieldControl) {
             fieldControl.setValidators([Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]);
@@ -563,9 +583,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'gender')) {
+        this.canShowGender = true
+        this.customForm = true
         if (!this.findInProfile('gender')) {
           this.showGender = true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('gender')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
@@ -574,9 +595,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'dob')) {
+        this.canShowDob = true
+        this.customForm = true
         if (!this.findInProfile('dob')) {
           this.showDob= true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('dob')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
@@ -585,9 +607,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'domicileMedium')) {
+        this.canShowDomicileMedium = true
+        this.customForm = true
         if (!this.findInProfile('domicileMedium')) {
           this.showDecimalMedium = true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('domicileMedium')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
@@ -596,9 +619,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'category')) {
+        this.canShowCategory= true
+        this.customForm = true
         if (!this.findInProfile('category')) {
           this.showCategory= true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('category')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
@@ -607,9 +631,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'pinCode')) {
+        this.canShowpinCode= true
+        this.customForm = true
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
-          this.customForm = true
           const fieldControl = this.userDetailsForm.get('pinCode')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]);
@@ -619,15 +644,16 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if (this.findAttr(customAttr, 'cadreDetails')) {
+        this.canShowshowCadreDetails = true
+        this.customForm = true
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
-          this.customForm = true
-          const fieldControl = this.userDetailsForm.get('isCadre')
+        }
+        const fieldControl = this.userDetailsForm.get('isCadre')
           if (fieldControl) {
             fieldControl.setValidators([Validators.required]);
             fieldControl.updateValueAndValidity()
           }
-        }
       }
     }
   }
@@ -682,27 +708,117 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED' || (this.pDesignation ? true : false)
     }
     if (attr === 'employeeCode') {
+      if (this.userProfileObject.profileDetails.employmentDetails.employeeCode) {
+        const contrl = this.userDetailsForm.get('employeeCode')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.employeeCode)
+          contrl.disable()
+        }        
+      }
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
     }
     if (attr === 'mobile') {
+      if(this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
+        const contrl = this.userDetailsForm.get('mobile')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.mobile)
+          contrl.disable()
+        }  
+      }
       return this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified
     }
     if (attr === 'gender') {
+      if(this.userProfileObject.profileDetails.personalDetails.gender) {
+        const contrl = this.userDetailsForm.get('gender')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.gender)
+          contrl.disable()
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.gender
     }
     if (attr === 'dob') {
+      if(this.userProfileObject.profileDetails.personalDetails.dob) {
+        const contrl = this.userDetailsForm.get('dob')
+        if (contrl) {
+          this.selectedDate = new Date(this.userProfileObject.profileDetails.personalDetails.dob)
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.dob)
+          contrl.disable()
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.dob
     }
     if (attr === 'domicileMedium') {
+      if(this.userProfileObject.profileDetails.personalDetails.domicileMedium) {
+        const contrl = this.userDetailsForm.get('domicileMedium')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.domicileMedium)
+          contrl.disable()
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.domicileMedium
     }
     if (attr === 'category') {
+      if(this.userProfileObject.profileDetails.personalDetails.category) {
+        const contrl = this.userDetailsForm.get('category')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.category)
+          contrl.disable()
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.category
     }
     if (attr === 'pinCode') {
+      if(this.userProfileObject.profileDetails.employmentDetails.pinCode) {
+        const contrl = this.userDetailsForm.get('pinCode')
+        if (contrl) {
+          contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.pinCode)
+          contrl.disable()
+        } 
+
+      }
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
+      if (Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre') &&
+        this.userProfileObject.profileDetails.personalDetails.isCadre === true) {
+        const contrl = this.userDetailsForm.get('isCadre')
+        if (contrl) {
+          contrl.setValue(true)
+          this.isCadreStatus = true
+          this.serviceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeId
+          this.civilServiceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceId
+          this.cadreId = this.userProfileObject.profileDetails.cadreDetails.cadreId
+          this.cadreControllingAuthority = this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName
+          this.yearArray = [this.userProfileObject.profileDetails.cadreDetails.cadreBatch]
+          this.cadre = [this.userProfileObject.profileDetails.cadreDetails.cadreName]
+          this.serviceName = [this.userProfileObject.profileDetails.cadreDetails.civilServiceName]
+          this.userDetailsForm.patchValue({
+            typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
+            serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,
+            cadreName: this.userProfileObject.profileDetails.cadreDetails.cadreName,
+            cadreBatch: this.userProfileObject.profileDetails.cadreDetails.cadreBatch,
+            cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
+          })
+          contrl.disable()
+        }
+        const contrlTypeOfCivilService= this.userDetailsForm.get('typeOfCivilService')
+        if (contrlTypeOfCivilService) {
+          contrlTypeOfCivilService.disable()
+        }
+        const contrlServiceType = this.userDetailsForm.get('serviceType')
+        if (contrlServiceType) {
+          contrlServiceType.disable()
+        }
+        const contrlCadreName = this.userDetailsForm.get('cadreName')
+        if (contrlCadreName) {
+          contrlCadreName.disable()
+        }
+        const contrlCadreBatch = this.userDetailsForm.get('cadreBatch')
+        if (contrlCadreBatch) {
+          contrlCadreBatch.disable()
+        }
+      }
       return Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')
     }
   }
@@ -882,7 +998,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
-    if(this.showCadreDetails) {
+    if(this.canShowshowCadreDetails) {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
@@ -1016,14 +1132,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.userDetailsForm.controls['isCadre'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails && this.userProfileObject.profileDetails.cadreDetails ? 'yes' : 'No'
         }
       }
       if(_field.field === 'profileDetails.cadreDetails.civilServiceType') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.userDetailsForm.controls['typeOfCivilService'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceType ?
@@ -1032,7 +1148,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.civilServiceName') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.userDetailsForm.controls['serviceType'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceName ?
@@ -1041,7 +1157,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreName') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreName'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails  && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
@@ -1049,7 +1165,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if(_field.field === 'profileDetails.cadreDetails.cadreBatch') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
@@ -1058,7 +1174,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreControllingAuthorityName') {
-        if (this.showCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
           dataObject[_field.name] = this.cadreControllingAuthority
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName ?
