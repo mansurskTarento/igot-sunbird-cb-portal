@@ -24,6 +24,7 @@ export class EventPlayerComponent implements OnInit {
   videoId = ''
   batchId = ''
   isEnrolled = false
+  pageData: any = {}
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -101,6 +102,7 @@ export class EventPlayerComponent implements OnInit {
       }
       
     })
+    this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
   }
 
   getUserIsEnrolled() {

@@ -70,7 +70,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   page = 0
   totalpages!: number | 0
   newQueryParam: any
-
+  pageConfig: any = {}
   sideNavBarOpened = true
   private defaultSideNavBarOpenedSubscription: any
 
@@ -121,6 +121,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.facets = data.defaultsearch
       })
     } else {
+      this.pageConfig = this.activated.snapshot.data.searchPageData.data
       this.facets = this.activated.snapshot.data.searchPageData.data.defaultsearch
       if (this.param === 'moderatedCourses') {
         for (const key in this.facets[0].values) {

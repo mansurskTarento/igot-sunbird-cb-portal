@@ -416,7 +416,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             }
             if (this.selectedContent === 'otherResources') {
               this.selectedFilter['createdFor'] = ''
-            } 
+            }
             this.fetchFromSearchV6(this.seeAllPageConfig)
             this.seeAllPageConfig.request.searchV6.request.filters = {
               ...this.seeAllPageConfig.request.searchV6.request.filters,

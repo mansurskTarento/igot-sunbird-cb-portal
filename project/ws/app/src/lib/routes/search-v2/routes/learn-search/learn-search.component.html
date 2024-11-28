@@ -127,7 +127,7 @@
                             <!-- {{content.primaryCategory || content.contentType}} -->
                             
                            <span *ngIf="content?.contentType !== 'Event'">{{ translateLabels(content.courseCategory || content.contentType, 'searchfilters') }}</span> 
-                           <span *ngIf="content?.contentType === 'Event' && content.resourceType === 'Karmayogi Saptah'">{{ 'event.karmayogiSaptah' | translate }}</span> 
+                           <span *ngIf="content?.contentType === 'Event' && pageConfig?.enrollFlowItems?.includes(content.resourceType)">{{ 'event.karmayogiSaptah' | translate }}</span> 
                         </p>
 
                         <!-- <p class="mat-subheading-1 margin-bottom-xs font-bold-imp cursor-pointer content-title" (click)="navigateToToc(param, content?.identifier, content?.primaryCategory)"> -->

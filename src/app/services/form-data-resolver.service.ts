@@ -7,7 +7,7 @@ import { FormExtService } from './form-ext.service'
 import { HttpClient } from '@angular/common/http'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FormDataResolverService  implements
 Resolve<Observable<IResolveResponse<any>> | IResolveResponse<any>> {
@@ -20,7 +20,7 @@ resolve(
       _route: ActivatedRouteSnapshot,
       _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<any>> {
-    let pageDataKey = _route.data.pageKey
+    const pageDataKey = _route.data.pageKey
     const requestData: any = {
       'request': {
           'type': 'page',
