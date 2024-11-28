@@ -36,7 +36,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   eventEnrollmentList: any
   isEnrolled = false
   batchId = ''
-  pageConfig: any= {}
+  pageConfig: any = {}
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -98,7 +98,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       }
 
       if (this.eventData && this.eventData.registrationLink) {
-        if (this.eventData && this.eventData.registrationLink && this.pageConfig.enrollFlowItems.includes(this.eventData.resourceType )) {
+        if (this.eventData && this.eventData.registrationLink && this.pageConfig.enrollFlowItems.includes(this.eventData.resourceType)) {
           const videoId = this.eventData.registrationLink.split('?')[0].split('/').pop()
           if (videoId) {
             this.videoId = videoId

@@ -35,7 +35,7 @@ export class EventDetailComponent implements OnInit {
   pastEvent = false
   // fetchNewData = false
   showYouTubeVideoFlag = false
-  enrollFlowItems : any= []
+  enrollFlowItems: any = []
   // playerVars = {
   //   cc_lang_pref: 'en',
   // };
