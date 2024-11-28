@@ -107,6 +107,16 @@ export class EnrollQuestionnaireComponent implements OnInit {
   pGroup: any
   pDesignation: any
   isLoading: boolean = false
+  canShowEmployeeCode: boolean = false
+  canshowMobile: boolean = false
+  canShowGender: boolean = false
+  canShowDob: boolean = false
+  canShowDomicileMedium: boolean = false
+  canShowCategory: boolean = false
+  canShowpinCode: boolean = false
+  canShowshowCadreDetails: boolean = false
+  canShowGroup: boolean = false
+  canShowDesignation: boolean = false
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -497,6 +507,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile") && 
         this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields) {
       let customAttr = this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields
+      console.log(" customAttr ", customAttr)
       if (this.findAttr(customAttr, 'name')) {
         if (!this.findInProfile('name')) {
           this.showname = true
@@ -504,6 +515,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'group')) {
+        this.canShowGroup = true
         if (this.findInProfile('group')) {
           this.showGroup = true
           this.customForm = true
@@ -523,6 +535,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'designation')) {
+        this.canShowDesignation = true
         if (this.findInProfile('designation')) {
           this.showDesignation = true
           this.customForm = true
@@ -541,6 +554,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'employeeCode')) {
+        this.canShowEmployeeCode = true
         if (!this.findInProfile('employeeCode')) {
           this.showEmployeeCode = true
           this.customForm = true
@@ -552,6 +566,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'mobile')) {
+        this.canshowMobile = true
         if (!this.findInProfile('mobile')) {
           this.showMobile = true
           this.customForm = true
@@ -563,6 +578,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'gender')) {
+        this.canShowGender = true
         if (!this.findInProfile('gender')) {
           this.showGender = true
           this.customForm = true
@@ -574,6 +590,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'dob')) {
+        this.canShowDob = true
         if (!this.findInProfile('dob')) {
           this.showDob= true
           this.customForm = true
@@ -585,6 +602,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'domicileMedium')) {
+        this.canShowDomicileMedium = true
         if (!this.findInProfile('domicileMedium')) {
           this.showDecimalMedium = true
           this.customForm = true
@@ -596,6 +614,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'category')) {
+        this.canShowCategory= true
         if (!this.findInProfile('category')) {
           this.showCategory= true
           this.customForm = true
@@ -607,6 +626,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if (this.findAttr(customAttr, 'pinCode')) {
+        this.canShowpinCode= true
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           this.customForm = true
@@ -619,6 +639,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if (this.findAttr(customAttr, 'cadreDetails')) {
+        this.canShowshowCadreDetails = true
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
           this.customForm = true
@@ -682,24 +703,74 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED' || (this.pDesignation ? true : false)
     }
     if (attr === 'employeeCode') {
+      if (this.userProfileObject.profileDetails.employmentDetails.employeeCode) {
+        const contrl = this.userDetailsForm.get('employeeCode')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.employeeCode)
+        }        
+      }
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
     }
     if (attr === 'mobile') {
+      if(this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
+        const contrl = this.userDetailsForm.get('mobile')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.mobile)
+        }  
+      }
       return this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified
     }
     if (attr === 'gender') {
+      if(this.userProfileObject.profileDetails.personalDetails.gender) {
+        const contrl = this.userDetailsForm.get('gender')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.gender)
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.gender
     }
     if (attr === 'dob') {
+      if(this.userProfileObject.profileDetails.personalDetails.dob) {
+        const contrl = this.userDetailsForm.get('dob')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.dob)
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.dob
     }
     if (attr === 'domicileMedium') {
+      if(this.userProfileObject.profileDetails.personalDetails.domicileMedium) {
+        const contrl = this.userDetailsForm.get('domicileMedium')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.domicileMedium)
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.domicileMedium
     }
     if (attr === 'category') {
+      if(this.userProfileObject.profileDetails.personalDetails.category) {
+        const contrl = this.userDetailsForm.get('category')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.category)
+        } 
+      }
       return this.userProfileObject.profileDetails.personalDetails.category
     }
     if (attr === 'pinCode') {
+      if(this.userProfileObject.profileDetails.personalDetails.category) {
+        const contrl = this.userDetailsForm.get('pinCode')
+        if (contrl) {
+          contrl.disable()
+          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.category)
+        } 
+
+      }
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
