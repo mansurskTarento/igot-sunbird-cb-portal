@@ -18,15 +18,15 @@
             </div>
             <ng-container *ngIf="!batchId">
               <ng-container *ngIf="pageConfig?.enrollFlowItems?.includes(eventData?.resourceType ) && getLink(); else noBatch ">
-                <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all " *ngIf="currentEvent">
-                  <a class="flex-1"  [href]="getLink()" target="_blank" (click)="raiseTelemetry('view-recording')">
+                <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all ">
+                  <a class="flex-1  action-button"  [href]="getLink()" target="_blank" (click)="raiseTelemetry('view-recording')">
                     <span >{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
                   </a>
                 </div>
               </ng-container>
-              <ng-templete #noBatch>
+              <ng-template #noBatch>
                 <p class="text-center pt-4" *ngIf="!batchId">{{'eventDetailsRightCard.noBatchErrormsg' | translate }}</p>   
-              </ng-templete>
+              </ng-template>
 
             </ng-container>          
           </ng-container>
