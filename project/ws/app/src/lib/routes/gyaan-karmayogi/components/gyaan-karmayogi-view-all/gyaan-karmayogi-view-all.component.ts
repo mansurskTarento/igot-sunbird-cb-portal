@@ -135,6 +135,10 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
+        if (this.selectedContent === 'otherResources') {
+          delete this.selectedFilter.createdFor
+          delete strip.request.searchV6.request.filters.createdFor
+        }
         if (this.selectedFilter[gyaanConstants.resourceCategory] &&
             this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
           this.selectedContent !== 'otherResources'
