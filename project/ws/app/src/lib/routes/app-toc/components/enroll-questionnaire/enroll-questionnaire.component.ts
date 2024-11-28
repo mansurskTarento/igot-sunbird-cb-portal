@@ -741,8 +741,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if(this.userProfileObject.profileDetails.personalDetails.dob) {
         const contrl = this.userDetailsForm.get('dob')
         if (contrl) {
-          this.selectedDate = new Date(this.userProfileObject.profileDetails.personalDetails.dob)
-          contrl.setValue(this.userProfileObject.profileDetails.personalDetails.dob)
+          let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
+          const [day, month, year] = _dob.split('-')
+          const date = new Date(Number(year), Number(month) - 1, Number(day))
+          const formattedDay = String(date.getDate()).padStart(2, '0')
+          const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
+          const formattedYear = date.getFullYear()
+          this.selectedDate = new Date(`${formattedYear}-${formattedMonth}-${formattedDay}`)
+          contrl.setValue(this.selectedDate)
           contrl.disable()
         } 
       }
