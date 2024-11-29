@@ -42,6 +42,33 @@
                     </mat-error>
                 </mat-form-field>
             </div>
+            <div class="w-full" *ngIf="canShowName">
+              <div class="mat-subheading-2 margin-0 required"
+                  i18n="Title label|Label which explains the user to enter title">
+                  {{ 'profileInfo.name' | translate }}
+              </div>
+              <mat-form-field appearance="outline" class="w-full">
+                  <input type="text" class="input-text" matInput formControlName="name" placeholder="Name"/>
+              </mat-form-field>
+            </div>
+            <div class="w-full" *ngIf="canShowEmail">
+              <div class="mat-subheading-2 margin-0 required"
+                  i18n="Title label|Label which explains the user to enter title">
+                  {{ 'profileInfo.email' | translate }}
+              </div>
+              <mat-form-field appearance="outline" class="w-full">
+                  <input type="text" class="input-text" matInput formControlName="primaryEmail" placeholder="Enter email"/>
+              </mat-form-field>
+            </div>
+            <div class="w-full" *ngIf="canShowOrg">
+              <div class="mat-subheading-2 margin-0 required"
+                  i18n="Title label|Label which explains the user to enter title">
+                  {{ 'profileInfo.organisation' | translate }}
+              </div>
+              <mat-form-field appearance="outline" class="w-full">
+                  <input type="text" class="input-text" matInput formControlName="organisation" placeholder="Organisation"/>
+              </mat-form-field>
+            </div>
             <div class="w-full" *ngIf="canShowEmployeeCode">
                 <div class="mat-subheading-2 margin-0 required"
                     i18n="Title label|Label which explains the user to enter title">
@@ -261,14 +288,25 @@
                 </div>
                 <span class="cadreControl-name">{{cadreControllingAuthority}}</span>
             </div>
-            <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
+            <ng-container *ngIf="showCounter !== disableCounter">
+              <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
                 <button
                   class="save-button"
                   [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
                   (click)="onSubmitForm(userDetailsForm)">
                   {{ 'profileInfo.saveChanges' | translate }}
                 </button> 
-            </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="showCounter === disableCounter">
+              <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
+                <button
+                  class="save-button"
+                  (click)="onSubmitForm(userDetailsForm)">
+                  {{ 'apptocsinglepage.next' | translate }}
+                </button>
+              </div>
+            </ng-container>
         </form>
       </div>
    </div>
