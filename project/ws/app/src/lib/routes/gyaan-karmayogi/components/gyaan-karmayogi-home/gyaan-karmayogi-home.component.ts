@@ -360,7 +360,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
       queryParams : {
         sector: this.selectedSector,
         // preview: true
-        key: 'case study',
+        // key: 'case study',
         content: this.selectedTabIndex === 0 ? 'agkCaseStudies' : 'otherResources',
       },
     })
