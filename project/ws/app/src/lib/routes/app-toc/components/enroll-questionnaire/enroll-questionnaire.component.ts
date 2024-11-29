@@ -118,6 +118,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
   canShowGroup: boolean = false
   canShowDesignation: boolean = false
   selectedDate: any
+  showCounter: number = 0
+  disableCounter: number = 0
+  canShowEmail: boolean = false
+  showEmail: boolean = false
+  canShowName: boolean = false
+  canShowOrg: boolean = false
+  showOrg: boolean = false
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -138,10 +145,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
     this.batchDetails = this.data.batchData
     this.userDetailsForm = new FormGroup({
+      name: new FormControl(''),
+      organisation: new FormControl(''),
       group: new FormControl(''),
       designation: new FormControl(''),
       employeeCode: new FormControl(''),
-      // primaryEmail: new FormControl('', ),
+      primaryEmail: new FormControl('', ),
       mobile: new FormControl(''),
       gender: new FormControl('', []),
       dob: new FormControl('', []),
@@ -509,21 +518,57 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile") && 
         this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields) {
       let customAttr = this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields
+
       if (this.findAttr(customAttr, 'name')) {
-        if (!this.findInProfile('name')) {
-          this.showname = true
-          this.customForm = true
+        this.canShowName = true
+        this.showname = true
+        this.customForm = true
+        this.showCounter = this.showCounter + 1
+        const fieldControl = this.userDetailsForm.get('name')
+        if (fieldControl) {
+          fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.firstname)
+          fieldControl.disable()
+          this.disableCounter = this.disableCounter + 1
         }
       }
+
+      if(this.findAttr(customAttr, 'email')) {
+        this.canShowEmail = true
+        this.customForm = true
+        this.showEmail = true
+        this.showCounter = this.showCounter + 1
+        const fieldControl = this.userDetailsForm.get('primaryEmail')
+        if (fieldControl) {
+          fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.primaryEmail)
+          fieldControl.disable()
+          this.disableCounter = this.disableCounter + 1
+        }
+      }
+
+      if (this.findAttr(customAttr, 'organisation')) {
+        this.canShowOrg = true
+        this.customForm = true
+        this.showOrg = true
+        this.showCounter = this.showCounter + 1
+        const fieldControl = this.userDetailsForm.get('organisation')
+        if (fieldControl) {
+          fieldControl.setValue(this.userProfileObject.profileDetails.employmentDetails.departmentName)
+          fieldControl.disable()
+          this.disableCounter = this.disableCounter + 1
+        }
+      }
+
       if (this.findAttr(customAttr, 'group')) {
         this.canShowGroup = true
         this.customForm = true
         this.showGroup = true
+        this.showCounter = this.showCounter + 1
         const fieldControl = this.userDetailsForm.get('group')
         if (fieldControl) {
           if (this.pGroup) {
             fieldControl.setValue(this.pGroup)
             fieldControl.disable()
+            this.disableCounter = this.disableCounter +  1
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
@@ -531,6 +576,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
             ){
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
               fieldControl.disable()
+              this.disableCounter = this.disableCounter +  1
             }
           }
           fieldControl.setValidators([Validators.required])
@@ -541,17 +587,20 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.canShowDesignation = true
         this.customForm = true
         this.showDesignation = true
+        this.showCounter = this.showCounter + 1
         const fieldControl = this.userDetailsForm.get('designation')
         if (fieldControl) {
           if (this.pDesignation) {
             fieldControl.setValue(this.pDesignation)
             fieldControl.disable()
+            this.disableCounter = this.disableCounter +  1
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].designation){
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
               fieldControl.disable()
+              this.disableCounter = this.disableCounter +  1
             }
           }
           fieldControl.setValidators([Validators.required])
@@ -561,6 +610,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'employeeCode')) {
         this.canShowEmployeeCode = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('employeeCode')) {
           this.showEmployeeCode = true
           const fieldControl = this.userDetailsForm.get('employeeCode')
@@ -573,6 +623,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'mobile')) {
         this.canshowMobile = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('mobile')) {
           this.showMobile = true
           const fieldControl = this.userDetailsForm.get('mobile')
@@ -585,6 +636,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'gender')) {
         this.canShowGender = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('gender')) {
           this.showGender = true
           const fieldControl = this.userDetailsForm.get('gender')
@@ -597,6 +649,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'dob')) {
         this.canShowDob = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('dob')) {
           this.showDob= true
           const fieldControl = this.userDetailsForm.get('dob')
@@ -609,6 +662,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'domicileMedium')) {
         this.canShowDomicileMedium = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('domicileMedium')) {
           this.showDecimalMedium = true
           const fieldControl = this.userDetailsForm.get('domicileMedium')
@@ -621,6 +675,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'category')) {
         this.canShowCategory= true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('category')) {
           this.showCategory= true
           const fieldControl = this.userDetailsForm.get('category')
@@ -633,6 +688,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'pinCode')) {
         this.canShowpinCode= true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('pinCode')) {
           this.showPinCode = true
           const fieldControl = this.userDetailsForm.get('pinCode')
@@ -646,6 +702,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       if (this.findAttr(customAttr, 'cadreDetails')) {
         this.canShowshowCadreDetails = true
         this.customForm = true
+        this.showCounter = this.showCounter + 1
         if (!this.findInProfile('cadreDetails')) {
           this.showCadreDetails = true
         }
@@ -661,6 +718,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
   findAttr(customAttr: any, fName: any) {
     if(fName === 'name') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.firstname')
+    }
+    if(fName === 'email') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.primaryEmail')
+    }
+    if(fName === 'organisation') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.departmentName')
     }
     if(fName === 'group') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.professionalDetails.group') 
@@ -713,6 +776,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.employeeCode)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         }        
       }
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
@@ -723,6 +787,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.personalDetails.mobile)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         }  
       }
       return this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified
@@ -733,6 +798,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.personalDetails.gender)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         } 
       }
       return this.userProfileObject.profileDetails.personalDetails.gender
@@ -750,6 +816,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.selectedDate = new Date(`${formattedYear}-${formattedMonth}-${formattedDay}`)
           contrl.setValue(this.selectedDate)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         } 
       }
       return this.userProfileObject.profileDetails.personalDetails.dob
@@ -760,6 +827,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.personalDetails.domicileMedium)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         } 
       }
       return this.userProfileObject.profileDetails.personalDetails.domicileMedium
@@ -770,6 +838,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.personalDetails.category)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         } 
       }
       return this.userProfileObject.profileDetails.personalDetails.category
@@ -780,6 +849,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         if (contrl) {
           contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.pinCode)
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         } 
 
       }
@@ -807,6 +877,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
             cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
           })
           contrl.disable()
+          this.disableCounter = this.disableCounter +  1
         }
         const contrlTypeOfCivilService= this.userDetailsForm.get('typeOfCivilService')
         if (contrlTypeOfCivilService) {
