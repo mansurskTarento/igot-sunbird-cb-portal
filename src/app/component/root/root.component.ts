@@ -295,7 +295,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (!(event.url.includes('/page/home')) && isMobile) {
           this.showHubs = false
         } else {
-          if (event.url.includes('/public')) {
+          if (event.url.includes('/public') || event.url.includes('/crp')) {
             this.showHubs = false
           } else {
             this.showHubs = true

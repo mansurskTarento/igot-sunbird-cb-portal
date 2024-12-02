@@ -303,15 +303,14 @@
                             </div>
                         </div>
                         <div class="w-full margin-top-l">
+                            
                             <div class="button_box flex flex-col items-center justify-center">
                                 <button mat-flat-button type="submit" class="submitBtn mat-btn-flat" (click)="signup()"
                                     [disabled]="
                                         !registrationForm?.valid || 
-                                        !confirm || 
                                         disableBtn || 
                                         !isMobileVerified ||
                                         !isEmailVerified || 
-                                        !heirarchyObject || 
                                         !confirmTerms">
                                     {{ 'publicsignup.signup' | translate }}
                                 </button>

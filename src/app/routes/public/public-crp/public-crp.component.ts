@@ -16,7 +16,7 @@ import { SignupService } from '../public-signup/signup.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
+// import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
@@ -96,7 +96,7 @@ export class PublicCrpComponent {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
-    private recaptchaV3Service: ReCaptchaV3Service,
+    // private recaptchaV3Service: ReCaptchaV3Service,
     private router: Router,
     @Inject(DOCUMENT) private _document: any,
     @Inject(PLATFORM_ID) private _platformId: any,
@@ -163,16 +163,17 @@ export class PublicCrpComponent {
       this.groupsOriginal = [];
     }
 
-    const org = this.activatedRoute.snapshot.data.organization
-    if(org) {
-      this.designationsList = org.designationsList
-      this.organizationDetails = org.organizationDetails
+    const org = this.activatedRoute.snapshot.data.organization;
+    if (org) {
+      this.designationsList = org.designationsList;
+      this.organizationDetails = org.organizationDetails;
+    } else {
+      this.openSnackbar(
+        'Oops! It seems the registration link is invalid or the organization could not be found'
+      );
+      // this.router.navigate(['/public/signup'])
     }
-    else {
-      this.openSnackbar('Oops! It seems the registration link is invalid or the organization could not be found')
-      this.router.navigate(['/public/signup'])
-    }
-    this.getOrganization()
+    this.getOrganization();
     this.onPhoneChange();
     this.onEmailChange();
     if (instanceConfig) {
@@ -464,10 +465,10 @@ export class PublicCrpComponent {
 
   signup() {
     this.disableBtn = true;
-    this.recaptchaSubscription = this.recaptchaV3Service
-      .execute('importantAction')
-      .subscribe(
-        (_token) => {
+    // this.recaptchaSubscription = this.recaptchaV3Service
+    //   .execute('importantAction')
+    //   .subscribe(
+    //     (_token) => {
           // tslint:disable-next-line: no-console
           let req: any;
           if (this.heirarchyObject) {
@@ -486,7 +487,6 @@ export class PublicCrpComponent {
               mapId: this.heirarchyObject.mapId || '',
               sbRootOrgId: this.heirarchyObject.sbRootOrgId,
               sbOrgId: this.heirarchyObject.sbOrgId,
-
             };
           }
 
@@ -508,14 +508,14 @@ export class PublicCrpComponent {
               }
             }
           );
-        },
-        (error) => {
-          this.disableBtn = false;
-          // tslint:disable-next-line: no-console
-          console.error('captcha validation error', error);
-          this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
-        }
-      );
+      //   },
+      //   (error) => {
+      //     this.disableBtn = false;
+      //     // tslint:disable-next-line: no-console
+      //     console.error('captcha validation error', error);
+      //     this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
+      //   }
+      // );
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -653,24 +653,22 @@ export class PublicCrpComponent {
   }
 
   getOrganization() {
-    if (this.stopExecution === 2) return;
-
     const params = {
-      orgName: this.organizationDetails ? this.organizationDetails.orgName : '',
-      type: 'state',
+      request: {
+        filters: {
+          identifier: [this.organizationDetails?.id],
+        },
+      },
     };
-    this.signupSvc.searchOrgs(params.orgName, params.type).subscribe({
+    this.signupSvc.searchOrgsByIdentifier(params).subscribe({
       next: (response: any) => {
-        // tslint:disable-next-line: no-non-null-assertion
-        const organization = response.result.response.find(
-          (org: any) => org.orgName === this.organizationDetails!.orgName
-        );
-        if (organization) {
-          this.heirarchyObject = organization;
-        } else {
-          params.type = 'ministry';
-          this.getOrganization();
-          this.stopExecution = this.stopExecution + 1;
+        if (response.result) {
+          const organization = response.result.response.find(
+            (org: any) => org.orgName === this.organizationDetails!.orgName
+          );
+          if (organization) {
+            this.heirarchyObject = organization;
+          }
         }
       },
     });

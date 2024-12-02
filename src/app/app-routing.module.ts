@@ -718,9 +718,7 @@ const routes: Routes = [
     component: PublicCrpComponent,
     data: {
       module: 'Login',
-      pageId: 'public/signup',
-      pageType: 'feature',
-      pageKey: 'signup',
+      pageId: 'crp',
     },
     resolve: {
       organization: AppPublicOrganizationResolver,

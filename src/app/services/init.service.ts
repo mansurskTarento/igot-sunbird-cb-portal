@@ -71,7 +71,7 @@ export class InitService {
   }
 
   isAnonymousTelemetry = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-  || window.location.href.includes('/certs')
+  || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
 
   constructor(
     private logger: LoggerService,
@@ -148,7 +148,7 @@ export class InitService {
 
   get isAnonymousTelemetryRequired(): boolean {
     this.isAnonymousTelemetry = window.location.href.includes('/public/')
-      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs')
+      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
     return this.isAnonymousTelemetry
   }
 
@@ -177,7 +177,7 @@ export class InitService {
     try {
       const path = window.location.pathname
       const isPublic = window.location.href.includes('/public/')
-        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs')
+        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
@@ -228,9 +228,12 @@ export class InitService {
     //     // throw new DataResponseError('COOKIE_SET_FAILURE')
     //   })
     if (
-      !(window.location.href.includes('/public/') ||
-      window.location.href.includes('/certs') ||
-      window.location.href.includes('/viewer'))
+      !(
+        window.location.href.includes('/public/') || 
+        window.location.href.includes('/crp/') ||
+        window.location.href.includes('/certs') ||
+        window.location.href.includes('/viewer')
+      )
     ) {
       this.logFirstLogin()
     }

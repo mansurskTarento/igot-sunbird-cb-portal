@@ -185,4 +185,8 @@ export class SignupService {
     });
   }
 
+  searchOrgsByIdentifier(req: any) {
+    return this.http.post(API_END_POINTS.SEARCH_ORG, req)
+  }
+
 }
