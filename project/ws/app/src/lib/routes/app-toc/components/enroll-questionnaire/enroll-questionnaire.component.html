@@ -145,8 +145,8 @@
               </div>
               <mat-form-field appearance="outline" class="w-full">
                   <mat-select formControlName="gender" placeholder="Select gender">
-                      <mat-option *ngFor="let gender of eUserGender" value="{{ gender }}">{{
-                        handleTranslateTo(gender.toLowerCase()) }}</mat-option>
+                      <mat-option *ngFor="let _gender of eUserGender" value="{{ _gender }}">{{
+                        handleTranslateTo(_gender.toLowerCase()) }}</mat-option>
                   </mat-select>
               </mat-form-field>
             </div>
