@@ -21,6 +21,12 @@
 ::ng-deep.userDetailsForm .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 0.5rem 0 0.8rem 0;
 }
+input[disabled] + mat-icon.disagnation-caret {
+    opacity: 0.5;
+}
+input[disabled] + mat-icon.mother-toungue-caret {
+    opacity: 0.5;
+}
 
 ::ng-deep.course-survey .lib-container-2 {
     height: auto;

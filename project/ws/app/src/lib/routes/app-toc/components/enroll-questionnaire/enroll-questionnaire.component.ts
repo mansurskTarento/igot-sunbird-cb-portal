@@ -856,44 +856,50 @@ export class EnrollQuestionnaireComponent implements OnInit {
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
     if (attr === 'cadreDetails') {
-      if (Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre') &&
-        this.userProfileObject.profileDetails.personalDetails.isCadre === true) {
-        const contrl = this.userDetailsForm.get('isCadre')
+      if (Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')) {
+        let contrl = this.userDetailsForm.get('isCadre')
         if (contrl) {
-          contrl.setValue(true)
-          this.isCadreStatus = true
-          this.serviceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeId
-          this.civilServiceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceId
-          this.cadreId = this.userProfileObject.profileDetails.cadreDetails.cadreId
-          this.cadreControllingAuthority = this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName
-          this.yearArray = [this.userProfileObject.profileDetails.cadreDetails.cadreBatch]
-          this.cadre = [this.userProfileObject.profileDetails.cadreDetails.cadreName]
-          this.serviceName = [this.userProfileObject.profileDetails.cadreDetails.civilServiceName]
-          this.userDetailsForm.patchValue({
-            typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
-            serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,
-            cadreName: this.userProfileObject.profileDetails.cadreDetails.cadreName,
-            cadreBatch: this.userProfileObject.profileDetails.cadreDetails.cadreBatch,
-            cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
-          })
-          contrl.disable()
-          this.disableCounter = this.disableCounter +  1
-        }
-        const contrlTypeOfCivilService= this.userDetailsForm.get('typeOfCivilService')
-        if (contrlTypeOfCivilService) {
-          contrlTypeOfCivilService.disable()
-        }
-        const contrlServiceType = this.userDetailsForm.get('serviceType')
-        if (contrlServiceType) {
-          contrlServiceType.disable()
-        }
-        const contrlCadreName = this.userDetailsForm.get('cadreName')
-        if (contrlCadreName) {
-          contrlCadreName.disable()
-        }
-        const contrlCadreBatch = this.userDetailsForm.get('cadreBatch')
-        if (contrlCadreBatch) {
-          contrlCadreBatch.disable()
+          if(this.userProfileObject.profileDetails.personalDetails.isCadre === true) {
+            contrl.setValue(true)
+            this.isCadreStatus = true
+            this.serviceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeId
+            this.civilServiceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceId
+            this.cadreId = this.userProfileObject.profileDetails.cadreDetails.cadreId
+            this.cadreControllingAuthority = this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName
+            this.yearArray = [this.userProfileObject.profileDetails.cadreDetails.cadreBatch]
+            this.cadre = [this.userProfileObject.profileDetails.cadreDetails.cadreName]
+            this.serviceName = [this.userProfileObject.profileDetails.cadreDetails.civilServiceName]
+            this.userDetailsForm.patchValue({
+              typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
+              serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,
+              cadreName: this.userProfileObject.profileDetails.cadreDetails.cadreName,
+              cadreBatch: this.userProfileObject.profileDetails.cadreDetails.cadreBatch,
+              cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
+            })
+            contrl.disable()
+            this.disableCounter = this.disableCounter +  1
+            const contrlTypeOfCivilService= this.userDetailsForm.get('typeOfCivilService')
+            if (contrlTypeOfCivilService) {
+              contrlTypeOfCivilService.disable()
+            }
+            const contrlServiceType = this.userDetailsForm.get('serviceType')
+            if (contrlServiceType) {
+              contrlServiceType.disable()
+            }
+            const contrlCadreName = this.userDetailsForm.get('cadreName')
+            if (contrlCadreName) {
+              contrlCadreName.disable()
+            }
+            const contrlCadreBatch = this.userDetailsForm.get('cadreBatch')
+            if (contrlCadreBatch) {
+              contrlCadreBatch.disable()
+            }
+          } else {
+            contrl.setValue(false)
+            this.isCadreStatus = false
+            contrl.disable()
+            this.disableCounter = this.disableCounter +  1
+          }
         }
       }
       return Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')
