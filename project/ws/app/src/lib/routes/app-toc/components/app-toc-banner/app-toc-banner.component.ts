@@ -479,8 +479,10 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
         // conflicts check end
         if (userList && userList.length === 0) {
-          if (this.content && this.content.wfSurveyLink) {
+          if (this.content && this.content.wfSurveyLink ||
+            (batchData.batchAttributes && batchData.batchAttributes.userProfileFileds)) {
             const sID = this.content.wfSurveyLink.split('surveys/')
+
             const surveyId = sID[1]
             const courseId = this.content.identifier
             const courseName = this.content.name

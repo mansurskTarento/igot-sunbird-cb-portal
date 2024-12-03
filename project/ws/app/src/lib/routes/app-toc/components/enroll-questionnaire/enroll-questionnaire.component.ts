@@ -125,6 +125,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   canShowName: boolean = false
   canShowOrg: boolean = false
   showOrg: boolean = false
+  surveyId: any
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -144,6 +145,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
 
     this.batchDetails = this.data.batchData
+    this.surveyId = this.data.surveyId
     this.userDetailsForm = new FormGroup({
       name: new FormControl(''),
       organisation: new FormControl(''),
@@ -264,6 +266,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
       this.submitSurevy()
     }
     this.openSnackbar('Form is submitted successfully')
+    this.dialogRef.close(true)
+  }
+
+  closePopup() {
     this.dialogRef.close(true)
   }
 
@@ -518,7 +524,6 @@ export class EnrollQuestionnaireComponent implements OnInit {
         this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile") && 
         this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields) {
       let customAttr = this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields
-
       if (this.findAttr(customAttr, 'name')) {
         this.canShowName = true
         this.showname = true
@@ -1013,6 +1018,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
       if (resp && resp.statusInfo && resp.statusInfo.statusCode === 200) {
         this.customForm = false
+        if (!this.surveyId) {
+          this.closePopup()
+        }
       }
       if (resp && resp.statusCode && resp.statusCode !== 200) {
         this.customForm = false
