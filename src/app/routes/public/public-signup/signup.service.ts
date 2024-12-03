@@ -18,9 +18,9 @@ const API_END_POINTS = {
   GET_POSITIONS: '/api/user/v1/positions',
   GET_GROUPS: '/api/user/v1/groups',
   SEARCH_ORG: '/api/org/ext/v2/signup/search',
-  ORG_READ: '/apis/proxies/v8/org/v1/read',
+  ORG_READ: '/api/org/v1/read',
   ORGANISATION_FW: (frameworkName: string) =>
-    `/apis/proxies/v8/framework/v1/read/${frameworkName}`,
+    `/api/framework/v1/read/${frameworkName}`,
 }
 
 @Injectable({
