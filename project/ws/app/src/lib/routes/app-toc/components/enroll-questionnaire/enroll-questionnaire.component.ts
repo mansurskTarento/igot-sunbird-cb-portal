@@ -126,6 +126,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   canShowOrg: boolean = false
   showOrg: boolean = false
   surveyId: any
+  profileFormType: any
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollQuestionnaireComponent>,
@@ -146,6 +147,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
     this.batchDetails = this.data.batchData
     this.surveyId = this.data.surveyId
+    this.profileFormType = this.batchDetails.batchAttributes.userProfileFileds
     this.userDetailsForm = new FormGroup({
       name: new FormControl(''),
       organisation: new FormControl(''),
@@ -258,12 +260,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
     console.log('Form is submitted successfully')
     if (this.batchDetails.batchAttributes.userProfileFileds &&
         this.batchDetails.batchAttributes.userProfileFileds === "Available user filled iGOT profile") {
-      this.submitSurevy()
+      this.submitSurevy(true)
     }
     if (this.batchDetails.batchAttributes.userProfileFileds && !this.updateProfile &&
       (this.batchDetails.batchAttributes.userProfileFileds === "Full iGOT profile" ||
       this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile")) {
-      this.submitSurevy()
+      this.submitSurevy(true)
     }
     this.openSnackbar('Form is submitted successfully')
     this.dialogRef.close(true)
@@ -519,10 +521,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   defineFormAttributes() {
-    if (this.batchDetails.batchAttributes.userProfileFileds && 
-        (this.batchDetails.batchAttributes.userProfileFileds === "Full iGOT profile" || 
-        this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile") && 
-        this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields) {
+    if (this.batchDetails.batchAttributes.userProfileFileds &&
+      this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields) {
       let customAttr = this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields
       if (this.findAttr(customAttr, 'name')) {
         this.canShowName = true
@@ -534,6 +534,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.firstname)
           fieldControl.disable()
           this.disableCounter = this.disableCounter + 1
+        }
+        if(this.profileFormType === 'Available user filled iGOT profile' &&
+          !this.userProfileObject.profileDetails.personalDetails.firstname
+        ) {
+          this.canShowName = false
+          this.showname = false
         }
       }
 
@@ -548,6 +554,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           fieldControl.disable()
           this.disableCounter = this.disableCounter + 1
         }
+        if(this.profileFormType === 'Available user filled iGOT profile' &&
+          !this.userProfileObject.profileDetails.personalDetails.primaryEmail
+        ) {
+          this.canShowEmail = false
+          this.showEmail = false
+        }
       }
 
       if (this.findAttr(customAttr, 'organisation')) {
@@ -560,6 +572,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           fieldControl.setValue(this.userProfileObject.profileDetails.employmentDetails.departmentName)
           fieldControl.disable()
           this.disableCounter = this.disableCounter + 1
+        }
+        if(this.profileFormType === 'Available user filled iGOT profile' &&
+          !this.userProfileObject.profileDetails.employmentDetails.departmentName
+        ) {
+          this.canShowOrg = false
+          this.showOrg = false
         }
       }
 
@@ -574,6 +592,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
             fieldControl.setValue(this.pGroup)
             fieldControl.disable()
             this.disableCounter = this.disableCounter +  1
+            if (this.profileFormType === 'Available user filled iGOT profile') {
+              this.canShowGroup = false
+              this.showGroup = false
+            }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
@@ -582,6 +604,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
               fieldControl.disable()
               this.disableCounter = this.disableCounter +  1
+              if (this.profileFormType === 'Available user filled iGOT profile') {
+                this.canShowGroup = false
+                this.showGroup = false
+              }
             }
           }
           fieldControl.setValidators([Validators.required])
@@ -599,6 +625,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
             fieldControl.setValue(this.pDesignation)
             fieldControl.disable()
             this.disableCounter = this.disableCounter +  1
+            if (this.profileFormType === 'Available user filled iGOT profile') {
+              this.canShowDesignation = false
+              this.showDesignation = false
+            }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
@@ -606,6 +636,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
               fieldControl.disable()
               this.disableCounter = this.disableCounter +  1
+              if (this.profileFormType === 'Available user filled iGOT profile') {
+                this.canShowDesignation = false
+                this.showDesignation = false
+              }
             }
           }
           fieldControl.setValidators([Validators.required])
@@ -784,6 +818,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.disableCounter = this.disableCounter +  1
         }        
       }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.employmentDetails.employeeCode) {
+          this.canShowEmployeeCode = false
+          this.showEmployeeCode = false
+      }
       return this.userProfileObject.profileDetails.employmentDetails.employeeCode
     }
     if (attr === 'mobile') {
@@ -795,6 +834,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.disableCounter = this.disableCounter +  1
         }  
       }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !(this.userProfileObject.profileDetails.personalDetails.mobile || this.userProfileObject.profileDetails.personalDetails.phoneVerified)
+      ) {
+        this.canshowMobile = false
+        this.showMobile = false
+      }
       return this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified
     }
     if (attr === 'gender') {
@@ -805,6 +850,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           contrl.disable()
           this.disableCounter = this.disableCounter +  1
         } 
+      }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.personalDetails.gender
+      ) {
+          this.canShowGender = false
+          this.showGender = false
       }
       return this.userProfileObject.profileDetails.personalDetails.gender
     }
@@ -824,6 +875,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.disableCounter = this.disableCounter +  1
         } 
       }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.personalDetails.dob
+      ) {
+          this.canShowDob = false
+          this.showDob = false
+      }
       return this.userProfileObject.profileDetails.personalDetails.dob
     }
     if (attr === 'domicileMedium') {
@@ -833,7 +890,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           contrl.setValue(this.userProfileObject.profileDetails.personalDetails.domicileMedium)
           contrl.disable()
           this.disableCounter = this.disableCounter +  1
-        } 
+        }
+      }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.personalDetails.domicileMedium
+      ) {
+          this.canShowDomicileMedium = false
+          this.showDecimalMedium = false
       }
       return this.userProfileObject.profileDetails.personalDetails.domicileMedium
     }
@@ -846,6 +909,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.disableCounter = this.disableCounter +  1
         } 
       }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.personalDetails.category
+      ) {
+          this.canShowCategory = false
+          this.showCategory = false
+      }
       return this.userProfileObject.profileDetails.personalDetails.category
     }
     if (attr === 'pinCode') {
@@ -855,8 +924,13 @@ export class EnrollQuestionnaireComponent implements OnInit {
           contrl.setValue(this.userProfileObject.profileDetails.employmentDetails.pinCode)
           contrl.disable()
           this.disableCounter = this.disableCounter +  1
-        } 
-
+        }
+      }
+      if(this.profileFormType === 'Available user filled iGOT profile' &&
+        !this.userProfileObject.profileDetails.employmentDetails.pinCode
+      ) {
+          this.canShowpinCode = false
+          this.showPinCode = false
       }
       return this.userProfileObject.profileDetails.employmentDetails.pinCode
     }
@@ -906,6 +980,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
             this.disableCounter = this.disableCounter +  1
           }
         }
+      }
+      if (this.profileFormType === 'Available user filled iGOT profile' &&
+        !Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')) {
+          this.canShowshowCadreDetails = false
+
       }
       return Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')
     }
@@ -958,6 +1037,18 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }    
   }
 
+  onConditionalSubmit(form: any) {
+    /* tslint:disable */
+    console.log(form)
+    if (this.surveyId) {
+      this.customForm = false
+    } else {
+      if (this.profileFormType === 'Available user filled iGOT profile') {
+        this.submitSurevy(false)
+      }
+    }
+  }
+
 
   onSubmitForm(form: any) {
     /* tslint:disable */
@@ -999,7 +1090,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     if (this.updateProfile) {
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
         if (res.responseCode === 'OK') {
-          this.submitSurevy()
+          this.submitSurevy(true)
         }
       }, error => {
         /* tslint:disable */
@@ -1009,9 +1100,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
   }
 
-  submitSurevy() {
+  submitSurevy(status: any) {
     let surevyPayload = {
-      dataObject: this.genereateSurveyPayload(),
+      dataObject: this.genereateSurveyPayload(status),
         formId: this.data.batchData.batchAttributes.profileSurveyId,
         timestamp: new Date().getTime(),
     }
@@ -1118,7 +1209,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     return  `${new Date(dateString).getFullYear()}-${new Date(dateString).getMonth()+1}-${new Date(dateString).getDate()}`
   }
 
-  genereateSurveyPayload() {
+  genereateSurveyPayload(status: any) {
     let dataObject: any = {}
     this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields.forEach((_field: any)  => {
       if(_field.field === 'profileDetails.personalDetails.firstname') {
@@ -1129,7 +1220,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           this.userProfileObject.profileDetails.employmentDetails.departmentName : "N/A"
       }
       if(_field.field === 'profileDetails.professionalDetails.group') {
-        if (this.showGroup) {
+        if (this.showGroup && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['group'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].group ?
@@ -1137,7 +1228,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if(_field.field === 'profileDetails.professionalDetails.designation') {
-        if (this.showDesignation) {
+        if (this.showDesignation && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].designation ?
@@ -1146,7 +1237,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.employmentDetails.employeeCode') {
-        if (this.showEmployeeCode) {
+        if (this.showEmployeeCode && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['employeeCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.employeeCode?
@@ -1159,7 +1250,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.personalDetails.mobile') {
-        if (this.showMobile) {
+        if (this.showMobile && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['mobile'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.mobile?
@@ -1168,7 +1259,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.personalDetails.dob') {
-        if (this.showDob) {
+        if (this.showDob && status) {
           let _dob: any = this.userDetailsForm.controls['dob'].value
           dataObject[_field.name] = this.formatDate(_dob)
         } else {
@@ -1187,7 +1278,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.personalDetails.gender') {
-        if (this.showGender) {
+        if (this.showGender && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['gender'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.gender ?
@@ -1196,7 +1287,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.personalDetails.domicileMedium') {
-        if (this.showDecimalMedium) {
+        if (this.showDecimalMedium && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['domicileMedium'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.domicileMedium ?
@@ -1205,7 +1296,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.personalDetails.category') {
-        if (this.showCategory) {
+        if (this.showCategory && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['category'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.category ?
@@ -1214,7 +1305,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.employmentDetails.pinCode') {
-        if (this.showPinCode) {
+        if (this.showPinCode && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['pinCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
@@ -1223,14 +1314,14 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['isCadre'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails && this.userProfileObject.profileDetails.cadreDetails ? 'yes' : 'No'
         }
       }
       if(_field.field === 'profileDetails.cadreDetails.civilServiceType') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['typeOfCivilService'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceType ?
@@ -1239,7 +1330,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.civilServiceName') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['serviceType'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.civilServiceName ?
@@ -1248,7 +1339,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreName') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreName'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails  && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
@@ -1256,7 +1347,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         }
       }
       if(_field.field === 'profileDetails.cadreDetails.cadreBatch') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
@@ -1265,7 +1356,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
 
       if(_field.field === 'profileDetails.cadreDetails.cadreControllingAuthorityName') {
-        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value) {
+        if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.cadreControllingAuthority
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName ?
