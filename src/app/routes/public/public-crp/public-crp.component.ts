@@ -662,7 +662,7 @@ export class PublicCrpComponent {
     };
     this.signupSvc.searchOrgsByIdentifier(params).subscribe({
       next: (response: any) => {
-        if (response.result) {
+        if (response.result && response.result.response) {
           const organization = response.result.response.find(
             (org: any) => org.orgName === this.organizationDetails!.orgName
           );
