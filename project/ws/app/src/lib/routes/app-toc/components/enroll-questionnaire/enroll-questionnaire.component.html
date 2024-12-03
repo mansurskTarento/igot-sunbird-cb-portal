@@ -288,24 +288,36 @@
                 </div>
                 <span class="cadreControl-name">{{cadreControllingAuthority}}</span>
             </div>
-            <ng-container *ngIf="showCounter !== disableCounter">
+            <ng-container *ngIf="profileFormType === 'Available user filled iGOT profile'">
               <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
                 <button
                   class="save-button"
-                  [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
-                  (click)="onSubmitForm(userDetailsForm)">
-                  {{ 'profileInfo.saveChanges' | translate }}
-                </button> 
-              </div>
-            </ng-container>
-            <ng-container *ngIf="showCounter === disableCounter">
-              <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
-                <button
-                  class="save-button"
-                  (click)="onSubmitForm(userDetailsForm)">
+                  (click)="onConditionalSubmit(userDetailsForm)">
                   {{ 'apptocsinglepage.next' | translate }}
                 </button>
               </div>
+            </ng-container>
+
+            <ng-container *ngIf="profileFormType !== 'Available user filled iGOT profile'">
+              <ng-container *ngIf="showCounter !== disableCounter">
+                <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
+                  <button
+                    class="save-button"
+                    [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
+                    (click)="onSubmitForm(userDetailsForm)">
+                    {{ 'profileInfo.saveChanges' | translate }}
+                  </button>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="showCounter === disableCounter">
+                <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
+                  <button
+                    class="save-button"
+                    (click)="onSubmitForm(userDetailsForm)">
+                    {{ 'apptocsinglepage.next' | translate }}
+                  </button>
+                </div>
+              </ng-container>
             </ng-container>
         </form>
       </div>
