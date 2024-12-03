@@ -310,7 +310,7 @@
         </form>
       </div>
    </div>
-   <div *ngIf ="!customForm && !isLoading">
+   <div *ngIf ="!customForm && !isLoading && surveyId">
        <lib-micro-survey class="course-survey"
            [apiData]="data?.apiData"
            [afterSubmitAction]="afterSubmitAction"
