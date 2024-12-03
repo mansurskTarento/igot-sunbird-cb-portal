@@ -205,6 +205,23 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
             }
           }
         }
+        if (this.selectedTabIndex === 0 && addFilters.resourceCategory === 'case study') {
+          data.strips[0].request.searchV6.request.filters.contentType = [
+            'Resource',
+            'Course',
+          ]
+          data.strips[0].request.searchV6.request.filters.createdFor = this.selectedTabIndex === 0
+            ? environment.cbcOrg : this.nonCbcOrgids
+        }  else {
+          data.strips[0].request.searchV6.request.filters.contentType = [
+            'Resource',
+          ]
+          data.strips[0].request.searchV6.request.filters = {
+            ...data.strips[0].request.searchV6.request.filters,
+            ...addFilters,
+            createdFor: this.selectedTabIndex === 0 ? environment.cbcOrg : this.nonCbcOrgids,
+          }
+        }
         this.hideAllStrip = true
 
         this.stripData = [data]

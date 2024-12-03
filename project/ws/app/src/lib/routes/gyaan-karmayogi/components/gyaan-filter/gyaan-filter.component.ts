@@ -66,13 +66,15 @@ export class GyaanFilterComponent implements OnInit {
       yearsData = this.localFilterData[gyaanConstants.contextYear]
     }
 
-    this.minValue = Number(yearsData.values[0].name)
-    this.maxValue = Number(yearsData.values[yearsData.values.length - 1].name)
-    this.options  = {
-      floor: Number(yearsData.values[0].name),
-      ceil: Number(yearsData.values[yearsData.values.length - 1].name),
-      step: 1,
-      showTicks: false,
+    if (yearsData.values && yearsData.values.length) {
+      this.minValue = Number(yearsData.values[0].name)
+      this.maxValue = Number(yearsData.values[yearsData.values.length - 1].name)
+      this.options  = {
+        floor: Number(yearsData.values[0].name),
+        ceil: Number(yearsData.values[yearsData.values.length - 1].name),
+        step: 1,
+        showTicks: false,
+      }
     }
   }
 

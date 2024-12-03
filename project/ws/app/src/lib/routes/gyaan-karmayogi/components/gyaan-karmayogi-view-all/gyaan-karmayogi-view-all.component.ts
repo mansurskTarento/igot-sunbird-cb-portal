@@ -158,7 +158,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         if (!(this.selectedFilter[gyaanConstants.sectorName] &&
           this.selectedFilter[gyaanConstants.sectorName].length)) {
           strip.request.searchV6.request.filters.sectorName = this.sectorNames
-          //delete strip.request.searchV6.request.filters.sectorName
+          // delete strip.request.searchV6.request.filters.sectorName
         }
         if (!(this.selectedFilter[gyaanConstants.subSectorName] &&
           this.selectedFilter[gyaanConstants.subSectorName].length)) {
