@@ -14,15 +14,6 @@
                 <input type="text" class="input-text" matInput formControlName="name" placeholder="Name"/>
             </mat-form-field>
           </div>
-          <div class="w-full" *ngIf="canShowEmail">
-            <div class="mat-subheading-2 margin-0 required"
-                i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.email' | translate }}
-            </div>
-            <mat-form-field appearance="outline" class="w-full">
-                <input type="text" class="input-text" matInput formControlName="primaryEmail" placeholder="Enter email"/>
-            </mat-form-field>
-          </div>
           <div class="w-full" *ngIf="canShowOrg">
             <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
@@ -31,6 +22,51 @@
             <mat-form-field appearance="outline" class="w-full">
                 <input type="text" class="input-text" matInput formControlName="organisation" placeholder="Organisation"/>
             </mat-form-field>
+          </div>
+          <div class="w-full" *ngIf="canShowEmail">
+            <div class="mat-subheading-2 margin-0 required"
+                i18n="Title label|Label which explains the user to enter title">
+                {{ 'profileInfo.email' | translate }}
+            </div>
+            <mat-form-field appearance="outline" class="w-full">
+                <input type="text" class="input-text" matInput formControlName="primaryEmail" placeholder="Enter email" (keyup)="handleEmpty('primaryEmail')"/>
+            </mat-form-field>
+            <mat-error class="text-xs" *ngIf="userDetailsForm.get('primaryEmail').hasError('required') || userDetailsForm.get('primaryEmail').hasError('pattern')">
+              {{ 'profileInfo.invalidEmail' | translate }}
+            </mat-error>
+            <div class="flex justify-end" *ngIf="verifyEmail && !otpSent && !eVerified">
+              <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'profileInfo.getOTP' | translate
+                }}</span>
+            </div>
+            <div *ngIf="emailOtpSent">
+              <form [formGroup]="emailOtpForm">
+                <div class="w-full">
+                  <div class="flex enter-otp">
+                    <div class="mat-subheading-2 required"
+                      i18n="Title label|Label which explains the user to enter title">
+                      {{ 'profileInfo.enterOTP' | translate }}
+                    </div>
+                    <div class="mb-3">Time Remaining: <span #emailTimerDiv></span></div>
+                  </div>
+                  <mat-form-field appearance="outline" class="profile-form-field mobile-num">
+                    <input type="text" matInput formControlName="eOtp" class="input-text custom-size" placeholder="{{ 'profileInfo.enterTheOTP' | translate }}" maxlength="6" />
+                  </mat-form-field>
+                </div>
+                <div class="w-full">
+                  <div class="flex justify-center" *ngIf="showEmailResendOTP">
+                    <div class="flex flex-row">
+                        <div class="timer">{{ 'profileInfo.didNotReceiveOTP' | translate }}</div>
+                        <div class="resend-otp" (click)="handleResendEmailOTP()">&nbsp;&nbsp;{{ 'profileInfo.resentOTP' | translate }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full mb-4">
+                  <div class="flex flex-row justify-between">
+                    <button class="save-button" (click)="verifyEmailOTP()">{{ 'profileInfo.submit' | translate }}</button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
           <div class="w-full" *ngIf="canShowGroup">
             <div class="mat-subheading-2 margin-0 required"
@@ -290,7 +326,7 @@
             <div class="w-full flex flex-row gap-4 justify-end margin-top-m">
               <button
                 class="save-button"
-                [disabled]="userDetailsForm?.invalid || (showMobile && !mVerified)"
+                [disabled]="userDetailsForm?.invalid || !mVerified || !eVerified"
                 (click)="onSubmitForm(userDetailsForm)">
                 {{ 'profileInfo.saveChanges' | translate }}
               </button>
