@@ -40,6 +40,7 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatChipInputEvent } from '@angular/material/chips'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { EnrollProfileFormComponent } from '../enroll-profile-form/enroll-profile-form.component'
 
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
@@ -459,6 +460,67 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     })
   }
 
+  callBPSurevy(batchData: any) {
+    if (this.content) {
+      const sID = this.content.wfSurveyLink.split('surveys/')
+      const surveyId = sID[1]
+      const courseId = this.content.identifier
+      const courseName = this.content.name
+      const apiData = {
+        // tslint:disable-next-line:prefer-template
+        getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
+        // tslint:disable-next-line:prefer-template
+        postAPI: '/apis/proxies/v8/forms/v1/saveFormSubmit',
+        getAllApplications: '/apis/proxies/v8/forms/getAllApplications',
+        customizedHeader: {},
+      }
+      const enrollQuestionnaire = this.dialog.open(EnrollQuestionnaireComponent, {
+        width: '920px',
+        maxHeight: '85vh',
+        data: {
+          surveyId,
+          courseId,
+          courseName,
+          apiData,
+          batchData,
+
+        },
+        disableClose: false,
+        panelClass: ['animate__animated', 'animate__slideInLeft'],
+      })
+      enrollQuestionnaire.afterClosed().subscribe(result => {
+        if (result) {
+          this.openRequestToEnroll(batchData)
+        }
+      })
+    }
+  }
+
+  callBPProfileSurevy(batchData: any) {
+    if (this.content) {
+      const courseName = this.content.name
+      const profileForm = this.dialog.open(EnrollProfileFormComponent, {
+        width: '920px',
+        maxHeight: '85vh',
+        data: {
+          courseName,
+          batchData,
+        },
+        disableClose: false,
+        panelClass: ['animate__animated', 'animate__slideInLeft'],
+      })
+      profileForm.afterClosed().subscribe(result => {
+        if (result) {
+          if (this.content && this.content.wfSurveyLink) {
+            this.callBPSurevy(batchData)
+          } else {
+            this.openRequestToEnroll(batchData)
+          }
+        }
+      })
+    }
+  }
+
   public requestToEnrollDialog() {
 
     const batchData = this.batchControl.value
@@ -479,40 +541,10 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
         // conflicts check end
         if (userList && userList.length === 0) {
-          if (this.content && this.content.wfSurveyLink ||
-            (batchData.batchAttributes && batchData.batchAttributes.userProfileFileds)) {
-            const sID = this.content.wfSurveyLink.split('surveys/')
-
-            const surveyId = sID[1]
-            const courseId = this.content.identifier
-            const courseName = this.content.name
-            const apiData = {
-              // tslint:disable-next-line:prefer-template
-              getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
-              // tslint:disable-next-line:prefer-template
-              postAPI: '/apis/proxies/v8/forms/v1/saveFormSubmit',
-              getAllApplications: '/apis/proxies/v8/forms/getAllApplications',
-              customizedHeader: {},
-            }
-            const enrollQuestionnaire = this.dialog.open(EnrollQuestionnaireComponent, {
-              width: '920px',
-              maxHeight: '85vh',
-              data: {
-                surveyId,
-                courseId,
-                courseName,
-                apiData,
-                batchData,
-
-              },
-              disableClose: false,
-              panelClass: ['animate__animated', 'animate__slideInLeft'],
-            })
-            enrollQuestionnaire.afterClosed().subscribe(result => {
-              if (result) {
-                this.openRequestToEnroll(batchData)
-              }
-            })
+          if (this.content && batchData.batchAttributes && batchData.batchAttributes.userProfileFileds) {
+            this.callBPProfileSurevy(batchData)
+          } else if (this.content && this.content.wfSurveyLink) {
+            this.callBPSurevy(batchData)
           } else {
             this.openRequestToEnroll(batchData)
           }
