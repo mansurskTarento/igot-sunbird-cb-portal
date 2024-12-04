@@ -18,6 +18,8 @@ import { TranslateService } from '@ngx-translate/core'
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
 const EMP_ID_PATTERN = /^[a-z0-9]+$/i
+/* tslint:disable */
+const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
 
 @Component({
   selector: 'ws-app-enroll-profile-form',
@@ -64,13 +66,20 @@ export class EnrollProfileFormComponent implements OnInit {
   selectedCadre: any
   verifyMobile: boolean = false
   otpSent: boolean = false
+  emailOtpSent: boolean = false
   otpEntered = ''
   mVerified :boolean = false
+  eVerified :boolean = false
   @ViewChild('timerDiv', { static: false }) timerDiv !: any
+  @ViewChild('emailTimerDiv', { static: false }) emailTimerDiv !: any
   timeLeft = 150
+  emailTimeLeft = 150
   interval: any
+  emailInterval: any
   showResendOTP = false
+  showEmailResendOTP = false
   otpForm: FormGroup
+  emailOtpForm: FormGroup
   showname = false
   showDesignation = false
   showGroup = false
@@ -107,6 +116,9 @@ export class EnrollProfileFormComponent implements OnInit {
   showOrg: boolean = false
   surveyId: any
   profileFormType: any
+  verifyEmail = false
+  approvedDomainList: any = []
+  contextToken: any
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollProfileFormComponent>,
@@ -134,7 +146,7 @@ export class EnrollProfileFormComponent implements OnInit {
       group: new FormControl(''),
       designation: new FormControl(''),
       employeeCode: new FormControl(''),
-      primaryEmail: new FormControl('', ),
+      primaryEmail: new FormControl('',[Validators.pattern(EMAIL_PATTERN)]),
       mobile: new FormControl(''),
       gender: new FormControl('', []),
       dob: new FormControl('', []),
@@ -148,12 +160,18 @@ export class EnrollProfileFormComponent implements OnInit {
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
     })
-    this.getUserDetails()
+    this.isLoading = true
+    this.userProfileObject = this.configSrc.unMappedUser
+    this.getPendingDetails()
     
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
     })
+    this.emailOtpForm = new FormGroup({
+      eOtp: new FormControl('', Validators.required)
+    })
 
+    // To check the mobile number entered by the user is same or not, validating the mobile number to show the Get OTP.
     if (this.userDetailsForm.get('mobile')) {
       this.userDetailsForm.get('mobile')!.valueChanges
         .subscribe(res => {
@@ -170,6 +188,58 @@ export class EnrollProfileFormComponent implements OnInit {
           }
         })
     }
+
+    // To check the email entered by the user is same or not, validating the email to show the Get OTP.
+    if (this.userDetailsForm.get('primaryEmail')) {
+      this.userDetailsForm.get('primaryEmail')!.valueChanges
+        .subscribe(res => {
+          if (res && res !== this.userProfileObject.profileDetails.personalDetails.primaryEmail) {
+            if (EMAIL_PATTERN.test(res)) {
+              this.verifyEmail = true
+              this.eVerified = false
+            } else {
+              this.verifyEmail = false
+            }
+          } else {
+            this.verifyEmail = false
+          }
+        })
+    }
+  }
+
+  isEmailAllowed(email: string): boolean {
+    const domain = email.split('@')[1]
+    return domain ? this.approvedDomainList.includes(domain) : false
+  }
+
+  handleGenerateEmailOTP(verifyType?: any): void {
+    console.log(verifyType)
+    this.userProfileService.getWhiteListDomain().subscribe((response: any) => {
+      if (response && response.result && response.result.domains && response.result.domains.length > 0) {
+        this.approvedDomainList = response.result.domains
+        if (this.approvedDomainList && this.approvedDomainList.length && this.approvedDomainList.length > 0) {
+          if (this.isEmailAllowed(this.userDetailsForm.value['primaryEmail'])) {
+            this.otpService.sendEmailOtp(this.userDetailsForm.value['primaryEmail'])
+              .pipe(takeUntil(this.destroySubject$))
+              .subscribe((_res: any) => {
+                this.emailOtpForm.reset()
+                if (verifyType) {
+                  this.emailOtpSent = true
+                  this.startEmailTimer()
+                  this.snackBar.open(this.handleTranslateTo('otpSentEmail'))
+                }
+              },(error: HttpErrorResponse) => {
+                if (!error.ok) {
+                  this.snackBar.open(this.handleTranslateTo('emailOTPSentFail'))
+                }
+              }
+            )
+          } else {
+            this.snackBar.open(this.handleTranslateTo('emailApprovedPopupMsg'))
+          }
+        }
+      }
+    })
   }
 
   handleGenerateOTP(verifyType?: string): void {
@@ -177,6 +247,7 @@ export class EnrollProfileFormComponent implements OnInit {
     .pipe(takeUntil(this.destroySubject$))
     .subscribe((_res: any) => {
       this.snackBar.open(this.handleTranslateTo('otpSentMobile'))
+      this.otpForm.reset()
       if (verifyType) {
         this.otpSent = true
         this.startTimer()
@@ -191,7 +262,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
   handleResendOTP(): void {
     this.timeLeft = 150
-    this.showResendOTP =true
+    this.showResendOTP = true
     this.startTimer()
     let otpValue$: any
     otpValue$ = this.otpService.resendOtp(this.userDetailsForm.controls['mobile'].value)
@@ -206,6 +277,39 @@ export class EnrollProfileFormComponent implements OnInit {
       })
   }
 
+  handleResendEmailOTP(): void {
+    this.emailTimeLeft = 150
+    this.showEmailResendOTP = true
+    this.startEmailTimer()
+    let otpValue$: any
+    otpValue$ = this.otpService.sendEmailOtp(this.userDetailsForm.controls['primaryEmail'].value)
+    otpValue$.pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.snackBar.open(this.handleTranslateTo('otpSentEmail'))
+      },(error: any) => {
+        if (!error.ok) {
+          this.snackBar.open(_.get(error, 'error.params.errmsg') || 'Unable to resend OTP, please try again later!')
+        }
+      })
+  }
+
+  verifyEmailOTP(): void {
+    this.otpService.verifyEmailOTP(this.emailOtpForm.controls['eOtp'].value, this.userDetailsForm.controls['primaryEmail'].value)
+    .pipe(takeUntil(this.destroySubject$))
+    .subscribe((_res: any) => {
+      this.snackBar.open(this.handleTranslateTo('OTPSentSuccess'))
+      this.verifyEmail = true
+      this.eVerified = true
+      this.emailOtpSent = false
+      this.contextToken = _res.result.contextToken
+      this.emailOtpForm.reset()
+    }, (error: HttpErrorResponse) => {
+      if (!error.ok) {
+        this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+      }
+    })
+  }
+
   verifyMobileOTP(): void {
     this.otpService.verifyOTP(this.otpForm.controls['otp'].value, this.userDetailsForm.controls['mobile'].value)
     .pipe(takeUntil(this.destroySubject$))
@@ -214,6 +318,7 @@ export class EnrollProfileFormComponent implements OnInit {
       this.verifyMobile = true
       this.mVerified = true
       this.otpSent = false
+      this.otpForm.reset()
     }, (error: HttpErrorResponse) => {
       if (!error.ok) {
         this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
@@ -233,6 +338,20 @@ export class EnrollProfileFormComponent implements OnInit {
         this.showResendOTP = true
       }
     },                          1000)
+  }
+
+  startEmailTimer() {
+    this.emailInterval = setInterval(() => {
+      if (this.emailTimeLeft > 0) {
+        this.emailTimeLeft = this.emailTimeLeft - 1
+        if (this.emailTimerDiv) {
+          this.emailTimerDiv.nativeElement.innerHTML = `${Math.floor(this.emailTimeLeft / 60)}m: ${this.emailTimeLeft % 60}s`
+        }
+      } else {
+        clearInterval(this.emailInterval)
+        this.showEmailResendOTP = true
+      }
+    },1000)
   }
 
   public checkAfterSubmit(_e: any) {
@@ -479,18 +598,12 @@ export class EnrollProfileFormComponent implements OnInit {
           })
         }
       }
+      this.isLoading = false
       this.defineFormAttributes()
-    })
-  }
-
-  getUserDetails(){
-    this.isLoading = true
-    this.profileV2Svc.fetchProfile(this.configSrc.unMappedUser.identifier).subscribe((resp: any) => {
-      if (resp && resp.result && resp.result.response) {
-        this.userProfileObject = resp.result.response
-        this.getPendingDetails()
-        this.isLoading = false
-      }      
+    }, error => {
+      // tslint:disable-next-line:no-console
+      console.log(error)
+      this.isLoading = false
     })
   }
 
@@ -517,17 +630,17 @@ export class EnrollProfileFormComponent implements OnInit {
 
       if(this.findAttr(customAttr, 'email')) {
         this.canShowEmail = true
-        this.showEmail = true
         const fieldControl = this.userDetailsForm.get('primaryEmail')
         if (fieldControl) {
           fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.primaryEmail)
-          fieldControl.disable()
-        }
-        if(this.profileFormType === 'Available user filled iGOT profile' &&
-          !this.userProfileObject.profileDetails.personalDetails.primaryEmail
-        ) {
-          this.canShowEmail = false
-          this.showEmail = false
+          if (this.userProfileObject.profileDetails.personalDetails.primaryEmail) {
+            fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.primaryEmail)
+            this.eVerified = true
+          } else if (this.profileFormType === 'Available user filled iGOT profile') {
+            this.showEmail = false
+          } else {
+            this.showEmail = true
+          }
         }
       }
 
@@ -624,6 +737,7 @@ export class EnrollProfileFormComponent implements OnInit {
         if (contrl) {
           if(this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
             contrl.setValue(this.userProfileObject.profileDetails.personalDetails.mobile)
+            this.mVerified = true
             contrl.setValidators([Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]);
             contrl.updateValueAndValidity()
           } else if (this.profileFormType === 'Available user filled iGOT profile') {
@@ -872,7 +986,12 @@ export class EnrollProfileFormComponent implements OnInit {
       if (this.userProfileObject.profileDetails.personalDetails.mobile &&!this.userDetailsForm.controls['mobile'].value) {
         this.userDetailsForm.controls['mobile'].setErrors({ valid: false })
       }
-    }    
+    }
+    if (type === 'primaryEmail') {
+      if (!this.userProfileObject.profileDetails.personalDetails.primaryEmail && !this.userProfileObject.profileDetails.value['primaryEmail']) {
+        this.userDetailsForm.setErrors({ valid: false })
+      }
+    }
   }  
   onSubmitForm(form: any) {
     /* tslint:disable */
@@ -899,9 +1018,15 @@ export class EnrollProfileFormComponent implements OnInit {
             })
           }
         })
+        if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+          this.updateEmail(this.userDetailsForm.value.primaryEmail)
+        }
         this.submitProfile(payload)
       }
     } else {
+      if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+        this.updateEmail(this.userDetailsForm.value.primaryEmail)
+      }
       this.submitProfile(payload)
     }
   }
@@ -1210,6 +1335,31 @@ export class EnrollProfileFormComponent implements OnInit {
     })
 
     return dataObject
+  }
+
+  updateEmail(email: string): void {
+    const postData = {
+      request: {
+        'userId': this.configSrc.unMappedUser.id,
+        'contextToken': this.contextToken,
+        'profileDetails': {
+          'personalDetails': {
+            'primaryEmail': email,
+          },
+        },
+      },
+    }
+
+    this.userProfileService.updatePrimaryEmailDetails(postData)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.userProfileObject.profileDetails.personalDetails.primaryEmail = email
+        this.snackBar.open(this.handleTranslateTo('emailUpdated'))
+      },         (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.snackBar.open(this.handleTranslateTo('updateEmailFailed'))
+        }
+      })
   }
 
 }
