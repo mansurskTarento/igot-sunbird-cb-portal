@@ -162,7 +162,6 @@ export class EnrollProfileFormComponent implements OnInit {
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
-    this.getPendingDetails()
     
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
@@ -382,10 +381,11 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.fetchCadreData()
     this.getGroupData()
     this.loadDesignations()
     this.getMasterLanguage()
-    this.fetchCadreData()
+    this.getPendingDetails()
     this.userDetailsForm.get('designation')!.valueChanges
     .pipe(
       debounceTime(250),
@@ -859,16 +859,18 @@ export class EnrollProfileFormComponent implements OnInit {
               this.civilServiceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceId
               this.cadreId = this.userProfileObject.profileDetails.cadreDetails.cadreId
               this.cadreControllingAuthority = this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName
-              this.yearArray = [this.userProfileObject.profileDetails.cadreDetails.cadreBatch]
-              this.cadre = [this.userProfileObject.profileDetails.cadreDetails.cadreName]
-              this.serviceName = [this.userProfileObject.profileDetails.cadreDetails.civilServiceName]
-              this.userDetailsForm.patchValue({
-                typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
-                serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,
-                cadreName: this.userProfileObject.profileDetails.cadreDetails.cadreName,
-                cadreBatch: this.userProfileObject.profileDetails.cadreDetails.cadreBatch,
-                cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
-              }) 
+              setTimeout(() => {
+                this.getService(this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
+                this.onServiceSelect({value: this.userProfileObject.profileDetails.cadreDetails.civilServiceName})
+                this.onCadreSelect(this.userProfileObject.profileDetails.cadreDetails.cadreName)
+                this.userDetailsForm.patchValue({
+                  typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
+                  serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,
+                  cadreName: this.userProfileObject.profileDetails.cadreDetails.cadreName,
+                  cadreBatch: this.userProfileObject.profileDetails.cadreDetails.cadreBatch,
+                  cadreControllingAuthority: this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName,
+                })
+              }, 1000)
             } else {
               contrl.setValue(false)
               this.isCadreStatus = false
