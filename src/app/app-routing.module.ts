@@ -714,7 +714,7 @@ const routes: Routes = [
   //     import('./routes/route-authoring-app.module').then(u => u.AuthoringAppModule),
   // },
   {
-    path: 'crp/:orgId',
+    path: 'crp/:qrCodeId/:orgId',
     component: PublicCrpComponent,
     data: {
       module: 'Login',
