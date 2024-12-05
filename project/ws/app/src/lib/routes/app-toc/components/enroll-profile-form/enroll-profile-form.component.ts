@@ -119,6 +119,7 @@ export class EnrollProfileFormComponent implements OnInit {
   verifyEmail = false
   approvedDomainList: any = []
   contextToken: any
+  currentDate = new Date()
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollProfileFormComponent>,
