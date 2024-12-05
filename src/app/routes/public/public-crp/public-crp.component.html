@@ -61,7 +61,7 @@
                                     <input id="firstName" matInput #firstname formControlName="firstname"
                                         i18n-placeholder placeholder="{{'publicsignup.enterYourFullName' | translate}}"
                                         autocomplete="off" i18n-aria-label aria-label="First Name input"
-                                        maxlength="150" />
+                                        maxlength="100" />
                                     <mat-error [hidden]="false" i18n="First Name Error|Explains name is required"
                                         i18n-aria-label aria-label="First Name Error|Explains name is required "
                                         *ngIf=" registrationForm?.controls['firstname'].errors?.required">

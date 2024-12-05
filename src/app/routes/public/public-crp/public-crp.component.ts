@@ -36,7 +36,7 @@ import { IOrganizationDetails } from './models/public-crp-model';
 })
 export class PublicCrpComponent {
   registrationForm!: UntypedFormGroup;
-  namePatern = `[a-zA-Z\\s\\']{1,32}$`;
+  namePatern = /^[a-zA-Z0-9\s']+$/;
   customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`;
   positionsOriginal!: [];
   postions!: any;
