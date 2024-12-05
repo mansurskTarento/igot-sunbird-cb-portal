@@ -170,7 +170,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     || window.location.pathname.includes('/public/contact')
     || window.location.pathname.includes('/public/signup')
     || window.location.pathname.includes('/public/request')
-    || /^\/crp\/[^\/]+$/.test(window.location.pathname)
+    || /^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
 
     ) {
       this.customHeight = true
@@ -332,7 +332,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           || !!this.currentUrl.startsWith('/viewer/')
           || !!this.currentUrl.startsWith('/public/request')
           || !!this.currentUrl.startsWith('/public/toc')
-          || !!/^\/crp\/[^\/]+$/.test(window.location.pathname)
+          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
         ) {
           this.showFooter = false
           this.showNavbar = false
