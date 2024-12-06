@@ -102,7 +102,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       } else {
         this.discussWidgetData.enrolledContent = false
-        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to comment…'
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }

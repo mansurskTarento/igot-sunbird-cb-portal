@@ -137,7 +137,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       } else {
         this.discussWidgetData.enrolledContent = false
-        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to comment…'
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
