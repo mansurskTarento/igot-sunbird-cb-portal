@@ -404,12 +404,12 @@
                 <div class="label">{{ 'profileInfo.dob' | translate }}</div>
                 <div class="info-value" *ngIf="!editDetails">
                   <span *ngIf="portalProfile?.personalDetails?.dob">{{
-                    getDateFromText(this.portalProfile?.personalDetails?.dob) | date: 'd MMM yyyy' }}</span>
+                    getDateFromText(portalProfile?.personalDetails?.dob) | date: 'd MMM yyyy' }}</span>
                   <span *ngIf="!portalProfile?.personalDetails?.dob">NA</span>
                 </div>
                 <div class="info-value" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
-                    <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker" readonly
+                    <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker" [value]="userDate"
                       formControlName="dob" />
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>

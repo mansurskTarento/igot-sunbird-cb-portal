@@ -368,6 +368,11 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
+::ng-deep.mat-calendar-body-active {
+  background: #1b4ca1!important;
+  border-radius: 100%!important;
+}
+
 .profile-circle-container { 
   .camera-icon {
     background-color: #0074b6;
