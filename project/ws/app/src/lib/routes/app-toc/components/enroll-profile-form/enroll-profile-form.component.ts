@@ -206,6 +206,26 @@ export class EnrollProfileFormComponent implements OnInit {
         })
     }
 
+    // filters designations
+    this.userDetailsForm.get('designation')!.valueChanges
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        startWith(''),
+      )
+      .subscribe(res => {
+        if (res) {
+          if(this.designationsMeta) {
+            this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+              val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+            )
+          }
+        } else {
+          this.filterDesignationsMeta =  this.designationsMeta
+        }
+    })
+    
+    // filters master languages
     if (this.userDetailsForm.get('domicileMedium')) {
       this.userDetailsForm.get('domicileMedium')!.valueChanges
         .pipe(
@@ -403,21 +423,6 @@ export class EnrollProfileFormComponent implements OnInit {
       this.loadDesignations()
       this.getMasterLanguage()
     }, 500)
-    this.userDetailsForm.get('designation')!.valueChanges
-    .pipe(
-      debounceTime(250),
-      distinctUntilChanged(),
-      startWith(''),
-    )
-    .subscribe(res => {
-      if (res) {
-        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
-        )
-      } else {
-        this.filterDesignationsMeta =  this.designationsMeta
-      }
-    })
   }
 
   fetchCadreData(){
