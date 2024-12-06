@@ -129,8 +129,8 @@ export class EventDetailComponent implements OnInit {
       }
       if (this.isenrollFlow) {
         this.getUserIsEnrolled()
-      }
-
+      } else {
+        
       this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
       this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
       if (this.discussWidgetData) {
@@ -141,15 +141,13 @@ export class EventDetailComponent implements OnInit {
             this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
           }
         }
-        if(this.isEnrolled) {
           this.discussWidgetData.enrolledContent = true
           this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-        } else {
-          this.discussWidgetData.enrolledContent = false
-          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to comment…'
-        }
+       
         this.discussWidgetData = { ...this.discussWidgetData }
       }
+      }
+
     })
   }
 
@@ -157,6 +155,19 @@ export class EventDetailComponent implements OnInit {
     let userId = ''
     if (this.configSvc.userProfile) {
       userId = this.configSvc.userProfile.userId || ''
+    }
+    this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
+    this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+    if (this.discussWidgetData) {
+      if (this.eventData && this.eventData.identifier) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
+
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
+        }
+      }
+       
+      
     }
     if (this.eventData && userId) {
       this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
@@ -177,7 +188,16 @@ export class EventDetailComponent implements OnInit {
           if( this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
           }
+
+      this.discussWidgetData.enrolledContent = true
+      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+    
+      
+        }  else {
+          this.discussWidgetData.enrolledContent = false
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
         }
+        this.discussWidgetData = { ...this.discussWidgetData }
       })
     }
   }
