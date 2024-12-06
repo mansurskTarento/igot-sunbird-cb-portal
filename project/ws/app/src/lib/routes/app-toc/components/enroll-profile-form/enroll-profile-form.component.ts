@@ -119,6 +119,7 @@ export class EnrollProfileFormComponent implements OnInit {
   verifyEmail = false
   approvedDomainList: any = []
   contextToken: any
+  currentDate = new Date()
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollProfileFormComponent>,
@@ -201,6 +202,20 @@ export class EnrollProfileFormComponent implements OnInit {
             }
           } else {
             this.verifyEmail = false
+          }
+        })
+    }
+
+    if (this.userDetailsForm.get('domicileMedium')) {
+      this.userDetailsForm.get('domicileMedium')!.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          if (this.masterLanguageBackup) {
+            this.masterLanguages = this.masterLanguageBackup.filter(item => item.name.toLowerCase().includes(res && res.toLowerCase()))
           }
         })
     }
@@ -383,9 +398,11 @@ export class EnrollProfileFormComponent implements OnInit {
   ngOnInit() {
     this.fetchCadreData()
     this.getGroupData()
-    this.loadDesignations()
-    this.getMasterLanguage()
     this.getPendingDetails()
+    setTimeout(() => {
+      this.loadDesignations()
+      this.getMasterLanguage()
+    }, 500)
     this.userDetailsForm.get('designation')!.valueChanges
     .pipe(
       debounceTime(250),
@@ -693,7 +710,7 @@ export class EnrollProfileFormComponent implements OnInit {
         const fieldControl = this.userDetailsForm.get('designation')
         if (fieldControl) {
           if (this.pDesignation) {
-            fieldControl.setValue(this.pDesignation)
+            fieldControl.patchValue(this.pDesignation)
             if (this.profileFormType === 'Available user filled iGOT profile') {
               this.canShowDesignation = false
               this.showDesignation = false
@@ -702,7 +719,7 @@ export class EnrollProfileFormComponent implements OnInit {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].designation){
-              fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
+              fieldControl.patchValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
               if (this.profileFormType === 'Available user filled iGOT profile') {
                 this.canShowDesignation = false
                 this.showDesignation = false
@@ -999,7 +1016,6 @@ export class EnrollProfileFormComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-    debugger
     if (this.canShowDesignation || this.canShowGroup) {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {

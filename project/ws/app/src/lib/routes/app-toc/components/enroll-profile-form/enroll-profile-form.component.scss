@@ -9,6 +9,11 @@
 
 }
 
+::ng-deep.mat-calendar-body-active {
+    background: #1b4ca1!important;
+    border-radius: 100%!important;
+}
+
 ::ng-deep.course-survey .lib-container{
     height: 100% !important;
     @media screen and (max-width: 430px) {
