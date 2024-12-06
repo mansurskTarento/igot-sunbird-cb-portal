@@ -202,6 +202,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   noHtmlCharacter = new RegExp(/<[^>]*>|(function[^\s]+)|(javascript:[^\s]+)/i)
   isNotMyUser = false
   isIgotOrg = false
+  userDate: any
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -303,6 +304,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (data.profile.data.profileDetails) {
         this.portalProfile = data.profile.data.profileDetails
+        this.userDate = this.portalProfile.personalDetails.dob
       }
 
       const user = this.portalProfile.userId || this.portalProfile.id || _.get(data, 'profile.data.id') || ''
@@ -746,7 +748,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   const dateArray = this.portalProfile.personalDetails.dob.split('-')
     //   this.dateOfBirth = new Date(`${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`)
     // }
-
     this.otherDetailsForm.patchValue({
       employeeCode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.employeeCode : '',
       primaryEmail: this.portalProfile.personalDetails.primaryEmail,
