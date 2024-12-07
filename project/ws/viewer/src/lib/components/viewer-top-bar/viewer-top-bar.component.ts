@@ -191,7 +191,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       this.collectionType = params.get('collectionType') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
       const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
-      this.currentDataFromEnrollList =  enrollList[this.collectionId]
+      this.currentDataFromEnrollList =  enrollList
       this.getUserRating(false)
     })
 
@@ -353,7 +353,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
                   courseName: this.activatedRoute.snapshot.queryParams.courseName,
                   userId: this.userid,
                   identifier: this.identifier,
-                  primaryCategory: this.collectionType
+                  primaryCategory: this.collectionType,
+                  courseCategory: this.currentDataFromEnrollList.content.courseCategory
                 },
                 panelClass: 'course-completion-dialog'
               })

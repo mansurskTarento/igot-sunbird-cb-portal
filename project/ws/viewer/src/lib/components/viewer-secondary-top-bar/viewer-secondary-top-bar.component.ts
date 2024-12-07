@@ -215,7 +215,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
       this.collectionId = params.get('collectionId') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
       const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
-      this.currentDataFromEnrollList =  enrollList[this.collectionId]
+      this.currentDataFromEnrollList =  enrollList
     })
 
     this.viewerDataServiceResourceSubscription = this.viewerDataSvc.changedSubject.subscribe(
@@ -375,6 +375,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         userId: this.userid,
         identifier: this.identifier,
         primaryCategory: this.collectionType,
+        courseCategory: this.currentDataFromEnrollList.content.courseCategory
       },
     })
     dialogRef.afterClosed().subscribe(result => {
