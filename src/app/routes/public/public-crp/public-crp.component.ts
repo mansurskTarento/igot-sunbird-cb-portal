@@ -28,7 +28,7 @@ import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/route
 // tslint:disable-next-line: import-name
 import _ from 'lodash';
 import { IOrganizationDetails } from './models/public-crp-model';
-import { MobileAppsService } from 'src/app/services/mobile-apps.service';
+import { MobileAppsService } from '../../../services/mobile-apps.service';
 
 @Component({
   selector: 'ws-public-crp',
