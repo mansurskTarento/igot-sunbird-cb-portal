@@ -265,10 +265,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.registrationForm.get('organisation')!.setValue('')
     this.heirarchyObject = null
   }
-  mdoRedirect(){
+  mdoRedirect() {
     this.environment = environment
     const sitePath = this.environment.sitePath
-    const domain = sitePath.split(".").slice(1).join(".")
+    const domain = sitePath.split('.').slice(1).join('.')
     const newUrl = `https://${domain}/#/mdoList#mdoUserList`
     window.location.href = newUrl
   }

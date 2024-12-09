@@ -320,6 +320,11 @@ export class CardHubsListComponent extends WidgetBaseComponent
       }
     )
   }
+  handleClick() {
+    this.toggleVisibility()
+    this.trackTelemetry('discover-mentors')
+    this.routeToMentorship()
+  }
   routeToMentorship() {
     window.open(`${environment.contentHost}/mentorship`, '_blank')
   }

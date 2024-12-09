@@ -36,6 +36,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   throttle = 100
   scrollDistance = 0.2
   selectedContent: any
+  resouceCategoriesList: any = []
   constructor(private bottomSheet: MatBottomSheet,
               private route: ActivatedRoute,
               private seeAllSvc: GyaanKarmayogiService,
@@ -108,7 +109,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       }
 
   // the below method is used to fetch data search api as promise
-  async fetchFromSearchV6(strip: any, calculateParentStatus = true) {
+  async fetchFromSearchV6(strip: any, onLoad: boolean = false) {
     const factes = {
       'facets': [
         gyaanConstants.resourceCategory,
@@ -135,9 +136,13 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-        if (this.selectedFilter[gyaanConstants.resourceCategory] && 
-            this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' &&
-          this.selectedContent !== 'otherResources'
+        if (this.selectedContent === 'otherResources') {
+          delete this.selectedFilter.createdFor
+          delete strip.request.searchV6.request.filters.createdFor
+        }
+        if (this.selectedFilter[gyaanConstants.resourceCategory] &&
+            this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' ||
+            this.selectedContent !== 'otherResources'
         ) {
           strip.request.searchV6.request.filters.contentType = [
             'Resource',
@@ -152,7 +157,8 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         strip.request.searchV6.request.query = this.searchControl && this.searchControl.value
         if (!(this.selectedFilter[gyaanConstants.sectorName] &&
           this.selectedFilter[gyaanConstants.sectorName].length)) {
-          delete strip.request.searchV6.request.filters.sectorName
+          strip.request.searchV6.request.filters.sectorName = this.sectorNames
+          // delete strip.request.searchV6.request.filters.sectorName
         }
         if (!(this.selectedFilter[gyaanConstants.subSectorName] &&
           this.selectedFilter[gyaanConstants.subSectorName].length)) {
@@ -170,10 +176,15 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         }
         strip.request.searchV6['request']['limit'] = this.limit
         strip.request.searchV6['request']['offset'] = 0
+        if (onLoad || !this.selectedFilter[gyaanConstants.resourceCategory]) {
+          if (!this.keyData) {
+            strip.request.searchV6.request.filters.resourceCategory = this.resouceCategoriesList
+          }
+        }
       }
       this.newQueryParam = strip.request
       try {
-        const response = await this.searchV6Request(strip, strip.request, calculateParentStatus)
+        const response = await this.searchV6Request(strip, strip.request, true)
         if (response && response.results && response.results.result.content && response.results.result.content.length) {
           const filteRespose: any = []
           if (this.contentDataList.length && this.contentDataList[0].widgetData.content) {
@@ -276,7 +287,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           const localFacetData: any = {
             contentType: {
               name: gyaanConstants.contentType,
-              displayName: gyaanConstants.contentType,
+              displayName: gyaanConstants.contentLabel,
               label: gyaanConstants.contentLabel,
               placeHolder: gyaanConstants.contentLabel,
               values: [
@@ -309,7 +320,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             },
             resourceCategory: {
               name: gyaanConstants.category,
-              displayName: gyaanConstants.category,
+              displayName: gyaanConstants.categoryDislayName,
               label: gyaanConstants.singleCategory,
               placeHolder:  gyaanConstants.singleCategory,
               values: 'values',
@@ -345,6 +356,9 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             if (localFacetData[facet.name]) {
               if (facet.name === gyaanConstants.sectorName) {
                 this.sectorNames = facet.values.map((sectorName: any) => sectorName.name)
+              }
+              if (facet.name === gyaanConstants.resourceCategory) {
+                this.resouceCategoriesList = facet.values.map((sectorName: any) => sectorName.name)
               }
               facet.values.forEach((item: any) => {
                 if (item.name === this.keyData.toLowerCase()) {
@@ -407,10 +421,13 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             if (this.keyData)  {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
             }
-            if (this.selectedContent !== 'otherResources' && this.keyData === 'case study') {
+            if (this.selectedContent !== 'otherResources') {
               this.selectedFilter['createdFor'] = environment.cbcOrg
             }
-            this.fetchFromSearchV6(this.seeAllPageConfig)
+            if (this.selectedContent === 'otherResources') {
+              this.selectedFilter['createdFor'] = ''
+            }
+            this.fetchFromSearchV6(this.seeAllPageConfig, true)
             this.seeAllPageConfig.request.searchV6.request.filters = {
               ...this.seeAllPageConfig.request.searchV6.request.filters,
             }
@@ -477,7 +494,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
     }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
     if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
-      this.fetchFromSearchV6(this.seeAllPageConfig)
+      this.fetchFromSearchV6(this.seeAllPageConfig, false)
     }
   }
   contentTypeSelection(selectedFilter: any , _key: any, keyData: any) {
@@ -514,7 +531,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       this.selectedFilter = filter
       this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
       if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
-        this.fetchFromSearchV6(this.seeAllPageConfig)
+        this.fetchFromSearchV6(this.seeAllPageConfig, false)
       }
    }
   })
@@ -523,7 +540,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   globalSearch() {
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
     if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
-      this.fetchFromSearchV6(this.seeAllPageConfig)
+      this.fetchFromSearchV6(this.seeAllPageConfig, false)
     }
   }
   async onScrollEnd() {

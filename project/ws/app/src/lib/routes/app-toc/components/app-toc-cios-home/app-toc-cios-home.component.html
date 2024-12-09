@@ -108,7 +108,8 @@
                     </button>
                   </ng-container>
                 <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && extContentReadData?.redirectUrl">
-                    <a class="flex action-button justify-center flex-middle resume" target="_blank" [href]="extContentReadData?.redirectUrl">
+                    <a class="flex action-button justify-center flex-middle resume" target="_blank"
+                        [href]="extContentReadData?.redirectUrl" (click)="captureRedirectTelemetry(extContentReadData)">
                       <ng-container >{{ 'apptochome.redirect' | translate }}
                         <mat-icon class="ml-2 ws-mat-white-text">open_in_new</mat-icon>
                       </ng-container>
@@ -221,7 +222,8 @@
                             </button>
                         </ng-container>
                         <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && extContentReadData?.redirectUrl">
-                            <a class="flex action-button justify-center flex-middle resume" target="_blank" [href]="extContentReadData?.redirectUrl">
+                            <a class="flex action-button justify-center flex-middle resume" target="_blank" [href]="extContentReadData?.redirectUrl"
+                                (click)="captureRedirectTelemetry(extContentReadData)">
                             <ng-container >{{ 'apptochome.redirect' | translate }}
                                 <mat-icon class="ml-2 ws-mat-white-text">open_in_new</mat-icon>
                             </ng-container>

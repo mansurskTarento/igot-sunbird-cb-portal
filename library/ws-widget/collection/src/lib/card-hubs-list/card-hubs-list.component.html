@@ -17,7 +17,7 @@
             </ng-container>
             <ng-container *ngIf="hub.hubname != 'Discuss' && hub.active">
               <a class="simple-hubs-link" [id]="hub.hubname" i18n-aria-label role="menuitem" (click)="navigateToRoute(hub.path);trackTelemetry(hub.hubname)"
-                [attr.accesskey]="hub.accessKey" [ngClass]="{'gyaan-icon': hub.hubname === 'Gyaan Karmayogi' || hub.hubname === 'Jan Karmayogi'}">
+                [attr.accesskey]="hub.accessKey" [ngClass]="{'gyaan-icon': hub.hubname === 'Amrit Gyaan Kosh' || hub.hubname === 'Jan Karmayogi'}">
                 <img [ngClass]="activeRoute === hub.hubname ? 'active-icon': 'mat-icon-disable'" src="/assets/icons/hubs/{{hub?.icon}}.svg" id="draft" alt="draft" title="draft" />
                 <span [ngClass]="activeRoute === hub.hubname ? 'active-text margin-8 text-gray': 'margin-8 text-gray'">  {{ translateLabels(hub.hubname, 'common') }}</span>
               </a>
@@ -83,8 +83,7 @@
                 <div class="mat-caption cohorts-desc ws-mat-black60-text">{{ 'cardshublist.settingSubtitle' | translate }}</div>
               </div>
             </a>
-            <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
-            (click)="trackTelemetry('discover-mentors'); routeToMentorship()">
+            <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="handleClick()">
             <div class="icon ws-mat-primary-tags">
               <mat-icon class=" m-auto mat-icon notranslate material-icons mat-icon-no-color" role="img"
                 aria-hidden="true">search</mat-icon>

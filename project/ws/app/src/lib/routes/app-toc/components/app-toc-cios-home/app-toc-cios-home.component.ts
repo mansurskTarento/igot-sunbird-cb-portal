@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild }
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { ConfigurationsService, EventService, MultilingualTranslationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, MultilingualTranslationsService, WidgetContentService, WsEvents } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { CertificateService } from '../../../certificate/services/certificate.service'
@@ -186,11 +186,70 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     if (enrollRes && enrollRes.result  && Object.keys(enrollRes.result).length > 0) {
       this.userExtCourseEnroll = enrollRes.result
       this.loader.changeLoad.next(false)
+      this.telemetryToCaptureInteract(contentId, 'enroll', 'enrol-content')
       this.snackBar.open('Successfully enrolled in the course.')
     } else {
       this.loader.changeLoad.next(false)
       this.snackBar.open('Unable to get the enrolled details')
     }
+  }
+
+  captureRedirectTelemetry(content: any) {
+    this.raiseTelemtryStartEvent()
+    this.telemetryToCaptureInteract(content.contentId, 'redirect', 'redirect-content')
+    this.raiseTelemtryEndEvent()
+  }
+
+  raiseTelemtryStartEvent(){
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      from: 'test',
+      to: '',
+      data: {
+        edata: { type: '' },
+        object: {},
+        state: WsEvents.EnumTelemetrySubType.Loaded,
+        type: 'session',
+        mode: 'view',
+      },
+    }
+    this.events.dispatchEvent(event)
+
+  }
+
+  telemetryToCaptureInteract(contentId: any, subType: any, id: any) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType,
+        id: id,
+      },
+      {
+        id: contentId,
+        type: 'External content',
+      },
+      {
+        module: 'Home',
+      }
+    )
+  }
+
+  raiseTelemtryEndEvent() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      from: 'test',
+      to: '',
+      data: {
+        edata: { type: '' },
+        object: {},
+        state: WsEvents.EnumTelemetrySubType.Unloaded,
+        type: 'session',
+        mode: 'view',
+      },
+    }
+    this.events.dispatchEvent(event)
   }
 
   async downloadCert() {

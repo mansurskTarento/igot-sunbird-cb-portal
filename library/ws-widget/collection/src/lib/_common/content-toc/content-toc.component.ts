@@ -70,10 +70,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
     if (this.configService && this.configService.userRoles) {
       // tslint:disable-next-line:max-line-length
-      this.displayTeachersContent = (this.configService.userRoles.has('MENTOR') || this.configService.userRoles.has('mentor') || this.configService.userRoles.has('Mentor')) ? true : false
-      if (!this.displayTeachersContent) {
-        this.displayTeachersContent = this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
-      }
+      this.displayTeachersContent = (
+        this.configService.userRoles.has('MENTOR') ||
+        this.configService.userRoles.has('mentor') ||
+        this.configService.userRoles.has('Mentor')
+      && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
     } else {
       this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
         this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
