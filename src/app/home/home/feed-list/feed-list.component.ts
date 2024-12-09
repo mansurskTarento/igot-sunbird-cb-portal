@@ -30,22 +30,39 @@ export class FeedListComponent implements OnInit {
       this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
     }
     if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
-      const id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
-      const type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
-      this.events.raiseInteractTelemetry(
-        {
-          type: 'click',
-          subType: event.typeOfTelemetry,
-          id: 'content-card',
-        },
-        {
-          id,
-          type,
-        },
-        {
-          module: WsEvents.EnumTelemetrymodules.HOME,
-        }
-      )
+      if (event.contentId && event.contentId.includes("ext")) {
+        this.events.raiseInteractTelemetry(
+          {
+            type: 'click',
+            subType: 'providers',
+            id: 'card-content',
+          },
+          {
+            id: 'event.contentId',
+            type: 'External content'
+          },
+          {
+            module: WsEvents.EnumTelemetrymodules.HOME
+          }
+        )
+      } else {
+        const id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
+        const type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
+        this.events.raiseInteractTelemetry(
+          {
+            type: 'click',
+            subType: event.typeOfTelemetry,
+            id: 'content-card',
+          },
+          {
+            id,
+            type,
+          },
+          {
+            module: WsEvents.EnumTelemetrymodules.HOME,
+          }
+        )
+      }
     }
     this.isTelemetryRaised = true
   }
