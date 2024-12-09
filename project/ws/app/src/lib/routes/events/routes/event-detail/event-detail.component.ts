@@ -297,5 +297,12 @@ export class EventDetailComponent implements OnInit {
       return this.langtranslations.translateActualLabel(label, type, '')
     }
   
-
+    enrollEvent(event: any) {
+      this.isEnrolled = event
+      if(this.discussWidgetData) {
+          this.discussWidgetData.enrolledContent = this.isEnrolled
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+          this.discussWidgetData = { ...this.discussWidgetData }
+      }
+    }
 }

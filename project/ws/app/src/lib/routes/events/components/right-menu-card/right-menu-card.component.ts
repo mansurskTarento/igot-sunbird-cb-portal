@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Input, OnChanges } from '@angular/core'
+import { Component, OnDestroy, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core'
 import moment from 'moment'
 import { ConfigurationsService, EventService as EventServiceGlobal, WsEvents } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
@@ -22,6 +22,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isenrollFlow: any
   @Input() enrollFlowItems: any
   @Input() enrolledEvent: any
+  @Output() enrollEvent: any = new EventEmitter()
   startTime: any
   endTime: any
   lastUpdate: any
@@ -248,6 +249,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       this.eventSvc.enrollEvent(req).subscribe(res => {
           if (res.responseCode === 'OK' || res.result.response === 'SUCCESS') {
             this.openSnackBar('Enrolled Successfully')
+            this.enrollEvent.emit(true)
           }
           if (this.batchId) {
             // this.navigateToPlayerPage(batchId)
