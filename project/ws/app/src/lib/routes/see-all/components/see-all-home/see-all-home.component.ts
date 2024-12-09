@@ -643,10 +643,28 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   takeExtClickAction(_item: any) {
+    this.telemetryToCaptureInteract(_item.contentId, "providers", 'card-content')
     if (_item.externalId) {
       this.router.navigate(
         [`app/toc/ext/${_item.contentId}`])
     }
+  }
+
+  telemetryToCaptureInteract(contentId: any, subType: any, id: any) {
+    this.eventSvc.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType,
+        id: id,
+      },
+      {
+        id: contentId,
+        type: 'External content',
+      },
+      {
+        module: 'Home',
+      }
+    )
   }
 
 }
