@@ -21,6 +21,7 @@ const API_END_POINTS = {
   ORG_READ: '/api/org/v1/read',
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
+  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive'
 }
 
 @Injectable({
@@ -189,4 +190,7 @@ export class SignupService {
     return this.http.post(API_END_POINTS.SEARCH_ORG, req)
   }
 
+  getRegistrationLinkStatus(req: any) {
+    return this.http.post(API_END_POINTS.CHECK_REGISTRATION_LINK_STATUS, req)
+  }
 }
