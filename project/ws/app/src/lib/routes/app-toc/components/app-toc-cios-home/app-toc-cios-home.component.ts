@@ -174,6 +174,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     }
     const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => {})
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
+      this.discussWidgetData.enrolledContent = true
+      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       this.getUserContentEnroll(content.contentId)
     } else {
       this.loader.changeLoad.next(false)

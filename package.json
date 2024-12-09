@@ -52,7 +52,7 @@
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@sunbird-cb/consumption": "0.0.107-ang-13-16",
     "@sunbird-cb/design-system": "0.0.2",
-    "@sunbird-cb/discussion-v2": "0.0.17-ang-13-16",
+    "@sunbird-cb/discussion-v2": "0.0.18-ang-13-16",
     "@sunbird-cb/discussions-ui-v8": "2.1.7-ang-9-12",
     "@sunbird-cb/micro-surveys": "2.0.20-ang-9-12",
     "@sunbird-cb/rain-dashboards": "0.0.36-ang-13-16",
