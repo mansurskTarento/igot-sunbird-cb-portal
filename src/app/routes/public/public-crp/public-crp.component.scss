@@ -543,7 +543,11 @@ a.terms-text {
     width: 133px;
     padding: 0 !important;
     position: relative;
-  }
+
+    @media (max-width: 576px) {
+      margin-right: 4px !important;
+    }
+   }
   ::ng-deep.mat-form-field-appearance-legacy .mat-form-field-wrapper {
     padding: 0 !important;
   }

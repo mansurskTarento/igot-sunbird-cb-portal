@@ -30,6 +30,10 @@
             <button mat-icon-button aria-label="back" [routerLink]="'/static-home'">
                 <mat-icon>arrow_back</mat-icon>
             </button>
+            <div class="karmayogi-logo block sm:hidden">
+                <img src="/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg" alt="logo-karmayogi" class="mt-1"
+                    width="78">
+            </div>
             <div class="flex gap-4 items-center">
                 <div class="langdiv" *ngIf="isMultiLangEnabled">
                     <mat-form-field class="custom-lang float-right margin-right-xl">
@@ -54,6 +58,12 @@
         </div>
 
         <div class="right_inner_container profile-box">
+            <div class="sm:flex hidden items-center justify-between ">
+                <div class="karmayogi-logo">
+                    <img src="/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg"
+                        alt="logo-karmayogi" width="140">
+                </div>
+            </div>
             <div class="flex items-center justify-between">
                 <div class="">
                     <p class="ff-montserrat fw-medium fs-28"> {{ 'publicsignup.registerFor' | translate }} </p>
@@ -321,7 +331,7 @@
                             </div>
                         </div>
                         <div class="w-full margin-top-l">
-                            
+
                             <div class="button_box flex flex-col items-center justify-center">
                                 <button mat-flat-button type="submit" class="submitBtn mat-btn-flat" (click)="signup()"
                                     [disabled]="

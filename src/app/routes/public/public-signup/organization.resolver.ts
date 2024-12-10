@@ -40,7 +40,7 @@ export class AppPublicOrganizationResolver
           response?.params?.errmsg !== 'Registration link is active'
         ) {
           this.snackBar.open(
-            'Registration link is invalid or expired. Please reach out to your department MDO or write to us at mission.karmayogi@gov.in with organization and designation name.',
+            'Registrations are closed as of now please reach out to your department MDO or please write us at mission.karmayogi@gov.in with organization and designation name',
             'X',
             { duration: 20000, panelClass: ['error'] }
           );
