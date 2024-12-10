@@ -6,9 +6,12 @@ import {
 } from '@angular/forms';
 import {
   ConfigurationsService,
+  EventService,
   LoggerService,
   MultilingualTranslationsService,
   NsInstanceConfig,
+  TelemetryService,
+  WsEvents,
 } from '@sunbird-cb/utils-v2';
 import { interval, Observable, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -108,7 +111,9 @@ export class PublicCrpComponent {
     private langtranslations: MultilingualTranslationsService,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    public mobileAppsService: MobileAppsService
+    public mobileAppsService: MobileAppsService,
+    private eventService: EventService,
+    private telemetrySvc: TelemetryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -153,6 +158,8 @@ export class PublicCrpComponent {
       this.isMultiLangEnabled =
         this.configSvc.instanceConfig.isMultilingualEnabled;
     }
+
+    this.raiseImpressionTelemetry()
   }
 
   ngOnInit() {
@@ -469,6 +476,7 @@ export class PublicCrpComponent {
   }
 
   signup() {
+    this.raiseSignupInteractTelementry()
     this.disableBtn = true;
     // this.recaptchaSubscription = this.recaptchaV3Service
     //   .execute('importantAction')
@@ -501,6 +509,7 @@ export class PublicCrpComponent {
               this.openDialog();
               this.disableBtn = false;
               this.isMobileVerified = true;
+              
             },
             (err: any) => {
               this.disableBtn = false;
@@ -701,6 +710,29 @@ export class PublicCrpComponent {
     if (/iPad|iPhone|iPod/.test(userAgent)) {
         window.open('https://apps.apple.com/in/app/igot-karmayogi/id6443949491', '_blank')
     }
+  }
+
+  raiseSignupInteractTelementry() {
+      this.eventService.raiseInteractTelemetry(
+        {
+          type: WsEvents.EnumInteractTypes.CLICK,
+          id: 'sign-up',
+          pageid: "/crp" 
+        },
+        {},
+      )
+  }
+
+  raiseImpressionTelemetry() {
+    this.telemetrySvc.impression(
+      { 
+        type: "view",
+        pageid: "/crp",
+        uri: this.router.url,
+      },{
+        module: "Self Registration",
+      }
+    )
   }
 
 }
