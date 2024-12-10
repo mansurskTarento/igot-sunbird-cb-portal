@@ -15,7 +15,6 @@ export class AppTocTeachersNotesComponent implements OnInit {
   @Input() content!: NsContent.IContent
   primaryCategory = NsContent.EPrimaryCategory
 
-
   constructor(public router: Router,
   ) {
 

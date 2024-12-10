@@ -91,7 +91,7 @@
                 [floatLabel]="'never'">
                 <mat-icon matPrefix class="py-5 flex items-center justify-center">search</mat-icon>
                 <input (onChange)="updateQuery(queryControl.value)" type="search" #searchInput class="ml-2" i18n-placeholder="search content"
-                    [placeholder]="translateLabels('search', 'common')" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
+                    [placeholder]="translateLabels('search', 'event')" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
                     accesskey="F" maxlength="50" />
             </mat-form-field>
         </form>
@@ -132,6 +132,20 @@
                     [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
                     (scrolled)="onScrollEnd()">
                         <ng-container *ngFor="let event of karmayogiSaptahEvents">
+                            <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
+                            <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
+                        </ng-container>
+                    </div>
+                </section>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="{{ translateLabels('karmayogiTalks', 'event') }}" *ngIf="karmayogiTalksEvents?.length">
+            <ng-template matTabContent>
+                <section id="content">
+                    <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+                        <ng-container *ngFor="let event of karmayogiTalksEvents">
                             <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
                             <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
                         </ng-container>

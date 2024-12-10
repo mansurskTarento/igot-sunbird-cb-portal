@@ -195,8 +195,8 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
-      pageKey: 'knowledge-resource',
-      pageId: 'app/knowledge-resource',
+      pageKey: 'amrit-gyaan-kosh',
+      pageId: 'app/amrit-gyaan-kosh',
     },
     resolve: {
       pageData: FormDataResolverService,
@@ -895,7 +895,7 @@ const routes: Routes = [
     component: LearnerAdvisoryComponent,
     canActivate: [GeneralGuard],
     resolve: {
-      resolve: { home: HomeResolverService },
+     home: HomeResolverService,
     },
     // data: {
     //   module: 'learner-advisory',

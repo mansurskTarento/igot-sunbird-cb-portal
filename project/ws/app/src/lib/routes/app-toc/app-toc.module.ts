@@ -139,6 +139,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
 import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dynamic/sliders-dynamic.module'
+import { EnrollProfileFormComponent } from './components/enroll-profile-form/enroll-profile-form.component'
 
 @NgModule({
   declarations: [
@@ -168,6 +169,7 @@ import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dyn
     AppTocSessionsComponent,
     AppTocSessionCardComponent,
     EnrollQuestionnaireComponent,
+    EnrollProfileFormComponent,
     AppTocCiosHomeComponent,
   ],
   imports: [

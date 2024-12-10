@@ -16,14 +16,15 @@ resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
 ): Observable<IResolveResponse<any>> {
-    const orgId = _route.params && _route.params.orgId || ''
+    // const orgId = _route.params && _route.params.orgId || ''
+    const playListKey = _route && _route.params.playListKey  || ''
     const requestData: any = {
       'request': {
         'type': 'karma-program',
         'subType': 'microsite-v2',
         'action': 'page-configuration',
         'component': 'portal',
-        'rootOrgId': orgId,
+        'rootOrgId': playListKey,
       },
   }
         // 'request': {

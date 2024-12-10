@@ -37,6 +37,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   eventEnrollmentList: any
   isEnrolled = false
   batchId = ''
+  pageConfig: any = {}
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -61,6 +62,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     this.loadEnrolledEventData()
 
     this.kparray = (this.route.parent && this.route.parent.snapshot.data.pageData.data.karmaPoints) || []
+    this.pageConfig = this.route.parent && this.route.parent.snapshot.data.pageData.data
     if (this.eventData) {
 
       this.startTime = this.eventData.startTime.split('+')[0].replace(/(.*)\D\d+/, '$1')
@@ -97,7 +99,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       }
 
       if (this.eventData && this.eventData.registrationLink) {
-        if (this.eventData && this.eventData.registrationLink && this.eventData.resourceType === 'Karmayogi Saptah') {
+        if (this.eventData && this.eventData.registrationLink && this.pageConfig.enrollFlowItems.includes(this.eventData.resourceType)) {
           const videoId = this.eventData.registrationLink.split('?')[0].split('/').pop()
           if (videoId) {
             this.videoId = videoId
