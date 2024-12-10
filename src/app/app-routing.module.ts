@@ -717,7 +717,7 @@ const routes: Routes = [
     path: 'crp/:qrCodeId/:orgId',
     component: PublicCrpComponent,
     data: {
-      module: 'Login',
+      module: 'Self Registration',
       pageId: 'crp',
     },
     resolve: {
