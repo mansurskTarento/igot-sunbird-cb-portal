@@ -2,6 +2,12 @@
 @import 'ws-vars';
 @import 'ws-mixins';
 
+::ng-deep .custom-tabgroup .mat-tab-label-active {
+  font-weight: 700;
+  color: #1b4ca1 !important;
+  opacity: 1!important;
+}
+
 .buton {
   display: flex;
   flex: 1;

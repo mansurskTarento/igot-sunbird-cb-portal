@@ -69,7 +69,7 @@
       <div><img src="assets/icons/final-assessment/congrats_badge.svg"/></div>
       
       <div class="heading-text"><span >{{ translateLabels('congratulations', 'coursecompletiondialog') }}</span></div>
-      <div class="subheading-text"><span >{{ 'coursecompletiondialog.yourCertificateAvailableShortly' | translate }}</span></div>
+      <div class="subheading-text" *ngIf="data?.courseCategory?.toLowerCase() !== 'case study'"><span >{{ 'coursecompletiondialog.yourCertificateAvailableShortly' | translate }}</span></div>
     </div>
     
     <div class="seperator"></div>
@@ -87,7 +87,7 @@
               </button>
           </ng-container>
       </div>
-      <div class="subheading-text-bold">Rate this course</div>
+      <div class="subheading-text-bold">Rate this {{data?.courseCategory}}</div>
     </div>
   </div>
 <div>

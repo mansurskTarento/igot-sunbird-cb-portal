@@ -33,7 +33,7 @@ const routes: Routes = [
         component: GyaanKarmayogiHomeComponent,
         data: {
           pageId: 'all',
-          module: 'Knowledge Resources',
+          module: 'Amrit Gyaan Kosh',
         },
       },
 
@@ -42,8 +42,8 @@ const routes: Routes = [
         component: GyaanKarmayogiViewAllComponent,
         data: {
           pageType: 'feature',
-          pageKey: 'knowledge-resource',
-          pageId: 'app/knowledge-resource',
+          pageKey: 'amrit-gyaan-kosh',
+          pageId: 'app/amrit-gyaan-kosh',
         },
         resolve: {
           pageData: PageResolve,

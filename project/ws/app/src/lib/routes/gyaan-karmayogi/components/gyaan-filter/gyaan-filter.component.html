@@ -71,7 +71,7 @@
                                 <ng-container [ngTemplateOutlet]="labelAndSearch" [ngTemplateOutletContext]="{facet: facet}"></ng-container>
                                 <ng-container>
                                     <div class="custom-slider">
-                                        <ngx-slider [(value)]="minValue" [(highValue)]="maxValue" (userChangeEnd)="changeSlider($event)" [options]="options"></ngx-slider>
+                                        <ngx-slider [value]="minValue" [highValue]="maxValue" (userChangeEnd)="changeSlider($event)" [options]="options"></ngx-slider>
                                     </div>
                                 </ng-container>
                             </ng-container>
@@ -95,7 +95,7 @@
                                         </ng-container>
                                         <ng-container *ngIf="facet.viewMore">
                                             <div class="pt-3">
-                                                <span class="view-more" (click)="facet.viewMore = false">View less</span>
+                                                <span class="view-more" (click)="facet.viewMore = false">View Less</span>
                                             </div>
                                         </ng-container>
                                     </mat-radio-group>

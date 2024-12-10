@@ -108,7 +108,7 @@
                 class="ws-mat-primary-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.typoWebinar' |
                 translate }}</button>
             </div> -->
-            <div class="ml-2" *ngIf="eventData?.resourceType === 'Karmayogi Saptah' && currentEvent">
+            <div class="ml-2" *ngIf="enrollFlowItems?.includes(eventData?.resourceType) && currentEvent">
               <button mat-raised-button type="button"
                 class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }} </button>
             </div>

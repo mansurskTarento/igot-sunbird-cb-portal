@@ -35,7 +35,7 @@ export class EventDetailComponent implements OnInit {
   pastEvent = false
   // fetchNewData = false
   showYouTubeVideoFlag = false
-  enrollFlowItems = ['Karmayogi Saptah']
+  enrollFlowItems: any = []
   // playerVars = {
   //   cc_lang_pref: 'en',
   // };
@@ -76,10 +76,9 @@ export class EventDetailComponent implements OnInit {
   }
 
   get isenrollFlow() {
-    if (this.eventData) {
+    if (this.eventData && this.enrollFlowItems.length) {
       return this.eventData.resourceType && this.enrollFlowItems.includes(this.eventData.resourceType)
-    }
-
+    } return false
   }
 
   ngOnInit() {
@@ -133,21 +132,20 @@ export class EventDetailComponent implements OnInit {
         
       this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
       this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
-      if (this.discussWidgetData) {
-        if (this.eventData && this.eventData.identifier) {
-          this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
-
-          if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-            this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
+        if (this.discussWidgetData) {
+          if (this.eventData && this.eventData.identifier) {
+            this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
+  
+            if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+              this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
+            }
           }
+            this.discussWidgetData.enrolledContent = true
+            this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+        
+          this.discussWidgetData = { ...this.discussWidgetData }
         }
-          this.discussWidgetData.enrolledContent = true
-          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-       
-        this.discussWidgetData = { ...this.discussWidgetData }
       }
-      }
-
     })
   }
 
