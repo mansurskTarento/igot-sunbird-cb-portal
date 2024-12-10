@@ -79,30 +79,32 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <div class="w-full" *ngIf="canShowDesignation">
-            <div class="mat-subheading-2 margin-0 required"
-              i18n="Title label|Label which explains the user to enter title">
-              {{ 'profileInfo.designation' | translate }}
-            </div>
-            <mat-form-field appearance="outline" class="w-full">
-                <!-- <mat-select formControlName="designation" placeholder="Select designation">
-                    <mat-option *ngFor="let designation of designationsMeta"
-                      value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                  </mat-select> -->
-                  <div class="flex flex-row auto-complete-row">
-                    <input type="text" class="input-text" matInput formControlName="designation"
-                      placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
-                    <mat-icon class="disagnation-caret">arrow_drop_down</mat-icon>
-                </div>
-                <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete">
-                    <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                </mat-autocomplete>
-                <mat-error *ngIf="userDetailsForm.controls['designation'].invalid && userDetailsForm.controls['designation'].touched"
-                    class="mat-error">
-                    Please enter a valid designation.
-                </mat-error>
-            </mat-form-field>
+        <div class="w-full relative" *ngIf="canShowDesignation">
+          <div class="mat-subheading-2 margin-0 required"
+            i18n="Title label|Label which explains the user to enter title">
+            {{ 'profileInfo.designation' | translate }}
           </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <div class="flex flex-row auto-complete-row">
+              <input type="text" class="input-text" matInput formControlName="designation"
+                (input)="filterdesignation($event.target.value)" (focus)="onDesignationsFocus()" #textBox
+                placeholder="{{ 'profileInfo.chooseADesignation' | translate }}">
+              <mat-icon class="disagnation-caret">arrow_drop_down</mat-icon>
+            </div>
+            <mat-error *ngIf="userDetailsForm.controls['designation'].invalid && userDetailsForm.controls['designation'].touched"
+                class="mat-error">
+                Please select a valid designation.
+            </mat-error>
+          </mat-form-field>
+          <div class="auto-list flex flex-col ignore-blur" #dropdown
+            *ngIf="openDesignationDropdown && filterDesignationsMeta.length">
+            <div (mousedown)="preventBlur($event)"
+              class="item {{userDetailsForm.controls['designation']?.value?.toLowerCase() === designation?.name?.toLowerCase() ? 'item-active' : ''}}"
+              *ngFor="let designation of filterDesignationsMeta" (click)="selectDesignation(designation.name)">
+              {{ designation?.name }}
+            </div>
+          </div>
+        </div>
           <div class="w-full" *ngIf="canShowEmployeeCode">
               <div class="mat-subheading-2 margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
@@ -196,23 +198,31 @@
                   <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
           </div>
-          <div class="w-full" *ngIf="canShowDomicileMedium">
-              <div class="mat-subheading-2 margin-0 required"
-                i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.motherTongue' | translate }}
+          <div class="w-full relative" *ngIf="canShowDomicileMedium">
+            <div class="mat-subheading-2 margin-0 required"
+              i18n="Title label|Label which explains the user to enter title">
+              {{ 'profileInfo.motherTongue' | translate }}
+            </div>
+            <mat-form-field appearance="outline" class="w-full">
+              <div class="flex flex-row auto-complete-row">
+                <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput
+                  formControlName="domicileMedium" placeholder="Select mother tongue"
+                  (input)="filterLanguage($event.target.value)" (focus)="onLanguageFocus()" #languageTextBox/>
+                <mat-icon class="mother-toungue-caret">arrow_drop_down</mat-icon>
               </div>
-              <mat-form-field appearance="outline" class="w-full">
-                  <div class="flex flex-row auto-complete-row">
-                    <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput 
-                      formControlName="domicileMedium" [matAutocomplete]="languageAuto" placeholder="Select mother tongue" />
-                    <mat-icon class="mother-toungue-caret">arrow_drop_down</mat-icon>
-                  </div>
-                  <mat-autocomplete #languageAuto="matAutocomplete">
-                    <mat-option *ngFor="let language of masterLanguages" [value]="language.name">
-                      {{ language.name }}
-                    </mat-option>
-                  </mat-autocomplete>
-              </mat-form-field>
+              <mat-error *ngIf="userDetailsForm.controls['domicileMedium'].invalid && userDetailsForm.controls['domicileMedium'].touched"
+                class="mat-error">
+                  Please select a valid mother tongue.
+              </mat-error>
+            </mat-form-field>
+            <div class="auto-language-list flex flex-col ignore-blur" #languageDropdown
+              *ngIf="openLanguageDropdown && masterLanguages?.length">
+              <div (mousedown)="preventLanguageBlur($event)"
+                class="language-item {{userDetailsForm.controls['domicileMedium']?.value?.toLowerCase() === language?.name?.toLowerCase() ? 'language-item-active' : ''}}"
+                *ngFor="let language of masterLanguages" (click)="selectLanguage(language.name)">
+                {{ language?.name }}
+              </div>
+            </div>
           </div>
             <div class="w-full" *ngIf="canShowCategory">
               <div class="mat-subheading-2 margin-0 required"

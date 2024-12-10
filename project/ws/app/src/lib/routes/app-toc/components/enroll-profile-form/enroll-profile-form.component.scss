@@ -9,6 +9,55 @@
 
 }
 
+.auto-list {
+    display: flex;
+    border: 1px solid #e3dede;
+    padding: 15px 0;
+    border-radius: 7px;
+    max-height: 200px;
+    overflow: auto;
+    position: absolute;
+    background: white;
+    z-index: 99;
+    width: 100%;
+
+    .item {
+        padding: 5px 15px;
+    }
+    .item:hover {
+        background-color: #f3f3f3;
+        cursor: pointer;
+    }
+    .item-active {
+        background-color: #1b4ca1!important;
+        color: white!important
+    }
+}
+
+.auto-language-list {
+    display: flex;
+    border: 1px solid #e3dede;
+    padding: 15px 0;
+    border-radius: 7px;
+    max-height: 200px;
+    overflow: auto;
+    position: absolute;
+    background: white;
+    z-index: 99;
+    width: 100%;
+    .language-item {
+        padding: 5px 15px;
+    }
+    .language-item:hover {
+        background-color: #f3f3f3;
+        cursor: pointer;
+    }
+    .language-item-active {
+        background-color: #1b4ca1!important;
+        color: white!important
+    }
+}
+
 ::ng-deep.mat-calendar-body-active {
     background: #1b4ca1!important;
     border-radius: 100%!important;
