@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="action-container flex items-center justify-center">
-            <button mat-stroked-button color="accent" type="button" class=" mat-accent-border flex-auto-display minwid"
+            <button mat-stroked-button color="accent" type="button" class="focus-btn mat-accent-border flex-auto-display minwid"
                 (click)="connetToUser()" *ngIf="!user?.requestSent && !user?.requestRecieved && !user?.connectionEstablished">
                 <span class="" >{{'connectionPeopleCard.connect' | translate}}</span>
             </button>

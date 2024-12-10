@@ -3,7 +3,7 @@
         <form (submit)="updateQuery(queryControl.value)">
             <mat-form-field appearance="outline" class="autocomplete-form" color="primary" [floatLabel]="'never'">
                 <mat-icon matPrefix class="ml-5 flex items-center justify-center">search</mat-icon>
-                <mat-label>{{ 'network.searchUser' | translate }}</mat-label>
+                <mat-label>{{ 'network.searchUrConnections' | translate }}</mat-label>
                 <input type="search" #searchInput class="ml-2" i18n-placeholder="search content"
                     [placeholder]="'common.search' | translate" i18-aria-label aria-label="Query" matInput [formControl]="queryControl"
                     accesskey="F" maxlength="50" />

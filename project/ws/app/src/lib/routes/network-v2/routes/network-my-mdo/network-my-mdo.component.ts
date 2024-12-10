@@ -78,6 +78,15 @@ export class NetworkMyMdoComponent implements OnInit {
     if (key) {
       this.currentFilter = key
       this.currentFilterSort = order
+      if (this.currentFilter === 'timestamp') {
+        this.data.sort((a: any, b: any) => {
+          return a.id.toLowerCase().localeCompare(b.id.toLowerCase())
+        })
+      } else {
+        this.data.sort((a: any, b: any) => {
+          return a.personalDetails.firstname.toLowerCase().localeCompare(b.personalDetails.firstname.toLowerCase())
+        })
+      }
     }
   }
 
