@@ -488,8 +488,7 @@ export class InitService {
           localStorage.setItem('login', 'true')
         } else {
           // this.authSvc.force_logout()
-          // await this.http.get('/apis/reset').toPromise()
-          debugger
+          // await this.http.get('/apis/reset').toPromise()          
           if (apiResponse && apiResponse.redirectUrl) {
             window.location.href = apiResponse.redirectUrl
           } else {
