@@ -1,4 +1,10 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  PLATFORM_ID,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import {
   UntypedFormControl,
   UntypedFormGroup,
@@ -77,7 +83,7 @@ export class PublicCrpComponent {
   emailPattern = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`;
   zohoHtml: any;
   zohoUrl: any = '/assets/static-data/zoho-code.html';
-
+  invalidLinkMessage = '';
   private subscriptionContact: Subscription | null = null;
   private recaptchaSubscription!: Subscription;
   private userdataSubscription!: Subscription;
@@ -94,7 +100,8 @@ export class PublicCrpComponent {
   designationsList: any[] = [];
   stopExecution = 0;
 
-  mobileTopHeaderVisibilityStatus = true
+  mobileTopHeaderVisibilityStatus = true;
+  @ViewChild('invalidLinkTemplate') invalidLinkTemplateRef!: TemplateRef<any>;
 
   constructor(
     private signupSvc: SignupService,
@@ -113,7 +120,7 @@ export class PublicCrpComponent {
     private sanitizer: DomSanitizer,
     public mobileAppsService: MobileAppsService,
     private eventService: EventService,
-    private telemetrySvc: TelemetryService,
+    private telemetrySvc: TelemetryService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -174,17 +181,39 @@ export class PublicCrpComponent {
     } else {
       this.groupsOriginal = [];
     }
-
     const org = this.activatedRoute.snapshot.data.organization;
     if (org) {
       this.designationsList = org.designationsList;
       this.organizationDetails = org.organizationDetails;
-    } else {
-      this.openSnackbar(
-        'Oops! It seems the registration link is invalid or the organization could not be found'
-      );
-      // this.router.navigate(['/public/signup'])
+      this.invalidLinkMessage = org.invalidLinkMessage;
+
+      if (
+        this.invalidLinkMessage &&
+        this.invalidLinkMessage !== 'Registration link is not active'
+      ) {
+        setTimeout(() => {
+          this.dialog.open(this.invalidLinkTemplateRef, {
+            width: '400px',
+            height: '200px',
+            data: this.invalidLinkMessage,
+            disableClose: true,
+          });
+        }, 200);
+      } else if (
+        this.invalidLinkMessage &&
+        this.invalidLinkMessage == 'Registration link is not active'
+      ) {
+        setTimeout(() => {
+          this.dialog.open(this.invalidLinkTemplateRef, {
+            width: '400px',
+            height: '200px',
+            data: 'Registrations are closed as of now please reach out to your department MDO or please write us at mission.karmayogi@gov.in with organization and designation name',
+            disableClose: true,
+          });
+        }, 200)
+      }
     }
+
     this.getOrganization();
     this.onPhoneChange();
     this.onEmailChange();
