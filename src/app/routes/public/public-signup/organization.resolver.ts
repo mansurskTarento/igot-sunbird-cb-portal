@@ -15,7 +15,9 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class AppPublicOrganizationResolver
-  implements Resolve<Observable<{ organizationDetails: any; designationsList: any[] }>> {
+  implements
+    Resolve<Observable<{ organizationDetails: any; designationsList: any[]; isInvalidLink?: string }>>
+{
   constructor(
     private signupSvc: SignupService,
     private snackBar: MatSnackBar
@@ -34,17 +36,21 @@ export class AppPublicOrganizationResolver
 
     return this.signupSvc.getRegistrationLinkStatus({ registrationLink }).pipe(
       switchMap((response: any) => {
+
         if (
-          !response ||
-          response.responseCode !== 'OK' ||
+          response &&
+          response.params?.status === 'Failed' &&
+          response?.params?.errmsg === 'Registration link is not active'
+        ) {
+          return of({ organizationDetails: null, designationsList: [], invalidLinkMessage: response?.params?.errmsg });
+        }
+
+        if (
+          response &&
+          response?.params?.status === 'Failed' &&
           response?.params?.errmsg !== 'Registration link is active'
         ) {
-          this.snackBar.open(
-            'Registrations are closed as of now please reach out to your department MDO or please write us at mission.karmayogi@gov.in with organization and designation name',
-            'X',
-            { duration: 20000, panelClass: ['error'] }
-          );
-          return of({ organizationDetails: null, designationsList: [] });
+          return of({ organizationDetails: null, designationsList: [], invalidLinkMessage: response?.params?.errmsg });
         }
 
         return this.signupSvc.getOrgReadData(orgId).pipe(
