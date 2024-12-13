@@ -786,3 +786,11 @@ a.help-icon {
   font-size: 14px;
   text-decoration: underline;
 }
+
+::ng-deep.theme-igot.day-mode .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover):not(.mat-option-disabled) {
+  color: #fff !important;
+}
+
+::ng-deep .theme-igot.day-mode .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  background-color: #1B4CA1 !important;
+}

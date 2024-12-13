@@ -99,6 +99,7 @@ export class PublicCrpComponent {
   frameworkDetails: any;
   organisationsList: any[] = [];
   designationsList: any[] = [];
+  filteredDesignationsList: any[] = [];
   stopExecution = 0;
 
   mobileTopHeaderVisibilityStatus = true;
@@ -189,6 +190,7 @@ export class PublicCrpComponent {
       this.designationsList = org.designationsList;
       this.organizationDetails = org.organizationDetails;
       this.invalidLinkMessage = org.invalidLinkMessage;
+      this.filteredDesignationsList = [...this.designationsList]
 
       if (
         this.invalidLinkMessage &&
@@ -532,7 +534,8 @@ export class PublicCrpComponent {
               mapId: this.heirarchyObject.mapId || '',
               sbRootOrgId: this.heirarchyObject.sbRootOrgId,
               sbOrgId: this.heirarchyObject.sbOrgId,
-              registrationLink: window.location.href
+              registrationLink: window.location.href,
+              designation: this.registrationForm.value.designation || '',
             };
           }
 
@@ -767,4 +770,14 @@ export class PublicCrpComponent {
     )
   }
 
+  onFilterDesignation(value: string): void {
+    const filterValue = value.toLowerCase()
+    this.filteredDesignationsList = this.designationsList.filter((option: any) =>
+      option.name.toLowerCase().includes(filterValue)
+    )
+  }
+
+  displayFn(option: any): string {
+    return option ? option : ''
+  }
 }

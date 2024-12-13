@@ -116,7 +116,7 @@
                                         i18n-aria-label aria-label="Designation Field label">
                                         {{ 'publicsignup.designation' | translate }}
                                     </label>
-                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                    <!-- <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
                                         <mat-select placeholder=" {{ 'publicsignup.selectDesignation' | translate }}"
                                             id="designation" #designation i18n-placeholder="group"
                                             formControlName="designation">
@@ -130,7 +130,22 @@
                                             i18n-aria-label aria-label="Designation is mandatory">
                                             {{ 'publicsignup.designationMandatory' | translate }}
                                         </mat-error>
-                                    </mat-form-field>
+                                    </mat-form-field> -->
+                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="designation">
+                                        <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
+                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto">
+                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                          <ng-container *ngFor="let option of filteredDesignationsList">
+                                            <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
+                                          </ng-container>
+                                        </mat-autocomplete>
+                                        <mat-error [hidden]="false"
+                                        i18n="Designation Error | Explains Designation is required"
+                                        *ngIf="registrationForm?.controls['designation'].errors?.required"
+                                        i18n-aria-label aria-label="Designation is mandatory">
+                                        {{ 'publicsignup.designationMandatory' | translate }}
+                                    </mat-error>
+                                      </mat-form-field>
                                 </div>
 
                             </div>
