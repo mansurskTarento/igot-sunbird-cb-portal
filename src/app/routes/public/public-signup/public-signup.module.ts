@@ -37,9 +37,10 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { PublicCrpComponent } from '../public-crp/public-crp.component'
 import { AppPublicOrganizationResolver } from './organization.resolver'
+import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-reader.component'
 
 @NgModule({
-    declarations: [PublicSignupComponent, SignupSuccessDialogueComponent, TermsAndConditionComponent, PublicCrpComponent],
+    declarations: [PublicSignupComponent, SignupSuccessDialogueComponent, TermsAndConditionComponent, PublicCrpComponent, AppOtpReaderComponent],
     imports: [
         CommonModule,
         FormsModule,

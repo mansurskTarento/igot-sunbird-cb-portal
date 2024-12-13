@@ -38,6 +38,7 @@ import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/route
 import _ from 'lodash';
 import { IOrganizationDetails } from './models/public-crp-model';
 import { MobileAppsService } from '../../../services/mobile-apps.service';
+import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-reader.component';
 
 @Component({
   selector: 'ws-public-crp',
@@ -102,6 +103,8 @@ export class PublicCrpComponent {
 
   mobileTopHeaderVisibilityStatus = true;
   @ViewChild('invalidLinkTemplate') invalidLinkTemplateRef!: TemplateRef<any>;
+  @ViewChild('emailOTPComponent') emailOTPComponent!: AppOtpReaderComponent;
+  @ViewChild('phoneOTPComponent') phoneOTPComponent!: AppOtpReaderComponent;
 
   constructor(
     private signupSvc: SignupService,
@@ -339,13 +342,13 @@ export class PublicCrpComponent {
   verifyOtp(otp: any) {
     const mob = this.registrationForm.get('mobile');
 
-    if (otp && otp.value) {
-      if (otp && otp.value.length < 4) {
+    if (otp) {
+      if (otp && otp.length < 4) {
         this.snackBar.open(
           this.translateLabels('pleaseEnterValidOtp', 'publicsignup')
         );
       } else if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
-        this.signupSvc.verifyOTP(otp.value, mob.value, 'phone').subscribe(
+        this.signupSvc.verifyOTP(otp, mob.value, 'phone').subscribe(
           (res: any) => {
             if (_.get(res, 'result.response').toUpperCase() === 'SUCCESS') {
               this.otpVerified = true;
@@ -441,13 +444,13 @@ export class PublicCrpComponent {
 
   verifyOtpEmail(otp: any) {
     const email = this.registrationForm.get('email');
-    if (otp && otp.value) {
-      if (otp && otp.value.length < 4) {
+    if (otp ) {
+      if (otp && otp.length < 4) {
         this.snackBar.open(
           this.translateLabels('pleaseEnterValidOtp', 'publicsignup')
         );
       } else if (email && email.value && email.valid) {
-        this.signupSvc.verifyOTP(otp.value, email.value, 'email').subscribe(
+        this.signupSvc.verifyOTP(otp, email.value, 'email').subscribe(
           (res: any) => {
             if (_.get(res, 'result.response').toUpperCase() === 'SUCCESS') {
               this.otpEmailSend = true;
