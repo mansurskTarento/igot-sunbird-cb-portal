@@ -304,6 +304,7 @@ input[type='number'] {
   text-underline-position: from-font;
   text-decoration-skip-ink: none;
   color: #00000099;
+  margin-top: 5px;
 }
 
 ::ng-deep #position .mat-form-field-hint-wrapper {
@@ -760,4 +761,36 @@ a.help-icon {
   ::ng-deep.abc.mt-4 {
     margin-top: 0 !important;
   }
+}
+
+.otp-reader-wrapper {
+  padding: 16px 12px;
+  border: 1px solid #1B4CA1;
+  border-radius: 4px;
+
+  .otp-resent-timer span {
+    font-size: 12px;
+    color: #1B4CA1;
+  }
+}
+
+.break-word-link {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+}
+
+.request-help-text {
+  color: #1B4CA1;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+::ng-deep.theme-igot.day-mode .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover):not(.mat-option-disabled) {
+  color: #fff !important;
+}
+
+::ng-deep .theme-igot.day-mode .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  background-color: #1B4CA1 !important;
 }

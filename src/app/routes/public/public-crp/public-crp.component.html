@@ -116,7 +116,7 @@
                                         i18n-aria-label aria-label="Designation Field label">
                                         {{ 'publicsignup.designation' | translate }}
                                     </label>
-                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                    <!-- <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
                                         <mat-select placeholder=" {{ 'publicsignup.selectDesignation' | translate }}"
                                             id="designation" #designation i18n-placeholder="group"
                                             formControlName="designation">
@@ -130,7 +130,22 @@
                                             i18n-aria-label aria-label="Designation is mandatory">
                                             {{ 'publicsignup.designationMandatory' | translate }}
                                         </mat-error>
-                                    </mat-form-field>
+                                    </mat-form-field> -->
+                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="designation">
+                                        <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
+                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto">
+                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                          <ng-container *ngFor="let option of filteredDesignationsList">
+                                            <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
+                                          </ng-container>
+                                        </mat-autocomplete>
+                                        <mat-error [hidden]="false"
+                                        i18n="Designation Error | Explains Designation is required"
+                                        *ngIf="registrationForm?.controls['designation'].errors?.required"
+                                        i18n-aria-label aria-label="Designation is mandatory">
+                                        {{ 'publicsignup.designationMandatory' | translate }}
+                                    </mat-error>
+                                      </mat-form-field>
                                 </div>
 
                             </div>
@@ -142,7 +157,7 @@
                                         aria-label="Email label">
                                         {{ 'publicsignup.email' | translate }}
                                     </label>
-                                    <div class="flex flex-1">
+                                    <div class="flex">
                                         <mat-form-field appearance="outline" class="margin-top-s" id="email">
                                             <input id="email" name="emailField" autocomplete="off" type="email"
                                                 maxlength="320" (input)="emailVerification($event.target.value)"
@@ -168,15 +183,23 @@
                                             </div>
                                         </mat-form-field>
                                     </div>
-                                    <a class="pos-hint help-request ws-mat-black60-text" id="org-field">
+                                    <div class="flex justify-between items-start">
+                                        <span class="pos-hint help-request ws-mat-black60-text break-word-link" id="org-field"> {{
+                                            'publicsignup.donotHaveGovernmentEmail' | translate }}</span>
+                                        <span class="float-right ws-mat-accent-text cursor-pointer request-help-text"
+                                            (click)="navigateTo('Domain')"> {{ 'publicsignup.requestForHelp2' |
+                                            translate
+                                            }}</span>
+                                    </div>
+                                    <!-- //NOSONAR -->
+                                    <!-- <a class="pos-hint help-request ws-mat-black60-text" id="org-field">
                                         {{ 'publicsignup.donotHaveGovernmentEmail' | translate }}
-                                        <!-- //NOSONAR -->
 
                                         <span class="float-right ws-mat-accent-text cursor-pointer font-bold"
                                             (click)="navigateTo('Domain')"> {{ 'publicsignup.requestForHelp2' |
                                             translate
                                             }}</span>
-                                    </a>
+                                    </a> -->
 
                                     <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
                                         <button *ngIf="!otpEmailSend" mat-btn-button type="button"
@@ -186,8 +209,9 @@
                                                 {{ 'publicsignup.btnVerify' | translate }}
                                             </a>
                                         </button>
+
                                         <div *ngIf="otpEmailSend" class="flex flex-1 flex-column">
-                                            <mat-form-field appearance="outline" class="margin-top-xs w-full">
+                                            <!-- <mat-form-field appearance="outline" class="margin-top-xs w-full">
                                                 <input id="emailOTP" #emailotp type="password" minlength="4"
                                                     maxlength="6" matInput
                                                     placeholder="{{ 'publicsignup.enterOTP' | translate }}"
@@ -202,14 +226,34 @@
                                                         }}</span>
                                                 </mat-hint>
                                                 <mat-hint *ngIf="timeLeftforOTPEmail <= 0">
-                                                    <!-- //NOSONAR -->
                                                     <span class="cursor-pointer ws-mat-default-text"
                                                         (click)="resendOTPEmail()">
                                                         {{ 'publicsignup.btnVerify' | translate }}</span>
                                                 </mat-hint>
-                                            </mat-form-field>
+                                            </mat-form-field> -->
+                                            <div class="otp-reader-wrapper">
+                                                <ws-app-otp-reader #emailOTPComponent></ws-app-otp-reader>
+                                                <ng-container *ngIf="timeLeftforOTPEmail > 0">
+                                                    <div class="otp-resent-timer mt-2">
+                                                        <span>{{ 'publicsignup.resendOTPAfter' | translate }}
+                                                            {{
+                                                            timeLeftforOTPEmail
+                                                            | pipeDurationTransform : 'hms2M'
+                                                            }}</span>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="timeLeftforOTPEmail <= 0">
+                                                    <div class="otp-resend-btn mt-2">
+                                                        <span class="cursor-pointer ws-mat-default-text"
+                                                            (click)="resendOTPEmail()">
+                                                            {{ 'publicsignup.resendOTP' | translate }}</span>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+
+
                                             <div class="flex flex-1 margin-top-s justify-end">
-                                                <button mat-btn-button type="button" (click)="verifyOtpEmail(emailotp)"
+                                                <button mat-btn-button type="button" (click)="verifyOtpEmail(emailOTPComponent.finalOTPValues)"
                                                     class="mat-btn-flat margin-top-s otp"
                                                     [disabled]="registrationForm?.email?.invalid">
                                                     <span class="text-white">
@@ -220,13 +264,15 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- mobile otp / -->
                                 <div class="input-wrapper mobile-wrapper margin-top-l">
                                     <label for="mobileNumber" class="margin-remove-bottom form-label required"
                                         i18n="Mobile Number label|Label which explains the user to enter Mobile Number"
                                         i18n-aria-label aria-label="Mobile Number label">
                                         {{ 'publicsignup.mobileNumber' | translate }}
                                     </label>
-                                    <div class="flex flex-1">
+                                    <div class="flex">
                                         <mat-form-field appearance="outline" class="margin-top-s w-full">
                                             <input id="mobileNumber" #mobile matInput type="text" maxlength="10"
                                                 (keypress)="numericOnly($event)" (paste)="numericOnly($event)"
@@ -261,7 +307,7 @@
                                             </a>
                                         </button>
                                         <div *ngIf="otpSend" class="flex flex-1 flex-column">
-                                            <mat-form-field appearance="outline" class="margin-top-xs w-full">
+                                            <!-- <mat-form-field appearance="outline" class="margin-top-xs w-full">
                                                 <input id="mobileNumber" #otp type="password" minlength="4"
                                                     maxlength="6" matInput
                                                     placeholder="{{ 'publicsignup.enterOTP' | translate }}"
@@ -275,7 +321,6 @@
                                                         }}</span>
                                                 </mat-hint>
                                                 <mat-hint *ngIf="timeLeftforOTP <= 0">
-                                                    <!-- //NOSONAR -->
                                                     <span class="cursor-pointer ws-mat-default-text"
                                                         (click)="resendOTP()">{{
                                                         'publicsignup.resendOTP' | translate
@@ -285,9 +330,31 @@
                                                 <mat-error [hidden]="false" *ngIf="otp.errors?.minlength">
                                                     {{ 'publicsignup.mobileOtp' | translate }}
                                                 </mat-error>
-                                            </mat-form-field>
+                                            </mat-form-field> -->
+                                            <div class="otp-reader-wrapper">
+                                                <ws-app-otp-reader #phoneOTPComponent></ws-app-otp-reader>
+                                                <ng-container *ngIf="timeLeftforOTP > 0">
+                                                    <div class="otp-resent-timer mt-2">
+                                                        <span>{{ 'publicsignup.resendOTPAfter' | translate }}
+                                                            {{
+                                                            timeLeftforOTP | pipeDurationTransform : 'hms2M'
+                                                            }}</span>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="timeLeftforOTP <= 0">
+                                                    <div class="otp-resend-btn mt-2">
+                                                        <span class="cursor-pointer ws-mat-default-text"
+                                                        (click)="resendOTP()">{{
+                                                        'publicsignup.resendOTP' | translate
+                                                        }}</span>
+                                                    </div>
+                                                </ng-container>
+                                                <!-- <span class="text-xs text-red-600" [hidden]="false" *ngIf="otp.errors?.minlength">
+                                                    {{ 'publicsignup.mobileOtp' | translate }}
+                                                </span> -->
+                                            </div>
                                             <div class="flex flex-1 margin-top-s justify-end">
-                                                <button mat-flat-button type="button" (click)="verifyOtp(otp)"
+                                                <button mat-flat-button type="button" (click)="verifyOtp(phoneOTPComponent.finalOTPValues)"
                                                     class="mat-btn-flat margin-top-s otp" [disabled]="
                                   registrationForm?.mobile?.invalid || disableVerifyBtn
                                 ">
