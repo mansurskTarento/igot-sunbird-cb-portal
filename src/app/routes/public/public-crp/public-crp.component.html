@@ -244,7 +244,7 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="timeLeftforOTPEmail <= 0">
                                                     <div class="otp-resend-btn mt-2">
-                                                        <span class="cursor-pointer ws-mat-default-text"
+                                                        <span class="cursor-pointer ws-mat-default-text text-sm"
                                                             (click)="resendOTPEmail()">
                                                             {{ 'publicsignup.resendOTP' | translate }}</span>
                                                     </div>
@@ -376,7 +376,7 @@
                                     aria-label="Group Field label">
                                     {{ 'publicsignup.groupGrade' | translate }}
                                 </label>
-                                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                <!-- <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
                                     <mat-select placeholder="{{'publicsignup.selectgroupGrade' | translate}}" id="group"
                                         #group i18n-placeholder="group" formControlName="group">
                                         <mat-option *ngFor="let option of masterGroup" [value]="option">{{ option
@@ -387,7 +387,21 @@
                                         aria-label="Group/Grade is mandatory">
                                         {{ 'publicsignup.groupGradeMandatory' | translate }}
                                     </mat-error>
-                                </mat-form-field>
+                                </mat-form-field> -->
+                                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                    <input #group i18n-placeholder="group" type="text" placeholder="Type to search" aria-label="Type to search" matInput
+                                      (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups">
+                                    <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups">
+                                      <ng-container *ngFor="let option of filteredGroupsList">
+                                        <mat-option  [value]="option">{{ option }}</mat-option>
+                                      </ng-container>
+                                    </mat-autocomplete>
+                                    <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
+                                        *ngIf="registrationForm?.controls['group'].errors?.required" i18n-aria-label
+                                        aria-label="Group/Grade is mandatory">
+                                        {{ 'publicsignup.groupGradeMandatory' | translate }}
+                                    </mat-error>
+                                  </mat-form-field>
                             </div>
 
                             <div class="input-wrapper margin-top-s terms-conditions-text">

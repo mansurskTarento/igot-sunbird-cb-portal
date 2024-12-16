@@ -100,6 +100,7 @@ export class PublicCrpComponent {
   organisationsList: any[] = [];
   designationsList: any[] = [];
   filteredDesignationsList: any[] = [];
+  filteredGroupsList: any[] = [];
   stopExecution = 0;
 
   mobileTopHeaderVisibilityStatus = true;
@@ -182,6 +183,7 @@ export class PublicCrpComponent {
         (ele: any) => ele !== 'Others'
       );
       this.masterGroup = this.groupsOriginal;
+      this.filteredGroupsList = [...this.groupsOriginal];
     } else {
       this.groupsOriginal = [];
     }
@@ -535,7 +537,7 @@ export class PublicCrpComponent {
               sbRootOrgId: this.heirarchyObject.sbRootOrgId,
               sbOrgId: this.heirarchyObject.sbOrgId,
               registrationLink: window.location.href,
-              designation: this.registrationForm.value.designation || '',
+              position: this.registrationForm.value.designation || '',
             };
           }
 
@@ -778,6 +780,17 @@ export class PublicCrpComponent {
   }
 
   displayFn(option: any): string {
+    return option ? option : ''
+  }
+
+  onFilterGroups(value: string): void {
+    const filterValue = value.toLowerCase()
+    this.filteredGroupsList = this.masterGroup.filter((option: any) =>
+      option.toLowerCase().includes(filterValue)
+    )
+  }
+
+  displayFnGroups(option: any): string {
     return option ? option : ''
   }
 }
