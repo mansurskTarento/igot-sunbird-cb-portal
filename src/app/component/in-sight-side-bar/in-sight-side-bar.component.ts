@@ -8,6 +8,9 @@ import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/dis
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import moment from 'moment'
+import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
+import _ from 'lodash';
+import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -88,6 +91,10 @@ export class InsightSideBarComponent implements OnInit {
   totlaDays = 0
   daysCompleted = 0
   currentLang: any = ''
+  updateDesignationCard: any
+  selectDesignation: string = ''
+  designationList: any = []
+  showUpdateDesignations: boolean = false
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -97,6 +104,8 @@ export class InsightSideBarComponent implements OnInit {
     private events: EventService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private signupService: SignupService,
+    private profileV2Svc: ProfileV2Service,
     private langtranslations: MultilingualTranslationsService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -122,8 +131,12 @@ export class InsightSideBarComponent implements OnInit {
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
+      this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updteDesignation
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
+      }
+      if (this.updateDesignationCard && this.updateDesignationCard.enabled) {
+        this.getMasterDesignation()
       }
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
@@ -175,6 +188,59 @@ export class InsightSideBarComponent implements OnInit {
         this.daysCompleted = this.totlaDays
       }
     }
+  }
+  getMasterDesignation() {
+    this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
+      if (result && result.frameworkid) {
+        this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
+          const frameworkDetails = _.get(res, 'result.framework')
+          const categoriesOfFramework = _.get(frameworkDetails, 'categories', [])
+          const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
+          const disOrderedList = _.get(organisationsList, '[0].children', [])
+          this.designationList = _.sortBy(disOrderedList, 'name')
+          this.profileV2Svc.fetchApprovalDetails().subscribe((resp: any) => {
+            if (resp && resp.result && resp.result.data) {
+              if (resp.result.data.length > 0) {
+                resp.result.dat.forEach((user: any) => {
+                  if (user['designation']) {
+                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    if (!designationsArray.includes(user['designation'].toLowerCase())) {
+                      this.showUpdateDesignations = true
+                    }
+                  }
+                })
+              } else {
+                if (this.configSvc.userProfile && this.configSvc.userProfile.professionalDetails &&
+                    this.configSvc.userProfile.professionalDetails[0]) {
+                  let designation = this.configSvc.userProfile.professionalDetails[0].designation
+                  if (designation) {
+                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    if (!designationsArray.includes(designation.toLowerCase())) {
+                      this.showUpdateDesignations = true
+                    }
+                  }
+                } else {
+                  this.showUpdateDesignations = true
+                }
+              }
+            }
+          })
+        },(_error: any) => {
+          // tslint:disable-next-line
+          console.error('Error occurred:', _error)
+        })
+      }
+    },(error: any) => {
+      // tslint:disable-next-line
+      console.error('Error occurred:', error)
+    })
+  }
+
+  private getTermsByCode(categories: any[], code: string) {
+    const selectedCategory = categories.filter(
+      (category: any) => category.code === code
+    );
+    return _.get(selectedCategory, '[0].terms', []);
   }
 
   getInsights() {
@@ -410,6 +476,13 @@ export class InsightSideBarComponent implements OnInit {
     )
 
     this.router.navigateByUrl('app/learn/karmayogi-saptah')
+  }
+
+  updateDesignation() {
+    console.log(this.selectDesignation)
+    if (this.selectDesignation) {
+
+    }
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

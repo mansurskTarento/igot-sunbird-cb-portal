@@ -43,6 +43,11 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection/src/lib/_common/survey-form-left-section/survey-form/survey-form.module'
 import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-form.component'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { SignupService } from '../routes/signup/signup.service'
+ 
 
 @NgModule({
     declarations: [
@@ -78,6 +83,9 @@ import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-
         PendingRequestModule,
         ContentStripWithTabsLibModule,
         ContentStripWithTabsPillsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatButtonModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -96,6 +104,7 @@ import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-
     ],
     providers: [
         HomePageService,
+        SignupService,
     ]
 })
 export class HomeModule { }

@@ -12,6 +12,34 @@
         </div>
     </div>
 </div>
+<div class="disigantion-master-container margin-top-l" *ngIf="updateDesignationCard && designationList?.length && showUpdateDesignations">
+    <div class="flex items-center justify-center gap-2">
+        <img [src]="updateDesignationCard?.imageUrl" />
+        <div class="flex flex-col gap-2">
+            <div class="title">{{userData?.firstName}}</div>
+            <div class="note">{{updateDesignationCard?.header}}</div>
+        </div>
+    </div>
+    <div class="hr my-3"></div>
+    <div class="choose-designation">
+        <div class="dLabel pb-1">{{ 'publicsignup.selectDesignation' | translate }}</div>
+        <div class="flex items-center gap-3 pb-3">
+            <div class="contoller">
+                <mat-form-field class="w-full" appearance="outline">
+                    <mat-select placeholder="Select" class="select-designation" [(value)]="selectDesignation">
+                        <mat-option
+                            [value]="designation?.name"
+                            *ngFor="let designation of designationList">
+                            {{designation?.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <button type="button" mat-button  (click)="updateDesignation()" class="btn submit-btn cursor-pointer">{{updateDesignationCard?.ButtonText}}</button>
+        </div>
+    </div>
+    <div class="hint" [innerHTML]="updateDesignationCard?.hintText"></div>
+</div>
 <div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
     <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
         <div class="flex">

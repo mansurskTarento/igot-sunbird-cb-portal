@@ -1,3 +1,7 @@
+@import 'ws-common';
+@import 'ws-vars';
+@import 'ws-mixins';
+
 .margin-top-m {
     margin-top:32px;
 }
@@ -214,6 +218,111 @@
     border-radius: 5px;
     text-align: center;
  }
+
+//  Designation Master
+.disigantion-master-container {
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    background: radial-gradient(15939.06% 100% at 50% 0%, #E86E7F 0%, #C45469 100%);
+    color: white;
+    
+    .title {
+      font-family: Montserrat;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 19.5px;
+      text-align: left;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+    }
+    .note {
+      font-family: Lato;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 16.8px;
+      text-align: left;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+
+    }
+    .hr {
+      width: 100%;
+      height: 1px;
+      background-color: white;
+      opacity: 0.6;
+    }
+    .hint {
+      font-family: Lato;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 14.4px;
+      text-align: left;
+      text-decoration-style: solid;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+    }
+    .dLabel{
+      font-family: Lato;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 21px;
+      text-align: left;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+    }
+    .contoller {
+      width: 75%;
+    }
+    .mat-ctrl {
+      background-color: white;
+    }
+    .submit-btn {
+      background: #1B4CA1!important;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      justify-content: center;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      min-width: 87px;
+      border-radius: 45px;
+
+    }
+  }
+:host ::ng-deep .choose-designation {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none
+  }
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0px!important;
+  }
+  .mat-select-arrow-wrapper {
+    padding-top: 10px!important;
+  }
+  .mat-form-field-wrapper {
+    padding-bottom: 0px!important;
+  }
+  .theme-igot.day-mode .mat-primary {
+    color: none!important;
+  }
+  .mat-form-field-outline {
+    border-radius: 50px;
+    color: #C45469!important;
+  }
+  .theme-igot.day-mode .mat-form-field-outline-thick {
+    color: #C45469!important;
+  }
+}
+.select-designation {
+  padding: 0px 0px 8px 0px!important;
+}
 
 
 /** Not My User **/
