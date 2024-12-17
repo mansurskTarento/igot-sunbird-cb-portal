@@ -5,7 +5,8 @@
     class="mat-elevation-z3 custom mobile-height" [ngClass]="{'mobile': isHubEnable}">
     <div class="fix-ww" id="root-tool-bar" *ngIf="isHubEnable">
       <ng-container *ngIf="mode === 'top'">
-        <a [routerLink]="!isforPreview ? '/page/home' : '/static-home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label>
+        <a [routerLink]="'/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label>
+          <!-- <a [routerLink]="!isforPreview ? '/page/home' : '/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label> -->
           <ng-container *ngIf="jan26Data && jan26Data.isEnabled; else normalLogo">
             <div *ngIf="janDataEnable; else janDataDisabled" class="logo-box flex items-center">
               <img  [src]="jan26Data.desktop.logoUrl" alt="Application Logo" class="app-logo-new" />
