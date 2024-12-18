@@ -195,7 +195,7 @@
                   <div class="note-container p-2">
                     <div class="flex flex-start items-center gap-2">
                       <mat-icon>info</mat-icon>
-                      <div class="designation-note">Not able to find your designation? Please write us at <span class="note-email">mission.karmayogi@gov.in</span> with the organization and designation name.</div>
+                      <div class="designation-note" [innerHTML]="'profileInfo.designationHint' | translate"></div>
                     </div>
                   </div>
                 </ng-container>
