@@ -53,7 +53,7 @@
 
             <div class="faq-img-section flex flex-wrap flex-between items-stretch"
               *ngIf="contactPage && contactPage.help && contactPage.help.length && contactPage.help.length > 0" >
-              <ng-container *ngFor="let chelp of contactPage.help  | customFilter : searchText">
+              <ng-container *ngFor="let chelp of contactPage.help  | filterSearch : searchText">
                 <div [attr.id]="chelp.fragment" class="info-section margin-bottom-xl" [ngClass]="{ 'width-1-1': true}">
                   <h3 class="flex flex-middle margin-remove">
                     <!-- <mat-icon *ngIf="chelp.icon">{{ chelp.icon}}</mat-icon> -->
