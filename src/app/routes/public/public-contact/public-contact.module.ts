@@ -13,6 +13,7 @@ import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import { MatToolbarModule } from '@angular/material/toolbar'
+import { FilterSearchPipeModule } from 'src/app/pipes/filter-search/filter-search.module'
 
 @NgModule({
   declarations: [PublicContactComponent],
@@ -31,6 +32,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     FormsModule,
     // Ng2SearchPipeModule,
     TranslateModule,
+    FilterSearchPipeModule,
   ],
   exports: [PublicContactComponent, TranslateModule],
 
