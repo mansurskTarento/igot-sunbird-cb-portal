@@ -505,6 +505,7 @@ export class InsightSideBarComponent implements OnInit {
     this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
       if (res.responseCode === 'OK') {
         this.showUpdateDesignations = false
+        this.openSnackbar('Designation updated successfully')
       }
     }, error => {
       /* tslint:disable */
@@ -540,6 +541,39 @@ export class InsightSideBarComponent implements OnInit {
 
   onOptionSelected(designation: string) {
     this.selectDesignation = designation
+  }
+
+  renderUpdateDesignationCardHeader(){
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.headerHi
+      case "gu":
+        return this.updateDesignationCard.headerGu
+      default:
+        return this.updateDesignationCard.header
+    }
+  }
+
+  renderUpdateDesignationCardButtonText() {
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.buttonTextHi
+      case "gu":
+        return this.updateDesignationCard.buttonTextGu
+      default:
+        return this.updateDesignationCard.buttonText
+    }
+  }
+
+  renderUpdateDesignationCardHint() {
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.hintTextHi
+      case "gu":
+        return this.updateDesignationCard.hintTextGu
+      default:
+        return this.updateDesignationCard.hintText
+    }
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
