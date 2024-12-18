@@ -295,34 +295,44 @@
       border-radius: 45px;
 
     }
+
+    .designation-input {
+      width: 86%;
+      height: 10px;
+      border-radius: 20px;
+      border: 1px solid #fff;
+    }
+    .designation-input:focus {
+      border: 1px solid #fff!important;
+    }
   }
 :host ::ng-deep .choose-designation {
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none
-  }
-  .mat-form-field-appearance-outline .mat-form-field-infix {
-    padding: 0px!important;
-  }
-  .mat-select-arrow-wrapper {
-    padding-top: 10px!important;
-  }
-  .mat-form-field-wrapper {
-    padding-bottom: 0px!important;
-  }
-  .theme-igot.day-mode .mat-primary {
-    color: none!important;
-  }
-  .mat-form-field-outline {
-    border-radius: 50px;
-    color: #C45469!important;
-  }
-  .theme-igot.day-mode .mat-form-field-outline-thick {
-    color: #C45469!important;
+  .auto-list {
+    display: flex;
+    border: 1px solid #e3dede;
+    padding: 15px 0;
+    border-radius: 7px;
+    max-height: 200px;
+    overflow: auto;
+    position: absolute;
+    background: white;
+    z-index: 99;
+    width: 100%;
+
+    .item {
+        padding: 5px 15px;
+    }
+    .item:hover {
+        background-color: #f3f3f3;
+        cursor: pointer;
+    }
+    .item-active {
+        background-color: #1b4ca1!important;
+        color: white!important
+    }
   }
 }
-.select-designation {
-  padding: 0px 0px 8px 0px!important;
-}
+
 
 
 /** Not My User **/

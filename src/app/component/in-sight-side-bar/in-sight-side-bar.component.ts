@@ -11,6 +11,7 @@ import moment from 'moment'
 import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
 import _ from 'lodash';
 import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
+import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -95,6 +96,8 @@ export class InsightSideBarComponent implements OnInit {
   selectDesignation: string = ''
   designationList: any = []
   showUpdateDesignations: boolean = false
+  desigantionUnderApproval: any
+  filterDesigantionList: any = []
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -106,6 +109,7 @@ export class InsightSideBarComponent implements OnInit {
     private router: Router,
     private signupService: SignupService,
     private profileV2Svc: ProfileV2Service,
+    private userProfileService: UserProfileService,
     private langtranslations: MultilingualTranslationsService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -198,14 +202,16 @@ export class InsightSideBarComponent implements OnInit {
           const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
           const disOrderedList = _.get(organisationsList, '[0].children', [])
           this.designationList = _.sortBy(disOrderedList, 'name')
+          this.filterDesigantionList = this.designationList
           this.profileV2Svc.fetchApprovalDetails().subscribe((resp: any) => {
             if (resp && resp.result && resp.result.data) {
               if (resp.result.data.length > 0) {
-                resp.result.dat.forEach((user: any) => {
+                resp.result.data.forEach((user: any) => {
                   if (user['designation']) {
                     let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
                     if (!designationsArray.includes(user['designation'].toLowerCase())) {
                       this.showUpdateDesignations = true
+                      this.desigantionUnderApproval = user
                     }
                   }
                 })
@@ -479,10 +485,61 @@ export class InsightSideBarComponent implements OnInit {
   }
 
   updateDesignation() {
-    console.log(this.selectDesignation)
     if (this.selectDesignation) {
-
+      this.apiCallToUpdateDesignation()
+    } else {
+      this.openSnackbar('Please select a valid designation')
     }
+  }
+
+  submitProfile() {
+    let payload: any = {
+      request: {
+        userId: this.configSvc.unMappedUser.id,
+        profileDetails: {
+          professionalDetails: [{designation: this.selectDesignation}]
+        }
+      }
+    }
+
+    this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
+      if (res.responseCode === 'OK') {
+        this.showUpdateDesignations = false
+      }
+    }, error => {
+      /* tslint:disable */
+      console.log(error)
+      this.snackBar.open("something went wrong!")
+    })
+
+  }
+
+  apiCallToUpdateDesignation() {
+    if (this.desigantionUnderApproval) {
+      this.profileV2Svc.withDrawApprovalRequest(this.configSvc.unMappedUser.id, this.desigantionUnderApproval.wfId).subscribe((resp: any) => {
+        if (resp && resp.result) {
+          /* tslint:disable */
+          console.log(resp.result.message)
+          this.submitProfile()
+        }
+      })
+    } else {
+      this.submitProfile()
+    }
+  }
+
+  onInputChange(searchValue: string) {
+    if (searchValue.length) {
+      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue))
+      this.selectDesignation = searchValue
+    } else {
+      this.filterDesigantionList = this.designationList
+    }
+    this.selectDesignation = ''
+  }
+
+  onOptionSelected(designation: string) {
+    this.selectDesignation = designation
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

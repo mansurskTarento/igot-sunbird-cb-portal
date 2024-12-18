@@ -47,6 +47,7 @@ import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/materia
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { SignupService } from '../routes/signup/signup.service'
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
  
 
 @NgModule({
@@ -86,6 +87,7 @@ import { SignupService } from '../routes/signup/signup.service'
         MatFormFieldModule,
         MatSelectModule,
         MatButtonModule,
+        MatAutocompleteModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

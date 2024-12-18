@@ -25,17 +25,17 @@
         <div class="dLabel pb-1">{{ 'publicsignup.selectDesignation' | translate }}</div>
         <div class="flex items-center gap-3 pb-3">
             <div class="contoller">
-                <mat-form-field class="w-full" appearance="outline">
-                    <mat-select placeholder="Select" class="select-designation" [(value)]="selectDesignation">
-                        <mat-option
-                            [value]="designation?.name"
-                            *ngFor="let designation of designationList">
-                            {{designation?.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
+                <input type="text" class="input-text designation-input" matInput [(value)]="selectDesignation" placeholder="Select"
+                [matAutocomplete]="designationAuto" (input)="onInputChange($event.target.value)"/>
+                <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete" (optionSelected)="onOptionSelected($event.option.value)">
+                    <mat-option *ngFor="let designation of filterDesigantionList" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                </mat-autocomplete>
             </div>
-            <button type="button" mat-button  (click)="updateDesignation()" class="btn submit-btn cursor-pointer">{{updateDesignationCard?.ButtonText}}</button>
+            <button
+                type="button" mat-button
+                (click)="updateDesignation()"
+                class="btn submit-btn cursor-pointer">{{updateDesignationCard?.ButtonText}}
+            </button>
         </div>
     </div>
     <div class="hint" [innerHTML]="updateDesignationCard?.hintText"></div>
