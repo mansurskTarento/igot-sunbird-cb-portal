@@ -395,6 +395,27 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
+.note-container {
+  background-color: #EBEBEB;
+  border: 1px solid #c3c3c3;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.designation-note {
+  font-family: Lato;
+  font-size: 12px;
+  line-height: 14.4px;
+  color: black;
+}
+
+:host ::ng-deep .designation-note {
+  .note-email {
+    color: #1b4ca1!important;
+    text-decoration: underline!important;
+  }
+}
+
 .icon-include-input {
   width: calc(100% + -2px);
 }
