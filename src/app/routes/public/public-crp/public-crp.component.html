@@ -131,9 +131,10 @@
                                             {{ 'publicsignup.designationMandatory' | translate }}
                                         </mat-error>
                                     </mat-form-field> -->
-                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="designation">
+                                    <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="designation">
                                         <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
                                           (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto">
+                                          <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
                                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                                           <ng-container *ngFor="let option of filteredDesignationsList">
                                             <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
@@ -244,7 +245,7 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="timeLeftforOTPEmail <= 0">
                                                     <div class="otp-resend-btn mt-2">
-                                                        <span class="cursor-pointer ws-mat-default-text text-sm"
+                                                        <span class="cursor-pointer ws-mat-default-text text-xs"
                                                             (click)="resendOTPEmail()">
                                                             {{ 'publicsignup.resendOTP' | translate }}</span>
                                                     </div>
@@ -295,7 +296,7 @@
                                             </mat-error>
                                         </mat-form-field>
                                     </div>
-                                    <mat-checkbox class="text-sm recieve-text"> {{ 'publicsignup.receiveOnWhatsapp' |
+                                    <mat-checkbox class="text-sm recieve-text" formControlName="isWhatsappConsent"> {{ 'publicsignup.receiveOnWhatsapp' |
                                         translate }}</mat-checkbox>
 
                                     <div *ngIf="!isMobileVerified" class="flex flex-1 margin-top-s justify-end">
@@ -388,9 +389,10 @@
                                         {{ 'publicsignup.groupGradeMandatory' | translate }}
                                     </mat-error>
                                 </mat-form-field> -->
-                                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="group">
                                     <input #group i18n-placeholder="group" type="text" placeholder="Type to search" aria-label="Type to search" matInput
                                       (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups">
+                                      <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
                                     <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups">
                                       <ng-container *ngFor="let option of filteredGroupsList">
                                         <mat-option  [value]="option">{{ option }}</mat-option>

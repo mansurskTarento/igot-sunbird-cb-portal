@@ -47,7 +47,8 @@ import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-
 })
 export class PublicCrpComponent {
   registrationForm!: UntypedFormGroup;
-  namePatern = /^[a-zA-Z0-9\s']+$/;
+  // namePatern = /^[a-zA-Z0-9\s']+$/;
+  namePatern = /^[a-zA-Z\s.]+$/;
   customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`;
   positionsOriginal!: [];
   postions!: any;
@@ -162,6 +163,7 @@ export class PublicCrpComponent {
       ]),
       confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       designation: new UntypedFormControl('', [Validators.required]),
+      isWhatsappConsent: new UntypedFormControl(false),
     });
     if (
       this.configSvc.instanceConfig &&
@@ -538,6 +540,7 @@ export class PublicCrpComponent {
               sbOrgId: this.heirarchyObject.sbOrgId,
               registrationLink: window.location.href,
               position: this.registrationForm.value.designation || '',
+              isWhatsappConsent: this.registrationForm.value.isWhatsappConsent,
             };
           }
 
