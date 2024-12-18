@@ -1160,6 +1160,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
       this.userSvc.resetTime('enrollmentService')
+      this.raiseEnrollTelemetry()
       const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
       if (this.content && this.content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
         this.autoEnrollCuratedProgram(NsContent.ECourseCategory.CURATED_PROGRAM, batchData)
@@ -1888,6 +1889,24 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       //   this.nestedTreeControl.expand(node)
       // })
     }
+  }
+
+  raiseEnrollTelemetry() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'enroll',
+        id: this.content ? this.content.identifier : '',
+      },
+      {
+        id: this.content ? this.content.identifier : '',
+        type: this.content ? this.content.primaryCategory : '',
+      },
+      {
+        pageIdExt: `btn-enroll`,
+        module: WsEvents.EnumTelemetrymodules.CONTENT,
+      }
+    )
   }
 
   onClickOfShare() {
