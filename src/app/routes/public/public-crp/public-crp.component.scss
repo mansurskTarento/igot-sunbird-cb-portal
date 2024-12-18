@@ -794,3 +794,15 @@ a.help-icon {
 ::ng-deep .theme-igot.day-mode .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   background-color: #1B4CA1 !important;
 }
+
+.arrow-down {
+  position: relative;
+  input {
+    padding-right: 2rem;
+  }
+  .mat-icon-arroe {
+    position:absolute;
+    top: 5px;
+    right: 0;
+  }
+}
