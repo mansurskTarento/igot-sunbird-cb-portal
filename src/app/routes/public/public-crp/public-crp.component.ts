@@ -175,9 +175,11 @@ export class PublicCrpComponent {
     }
 
     const fullPath = this.activatedRoute.snapshot.url.map(segment => segment.path).join('/');
-    const crpIndex = fullPath.indexOf('crp/');
-    if (crpIndex !== -1) {
-      this.crpPath = fullPath.slice(crpIndex);
+    if(fullPath) {
+      const crpIndex = fullPath.indexOf('crp/');
+      if (crpIndex !== -1) {
+        this.crpPath = fullPath.slice(crpIndex);
+      }
     }
 
     this.raiseImpressionTelemetry()
