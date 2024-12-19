@@ -807,3 +807,10 @@ a.help-icon {
     color: grey;
   }
 }
+
+.close-error-modal {
+  position: absolute;
+  top: -32px;
+  right: 0;
+  cursor: pointer;
+}
