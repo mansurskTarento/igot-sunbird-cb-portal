@@ -225,7 +225,7 @@ export class PublicCrpComponent {
           const message = this.sanitizer.bypassSecurityTrustHtml(
             'Registrations are closed as of now. Please reach out to your department MDO or write to us at ' +
             '<a href="mailto:mission.karmayogi@gov.in?subject=Support Request&body=Please provide your organization and designation details." ' +
-            'target="_blank">mission.karmayogi@gov.in</a>'
+            'target="_blank">mission.karmayogi@gov.in</a> with organization and designation name'
           );
           this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
             width: '400px',
@@ -827,5 +827,10 @@ export class PublicCrpComponent {
 
   displayFnGroups(option: any): string {
     return option ? option : ''
+  }
+
+  closedDialogandRedirect() {
+    this.dialogRef?.close()
+    this.router.navigate(['/static-home'])
   }
 }
