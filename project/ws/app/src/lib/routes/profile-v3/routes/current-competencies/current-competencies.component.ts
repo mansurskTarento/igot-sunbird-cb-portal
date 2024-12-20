@@ -5,10 +5,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { Subscription } from 'rxjs'
 import { CompLocalService } from '../../services/comp.service'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
@@ -31,7 +31,7 @@ export class CurrentCompetenciesComponent implements OnInit, OnDestroy {
   infoIcon = false
   currentComps: NSProfileDataV3.ICompetencie[] = []
   private currentCompSubscription: Subscription | null = null
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   constructor(
     private configService: ConfigurationsService,
     private activateroute: ActivatedRoute,

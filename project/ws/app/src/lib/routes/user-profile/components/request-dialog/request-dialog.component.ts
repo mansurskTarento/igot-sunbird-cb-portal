@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
 import { Observable } from 'rxjs'
@@ -8,8 +8,8 @@ import { v4 as uuid } from 'uuid'
 import { RequestService } from 'src/app/routes/public/public-request/request.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -32,7 +32,7 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
   styleUrls: ['./request-dialog.component.scss'],
 })
 export class RequestDialogComponent implements OnInit {
-  requestForm!: FormGroup
+  requestForm!: UntypedFormGroup
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
   customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`
   customCharsPatternOrg = `^[a-zA-Z0-9 \\w\-\&,\(\)]*$`
@@ -61,9 +61,9 @@ export class RequestDialogComponent implements OnInit {
     this.requestType = this.data.reqType
     this.userData = this.data
 
-    this.requestForm = new FormGroup({
+    this.requestForm = new UntypedFormGroup({
       // tslint:disable-next-line:max-line-length
-      designation: new FormControl('', this.requestType === 'Position' ? [Validators.pattern(this.customCharsPattern),
+      designation: new UntypedFormControl('', this.requestType === 'Position' ? [Validators.pattern(this.customCharsPattern),
       Validators.required, forbiddenNamesValidatorPosition(this.masterPositions)] : []),
     })
 

@@ -265,8 +265,8 @@
                 i18n="Add deatils | Label which explains the Details" i18n-aria-label
                 aria-label="Details label">{{'publicrequest.addDetails' | translate}}</label>
                 <mat-form-field appearance="outline" class="margin-top-s w-full">
-                    <textarea matInput name="addDetails" id="addDetails" [matTextareaAutosize] [matAutosizeMaxRows]="5"
-                    [matAutosizeMinRows]="3"  maxlength="500" formControlName="addDetails" placeholder="{{'publicrequest.typeHere' | translate}}"></textarea>
+                    <textarea matInput name="addDetails" id="addDetails" [cdkTextareaAutosize] [cdkAutosizeMaxRows]="5"
+                    [cdkAutosizeMinRows]="3"  maxlength="500" formControlName="addDetails" placeholder="{{'publicrequest.typeHere' | translate}}"></textarea>
                     <mat-error [hidden]="false" i18n="Details Error | Explains details is required"
                       *ngIf="requestForm?.controls['addDetails'].errors?.required" i18n-aria-label
                       aria-label="Position details is mandatory">

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { HomeRoutingModule } from './home-routing.module'
 
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatIconModule } from '@angular/material/icon'
 
 import { HeaderModule } from '../header/header.module'
@@ -39,65 +39,63 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
 import { HttpClient } from '@angular/common/http'
 import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
-import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection/src/lib/_common/survey-form-left-section/survey-form/survey-form.module'
 import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-form.component'
 
 @NgModule({
-  declarations: [
-    HomeComponent, FeedListComponent, InsightSideBarComponent,
-    PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
-    HomeOtherPortalComponent, HomeContainerComponent, DiscussHubComponent,
-    NetworkHubComponent, NotificationComponent, SurveyFormComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    HomeRoutingModule,
-    GridLayoutModule,
-    SlidersModule,
-    DiscussStripMultipleModule,
-    NetworkStripMultipleModule,
-    ContentStripWithTabsModule,
-    MatCardModule,
-    MatIconModule,
-    SharedModule,
-    ProfileCardStatsModule,
-    UserLeaderboardModule,
-    MatIconModule,
-    WeeklyClapsModule,
-    TipsForLearnerModule,
-    UpdatePostsModule,
-    DiscussionsModule,
-    RecentRequestsModule,
-    SkeletonLoaderModule,
-    PipeRelativeTimeModule,
-    ImageResponsiveModule,
-    AvatarPhotoModule,
-    PendingRequestModule,
-    ContentStripWithTabsLibModule,
-    ContentStripWithTabsPillsModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-    MatTooltipModule,
-    SurveyFormModule,
-  ],
-  exports: [
-    HeaderModule,
-    MatCardModule,
-    SharedModule,
-    TranslateModule,
-  ],
-  providers: [
-    HomePageService,
-  ],
-  entryComponents: [
-    NotificationComponent,
-  ],
+    declarations: [
+        HomeComponent, FeedListComponent, InsightSideBarComponent,
+        PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
+        HomeOtherPortalComponent, HomeContainerComponent, DiscussHubComponent,
+        NetworkHubComponent, NotificationComponent, SurveyFormComponent
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        HomeRoutingModule,
+        GridLayoutModule,
+        SlidersModule,
+        DiscussStripMultipleModule,
+        NetworkStripMultipleModule,
+        ContentStripWithTabsModule,
+        MatCardModule,
+        MatIconModule,
+        SharedModule,
+        ProfileCardStatsModule,
+        UserLeaderboardModule,
+        MatIconModule,
+        WeeklyClapsModule,
+        TipsForLearnerModule,
+        UpdatePostsModule,
+        DiscussionsModule,
+        RecentRequestsModule,
+        SkeletonLoaderModule,
+        PipeRelativeTimeModule,
+        ImageResponsiveModule,
+        AvatarPhotoModule,
+        PendingRequestModule,
+        ContentStripWithTabsLibModule,
+        ContentStripWithTabsPillsModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+        MatTooltipModule,
+        SurveyFormModule,
+    ],
+    exports: [
+        HeaderModule,
+        MatCardModule,
+        SharedModule,
+        TranslateModule,
+    ],
+    providers: [
+        HomePageService,
+    ]
 })
 export class HomeModule { }

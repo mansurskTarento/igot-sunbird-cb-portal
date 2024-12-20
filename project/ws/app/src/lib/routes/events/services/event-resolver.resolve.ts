@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot  } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { catchError, map } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
 import { IResolveResponse, NsContent } from '@sunbird-cb/utils-v2'
 import { EventService } from './events.service'
 @Injectable()
 export class EventResolve
-  implements
-  Resolve<
-  Observable<IResolveResponse<NsContent.IContent>> | IResolveResponse<NsContent.IContent> | null
-  > {
+   {
   constructor(
     private eventService: EventService
   ) { }

@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common'
 import { ChallengeComponent } from './challenge.component'
 import { ActivityCardModule } from '../activity-card/activity-card.module'
 import { HorizontalScrollerModule } from '@sunbird-cb/utils-v2'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 
 @NgModule({
   declarations: [ChallengeComponent],

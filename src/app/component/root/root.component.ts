@@ -41,7 +41,7 @@ import { UrlService } from 'src/app/shared/url.service'
 import { CsModule } from '@project-sunbird/client-services'
 import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
-import { MatDialog } from '@angular/material/dialog'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
 
@@ -170,6 +170,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     || window.location.pathname.includes('/public/contact')
     || window.location.pathname.includes('/public/signup')
     || window.location.pathname.includes('/public/request')
+    || /^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
 
     ) {
       this.customHeight = true
@@ -294,7 +295,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (!(event.url.includes('/page/home')) && isMobile) {
           this.showHubs = false
         } else {
-          if (event.url.includes('/public')) {
+          if (event.url.includes('/public') || event.url.includes('/crp')) {
             this.showHubs = false
           } else {
             this.showHubs = true
@@ -331,6 +332,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           || !!this.currentUrl.startsWith('/viewer/')
           || !!this.currentUrl.startsWith('/public/request')
           || !!this.currentUrl.startsWith('/public/toc')
+          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
         ) {
           this.showFooter = false
           this.showNavbar = false

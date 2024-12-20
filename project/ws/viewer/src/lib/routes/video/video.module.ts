@@ -26,10 +26,10 @@ import { VideoComponent } from './video.component'
 import { RouterModule } from '@angular/router'
 
 import { VideoModule as VideoViewContainerModule } from '../../route-view-container/video/video.module'
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 
 @NgModule({
   declarations: [VideoComponent],

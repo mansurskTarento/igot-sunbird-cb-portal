@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { AppCbpPlansService } from 'src/app/services/app-cbp-plans.service'
 // tslint:disable
 import _ from 'lodash'
@@ -42,7 +42,7 @@ export class FilterComponent implements OnInit {
     competencySubTheme: [],
     providers: [],
   }
-  searchThemeControl = new FormControl()
+  searchThemeControl = new UntypedFormControl()
   @ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
   constructor(private appCbpPlansService: AppCbpPlansService,
               private translate: TranslateService,

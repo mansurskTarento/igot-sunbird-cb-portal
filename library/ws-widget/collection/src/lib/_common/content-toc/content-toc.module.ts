@@ -99,10 +99,7 @@ import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-t
     AppTocContentComponent,
     AppTocTeachersNotesComponent,
     ReviewsContentComponent,
-  ],
-  entryComponents: [
-    ReviewsContentComponent,
-  ],
+  ]
 })
 
 export class ContentTocModule { }

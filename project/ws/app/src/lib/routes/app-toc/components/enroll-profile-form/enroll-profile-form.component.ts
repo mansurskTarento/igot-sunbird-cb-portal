@@ -1,9 +1,7 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { Component, OnInit, Inject, ViewChild, ElementRef, HostListener } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
-import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
+import { takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -11,6 +9,8 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ProfileV2Service } from '../../../profile-v2/services/profile-v2.servive'
 import { OtpService } from '../../../user-profile/services/otp.services'
 import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 /* tslint:disable */
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
@@ -37,8 +37,8 @@ export class EnrollProfileFormComponent implements OnInit {
   designationsMeta: any
   filterDesignationsMeta: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
-  masterLanguages: any[] | undefined
-  masterLanguageBackup: any[] | undefined
+  masterLanguages: any
+  masterLanguageBackup: any
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
   userProfileObject: any
   eligible: boolean = false
@@ -120,6 +120,12 @@ export class EnrollProfileFormComponent implements OnInit {
   approvedDomainList: any = []
   contextToken: any
   currentDate = new Date()
+  openDesignationDropdown = false
+  openLanguageDropdown = false
+  @ViewChild('textBox') textBox!: ElementRef
+  @ViewChild('dropdown') dropdown!: ElementRef
+  @ViewChild('languageTextBox') languageTextBox!: ElementRef
+  @ViewChild('languageDropdown') languageDropdown!: ElementRef
   constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EnrollProfileFormComponent>,
@@ -205,40 +211,98 @@ export class EnrollProfileFormComponent implements OnInit {
           }
         })
     }
+  }
 
-    // filters designations
-    this.userDetailsForm.get('designation')!.valueChanges
-      .pipe(
-        debounceTime(250),
-        distinctUntilChanged(),
-        startWith(''),
-      )
-      .subscribe(res => {
-        if (res) {
-          if(this.designationsMeta) {
-            this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-              val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
-            )
-          }
-        } else {
-          this.filterDesignationsMeta =  this.designationsMeta
-        }
-    })
-    
-    // filters master languages
-    if (this.userDetailsForm.get('domicileMedium')) {
-      this.userDetailsForm.get('domicileMedium')!.valueChanges
-        .pipe(
-          debounceTime(250),
-          distinctUntilChanged(),
-          startWith(''),
-        )
-        .subscribe(res => {
-          if (this.masterLanguageBackup) {
-            this.masterLanguages = this.masterLanguageBackup.filter(item => item.name.toLowerCase().includes(res && res.toLowerCase()))
-          }
-        })
+  scrollToActive(type: any): void {
+    let activeElement: any
+    let container: any
+    if (type === 'language') {
+      container = this.languageDropdown.nativeElement
+      activeElement = container.querySelector('.language-item-active')
+    } else if (type === 'designation') {
+      container = this.dropdown.nativeElement
+      activeElement = container.querySelector('.item-active')
     }
+    if (activeElement) {
+      activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+
+  handleClickOutside(event: MouseEvent): void {
+    const clickedElement = event.target as HTMLElement
+    if (
+      this.textBox && !this.textBox.nativeElement.contains(clickedElement) &&
+      this.dropdown && !this.dropdown.nativeElement.contains(clickedElement)
+    ) {
+      this.openDesignationDropdown = false
+    }
+    if (
+      this.languageTextBox && !this.languageTextBox.nativeElement.contains(clickedElement) &&
+      this.languageDropdown && !this.languageDropdown.nativeElement.contains(clickedElement)
+    ) {
+      this.openLanguageDropdown = false
+    }
+  }
+  onDesignationsFocus() {
+    this.openDesignationDropdown = true
+    setTimeout(() => {
+      this.scrollToActive('designation')
+    }, 100)
+  }
+  onLanguageFocus() {
+    this.openLanguageDropdown = true
+    setTimeout(() => {
+      this.scrollToActive('language')
+    }, 100)
+  }
+
+  filterLanguage(value: any) {
+    if (value.length) {
+      this.masterLanguages = this.masterLanguageBackup.filter((val: any) =>
+        val && val.name.trim().toLowerCase().includes(value.toLowerCase())
+      )
+      if (this.masterLanguages.length === 0) {
+        const usernameControl = this.userDetailsForm.get('domicileMedium')
+        if (usernameControl) {
+          usernameControl.setErrors({ required: true });
+        }
+      }
+    }
+    this.openLanguageDropdown = true
+  }
+
+  filterdesignation(value: any) {
+    if (value.length) {
+      this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+        val && val.name.trim().toLowerCase().includes(value.toLowerCase())
+      )
+      if (this.filterDesignationsMeta.length === 0) {
+        const usernameControl = this.userDetailsForm.get('designation')
+        if (usernameControl) {
+          usernameControl.setErrors({ required: true });
+        }
+      }
+    }
+    this.openDesignationDropdown = true
+  }
+
+  preventBlur(event: MouseEvent): void {
+    event.preventDefault()
+  }
+  preventLanguageBlur(event: MouseEvent): void {
+    event.preventDefault()
+  }
+
+  selectDesignation(designation: any) {
+    this.userDetailsForm.patchValue({designation: designation})
+    this.openDesignationDropdown = false
+  }
+
+  selectLanguage(language: any) {
+    this.userDetailsForm.patchValue({domicileMedium: language})
+    this.openLanguageDropdown = false
   }
 
   isEmailAllowed(email: string): boolean {

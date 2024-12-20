@@ -51,8 +51,8 @@ export class CompetencyCardComponent implements OnInit {
             'mimeType',
             'source',
             `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`,
-            `${this.compentencyKey.vKey}.competencyType`,
-            'taxonomyPaths_v2.name',
+            // `${this.compentencyKey.vKey}.competencyType`,
+            // 'taxonomyPaths_v2.name',
         ],
     },
     }

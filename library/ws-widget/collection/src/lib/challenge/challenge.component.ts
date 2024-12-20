@@ -5,7 +5,7 @@ import { Component, OnInit, Input } from '@angular/core'
 // } from '../../../../../../project/ws/app/src/lib/routes/activities/interfaces/activities.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Router, NavigationExtras } from '@angular/router'
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner'
+import { LegacyProgressSpinnerMode as ProgressSpinnerMode } from '@angular/material/legacy-progress-spinner'
 
 @Component({
   selector: 'ws-widget-challenge',

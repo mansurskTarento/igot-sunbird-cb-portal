@@ -1,4 +1,4 @@
-import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router'
+import { Router, ActivatedRouteSnapshot } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Injectable } from '@angular/core'
@@ -10,7 +10,7 @@ interface IResolverResponse {
 @Injectable({
   providedIn: 'root',
 })
-export class GyaanResolverService implements Resolve<any> {
+export class GyaanResolverService  {
 
   constructor(
     private http: HttpClient,

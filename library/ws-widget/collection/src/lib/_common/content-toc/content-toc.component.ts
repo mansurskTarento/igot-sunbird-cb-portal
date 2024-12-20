@@ -4,9 +4,8 @@ import { ConfigurationsService, NsContent, UtilityService } from '@sunbird-cb/ut
 import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
-import { MatTabGroup, MatTabChangeEvent } from '@angular/material/tabs'
+import { MatLegacyTabGroup as MatTabGroup, MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
-
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -35,6 +34,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() selectedBatchData: any
   @Input() config: any
   @Input() componentName!: string
+  @Input() isEnrolled!: boolean
   sticky = false
   menuPosition: any
   isMobile = false
@@ -97,6 +97,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
         }
+      }
+      if(this.isEnrolled) {
+        this.discussWidgetData.enrolledContent = true
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+      } else {
+        this.discussWidgetData.enrolledContent = false
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }

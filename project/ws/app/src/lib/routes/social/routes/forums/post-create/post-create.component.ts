@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
@@ -8,8 +8,8 @@ import { Observable } from 'rxjs'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { WsSocialService } from '../../../services/ws-social.service'
 import { SocialForum } from '../models/SocialForumposts.model'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-post-create',
@@ -55,7 +55,7 @@ export class PostCreateComponent implements OnInit {
   }
 
   separatorKeysCodes: number[] = [ENTER, COMMA]
-  tagsCtrl = new FormControl()
+  tagsCtrl = new UntypedFormControl()
   selectedTags: NsDiscussionForum.IPostTag[] = []
   autocompleteAllTags: NsDiscussionForum.IPostTag[] = []
   tagsFromConversation: NsDiscussionForum.IPostTag[] = []

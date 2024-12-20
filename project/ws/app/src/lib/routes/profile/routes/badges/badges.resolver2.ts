@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve } from '@angular/router'
+
 import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
@@ -8,10 +8,7 @@ import { BadgesService } from './badges.service'
 
 @Injectable()
 export class BadgesResolver2
-  implements
-  Resolve<
-  Observable<IResolveResponse<{ response: IBadgeResponse }>> | IResolveResponse<IBadgeResponse>
-  > {
+   {
   constructor(private badgesSvc: BadgesService) { }
 
   resolve(): Observable<IResolveResponse<IBadgeResponse>> | IResolveResponse<IBadgeResponse> {

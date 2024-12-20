@@ -30,8 +30,8 @@
             <h3 class="mat-h3 margin-bottom-xs" >{{ 'ratingdialog.giveReview' | translate }}</h3>
             <div class="mat-body-2">
                 <mat-form-field appearance="outline" class="textarea-container">
-                    <textarea id="review" matInput [matTextareaAutosize] [matAutosizeMaxRows]="10"
-                        [matAutosizeMinRows]="3" maxlength="200" formControlName="review"
+                    <textarea id="review" matInput [cdkTextareaAutosize] [cdkAutosizeMaxRows]="10"
+                        [cdkAutosizeMinRows]="3" maxlength="200" formControlName="review"
                         placeholder="{{ 'ratingdialog.addReview' | translate}} {{content?.primaryCategory | lowercase}} (optional)" i18n-placeholder #review i18n-aria-label aria-label="Review textarea input" class="mat-body-2"></textarea>
                     <mat-hint align="end">{{ review.value.length }} / 200 {{ 'ratingdialog.characters' | translate}}</mat-hint>
                     <mat-error [hidden]="false" i18n="review error | Explains review is required"

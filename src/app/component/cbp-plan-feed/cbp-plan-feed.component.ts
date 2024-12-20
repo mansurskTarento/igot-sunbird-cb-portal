@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -12,7 +12,7 @@ import { distinctUntilChanged } from 'rxjs/operators'
 })
 export class CbpPlanFeedComponent implements OnInit {
 
-  searchControl = new FormControl('')
+  searchControl = new UntypedFormControl('')
   toggleFilter = false
   contentDataList: any = []
   cbpConfig: any

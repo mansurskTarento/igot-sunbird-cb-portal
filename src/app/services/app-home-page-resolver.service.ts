@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
@@ -9,8 +9,7 @@ import { HttpClient } from '@angular/common/http'
 @Injectable({
   providedIn: 'root',
 })
-export class AppHomePageResolverService implements
-Resolve<Observable<IResolveResponse<any>> | IResolveResponse<any>> {
+export class AppHomePageResolverService  {
 constructor(
 private http: HttpClient,
 public configSvc: ConfigurationsService,

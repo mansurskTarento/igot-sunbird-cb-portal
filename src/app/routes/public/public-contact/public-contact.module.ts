@@ -4,16 +4,16 @@ import { PublicContactComponent } from './public-contact.component'
 import { BtnPageBackModule, LeftMenuModule } from '@sunbird-cb/collection'
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { FormsModule } from '@angular/forms'
-import { Ng2SearchPipeModule } from 'ng2-search-filter'
+// import { Ng2SearchPipeModule } from 'ng2-search-filter'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatCardModule } from '@angular/material/card'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import { MatToolbarModule } from '@angular/material/toolbar'
-
+import { FilterSearchPipeModule } from '../../../pipes/filter-search/filter-search.module'
 @NgModule({
   declarations: [PublicContactComponent],
   imports: [
@@ -29,8 +29,9 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    Ng2SearchPipeModule,
+    // Ng2SearchPipeModule,
     TranslateModule,
+    FilterSearchPipeModule,
   ],
   exports: [PublicContactComponent, TranslateModule],
 

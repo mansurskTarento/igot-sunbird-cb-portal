@@ -6,32 +6,29 @@ import { DefaultThumbnailModule, PipeDurationTransformModule, PipePartialContent
 import { BtnContentShareModule } from '../btn-content-share/btn-content-share.module'
 import { BtnFollowModule } from '../btn-follow/btn-follow.module'
 import { BtnKbAnalyticsModule } from '../btn-kb-analytics/btn-kb-analytics.module'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatChipsModule } from '@angular/material/chips'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
 import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
-  declarations: [CardKnowledgeComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    DefaultThumbnailModule,
-    BtnFollowModule,
-    BtnContentShareModule,
-
-    // Material Imports
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatChipsModule,
-    PipeDurationTransformModule,
-    BtnKbAnalyticsModule,
-    PipePartialContentModule,
-    PipePublicURLModule,
-  ],
-  exports: [CardKnowledgeComponent],
-  entryComponents: [CardKnowledgeComponent],
-
+    declarations: [CardKnowledgeComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        DefaultThumbnailModule,
+        BtnFollowModule,
+        BtnContentShareModule,
+        // Material Imports
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatChipsModule,
+        PipeDurationTransformModule,
+        BtnKbAnalyticsModule,
+        PipePartialContentModule,
+        PipePublicURLModule,
+    ],
+    exports: [CardKnowledgeComponent]
 })
 export class CardKnowledgeModule { }

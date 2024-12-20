@@ -54,7 +54,7 @@
       </mat-form-field>
       <div *ngIf="selectedOption">
         <div class="margin-top-xs text-justify" [innerHTML]="selectedOption?.concept"></div>
-        <ace-editor class="code-container margin-top-s" (textChanged)="raiseInputChange()" [(text)]="selectedOption.query" theme="eclipse" [mode]="'sql'" [options]="options"></ace-editor>
+        <!-- <ace-editor class="code-container margin-top-s" (textChanged)="raiseInputChange()" [(text)]="selectedOption.query" theme="eclipse" [mode]="'sql'" [options]="options"></ace-editor> -->
         <div class="margin-top-s">
           <button
             mat-raised-button
@@ -108,7 +108,7 @@
   </div>
   <ng-template #noDropdown>
     <div>
-      <ace-editor class="code-container margin-top-s" (textChanged)="raiseInputChange()" [(text)]="contentData.query" theme="eclipse" [mode]="'sql'" [options]="options"></ace-editor>
+      <!-- <ace-editor class="code-container margin-top-s" (textChanged)="raiseInputChange()" [(text)]="contentData.query" theme="eclipse" [mode]="'sql'" [options]="options"></ace-editor> -->
       <div class="margin-top-s">
         <button
           mat-raised-button

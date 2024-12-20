@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 import { Observable, Subject } from 'rxjs'
 import { BrowseProviderService } from '../../browse-by-provider/services/browse-provider.service'
 import { LocalDataService } from '../../browse-by-competency/services/localService'
@@ -22,7 +22,7 @@ export class KarmaProgramsComponent implements OnInit {
   page = 1
   defaultLimit = 20
   limit = 20
-  searchForm: FormGroup | undefined
+  searchForm: UntypedFormGroup | undefined
   sortBy: any
   searchQuery = ''
   allProviders: any = []
@@ -82,9 +82,9 @@ export class KarmaProgramsComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.searchForm = new FormGroup({
-      sortByControl: new FormControl(''),
-      searchKey: new FormControl(''),
+    this.searchForm = new UntypedFormGroup({
+      sortByControl: new UntypedFormControl(''),
+      searchKey: new UntypedFormControl(''),
     })
     this.sortType('asc')
     this.displayLoader = this.browseProviderSvc.isLoading()

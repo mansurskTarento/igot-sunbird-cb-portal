@@ -50,3 +50,7 @@ $title-line-count: 1;
     -webkit-box-orient: vertical;
     min-height: $title-line-count * 24px;
 }
+
+.focus-btn {
+    border: 1px solid #0074b6!important;
+}

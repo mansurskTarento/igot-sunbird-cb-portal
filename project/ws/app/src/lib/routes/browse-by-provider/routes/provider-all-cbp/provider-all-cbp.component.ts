@@ -4,7 +4,7 @@ import { Subscription, Subject, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 // tslint:disable
 import _ from 'lodash'
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core'
 import { NsContent } from '@sunbird-cb/collection'
@@ -30,7 +30,7 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
   sortBy: any
   searchQuery = ''
   primaryCategory = NsContent.EPrimaryCategory
-  searchForm: FormGroup | undefined
+  searchForm: UntypedFormGroup | undefined
   disableLoadMore =  false
   private unsubscribe = new Subject<void>()
   searchReq = {
@@ -79,9 +79,9 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
         this.getAllCbps()
       })
     }
-    this.searchForm = new FormGroup({
-      sortByControl: new FormControl(''),
-      searchKey: new FormControl(''),
+    this.searchForm = new UntypedFormGroup({
+      sortByControl: new UntypedFormControl(''),
+      searchKey: new UntypedFormControl(''),
     })
     this.searchForm.valueChanges
       .pipe(

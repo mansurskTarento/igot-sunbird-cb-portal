@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 // import { ConnectionHoverService } from '../../components/connection-name/connection-hover.servive'
 import { WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -15,7 +15,7 @@ import * as _ from 'lodash'
   /* tslint:enable */
 })
 export class NetworkMyConnectionComponent implements OnInit {
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   currentFilter = 'timestamp'
   currentFilterSort = 'desc'
   enableSearchFeature = false

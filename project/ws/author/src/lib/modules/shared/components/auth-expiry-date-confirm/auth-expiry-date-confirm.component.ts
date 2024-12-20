@@ -1,8 +1,8 @@
 import { NotificationService } from '@ws/author/src/lib/services/notification.service'
 import { ErrorParserComponent } from './../error-parser/error-parser.component'
 import { Component, OnInit, Inject } from '@angular/core'
-import { FormGroup, FormBuilder, Validators } from '@angular/forms'
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { ISearchContent } from '@ws/author/src/lib/interface/search'
 import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
@@ -13,7 +13,7 @@ import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { mergeMap, catchError } from 'rxjs/operators'
 import { of } from 'rxjs'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-auth-expiry-date-confirm',
@@ -21,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
   styleUrls: ['./auth-expiry-date-confirm.component.scss'],
 })
 export class AuthExpiryDateConfirmComponent implements OnInit {
-  userActionForm!: FormGroup
+  userActionForm!: UntypedFormGroup
   isSubmitPressed = false
   minDate = new Date()
   onAction = false
@@ -29,7 +29,7 @@ export class AuthExpiryDateConfirmComponent implements OnInit {
 
   constructor(
     private accessService: AccessControlService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public dialogRef: MatDialogRef<AuthExpiryDateConfirmComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ISearchContent,
     private snackBar: MatSnackBar,

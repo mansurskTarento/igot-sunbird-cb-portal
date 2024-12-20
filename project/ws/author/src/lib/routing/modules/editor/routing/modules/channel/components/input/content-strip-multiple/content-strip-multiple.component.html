@@ -40,12 +40,12 @@
   </div>
 
   <p >Filters</p>
-  <ws-auth-ace-editor
+  <!-- <ws-auth-ace-editor
     [mode]="'json'"
     [content]="form.controls.filters.value || {}"
     (data)="form.controls.filters.setValue($event)"
   >
-  </ws-auth-ace-editor>
+  </ws-auth-ace-editor> -->
   <br />
 
   <mat-radio-group
@@ -77,36 +77,36 @@
       </mat-form-field>
     </div> -->
     <div *ngSwitchCase="'search'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="form?.controls?.request?.get('search')?.value || {}"
         (data)="update('api', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
     <div *ngSwitchCase="'searchV6'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="form?.controls?.request?.get('searchV6')?.value || {}"
         (data)="update('searchV6', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
     <div *ngSwitchCase="'searchRegionRecommendation'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="form?.controls?.request?.get('searchRegionRecommendation')?.value || {}"
         (data)="update('api', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
     <div *ngSwitchCase="'api'">
-      <ws-auth-ace-editor
+      <!-- <ws-auth-ace-editor
         [mode]="'json'"
         [content]="form?.controls?.request?.get('api')?.value || {}"
         (data)="update('api', $event)"
       >
-      </ws-auth-ace-editor>
+      </ws-auth-ace-editor> -->
     </div>
 
     <div *ngSwitchCase="'ids'">

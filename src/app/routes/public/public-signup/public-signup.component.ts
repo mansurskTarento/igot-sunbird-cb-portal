@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core'
 import { Subscription, Observable, interval } from 'rxjs'
-import { FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
+import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
-import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService, WsEvents, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
 import { startWith, map, pairwise } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
@@ -16,8 +16,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -94,7 +94,7 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 })
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
-  registrationForm!: FormGroup
+  registrationForm!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
   // emailWhitelistPattern = `^[a-zA-Z0-9._-]{3,}\\b@\\b[a-zA-Z0-9]*|\\b(.gov|.nic)\b\\.\\b(in)\\b$`
@@ -161,7 +161,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private eventService: EventService,
+    private telemetrySvc: TelemetryService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -180,25 +182,25 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     })
     this.isMobileVerified = userData && userData.isMobileVerified || false
     this.isEmailVerified = userData && userData.isEmailVerified || false
-    this.registrationForm = new FormGroup({
-      firstname: new FormControl(userData && userData.firstname || '', [Validators.required, Validators.pattern(this.namePatern)]),
+    this.registrationForm = new UntypedFormGroup({
+      firstname: new UntypedFormControl(userData && userData.firstname || '', [Validators.required, Validators.pattern(this.namePatern)]),
       // lastname: new FormControl('', [Validators.required, Validators.pattern(this.namePatern)]),
       // tslint:disable-next-line:max-line-length
       // position: new FormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterPositions)]),
       // tslint:disable-next-line:max-line-length
-      group: new FormControl('', [Validators.required]),
+      group: new UntypedFormControl('', [Validators.required]),
       // tslint:disable-next-line:max-line-length
-      email: new FormControl(userData && userData.email || '', [Validators.required, Validators.pattern(this.emailPattern)]),
+      email: new UntypedFormControl(userData && userData.email || '', [Validators.required, Validators.pattern(this.emailPattern)]),
       // department: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterDepartments)]),
-      mobile: new FormControl(userData && userData.mobile || '', [Validators.required,
+      mobile: new UntypedFormControl(userData && userData.mobile || '', [Validators.required,
         Validators.pattern(this.phoneNumberPattern), Validators.maxLength(12)]),
-      confirmBox: new FormControl(false, [Validators.required]),
-      confirmTermsBox: new FormControl(false, [Validators.required]),
-      type: new FormControl('ministry', [Validators.required]),
+      confirmBox: new UntypedFormControl(false, [Validators.required]),
+      confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
+      type: new UntypedFormControl('ministry', [Validators.required]),
       // ministry: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterMinisteries)]),
       // department: new FormControl('', [forbiddenNamesValidator(this.masterDepartments)]),
       // organisation: new FormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
-      organisation: new FormControl('', [Validators.required]),
+      organisation: new UntypedFormControl('', [Validators.required]),
       // recaptchaReactive: new FormControl(null, [Validators.required]),
     })
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
@@ -359,7 +361,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   orgClicked(event: any) {
     if (event) {
       if (event.option && event.option.value && event.option.value.orgName) {
-        const frmctr = this.registrationForm.get('organisation') as FormControl
+        const frmctr = this.registrationForm.get('organisation') as UntypedFormControl
         frmctr.setValue(_.get(event, 'option.value.orgName') || '')
         // frmctr.patchValue(_.get(event, 'option.value') || '')
         this.heirarchyObject = _.get(event, 'option.value')
@@ -682,6 +684,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.openDialog()
               this.disableBtn = false
               this.isMobileVerified = true
+              this.raiseSignupInteractTelementry()
             },
             (err: any) => {
               this.disableBtn = false
@@ -829,4 +832,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     webFormxhr.send()
   }
+
+   raiseSignupInteractTelementry() {
+        this.eventService.raiseInteractTelemetry(
+          {
+            type: WsEvents.EnumInteractTypes.CLICK,
+            id: 'sign-up',
+            pageid: "/public/signup" 
+          },
+          {},
+          {
+            module: "User Registration",
+          }
+        )
+  
+        setTimeout(() => {
+          this.telemetrySvc.end(
+            { 
+              type: WsEvents.EnumInteractTypes.CLICK,
+              id: 'sign-up',
+              pageid: "/public/signup" 
+          }, {},
+           {
+              module: "User Registration",
+            })
+          
+        }, 2000);
+    
+    }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { Observable, Subscription } from 'rxjs'
 import { finalize, startWith, map, tap, switchMap } from 'rxjs/operators'
 
@@ -30,11 +30,11 @@ export class AccSlotBookingComponent implements OnInit {
     HTMLInputElement
   >
 
-  accForm: FormGroup
+  accForm: UntypedFormGroup
   locations!: IAccLocation[]
   locationChipList: IAccLocation[]
   filteredLocations$!: Observable<IAccLocation[]>
-  locationCtrl: FormControl
+  locationCtrl: UntypedFormControl
   slots?: ITestCenterSlotList | null
   dateSlotMap: Map<number, ITestCenterSlot[]>
   fetchStatus: TFetchStatus
@@ -52,14 +52,14 @@ export class AccSlotBookingComponent implements OnInit {
     private certificationSvc: CertificationService,
   ) {
     this.locationChipList = []
-    this.locationCtrl = new FormControl()
+    this.locationCtrl = new UntypedFormControl()
     this.dateSlotMap = new Map<number, ITestCenterSlot[]>()
 
-    this.accForm = new FormGroup({
-      dc: new FormControl(null, [Validators.required]),
-      testCenter: new FormControl(null, [Validators.required]),
-      dateSlot: new FormControl(null, [Validators.required]),
-      slot: new FormControl(null, [Validators.required]),
+    this.accForm = new UntypedFormGroup({
+      dc: new UntypedFormControl(null, [Validators.required]),
+      testCenter: new UntypedFormControl(null, [Validators.required]),
+      dateSlot: new UntypedFormControl(null, [Validators.required]),
+      slot: new UntypedFormControl(null, [Validators.required]),
     })
 
     this.fetchStatus = 'none'

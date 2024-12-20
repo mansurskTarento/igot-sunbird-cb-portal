@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatDialog } from '@angular/material/dialog'
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
@@ -19,7 +19,7 @@ import { URLCheckerClass } from './url-upload.helper'
   styleUrls: ['./url-upload.component.scss'],
 })
 export class UrlUploadComponent implements OnInit {
-  urlUploadForm!: FormGroup
+  urlUploadForm!: UntypedFormGroup
   iprAccepted = false
   currentContent = ''
   canUpdate = true
@@ -28,7 +28,7 @@ export class UrlUploadComponent implements OnInit {
   @Output() data = new EventEmitter<string>()
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private contentService: EditorContentService,

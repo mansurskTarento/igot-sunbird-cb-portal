@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { NSNetworkDataV2 } from '../../models/network-v2.model'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router'
 import { NetworkV2Service } from '../../services/network-v2.service'
 import { ConfigurationsService, WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -18,7 +18,7 @@ import * as _ from 'lodash'
 export class NetworkMyMdoComponent implements OnInit {
 
   data!: NSNetworkDataV2.INetworkUser[]
-  queryControl = new FormControl('')
+  queryControl = new UntypedFormControl('')
   currentFilter = 'timestamp'
   currentFilterSort = 'desc'
   enableSearchFeature = false
@@ -78,6 +78,15 @@ export class NetworkMyMdoComponent implements OnInit {
     if (key) {
       this.currentFilter = key
       this.currentFilterSort = order
+      if (this.currentFilter === 'timestamp') {
+        this.data.sort((a: any, b: any) => {
+          return a.id.toLowerCase().localeCompare(b.id.toLowerCase())
+        })
+      } else {
+        this.data.sort((a: any, b: any) => {
+          return a.personalDetails.firstname.toLowerCase().localeCompare(b.personalDetails.firstname.toLowerCase())
+        })
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
@@ -7,8 +7,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Injectable()
 export class Profilev2CerficatesResolve
-  implements
-  Resolve<any> {
+   {
   constructor(private configSvc: ConfigurationsService,
               private userSvc: WidgetUserServiceLib) { }
 

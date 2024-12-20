@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WidgetContentService, WsEvents } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 
@@ -131,6 +131,14 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.extContentReadData.contentId
         }
       }
+
+      if(Object.keys(this.userExtCourseEnroll).length) {
+        this.discussWidgetData.enrolledContent = true
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+      } else {
+        this.discussWidgetData.enrolledContent = false
+        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
+      }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
   }
@@ -166,6 +174,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     }
     const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => {})
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
+      this.discussWidgetData.enrolledContent = true
+      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       this.getUserContentEnroll(content.contentId)
     } else {
       this.loader.changeLoad.next(false)

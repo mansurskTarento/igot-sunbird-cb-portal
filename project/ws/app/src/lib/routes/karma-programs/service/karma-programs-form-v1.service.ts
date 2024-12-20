@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
@@ -8,8 +8,7 @@ import { FormExtService } from 'src/app/services/form-ext.service'
 @Injectable({
   providedIn: 'root',
 })
-export class KarmaProgramsFormV1Service implements
-Resolve<Observable<IResolveResponse<any>> | IResolveResponse<any>> {
+export class KarmaProgramsFormV1Service  {
 constructor(
 private formSvc: FormExtService) {}
 

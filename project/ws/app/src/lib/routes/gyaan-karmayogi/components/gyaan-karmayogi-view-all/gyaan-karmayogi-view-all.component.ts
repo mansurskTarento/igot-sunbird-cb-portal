@@ -5,7 +5,7 @@ import { NsContent } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 import { gyaanConstants } from '../../models/gyaan-contants.model'
 import { TitleCasePipe } from '@angular/common'
-import { FormControl } from '@angular/forms'
+import { UntypedFormControl } from '@angular/forms'
 
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { GyaanFilterComponent } from '../gyaan-filter/gyaan-filter.component'
@@ -19,7 +19,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
   sectorsList = []
   keyData: any
   filterDataLoading = false
-  searchControl = new FormControl('')
+  searchControl = new UntypedFormControl('')
   contentDataList: any = []
   seeAllPageConfig: any
   facetsData: any

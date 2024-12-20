@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Resolve } from '@angular/router'
+
 import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
@@ -8,11 +8,7 @@ import { LearningHistoryService } from '../services/learning-history.service'
 
 @Injectable()
 export class LearningHistoryResolver
-  implements
-    Resolve<
-      | Observable<IResolveResponse<{ response: NSLearningHistory.ILearningHistory }>>
-      | IResolveResponse<NSLearningHistory.ILearningHistory>
-    > {
+   {
   constructor(private learnHistorySvc: LearningHistoryService) {}
   pageState = ''
   pageSize = 10

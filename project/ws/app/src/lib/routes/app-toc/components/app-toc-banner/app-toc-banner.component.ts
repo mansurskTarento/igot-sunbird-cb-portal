@@ -20,7 +20,7 @@ import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AppTocDialogIntroVideoComponent } from '../app-toc-dialog-intro-video/app-toc-dialog-intro-video.component'
 import { MobileAppsService } from 'src/app/services/mobile-apps.service'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import dayjs from 'dayjs'
 import * as  lodash from 'lodash'
 import { TitleTagService } from '../../services/title-tag.service'
@@ -36,10 +36,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { ENTER } from '@angular/cdk/keycodes'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { TimerService } from '../../services/timer.service'
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
-import { MatChipInputEvent } from '@angular/material/chips'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { EnrollProfileFormComponent } from '../enroll-profile-form/enroll-profile-form.component'
 
 dayjs.extend(isSameOrBefore)
@@ -67,7 +67,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   @Output() programEnrollCall = new EventEmitter<any>()
   timer: any
   nsContent = NsContent
-  batchControl = new FormControl('', Validators.required)
+  batchControl = new UntypedFormControl('', Validators.required)
   primaryCategory = NsContent.EPrimaryCategory
   WFBlendedProgramStatus = NsContent.WFBlendedProgramStatus
   WFSTATUS_MSG_MAPPING = NsContent.WFSTATUS_MSG_MAPPING
@@ -128,12 +128,12 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   timerIntervalClear: any
 
   // share content
-  shareForm: FormGroup | undefined
+  shareForm: UntypedFormGroup | undefined
   selectable = true
   removable = true
   addOnBlur = true
   separatorKeysCodes: number[] = [ENTER]
-  userCtrl = new FormControl('')
+  userCtrl = new UntypedFormControl('')
   filteredUsers: any []| undefined
   users: any[] = []
   allUsers: any[] = []
@@ -172,8 +172,8 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     })
 
     this.helpEmail = environment.helpEmail
-    this.shareForm = new FormGroup({
-      review: new FormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
+    this.shareForm = new UntypedFormGroup({
+      review: new UntypedFormControl(null, [Validators.minLength(1), Validators.maxLength(2000)]),
     })
 
     this.userCtrl.valueChanges.pipe(

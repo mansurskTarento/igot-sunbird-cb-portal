@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core'
 import { UserProfileService } from '../../../../services/user-profile.service'
-import { FormControl, FormGroup } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 
 @Component({
   selector: 'ws-app-ehrms',
@@ -17,37 +17,37 @@ export class EhrmsComponent implements OnInit, OnChanges {
   name = 'Guest User'
   defaultMsg = 'This field value is not found. Please update your e-HRMS profile.'
   isErrorMsg = false
-  getEhrmsForm: FormGroup
+  getEhrmsForm: UntypedFormGroup
   constructor(
     private userProfileSvc: UserProfileService
   ) {
-    this.getEhrmsForm = new FormGroup({
-      ehrmsSalutation: new FormControl('', []),
-      ehrmsFirstname: new FormControl('', []),
-      ehrmsMiddlename: new FormControl('', []),
-      ehrmsLastname: new FormControl('', []),
-      ehrmsDob: new FormControl('', []),
-      ehrmsGender: new FormControl('', []),
-      ehrmsCategory: new FormControl('', []),
-      ehrmsDisabled: new FormControl('', []),
-      ehrmsMarital: new FormControl('', []),
-      ehrmsEmployeecode: new FormControl('', []),
-      ehrmsService: new FormControl('', []),
-      ehrmsDesignation: new FormControl('', []),
-      ehrmsMdo: new FormControl('', []),
-      ehrmsPosting: new FormControl('', []),
-      ehrmsEmailid: new FormControl('', []),
-      ehrmsMobile: new FormControl('', []),
-      ehrmsPresentadd1: new FormControl('', []),
-      ehrmsPresentadd2: new FormControl('', []),
-      ehrmsPresentstate: new FormControl('', []),
-      ehrmsPresentdistrict: new FormControl('', []),
-      ehrmsPresentpincode: new FormControl('', []),
-      ehrmsAddress1: new FormControl('', []),
-      ehrmsAddress2: new FormControl('', []),
-      ehrmsState: new FormControl('', []),
-      ehrmsDistrict: new FormControl('', []),
-      ehrmsPincode: new FormControl('', []),
+    this.getEhrmsForm = new UntypedFormGroup({
+      ehrmsSalutation: new UntypedFormControl('', []),
+      ehrmsFirstname: new UntypedFormControl('', []),
+      ehrmsMiddlename: new UntypedFormControl('', []),
+      ehrmsLastname: new UntypedFormControl('', []),
+      ehrmsDob: new UntypedFormControl('', []),
+      ehrmsGender: new UntypedFormControl('', []),
+      ehrmsCategory: new UntypedFormControl('', []),
+      ehrmsDisabled: new UntypedFormControl('', []),
+      ehrmsMarital: new UntypedFormControl('', []),
+      ehrmsEmployeecode: new UntypedFormControl('', []),
+      ehrmsService: new UntypedFormControl('', []),
+      ehrmsDesignation: new UntypedFormControl('', []),
+      ehrmsMdo: new UntypedFormControl('', []),
+      ehrmsPosting: new UntypedFormControl('', []),
+      ehrmsEmailid: new UntypedFormControl('', []),
+      ehrmsMobile: new UntypedFormControl('', []),
+      ehrmsPresentadd1: new UntypedFormControl('', []),
+      ehrmsPresentadd2: new UntypedFormControl('', []),
+      ehrmsPresentstate: new UntypedFormControl('', []),
+      ehrmsPresentdistrict: new UntypedFormControl('', []),
+      ehrmsPresentpincode: new UntypedFormControl('', []),
+      ehrmsAddress1: new UntypedFormControl('', []),
+      ehrmsAddress2: new UntypedFormControl('', []),
+      ehrmsState: new UntypedFormControl('', []),
+      ehrmsDistrict: new UntypedFormControl('', []),
+      ehrmsPincode: new UntypedFormControl('', []),
     })
 
   }

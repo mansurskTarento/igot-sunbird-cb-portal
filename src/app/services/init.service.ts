@@ -71,7 +71,7 @@ export class InitService {
   }
 
   isAnonymousTelemetry = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-  || window.location.href.includes('/certs')
+  || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
 
   constructor(
     private logger: LoggerService,
@@ -148,7 +148,7 @@ export class InitService {
 
   get isAnonymousTelemetryRequired(): boolean {
     this.isAnonymousTelemetry = window.location.href.includes('/public/')
-      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs')
+      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
     return this.isAnonymousTelemetry
   }
 
@@ -177,7 +177,7 @@ export class InitService {
     try {
       const path = window.location.pathname
       const isPublic = window.location.href.includes('/public/')
-        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs')
+        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
@@ -228,9 +228,12 @@ export class InitService {
     //     // throw new DataResponseError('COOKIE_SET_FAILURE')
     //   })
     if (
-      !(window.location.href.includes('/public/') ||
-      window.location.href.includes('/certs') ||
-      window.location.href.includes('/viewer'))
+      !(
+        window.location.href.includes('/public/') || 
+        window.location.href.includes('/crp/') ||
+        window.location.href.includes('/certs') ||
+        window.location.href.includes('/viewer')
+      )
     ) {
       this.logFirstLogin()
     }
@@ -408,6 +411,7 @@ export class InitService {
   }
   private async fetchStartUpDetails(): Promise<any> {
     // const userRoles: string[] = []
+    let apiResponse: any
     if (this.configSvc.instanceConfig && !Boolean(this.configSvc.instanceConfig.disablePidCheck)) {
       let userPidProfile: any | null = null
       try {
@@ -416,6 +420,7 @@ export class InitService {
           .pipe(map((res: any) => {
             // const roles = _.map(_.get(res, 'result.response.roles'), 'role')
             // _.set(res, 'result.response.roles', roles)
+            apiResponse = res
             return _.get(res, 'result.response')
           })).toPromise()
         if (userPidProfile && userPidProfile.roles && userPidProfile.roles.length > 0 &&
@@ -483,8 +488,12 @@ export class InitService {
           localStorage.setItem('login', 'true')
         } else {
           // this.authSvc.force_logout()
-          // await this.http.get('/apis/reset').toPromise()
-          window.location.href = `${this.defaultRedirectUrl}apis/reset`
+          // await this.http.get('/apis/reset').toPromise()          
+          if (apiResponse && apiResponse.redirectUrl) {
+            window.location.href = apiResponse.redirectUrl
+          } else {
+            window.location.href = `${this.defaultRedirectUrl}apis/reset`
+          }
           this.updateTelemetryConfig()
         }
         const details = {

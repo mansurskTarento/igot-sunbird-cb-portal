@@ -12,18 +12,18 @@ import { KnowledgeSavedComponent } from './routes/knowledge-saved/knowledge-save
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { KnowledgeDetailComponent } from './routes/knowledge-detail/knowledge-detail.component'
-import { Ng2SearchPipeModule } from 'ng2-search-filter'
+// import { Ng2SearchPipeModule } from 'ng2-search-filter'
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 // import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { MatCardModule } from '@angular/material/card'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 
 // tslint:disable-next-line:function-name
@@ -53,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatCardModule,
     BtnPageBackModule,
     WidgetResolverModule,
-    Ng2SearchPipeModule,
+    // Ng2SearchPipeModule,
     PipeSafeSanitizerModule,
     MatExpansionModule,
     TranslateModule.forChild({

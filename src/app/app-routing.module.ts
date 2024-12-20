@@ -48,6 +48,8 @@ import { AppEventPageResolverService } from './services/app-event-page-resolver.
 import { HomeResolverService } from './home/home/home-resolver.service'
 import { PublicExtTocComponent } from './routes/public/public-ext-toc/public-ext-toc.component'
 import { AppTocExtPublicResolverService } from '@ws/app/src/lib/routes/app-toc/resolvers/app-toc-ext-public-resolver.service'
+import { PublicCrpComponent } from './routes/public/public-crp/public-crp.component'
+import { AppPublicOrganizationResolver } from './routes/public/public-signup/organization.resolver'
 import { FormDataResolverService } from './services/form-data-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
@@ -711,6 +713,19 @@ const routes: Routes = [
   //   loadChildren: () =>
   //     import('./routes/route-authoring-app.module').then(u => u.AuthoringAppModule),
   // },
+  {
+    path: 'crp/:qrCodeId/:orgId',
+    component: PublicCrpComponent,
+    data: {
+      module: 'Self Registration',
+      pageId: 'crp',
+    },
+    resolve: {
+      organization: AppPublicOrganizationResolver,
+      positions: AppPublicPositionResolverService,
+      group: AppPublicGroupResolverService,
+    },
+  },
   {
     path: 'error-access-forbidden',
     component: ErrorResolverComponent,
