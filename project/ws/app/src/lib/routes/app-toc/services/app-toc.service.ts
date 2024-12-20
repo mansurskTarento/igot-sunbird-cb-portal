@@ -573,7 +573,9 @@ export class AppTocService {
                 totalCount = totalCount += parentChild.leafNodesCount
                 completedLeafNodes = [...completedLeafNodes, ...parentChild.leafNodes]
                 if (foundContent.issuedCertificates.length > 0) {
-                  const certId: any = foundContent.issuedCertificates[0].identifier
+                  const certificate: any = foundContent.issuedCertificates.sort((a: any, b: any) =>
+                    new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
+                  const certId: any = certificate.issuedCertificates[0].identifier
                   parentChild.issuedCertificatesId = certId
                   // const certData: any = await this.dowonloadCertificate(certId).toPromise().catch(_error => {
                   //   this.contentLoader.next(false)
