@@ -133,12 +133,18 @@
                                     </mat-form-field> -->
                                     <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="designation">
                                         <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
-                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto">
+                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto" 
+                                          (keydown)="onkeyDown($event)">
                                           <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
-                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                          <ng-container *ngFor="let option of filteredDesignationsList">
-                                            <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
-                                          </ng-container>
+                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                                            <ng-container *ngIf="filteredDesignationsList.length > 0; else noDesignation">
+                                                <ng-container *ngFor="let option of filteredDesignationsList">
+                                                  <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
+                                                </ng-container>
+                                            </ng-container>
+                                          <ng-template #noDesignation>
+                                            <mat-option disabled>No Designation found</mat-option>
+                                          </ng-template>
                                         </mat-autocomplete>
                                         <mat-error [hidden]="false"
                                         i18n="Designation Error | Explains Designation is required"
@@ -391,12 +397,17 @@
                                 </mat-form-field> -->
                                 <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="group">
                                     <input #group i18n-placeholder="group" type="text" placeholder="Type to search" aria-label="Type to search" matInput
-                                      (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups">
+                                      (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups" (keydown)="onkeyDown($event)">
                                       <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
-                                    <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups">
-                                      <ng-container *ngFor="let option of filteredGroupsList">
-                                        <mat-option  [value]="option">{{ option }}</mat-option>
-                                      </ng-container>
+                                    <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                                        <ng-container *ngIf="filteredGroupsList?.length > 0; else nogroups">
+                                            <ng-container *ngFor="let option of filteredGroupsList">
+                                              <mat-option  [value]="option">{{ option }}</mat-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-template #nogroups>
+                                            <mat-option disabled>No Groups found</mat-option>
+                                          </ng-template>
                                     </mat-autocomplete>
                                     <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
                                         *ngIf="registrationForm?.controls['group'].errors?.required" i18n-aria-label
