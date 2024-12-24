@@ -109,6 +109,7 @@ export class PublicCrpComponent {
   @ViewChild('emailOTPComponent') emailOTPComponent!: AppOtpReaderComponent;
   @ViewChild('phoneOTPComponent') phoneOTPComponent!: AppOtpReaderComponent;
   crpPath: string = '';
+  isMatcompleteOpened = false;
 
   constructor(
     private signupSvc: SignupService,
@@ -832,5 +833,17 @@ export class PublicCrpComponent {
   closedDialogandRedirect() {
     this.dialogRef?.close()
     this.router.navigate(['/static-home'])
+  }
+
+  onkeyDown(_event: any) {
+    return this.isMatcompleteOpened
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
   }
 }
