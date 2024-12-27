@@ -1,4 +1,4 @@
-<div #fullScreenContainer>
+<!-- <div #fullScreenContainer>
   <div class="dialog-header text-right mb-2">
     <mat-icon class="mat-icon notranslate material-icons close-icon cursor-pointer" matprefix="" role="img" aria-hidden="true" [mat-dialog-close]="false">close</mat-icon>
   </div>
@@ -12,4 +12,37 @@
     [isblendedprogram]="true"
     [customTextAreaRows]="1">
   </lib-micro-survey>
+</div> -->
+
+<div class="preview-container">
+  <div class="form-header">
+    <div class="flex justify-between iteams-center">
+      <div>{{formDetails?.title}}</div>
+      <div class="cursor-pointer" (click)="closeForm()"><mat-icon>close</mat-icon></div>
+    </div>
+  </div>
+  <div class="form-content">
+    <ng-container *ngIf="surveyForm">
+      <form [formGroup]="surveyForm">
+        <ng-container *ngFor="let parentField of parentalFields">
+          <ng-container [ngSwitch]="parentField.fieldType">
+            <ng-container *ngSwitchCase="'heading'">
+              <ws-app-survey-form-section [chaildFields]="getChaildFields(parentField.sectionId)" [sectionField]="parentField"
+              [chaildQuestionsFormArray]="getChaildQuestionsFormArray(parentField.sectionId)"></ws-app-survey-form-section>
+            </ng-container>
+            <ng-container *ngSwitchCase="'separator'">
+              <hr class="opacity-50 elment-separator">
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <ws-app-survey-form-question [fieldDetails]="parentField" 
+              [questionForm]="getQuestionControl(parentField.controlIndex)"></ws-app-survey-form-question>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <div class="flex justify-end m-4">
+          <button mat-button class="submit-btn" (click)="submitForm()">Submit</button>
+        </div>
+      </form>
+    </ng-container>
+  </div>
 </div>

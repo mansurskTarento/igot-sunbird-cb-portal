@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject } from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of} from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'
@@ -34,6 +34,8 @@ const API_END_POINTS = {
   CERT_DOWNLOAD: (certId: any) => `${PROTECTED_SLAG_V8}/cohorts/course/batch/cert/download/${certId}`,
   SERVER_DATE: 'apis/public/v8/systemDate',
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
+  GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
+  SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`
 }
 
 @Injectable()
@@ -863,6 +865,255 @@ export class AppTocService {
   getServerDate() {
     return this.http.get<{ result: NsAppToc.IPostAssessment[] }>(
       API_END_POINTS.SERVER_DATE)
+  }
+
+  getFormById(formId: string) {
+    // return this.http.get(API_END_POINTS.GET_FORM_BYID(formId))
+    if(formId) {}
+    const result = {
+      "statusInfo": {
+          "statusCode": 200,
+          "statusMessage": "success",
+          "errorMessage": ""
+      },
+      "responseData": {
+          "updatedDate": 1735210766652,
+          "fields": [
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Question 1",
+                  "fieldType": "dropdown",
+                  "values": [
+                      {
+                          "value": "1",
+                          "key": "1"
+                      },
+                      {
+                          "value": "2",
+                          "key": "2"
+                      },
+                      {
+                          "value": "7",
+                          "key": "7"
+                      }
+                  ],
+                  "order": 1,
+                  "isRequired": true,
+                  "notApplicable": true,
+                  "parentId": ""
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "heading",
+                  "fieldType": "heading",
+                  "values": [
+                      {
+                          "heading": "Personal details",
+                          "subHeading": "Rent India's smartest RO+UV water purifier with copper & alkaline filters, mineral cartridge starting @ ₹299/month. Subscribe to DrinkPrime today!"
+                      }
+                  ],
+                  "order": 2,
+                  "isRequired": false,
+                  "sectionId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Age?",
+                  "fieldType": "phone number",
+                  "values": [],
+                  "order": 3,
+                  "isRequired": true,
+                  "notApplicable": true,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "DOB",
+                  "fieldType": "date",
+                  "values": [],
+                  "order": 4,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "2+5 = 7",
+                  "fieldType": "boolean",
+                  "values": [],
+                  "order": 5,
+                  "isRequired": true,
+                  "notApplicable": true,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Mother tongue?",
+                  "fieldType": "dropdown",
+                  "values": [
+                      {
+                          "value": "English",
+                          "key": "English"
+                      },
+                      {
+                          "value": "Hindi",
+                          "key": "Hindi"
+                      },
+                      {
+                          "value": "Telugu",
+                          "key": "Telugu"
+                      }
+                  ],
+                  "order": 6,
+                  "isRequired": false,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Enter your Email?",
+                  "fieldType": "email",
+                  "values": [],
+                  "order": 7,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Feedback?",
+                  "fieldType": "rating",
+                  "values": [],
+                  "order": 8,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Name?",
+                  "fieldType": "text",
+                  "values": [],
+                  "order": 9,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "About your self?",
+                  "fieldType": "textarea",
+                  "values": [],
+                  "order": 10,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Gender",
+                  "fieldType": "radio",
+                  "values": [
+                      {
+                          "value": "Male",
+                          "key": "Male"
+                      },
+                      {
+                          "value": "Female",
+                          "key": "Female"
+                      }
+                  ],
+                  "order": 11,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Date of birth?",
+                  "fieldType": "date",
+                  "values": [],
+                  "order": 12,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Enter your age?",
+                  "fieldType": "numeric",
+                  "values": [],
+                  "order": 13,
+                  "isRequired": true,
+                  "notApplicable": false,
+                  "parentId": "b0bb0f57-44ea-438d-bf90-3f034ad71c9f"
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "separator",
+                  "fieldType": "separator",
+                  "values": [],
+                  "order": 14,
+                  "isRequired": false
+              },
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Question 2",
+                  "fieldType": "textarea",
+                  "values": [],
+                  "order": 15,
+                  "isRequired": true,
+                  "notApplicable": true,
+                  "parentId": ""
+              }
+          ],
+          "status": "PUBLISH",
+          "id": 1735196765470,
+          "title": "Form with all scenarios",
+          "version": 1,
+          "numberOfRecords": 0,
+          "mandatoryFields": [
+              {
+                  "refApi": "",
+                  "logicalGroupCode": "",
+                  "name": "Course ID and Name",
+                  "fieldType": "text",
+                  "values": [],
+                  "order": 99,
+                  "isRequired": true,
+                  "hidden": true,
+                  "additionalProperties": {}
+              }
+          ],
+          "meta": [
+              {
+                  "value": "",
+                  "key": ""
+              }
+          ],
+          "clientVerion": 1.1
+      }
+  }
+    return of(result)
+  }
+
+  submitForm(formData: any) {
+    return this.http.post<any>(API_END_POINTS.SUBMIT_FORM, formData)
   }
 
   shareContent(reqBody: any) {
