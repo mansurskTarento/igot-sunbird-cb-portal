@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of} from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject} from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'

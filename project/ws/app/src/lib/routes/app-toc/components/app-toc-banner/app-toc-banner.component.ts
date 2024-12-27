@@ -534,7 +534,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   callBPProfileSurevy(batchData: any) {
     if (this.content) {
       const doptorgID = environment.doptOrg
-      // this.content.createdFor.push(doptorgID) // need to remove later
+      this.content.createdFor.push(doptorgID) // need to remove later
       const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
       const civilServiceType = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceType', '')
       if( isDoptContent) {
