@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject } from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject} from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'
@@ -34,6 +34,8 @@ const API_END_POINTS = {
   CERT_DOWNLOAD: (certId: any) => `${PROTECTED_SLAG_V8}/cohorts/course/batch/cert/download/${certId}`,
   SERVER_DATE: 'apis/public/v8/systemDate',
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
+  GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
+  SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`
 }
 
 @Injectable()
@@ -863,6 +865,14 @@ export class AppTocService {
   getServerDate() {
     return this.http.get<{ result: NsAppToc.IPostAssessment[] }>(
       API_END_POINTS.SERVER_DATE)
+  }
+
+  getFormById(formId: string) {
+    return this.http.get(API_END_POINTS.GET_FORM_BYID(formId))
+  }
+
+  submitForm(formData: any) {
+    return this.http.post<any>(API_END_POINTS.SUBMIT_FORM, formData)
   }
 
   shareContent(reqBody: any) {

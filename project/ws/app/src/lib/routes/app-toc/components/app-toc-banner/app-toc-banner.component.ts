@@ -140,6 +140,8 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   apiResponse: any
   courseDetails: any
   userProfile: any
+  userProfileObject: any
+  doptEligibleServicesList: string[] = []
   maxEmailsLimit = 30
   showLoader = false
   constructor(
@@ -292,9 +294,12 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       this.canShare = true
       if (this.configSvc.userProfile) {
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
+        this.userProfile = this.configSvc.userProfile
+        this.userProfileObject = this.configSvc.unMappedUser
         // this.getUsersToShare('')
       }
     }
+    this.getDoptEligibleServicesList()
   }
 
   getUsersToShare(queryStr: string) {
@@ -371,6 +376,25 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     return this.tocSvc.subtitleOnBanners
   }
 
+  getDoptEligibleServicesList() {
+    this.doptEligibleServicesList = [
+      `Central Company Law Service`, `Central Engineering Service`, `Central Power Engineering Service`,
+       `Indian Trade Service`, `Central Water Engineering Service`, `Central Engineering Service (CPWD)`,
+       `Indian Administrative Service`, `Indian Audit & Account Service`, `Indian Broadcasting (Engineering) Service`,
+       `Indian Broadcasting Programme Service`, `Indian Civil Accounts Service`, `Indian Cost Accounts Service`,
+       `Indian Defence Accounts Service`, `Indian Defence Estate Service`, `Indian Defence Service of Engineers`,
+       `Indian Economic Service`, `Indian Forest Service`, `Indian Information Service`, `Indian Inspection Service`,
+       `Indian Ordnance Factory Service`, `Indian P&T Finance & Accounts Service`, `Indian Police Service`,
+       `Indian Postal Service`, `Indian Railway Accounts Service`, `Indian Railway Personnel Service`,
+       `Indian Railway Service of Electrical Engineers`, `Indian Railway Service of Engineers`,
+       `Indian Railway Service of Mechanical Engineers`, `Indian Railway Service of Signal Engineers`,
+       `Indian Railway Store Service`, `Indian Railway Traffic Service`, `Indian Revenue Service (C&CE)`,
+       `Indian Revenue Service (IT)`, `Indian Statistical Service`, `Indian Supply Service`, `Indian Telecom Service`,
+       `Geological Survey of India, Group 'A' Service`, `Central Secretariat Service`, `Central Secretariat Stenographers Service`,
+       `Union Civil Service`
+    ]
+  }
+
   ngOnChanges(_changes: SimpleChanges): void {
     this.assignPathAndUpdateBanner(this.router.url)
     if (this.content) {
@@ -439,6 +463,17 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       }
     })
   }
+  
+  openConformationDialog(message: string) {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '600px',
+      data: {
+        message: message,
+        acceptButton: 'Ok',
+        disableClose: true
+      }
+    })
+  }
 
   public openRequestToEnroll(batchData: any) {
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
@@ -498,6 +533,19 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
   callBPProfileSurevy(batchData: any) {
     if (this.content) {
+      const doptorgID = environment.doptOrg
+      this.content.createdFor.push(doptorgID) // need to remove later
+      const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
+      const civilServiceType = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceType', '')
+      if( isDoptContent) {
+        if(!civilServiceType) {
+          this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
+          return
+        } else if (!this.doptEligibleServicesList.includes(civilServiceType)) {
+          this.openConformationDialog(`You are not eligible for the IST Blended Program of DoPT with the current service in your profile. If your service details are incorrect, please update your profile and apply.`)
+          return
+        }
+      }
       const courseName = this.content.name
       const profileForm = this.dialog.open(EnrollProfileFormComponent, {
         width: '920px',
@@ -505,6 +553,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
         data: {
           courseName,
           batchData,
+          isDoptContent,
         },
         disableClose: false,
         panelClass: ['animate__animated', 'animate__slideInLeft'],

@@ -115,6 +115,7 @@ export class EnrollProfileFormComponent implements OnInit {
   canShowOrg: boolean = false
   showOrg: boolean = false
   surveyId: any
+  isDoptContent: boolean = false
   profileFormType: any
   verifyEmail = false
   approvedDomainList: any = []
@@ -146,6 +147,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
     this.batchDetails = this.data.batchData
     this.surveyId = this.data.surveyId
+    this.isDoptContent = this.data.isDoptContent
     this.profileFormType = this.batchDetails.batchAttributes.userProfileFileds
     this.userDetailsForm = new FormGroup({
       name: new FormControl(''),
@@ -208,6 +210,7 @@ export class EnrollProfileFormComponent implements OnInit {
             }
           } else {
             this.verifyEmail = false
+            this.eVerified = true
           }
         })
     }
@@ -828,6 +831,7 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.updateValueAndValidity()
           } else if (this.profileFormType === 'Available user filled iGOT profile') {
             this.canshowMobile = false
+            this.mVerified = true
           } else {
             this.showMobile = true
             contrl.setValidators([Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]);
@@ -1085,7 +1089,7 @@ export class EnrollProfileFormComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-    if (this.canShowDesignation || this.canShowGroup) {
+    if ((this.canShowDesignation || this.canShowGroup) && !this.isDoptContent) {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {
           if (Object.keys(_obj).includes('designation')) {
@@ -1173,12 +1177,12 @@ export class EnrollProfileFormComponent implements OnInit {
     }
     let _professionalDetails: any = {}
     let updateProfessionalDetails : boolean = false
-    if(this.showGroup && this.userDetailsForm.controls['group'].value) {
+    if(this.showGroup && this.userDetailsForm.controls['group'].value && !this.isDoptContent) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
       updateProfessionalDetails = true
     }
-    if(this.showDesignation && this.userDetailsForm.controls['designation'].value) {
+    if(this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.isDoptContent) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
       updateProfessionalDetails = true

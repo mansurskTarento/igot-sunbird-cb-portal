@@ -17,7 +17,7 @@
           <div class="w-full" *ngIf="canShowOrg">
             <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.organisation' | translate }}
+                {{ (isDoptContent ? 'profileInfo.presentOrganisation' : 'profileInfo.organisation') | translate }}
             </div>
             <mat-form-field appearance="outline" class="w-full">
                 <input type="text" class="input-text" matInput formControlName="organisation" placeholder="Organisation"/>
@@ -248,10 +248,10 @@
                       </mat-error>
               </mat-form-field>                    
           </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails">
+          <div class="w-full" *ngIf="canShowshowCadreDetails  && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.isCadre' | translate }}
+                {{ 'profileInfo.fromGovOrganization' | translate }}
               </div>
               <mat-form-field appearance="outline" class="profile-form-field">
                   <mat-select formControlName="isCadre" (selectionChange)="getIsCadreStatus($event.value)" placeholder="Select cadre">
@@ -261,7 +261,7 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus  && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.typeOfCivilService' | translate }}
@@ -273,7 +273,7 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.serviceType' | translate }}
@@ -291,7 +291,7 @@
                   userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-                )">
+                ) && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadre' | translate }}
@@ -314,7 +314,7 @@
               userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
               userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
               userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
-          ))) ? true : false">
+          ))) ? true : false && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.batch' | translate }}
@@ -325,7 +325,7 @@
                   </mat-select>
                 </mat-form-field>
           </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !isDoptContent">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadreControllingAuthority' | translate }}
