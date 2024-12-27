@@ -63,6 +63,7 @@ export class PlayerPdfComponent extends WidgetBaseComponent
   private routerSubs: Subscription | null = null
   public isInFullScreen = false
   public isMobile = false
+  public markAsCompleteSubjectSubscribe: Subscription | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -151,14 +152,16 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       this.eventDispatcher(WsEvents.EnumTelemetrySubType.Init)
     }
 
-    this.viewerSvc.markAsCompleteSubject.subscribe((data: any) => {
+    this.markAsCompleteSubjectSubscribe  = this.viewerSvc.markAsCompleteSubject.subscribe((data: any) => {
 
       if (data) {
         this.currentPage.reset()
         this.currentPage.setValue(this.totalPages)
+        this.current  = [...this.current, ...[this.totalPages.toString()]]
+        this.markAsCompleteSubjectSubscribe?.unsubscribe()
         if (this.identifier) {
           this.saveContinueLearning(this.identifier)
-          this.fireRealTimeProgress(this.identifier)
+          // this.fireRealTimeProgress(this.identifier)
         }
       }
     })

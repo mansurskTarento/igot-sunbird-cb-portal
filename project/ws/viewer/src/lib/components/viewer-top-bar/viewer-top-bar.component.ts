@@ -114,6 +114,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
     this.isTypeOfCollection = this.activatedRoute.snapshot.queryParams.collectionType ? true : false
     this.collectionType = this.activatedRoute.snapshot.queryParams.collectionType
+    this.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
     this.courseName = this.activatedRoute.snapshot.queryParams.courseName
     this.channelId = this.activatedRoute.snapshot.queryParams.channelId
     if (this.configSvc.instanceConfig) {
@@ -186,13 +187,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.resourcePrimaryCategory = this.viewerDataSvc.resource ? this.viewerDataSvc.resource.primaryCategory : ''
       }
     })
+    if(this.paramSubscription) {
+      this.paramSubscription.unsubscribe()
+    } 
+    this.getUserRating(false)
     this.paramSubscription = this.activatedRoute.queryParamMap.subscribe(async params => {
       this.collectionId = params.get('collectionId') as string
       this.collectionType = params.get('collectionType') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
       const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
       this.currentDataFromEnrollList =  enrollList
-      this.getUserRating(false)
     })
 
     this.viewerDataServiceResourceSubscription = this.viewerDataSvc.changedSubject.subscribe(

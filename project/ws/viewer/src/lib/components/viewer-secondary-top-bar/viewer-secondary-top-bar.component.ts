@@ -375,7 +375,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         userId: this.userid,
         identifier: this.identifier,
         primaryCategory: this.collectionType,
-        courseCategory: this.currentDataFromEnrollList.content.courseCategory
+        courseCategory: this.currentDataFromEnrollList.content.courseCategory,
       },
     })
     dialogRef.afterClosed().subscribe(result => {

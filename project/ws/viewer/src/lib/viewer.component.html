@@ -1,9 +1,6 @@
 <section *ngIf="isNotEmbed" id="viewer-conatiner-backdrop">
   <ng-container *ngIf="!isMobile">
-    <viewer-viewer-top-bar *ngIf="fullScreenContainer" [content]="content" [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
-      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="tocSvc?.hashmap">
-    </viewer-viewer-top-bar>
-    <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
+    <viewer-viewer-top-bar  [content]="content" [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
       (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="tocSvc?.hashmap">
     </viewer-viewer-top-bar>
   </ng-container>
@@ -121,12 +118,12 @@
       <ng-container *ngIf="isMobile">
         <div class="mobile-top-bar-container" *ngIf="!(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <ng-container>
-            <viewer-viewer-top-bar *ngIf="fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
+            <viewer-viewer-top-bar  [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
               (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount">
             </viewer-viewer-top-bar>
-            <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
+            <!-- <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
               (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount">
-            </viewer-viewer-top-bar>
+            </viewer-viewer-top-bar> -->
           </ng-container>
         </div>
         <div [ngClass]="isMobile ? 'toc-container-mobile' : 'toc-container'" *ngIf="viewerHeaderSideBarToggleFlag && !(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
