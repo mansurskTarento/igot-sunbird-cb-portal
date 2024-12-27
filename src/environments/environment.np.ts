@@ -33,6 +33,7 @@ export const environment = {
   supportEmail: (window as { [key: string]: any })['env']['supportEmail'] || '',
   apiCache: (window as { [key: string]: any })['env']['apiCache'] || 0,
   spvorgID: (window as { [key: string]: any })['env']['spvorgID'] || '',
+  doptOrg: (window as { [key: string]: any })['env']['doptOrg'] || '',
   mdoChannelsBookmarkId: (window as { [key: string]: any })['env']['mdoChannelsBookmarkId'] || '',
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
