@@ -1171,7 +1171,7 @@ export class EnrollProfileFormComponent implements OnInit {
         profileDetails: {
           employmentDetails: {},
           personalDetails: {},
-          cadreDetails: {},
+          // cadreDetails: {},
         }
       }
     }
@@ -1220,7 +1220,7 @@ export class EnrollProfileFormComponent implements OnInit {
       payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
-    if(this.canShowshowCadreDetails) {
+    if(this.canShowshowCadreDetails && !this.isDoptContent) {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
@@ -1233,7 +1233,7 @@ export class EnrollProfileFormComponent implements OnInit {
         _cadreDetails['cadreId'] = this.cadreId
         _cadreDetails['civilServiceId'] = this.civilServiceId
         _cadreDetails['civilServiceTypeId'] = this.serviceId
-        payload.request.profileDetails.cadreDetails = _cadreDetails
+        payload.request.profileDetails['cadreDetails'] = _cadreDetails
       }
     }
     return payload
