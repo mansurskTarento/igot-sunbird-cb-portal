@@ -536,12 +536,13 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const doptorgID = environment.doptOrg
       this.content.createdFor.push(doptorgID) // need to remove later
       const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
-      const civilServiceType = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceType', '')
+      // const isDptUser = _.get(this.userProfileObject, 'rootOrgId')
+      const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
       if( isDoptContent) {
-        if(!civilServiceType) {
+        if(!civilServiceName) {
           this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
           return
-        } else if (!this.doptEligibleServicesList.includes(civilServiceType)) {
+        } else if (!this.doptEligibleServicesList.includes(civilServiceName)) {
           this.openConformationDialog(`You are not eligible for the IST Blended Program of DoPT with the current service in your profile. If your service details are incorrect, please update your profile and apply.`)
           return
         }
