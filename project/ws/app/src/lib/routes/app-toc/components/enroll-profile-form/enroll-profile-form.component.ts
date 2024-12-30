@@ -123,6 +123,7 @@ export class EnrollProfileFormComponent implements OnInit {
   currentDate = new Date()
   openDesignationDropdown = false
   openLanguageDropdown = false
+  canShowOtherDesignation = false
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -168,6 +169,7 @@ export class EnrollProfileFormComponent implements OnInit {
       cadreName: new FormControl(''),
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
+      otherDesignation: new FormControl('')
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
@@ -300,8 +302,23 @@ export class EnrollProfileFormComponent implements OnInit {
 
   selectDesignation(designation: any) {
     this.userDetailsForm.patchValue({designation: designation})
+    const fieldControl = this.userDetailsForm.get('otherDesignation')
+    if (this.showDoptChanges && designation === 'Others') {
+      if (fieldControl) {
+        fieldControl.setValidators([Validators.required]);
+        fieldControl.updateValueAndValidity()
+      }
+      this.canShowOtherDesignation = true
+    } else {
+      if (fieldControl) {
+        fieldControl.clearValidators()
+        fieldControl.updateValueAndValidity()
+      }
+      this.canShowOtherDesignation = false
+    }
     this.openDesignationDropdown = false
   }
+ 
 
   selectLanguage(language: any) {
     this.userDetailsForm.patchValue({domicileMedium: language})
@@ -1054,6 +1071,9 @@ export class EnrollProfileFormComponent implements OnInit {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        if (this.showDoptChanges) {
+          this.designationsMeta.push({name: 'Others', id: 0, description: 'Others'})
+        }
         this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
@@ -1268,7 +1288,12 @@ export class EnrollProfileFormComponent implements OnInit {
       }
       if(_field.field === 'profileDetails.professionalDetails.designation') {
         if (this.showDesignation && status) {
-          dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
+          if (this.showDoptChanges && this.userDetailsForm.controls['designation'] &&
+              this.userDetailsForm.controls['designation'].value ==='Others' && this.userDetailsForm.controls['otherDesignation']) {
+            dataObject[_field.name] = this.userDetailsForm.controls['otherDesignation'].value
+          } else {
+            dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
+          }
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].designation ?
             this.userProfileObject.profileDetails.professionalDetails[0].designation : "N/A"
