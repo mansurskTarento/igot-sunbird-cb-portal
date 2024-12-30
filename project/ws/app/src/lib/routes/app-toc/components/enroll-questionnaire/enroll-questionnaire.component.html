@@ -28,14 +28,16 @@
           <ng-container [ngSwitch]="parentField.fieldType">
             <ng-container *ngSwitchCase="'heading'">
               <ws-app-survey-form-section [chaildFields]="getChaildFields(parentField.sectionId)" [sectionField]="parentField"
-              [chaildQuestionsFormArray]="getChaildQuestionsFormArray(parentField.sectionId)"></ws-app-survey-form-section>
+              [chaildQuestionsFormArray]="getChaildQuestionsFormArray(parentField.sectionId)"
+              (questionValues)="updateQuestionValues($event)"></ws-app-survey-form-section>
             </ng-container>
             <ng-container *ngSwitchCase="'separator'">
               <hr class="opacity-50 elment-separator">
             </ng-container>
             <ng-container *ngSwitchDefault>
               <ws-app-survey-form-question [fieldDetails]="parentField" 
-              [questionForm]="getQuestionControl(parentField.controlIndex)"></ws-app-survey-form-question>
+              [questionForm]="getQuestionControl(parentField.controlIndex)"
+              (questionValues)="updateQuestionValues($event)"></ws-app-survey-form-question>
             </ng-container>
           </ng-container>
         </ng-container>

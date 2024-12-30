@@ -7,7 +7,8 @@
     <div class="section-content pt-5">
         <ng-container *ngFor="let questionForm of chaildQuestionsFormArray?.controls">
           <ws-app-survey-form-question [questionForm]="questionForm"
-           [fieldDetails]="getField(questionForm.value.questionIndex)"></ws-app-survey-form-question>
+           [fieldDetails]="getField(questionForm.value.questionIndex)"
+           (questionValues)="updateQuestionValues($event)"></ws-app-survey-form-question>
         </ng-container>
     </div>
   </div>
