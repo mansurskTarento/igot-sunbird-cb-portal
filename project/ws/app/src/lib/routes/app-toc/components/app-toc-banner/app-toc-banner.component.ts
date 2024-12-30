@@ -561,9 +561,9 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const doptorgID = environment.doptOrg
       this.content.createdFor.push(doptorgID) // need to remove later
       const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
-      // const isDptUser = _.get(this.userProfileObject, 'rootOrgId')
+      const isDptUser = _.get(this.userProfileObject, 'rootOrgId') === doptorgID
       const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
-      if( isDoptContent) {
+      if( isDoptContent && isDptUser) {
         if(!civilServiceName) {
           this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
           return
@@ -573,13 +573,14 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
       const courseName = this.content.name
+      const showDoptChanges = (isDoptContent && isDptUser) ? true : false
       const profileForm = this.dialog.open(EnrollProfileFormComponent, {
         width: '920px',
         maxHeight: '85vh',
         data: {
           courseName,
           batchData,
-          isDoptContent,
+          showDoptChanges,
         },
         disableClose: false,
         panelClass: ['animate__animated', 'animate__slideInLeft'],

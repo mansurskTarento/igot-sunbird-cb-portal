@@ -6,11 +6,17 @@ import * as _ from 'lodash'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
 // import { DatePipe } from '@angular/common'
 import { HttpErrorResponse } from '@angular/common/http'
+
+
+const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
+const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
+
 @Component({
   selector: 'ws-app-enroll-questionnaire',
   templateUrl: './enroll-questionnaire.component.html',
   styleUrls: ['./enroll-questionnaire.component.scss'],
 })
+
 export class EnrollQuestionnaireComponent implements OnInit {
   public afterSubmitAction = this.checkAfterSubmit.bind(this)
   isReadOnly = false
@@ -23,7 +29,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   surveyId = ''
   surveyForm!: FormGroup
   parentalFields: any[] = []
-  chaildFields: any[] = []
+  childFields: any[] = []
   surveyFormIsValid = true
 
   constructor(
@@ -80,6 +86,19 @@ export class EnrollQuestionnaireComponent implements OnInit {
               validatorsArray.push(Validators.required)
             }
 
+            switch (field.fieldType) {
+              case 'phone number':
+                validatorsArray.push(Validators.pattern(MOBILE_PATTERN))
+                validatorsArray.push(Validators.minLength(10))
+                validatorsArray.push(Validators.maxLength(10))
+                break
+              case 'email':
+                validatorsArray.push(Validators.pattern(EMAIL_PATTERN))
+                break
+              case 'numeric':
+                break
+            }
+
             const questionGroup = this.fb.group({
               question: [field.name],
               parentId: [field.parentId],
@@ -97,7 +116,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
           }
 
           if(field.parentId) {
-            this.chaildFields.push(field)
+            this.childFields.push(field)
           } else {
             this.parentalFields.push(field)
           }
@@ -113,7 +132,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     return this.fb.array([])
   }
 
-  getChaildQuestionsFormArray(sectionId: string): FormArray {
+  getChildQuestionsFormArray(sectionId: string): FormArray {
     if(this.surveyForm && this.surveyForm.controls.fields) {
       const questionsArray = this.questionsArray
       const childQuestionsArray = questionsArray.controls.filter((question: any) => {
@@ -127,12 +146,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
     return this.fb.array([]) as FormArray
   }
 
-  getChaildFields(sectionId: string) {
-    let sectionChailds: any = []
-    if(this.chaildFields) {
-      sectionChailds = this.chaildFields.filter((field: any) => field.parentId === sectionId)
+  getChildFields(sectionId: string) {
+    let sectionChilds: any = []
+    if(this.childFields) {
+      sectionChilds = this.childFields.filter((field: any) => field.parentId === sectionId)
     }
-    return sectionChailds
+    return sectionChilds
   }
 
   getQuestionControl(index: number) {
@@ -159,7 +178,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         
       }
 
-      if(this.chaildFields.length) {
+      if(this.childFields.length) {
         formBody['meta'] = [
           {
               key: '',

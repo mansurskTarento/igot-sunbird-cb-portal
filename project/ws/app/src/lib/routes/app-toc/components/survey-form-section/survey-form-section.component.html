@@ -5,7 +5,7 @@
     <div class="section-desc text-xs font-normal pt-2">{{sectionField?.values[0]?.subHeading}}</div>
     <hr class="opacity-50 mb-0">
     <div class="section-content pt-5">
-        <ng-container *ngFor="let questionForm of chaildQuestionsFormArray?.controls">
+        <ng-container *ngFor="let questionForm of childQuestionsFormArray?.controls">
           <ws-app-survey-form-question [questionForm]="questionForm"
            [fieldDetails]="getField(questionForm.value.questionIndex)"
            (questionValues)="updateQuestionValues($event)"></ws-app-survey-form-question>

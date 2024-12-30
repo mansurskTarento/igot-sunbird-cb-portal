@@ -1,6 +1,6 @@
-<form [formGroup]="questionForm" class="pb-2 q-element mb-4">
+<form [formGroup]="questionForm" class="pb-2 q-element mb-4 question-container">
     <div class="flex items-start">
-        <div class="mat-subheading-2 margin-remove flex"
+        <div class="font-semibold margin-remove flex"
             [ngClass]="{'required' : fieldDetails.isRequired, 'pb-3': otherFieldType.includes(fieldDetails.fieldType)}"
             i18n="Title label|Label which explains the user to enter title">
             {{questionForm.value?.question}}
@@ -16,7 +16,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="'phone number'">
             <mat-form-field appearance="outline" class="w-full">
-                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" />
+                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" maxlength="10"/>
             </mat-form-field>
         </ng-container>
         <ng-container *ngSwitchCase="'date'">
@@ -68,6 +68,13 @@
                 <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" type="number" />
             </mat-form-field>
         </ng-container>
+        <ng-container *ngSwitchCase="'checkbox'">
+            <section class="pt-2">
+              <mat-checkbox *ngFor="let objct of fieldDetails?.values" [value]="objct.value" class="pr-5 pb-2">
+                {{ objct.key }}
+              </mat-checkbox>
+            </section>
+          </ng-container>
     </ng-container>
 
     <ng-container *ngIf="fieldDetails.notApplicable">

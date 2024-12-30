@@ -145,3 +145,7 @@ input[disabled] + mat-icon.mother-toungue-caret {
   border-radius: 20px;
 }
 
+.submit-btn:disabled {
+    opacity: 0.6!important;
+}
+

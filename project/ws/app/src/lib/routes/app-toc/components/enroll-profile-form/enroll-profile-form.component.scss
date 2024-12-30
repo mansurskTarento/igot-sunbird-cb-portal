@@ -153,3 +153,7 @@ input[disabled] + mat-icon.mother-toungue-caret {
 .save-button:disabled {
     opacity: 0.6!important;
 }
+
+:host ::ng-deep.userDetailsForm .mat-form-field-wrapper {
+    padding-bottom: 8px!important
+}

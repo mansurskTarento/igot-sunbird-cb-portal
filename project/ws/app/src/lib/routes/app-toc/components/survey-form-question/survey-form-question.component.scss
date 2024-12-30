@@ -27,7 +27,7 @@
     color: #ffca28;
 }
 
-:host ::ng-deep .preview-container {
+:host ::ng-deep .question-container {
     .mat-form-field-wrapper {
       padding: 0px !important;
     }
@@ -42,4 +42,6 @@
       font-family: Montserrat;
       /* stylelint-enable */
     }
+
+    .mat-form-field-wrapper {}
   }
