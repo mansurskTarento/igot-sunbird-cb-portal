@@ -68,6 +68,13 @@
                 <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" type="number" />
             </mat-form-field>
         </ng-container>
+        <ng-container *ngSwitchCase="'checkbox'">
+            <section class="pt-2">
+              <mat-checkbox *ngFor="let objct of fieldDetails?.values" [value]="objct.value" class="pr-5 pb-2">
+                {{ objct.key }}
+              </mat-checkbox>
+            </section>
+          </ng-container>
     </ng-container>
 
     <ng-container *ngIf="fieldDetails.notApplicable">
