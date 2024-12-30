@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray } from '@angular/forms';
 
 @Component({
@@ -12,6 +12,8 @@ export class SurveyFormSectionComponent {
   @Input() chaildFields: any
   @Input() sectionField: any
 
+  @Output() questionValues = new EventEmitter()
+
   getField(questionIndex: number) {
     let field = {}
     if(this.chaildFields) {
@@ -19,6 +21,10 @@ export class SurveyFormSectionComponent {
       field = filterList ? filterList[0] : {}
     }
     return field
+  }
+
+  updateQuestionValues(event: any) {
+    this.questionValues.emit(event)
   }
 
 }

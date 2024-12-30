@@ -24,6 +24,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   surveyForm!: FormGroup
   parentalFields: any[] = []
   chaildFields: any[] = []
+  surveyFormIsValid = true
 
   constructor(
     private snackBar: MatSnackBar,
@@ -88,7 +89,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
               isNA: [false]
             })
             field['controlIndex'] = questionsArray.length
+            field['validatorsArray'] = validatorsArray
             questionsArray.push(questionGroup)
+            if(validatorsArray.length) {
+              this.surveyFormIsValid = false
+            }
           }
 
           if(field.parentId) {
@@ -143,7 +148,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
   submitForm() {
     this.surveyForm.markAllAsTouched()
-    if(this.surveyForm.valid) {
+    this.surveyForm.updateValueAndValidity()
+    if(this.surveyFormIsValid) {
       const formBody: any = {
         formId: this.surveyId,
         formData: '',
@@ -198,6 +204,20 @@ export class EnrollQuestionnaireComponent implements OnInit {
       })
     }
     return dataObject
+  }
+
+  updateQuestionValues(event: any) {
+    this.questionsArray.value[event.questionIndex] = event
+    this.updateSurveyFormValidity()
+  }
+
+  updateSurveyFormValidity() { // some times reactive forms not abale to detect value changes and validity in dynamic formArray
+    this.surveyFormIsValid = true
+    this.questionsArray.controls.forEach((form: any) => {
+      if(!form.controls.answer.valid) {
+        this.surveyFormIsValid = false
+      }
+    })
   }
 
 }
