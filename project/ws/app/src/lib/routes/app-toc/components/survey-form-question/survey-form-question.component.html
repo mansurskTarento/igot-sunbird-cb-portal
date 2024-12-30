@@ -1,4 +1,4 @@
-<form [formGroup]="questionForm" class="pb-2 q-element mb-4">
+<form [formGroup]="questionForm" class="pb-2 q-element mb-4 question-container">
     <div class="flex items-start">
         <div class="mat-subheading-2 margin-remove flex"
             [ngClass]="{'required' : fieldDetails.isRequired, 'pb-3': otherFieldType.includes(fieldDetails.fieldType)}"
@@ -16,7 +16,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="'phone number'">
             <mat-form-field appearance="outline" class="w-full">
-                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" />
+                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" maxlength="10"/>
             </mat-form-field>
         </ng-container>
         <ng-container *ngSwitchCase="'date'">

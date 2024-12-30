@@ -17,7 +17,7 @@
           <div class="w-full" *ngIf="canShowOrg">
             <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                {{ (isDoptContent ? 'profileInfo.presentOrganisation' : 'profileInfo.organisation') | translate }}
+                {{ (showDoptChanges ? 'profileInfo.presentOrganisation' : 'profileInfo.organisation') | translate }}
             </div>
             <mat-form-field appearance="outline" class="w-full">
                 <input type="text" class="input-text" matInput formControlName="organisation" placeholder="Organisation"/>
@@ -248,7 +248,7 @@
                       </mat-error>
               </mat-form-field>                    
           </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails  && !isDoptContent">
+          <div class="w-full" *ngIf="canShowshowCadreDetails  && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.fromGovOrganization' | translate }}
@@ -261,7 +261,7 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus  && !isDoptContent">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus  && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.typeOfCivilService' | translate }}
@@ -273,7 +273,7 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value && !isDoptContent">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.serviceType' | translate }}
@@ -291,7 +291,7 @@
                   userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-                ) && !isDoptContent">
+                ) && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadre' | translate }}
@@ -314,7 +314,7 @@
               userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
               userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
               userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
-          ))) ? true : false && !isDoptContent">
+          ))) ? true : false && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.batch' | translate }}
@@ -325,7 +325,7 @@
                   </mat-select>
                 </mat-form-field>
           </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !isDoptContent">
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !showDoptChanges">
               <div class="mat-subheading-2 margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadreControllingAuthority' | translate }}

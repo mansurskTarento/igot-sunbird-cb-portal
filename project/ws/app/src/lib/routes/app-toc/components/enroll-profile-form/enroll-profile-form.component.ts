@@ -115,7 +115,7 @@ export class EnrollProfileFormComponent implements OnInit {
   canShowOrg: boolean = false
   showOrg: boolean = false
   surveyId: any
-  isDoptContent: boolean = false
+  showDoptChanges: boolean = false
   profileFormType: any
   verifyEmail = false
   approvedDomainList: any = []
@@ -147,7 +147,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
     this.batchDetails = this.data.batchData
     this.surveyId = this.data.surveyId
-    this.isDoptContent = this.data.isDoptContent
+    this.showDoptChanges = this.data.showDoptChanges
     this.profileFormType = this.batchDetails.batchAttributes.userProfileFileds
     this.userDetailsForm = new FormGroup({
       name: new FormControl(''),
@@ -653,13 +653,13 @@ export class EnrollProfileFormComponent implements OnInit {
     this.selectedCadreName = event
     if(this.selectedService) {
       this.selectedCadre = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName)
-      this.startBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).startBatchYear
-      this.endBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).endBatchYear
-      this.exclusionYear = this.selectedCadre.exculsionYearList
+      this.startBatch = this.selectedCadre ? this.selectedCadre.startBatchYear : ''
+      this.endBatch = this.selectedCadre ? this.selectedCadre.endBatchYear : ''
+      this.exclusionYear = this.selectedCadre ? this.selectedCadre.exculsionYearList : ''
       // tslint:disable
       this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
           .filter(year => !this.exclusionYear.includes(year))
-      this.cadreId = this.selectedCadre.id
+      this.cadreId = this.selectedCadre ? this.selectedCadre.id : ''
     }
   
   }
@@ -1089,7 +1089,7 @@ export class EnrollProfileFormComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-    if ((this.canShowDesignation || this.canShowGroup) && !this.isDoptContent) {
+    if ((this.canShowDesignation || this.canShowGroup) && !this.showDoptChanges) {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {
           if (Object.keys(_obj).includes('designation')) {
@@ -1177,12 +1177,12 @@ export class EnrollProfileFormComponent implements OnInit {
     }
     let _professionalDetails: any = {}
     let updateProfessionalDetails : boolean = false
-    if(this.showGroup && this.userDetailsForm.controls['group'].value && !this.isDoptContent) {
+    if(this.showGroup && this.userDetailsForm.controls['group'].value && !this.showDoptChanges) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
       updateProfessionalDetails = true
     }
-    if(this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.isDoptContent) {
+    if(this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.showDoptChanges) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
       updateProfessionalDetails = true
@@ -1220,7 +1220,7 @@ export class EnrollProfileFormComponent implements OnInit {
       payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
-    if(this.canShowshowCadreDetails && !this.isDoptContent) {
+    if(this.canShowshowCadreDetails && !this.showDoptChanges) {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true

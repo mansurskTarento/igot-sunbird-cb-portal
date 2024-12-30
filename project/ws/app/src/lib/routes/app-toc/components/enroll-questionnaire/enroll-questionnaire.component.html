@@ -27,8 +27,8 @@
         <ng-container *ngFor="let parentField of parentalFields">
           <ng-container [ngSwitch]="parentField.fieldType">
             <ng-container *ngSwitchCase="'heading'">
-              <ws-app-survey-form-section [chaildFields]="getChaildFields(parentField.sectionId)" [sectionField]="parentField"
-              [chaildQuestionsFormArray]="getChaildQuestionsFormArray(parentField.sectionId)"
+              <ws-app-survey-form-section [childFields]="getChildFields(parentField.sectionId)" [sectionField]="parentField"
+              [childQuestionsFormArray]="getChildQuestionsFormArray(parentField.sectionId)"
               (questionValues)="updateQuestionValues($event)"></ws-app-survey-form-section>
             </ng-container>
             <ng-container *ngSwitchCase="'separator'">
@@ -42,7 +42,8 @@
           </ng-container>
         </ng-container>
         <div class="flex justify-end m-4">
-          <button mat-button class="submit-btn" (click)="submitForm()">Submit</button>
+          <button mat-button class="submit-btn" 
+          [disabled]="!surveyFormIsValid" (click)="submitForm()">Submit</button>
         </div>
       </form>
     </ng-container>

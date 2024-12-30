@@ -18,12 +18,13 @@ export class SurveyFormQuestionComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.questionForm) {
-      this.questionForm.controls.answer.valueChanges.subscribe((value: any) => {
+      this.answerControl.valueChanges.subscribe((value: any) => {
         if(value !==  this.previesAnswer && value !== null) {
           if (this.fieldDetails['validatorsArray'] && this.questionForm.controls.isNA.value) {
-            this.questionForm.controls.answer.setValidators(this.fieldDetails['validatorsArray'])
+            this.answerControl.setValidators(this.fieldDetails['validatorsArray'])
             this.questionForm.controls.isNA.patchValue(false)
-            this.questionForm.controls.answer.updateValueAndValidity()
+            this.answerControl.markAllAsTouched()
+            this.answerControl.updateValueAndValidity()
           }
           this.questionForm.updateValueAndValidity()
           this.emitAnswer()
@@ -33,21 +34,24 @@ export class SurveyFormQuestionComponent implements OnInit {
     }
   }
 
+  get answerControl() {
+    return this.questionForm.controls.answer
+  }
+
   sectionChange() {
     if(this.questionForm.controls.isNA.value) {
-      this.questionForm.controls.answer.reset()
-      this.questionForm.controls.answer.clearValidators()
-      // debugger
+      this.answerControl.reset()
+      this.answerControl.clearValidators()
       const validatorsArray = this.fieldDetails['validatorsArray'] ? this.fieldDetails['validatorsArray'].filter((validator: any) => validator !== Validators.required) : []
-      this.questionForm.controls.answer.setValidators(validatorsArray)
-      this.questionForm.controls.answer.updateValueAndValidity()
+      this.answerControl.setValidators(validatorsArray)
+      this.answerControl.updateValueAndValidity()
       this.emitAnswer()
     }
   }
 
   setRating(rating: number) {
-    if(this.questionForm.controls.answer) {
-      this.questionForm.controls.answer.patchValue(rating)
+    if(this.answerControl) {
+      this.answerControl.patchValue(rating)
       this.emitAnswer()
     }
   }

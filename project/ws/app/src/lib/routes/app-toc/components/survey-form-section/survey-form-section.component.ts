@@ -8,16 +8,16 @@ import { FormArray } from '@angular/forms';
 })
 export class SurveyFormSectionComponent {
 
-  @Input() chaildQuestionsFormArray!: FormArray
-  @Input() chaildFields: any
+  @Input() childQuestionsFormArray!: FormArray
+  @Input() childFields: any
   @Input() sectionField: any
 
   @Output() questionValues = new EventEmitter()
 
   getField(questionIndex: number) {
     let field = {}
-    if(this.chaildFields) {
-      const filterList = this.chaildFields.filter((chaildField: any) => chaildField.controlIndex === questionIndex)
+    if(this.childFields) {
+      const filterList = this.childFields.filter((childField: any) => childField.controlIndex === questionIndex)
       field = filterList ? filterList[0] : {}
     }
     return field
