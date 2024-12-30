@@ -319,29 +319,30 @@
                     </mat-select>
                 </mat-form-field>
           </div>
-
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('serviceType') && (userDetailsForm.get('serviceType').value && 
-          userDetailsForm.get('isCadre').value && userDetailsForm.get('typeOfCivilService').value && (
-              userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
-              userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
-              userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-          ) && userDetailsForm.get('cadreName').value)  ? true : ((userDetailsForm.get('serviceType').value && 
-              userDetailsForm.get('isCadre').value 
-          && userDetailsForm.get('typeOfCivilService').value && (
-              userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
-              userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
-              userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
-          ))) ? true : false && !showDoptChanges">
-              <div class="font-semibold margin-0 required"
-                i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.batch' | translate }}
-              </div>
-              <mat-form-field appearance="outline" class="profile-form-field">
-                  <mat-select formControlName="cadreBatch" placeholder="Select batch">
-                      <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-          </div>
+          <ng-container *ngIf="!showDoptChanges">
+            <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('serviceType') && (userDetailsForm.get('serviceType').value && 
+            userDetailsForm.get('isCadre').value && userDetailsForm.get('typeOfCivilService').value && (
+                userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
+                userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
+                userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
+            ) && userDetailsForm.get('cadreName').value)  ? true : ((userDetailsForm.get('serviceType').value && 
+                userDetailsForm.get('isCadre').value 
+            && userDetailsForm.get('typeOfCivilService').value && (
+                userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
+                userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
+                userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
+            ))) ? true : false && !showDoptChanges">
+                <div class="font-semibold margin-0 required"
+                  i18n="Title label|Label which explains the user to enter title">
+                  {{ 'profileInfo.batch' | translate }}
+                </div>
+                <mat-form-field appearance="outline" class="profile-form-field">
+                    <mat-select formControlName="cadreBatch" placeholder="Select batch">
+                        <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+          </ng-container>
           <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !showDoptChanges">
               <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
