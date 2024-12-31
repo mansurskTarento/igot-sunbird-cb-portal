@@ -31,6 +31,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   parentalFields: any[] = []
   childFields: any[] = []
   surveyFormIsValid = true
+  addLoader = 0
 
   constructor(
     private snackBar: MatSnackBar,
@@ -63,12 +64,18 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   getFormDetails() {
+    this.addLoader = this.addLoader + 1
     this.appTocSvc.getFormById(this.surveyId).subscribe((result: any) => {
+      this.addLoader = this.addLoader - 1
       this.formDetails = {
         title: _.get(result, 'responseData.title', ''),
         fields: _.get(result, 'responseData.fields', [])
       }
       this.buildForm()
+    }, (error: HttpErrorResponse) => {
+      if(error) {
+        this.addLoader = this.addLoader - 1
+      }
     })
   }
 
@@ -189,15 +196,18 @@ export class EnrollQuestionnaireComponent implements OnInit {
             '': ''
         }
       }
-
+      
+      this.addLoader = this.addLoader + 1
       this.appTocSvc.submitForm(formBody).subscribe({
         next: res => {
+          this.addLoader = this.addLoader - 1
           if(res) {
             this.openSnackbar('Form is submitted successfully')
             this.dialogRef.close(true)
           }
         },
         error: (error: HttpErrorResponse) => {
+          this.addLoader = this.addLoader - 1
           if(error) {
             this.openSnackbar('Something went wrong please try again')
           }

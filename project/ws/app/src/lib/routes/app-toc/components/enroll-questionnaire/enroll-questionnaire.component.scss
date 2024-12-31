@@ -149,3 +149,13 @@ input[disabled] + mat-icon.mother-toungue-caret {
     opacity: 0.6!important;
 }
 
+.loader {
+    position: absolute;
+    top: 0pc;
+    left: 0px;
+    z-index: 1000;
+    height: 100vh;
+    width: 100vw;
+    background-color: #80808045;
+  }
+

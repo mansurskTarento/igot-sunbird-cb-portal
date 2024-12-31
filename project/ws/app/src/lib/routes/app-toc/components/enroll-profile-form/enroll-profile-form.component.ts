@@ -124,6 +124,7 @@ export class EnrollProfileFormComponent implements OnInit {
   openDesignationDropdown = false
   openLanguageDropdown = false
   canShowOtherDesignation = false
+  addLoader = 0
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -510,7 +511,9 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   fetchCadreData(){
+    this.addLoader = this.addLoader + 1
     this.profileV2Svc.fetchCadre().subscribe((response: any) => {
+      this.addLoader = this.addLoader - 1
       this.civilServiceData = response.result.response.value.civilServiceType
       this.civilServiceTypes = this.civilServiceData.civilServiceTypeList.map((service: any) => service.name)
     })
@@ -682,7 +685,9 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   getPendingDetails() {
+    this.addLoader = this.addLoader + 1
     this.profileV2Svc.fetchApprovalDetails().subscribe((resp: any) => {
+      this.addLoader = this.addLoader - 1
       if (resp && resp.result && resp.result.data) {
         this.pendingFileds = resp.result.data
         if (this.pendingFileds.length > 0) {
@@ -709,6 +714,7 @@ export class EnrollProfileFormComponent implements OnInit {
     }, error => {
       // tslint:disable-next-line:no-console
       console.log(error)
+      this.addLoader = this.addLoader - 1
       this.isLoading = false
     })
   }
@@ -1052,11 +1058,14 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   getGroupData(): void {
+    this.addLoader = this.addLoader + 1
     this.userProfileService.getGroups()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
+        this.addLoader = this.addLoader - 1
         this.groupData = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
       },         (error: HttpErrorResponse) => {
+        this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('groupDataFaile'))
         }
@@ -1113,18 +1122,30 @@ export class EnrollProfileFormComponent implements OnInit {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {
           if (Object.keys(_obj).includes('designation')) {
+            this.addLoader = this.addLoader + 1
             this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
+                this.addLoader = this.addLoader - 1
                 /* tslint:disable */
                 console.log(resp.result.message)
+              }
+            }, (error: HttpErrorResponse) => {
+              if(error) {
+                this.addLoader = this.addLoader - 1
               }
             })
           }
           if (Object.keys(_obj).includes('group')) {
+            this.addLoader = this.addLoader + 1
             this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
+                this.addLoader = this.addLoader - 1
                 /* tslint:disable */
                 console.log(resp.result.message)
+              }
+            }, (error: HttpErrorResponse) => {
+              if(error) {
+                this.addLoader = this.addLoader - 1
               }
             })
           }
@@ -1149,11 +1170,14 @@ export class EnrollProfileFormComponent implements OnInit {
       payload['request']['profileDetails']['personalDetails']['dob'] = dob
     }    
     if (this.updateProfile) {
+      this.addLoader = this.addLoader + 1
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
+        this.addLoader = this.addLoader - 1
         if (res.responseCode === 'OK') {
           this.submitSurevy(true)
         }
       }, error => {
+        this.addLoader = this.addLoader - 1
         /* tslint:disable */
         console.log(error)
         this.snackBar.open("something went wrong!")
@@ -1167,7 +1191,9 @@ export class EnrollProfileFormComponent implements OnInit {
         formId: this.data.batchData.batchAttributes.profileSurveyId,
         timestamp: new Date().getTime(),
     }
+    this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
+      this.addLoader = this.addLoader - 1
       if (resp && resp.statusInfo && resp.statusInfo.statusCode === 200) {
         this.customForm = false
         this.snackBar.open("Form is submitted successfully")
@@ -1178,6 +1204,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.snackBar.open(resp.errorMessage)
       }
     }, error => {
+      this.addLoader = this.addLoader - 1
       /* tslint:disable */
       console.log(error)
       this.snackBar.open("something went wrong!")
@@ -1466,12 +1493,15 @@ export class EnrollProfileFormComponent implements OnInit {
       },
     }
 
+    this.addLoader = this.addLoader + 1
     this.userProfileService.updatePrimaryEmailDetails(postData)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
+        this.addLoader = this.addLoader - 1
         this.userProfileObject.profileDetails.personalDetails.primaryEmail = email
         this.snackBar.open(this.handleTranslateTo('emailUpdated'))
       },         (error: HttpErrorResponse) => {
+        this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('updateEmailFailed'))
         }

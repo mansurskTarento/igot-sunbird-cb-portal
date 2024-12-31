@@ -49,3 +49,9 @@
     </ng-container>
   </div>
 </div>
+
+<ng-container *ngIf="addLoader > 0" >
+  <div class="text-center my-2 loader flex justify-center items-center">
+    <mat-spinner class="inline-block"></mat-spinner>
+  </div>
+</ng-container>
