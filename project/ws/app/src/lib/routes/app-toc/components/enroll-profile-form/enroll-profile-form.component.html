@@ -88,8 +88,8 @@
             {{ 'profileInfo.designation' | translate }}
           </div>
           <mat-form-field appearance="outline" class="w-full">
-            <div class="flex flex-row auto-complete-row">
-              <input type="text" class="input-text" matInput formControlName="designation"
+            <div class="flex flex-row auto-complete-row relative">
+              <input type="text" class="input-text high-zindex" matInput formControlName="designation"
                 (input)="filterdesignation($event.target.value)" (focus)="onDesignationsFocus()" #textBox
                 placeholder="{{ 'profileInfo.chooseADesignation' | translate }}">
               <mat-icon class="disagnation-caret">arrow_drop_down</mat-icon>
@@ -221,8 +221,8 @@
               {{ 'profileInfo.motherTongue' | translate }}
             </div>
             <mat-form-field appearance="outline" class="w-full">
-              <div class="flex flex-row auto-complete-row">
-                <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput
+              <div class="flex flex-row auto-complete-row relative">
+                <input type="text" class="input-text high-zindex" aria-label="Domicile Medium (Mother Tongue)" matInput
                   formControlName="domicileMedium" placeholder="Select mother tongue"
                   (input)="filterLanguage($event.target.value)" (focus)="onLanguageFocus()" #languageTextBox/>
                 <mat-icon class="mother-toungue-caret">arrow_drop_down</mat-icon>
@@ -344,7 +344,7 @@
             </div>
           </ng-container>
           <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !showDoptChanges">
-              <div class="font-semibold margin-0 required"
+              <div class="font-semibold margin-0 required mb-3"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadreControllingAuthority' | translate }}
               </div>

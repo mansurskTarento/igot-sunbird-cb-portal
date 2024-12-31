@@ -9,6 +9,10 @@
 
 }
 
+.high-zindex {
+    z-index: 9999;
+}
+
 .auto-list {
     display: flex;
     border: 1px solid #e3dede;
@@ -70,6 +74,17 @@
         padding-right: 0px !important;
         padding-bottom: 1rem !important;
       }
+}
+
+.disagnation-caret {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+.mother-toungue-caret {
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
 ::ng-deep.userDetailsForm .mat-form-field-appearance-outline .mat-form-field-infix {
