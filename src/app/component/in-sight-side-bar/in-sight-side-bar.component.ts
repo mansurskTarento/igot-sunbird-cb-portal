@@ -135,7 +135,7 @@ export class InsightSideBarComponent implements OnInit {
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
-      this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updteDesignation
+      this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
       }
