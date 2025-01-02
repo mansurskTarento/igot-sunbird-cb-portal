@@ -16,7 +16,8 @@
             *ngIf="tabResults.length > 0">
             <mat-tab-group animationDuration="0ms"
                   class="mat-tab-labels w-full strips-tabgroup" dynamicHeight
-                  (selectedTabChange)="tabClicked($event, seeAllPageConfig, seeAllPageConfig.key, 0)" [(selectedIndex)]="dynamicTabIndex">
+                  [selectedIndex]="dynamicTabIndex" (selectedIndexChange)="tabClicked($event, seeAllPageConfig, seeAllPageConfig.key, 0)"
+                  >
             <mat-tab *ngFor="let tab of tabResults; let last = last;let tabIndex = index" [label]="tab?.label">
                 <ng-template mat-tab-label>
                     <span>{{translateLabels(tab?.label,'seeAllHome')}} &nbsp;</span>
