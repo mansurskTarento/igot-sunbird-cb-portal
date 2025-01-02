@@ -10,7 +10,6 @@ import {
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption/lib/_common/strips/content-strip-with-tabs-pills/content-strip-with-tabs-pills.model'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
@@ -511,8 +510,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
           } else if (currentPillFromMap.request.trendingSearch) {
             this.getTabDataByNewReqTrending(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
           }
-          // if (stripMap && stripMap.tabs && stripMap.tabs[tabEvent.index]) {
-          //   stripMap.tabs[tabEvent.index].tabLoading = false;
+          // if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
+          //   stripMap.tabs[tabIndex].tabLoading = false;
           // }
 
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
@@ -525,15 +524,15 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         }
       }
     }
-    public tabClicked(tabEvent: MatTabChangeEvent, stripMap: any, _stripKey: string, pillIndex: any) {
-      if (stripMap && stripMap.tabs && stripMap.tabs[tabEvent.index]) {
-        stripMap.tabs[tabEvent.index].pillsData[pillIndex].fetchTabStatus = 'inprogress'
-        stripMap.tabs[tabEvent.index].pillsData[pillIndex].tabLoading = true
+    public tabClicked(tabIndex: any, stripMap: any, _stripKey: string, pillIndex: any) {
+      if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
+        stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
+        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
         stripMap.showOnLoader = true
       }
       const data: WsEvents.ITelemetryTabData = {
-        label: `${tabEvent.tab.textLabel}`,
-        index: tabEvent.index,
+        label: `${stripMap.tabs[tabIndex].textLabel}`,
+        index: tabIndex,
       }
       this.eventSvc.raiseInteractTelemetry(
         {
@@ -547,8 +546,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         }
       )
 
-      const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabEvent.index]
-      const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabEvent.index].pillsData[pillIndex]
+      const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex]
+      const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex].pillsData[pillIndex]
       const currentStrip = this.seeAllPageConfig
 
       if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick && currentPillFromMap) {
@@ -556,22 +555,22 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
           // call API to get tab data and process
           // this.processStrip(currentStrip, [], 'fetching', true, null)
           if (currentPillFromMap.request.searchV6) {
-            this.getTabDataByNewReqSearchV6(currentStrip, tabEvent.index, 0, currentPillFromMap, true)
+            this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, 0, currentPillFromMap, true)
           } else if (currentPillFromMap.request.trendingSearch) {
-            this.getTabDataByNewReqTrending(currentStrip, tabEvent.index, 0, currentPillFromMap, true)
+            this.getTabDataByNewReqTrending(currentStrip, tabIndex, 0, currentPillFromMap, true)
           }
 
-        stripMap.tabs[tabEvent.index].pillsData[pillIndex].tabLoading = false
+        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
         } else if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
           // call API to get tab data and process
           // this.processStrip(currentStrip, [], 'fetching', true, null)
           if (currentTabFromMap.request.enrollmentList) {
-            this.fetchFromEnrollmentList(currentStrip,  tabEvent.index, pillIndex, currentTabFromMap,  true)
+            this.fetchFromEnrollmentList(currentStrip,  tabIndex, pillIndex, currentTabFromMap,  true)
           } else if (currentTabFromMap.request.eventEnrollmentList) {
-            this.fetchFromEventEnrollmentList(currentStrip,  tabEvent.index, pillIndex, currentTabFromMap, true)
+            this.fetchFromEventEnrollmentList(currentStrip,  tabIndex, pillIndex, currentTabFromMap, true)
           }
 
-        stripMap.tabs[tabEvent.index].pillsData[pillIndex].tabLoading = false
+        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
         }
       }
     }
