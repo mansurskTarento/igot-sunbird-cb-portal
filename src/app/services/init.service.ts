@@ -32,6 +32,7 @@ import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-g
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 // import { of } from 'rxjs'
 /* tslint:enable */
 // interface IDetailsResponse {
@@ -84,6 +85,7 @@ export class InitService {
     private http: HttpClient,
     private npsSvc: NPSGridService,
     private translate: TranslateService,
+    private userSvc: WidgetUserServiceLib,
     // private widgetContentSvc: WidgetContentService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -186,6 +188,7 @@ export class InitService {
       } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
         await this.fetchStartUpDetails()
       }
+      await this.fetchUserEnrollDetails()
       // detail: depends only on userID
     } catch (e) {
       this.settingsSvc.initializePrefChanges(environment.production)
@@ -364,6 +367,37 @@ export class InitService {
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
       .toPromise()
     this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
+    return publicConfig
+  }
+
+  private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
+    const publicConfig: NsInstanceConfig.IConfig = await this.userSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
+      let userCourseEnrolmentInfo: any = {}
+      let userExternalCourseEnrolmentInfo: any = {}
+      if(res && res.result && res.result.userCourseEnrolmentInfo) {
+        userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
+        userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
+        userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
+        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
+        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
+        if(Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
+          if(Object.keys(userExternalCourseEnrolmentInfo).length > 0 && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
+            let addInfo = userExternalCourseEnrolmentInfo.addinfo
+            userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota']  + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
+            // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
+          }
+        }
+        let enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued'] 
+        const userData = {
+          enrolledCourseCount,
+          userCourseEnrolmentInfo
+        }
+        localStorage.removeItem('userEnrollmentCount')
+        localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
+      }
+      return res 
+    }) as NsInstanceConfig.IConfig || {}       
     return publicConfig
   }
 
