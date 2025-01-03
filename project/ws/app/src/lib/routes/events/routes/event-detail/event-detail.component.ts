@@ -76,7 +76,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   get isenrollFlow() {
-    if (this.eventData && this.enrollFlowItems.length) {
+    if (this.eventData && this.enrollFlowItems && this.enrollFlowItems.length) {
       return this.eventData.resourceType && this.enrollFlowItems.includes(this.eventData.resourceType)
     } return false
   }
