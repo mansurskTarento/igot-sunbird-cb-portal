@@ -56,6 +56,19 @@ export class SurveyFormQuestionComponent implements OnInit {
     }
   }
 
+  checkboxClicked(event: any) {
+    let checkedList = this.answerControl.value ? this.answerControl.value : []
+    if(event.checked) {
+      checkedList.push(event.source.value)
+    } else {
+      checkedList = checkedList.filter((e: any) => e !== event.source.value)
+    }
+    this.answerControl.patchValue(checkedList)
+    this.answerControl.updateValueAndValidity()
+    this.questionForm.updateValueAndValidity()
+    this.emitAnswer()
+  }
+
   emitAnswer() {
     const answerDetails = this.questionForm.value
     this.questionValues.emit(answerDetails)

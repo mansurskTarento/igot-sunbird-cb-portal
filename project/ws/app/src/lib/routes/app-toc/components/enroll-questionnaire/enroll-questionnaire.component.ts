@@ -222,7 +222,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     if(fields ) {
       fields.forEach((field: any) => {
         let value = field.isNA ? 'N/A' : field.answer
-        if(!field.isNA && field.fieldType === 'date') {
+        if(!field.isNA && field.fieldType === 'date' && value ) {
           const formattedYear = value.getFullYear()
           const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
           const formattedDay = String(value.getDate()).padStart(2, '0')

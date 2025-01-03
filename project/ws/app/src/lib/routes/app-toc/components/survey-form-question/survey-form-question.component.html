@@ -70,9 +70,11 @@
         </ng-container>
         <ng-container *ngSwitchCase="'checkbox'">
             <section class="pt-2">
-              <mat-checkbox *ngFor="let objct of fieldDetails?.values" [value]="objct.value" class="pr-5 pb-2">
-                {{ objct.key }}
-              </mat-checkbox>
+                <ng-container *ngFor="let objct of fieldDetails?.values">
+                    <mat-checkbox [value]="objct.value" class="pr-5 pb-2" (change)="checkboxClicked($event)">
+                        {{ objct.key }}
+                    </mat-checkbox>
+                </ng-container>
             </section>
           </ng-container>
     </ng-container>

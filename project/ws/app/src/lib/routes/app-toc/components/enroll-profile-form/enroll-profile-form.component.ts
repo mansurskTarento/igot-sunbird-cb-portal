@@ -754,6 +754,8 @@ export class EnrollProfileFormComponent implements OnInit {
             this.showEmail = true
           }
         }
+      } else {
+        this.eVerified = true
       }
 
       if (this.findAttr(customAttr, 'organisation')) {
@@ -861,6 +863,10 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.updateValueAndValidity()
           }
         }
+      }
+
+      if (this.canshowMobile === false) {
+        this.mVerified = true
       }
 
       if (this.findAttr(customAttr, 'gender')) {
