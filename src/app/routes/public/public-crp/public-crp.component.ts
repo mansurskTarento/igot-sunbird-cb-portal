@@ -529,6 +529,9 @@ export class PublicCrpComponent {
   }
 
   signup() {
+    const isDesignationValid = this.checkIfDesignationValid()
+    if (!isDesignationValid) return
+
     this.disableBtn = true;
     // this.recaptchaSubscription = this.recaptchaV3Service
     //   .execute('importantAction')
@@ -586,6 +589,17 @@ export class PublicCrpComponent {
       //     this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
       //   }
       // );
+  }
+
+  checkIfDesignationValid(): boolean {
+    const designation = this.filteredDesignationsList.find(
+      (designation) => designation.name === this.registrationForm.value.designation
+    )
+    if (!designation) {
+      this.openSnackbar('Invalid Designation', 4000)
+      return false
+    }
+    return true
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -768,31 +782,42 @@ export class PublicCrpComponent {
   }
 
   raiseSignupInteractTelementry() {
-      this.eventService.raiseInteractTelemetry(
+    this.telemetrySvc.start(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'sign-up',
+        pageid: '/crp',
+      },
+      {},
+      {
+        module: 'Self Registration',
+      }
+    );
+    this.eventService.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'sign-up',
+        pageid: '/crp',
+      },
+      {},
+      {
+        module: 'Self Registration',
+      }
+    );
+
+    setTimeout(() => {
+      this.telemetrySvc.end(
         {
           type: WsEvents.EnumInteractTypes.CLICK,
           id: 'sign-up',
-          pageid: "/crp" 
+          pageid: '/crp',
         },
         {},
         {
-          module: "Self Registration",
+          module: 'Self Registration',
         }
-      )
-
-      setTimeout(() => {
-        this.telemetrySvc.end(
-          { 
-          type: WsEvents.EnumInteractTypes.CLICK,
-            id: 'sign-up',
-            pageid: "/crp" 
-        }, {},
-         {
-            module: "Self Registration",
-          })
-        
-      }, 2000);
-  
+      );
+    }, 2000);
   }
 
   raiseImpressionTelemetry() {
