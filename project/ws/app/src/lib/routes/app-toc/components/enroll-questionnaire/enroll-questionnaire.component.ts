@@ -32,7 +32,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   childFields: any[] = []
   surveyFormIsValid = true
   addLoader = 0
-  wfClientVersion = ''
+  wfClientVersion = 0
 
   constructor(
     private snackBar: MatSnackBar,
@@ -61,8 +61,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getFormDetails()
-    this.otherFieldType = ['radio', 'boolean', 'rating']
+    if (this.wfClientVersion === 1.1) {
+      this.getFormDetails()
+      this.otherFieldType = ['radio', 'boolean', 'rating']
+    }
   }
 
   getFormDetails() {

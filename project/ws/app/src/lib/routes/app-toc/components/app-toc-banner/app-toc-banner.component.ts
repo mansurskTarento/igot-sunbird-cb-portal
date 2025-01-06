@@ -526,7 +526,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const surveyId = sID[1]
       const courseId = this.content.identifier
       const courseName = this.content.name
-      const wfClientVersion = _.get(this.content, 'wfClientVersion', '')
+      const wfClientVersion = _.get(this.content, 'wfClientVersion', 0)
       const apiData = {
         // tslint:disable-next-line:prefer-template
         getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
