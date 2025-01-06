@@ -526,6 +526,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const surveyId = sID[1]
       const courseId = this.content.identifier
       const courseName = this.content.name
+      const wfClientVersion = _.get(this.content, 'wfClientVersion', '')
       const apiData = {
         // tslint:disable-next-line:prefer-template
         getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
@@ -543,6 +544,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
           courseName,
           apiData,
           batchData,
+          wfClientVersion
 
         },
         disableClose: false,

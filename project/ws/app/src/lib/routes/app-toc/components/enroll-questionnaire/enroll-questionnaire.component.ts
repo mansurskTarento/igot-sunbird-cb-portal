@@ -32,6 +32,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   childFields: any[] = []
   surveyFormIsValid = true
   addLoader = 0
+  wfClientVersion = ''
 
   constructor(
     private snackBar: MatSnackBar,
@@ -42,6 +43,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     // private datePipe: DatePipe
   ) { 
     this.surveyId = data.surveyId
+    this.wfClientVersion = data.wfClientVersion
   }
 
   public checkAfterSubmit(_e: any) {
