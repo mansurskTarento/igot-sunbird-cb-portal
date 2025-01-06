@@ -84,10 +84,10 @@ interface IEnvironment {
   supportEmail: string,
   apiCache: number,
   spvorgID: number,
-  doptOrg?: string
-  mdoChannelsBookmarkId: string
+  doptOrg?: string,
+  mdoChannelsBookmarkId: string,
   providerDataKey: string,
-  compentencyVersionKey: string
+  compentencyVersionKey: string,
   cbcOrg: string
 }
 
