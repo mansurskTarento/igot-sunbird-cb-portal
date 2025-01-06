@@ -32,6 +32,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   childFields: any[] = []
   surveyFormIsValid = true
   addLoader = 0
+  wfClientVersion = 0
 
   constructor(
     private snackBar: MatSnackBar,
@@ -42,6 +43,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     // private datePipe: DatePipe
   ) { 
     this.surveyId = data.surveyId
+    this.wfClientVersion = data.wfClientVersion
   }
 
   public checkAfterSubmit(_e: any) {
@@ -59,8 +61,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getFormDetails()
-    this.otherFieldType = ['radio', 'boolean', 'rating']
+    if (this.wfClientVersion === 1.1) {
+      this.getFormDetails()
+      this.otherFieldType = ['radio', 'boolean', 'rating']
+    }
   }
 
   getFormDetails() {

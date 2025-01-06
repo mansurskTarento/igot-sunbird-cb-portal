@@ -526,6 +526,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const surveyId = sID[1]
       const courseId = this.content.identifier
       const courseName = this.content.name
+      const wfClientVersion = _.get(this.content, 'wfClientVersion', 0)
       const apiData = {
         // tslint:disable-next-line:prefer-template
         getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
@@ -543,6 +544,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
           courseName,
           apiData,
           batchData,
+          wfClientVersion
 
         },
         disableClose: false,
@@ -558,8 +560,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
   callBPProfileSurevy(batchData: any) {
     if (this.content) {
-      const doptorgID = '0140788863598264326'
-      this.content.createdFor.push(doptorgID) // need to remove later
+      const doptorgID = environment.doptOrg
       const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
       const isDptUser = _.get(this.userProfileObject, 'rootOrgId') === doptorgID
       const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
