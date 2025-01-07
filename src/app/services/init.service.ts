@@ -20,6 +20,7 @@ import {
   NsInstanceConfig,
   // NsUser,
   UserPreferenceService,
+  WidgetEnrollService,
 } from '@sunbird-cb/utils-v2'
 import { environment } from '../../environments/environment'
 /* tslint:disable */
@@ -32,7 +33,6 @@ import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-g
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 // import { of } from 'rxjs'
 /* tslint:enable */
 // interface IDetailsResponse {
@@ -85,7 +85,7 @@ export class InitService {
     private http: HttpClient,
     private npsSvc: NPSGridService,
     private translate: TranslateService,
-    private userSvc: WidgetUserServiceLib,
+    private enrollSvc: WidgetEnrollService,
     // private widgetContentSvc: WidgetContentService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -371,7 +371,7 @@ export class InitService {
   }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.userSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
+    const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
       if(res && res.result && res.result.userCourseEnrolmentInfo) {

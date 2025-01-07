@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { WidgetUserServiceLib, WidgetContentLibService } from '@sunbird-cb/consumption'
+import {  WidgetContentLibService } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -246,7 +246,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     private route: ActivatedRoute,
     private router: Router,
     private contentSvc: WidgetContentService,
-    private userSvc: WidgetUserServiceLib,
     public tocSvc: AppTocService,
     private loggerSvc: LoggerService,
     private configSvc: ConfigurationsService,
@@ -963,7 +962,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   // private getUserEnrollmentList() {
   //   this.enrollBtnLoading = true
   //   this.tocSvc.contentLoader.next(true)
-  //   this.userSvc.resetTime('enrollmentService')
   //   // tslint:disable-next-line
   //   if (this.content && this.content.identifier && this.content.primaryCategory !== this.primaryCategory.COURSE &&
   //     this.content.primaryCategory !== this.primaryCategory.PROGRAM &&
@@ -1164,7 +1162,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     } else {
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
-      this.userSvc.resetTime('enrollmentService')
       this.raiseEnrollTelemetry()
       const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
       if (this.content && this.content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
@@ -1200,7 +1197,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.contentSvc.autoAssignCuratedBatchApi(req, programType).subscribe(
         (data: NsContent.IBatchListResponse) => {
           if (data) {
-            this.userSvc.resetTime('enrollmentService')
             if (programType === NsContent.ECourseCategory.MODERATED_PROGRAM && batchData.endDate) {
               this.batchData = {
                 content: [batchData],
@@ -1996,7 +1992,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     let identifier = this.content && this.content.identifier || ''
     let request: any = {
       "request": {
-          "courseId": identifier
+          "courseId": [identifier]
       }
     }
     this.enrollSvc.fetchEnrollContentData(request).subscribe(async (res: any) => {
@@ -2032,10 +2028,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
 
 
   async checkIfUserEnrolled() {
-    
     this.enrollBtnLoading = true
     this.tocSvc.contentLoader.next(true)
-    this.userSvc.resetTime('enrollmentService')
     // tslint:disable-next-line
     if (this.content && this.content.identifier && this.content.primaryCategory !== this.primaryCategory.COURSE &&
       this.content.primaryCategory !== this.primaryCategory.PROGRAM &&
@@ -2047,119 +2041,101 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       return this.getContinueLearningData(this.content.identifier)
     }
 
-    // this.userEnrollmentList = []
-    // let userId: any
-
-    // if (this.configSvc.userProfile) {
-    //   userId = this.configSvc.userProfile.userId || ''
-    // }
-
-    // this.userSvc.fetchUserBatchList(userId).toPromise().then(
-    //   async (result: any) => {
-        // const courses: NsContent.ICourse[] = result && result.courses
-        // this.userEnrollmentList = courses
-        let enrolledCourse: NsContent.ICourse | undefined
-        if (this.content && this.content.identifier && !this.forPreview) {
-          if (this.userEnrollmentList && this.userEnrollmentList.length) {
-            enrolledCourse = this.userEnrollmentList.find((course: any) => {
-              const identifier = this.content && this.content.identifier || ''
-              if (course.courseId !== identifier) {
-                return undefined
-              }
-              return course
-            })
+    let enrolledCourse: NsContent.ICourse | undefined
+    if (this.content && this.content.identifier && !this.forPreview) {
+      if (this.userEnrollmentList && this.userEnrollmentList.length) {
+        enrolledCourse = this.userEnrollmentList.find((course: any) => {
+          const identifier = this.content && this.content.identifier || ''
+          if (course.courseId !== identifier) {
+            return undefined
           }
+          return course
+        })
+      }
 
-          // If current course is present in the list of user enrolled course
-          if (enrolledCourse && enrolledCourse.batchId) {
-            this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
-              if (res) {
-                this.resumeData = res
-                this.getLastPlayedResource()
-                this.generateResumeDataLinkNew()
-              }
-            })
-            this.tocSvc.checkModuleWiseData(this.content)
-            this.enrolledCourseData = enrolledCourse
-            this.isCourseCompletedOnThisMonth()
-            this.currentCourseBatchId = enrolledCourse.batchId
-            // this.downloadCert(enrolledCourse.issuedCertificates)
-            if (enrolledCourse && enrolledCourse.issuedCertificates &&
-              enrolledCourse.issuedCertificates.length) {
-              const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
-                 new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
-              const certId = certificate[0].identifier
-              this.certId = certId
-              if (this.content) {
-                this.content['certificateObj'] = {
-                  certId,
-                  certData: '',
-                }
-              }
+      // If current course is present in the list of user enrolled course
+      if (enrolledCourse && enrolledCourse.batchId) {
+        this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+          if (res) {
+            this.resumeData = res
+            this.getLastPlayedResource()
+            this.generateResumeDataLinkNew()
+          }
+        })
+        this.tocSvc.checkModuleWiseData(this.content)
+        this.enrolledCourseData = enrolledCourse
+        this.isCourseCompletedOnThisMonth()
+        this.currentCourseBatchId = enrolledCourse.batchId
+        // this.downloadCert(enrolledCourse.issuedCertificates)
+        if (enrolledCourse && enrolledCourse.issuedCertificates &&
+          enrolledCourse.issuedCertificates.length) {
+          const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
+              new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
+          const certId = certificate[0].identifier
+          this.certId = certId
+          if (this.content) {
+            this.content['certificateObj'] = {
+              certId,
+              certData: '',
             }
-            this.content.completionPercentage = enrolledCourse.completionPercentage || 0
-            this.content.completionStatus = enrolledCourse.status || 0
-            if (this.contentReadData && this.contentReadData.cumulativeTracking) {
-              await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
-              this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
-                if (res) {
-                  this.resumeData = res
-                  this.getLastPlayedResource()
-                  this.generateResumeDataLinkNew()
-                }
-              })
-
-              this.enrollBtnLoading = false
-              // this.tocSvc.contentLoader.next(false)
-            } else {
-              this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId)
-              this.content['completionPercentage'] = enrolledCourse.completionPercentage
-              this.enrollBtnLoading = false
-              this.tocSvc.mapModuleCount(this.content)
-              // this.tocSvc.contentLoader.next(false)
-            }
-            this.batchData = {
-              content: [enrolledCourse.batch],
-              enrolled: true,
-            }
-            this.tocSvc.setBatchData(this.batchData)
-            this.tocSvc.getSelectedBatchData(this.batchData)
-            this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
-            if (this.getBatchId()) {
-              this.router.navigate(
-                [],
-                {
-                  relativeTo: this.route,
-                  queryParams: { batchId: this.getBatchId() },
-                  queryParamsHandling: 'merge',
-                })
-            }
-          } else {
-            this.tocSvc.checkModuleWiseData(this.content)
-            this.tocSvc.mapModuleCount(this.content)
-            // It's understood that user is not already enrolled
-            // Fetch the available batches and present to user
-            if (this.content.primaryCategory === this.primaryCategory.COURSE
-              || this.content.primaryCategory !== this.primaryCategory.PROGRAM) {
-              // Disabling auto enrollment to batch
-              if (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM) {
-                this.fetchBatchDetails()
-              }
-            } else {
-              this.fetchBatchDetails()
-            }
-            this.tocSvc.callHirarchyProgressHashmap(this.content)
-            this.enrollBtnLoading = false
-            // this.tocSvc.contentLoader.next(false)
           }
         }
-        // console.log('calling ---------------- =========')
-        // this.getLastPlayedResource()
-      // },
-      // (error: any) => {
-      //   this.loggerSvc.error('CONTENT HISTORY FETCH ERROR >', error)
-      // },
-    // )
+        this.content.completionPercentage = enrolledCourse.completionPercentage || 0
+        this.content.completionStatus = enrolledCourse.status || 0
+        if (this.contentReadData && this.contentReadData.cumulativeTracking) {
+          await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
+          this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+            if (res) {
+              this.resumeData = res
+              this.getLastPlayedResource()
+              this.generateResumeDataLinkNew()
+            }
+          })
+
+          this.enrollBtnLoading = false
+          // this.tocSvc.contentLoader.next(false)
+        } else {
+          this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId)
+          this.content['completionPercentage'] = enrolledCourse.completionPercentage
+          this.enrollBtnLoading = false
+          this.tocSvc.mapModuleCount(this.content)
+          // this.tocSvc.contentLoader.next(false)
+        }
+        this.batchData = {
+          content: [enrolledCourse.batch],
+          enrolled: true,
+        }
+        this.tocSvc.setBatchData(this.batchData)
+        this.tocSvc.getSelectedBatchData(this.batchData)
+        this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
+        if (this.getBatchId()) {
+          this.router.navigate(
+            [],
+            {
+              relativeTo: this.route,
+              queryParams: { batchId: this.getBatchId() },
+              queryParamsHandling: 'merge',
+            })
+        }
+      } else {
+        this.tocSvc.checkModuleWiseData(this.content)
+        this.tocSvc.mapModuleCount(this.content)
+        // It's understood that user is not already enrolled
+        // Fetch the available batches and present to user
+        if (this.content.primaryCategory === this.primaryCategory.COURSE
+          || this.content.primaryCategory !== this.primaryCategory.PROGRAM) {
+          // Disabling auto enrollment to batch
+          if (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM) {
+            this.fetchBatchDetails()
+          }
+        } else {
+          this.fetchBatchDetails()
+        }
+        this.tocSvc.callHirarchyProgressHashmap(this.content)
+        this.enrollBtnLoading = false
+        // this.tocSvc.contentLoader.next(false)
+      }
+    }
 
     this.skeletonLoader = false
   }

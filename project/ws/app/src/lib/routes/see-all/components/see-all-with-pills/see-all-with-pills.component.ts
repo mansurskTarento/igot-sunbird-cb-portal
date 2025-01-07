@@ -8,10 +8,10 @@ import {
 } from '@angular/router'
 // tslint:disable-next-line
 import * as _ from 'lodash'
-import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
 import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption/lib/_common/strips/content-strip-with-tabs-pills/content-strip-with-tabs-pills.model'
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
+
 
 @Component({
   selector: 'ws-app-see-all-with-pills',
@@ -43,8 +43,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
     private seeAllSvc: SeeAllService,
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
-    private userSvc: WidgetUserServiceLib,
     private langtranslations: MultilingualTranslationsService,
+    private enrollSvc: WidgetEnrollService,
   ) {
 
   }
@@ -631,12 +631,12 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         && currentPillFromMap.request.payload.request.limit){
         delete currentPillFromMap.request.payload.request.limit
       }
-      this.userSvc.fetchInternalEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
+      this.enrollSvc.fetchInternalEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
         let courses: any = []
         if(res && res.result && res.result.courses && res.result.courses.length){
           courses  = [...courses, ...res.result.courses]
         }
-        this.userSvc.fetchExternalEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
+        this.enrollSvc.fetchExternalEnrollmentData( currentPillFromMap.request.payload).subscribe((res: any) => {
           
           if(res && res.result && res.result.courses && res.result.courses.length){
             courses  = [...courses, ...res.result.courses]
@@ -663,7 +663,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         && currentPillFromMap.request.payload.request.limit){
         delete currentPillFromMap.request.payload.request.limit
       }
-      this.userSvc.fetchEventsEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
+      this.enrollSvc.fetchEventsEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
         let events: any = []
         if(res && res.result && res.result.events && res.result.events.length){
           events  = [...events, ...res.result.events]
@@ -720,7 +720,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
 
   loadMore() {
     if(this.pageSize < this.contentDataList.length){
-      this.pageSize = this.pageSize + 10
+      this.pageSize = this.pageSize + 50
     }
   }
 
