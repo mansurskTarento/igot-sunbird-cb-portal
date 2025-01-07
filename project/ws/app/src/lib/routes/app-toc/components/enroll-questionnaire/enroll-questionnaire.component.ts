@@ -205,9 +205,11 @@ export class EnrollQuestionnaireComponent implements OnInit {
       this.appTocSvc.submitForm(formBody).subscribe({
         next: res => {
           this.addLoader = this.addLoader - 1
-          if(res) {
+          if(_.get(res, 'statusInfo.statusCode') === 200) {
             this.openSnackbar('Form is submitted successfully')
             this.dialogRef.close(true)
+          } else {
+            this.openSnackbar(_.get(res, 'errorMessage', 'Something went wrong please try again'))
           }
         },
         error: (error: HttpErrorResponse) => {
