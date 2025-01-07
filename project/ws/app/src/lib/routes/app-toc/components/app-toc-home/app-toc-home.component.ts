@@ -1996,7 +1996,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       }
     }
     this.enrollSvc.fetchEnrollContentData(request).subscribe(async (res: any) => {
-      console.log(res,'sdfghjhgfdsdfg')
+    
       
       if(res && res.result && res.result.courses && res.result.courses.length) {
         this.userEnrollmentList = res.result.courses

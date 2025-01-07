@@ -24,7 +24,7 @@ export class AppEnrollmentResolverService
           userId = this.configSvc.userProfile.userId || ''
         }
         
-        console.log('userEnrollData', this.dataTransfer.getEnrollData())
+        
         if (window.location.href.includes('/public/') || window.location.href.includes('&preview=true')) {
             return of({ error: null, data: null })
         }
