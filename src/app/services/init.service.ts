@@ -20,6 +20,7 @@ import {
   NsInstanceConfig,
   // NsUser,
   UserPreferenceService,
+  WidgetEnrollService,
 } from '@sunbird-cb/utils-v2'
 import { environment } from '../../environments/environment'
 /* tslint:disable */
@@ -84,6 +85,7 @@ export class InitService {
     private http: HttpClient,
     private npsSvc: NPSGridService,
     private translate: TranslateService,
+    private enrollSvc: WidgetEnrollService,
     // private widgetContentSvc: WidgetContentService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -186,6 +188,7 @@ export class InitService {
       } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
         await this.fetchStartUpDetails()
       }
+      await this.fetchUserEnrollDetails()
       // detail: depends only on userID
     } catch (e) {
       this.settingsSvc.initializePrefChanges(environment.production)
@@ -364,6 +367,55 @@ export class InitService {
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
       .toPromise()
     this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
+    return publicConfig
+  }
+
+  private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
+    const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
+      let userCourseEnrolmentInfo: any = {}
+      let userExternalCourseEnrolmentInfo: any = {}
+      if(res && res.result && res.result.userCourseEnrolmentInfo) {
+        userCourseEnrolmentInfo = {
+          karmaPoints:0,
+          timeSpentOnCompletedCourses: 0,
+          certificatesIssued: 0,
+          coursesInProgress: 0,
+          addinfo :{}
+        }
+        userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
+        userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
+        userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
+        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
+        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
+        if(Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
+          if(Object.keys(userExternalCourseEnrolmentInfo).length > 0 && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
+            let addInfo = userExternalCourseEnrolmentInfo.addinfo
+            userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota']  + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
+            // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
+          }
+        }
+        let enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued'] 
+        const userData = {
+          enrolledCourseCount,
+          userCourseEnrolmentInfo
+        }
+        localStorage.removeItem('userEnrollmentCount')
+        localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
+      }
+      return res 
+    }).catch((_err: any)=> {
+      let userCourseEnrolmentInfo = {
+        enrolledCourseCount:0,
+        karmaPoints:0,
+        timeSpentOnCompletedCourses: 0,
+        certificatesIssued: 0,
+        coursesInProgress: 0,
+        addinfo :{}
+      }
+      localStorage.removeItem('userEnrollmentCount')
+      localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
+    }) as NsInstanceConfig.IConfig || {}       
     return publicConfig
   }
 
