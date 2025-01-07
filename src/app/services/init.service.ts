@@ -375,6 +375,13 @@ export class InitService {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
       if(res && res.result && res.result.userCourseEnrolmentInfo) {
+        userCourseEnrolmentInfo = {
+          karmaPoints:0,
+          timeSpentOnCompletedCourses: 0,
+          certificatesIssued: 0,
+          coursesInProgress: 0,
+          addinfo :{}
+        }
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
@@ -397,6 +404,17 @@ export class InitService {
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
       }
       return res 
+    }).catch((_err: any)=> {
+      let userCourseEnrolmentInfo = {
+        enrolledCourseCount:0,
+        karmaPoints:0,
+        timeSpentOnCompletedCourses: 0,
+        certificatesIssued: 0,
+        coursesInProgress: 0,
+        addinfo :{}
+      }
+      localStorage.removeItem('userEnrollmentCount')
+      localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
     }) as NsInstanceConfig.IConfig || {}       
     return publicConfig
   }
