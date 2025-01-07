@@ -1156,13 +1156,13 @@ export class EnrollProfileFormComponent implements OnInit {
             })
           }
         })
-        if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+        if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail && this.canShowEmail) {
           this.updateEmail(this.userDetailsForm.value.primaryEmail)
         }
         this.submitProfile(payload)
       }
     } else {
-      if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+      if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail && this.canShowEmail) {
         this.updateEmail(this.userDetailsForm.value.primaryEmail)
       }
       this.submitProfile(payload)
