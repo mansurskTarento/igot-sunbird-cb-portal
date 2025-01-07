@@ -7,6 +7,7 @@ import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-conte
 import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,7 @@ export class ViewerUtilService {
     private configservice: ConfigurationsService,
     private contentSvc: WidgetContentService,
     private tocSvc: AppTocService,
+    private userSvc: WidgetUserServiceLib,
     ) { }
 
   async fetchManifestFile(url: string) {
@@ -179,7 +181,7 @@ export class ViewerUtilService {
        tempContentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM ||
        tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM)
        ) {
-       tempContentData.children.forEach((childList: NsContent.IContent) => {
+       tempContentData.children.forEach(async (childList: NsContent.IContent) => {
          if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
            // tslint:disable-next-line: max-line-length
            const courseEnrollmentList = enrollmentList &&  enrollmentList.filter((v: NsContent.ICourse) => v.contentId === childList.identifier)
@@ -187,6 +189,10 @@ export class ViewerUtilService {
              if (courseEnrollmentList && courseEnrollmentList.length > 0) {
                tempData.batchId = courseEnrollmentList[courseEnrollmentList.length - 1].batch.batchId
                tempData.courseId = childList.identifier
+             }  else {
+              const data: any = await this.checkForCourseEnrollment(childList, resourceId, enrollmentList, tempData)
+              tempData.courseId =  data.courseId
+              tempData.batchId = data.batchId
              }
            }
          } else if (tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
@@ -202,6 +208,28 @@ export class ViewerUtilService {
      }
     }
     return tempData
+  }
+  async checkForCourseEnrollment(childList: NsContent.IContent, _resourceId: string, _enrollmentList: any, _tempData: any) {
+    // tslint:disable-next-line: max-line-length
+    const courseData: any  = await this.contentSvc.autoAssignBatchApi(childList.identifier).toPromise().then(async (data: NsContent.IBatchListResponse) => {
+      if (data) {
+        // tslint:disable-next-line: max-line-length
+        const responseData = await this.userSvc.fetchEnrollmentDataByContentId(this.configservice.userProfile?.userId, childList.identifier).toPromise().then(async (res: any) => {
+          if (res && res.courses && res.courses.length) {
+            return res.courses
+          }
+            return [{ courseId: childList.identifier, batchId: '' }]
+
+        }).catch((_err: any) => {
+          return [{ courseId: childList.identifier, batchId: '' }]
+        })
+        this.contentSvc.currentBatchEnrollmentList = [...this.contentSvc.currentBatchEnrollmentList, ...responseData]
+        return { courseId: childList.identifier, batchId: responseData[0].batchId }
+      }
+    }).catch((_err: any) => {
+      return [{ courseId: childList.identifier, batchId: '' }]
+    })
+   return courseData
   }
 
   realTimeProgressUpdateQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
