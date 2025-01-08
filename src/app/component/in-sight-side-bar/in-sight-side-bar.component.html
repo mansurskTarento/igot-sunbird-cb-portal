@@ -26,20 +26,25 @@
         <div class="dLabel pb-1">{{ 'publicsignup.selectDesignation' | translate }}</div>
         <div class="flex items-center gap-3 pb-3">
             <div class="contoller">
-                <input type="text"
-                    class="input-text designation-input" matInput
-                    [(value)]="selectDesignation"
-                    placeholder="{{'updteDesignation.select' | translate }}"
-                    [matAutocomplete]="designationAuto"
-                    (input)="onInputChange($event.target.value)"/>
+                <div class="flex items-center relative">
+                    <input type="text"
+                        class="input-text designation-input cursor-pointer" matInput
+                        #trigger="matAutocompleteTrigger"
+                        #autocompleteInput
+                        [(value)]="selectDesignation"
+                        placeholder="{{'updteDesignation.select' | translate }}"
+                        [matAutocomplete]="designationAuto"
+                        (input)="onInputChange($event.target.value)"/>
+                    <mat-icon class="dropdown-icon cursor-pointer" (click)="openAutocomplete(trigger, autocompleteInput)">arrow_drop_down</mat-icon>
+                </div>
                 <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete" (optionSelected)="onOptionSelected($event.option.value)">
                     <mat-option *ngFor="let designation of filterDesigantionList" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
                 </mat-autocomplete>
             </div>
             <button
                 type="button" mat-button
-                (click)="updateDesignation()"
-                class="btn submit-btn cursor-pointer">{{renderUpdateDesignationCardButtonText()}}
+                (click)="updateDesignation()" [disabled]="selectDesignation?.length === 0"
+                class="btn submit-btn {{selectDesignation?.length === 0 ? '' : 'cursor-pointer'}}">{{renderUpdateDesignationCardButtonText()}}
             </button>
         </div>
     </div>

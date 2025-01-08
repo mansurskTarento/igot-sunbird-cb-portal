@@ -289,11 +289,13 @@
       justify-content: center;
       text-decoration: none;
       border: 0;
-      cursor: pointer;
       user-select: none;
       min-width: 87px;
       border-radius: 45px;
-
+    }
+    .submit-btn[disabled] {
+      color: white!important;
+      opacity: 0.8;
     }
 
     .designation-input {
@@ -304,6 +306,11 @@
     }
     .designation-input:focus {
       border: 1px solid #fff!important;
+    }
+    .dropdown-icon {
+      position: absolute;
+    color: #747070;
+    right: 9px;
     }
   }
 :host ::ng-deep .choose-designation {

@@ -12,6 +12,7 @@ import { SignupService } from 'src/app/routes/public/public-signup/signup.servic
 import _ from 'lodash';
 import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -486,10 +487,25 @@ export class InsightSideBarComponent implements OnInit {
 
   updateDesignation() {
     if (this.selectDesignation) {
+      this.raiseTelemetryForDesigantion()
       this.apiCallToUpdateDesignation()
     } else {
       this.openSnackbar('Please select a valid designation')
     }
+  }
+
+  raiseTelemetryForDesigantion() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        subType: "submit-designation",
+        id: "designation-master-import",
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
   }
 
   submitProfile() {
@@ -541,6 +557,11 @@ export class InsightSideBarComponent implements OnInit {
 
   onOptionSelected(designation: string) {
     this.selectDesignation = designation
+  }
+
+  openAutocomplete(trigger: MatAutocompleteTrigger, inputElement: HTMLInputElement): void {
+    inputElement.focus(); // Ensure the input field is focused
+    trigger.openPanel(); // Open the autocomplete panel
   }
 
   renderUpdateDesignationCardHeader(){
