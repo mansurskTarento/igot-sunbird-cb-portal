@@ -34,6 +34,7 @@ import { RejectionReasonPopupComponent } from '../../components/rejection-reason
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { ProfileV2Service } from '../../services/profile-v2.servive'
 import { environment } from 'src/environments/environment'
+import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
 
 export const MY_FORMATS = {
   parse: {
@@ -168,8 +169,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   groupApprovedTime = 0
   designationApprovedTime = 0
   currentDate = new Date()
-  designationsMeta: any
-  filterDesignationsMeta: any
+  designationsMeta: any = []
+  filterDesignationsMeta: any = []
   civilServiceTypes: any
   civilServiceData: any
   cadreControllingAuthority: any
@@ -215,7 +216,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private loader: LoaderService,
     private pipeImgUrl: PipeCertificateImageURL,
     private homeService: HomePageService,
-    private profileService: ProfileV2Service
+    private profileService: ProfileV2Service,
+    private signupService: SignupService,
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -336,7 +338,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getMasterLanguage()
     this.getGroupData()
     // this.getProfilePageMetaData()
-    this.loadDesignations()
+    //this.loadDesignations()
+    this.getMasterDesignation()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getApprovedFields()
@@ -1082,6 +1085,34 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       (_err: any) => {
       })
+  }
+
+  async getMasterDesignation() {
+    this.signupService.getOrgReadData(this.orgId).subscribe((result: any) => {
+      if (result && result.frameworkid) {
+        this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
+          const frameworkDetails = _.get(res, 'result.framework')
+          const categoriesOfFramework = _.get(frameworkDetails, 'categories', [])
+          const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
+          const disOrderedList = _.get(organisationsList, '[0].children', [])
+          this.designationsMeta = _.sortBy(disOrderedList, 'name')
+          this.filterDesignationsMeta = this.designationsMeta
+        },(error: any) => {
+          // tslint:disable-next-line
+          console.error('Error occurred:', error)
+        })
+      }
+    },(error: any) => {
+      // tslint:disable-next-line
+      console.error('Error occurred:', error)
+    })
+  }
+
+  private getTermsByCode(categories: any[], code: string) {
+    const selectedCategory = categories.filter(
+      (category: any) => category.code === code
+    );
+    return _.get(selectedCategory, '[0].terms', []);
   }
 
   // getProfilePageMetaData(): void {
