@@ -2006,6 +2006,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           if(urlData && urlData.url && urlData.url.includes('app/toc')) {
             this.checkIfUserEnrolled()
           } else {
+            this.contentLibSvc.oneStepResumeEnable = false
             if (urlData && urlData.url ) {
               this.router.navigate(
                 [urlData.url],
@@ -2015,7 +2016,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             }
           }
           
-          this.contentLibSvc.oneStepResumeEnable = false
         } else {
         this.checkIfUserEnrolled()
         }
@@ -2028,6 +2028,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
 
 
   async checkIfUserEnrolled() {
+    this.contentLibSvc.oneStepResumeEnable = false
     this.enrollBtnLoading = true
     this.tocSvc.contentLoader.next(true)
     // tslint:disable-next-line
