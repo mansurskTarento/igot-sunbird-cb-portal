@@ -1,0 +1,12 @@
+<div class="main-container m-auto margin-top-l">
+    <div class="heading flex flex-row">{{recommendedConfig?.strip?.title}}</div>
+    <div class="pill-container flex flex-row flex-wrap content-container mt-4 mb-10">
+        <mat-chip-list  class="content-pill" aria-label="Fish selection">
+            <ng-container *ngFor="let pill of recommendedConfig?.strip?.pillsData">
+                <mat-chip [selected]="pill?.selected" (click)="pillClicked(pill)" [selected]="slectedPill === pill?.value">
+                    <span class="pill-name">{{pill?.label}}</span>
+                </mat-chip>
+            </ng-container>            
+        </mat-chip-list>
+    </div>
+</div>

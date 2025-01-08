@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, of, Subject } from 'rxjs'
+import { Observable, of, Subject, throwError } from 'rxjs'
 import { NSSearch } from '@sunbird-cb/collection/src/lib/_services/widget-search.model'
+import { catchError, map } from 'rxjs/operators';
 
 // tslint:disable
 import _ from 'lodash'
@@ -69,6 +70,25 @@ export class SeeAllService {
       return this.http.get<NSSearch.ISearchV6ApiResultV2>(apiPath)
     }
     return this.http.post<NSSearch.ISearchV6ApiResultV2>(API_END_POINTS.SEARCH_V6, req)
+  }
+
+  fetchDesigantionsData(requestUrl: string) {
+    const result: any = this.http.get(requestUrl).pipe(catchError(this.handleError), map(
+      async (data: any) => {
+        if(data.result && data.result.courseList) {
+          return data.result && data.result.courseList
+        }
+        return ''
+      })
+    )
+    return result
+  }
+  handleError(error: ErrorEvent) {
+    let errorMessage = ''
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`
+    }
+    return throwError(errorMessage)
   }
 
 }

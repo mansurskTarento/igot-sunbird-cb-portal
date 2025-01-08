@@ -862,6 +862,20 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
   },
   {
+    path: 'page/recommended-learnings',
+    loadChildren: () => import('./recommende-learnings/recommende-learnings.module').then(m => m.RecommendeLearningsModule),
+    data: {
+      pageType: 'page',
+      pageKey: 'recommende-learnings',
+    },
+    resolve: {
+      pageData: PageResolve,
+      module: ModuleNameResolve,
+      pageId: PageNameResolve,
+    },
+    canActivate: [GeneralGuard],
+  },
+  {
     path: 'page/competency-passbook',
     loadChildren: () => import('./competency-passbook/competency-passbook.module').then(m => m.CompetencyPassbookModule),
     data: {
