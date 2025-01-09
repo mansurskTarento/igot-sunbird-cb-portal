@@ -10,3 +10,12 @@
 .main-container {
     max-width: 1200px;
 }
+.pill-container {
+    display: flex;
+    align-items: center;
+}
+
+.content-pill .mat-chip-selected {
+    background-color: #1b4ca1 !important;
+    color: white !important;
+}

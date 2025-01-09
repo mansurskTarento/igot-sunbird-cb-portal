@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router'
 import _ from 'lodash'
 /* tslint:enable */
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, NsContent, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '@ws/app/src/lib/routes/see-all/services/see-all.service'
-
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-recommende-learnings',
@@ -16,10 +16,15 @@ import { SeeAllService } from '@ws/app/src/lib/routes/see-all/services/see-all.s
 export class RecommendeLearningsComponent implements OnInit {
   recommendedConfig: any
   slectedPill: string = ''
+  available: any = []
+  inprogress: any = []
+  completed: any = []
+  results: any = []
+  content: any = []
   
   constructor(
     private activatedRoute: ActivatedRoute,
-    //private widgetSvc: WidgetUserServiceLib,
+    private widgetSvc: WidgetUserServiceLib,
     private translate: TranslateService,
     //private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService,
@@ -48,6 +53,8 @@ export class RecommendeLearningsComponent implements OnInit {
 
   pillClicked(pill: any) {
     this.slectedPill = pill.value
+    const _courses = this.results.find((key: any) => key.name === this.slectedPill)
+    this.content = _courses ? _courses.courses : []
   }
 
   async getRecommendeLeanings() {
@@ -68,10 +75,96 @@ export class RecommendeLearningsComponent implements OnInit {
       }).catch((_err: any) => {
         return {}
       })
-      console.log("enollData ", enollData)
+      const sRequest: any = {
+        "request": {
+          "filters": {
+            "identifier": response
+          },
+          "offset": 0,
+          "query": "",
+          "sort_by": {
+              "lastUpdatedOn": "desc"
+          },
+        }
+      }
+      this.seeAllSvc.fetchSearchData(sRequest).subscribe((res: any) => {
+        if (res && res.result && res.result.content) {
+          let courses = res.result.content
+          this.getPilldata(courses, enollData)
+        }
+      })
     }
   }
 
-  
+  getPilldata(courses: any, enollData: any){
+    let avaialable: any[] = []
+    let inprogress: any[] = []
+    let completed: any[] = []
+    let cbpData: any
+    this.widgetSvc.getData('cbpData').subscribe((result => {
+      cbpData = result
+    }))
+    courses.forEach((course: any) => {
+      if (cbpData) {
+        const cbpelem = cbpData.find((_course: any) => _course.identifier === course.identifier)
+        if (cbpelem) {
+          return
+        }
+      }
+      if (enollData) {
+        const elem = enollData.find((eCourse: any) => eCourse.contentId === course.identifier)
+        if (elem) {
+          if (elem.status === 2) {
+            completed.push(course)
+          } else {
+            inprogress.push(course)
+          }
+        } else {
+          avaialable.push(course)
+        }
+      } else {
+        avaialable.push(course)
+      }
+    })
+    this.results.push({name: 'available', courses: this.transformContentsToWidgets(
+      avaialable, this.recommendedConfig.strip)}
+    )
+    this.results.push({name: 'inprogress', courses: this.transformContentsToWidgets(
+      inprogress, this.recommendedConfig.strip)})
+    this.results.push({name: 'completed',  courses: this.transformContentsToWidgets(
+      completed, this.recommendedConfig.strip)}
+    )
+    const _courses = this.results.find((key: any) => key.name === this.slectedPill)
+    this.content = _courses ? _courses.courses : []
+  }
+
+  private transformContentsToWidgets(
+    contents: NsContent.IContent[],
+    strip: any,
+  ) {
+    return (contents || []).map((content, idx) => ({
+      widgetType: 'card',
+      widgetSubType: 'cardContent',
+      widgetHostClass: 'mb-2',
+      widgetData: {
+        content,
+        ...(content.batch && {
+          batch: content.batch,
+        }),
+        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.stripConfig
+        && strip.viewMoreUrl.stripConfig.cardSubType,
+        context: {
+          pageSection: strip.key,
+          position: idx,
+        },
+        intranetMode: strip.stripConfig && strip.stripConfig.intranetMode,
+        deletedMode: strip.stripConfig && strip.stripConfig.deletedMode,
+        contentTags: strip.stripConfig && strip.stripConfig.contentTags,
+      },
+    }))
+  }
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateLabel(label.toLowerCase(), type, '')
+  }
   
 }

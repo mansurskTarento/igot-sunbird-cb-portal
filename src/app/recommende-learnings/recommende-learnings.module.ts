@@ -23,6 +23,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { RecommendeLearningsRoutingModule } from './recommende-learnings-routing.module'
 import { RecommendeLearningsComponent } from './recommende-learnings/recommende-learnings.component'
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { CardsModule } from '@sunbird-cb/consumption'
 @NgModule({
     declarations: [RecommendeLearningsComponent],
     imports: [
@@ -51,6 +52,7 @@ import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy
         MatMenuModule,
         MatRadioModule,
         TranslateModule,
+        CardsModule
     ],
     exports: [
         HeaderModule,
