@@ -179,6 +179,10 @@ input[disabled] + mat-icon.mother-toungue-caret {
     background-color: #80808045;
   }
 
+  .mat-error {
+    margin: -10px 0px 5px;
+  }
+
 :host ::ng-deep.userDetailsForm .mat-form-field-wrapper {
     padding-bottom: 8px!important
 }
