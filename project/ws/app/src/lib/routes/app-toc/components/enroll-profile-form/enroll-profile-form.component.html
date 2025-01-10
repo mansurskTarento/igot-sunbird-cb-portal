@@ -6,7 +6,7 @@
     <div class="w-full" *ngIf="!isLoading">
       <form [formGroup]="userDetailsForm" class="userDetailsForm">
           <div class="w-full" *ngIf="canShowName">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.name' | translate }}
             </div>
@@ -15,16 +15,16 @@
             </mat-form-field>
           </div>
           <div class="w-full" *ngIf="canShowOrg">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.organisation' | translate }}
+                {{ (showDoptChanges ? 'profileInfo.presentOrganisation' : 'profileInfo.organisation') | translate }}
             </div>
             <mat-form-field appearance="outline" class="w-full">
                 <input type="text" class="input-text" matInput formControlName="organisation" placeholder="Organisation"/>
             </mat-form-field>
           </div>
           <div class="w-full" *ngIf="canShowEmail">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.email' | translate }}
             </div>
@@ -42,7 +42,7 @@
               <form [formGroup]="emailOtpForm">
                 <div class="w-full">
                   <div class="flex enter-otp">
-                    <div class="mat-subheading-2 required"
+                    <div class="font-semibold required"
                       i18n="Title label|Label which explains the user to enter title">
                       {{ 'profileInfo.enterOTP' | translate }}
                     </div>
@@ -69,7 +69,7 @@
             </div>
           </div>
           <div class="w-full" *ngIf="canShowGroup">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
               i18n="Title label|Label which explains the user to enter title">
               {{ 'profileInfo.group' | translate }}
             </div>
@@ -78,15 +78,18 @@
                   <mat-option *ngFor="let group of groupData" value="{{group}}">{{ group }}</mat-option>
                 </mat-select>
             </mat-form-field>
+            <div class="text-xs mb-2" *ngIf="showDoptChanges">
+              {{'profileInfo.groupNote' | translate}}
+            </div>
         </div>
         <div class="w-full relative" *ngIf="canShowDesignation">
-          <div class="mat-subheading-2 margin-0 required"
+          <div class="font-semibold margin-0 required"
             i18n="Title label|Label which explains the user to enter title">
             {{ 'profileInfo.designation' | translate }}
           </div>
           <mat-form-field appearance="outline" class="w-full">
-            <div class="flex flex-row auto-complete-row">
-              <input type="text" class="input-text" matInput formControlName="designation"
+            <div class="flex flex-row auto-complete-row relative">
+              <input type="text" class="input-text high-zindex" matInput formControlName="designation"
                 (input)="filterdesignation($event.target.value)" (focus)="onDesignationsFocus()" #textBox
                 placeholder="{{ 'profileInfo.chooseADesignation' | translate }}">
               <mat-icon class="disagnation-caret">arrow_drop_down</mat-icon>
@@ -96,6 +99,9 @@
                 Please select a valid designation.
             </mat-error>
           </mat-form-field>
+          <div class="text-xs mb-2" *ngIf="showDoptChanges">
+            {{'profileInfo.designationNote' | translate}}
+          </div>
           <div class="auto-list flex flex-col ignore-blur" #dropdown
             *ngIf="openDesignationDropdown && filterDesignationsMeta.length">
             <div (mousedown)="preventBlur($event)"
@@ -105,8 +111,19 @@
             </div>
           </div>
         </div>
+        <div class="w-full relative" *ngIf="canShowDesignation && canShowOtherDesignation">
+          <div class="font-semibold margin-0 required"
+            i18n="Title label|Label which explains the user to enter title">
+            {{ 'profileInfo.otherDesignation' | translate }}
+          </div>
+          <div *ngIf="canShowOtherDesignation">
+            <mat-form-field appearance="outline" class="w-full">
+              <input type="text" class="input-text" matInput formControlName="otherDesignation" placeholder="{{ 'profileInfo.enterDesignation' | translate }}"/>
+            </mat-form-field>
+          </div>
+        </div>
           <div class="w-full" *ngIf="canShowEmployeeCode">
-              <div class="mat-subheading-2 margin-0 required"
+              <div class="font-semibold margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
                   {{ 'profileInfo.employeeId' | translate }}
               </div>
@@ -118,7 +135,7 @@
               </mat-form-field>                    
           </div>
           <div class="w-full" *ngIf="canshowMobile">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.mobileNumber' | translate }}
             </div>
@@ -148,7 +165,7 @@
               <form [formGroup]="otpForm">
                 <div class="w-full">
                   <div class="flex enter-otp">
-                    <div class="mat-subheading-2 required"
+                    <div class="font-semibold required"
                       i18n="Title label|Label which explains the user to enter title">
                       {{ 'profileInfo.enterOTP' | translate }}
                     </div>
@@ -175,7 +192,7 @@
             </div>
           </div>
         <div class="w-full" *ngIf="canShowGender">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
               i18n="Title label|Label which explains the user to enter title">
               {{ 'profileInfo.gender' | translate }}
             </div>
@@ -187,7 +204,7 @@
             </mat-form-field>
           </div>
             <div class="w-full" *ngIf="canShowDob">
-              <div class="mat-subheading-2 margin-0 required"
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.dob' | translate }}
               </div>
@@ -199,13 +216,13 @@
               </mat-form-field>
           </div>
           <div class="w-full relative" *ngIf="canShowDomicileMedium">
-            <div class="mat-subheading-2 margin-0 required"
+            <div class="font-semibold margin-0 required"
               i18n="Title label|Label which explains the user to enter title">
               {{ 'profileInfo.motherTongue' | translate }}
             </div>
             <mat-form-field appearance="outline" class="w-full">
-              <div class="flex flex-row auto-complete-row">
-                <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput
+              <div class="flex flex-row auto-complete-row relative">
+                <input type="text" class="input-text high-zindex" aria-label="Domicile Medium (Mother Tongue)" matInput
                   formControlName="domicileMedium" placeholder="Select mother tongue"
                   (input)="filterLanguage($event.target.value)" (focus)="onLanguageFocus()" #languageTextBox/>
                 <mat-icon class="mother-toungue-caret">arrow_drop_down</mat-icon>
@@ -225,7 +242,7 @@
             </div>
           </div>
             <div class="w-full" *ngIf="canShowCategory">
-              <div class="mat-subheading-2 margin-0 required"
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.category' | translate }}
               </div>
@@ -237,7 +254,7 @@
               </mat-form-field>
           </div>
           <div class="w-full" *ngIf="canShowpinCode">
-              <div class="mat-subheading-2 margin-0 required"
+              <div class="font-semibold margin-0 required"
                   i18n="Title label|Label which explains the user to enter title">
                   {{ 'userProfile.officePinCode' | translate }}
               </div>
@@ -248,10 +265,10 @@
                       </mat-error>
               </mat-form-field>                    
           </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails">
-              <div class="mat-subheading-2 margin-0 required"
+          <div class="w-full" *ngIf="canShowshowCadreDetails  && !showDoptChanges">
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.isCadre' | translate }}
+                {{ 'profileInfo.fromGovOrganization' | translate }}
               </div>
               <mat-form-field appearance="outline" class="profile-form-field">
                   <mat-select formControlName="isCadre" (selectionChange)="getIsCadreStatus($event.value)" placeholder="Select cadre">
@@ -261,8 +278,8 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus">
-              <div class="mat-subheading-2 margin-0 required"
+          <div class="w-full" *ngIf="canShowshowCadreDetails && isCadreStatus  && !showDoptChanges">
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.typeOfCivilService' | translate }}
               </div>
@@ -273,8 +290,8 @@
               </mat-form-field>
           </div>
 
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value">
-              <div class="mat-subheading-2 margin-0 required"
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('typeOfCivilService').value && userDetailsForm.get('isCadre').value && !showDoptChanges">
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.serviceType' | translate }}
               </div>
@@ -291,8 +308,8 @@
                   userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
                   userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-                )">
-              <div class="mat-subheading-2 margin-0 required"
+                ) && !showDoptChanges">
+              <div class="font-semibold margin-0 required"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadre' | translate }}
               </div>
@@ -302,31 +319,32 @@
                     </mat-select>
                 </mat-form-field>
           </div>
-
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('serviceType') && (userDetailsForm.get('serviceType').value && 
-          userDetailsForm.get('isCadre').value && userDetailsForm.get('typeOfCivilService').value && (
-              userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
-              userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
-              userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-          ) && userDetailsForm.get('cadreName').value)  ? true : ((userDetailsForm.get('serviceType').value && 
-              userDetailsForm.get('isCadre').value 
-          && userDetailsForm.get('typeOfCivilService').value && (
-              userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
-              userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
-              userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
-          ))) ? true : false">
-              <div class="mat-subheading-2 margin-0 required"
-                i18n="Title label|Label which explains the user to enter title">
-                {{ 'profileInfo.batch' | translate }}
-              </div>
-              <mat-form-field appearance="outline" class="profile-form-field">
-                  <mat-select formControlName="cadreBatch" placeholder="Select batch">
-                      <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-          </div>
-          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value">
-              <div class="mat-subheading-2 margin-0 required"
+          <ng-container *ngIf="!showDoptChanges">
+            <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('serviceType') && (userDetailsForm.get('serviceType').value && 
+            userDetailsForm.get('isCadre').value && userDetailsForm.get('typeOfCivilService').value && (
+                userDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
+                userDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
+                userDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
+            ) && userDetailsForm.get('cadreName').value)  ? true : ((userDetailsForm.get('serviceType').value && 
+                userDetailsForm.get('isCadre').value 
+            && userDetailsForm.get('typeOfCivilService').value && (
+                userDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
+                userDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
+                userDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
+            ))) ? true : false">
+                <div class="font-semibold margin-0 required"
+                  i18n="Title label|Label which explains the user to enter title">
+                  {{ 'profileInfo.batch' | translate }}
+                </div>
+                <mat-form-field appearance="outline" class="profile-form-field">
+                    <mat-select formControlName="cadreBatch" placeholder="Select batch">
+                        <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+          </ng-container>
+          <div class="w-full" *ngIf="canShowshowCadreDetails && userDetailsForm.get('isCadre').value &&  userDetailsForm.get('cadreBatch').value && !showDoptChanges">
+              <div class="font-semibold margin-0 required mb-3"
                 i18n="Title label|Label which explains the user to enter title">
                 {{ 'profileInfo.cadreControllingAuthority' | translate }}
               </div>
@@ -344,4 +362,9 @@
           </ng-container>
       </form>
     </div>
+    <ng-container *ngIf="addLoader > 0" >
+      <div class="text-center my-2 loader flex justify-center items-center">
+        <mat-spinner class="inline-block"></mat-spinner>
+      </div>
+    </ng-container>
 </div>

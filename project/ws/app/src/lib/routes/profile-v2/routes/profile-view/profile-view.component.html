@@ -181,11 +181,19 @@
                       </mat-select> -->
                     <div class="flex flex-row auto-complete-row">
                         <input type="text" class="input-text" matInput formControlName="designation" 
-                         placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
+                        (keydown)="onkeyDown($event)" placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
                         <mat-icon>arrow_drop_down</mat-icon>
                     </div>
-                    <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete">
-                        <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                    <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                        <!-- <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option> -->
+                        <ng-container *ngIf="filterDesignationsMeta.length > 0; else noDesignation">
+                          <ng-container *ngFor="let designation of filterDesignationsMeta">
+                            <mat-option  [value]="designation?.name">{{ designation?.name }}</mat-option>
+                          </ng-container>
+                        </ng-container>
+                        <ng-template #noDesignation>
+                          <mat-option disabled>No Designation found</mat-option>
+                        </ng-template>
                     </mat-autocomplete>
 
                     </mat-form-field>
@@ -430,14 +438,22 @@
                 <div class="info-value flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <div class="flex flex-row auto-complete-row">
-                      <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput 
+                      <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput (keydown)="onkeyDown($event)"
                         formControlName="domicileMedium" [matAutocomplete]="languageAuto" />
                       <mat-icon>arrow_drop_down</mat-icon>
                     </div>
-                    <mat-autocomplete #languageAuto="matAutocomplete">
-                      <mat-option *ngFor="let language of masterLanguages" [value]="language.name">
+                    <mat-autocomplete #languageAuto="matAutocomplete" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                      <!-- <mat-option *ngFor="let language of masterLanguages" [value]="language.name">
                         {{ language.name }}
-                      </mat-option>
+                      </mat-option> -->
+                      <ng-container *ngIf="masterLanguages.length > 0; else noLanguage">
+                        <ng-container *ngFor="let language of masterLanguages">
+                          <mat-option  [value]="language.name">{{ language.name }}</mat-option>
+                        </ng-container>
+                      </ng-container>
+                      <ng-template #noLanguage>
+                        <mat-option disabled>No language found</mat-option>
+                      </ng-template>
                     </mat-autocomplete>
                   </mat-form-field>
                 </div>

@@ -47,7 +47,8 @@ import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-
 })
 export class PublicCrpComponent {
   registrationForm!: UntypedFormGroup;
-  namePatern = /^[a-zA-Z0-9\s']+$/;
+  // namePatern = /^[a-zA-Z0-9\s']+$/;
+  namePatern = /^[a-zA-Z\s.]+$/;
   customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`;
   positionsOriginal!: [];
   postions!: any;
@@ -94,7 +95,7 @@ export class PublicCrpComponent {
   selectedLanguage = 'en';
   multiLang: any = [];
   isMultiLangEnabled: any;
-
+  dialogRef: any
   organizationDetails: IOrganizationDetails | null = null;
   frameworkDetails: any;
   organisationsList: any[] = [];
@@ -107,6 +108,8 @@ export class PublicCrpComponent {
   @ViewChild('invalidLinkTemplate') invalidLinkTemplateRef!: TemplateRef<any>;
   @ViewChild('emailOTPComponent') emailOTPComponent!: AppOtpReaderComponent;
   @ViewChild('phoneOTPComponent') phoneOTPComponent!: AppOtpReaderComponent;
+  crpPath: string = '';
+  isMatcompleteOpened = false;
 
   constructor(
     private signupSvc: SignupService,
@@ -162,6 +165,7 @@ export class PublicCrpComponent {
       ]),
       confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       designation: new UntypedFormControl('', [Validators.required]),
+      isWhatsappConsent: new UntypedFormControl(false),
     });
     if (
       this.configSvc.instanceConfig &&
@@ -169,6 +173,14 @@ export class PublicCrpComponent {
     ) {
       this.isMultiLangEnabled =
         this.configSvc.instanceConfig.isMultilingualEnabled;
+    }
+
+    const fullPath = this.activatedRoute.snapshot.url.map(segment => segment.path).join('/');
+    if(fullPath) {
+      const crpIndex = fullPath.indexOf('crp/');
+      if (crpIndex !== -1) {
+        this.crpPath = fullPath.slice(crpIndex);
+      }
     }
 
     this.raiseImpressionTelemetry()
@@ -199,10 +211,10 @@ export class PublicCrpComponent {
         this.invalidLinkMessage !== 'Registration link is not active'
       ) {
         setTimeout(() => {
-          this.dialog.open(this.invalidLinkTemplateRef, {
+          this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
             width: '400px',
             height: '200px',
-            data: this.invalidLinkMessage,
+            data: {message: this.invalidLinkMessage, type: 'invalidLink'},
             disableClose: true,
           });
         }, 200);
@@ -211,10 +223,15 @@ export class PublicCrpComponent {
         this.invalidLinkMessage == 'Registration link is not active'
       ) {
         setTimeout(() => {
-          this.dialog.open(this.invalidLinkTemplateRef, {
+          const message = this.sanitizer.bypassSecurityTrustHtml(
+            'Registrations are closed as of now. Please reach out to your department MDO or write to us at ' +
+            '<a href="mailto:mission.karmayogi@gov.in?subject=Support Request&body=Please provide your organization and designation details." ' +
+            'target="_blank">mission.karmayogi@gov.in</a> with organization and designation name'
+          );
+          this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
             width: '400px',
             height: '200px',
-            data: 'Registrations are closed as of now please reach out to your department MDO or please write us at mission.karmayogi@gov.in with organization and designation name',
+            data: { type: 'expiredLink', message : message},
             disableClose: true,
           });
         }, 200)
@@ -512,7 +529,9 @@ export class PublicCrpComponent {
   }
 
   signup() {
-    this.raiseSignupInteractTelementry()
+    const isDesignationValid = this.checkIfDesignationValid()
+    if (!isDesignationValid) return
+
     this.disableBtn = true;
     // this.recaptchaSubscription = this.recaptchaV3Service
     //   .execute('importantAction')
@@ -538,6 +557,7 @@ export class PublicCrpComponent {
               sbOrgId: this.heirarchyObject.sbOrgId,
               registrationLink: window.location.href,
               position: this.registrationForm.value.designation || '',
+              isWhatsappConsent: this.registrationForm.value.isWhatsappConsent,
             };
           }
 
@@ -546,6 +566,7 @@ export class PublicCrpComponent {
               this.openDialog();
               this.disableBtn = false;
               this.isMobileVerified = true;
+              this.raiseSignupInteractTelementry()
               
             },
             (err: any) => {
@@ -568,6 +589,17 @@ export class PublicCrpComponent {
       //     this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
       //   }
       // );
+  }
+
+  checkIfDesignationValid(): boolean {
+    const designation = this.filteredDesignationsList.find(
+      (designation) => designation.name === this.registrationForm.value.designation
+    )
+    if (!designation) {
+      this.openSnackbar('Invalid Designation', 4000)
+      return false
+    }
+    return true
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -750,26 +782,55 @@ export class PublicCrpComponent {
   }
 
   raiseSignupInteractTelementry() {
-      this.eventService.raiseInteractTelemetry(
+    this.telemetrySvc.start(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'sign-up',
+        pageid: '/crp',
+      },
+      {},
+      {
+        module: 'Self Registration',
+      }
+    );
+    this.eventService.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'sign-up',
+        pageid: '/crp',
+      },
+      {},
+      {
+        module: 'Self Registration',
+      }
+    );
+
+    setTimeout(() => {
+      this.telemetrySvc.end(
         {
           type: WsEvents.EnumInteractTypes.CLICK,
           id: 'sign-up',
-          pageid: "/crp" 
+          pageid: '/crp',
         },
         {},
-      )
+        {
+          module: 'Self Registration',
+        }
+      );
+    }, 2000);
   }
 
   raiseImpressionTelemetry() {
-    this.telemetrySvc.impression(
+   setTimeout(() => {
+    this.telemetrySvc.end(
       { 
-        type: "view",
-        pageid: "/crp",
-        uri: this.router.url,
-      },{
+      type: "view",
+      pageid: "/crp",
+      uri: this.crpPath,
+      }, {}, {
         module: "Self Registration",
-      }
-    )
+      })
+   }, 2000);
   }
 
   onFilterDesignation(value: string): void {
@@ -792,5 +853,22 @@ export class PublicCrpComponent {
 
   displayFnGroups(option: any): string {
     return option ? option : ''
+  }
+
+  closedDialogandRedirect() {
+    this.dialogRef?.close()
+    this.router.navigate(['/static-home'])
+  }
+
+  onkeyDown(_event: any) {
+    return this.isMatcompleteOpened
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
   }
 }

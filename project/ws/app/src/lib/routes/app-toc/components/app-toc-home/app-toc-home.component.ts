@@ -22,13 +22,13 @@ import {
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import {
-  ConfigurationsService, EventService,
+  ConfigurationsService, DataTransferService, EventService,
   LoggerService, MultilingualTranslationsService,
   NsPage, TFetchStatus, TelemetryService,
-  UtilityService, WsEvents,
+  UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import {  WidgetContentLibService } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -76,7 +76,7 @@ const flattenItems = (items: any[], key: string | number) => {
 export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
   show = false
   changeTab = false
-  skeletonLoader = false
+  skeletonLoader = true
   banners: NsAppToc.ITocBanner | null = null
   showMoreGlance = false
   content: NsContent.IContent | null = null
@@ -246,7 +246,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     private route: ActivatedRoute,
     private router: Router,
     private contentSvc: WidgetContentService,
-    private userSvc: WidgetUserServiceLib,
     public tocSvc: AppTocService,
     private loggerSvc: LoggerService,
     private configSvc: ConfigurationsService,
@@ -269,6 +268,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     private handleClaimService: HandleClaimService,
     private resetRatingsService: ResetRatingsService,
     private timerService: TimerService,
+    public enrollSvc: WidgetEnrollService,
+    public contentLibSvc: WidgetContentLibService,
+    public dataTransferSvc: DataTransferService,
   ) {
     this.historyData = history.state
     this.handleBreadcrumbs()
@@ -344,7 +346,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.routeSubscription = this.route.data.subscribe(async (data: Data) => {
         if (data && data.content && data.content.data && data.content.data.identifier) {
           this.courseID = data.content.data.identifier
-          this.skeletonLoader = false
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
           },                                                                      (error: HttpErrorResponse) => {
@@ -359,6 +360,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             await this.tocSvc.fetchCourseHeirarchy(this.content)
             this.tocSvc.contentLoader.next(false)
             this.tocSvc.checkModuleWiseData(this.content)
+          } else {
+            this.fetchUserEnrollmentData();
           }
           this.initialrouteData = data
           this.banners = data.pageData.data.banners
@@ -614,7 +617,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       console.log(res)
       this.isClaimed = true
       this.openSnackbar('Karma points are successfully claimed.')
-      this.getUserEnrollmentList()
+      // this.getUserEnrollmentList()
+      this.checkIfUserEnrolled()
     },                                                  (error: any) => {
       // tslint:disable:no-console
       console.log(error)
@@ -815,7 +819,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
     if (!this.forPreview) {
       this.getUserRating(false)
-      this.getUserEnrollmentList()
+      // this.getUserEnrollmentList()
     }
     this.body = this.domSanitizer.bypassSecurityTrustHtml(
       this.content && this.content.body
@@ -955,135 +959,134 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     },         250)
   }
 
-  private getUserEnrollmentList() {
-    this.enrollBtnLoading = true
-    this.tocSvc.contentLoader.next(true)
-    this.userSvc.resetTime('enrollmentService')
-    // tslint:disable-next-line
-    if (this.content && this.content.identifier && this.content.primaryCategory !== this.primaryCategory.COURSE &&
-      this.content.primaryCategory !== this.primaryCategory.PROGRAM &&
-      this.content.primaryCategory !== this.primaryCategory.MANDATORY_COURSE_GOAL &&
-      this.content.primaryCategory !== this.primaryCategory.STANDALONE_ASSESSMENT &&
-      this.content.primaryCategory !== this.primaryCategory.BLENDED_PROGRAM &&
-      this.content.primaryCategory !== this.primaryCategory.CURATED_PROGRAM) {
-      // const collectionId = this.isResource ? '' : this.content.identifier
-      return this.getContinueLearningData(this.content.identifier)
-    }
+  // private getUserEnrollmentList() {
+  //   this.enrollBtnLoading = true
+  //   this.tocSvc.contentLoader.next(true)
+  //   // tslint:disable-next-line
+  //   if (this.content && this.content.identifier && this.content.primaryCategory !== this.primaryCategory.COURSE &&
+  //     this.content.primaryCategory !== this.primaryCategory.PROGRAM &&
+  //     this.content.primaryCategory !== this.primaryCategory.MANDATORY_COURSE_GOAL &&
+  //     this.content.primaryCategory !== this.primaryCategory.STANDALONE_ASSESSMENT &&
+  //     this.content.primaryCategory !== this.primaryCategory.BLENDED_PROGRAM &&
+  //     this.content.primaryCategory !== this.primaryCategory.CURATED_PROGRAM) {
+  //     // const collectionId = this.isResource ? '' : this.content.identifier
+  //     return this.getContinueLearningData(this.content.identifier)
+  //   }
 
-    this.userEnrollmentList = []
-    let userId: any
+  //   this.userEnrollmentList = []
+  //   let userId: any
 
-    if (this.configSvc.userProfile) {
-      userId = this.configSvc.userProfile.userId || ''
-    }
+  //   if (this.configSvc.userProfile) {
+  //     userId = this.configSvc.userProfile.userId || ''
+  //   }
 
-    this.userSvc.fetchUserBatchList(userId).toPromise().then(
-      async (result: any) => {
-        const courses: NsContent.ICourse[] = result && result.courses
-        this.userEnrollmentList = courses
-        let enrolledCourse: NsContent.ICourse | undefined
-        if (this.content && this.content.identifier && !this.forPreview) {
-          if (courses && courses.length) {
-            enrolledCourse = courses.find((course: any) => {
-              const identifier = this.content && this.content.identifier || ''
-              if (course.courseId !== identifier) {
-                return undefined
-              }
-              return course
-            })
-          }
+  //   this.userSvc.fetchUserBatchList(userId).toPromise().then(
+  //     async (result: any) => {
+  //       const courses: NsContent.ICourse[] = result && result.courses
+  //       this.userEnrollmentList = courses
+  //       let enrolledCourse: NsContent.ICourse | undefined
+  //       if (this.content && this.content.identifier && !this.forPreview) {
+  //         if (courses && courses.length) {
+  //           enrolledCourse = courses.find((course: any) => {
+  //             const identifier = this.content && this.content.identifier || ''
+  //             if (course.courseId !== identifier) {
+  //               return undefined
+  //             }
+  //             return course
+  //           })
+  //         }
 
-          // If current course is present in the list of user enrolled course
-          if (enrolledCourse && enrolledCourse.batchId) {
-            this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
-              if (res) {
-                this.resumeData = res
-                this.getLastPlayedResource()
-                this.generateResumeDataLinkNew()
-              }
-            })
-            this.tocSvc.checkModuleWiseData(this.content)
-            this.enrolledCourseData = enrolledCourse
-            this.isCourseCompletedOnThisMonth()
-            this.currentCourseBatchId = enrolledCourse.batchId
-            // this.downloadCert(enrolledCourse.issuedCertificates)
-            if (enrolledCourse && enrolledCourse.issuedCertificates &&
-              enrolledCourse.issuedCertificates.length) {
-              const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
-                 new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
-              const certId = certificate[0].identifier
-              this.certId = certId
-              if (this.content) {
-                this.content['certificateObj'] = {
-                  certId,
-                  certData: '',
-                }
-              }
-            }
-            this.content.completionPercentage = enrolledCourse.completionPercentage || 0
-            this.content.completionStatus = enrolledCourse.status || 0
-            if (this.contentReadData && this.contentReadData.cumulativeTracking) {
-              await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
-              this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
-                if (res) {
-                  this.resumeData = res
-                  this.getLastPlayedResource()
-                  this.generateResumeDataLinkNew()
-                }
-              })
+  //         // If current course is present in the list of user enrolled course
+  //         if (enrolledCourse && enrolledCourse.batchId) {
+  //           this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+  //             if (res) {
+  //               this.resumeData = res
+  //               this.getLastPlayedResource()
+  //               this.generateResumeDataLinkNew()
+  //             }
+  //           })
+  //           this.tocSvc.checkModuleWiseData(this.content)
+  //           this.enrolledCourseData = enrolledCourse
+  //           this.isCourseCompletedOnThisMonth()
+  //           this.currentCourseBatchId = enrolledCourse.batchId
+  //           // this.downloadCert(enrolledCourse.issuedCertificates)
+  //           if (enrolledCourse && enrolledCourse.issuedCertificates &&
+  //             enrolledCourse.issuedCertificates.length) {
+  //             const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
+  //                new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
+  //             const certId = certificate[0].identifier
+  //             this.certId = certId
+  //             if (this.content) {
+  //               this.content['certificateObj'] = {
+  //                 certId,
+  //                 certData: '',
+  //               }
+  //             }
+  //           }
+  //           this.content.completionPercentage = enrolledCourse.completionPercentage || 0
+  //           this.content.completionStatus = enrolledCourse.status || 0
+  //           if (this.contentReadData && this.contentReadData.cumulativeTracking) {
+  //             await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
+  //             this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+  //               if (res) {
+  //                 this.resumeData = res
+  //                 this.getLastPlayedResource()
+  //                 this.generateResumeDataLinkNew()
+  //               }
+  //             })
 
-              this.enrollBtnLoading = false
-              // this.tocSvc.contentLoader.next(false)
-            } else {
-              this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId)
-              this.content['completionPercentage'] = enrolledCourse.completionPercentage
-              this.enrollBtnLoading = false
-              this.tocSvc.mapModuleCount(this.content)
-              // this.tocSvc.contentLoader.next(false)
-            }
-            this.batchData = {
-              content: [enrolledCourse.batch],
-              enrolled: true,
-            }
-            this.tocSvc.setBatchData(this.batchData)
-            this.tocSvc.getSelectedBatchData(this.batchData)
-            this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
-            if (this.getBatchId()) {
-              this.router.navigate(
-                [],
-                {
-                  relativeTo: this.route,
-                  queryParams: { batchId: this.getBatchId() },
-                  queryParamsHandling: 'merge',
-                })
-            }
-          } else {
-            this.tocSvc.checkModuleWiseData(this.content)
-            this.tocSvc.mapModuleCount(this.content)
-            // It's understood that user is not already enrolled
-            // Fetch the available batches and present to user
-            if (this.content.primaryCategory === this.primaryCategory.COURSE
-              || this.content.primaryCategory !== this.primaryCategory.PROGRAM) {
-              // Disabling auto enrollment to batch
-              if (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM) {
-                this.fetchBatchDetails()
-              }
-            } else {
-              this.fetchBatchDetails()
-            }
-            this.tocSvc.callHirarchyProgressHashmap(this.content)
-            this.enrollBtnLoading = false
-            // this.tocSvc.contentLoader.next(false)
-          }
-        }
-        // console.log('calling ---------------- =========')
-        // this.getLastPlayedResource()
-      },
-      (error: any) => {
-        this.loggerSvc.error('CONTENT HISTORY FETCH ERROR >', error)
-      },
-    )
-  }
+  //             this.enrollBtnLoading = false
+  //             // this.tocSvc.contentLoader.next(false)
+  //           } else {
+  //             this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId)
+  //             this.content['completionPercentage'] = enrolledCourse.completionPercentage
+  //             this.enrollBtnLoading = false
+  //             this.tocSvc.mapModuleCount(this.content)
+  //             // this.tocSvc.contentLoader.next(false)
+  //           }
+  //           this.batchData = {
+  //             content: [enrolledCourse.batch],
+  //             enrolled: true,
+  //           }
+  //           this.tocSvc.setBatchData(this.batchData)
+  //           this.tocSvc.getSelectedBatchData(this.batchData)
+  //           this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
+  //           if (this.getBatchId()) {
+  //             this.router.navigate(
+  //               [],
+  //               {
+  //                 relativeTo: this.route,
+  //                 queryParams: { batchId: this.getBatchId() },
+  //                 queryParamsHandling: 'merge',
+  //               })
+  //           }
+  //         } else {
+  //           this.tocSvc.checkModuleWiseData(this.content)
+  //           this.tocSvc.mapModuleCount(this.content)
+  //           // It's understood that user is not already enrolled
+  //           // Fetch the available batches and present to user
+  //           if (this.content.primaryCategory === this.primaryCategory.COURSE
+  //             || this.content.primaryCategory !== this.primaryCategory.PROGRAM) {
+  //             // Disabling auto enrollment to batch
+  //             if (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM) {
+  //               this.fetchBatchDetails()
+  //             }
+  //           } else {
+  //             this.fetchBatchDetails()
+  //           }
+  //           this.tocSvc.callHirarchyProgressHashmap(this.content)
+  //           this.enrollBtnLoading = false
+  //           // this.tocSvc.contentLoader.next(false)
+  //         }
+  //       }
+  //       // console.log('calling ---------------- =========')
+  //       // this.getLastPlayedResource()
+  //     },
+  //     (error: any) => {
+  //       this.loggerSvc.error('CONTENT HISTORY FETCH ERROR >', error)
+  //     },
+  //   )
+  // }
 
   public fetchUserWFForBlended() {
     const applicationIds = (this.batchData && this.batchData.content && this.batchData.content.map(e => e.batchId)) || []
@@ -1159,7 +1162,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     } else {
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
-      this.userSvc.resetTime('enrollmentService')
+      this.raiseEnrollTelemetry()
       const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
       if (this.content && this.content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
         this.autoEnrollCuratedProgram(NsContent.ECourseCategory.CURATED_PROGRAM, batchData)
@@ -1194,7 +1197,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.contentSvc.autoAssignCuratedBatchApi(req, programType).subscribe(
         (data: NsContent.IBatchListResponse) => {
           if (data) {
-            this.userSvc.resetTime('enrollmentService')
             if (programType === NsContent.ECourseCategory.MODERATED_PROGRAM && batchData.endDate) {
               this.batchData = {
                 content: [batchData],
@@ -1208,7 +1210,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
                   queryParamsHandling: 'merge',
                 })
               setTimeout(() => {
-                this.getUserEnrollmentList()
+                // this.getUserEnrollmentList()
+                   this.checkIfUserEnrolled()
               },         2000)
             } else {
               this.navigateToPlayerPage(req.request.batchId)
@@ -1741,7 +1744,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
         this.getUserRating(true)
-        this.getUserEnrollmentList()
+        // this.getUserEnrollmentList()
+        this.checkIfUserEnrolled()
         this.resetRatingsService.setRatingServiceUpdate(true)
       }
     })
@@ -1890,6 +1894,24 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
   }
 
+  raiseEnrollTelemetry() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'enroll',
+        id: this.content ? this.content.identifier : '',
+      },
+      {
+        id: this.content ? this.content.identifier : '',
+        type: this.content ? this.content.primaryCategory : '',
+      },
+      {
+        pageIdExt: `btn-enroll`,
+        module: WsEvents.EnumTelemetrymodules.CONTENT,
+      }
+    )
+  }
+
   onClickOfShare() {
     this.enableShare = true
     this.raiseTelemetryForShare('shareContent')
@@ -1964,4 +1986,160 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         module: 'Landing Page',
       })
   }
+
+
+  fetchUserEnrollmentData() {
+    let identifier = this.content && this.content.identifier || ''
+    let request: any = {
+      "request": {
+          "courseId": [identifier]
+      }
+    }
+    this.enrollSvc.fetchEnrollContentData(request).subscribe(async (res: any) => {
+    
+      
+      if(res && res.result && res.result.courses && res.result.courses.length) {
+        this.userEnrollmentList = res.result.courses
+        this.dataTransferSvc.setEnrollData(this.userEnrollmentList)
+        if(this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
+          let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
+          if(urlData && urlData.url && urlData.url.includes('app/toc')) {
+            this.checkIfUserEnrolled()
+          } else {
+            this.contentLibSvc.oneStepResumeEnable = false
+            if (urlData && urlData.url ) {
+              this.router.navigate(
+                [urlData.url],
+                {
+                  queryParams: urlData.queryParams
+                })
+            }
+          }
+          
+        } else {
+        this.checkIfUserEnrolled()
+        }
+      } else {
+        this.userEnrollmentList = []
+        this.checkIfUserEnrolled()
+      }
+     }) 
+  }
+
+
+  async checkIfUserEnrolled() {
+    this.contentLibSvc.oneStepResumeEnable = false
+    this.enrollBtnLoading = true
+    this.tocSvc.contentLoader.next(true)
+    // tslint:disable-next-line
+    if (this.content && this.content.identifier && this.content.primaryCategory !== this.primaryCategory.COURSE &&
+      this.content.primaryCategory !== this.primaryCategory.PROGRAM &&
+      this.content.primaryCategory !== this.primaryCategory.MANDATORY_COURSE_GOAL &&
+      this.content.primaryCategory !== this.primaryCategory.STANDALONE_ASSESSMENT &&
+      this.content.primaryCategory !== this.primaryCategory.BLENDED_PROGRAM &&
+      this.content.primaryCategory !== this.primaryCategory.CURATED_PROGRAM) {
+      // const collectionId = this.isResource ? '' : this.content.identifier
+      return this.getContinueLearningData(this.content.identifier)
+    }
+
+    let enrolledCourse: NsContent.ICourse | undefined
+    if (this.content && this.content.identifier && !this.forPreview) {
+      if (this.userEnrollmentList && this.userEnrollmentList.length) {
+        enrolledCourse = this.userEnrollmentList.find((course: any) => {
+          const identifier = this.content && this.content.identifier || ''
+          if (course.courseId !== identifier) {
+            return undefined
+          }
+          return course
+        })
+      }
+
+      // If current course is present in the list of user enrolled course
+      if (enrolledCourse && enrolledCourse.batchId) {
+        this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+          if (res) {
+            this.resumeData = res
+            this.getLastPlayedResource()
+            this.generateResumeDataLinkNew()
+          }
+        })
+        this.tocSvc.checkModuleWiseData(this.content)
+        this.enrolledCourseData = enrolledCourse
+        this.isCourseCompletedOnThisMonth()
+        this.currentCourseBatchId = enrolledCourse.batchId
+        // this.downloadCert(enrolledCourse.issuedCertificates)
+        if (enrolledCourse && enrolledCourse.issuedCertificates &&
+          enrolledCourse.issuedCertificates.length) {
+          const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
+              new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
+          const certId = certificate[0].identifier
+          this.certId = certId
+          if (this.content) {
+            this.content['certificateObj'] = {
+              certId,
+              certData: '',
+            }
+          }
+        }
+        this.content.completionPercentage = enrolledCourse.completionPercentage || 0
+        this.content.completionStatus = enrolledCourse.status || 0
+        if (this.contentReadData && this.contentReadData.cumulativeTracking) {
+          await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
+          this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+            if (res) {
+              this.resumeData = res
+              this.getLastPlayedResource()
+              this.generateResumeDataLinkNew()
+            }
+          })
+
+          this.enrollBtnLoading = false
+          // this.tocSvc.contentLoader.next(false)
+        } else {
+          this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId)
+          this.content['completionPercentage'] = enrolledCourse.completionPercentage
+          this.enrollBtnLoading = false
+          this.tocSvc.mapModuleCount(this.content)
+          // this.tocSvc.contentLoader.next(false)
+        }
+        this.batchData = {
+          content: [enrolledCourse.batch],
+          enrolled: true,
+        }
+        this.tocSvc.setBatchData(this.batchData)
+        this.tocSvc.getSelectedBatchData(this.batchData)
+        this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
+        if (this.getBatchId()) {
+          this.router.navigate(
+            [],
+            {
+              relativeTo: this.route,
+              queryParams: { batchId: this.getBatchId() },
+              queryParamsHandling: 'merge',
+            })
+        }
+      } else {
+        this.tocSvc.checkModuleWiseData(this.content)
+        this.tocSvc.mapModuleCount(this.content)
+        // It's understood that user is not already enrolled
+        // Fetch the available batches and present to user
+        if (this.content.primaryCategory === this.primaryCategory.COURSE
+          || this.content.primaryCategory !== this.primaryCategory.PROGRAM) {
+          // Disabling auto enrollment to batch
+          if (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM) {
+            this.fetchBatchDetails()
+          }
+        } else {
+          this.fetchBatchDetails()
+        }
+        this.tocSvc.callHirarchyProgressHashmap(this.content)
+        this.enrollBtnLoading = false
+        // this.tocSvc.contentLoader.next(false)
+      }
+    }
+
+    this.skeletonLoader = false
+  }
+
+
 }

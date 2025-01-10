@@ -131,13 +131,20 @@
                                             {{ 'publicsignup.designationMandatory' | translate }}
                                         </mat-error>
                                     </mat-form-field> -->
-                                    <mat-form-field appearance="outline" class="margin-top-s w-full" id="designation">
+                                    <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="designation">
                                         <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
-                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto">
-                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                          <ng-container *ngFor="let option of filteredDesignationsList">
-                                            <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
-                                          </ng-container>
+                                          (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto" 
+                                          (keydown)="onkeyDown($event)">
+                                          <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
+                                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                                            <ng-container *ngIf="filteredDesignationsList.length > 0; else noDesignation">
+                                                <ng-container *ngFor="let option of filteredDesignationsList">
+                                                  <mat-option  [value]="option?.name">{{ option?.name }}</mat-option>
+                                                </ng-container>
+                                            </ng-container>
+                                          <ng-template #noDesignation>
+                                            <mat-option disabled>No Designation found</mat-option>
+                                          </ng-template>
                                         </mat-autocomplete>
                                         <mat-error [hidden]="false"
                                         i18n="Designation Error | Explains Designation is required"
@@ -244,7 +251,7 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="timeLeftforOTPEmail <= 0">
                                                     <div class="otp-resend-btn mt-2">
-                                                        <span class="cursor-pointer ws-mat-default-text text-sm"
+                                                        <span class="cursor-pointer ws-mat-default-text text-xs"
                                                             (click)="resendOTPEmail()">
                                                             {{ 'publicsignup.resendOTP' | translate }}</span>
                                                     </div>
@@ -295,7 +302,7 @@
                                             </mat-error>
                                         </mat-form-field>
                                     </div>
-                                    <mat-checkbox class="text-sm recieve-text"> {{ 'publicsignup.receiveOnWhatsapp' |
+                                    <mat-checkbox class="text-sm recieve-text" formControlName="isWhatsappConsent"> {{ 'publicsignup.receiveOnWhatsapp' |
                                         translate }}</mat-checkbox>
 
                                     <div *ngIf="!isMobileVerified" class="flex flex-1 margin-top-s justify-end">
@@ -388,13 +395,19 @@
                                         {{ 'publicsignup.groupGradeMandatory' | translate }}
                                     </mat-error>
                                 </mat-form-field> -->
-                                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="group">
                                     <input #group i18n-placeholder="group" type="text" placeholder="Type to search" aria-label="Type to search" matInput
-                                      (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups">
-                                    <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups">
-                                      <ng-container *ngFor="let option of filteredGroupsList">
-                                        <mat-option  [value]="option">{{ option }}</mat-option>
-                                      </ng-container>
+                                      (input)="onFilterGroups($event.target.value)" formControlName="group" [matAutocomplete]="autoGroups" (keydown)="onkeyDown($event)">
+                                      <mat-icon class="mat-icon-arroe">keyboard_arrow_down</mat-icon>
+                                    <mat-autocomplete #autoGroups="matAutocomplete" [displayWith]="displayFnGroups" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                                        <ng-container *ngIf="filteredGroupsList?.length > 0; else nogroups">
+                                            <ng-container *ngFor="let option of filteredGroupsList">
+                                              <mat-option  [value]="option">{{ option }}</mat-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-template #nogroups>
+                                            <mat-option disabled>No Groups found</mat-option>
+                                          </ng-template>
                                     </mat-autocomplete>
                                     <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
                                         *ngIf="registrationForm?.controls['group'].errors?.required" i18n-aria-label
@@ -458,7 +471,8 @@
 </ng-container>
 
 <ng-template #invalidLinkTemplate let-data>
-    <div class="flex flex-col justify-center items-center h-full items-center text-center">
-        {{ data }}
+    <div class="relative">
+        <div class="close-error-modal" *ngIf="data?.type === 'expiredLink'" (click)="closedDialogandRedirect()"><mat-icon>close</mat-icon></div>
+        <div class="flex flex-col justify-center items-center h-full items-center text-center mt-6" [innerHtml]="data?.message"></div>
     </div>
 </ng-template>

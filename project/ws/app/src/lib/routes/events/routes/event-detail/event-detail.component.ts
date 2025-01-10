@@ -76,7 +76,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   get isenrollFlow() {
-    if (this.eventData && this.enrollFlowItems.length) {
+    if (this.eventData && this.enrollFlowItems && this.enrollFlowItems.length) {
       return this.eventData.resourceType && this.enrollFlowItems.includes(this.eventData.resourceType)
     } return false
   }
@@ -126,6 +126,8 @@ export class EventDetailComponent implements OnInit {
       if (eventDate < today && eventendDate < today) {
         this.pastEvent = true
       }
+      this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+      this.enrollFlowItems = this.pageData.enrollFlowItems
       if (this.isenrollFlow) {
         this.getUserIsEnrolled()
       } else {
@@ -155,7 +157,7 @@ export class EventDetailComponent implements OnInit {
       userId = this.configSvc.userProfile.userId || ''
     }
     this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
-    this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+    
     if (this.discussWidgetData) {
       if (this.eventData && this.eventData.identifier) {
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier

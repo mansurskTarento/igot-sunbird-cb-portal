@@ -9,6 +9,10 @@
 
 }
 
+.high-zindex {
+    z-index: 9999;
+}
+
 .auto-list {
     display: flex;
     border: 1px solid #e3dede;
@@ -70,6 +74,17 @@
         padding-right: 0px !important;
         padding-bottom: 1rem !important;
       }
+}
+
+.disagnation-caret {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+.mother-toungue-caret {
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
 ::ng-deep.userDetailsForm .mat-form-field-appearance-outline .mat-form-field-infix {
@@ -152,4 +167,18 @@ input[disabled] + mat-icon.mother-toungue-caret {
 
 .save-button:disabled {
     opacity: 0.6!important;
+}
+
+.loader {
+    position: absolute;
+    top: 0pc;
+    left: 0px;
+    z-index: 1000;
+    height: 100vh;
+    width: 100vw;
+    background-color: #80808045;
+  }
+
+:host ::ng-deep.userDetailsForm .mat-form-field-wrapper {
+    padding-bottom: 8px!important
 }
