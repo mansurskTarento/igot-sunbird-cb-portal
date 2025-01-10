@@ -539,7 +539,6 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
       // tslint:disable-next-line: deprecation
       this.enrollSvc.fetchInternalEnrollmentData(userId, request).subscribe(
         (result: any) => {
-          debugger
           const courses = result && result.result && result.result.courses
           const showViewMore = Boolean(
             courses.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
