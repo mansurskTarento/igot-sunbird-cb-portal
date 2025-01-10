@@ -173,10 +173,12 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 .profile-not-verified {
   @extend .common-verified-css;
   border: 1px solid $border-color;
-  background: rgba($color: #000000, $alpha: 0.14);
+  background: red;
+  color: white;
+
 
   .mat-icon {
-    color: rgba($color: #000000, $alpha: 0.44);
+    color: white;
   }
 }
 
