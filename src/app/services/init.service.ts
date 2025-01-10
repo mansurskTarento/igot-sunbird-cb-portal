@@ -183,12 +183,13 @@ export class InitService {
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
+        await this.fetchUserEnrollDetails()
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
         await this.fetchStartUpDetails()
       }
-      await this.fetchUserEnrollDetails()
+
       // detail: depends only on userID
     } catch (e) {
       this.settingsSvc.initializePrefChanges(environment.production)
