@@ -140,6 +140,8 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   apiResponse: any
   courseDetails: any
   userProfile: any
+  userProfileObject: any
+  doptEligibleServicesList: string[] = []
   maxEmailsLimit = 30
   showLoader = false
   constructor(
@@ -292,9 +294,12 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       this.canShare = true
       if (this.configSvc.userProfile) {
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
+        this.userProfile = this.configSvc.userProfile
+        this.userProfileObject = this.configSvc.unMappedUser
         // this.getUsersToShare('')
       }
     }
+    this.getDoptEligibleServicesList()
   }
 
   getUsersToShare(queryStr: string) {
@@ -371,6 +376,50 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     return this.tocSvc.subtitleOnBanners
   }
 
+  getDoptEligibleServicesList() {
+    this.doptEligibleServicesList = [
+      `Indian Administrative Service (IAS)`,
+      `Indian Police Service (IPS)`,    
+      `Indian Forest Service (IFoS)`,
+      `Central Engineering Service(CPWD)`,
+      `Central Power Engineering Service`,    
+      `Central Secretariat Service`,
+      `Central Water Engineering Service`,
+      `Geological Survey of India`,
+      `Indian Audit & Accounts Service`,
+      `Indian Broadcasting Engineer Service`,
+      `Indian Broadcasting Programme Service`,
+      `Indian Civil Accounts Service`,
+      `Indian Corporate Law Service`,
+      `Indian Cost Account Service`,
+      `Indian Defence Accounts Service`,
+      `Indian Defence Estates Service`,
+      `Indian Defence S. of Engineer`,
+      `Indian Economic Service`,
+      `Indian Information Service`,
+      `Indian Inspection Service`,
+      `Indian Ordnance Factories Service`,
+      `Indian Postal Service`,
+      `Indian Railway Accounts Service`,
+      `Indian Railway Personnel Service`,
+      `Indian Railway Service`,
+      `Indian Railway Service of Electrical Engineers`,
+      `Indian Railway Service of Engineers`,
+      `Indian Railway Service of Mechanical Engineers`,
+      `Indian Railway Service of Signal Engineers`,
+      `Indian Railway Store Service`,
+      `Indian Railway Traffic Service`,
+      `Indian Revenue Service (C&CE)`,
+      `Indian Revenue Service (IT)`,
+      `Indian Statistical Service`,
+      `Indian Supply Service`,
+      `Indian Telecom Service`,
+      `Indian Trade Service`,
+      `IP&T (Fin. & Accounts) Service`,
+      `Delhi, Andaman and Nicobar Islands, Lakshadweep, Daman & Diu, and Dadra & Nagar Haveli Civil Service (DANICS)`
+  ]
+  }
+
   ngOnChanges(_changes: SimpleChanges): void {
     this.assignPathAndUpdateBanner(this.router.url)
     if (this.content) {
@@ -439,6 +488,17 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       }
     })
   }
+  
+  openConformationDialog(message: string) {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '600px',
+      data: {
+        message: message,
+        acceptButton: 'Ok',
+        disableClose: true
+      }
+    })
+  }
 
   public openRequestToEnroll(batchData: any) {
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
@@ -466,6 +526,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const surveyId = sID[1]
       const courseId = this.content.identifier
       const courseName = this.content.name
+      const wfClientVersion = _.get(this.content, 'wfClientVersion', 0)
       const apiData = {
         // tslint:disable-next-line:prefer-template
         getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
@@ -483,6 +544,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
           courseName,
           apiData,
           batchData,
+          wfClientVersion
 
         },
         disableClose: false,
@@ -498,13 +560,28 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
   callBPProfileSurevy(batchData: any) {
     if (this.content) {
+      const doptorgID = environment.doptOrg
+      const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
+      const isDptUser = _.get(this.userProfileObject, 'rootOrgId') === doptorgID
+      const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
+      if( isDoptContent && isDptUser) {
+        if(!civilServiceName) {
+          this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
+          return
+        } else if (!this.doptEligibleServicesList.includes(civilServiceName)) {
+          this.openConformationDialog(`You are not eligible for the IST Blended Program of DoPT with the current service in your profile. If your service details are incorrect, please update your profile and apply.`)
+          return
+        }
+      }
       const courseName = this.content.name
+      const showDoptChanges = (isDoptContent && isDptUser) ? true : false
       const profileForm = this.dialog.open(EnrollProfileFormComponent, {
         width: '920px',
         maxHeight: '85vh',
         data: {
           courseName,
           batchData,
+          showDoptChanges,
         },
         disableClose: false,
         panelClass: ['animate__animated', 'animate__slideInLeft'],

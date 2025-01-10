@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core
 import { Subscription, Observable, interval } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
-import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService, WsEvents, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
 import { startWith, map, pairwise } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
@@ -161,7 +161,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private eventService: EventService,
+    private telemetrySvc: TelemetryService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -682,6 +684,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.openDialog()
               this.disableBtn = false
               this.isMobileVerified = true
+              this.raiseSignupInteractTelementry()
             },
             (err: any) => {
               this.disableBtn = false
@@ -829,4 +832,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     webFormxhr.send()
   }
+
+   raiseSignupInteractTelementry() {
+        this.eventService.raiseInteractTelemetry(
+          {
+            type: WsEvents.EnumInteractTypes.CLICK,
+            id: 'sign-up',
+            pageid: "/public/signup" 
+          },
+          {},
+          {
+            module: "User Registration",
+          }
+        )
+  
+        setTimeout(() => {
+          this.telemetrySvc.end(
+            { 
+              type: WsEvents.EnumInteractTypes.CLICK,
+              id: 'sign-up',
+              pageid: "/public/signup" 
+          }, {},
+           {
+              module: "User Registration",
+            })
+          
+        }, 2000);
+    
+    }
 }

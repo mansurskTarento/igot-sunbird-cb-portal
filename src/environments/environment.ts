@@ -42,6 +42,7 @@ export const environment: IEnvironment = {
   helpEmail: (window as { [key: string]: any })['env']['helpEmail'] || '',
   supportEmail: (window as { [key: string]: any })['env']['supportEmail'] || '',
   spvorgID: (window as { [key: string]: any })['env']['spvorgID'] || '',
+  doptOrg: (window as { [key: string]: any })['env']['doptOrg'] || '',
   mdoChannelsBookmarkId: (window as { [key: string]: any })['env']['mdoChannelsBookmarkId'] || '',
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
@@ -83,9 +84,10 @@ interface IEnvironment {
   supportEmail: string,
   apiCache: number,
   spvorgID: number,
-  mdoChannelsBookmarkId: string
+  doptOrg?: string,
+  mdoChannelsBookmarkId: string,
   providerDataKey: string,
-  compentencyVersionKey: string
+  compentencyVersionKey: string,
   cbcOrg: string
 }
 

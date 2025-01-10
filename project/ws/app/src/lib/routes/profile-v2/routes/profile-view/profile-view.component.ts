@@ -204,6 +204,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isNotMyUser = false
   isIgotOrg = false
   userDate: any
+  isMatcompleteOpened = false
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -224,20 +225,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.translateService.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
       this.translateService.use(lang)
-    }
-
-    if (this.otherDetailsForm.get('domicileMedium')) {
-      this.otherDetailsForm.get('domicileMedium')!.valueChanges
-        .pipe(
-          debounceTime(250),
-          distinctUntilChanged(),
-          startWith(''),
-        )
-        .subscribe(res => {
-          if (this.masterLanguageBackup) {
-            this.masterLanguages = this.masterLanguageBackup.filter(item => item.name.toLowerCase().includes(res && res.toLowerCase()))
-          }
-        })
     }
 
     if (this.otherDetailsForm.get('countryCode')) {
@@ -375,6 +362,20 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.filterDesignationsMeta =  this.designationsMeta
       }
     })
+
+    if (this.otherDetailsForm.get('domicileMedium')) {
+      this.otherDetailsForm.get('domicileMedium')!.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          if (this.masterLanguageBackup) {
+            this.masterLanguages = this.masterLanguageBackup.filter(item => item.name.toLowerCase().includes(res && res.toLowerCase()))
+          }
+        })
+    }
   }
 
   // Sujith
@@ -1679,4 +1680,16 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   //   const parts = email.split('@');
   //   return parts.length > 1 ? parts[1] : '';
   // }
+
+  onkeyDown(_event: any) {
+    return this.isMatcompleteOpened
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
+  }
 }

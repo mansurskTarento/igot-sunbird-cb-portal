@@ -11,6 +11,7 @@ import {
   ConfigurationsService,
   UtilityService,
   MultilingualTranslationsService,
+  WidgetEnrollService,
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
@@ -86,6 +87,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
     private http: HttpClient,
     private searchApiService: SearchApiService,
     private langtranslations: MultilingualTranslationsService,
+    private enrollSvc: WidgetEnrollService
   ) {
     super()
   }
@@ -530,14 +532,14 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
       let userId = ''
       let content: NsContent.IContent[]
       let contentNew: NsContent.IContent[]
-      const queryParams = _.get(strip.request.enrollmentList, 'queryParams')
+      const request = _.get(strip.request.enrollmentList, 'payload')
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId
       }
       // tslint:disable-next-line: deprecation
-      this.userSvc.fetchUserBatchList(userId, queryParams).subscribe(
+      this.enrollSvc.fetchInternalEnrollmentData(userId, request).subscribe(
         (result: any) => {
-          const courses = result && result.courses
+          const courses = result && result.result && result.result.courses
           const showViewMore = Boolean(
             courses.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
           )

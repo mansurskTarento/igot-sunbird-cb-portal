@@ -116,6 +116,7 @@ export class EnrollProfileFormComponent implements OnInit {
   canShowOrg: boolean = false
   showOrg: boolean = false
   surveyId: any
+  showDoptChanges: boolean = false
   profileFormType: any
   verifyEmail = false
   approvedDomainList: any = []
@@ -123,6 +124,8 @@ export class EnrollProfileFormComponent implements OnInit {
   currentDate = new Date()
   openDesignationDropdown = false
   openLanguageDropdown = false
+  canShowOtherDesignation = false
+  addLoader = 0
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -148,6 +151,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
     this.batchDetails = this.data.batchData
     this.surveyId = this.data.surveyId
+    this.showDoptChanges = this.data.showDoptChanges
     this.profileFormType = this.batchDetails.batchAttributes.userProfileFileds
     this.userDetailsForm = new FormGroup({
       name: new FormControl(''),
@@ -168,6 +172,7 @@ export class EnrollProfileFormComponent implements OnInit {
       cadreName: new FormControl(''),
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
+      otherDesignation: new FormControl('')
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
@@ -210,6 +215,7 @@ export class EnrollProfileFormComponent implements OnInit {
             }
           } else {
             this.verifyEmail = false
+            this.eVerified = true
           }
         })
     }
@@ -336,8 +342,23 @@ export class EnrollProfileFormComponent implements OnInit {
 
   selectDesignation(designation: any) {
     this.userDetailsForm.patchValue({designation: designation})
+    const fieldControl = this.userDetailsForm.get('otherDesignation')
+    if (this.showDoptChanges && designation === 'Others') {
+      if (fieldControl) {
+        fieldControl.setValidators([Validators.required]);
+        fieldControl.updateValueAndValidity()
+      }
+      this.canShowOtherDesignation = true
+    } else {
+      if (fieldControl) {
+        fieldControl.clearValidators()
+        fieldControl.updateValueAndValidity()
+      }
+      this.canShowOtherDesignation = false
+    }
     this.openDesignationDropdown = false
   }
+ 
 
   selectLanguage(language: any) {
     this.userDetailsForm.patchValue({domicileMedium: language})
@@ -530,7 +551,9 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   fetchCadreData(){
+    this.addLoader = this.addLoader + 1
     this.profileV2Svc.fetchCadre().subscribe((response: any) => {
+      this.addLoader = this.addLoader - 1
       this.civilServiceData = response.result.response.value.civilServiceType
       this.civilServiceTypes = this.civilServiceData.civilServiceTypeList.map((service: any) => service.name)
     })
@@ -690,19 +713,21 @@ export class EnrollProfileFormComponent implements OnInit {
     this.selectedCadreName = event
     if(this.selectedService) {
       this.selectedCadre = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName)
-      this.startBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).startBatchYear
-      this.endBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).endBatchYear
-      this.exclusionYear = this.selectedCadre.exculsionYearList
+      this.startBatch = this.selectedCadre ? this.selectedCadre.startBatchYear : ''
+      this.endBatch = this.selectedCadre ? this.selectedCadre.endBatchYear : ''
+      this.exclusionYear = this.selectedCadre ? this.selectedCadre.exculsionYearList : ''
       // tslint:disable
       this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
           .filter(year => !this.exclusionYear.includes(year))
-      this.cadreId = this.selectedCadre.id
+      this.cadreId = this.selectedCadre ? this.selectedCadre.id : ''
     }
   
   }
 
   getPendingDetails() {
+    this.addLoader = this.addLoader + 1
     this.profileV2Svc.fetchApprovalDetails().subscribe((resp: any) => {
+      this.addLoader = this.addLoader - 1
       if (resp && resp.result && resp.result.data) {
         this.pendingFileds = resp.result.data
         if (this.pendingFileds.length > 0) {
@@ -729,6 +754,7 @@ export class EnrollProfileFormComponent implements OnInit {
     }, error => {
       // tslint:disable-next-line:no-console
       console.log(error)
+      this.addLoader = this.addLoader - 1
       this.isLoading = false
     })
   }
@@ -768,6 +794,8 @@ export class EnrollProfileFormComponent implements OnInit {
             this.showEmail = true
           }
         }
+      } else {
+        this.eVerified = true
       }
 
       if (this.findAttr(customAttr, 'organisation')) {
@@ -868,12 +896,17 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.updateValueAndValidity()
           } else if (this.profileFormType === 'Available user filled iGOT profile') {
             this.canshowMobile = false
+            this.mVerified = true
           } else {
             this.showMobile = true
             contrl.setValidators([Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]);
             contrl.updateValueAndValidity()
           }
         }
+      }
+
+      if (this.canshowMobile === false) {
+        this.mVerified = true
       }
 
       if (this.findAttr(customAttr, 'gender')) {
@@ -1071,11 +1104,14 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   getGroupData(): void {
+    this.addLoader = this.addLoader + 1
     this.userProfileService.getGroups()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
+        this.addLoader = this.addLoader - 1
         this.groupData = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
       },         (error: HttpErrorResponse) => {
+        this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('groupDataFaile'))
         }
@@ -1090,6 +1126,9 @@ export class EnrollProfileFormComponent implements OnInit {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
+        if (this.showDoptChanges) {
+          this.designationsMeta.push({name: 'Others', id: 0, description: 'Others'})
+        }
         this.filterDesignationsMeta = this.designationsMeta
       },
       (_err: any) => {
@@ -1125,33 +1164,45 @@ export class EnrollProfileFormComponent implements OnInit {
     /* tslint:disable */
     console.log(form)
     let payload = this.generateProfilePayload()
-    if (this.canShowDesignation || this.canShowGroup) {
+    if ((this.canShowDesignation || this.canShowGroup) && !this.showDoptChanges) {
       if (this.pendingFileds) {
         this.pendingFileds.forEach((_obj: any) => {
           if (Object.keys(_obj).includes('designation')) {
+            this.addLoader = this.addLoader + 1
             this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
+                this.addLoader = this.addLoader - 1
                 /* tslint:disable */
                 console.log(resp.result.message)
+              }
+            }, (error: HttpErrorResponse) => {
+              if(error) {
+                this.addLoader = this.addLoader - 1
               }
             })
           }
           if (Object.keys(_obj).includes('group')) {
+            this.addLoader = this.addLoader + 1
             this.profileV2Svc.withDrawApprovalRequest(this.configSrc.unMappedUser.id, _obj.wfId).subscribe((resp: any) => {
               if (resp && resp.result) {
+                this.addLoader = this.addLoader - 1
                 /* tslint:disable */
                 console.log(resp.result.message)
+              }
+            }, (error: HttpErrorResponse) => {
+              if(error) {
+                this.addLoader = this.addLoader - 1
               }
             })
           }
         })
-        if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+        if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail && this.canShowEmail) {
           this.updateEmail(this.userDetailsForm.value.primaryEmail)
         }
         this.submitProfile(payload)
       }
     } else {
-      if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail) {
+      if (this.userProfileObject.profileDetails.personalDetails.primaryEmail !== this.userDetailsForm.value.primaryEmail && this.canShowEmail) {
         this.updateEmail(this.userDetailsForm.value.primaryEmail)
       }
       this.submitProfile(payload)
@@ -1165,11 +1216,14 @@ export class EnrollProfileFormComponent implements OnInit {
       payload['request']['profileDetails']['personalDetails']['dob'] = dob
     }    
     if (this.updateProfile) {
+      this.addLoader = this.addLoader + 1
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
+        this.addLoader = this.addLoader - 1
         if (res.responseCode === 'OK') {
           this.submitSurevy(true)
         }
       }, error => {
+        this.addLoader = this.addLoader - 1
         /* tslint:disable */
         console.log(error)
         this.snackBar.open("something went wrong!")
@@ -1183,7 +1237,9 @@ export class EnrollProfileFormComponent implements OnInit {
         formId: this.data.batchData.batchAttributes.profileSurveyId,
         timestamp: new Date().getTime(),
     }
+    this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
+      this.addLoader = this.addLoader - 1
       if (resp && resp.statusInfo && resp.statusInfo.statusCode === 200) {
         this.customForm = false
         this.snackBar.open("Form is submitted successfully")
@@ -1194,6 +1250,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.snackBar.open(resp.errorMessage)
       }
     }, error => {
+      this.addLoader = this.addLoader - 1
       /* tslint:disable */
       console.log(error)
       this.snackBar.open("something went wrong!")
@@ -1207,18 +1264,18 @@ export class EnrollProfileFormComponent implements OnInit {
         profileDetails: {
           employmentDetails: {},
           personalDetails: {},
-          cadreDetails: {},
+          // cadreDetails: {},
         }
       }
     }
     let _professionalDetails: any = {}
     let updateProfessionalDetails : boolean = false
-    if(this.showGroup && this.userDetailsForm.controls['group'].value) {
+    if(this.showGroup && this.userDetailsForm.controls['group'].value && !this.showDoptChanges) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
       updateProfessionalDetails = true
     }
-    if(this.showDesignation && this.userDetailsForm.controls['designation'].value) {
+    if(this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.showDoptChanges) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
       updateProfessionalDetails = true
@@ -1256,7 +1313,7 @@ export class EnrollProfileFormComponent implements OnInit {
       payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
-    if(this.canShowshowCadreDetails) {
+    if(this.canShowshowCadreDetails && !this.showDoptChanges) {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
@@ -1269,7 +1326,7 @@ export class EnrollProfileFormComponent implements OnInit {
         _cadreDetails['cadreId'] = this.cadreId
         _cadreDetails['civilServiceId'] = this.civilServiceId
         _cadreDetails['civilServiceTypeId'] = this.serviceId
-        payload.request.profileDetails.cadreDetails = _cadreDetails
+        payload.request.profileDetails['cadreDetails'] = _cadreDetails
       }
     }
     return payload
@@ -1304,7 +1361,12 @@ export class EnrollProfileFormComponent implements OnInit {
       }
       if(_field.field === 'profileDetails.professionalDetails.designation') {
         if (this.showDesignation && status) {
-          dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
+          if (this.showDoptChanges && this.userDetailsForm.controls['designation'] &&
+              this.userDetailsForm.controls['designation'].value ==='Others' && this.userDetailsForm.controls['otherDesignation']) {
+            dataObject[_field.name] = this.userDetailsForm.controls['otherDesignation'].value
+          } else {
+            dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
+          }
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.professionalDetails && this.userProfileObject.profileDetails.professionalDetails[0].designation ?
             this.userProfileObject.profileDetails.professionalDetails[0].designation : "N/A"
@@ -1477,12 +1539,15 @@ export class EnrollProfileFormComponent implements OnInit {
       },
     }
 
+    this.addLoader = this.addLoader + 1
     this.userProfileService.updatePrimaryEmailDetails(postData)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
+        this.addLoader = this.addLoader - 1
         this.userProfileObject.profileDetails.personalDetails.primaryEmail = email
         this.snackBar.open(this.handleTranslateTo('emailUpdated'))
       },         (error: HttpErrorResponse) => {
+        this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('updateEmailFailed'))
         }
