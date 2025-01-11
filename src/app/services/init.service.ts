@@ -376,21 +376,17 @@ export class InitService {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
       if(res && res.result && res.result.userCourseEnrolmentInfo) {
-        userCourseEnrolmentInfo = {
-          karmaPoints:0,
-          timeSpentOnCompletedCourses: 0,
-          certificatesIssued: 0,
-          coursesInProgress: 0,
-          addinfo :{}
-        }
+        
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
         userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
         userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
         userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
-        if(Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
-          if(Object.keys(userExternalCourseEnrolmentInfo).length > 0 && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
+        if(userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
+          if(Object.keys(userExternalCourseEnrolmentInfo).length > 0 
+          && userExternalCourseEnrolmentInfo.addinfo 
+          && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
             let addInfo = userExternalCourseEnrolmentInfo.addinfo
             userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota']  + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
             // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
