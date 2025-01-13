@@ -488,7 +488,7 @@
               </div>
               <div class="info-div" *ngIf="noCadreDetails">
                 <div class="label">
-                  {{ 'profileInfo.isCadre' | translate }}
+                  {{ 'profileInfo.fromGovOrganization' | translate }}
                 </div>
                 <div class="info-value" *ngIf="!editDetails">
                   <span *ngIf="!portalProfile.hasOwnProperty('cadreDetails') || !portalProfile?.personalDetails.hasOwnProperty('isCadre'); else elsCadreDetails">NA</span>

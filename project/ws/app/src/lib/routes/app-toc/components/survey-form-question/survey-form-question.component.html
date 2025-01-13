@@ -18,6 +18,11 @@
             <mat-form-field appearance="outline" class="w-full">
                 <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" maxlength="10"/>
             </mat-form-field>
+            <ng-container *ngIf="questionForm.controls.answer.touched && questionForm.controls.answer.hasError('pattern')">
+                <mat-error class="mat-error mb-1">
+                    {{ 'profileInfo.pleaseEnterValidMobileNumber' | translate }}
+                  </mat-error>
+            </ng-container>
         </ng-container>
         <ng-container *ngSwitchCase="'date'">
             <mat-form-field appearance="outline">
@@ -36,6 +41,11 @@
             <mat-form-field appearance="outline" class="w-full">
                 <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" />
             </mat-form-field>
+            <ng-container *ngIf="questionForm.controls.answer.touched && questionForm.controls.answer.hasError('pattern')">
+                <mat-error class="mat-error mb-1">
+                    {{ 'profileInfo.invalidEmail' | translate }}
+                  </mat-error>
+            </ng-container>
         </ng-container>
         <ng-container *ngSwitchCase="'rating'">
             <div class="rating-container">
