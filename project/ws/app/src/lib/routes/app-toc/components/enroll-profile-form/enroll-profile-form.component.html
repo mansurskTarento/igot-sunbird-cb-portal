@@ -95,7 +95,7 @@
               <mat-icon class="disagnation-caret">arrow_drop_down</mat-icon>
             </div>
           </mat-form-field>
-          <mat-error *ngIf="userDetailsForm.controls['designation'].invalid && userDetailsForm.controls['designation'].touched"
+          <mat-error *ngIf="userDetailsForm?.controls['designation']?.invalid && userDetailsForm?.controls['designation']?.touched"
                 class="mat-error">
                 Please select a valid designation.
             </mat-error>
@@ -130,7 +130,7 @@
               <mat-form-field appearance="outline" class="w-full">
                   <input type="text" class="input-text" matInput formControlName="employeeCode" placeholder="Enter employee code"/>
               </mat-form-field>    
-              <mat-error class="mat-error" *ngIf="userDetailsForm.get('employeeCode').hasError('pattern')">
+              <mat-error class="mat-error" *ngIf="userDetailsForm?.get('employeeCode')?.hasError('pattern')">
                 Please enter an Alpha-numeric value only
             </mat-error>                
           </div>
@@ -140,12 +140,12 @@
                 {{ 'profileInfo.mobileNumber' | translate }}
             </div>
             <div class="flex flex-row gap-4">
-              <div class="country-code" appearance="outline">
+              <div class="country-code flex justify-center items-center" appearance="outline">
                 +91
               </div>
               <div class="flex-1">
                 <div class="flex flex-col">
-                  <mat-form-field appearance="outline" class="profile-form-field mobile-num">
+                  <mat-form-field appearance="outline" class="mobile-num">
                     <input type="text" class="input-text mobile-text relative" maxlength="10" (keyup)="handleEmpty('mobile')"
                       matInput formControlName="mobile" placeholder="Enter mobile number"/>
                       <mat-icon class="verified-check" *ngIf="mVerified">check_circle</mat-icon>
@@ -261,7 +261,7 @@
               <mat-form-field appearance="outline" class="w-full">
                   <input type="email" class="input-text" matInput maxlength="6" formControlName="pinCode" placeholder="Enter pincode"/>
               </mat-form-field>
-              <mat-error class="mat-error" *ngIf="userDetailsForm.get('pinCode').hasError('pattern')">
+              <mat-error class="mat-error" *ngIf="userDetailsForm?.get('pinCode')?.hasError('pattern')">
                 {{ 'profileInfo.invalidPinCode' | translate }}
                 </mat-error>          
           </div>
