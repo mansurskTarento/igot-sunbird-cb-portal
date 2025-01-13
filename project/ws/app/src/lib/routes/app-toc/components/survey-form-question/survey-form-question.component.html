@@ -80,8 +80,8 @@
         </ng-container>
         <ng-container *ngSwitchCase="'checkbox'">
             <section class="pt-2">
-                <ng-container *ngFor="let objct of fieldDetails?.values">
-                    <mat-checkbox [value]="objct.value" class="pr-5 pb-2" (change)="checkboxClicked($event)">
+                <ng-container *ngFor="let objct of fieldDetails?.values; let i = index">
+                    <mat-checkbox [checked]="objct.checked" [value]="objct.value" class="pr-5 pb-2" (change)="checkboxClicked($event, i)">
                         {{ objct.key }}
                     </mat-checkbox>
                 </ng-container>

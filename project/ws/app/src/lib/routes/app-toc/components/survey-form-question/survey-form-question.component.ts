@@ -45,7 +45,16 @@ export class SurveyFormQuestionComponent implements OnInit {
       const validatorsArray = this.fieldDetails['validatorsArray'] ? this.fieldDetails['validatorsArray'].filter((validator: any) => validator !== Validators.required) : []
       this.answerControl.setValidators(validatorsArray)
       this.answerControl.updateValueAndValidity()
+      this.resetCheckboxes()
       this.emitAnswer()
+    }
+  }
+
+  resetCheckboxes() {
+    if(this.fieldDetails && this.fieldDetails.values) {
+      this.fieldDetails.values.forEach((e: any) => {
+        e['checked'] = false
+      })
     }
   }
 
@@ -56,12 +65,15 @@ export class SurveyFormQuestionComponent implements OnInit {
     }
   }
 
-  checkboxClicked(event: any) {
+  checkboxClicked(event: any, index: number) {
     let checkedList = this.answerControl.value ? this.answerControl.value : []
     if(event.checked) {
       checkedList.push(event.source.value)
     } else {
       checkedList = checkedList.filter((e: any) => e !== event.source.value)
+    }
+    if(this.fieldDetails.values && this.fieldDetails.values[index]) {
+      this.fieldDetails.values[index]['checked'] = event.checked
     }
     this.answerControl.patchValue(checkedList)
     this.answerControl.updateValueAndValidity()
