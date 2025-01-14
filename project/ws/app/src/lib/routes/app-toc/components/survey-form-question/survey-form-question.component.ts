@@ -20,6 +20,16 @@ export class SurveyFormQuestionComponent implements OnInit {
     if (this.questionForm) {
       this.answerControl.valueChanges.subscribe((value: any) => {
         if(value !==  this.previesAnswer && value !== null) {
+          if(this.fieldDetails['fieldType'] === 'numeric') {
+            let modifiedValue = value.replace(/[^0-9.]/g, ''); // Remove all non-numeric and non-decimal characters
+            const decimalCount = (modifiedValue.match(/\./g) || []).length;
+            if (decimalCount > 1) {
+              modifiedValue = modifiedValue.replace(/\.$/, ''); // Remove the last decimal point
+            }
+            if(value !== modifiedValue) {
+              this.answerControl.patchValue(modifiedValue)
+            }
+          }
           if (this.fieldDetails['validatorsArray'] && this.questionForm.controls.isNA.value) {
             this.answerControl.setValidators(this.fieldDetails['validatorsArray'])
             this.questionForm.controls.isNA.patchValue(false)

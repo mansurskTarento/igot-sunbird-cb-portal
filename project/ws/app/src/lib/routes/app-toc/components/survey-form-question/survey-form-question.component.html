@@ -75,7 +75,8 @@
         </ng-container>
         <ng-container *ngSwitchCase="'numeric'">
             <mat-form-field appearance="outline" class="w-full">
-                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" type="number" />
+                <input matInput i18n-placeholder placeholder="Type here..." formControlName="answer" type="text" 
+                maxlength="18"/>
             </mat-form-field>
         </ng-container>
         <ng-container *ngSwitchCase="'checkbox'">
