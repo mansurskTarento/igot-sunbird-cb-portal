@@ -16,21 +16,28 @@ export class NetCoreService {
         /* tslint:disable */
         console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
-        smartech('contact', '2', payload)
+        smartech('contact', '', payload)
     }
 
     netCoreUserNameUpdate(payload:any) {
          /* tslint:disable */
          console.log('this.configSvc.unMappedUser', payload)
          /* tslint:enable */        
-        smartech('contact', '2', payload)
+        smartech('contact', '', payload)
+    }
+
+    netCoreUserProfilePhotoUpdate(payload:any) {
+        /* tslint:disable */
+        console.log('this.configSvc.unMappedUser', payload)
+        /* tslint:enable */        
+       smartech('contact', '', payload)
     }
 
     netCoreUserProfilepdate(payload:any) {
         /* tslint:disable */
         console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
-        smartech('contact', '2', payload)
+        smartech('contact', '', payload)
     }
     
     netCoreUserProfileUpdateEvent(payload:any, eventName: any, userIdentifier:any) {

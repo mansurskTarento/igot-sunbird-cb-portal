@@ -1449,6 +1449,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       (_res: any) => {
         this.matSnackBar.open(this.handleTranslateTo('profileImageUpdated'))
         this.portalProfile.profileImageUrl = (this.photoUrl as any)
+        this.netCoreUserProfilePhotoUpdateEvent()
 
       },
       (err: HttpErrorResponse) => {
@@ -1664,6 +1665,27 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAutoCompleteClosed() {
     this.isMatcompleteOpened = false
+  }
+
+  netCoreUserProfilePhotoUpdateEvent() {
+     /* tslint:disable */
+     console.log('this.content',this.portalProfile )
+     /* tslint:enable */
+     // smartech('contact', '2', {
+     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
+     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+     // })
+ 
+     let payload:any = {}
+     if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+       payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+     }
+     if(this.photoUrl) {
+       payload['PROFILE_PHOTO'] = this.photoUrl
+     }
+ 
+     this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
+     this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
   }
 
   netCoreUserProfileNameUpdateEvent() {
