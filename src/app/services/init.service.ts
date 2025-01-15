@@ -402,9 +402,11 @@ export class InitService {
         }
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
-        if (!localStorage.getItem('netCoreUserSetup')) {
-          this.netCoreUserLoginSetup()
-        }
+        
+      }
+      let netCoreUserSetupFlag:any = localStorage.getItem('netCoreUserSetup')  ? localStorage.getItem('netCoreUserSetup') : ''
+      if (netCoreUserSetupFlag === 'false' || netCoreUserSetupFlag === false || netCoreUserSetupFlag === '') {
+        this.netCoreUserLoginSetup()
       }
       return res 
     }).catch((_err: any)=> {
