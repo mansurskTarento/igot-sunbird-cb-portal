@@ -952,6 +952,7 @@ export class InitService {
     if(userEnrollmentCount) {
       userEnrollmentCount = JSON.parse(userEnrollmentCount)
     }
+    /* tslint:disable */
     console.log('userEnrollmentCount', userEnrollmentCount)
     /* tslint:enable */
     const userInfoPayload:any = {}
@@ -1013,6 +1014,7 @@ export class InitService {
         userInfoPayload['PROFILE_GROUP'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group.trim())
       }         
     }
+    /* tslint:disable */
     console.log('userInfoPayload', userInfoPayload)
     this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
     this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())

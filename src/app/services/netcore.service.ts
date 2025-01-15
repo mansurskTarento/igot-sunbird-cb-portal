@@ -49,9 +49,11 @@ export class NetCoreService {
         serverTime = serverTime.add(5, 'hours').add(30, 'minutes');
 
         // Display the server time
+        /* tslint:disable */
         console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
         console.log('eventName', eventName)
         console.log('userIdentifier', userIdentifier)
+        
         let payload:any = {
             'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
             'action_device': 'Desktop'
