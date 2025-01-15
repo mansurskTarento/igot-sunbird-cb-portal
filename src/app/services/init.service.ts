@@ -33,6 +33,8 @@ import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-g
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
+import { NetCoreService } from './netcore.service'
+// declare const smartech:any
 // import { of } from 'rxjs'
 /* tslint:enable */
 // interface IDetailsResponse {
@@ -86,6 +88,7 @@ export class InitService {
     private npsSvc: NPSGridService,
     private translate: TranslateService,
     private enrollSvc: WidgetEnrollService,
+    private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -184,6 +187,9 @@ export class InitService {
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
         await this.fetchUserEnrollDetails()
+        if (!localStorage.getItem('firsLogin')) {
+          await this.netCoreUserLoginSetup()
+        }
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
@@ -937,5 +943,101 @@ export class InitService {
     } catch (error) {
       return location.origin
     }
+  }
+
+  async netCoreUserLoginSetup() {
+    /* tslint:disable */
+    console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)  
+    let userEnrollmentCount:any = await localStorage.getItem('userEnrollmentCount')
+    if(userEnrollmentCount) {
+      userEnrollmentCount = JSON.parse(userEnrollmentCount)
+    }
+    console.log('userEnrollmentCount', userEnrollmentCount)
+    /* tslint:enable */
+    const userInfoPayload:any = {}
+    userInfoPayload['TOTAL_EXPERIENCE'] = ''
+    if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+      userInfoPayload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+    }
+    if(userEnrollmentCount && 
+      userEnrollmentCount['userCourseEnrolmentInfo'] && 
+      userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
+      userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
+    }
+    if(this.configSvc && this.configSvc.unMappedUser 
+      && this.configSvc.unMappedUser.profileDetails 
+      && this.configSvc.unMappedUser.profileDetails.personalDetails 
+    ) {
+      if (this.configSvc.unMappedUser.profileDetails.personalDetails.firstname) {
+        userInfoPayload['FULL_NAME'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim())
+      }
+      if (this.configSvc.unMappedUser.profileDetails.personalDetails.gender) {
+        userInfoPayload['GENDER'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim())
+      }
+      
+      if (this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium) {
+        userInfoPayload['MOTHER_TONGUE'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim())
+      }  
+       
+      if (this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail) {
+        userInfoPayload['email'] = this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail.trim()
+      } 
+      if (this.configSvc.unMappedUser.profileDetails.personalDetails.mobile) {
+        userInfoPayload['mobile'] = this.configSvc.unMappedUser.profileDetails.personalDetails.mobile
+      }    
+    }
+    if(this.configSvc && this.configSvc.unMappedUser 
+      && this.configSvc.unMappedUser.profileDetails        
+    ) {
+      if (this.configSvc.unMappedUser.profileDetails.profileStatus) {
+        userInfoPayload['PROFILE_STATUS'] = this.configSvc.unMappedUser.profileDetails.profileStatus.trim()
+      }
+      if (this.configSvc.unMappedUser.profileDetails.profileImageUrl) {
+        userInfoPayload['PROFILE_PHOTO'] = this.configSvc.unMappedUser.profileDetails.profileImageUrl.trim()
+      } 
+    }
+
+
+    if(this.configSvc && this.configSvc.unMappedUser 
+      && this.configSvc.unMappedUser.profileDetails 
+      && this.configSvc.unMappedUser.profileDetails.professionalDetails 
+      && this.configSvc.unMappedUser.profileDetails.professionalDetails[0]
+    ) {
+      if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation) {
+        userInfoPayload['PROFILE_DESIGNATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation.trim())
+      } 
+      if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].organisationType) {
+        userInfoPayload['ORGANISATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].organisationType.trim())
+      } 
+      if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group) {
+        userInfoPayload['PROFILE_GROUP'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group.trim())
+      }         
+    }
+    console.log('userInfoPayload', userInfoPayload)
+    this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
+    this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())
+    // smartech('contact', '', {
+    //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim().toLowerCase(),
+    //   'GENDER': this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim().toLowerCase(),
+    //   'NO_OF_KARMA_POINTS': userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints'],
+    //   'PROFILE_STATUS' : this.configSvc.unMappedUser.profileDetails.personalDetails.profileStatus.trim().toLowerCase(),
+    //   'MOTHER_TONGUE': this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim().toLowerCase(),
+    //   'TOTAL_EXPERIENCE' : 'NA',
+    //   'PROFILE_DESIGNATION': this.configSvc.unMappedUser.profileDetails.professionalDetails.designation.trim().toLowerCase(),
+    //   'ORGANISATION': this.configSvc.unMappedUser.profileDetails.professionalDetails.organisationType.trim().toLowerCase(),
+    //   'PROFILE_PHOTO':this.configSvc.unMappedUser.profileDetails.personalDetails.profileImageUrl.trim().toLowerCase(),
+    //   'PROFILE_GROUP': this.configSvc.unMappedUser.profileDetails.professionalDetails.group.trim().toLowerCase(),
+    //   'EMAIL': this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail.trim().toLowerCase(),
+    //   'MOBILE': this.configSvc.unMappedUser.profileDetails.personalDetails.mobile.toString().trim().toLowerCase(),
+    // })
+  }
+
+  toTitleCase(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }
