@@ -2134,7 +2134,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         }
         this.tocSvc.callHirarchyProgressHashmap(this.content)
         this.enrollBtnLoading = false
-        // this.tocSvc.contentLoader.next(false)
+        this.tocSvc.contentLoader.next(false)
       }
     }
 
