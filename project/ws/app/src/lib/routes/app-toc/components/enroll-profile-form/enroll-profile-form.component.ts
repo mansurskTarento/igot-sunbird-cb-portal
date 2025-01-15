@@ -642,9 +642,11 @@ export class EnrollProfileFormComponent implements OnInit {
     this.selectedServiceName = event.value
     if (this.serviceListData) {
       this.selectedService = this.serviceListData.find((service: any) => service.name === this.selectedServiceName)
-      this.civilServiceName =  this.selectedService.name
-      this.civilServiceId = this.selectedService.id
-      this.cadre = this.selectedService.cadreList.map((cadre: any) => cadre.name)
+      if (this.selectedService) {
+        this.civilServiceName =  this.selectedService.name
+        this.civilServiceId = this.selectedService.id
+        this.cadre = this.selectedService.cadreList ? this.selectedService.cadreList.map((cadre: any) => cadre.name) : []
+      }
     }
     if (this.selectedService && this.selectedService.cadreControllingAuthority) {
       this.cadreControllingAuthority = this.selectedService.cadreControllingAuthority

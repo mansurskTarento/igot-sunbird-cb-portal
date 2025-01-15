@@ -20,6 +20,16 @@ export class SurveyFormQuestionComponent implements OnInit {
     if (this.questionForm) {
       this.answerControl.valueChanges.subscribe((value: any) => {
         if(value !==  this.previesAnswer && value !== null) {
+          if(this.fieldDetails['fieldType'] === 'numeric') {
+            let modifiedValue = value.replace(/[^0-9.]/g, ''); // Remove all non-numeric and non-decimal characters
+            const decimalCount = (modifiedValue.match(/\./g) || []).length;
+            if (decimalCount > 1) {
+              modifiedValue = modifiedValue.replace(/\.$/, ''); // Remove the last decimal point
+            }
+            if(value !== modifiedValue) {
+              this.answerControl.patchValue(modifiedValue)
+            }
+          }
           if (this.fieldDetails['validatorsArray'] && this.questionForm.controls.isNA.value) {
             this.answerControl.setValidators(this.fieldDetails['validatorsArray'])
             this.questionForm.controls.isNA.patchValue(false)
@@ -45,7 +55,16 @@ export class SurveyFormQuestionComponent implements OnInit {
       const validatorsArray = this.fieldDetails['validatorsArray'] ? this.fieldDetails['validatorsArray'].filter((validator: any) => validator !== Validators.required) : []
       this.answerControl.setValidators(validatorsArray)
       this.answerControl.updateValueAndValidity()
+      this.resetCheckboxes()
       this.emitAnswer()
+    }
+  }
+
+  resetCheckboxes() {
+    if(this.fieldDetails && this.fieldDetails.values) {
+      this.fieldDetails.values.forEach((e: any) => {
+        e['checked'] = false
+      })
     }
   }
 
@@ -56,12 +75,15 @@ export class SurveyFormQuestionComponent implements OnInit {
     }
   }
 
-  checkboxClicked(event: any) {
+  checkboxClicked(event: any, index: number) {
     let checkedList = this.answerControl.value ? this.answerControl.value : []
     if(event.checked) {
       checkedList.push(event.source.value)
     } else {
       checkedList = checkedList.filter((e: any) => e !== event.source.value)
+    }
+    if(this.fieldDetails.values && this.fieldDetails.values[index]) {
+      this.fieldDetails.values[index]['checked'] = event.checked
     }
     this.answerControl.patchValue(checkedList)
     this.answerControl.updateValueAndValidity()

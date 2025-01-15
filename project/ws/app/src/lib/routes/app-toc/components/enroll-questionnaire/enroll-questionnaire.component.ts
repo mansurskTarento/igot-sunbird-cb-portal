@@ -223,7 +223,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   get dataObject(): any {
-    const dataObject: any = {}
+    const dataObject: any = {
+      'Course ID and Name': `${this.data.courseId},${this.data.courseName}`
+    }
+
     const fields = _.get(this.surveyForm, 'value.fields', [])
     if(fields ) {
       fields.forEach((field: any) => {
