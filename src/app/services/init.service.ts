@@ -185,11 +185,8 @@ export class InitService {
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
-        await this.fetchStartUpDetails()
-        await this.fetchUserEnrollDetails()
-        if (!localStorage.getItem('firsLogin')) {
-          await this.netCoreUserLoginSetup()
-        }
+        await this.fetchStartUpDetails()        
+        await this.fetchUserEnrollDetails()        
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
@@ -405,6 +402,9 @@ export class InitService {
         }
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
+        if (!localStorage.getItem('netCoreUserSetup')) {
+          this.netCoreUserLoginSetup()
+        }
       }
       return res 
     }).catch((_err: any)=> {
@@ -947,6 +947,7 @@ export class InitService {
 
   async netCoreUserLoginSetup() {
     /* tslint:disable */
+    localStorage.setItem('netCoreUserSetup', 'true')
     console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)  
     let userEnrollmentCount:any = await localStorage.getItem('userEnrollmentCount')
     if(userEnrollmentCount) {
