@@ -171,7 +171,6 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart'
 // }
 const appInitializer = (initSvc: InitService, logger: LoggerService) => async () => {
   try {
-    localStorage.setItem('language', 'hi')
     await initSvc.init()
   } catch (error) {
     logger.error('ERROR DURING APP INITIALIZATION >', error)
