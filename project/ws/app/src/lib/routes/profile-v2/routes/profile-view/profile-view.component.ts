@@ -1302,7 +1302,11 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value ||
         this.portalProfile.professionalDetails[0].designation !== this.primaryDetailsForm.get('designation')!.value
       ) {
-        return true
+        if (this.designationsMeta.find((obj: any) => obj.name.toLowerCase() === this.primaryDetailsForm.get('designation')!.value.toLowerCase())) {
+          return true
+        } else {
+          return false
+        }
       }
       if ((this.portalProfile.professionalDetails[0].group !== this.primaryDetailsForm.get('group')!.value) &&
         ((this.designationApprovedTime <= (this.rejectedFields.groupRejectionTime + 100) &&
@@ -1317,7 +1321,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.GroupAndDesignationApproved)) {
         return true
       }
-
       return false
 
     } if (this.primaryDetailsForm.get('group')!.value && this.primaryDetailsForm.get('designation')!.value) {
