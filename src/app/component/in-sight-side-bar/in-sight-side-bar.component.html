@@ -37,8 +37,14 @@
                         (input)="onInputChange($event.target.value)"/>
                     <mat-icon class="dropdown-icon cursor-pointer" (click)="openAutocomplete(trigger, autocompleteInput)">arrow_drop_down</mat-icon>
                 </div>
-                <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete" (optionSelected)="onOptionSelected($event.option.value)">
-                    <mat-option *ngFor="let designation of filterDesigantionList" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                <mat-autocomplete class="mat-autocomplete"
+                (closed)="onAutoCompleteClosed()" (opened)="onAutoCompleteOpened()" #designationAuto="matAutocomplete" (optionSelected)="onOptionSelected($event.option.value)">
+                    <ng-container *ngIf="filterDesigantionList.length > 0; else noDesignation">
+                        <mat-option *ngFor="let designation of filterDesigantionList" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                    </ng-container>
+                    <ng-template #noDesignation>
+                        <mat-option disabled>No Designation found</mat-option>
+                    </ng-template>
                 </mat-autocomplete>
             </div>
             <button
