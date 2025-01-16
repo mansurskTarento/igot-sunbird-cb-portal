@@ -13,7 +13,7 @@ import _ from 'lodash'
 import { Subject } from 'rxjs'
 import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 
-import { ImageCropComponent, ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ImageCropComponent, ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
@@ -219,6 +219,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private homeService: HomePageService,
     private profileService: ProfileV2Service,
     private signupService: SignupService,
+    private events: EventService
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -1384,13 +1385,27 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableWR = true
           this.portalProfile.verifiedKarmayogi = false
           this.getSendApprovalStatus()
+          this.raiseTelemetry(this.primaryDetailsForm.value['designation'])
         },         (error: HttpErrorResponse) => {
           if (!error.ok) {
             this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
           }
         })
     }
+  }
 
+  raiseTelemetry(designation: any) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: designation,
+        id: 'designation-master-import',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.PROFILE,
+      }
+    )
   }
 
   showWithdrawRequestPopup() {
