@@ -99,6 +99,7 @@ export class InsightSideBarComponent implements OnInit {
   showUpdateDesignations: boolean = false
   desigantionUnderApproval: any
   filterDesigantionList: any = []
+  isMatcompleteOpened = false
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -557,6 +558,15 @@ export class InsightSideBarComponent implements OnInit {
 
   onOptionSelected(designation: string) {
     this.selectDesignation = designation
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
+    this.filterDesigantionList = this.designationList
   }
 
   openAutocomplete(trigger: MatAutocompleteTrigger, inputElement: HTMLInputElement): void {
