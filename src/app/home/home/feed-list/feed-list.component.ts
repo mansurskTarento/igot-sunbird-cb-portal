@@ -46,12 +46,18 @@ export class FeedListComponent implements OnInit {
           }
         )
       } else {
-        const id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
-        const type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
+        let id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
+        let type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
+        let _subType = event.typeOfTelemetry
+        if (event.typeOfTelemetry === 'cbpPlan') {
+          id = event.identifier
+          type = event.primaryCategory
+          _subType = `${event.selectedTab}-${event.selectedPill}`
+        }
         this.events.raiseInteractTelemetry(
           {
             type: 'click',
-            subType: event.typeOfTelemetry,
+            subType: _subType,
             id: 'content-card',
           },
           {
