@@ -67,13 +67,12 @@ export class RecommendeLearningsComponent implements OnInit {
       }
       let enollData =  await this.enrollSvc.fetchEnrollContentData(request).toPromise().then(async (res: any) => {
         if (res && res.result && res.result.courses && res.result.courses.length) {
-          res.result.courses
           return res.result.courses
         } else {
-          return {}
+          return []
         }
       }).catch((_err: any) => {
-        return {}
+        return []
       })
       const sRequest: any = {
         "request": {
@@ -111,7 +110,7 @@ export class RecommendeLearningsComponent implements OnInit {
           return
         }
       }
-      if (enollData) {
+      if (enollData && enollData.length) {
         const elem = enollData.find((eCourse: any) => eCourse.contentId === course.identifier)
         if (elem) {
           if (elem.status === 2) {
@@ -126,12 +125,12 @@ export class RecommendeLearningsComponent implements OnInit {
         avaialable.push(course)
       }
     })
-    this.results.push({name: 'available', courses: this.transformContentsToWidgets(
+    this.results.push({name: 'ravailable', courses: this.transformContentsToWidgets(
       avaialable, this.recommendedConfig.strip)}
     )
-    this.results.push({name: 'inprogress', courses: this.transformContentsToWidgets(
+    this.results.push({name: 'rinprogress', courses: this.transformContentsToWidgets(
       inprogress, this.recommendedConfig.strip)})
-    this.results.push({name: 'completed',  courses: this.transformContentsToWidgets(
+    this.results.push({name: 'rcompleted',  courses: this.transformContentsToWidgets(
       completed, this.recommendedConfig.strip)}
     )
     const _courses = this.results.find((key: any) => key.name === this.slectedPill)

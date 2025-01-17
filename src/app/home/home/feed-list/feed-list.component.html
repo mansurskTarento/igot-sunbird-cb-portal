@@ -28,5 +28,6 @@
     <ws-widget-content-strip-with-tabs [widgetData]="widgetData"></ws-widget-content-strip-with-tabs>
 </ng-container>
 <ng-container *ngIf="widgetData?.stripType === 'withPils'  && (widgetData?.stripVisable === 'responsive' || (widgetData?.stripVisable === 'mobile' &&  isMobile))">
-    <sb-uic-content-strip-with-tabs-pills [widgetData]="widgetData"></sb-uic-content-strip-with-tabs-pills>
+    <sb-uic-content-strip-with-tabs-pills [widgetData]="widgetData"
+    (telemtryResponse)="raiseTelemetryInteratEvent($event)"></sb-uic-content-strip-with-tabs-pills>
 </ng-container>
