@@ -499,7 +499,7 @@ export class InsightSideBarComponent implements OnInit {
     this.events.raiseInteractTelemetry(
       {
         type: WsEvents.EnumInteractTypes.CLICK,
-        subType: "submit-designation",
+        subType: this.selectDesignation,
         id: "designation-master-import",
       },
       {},
