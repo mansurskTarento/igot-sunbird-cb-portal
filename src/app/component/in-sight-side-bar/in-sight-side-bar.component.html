@@ -12,6 +12,50 @@
         </div>
     </div>
 </div>
+<div class="disigantion-master-container margin-top-l"
+    *ngIf="updateDesignationCard && designationList?.length && showUpdateDesignations">
+    <div class="flex items-center justify-center gap-2">
+        <img [src]="updateDesignationCard?.imageUrl" />
+        <div class="flex flex-col gap-2">
+            <div class="title">Hello {{userData?.firstName}}!</div>
+            <div class="note">{{renderUpdateDesignationCardHeader()}}</div>
+        </div>
+    </div>
+    <div class="hr my-3"></div>
+    <div class="choose-designation">
+        <div class="dLabel pb-1">{{ 'publicsignup.selectDesignation' | translate }}</div>
+        <div class="flex items-center gap-3 pb-3">
+            <div class="contoller">
+                <div class="flex items-center relative">
+                    <input type="text"
+                        class="input-text designation-input cursor-pointer" matInput
+                        #trigger="matAutocompleteTrigger"
+                        #autocompleteInput
+                        [(value)]="selectDesignation"
+                        placeholder="{{'updteDesignation.select' | translate }}"
+                        [matAutocomplete]="designationAuto"
+                        (input)="onInputChange($event.target.value)"/>
+                    <mat-icon class="dropdown-icon cursor-pointer" (click)="openAutocomplete(trigger, autocompleteInput)">arrow_drop_down</mat-icon>
+                </div>
+                <mat-autocomplete class="mat-autocomplete"
+                (closed)="onAutoCompleteClosed()" (opened)="onAutoCompleteOpened()" #designationAuto="matAutocomplete" (optionSelected)="onOptionSelected($event.option.value)">
+                    <ng-container *ngIf="filterDesigantionList.length > 0; else noDesignation">
+                        <mat-option *ngFor="let designation of filterDesigantionList" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
+                    </ng-container>
+                    <ng-template #noDesignation>
+                        <mat-option disabled>No Designation found</mat-option>
+                    </ng-template>
+                </mat-autocomplete>
+            </div>
+            <button
+                type="button" mat-button
+                (click)="updateDesignation()" [disabled]="selectDesignation?.length === 0"
+                class="btn submit-btn {{selectDesignation?.length === 0 ? '' : 'cursor-pointer'}}">{{renderUpdateDesignationCardButtonText()}}
+            </button>
+        </div>
+    </div>
+    <div class="hint" [innerHTML]="renderUpdateDesignationCardHint()"></div>
+</div>
 <div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
     <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
         <div class="flex">

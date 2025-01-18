@@ -8,6 +8,11 @@ import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/dis
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import moment from 'moment'
+import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
+import _ from 'lodash';
+import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
+import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -88,6 +93,13 @@ export class InsightSideBarComponent implements OnInit {
   totlaDays = 0
   daysCompleted = 0
   currentLang: any = ''
+  updateDesignationCard: any
+  selectDesignation: string = ''
+  designationList: any = []
+  showUpdateDesignations: boolean = false
+  desigantionUnderApproval: any
+  filterDesigantionList: any = []
+  isMatcompleteOpened = false
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -97,6 +109,9 @@ export class InsightSideBarComponent implements OnInit {
     private events: EventService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private signupService: SignupService,
+    private profileV2Svc: ProfileV2Service,
+    private userProfileService: UserProfileService,
     private langtranslations: MultilingualTranslationsService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -122,8 +137,12 @@ export class InsightSideBarComponent implements OnInit {
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
+      this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
+      }
+      if (this.updateDesignationCard && this.updateDesignationCard.enabled) {
+        this.getMasterDesignation()
       }
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
@@ -175,6 +194,61 @@ export class InsightSideBarComponent implements OnInit {
         this.daysCompleted = this.totlaDays
       }
     }
+  }
+  getMasterDesignation() {
+    this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
+      if (result && result.frameworkid) {
+        this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
+          const frameworkDetails = _.get(res, 'result.framework')
+          const categoriesOfFramework = _.get(frameworkDetails, 'categories', [])
+          const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
+          const disOrderedList = _.get(organisationsList, '[0].children', [])
+          this.designationList = _.sortBy(disOrderedList, 'name')
+          this.filterDesigantionList = this.designationList
+          this.profileV2Svc.fetchApprovalDetails().subscribe((resp: any) => {
+            if (resp && resp.result && resp.result.data) {
+              if (resp.result.data.length > 0) {
+                resp.result.data.forEach((user: any) => {
+                  if (user['designation']) {
+                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    if (!designationsArray.includes(user['designation'].toLowerCase())) {
+                      this.showUpdateDesignations = true
+                      this.desigantionUnderApproval = user
+                    }
+                  }
+                })
+              } else {
+                if (this.configSvc.userProfile && this.configSvc.userProfile.professionalDetails &&
+                    this.configSvc.userProfile.professionalDetails[0]) {
+                  let designation = this.configSvc.userProfile.professionalDetails[0].designation
+                  if (designation) {
+                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    if (!designationsArray.includes(designation.toLowerCase())) {
+                      this.showUpdateDesignations = true
+                    }
+                  }
+                } else {
+                  this.showUpdateDesignations = true
+                }
+              }
+            }
+          })
+        },(_error: any) => {
+          // tslint:disable-next-line
+          console.error('Error occurred:', _error)
+        })
+      }
+    },(error: any) => {
+      // tslint:disable-next-line
+      console.error('Error occurred:', error)
+    })
+  }
+
+  private getTermsByCode(categories: any[], code: string) {
+    const selectedCategory = categories.filter(
+      (category: any) => category.code === code
+    );
+    return _.get(selectedCategory, '[0].terms', []);
   }
 
   getInsights() {
@@ -410,6 +484,127 @@ export class InsightSideBarComponent implements OnInit {
     )
 
     this.router.navigateByUrl('app/learn/karmayogi-saptah')
+  }
+
+  updateDesignation() {
+    if (this.selectDesignation) {
+      this.raiseTelemetryForDesigantion()
+      this.apiCallToUpdateDesignation()
+    } else {
+      this.openSnackbar('Please select a valid designation')
+    }
+  }
+
+  raiseTelemetryForDesigantion() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        subType: this.selectDesignation,
+        id: "designation-master-import",
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+  }
+
+  submitProfile() {
+    let payload: any = {
+      request: {
+        userId: this.configSvc.unMappedUser.id,
+        profileDetails: {
+          professionalDetails: [{designation: this.selectDesignation}]
+        }
+      }
+    }
+
+    this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
+      if (res.responseCode === 'OK') {
+        this.showUpdateDesignations = false
+        this.openSnackbar('Designation updated successfully')
+      }
+    }, error => {
+      /* tslint:disable */
+      console.log(error)
+      this.snackBar.open("something went wrong!")
+    })
+
+  }
+
+  apiCallToUpdateDesignation() {
+    if (this.desigantionUnderApproval) {
+      this.profileV2Svc.withDrawApprovalRequest(this.configSvc.unMappedUser.id, this.desigantionUnderApproval.wfId).subscribe((resp: any) => {
+        if (resp && resp.result) {
+          /* tslint:disable */
+          console.log(resp.result.message)
+          this.submitProfile()
+        }
+      })
+    } else {
+      this.submitProfile()
+    }
+  }
+
+  onInputChange(searchValue: string) {
+    if (searchValue.length) {
+      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue))
+      this.selectDesignation = searchValue
+    } else {
+      this.filterDesigantionList = this.designationList
+    }
+    this.selectDesignation = ''
+  }
+
+  onOptionSelected(designation: string) {
+    this.selectDesignation = designation
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
+    this.filterDesigantionList = this.designationList
+  }
+
+  openAutocomplete(trigger: MatAutocompleteTrigger, inputElement: HTMLInputElement): void {
+    inputElement.focus(); // Ensure the input field is focused
+    trigger.openPanel(); // Open the autocomplete panel
+  }
+
+  renderUpdateDesignationCardHeader(){
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.headerHi
+      case "gu":
+        return this.updateDesignationCard.headerGu
+      default:
+        return this.updateDesignationCard.header
+    }
+  }
+
+  renderUpdateDesignationCardButtonText() {
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.buttonTextHi
+      case "gu":
+        return this.updateDesignationCard.buttonTextGu
+      default:
+        return this.updateDesignationCard.buttonText
+    }
+  }
+
+  renderUpdateDesignationCardHint() {
+    switch (this.currentLang) {
+      case "hi":
+        return this.updateDesignationCard.hintTextHi
+      case "gu":
+        return this.updateDesignationCard.hintTextGu
+      default:
+        return this.updateDesignationCard.hintText
+    }
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
