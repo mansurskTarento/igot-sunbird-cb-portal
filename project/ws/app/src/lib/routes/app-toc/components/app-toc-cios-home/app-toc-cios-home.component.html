@@ -230,10 +230,10 @@
                             </a>
                         </ng-container>
                         <ng-container  *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length ===  0 
-                        && userExtCourseEnroll?.progress <= 100">
-                        <div class="no-certificate-found">
-                            <ws-widget-sliders-dynamic [widgetData]="currentLang === 'en' ? config?.infoMsg : config?.infoMsgHi"></ws-widget-sliders-dynamic>
-                        </div>
+                        && userExtCourseEnroll?.progress <= 100 && widgetData && widgetData.sliderData?.length">
+                            <div class="no-certificate-found">
+                                <ws-widget-sliders-dynamic [widgetData]="widgetData"></ws-widget-sliders-dynamic>
+                            </div>
                         </ng-container>
                     <!-- <ng-container *ngIf="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length > 0 
                         && userExtCourseEnroll?.progress === 100">

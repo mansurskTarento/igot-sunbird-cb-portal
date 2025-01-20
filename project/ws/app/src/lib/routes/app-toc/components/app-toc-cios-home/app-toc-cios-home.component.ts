@@ -7,6 +7,7 @@ import { LoaderService } from '@ws/author/src/public-api'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
+import * as _ from 'lodash'
 
 @Component({
   selector: 'ws-app-app-toc-cios-home',
@@ -30,6 +31,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   scrolled: boolean | undefined
   isMobile = false
   config: any
+  widgetData: any
   enableShare = false
   rootOrgId: any
   currentLang: any = 'en'
@@ -131,6 +133,11 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.extContentReadData.contentId
         }
       }
+      this.widgetData = this.config
+      this.widgetData['type'] = 'tips'
+      this.widgetData['cardClass'] = 'slider-container'
+      this.widgetData['height'] = 'auto'
+      this.widgetData['sliderData'] = _.get(this.extContentReadData, 'contentPartner.providerTips', [])
 
       if(Object.keys(this.userExtCourseEnroll).length) {
         this.discussWidgetData.enrolledContent = true
