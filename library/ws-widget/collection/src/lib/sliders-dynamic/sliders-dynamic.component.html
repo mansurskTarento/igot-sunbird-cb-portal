@@ -21,7 +21,7 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="widgetData.type === 'tips'">
+  <ng-container *ngIf="widgetData?.type === 'tips'">
     <ng-container *ngFor="let slide of widgetData?.sliderData; let i = index">
       <div class="tips banner WidgetInstanceId flex margin-bottom-xs" [hidden]="i !== currentIndex">
         <div class="banner-data flex margin-right-m">
