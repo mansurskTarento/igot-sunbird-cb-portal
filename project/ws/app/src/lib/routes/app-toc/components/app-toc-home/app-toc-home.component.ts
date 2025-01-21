@@ -361,6 +361,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             await this.tocSvc.fetchCourseHeirarchy(this.content)
             this.tocSvc.contentLoader.next(false)
             this.tocSvc.checkModuleWiseData(this.content)
+            this.skeletonLoader = false
           } else {
             this.fetchUserEnrollmentData();
           }
