@@ -76,7 +76,7 @@ export class SeeAllService {
     const result: any = this.http.get(requestUrl).pipe(catchError(this.handleError), map(
       async (data: any) => {
         if(data.result && data.result.courseList) {
-          return data.result && data.result.courseList
+          return data.result.courseList
         }
         return ''
       })
