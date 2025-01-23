@@ -2007,7 +2007,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         if(this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
           // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
 
-          const foundContent = this.userEnrollmentList && this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
+          const foundContent = this.userEnrollmentList && 
+             this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
           let urlData = await this.contentLibSvc.getResourseLink(this.content, [foundContent], true)
 
           // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
