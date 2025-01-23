@@ -40,13 +40,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-teachers-notes.component'
-
+import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component'
 @NgModule({
   declarations: [
     ContentTocComponent,
     AppTocAboutComponent,
     AppTocContentComponent,
     AppTocTeachersNotesComponent,
+    AppTocReferenceNotesComponent,
     AppTocContentCardV2Component,
     ReviewsContentComponent,
     AppTocSessionCardNewComponent,
