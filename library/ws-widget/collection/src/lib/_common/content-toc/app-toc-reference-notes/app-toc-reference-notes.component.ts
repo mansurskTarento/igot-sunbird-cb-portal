@@ -5,12 +5,12 @@ import { NsContent } from '@sunbird-cb/utils-v2'
 import * as fileSaver from 'file-saver'
 
 @Component({
-  selector: 'ws-widget-app-toc-teachers-notes',
-  templateUrl: './app-toc-teachers-notes.component.html',
-  styleUrls: ['./app-toc-teachers-notes.component.scss'],
+  selector: 'ws-widget-app-toc-reference-notes',
+  templateUrl: './app-toc-reference-notes.component.html',
+  styleUrls: ['./app-toc-reference-notes.component.scss'],
 })
 
-export class AppTocTeachersNotesComponent implements OnInit {
+export class AppTocReferenceNotesComponent implements OnInit {
 
   @Input() content!: NsContent.IContent
   primaryCategory = NsContent.EPrimaryCategory
@@ -20,7 +20,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
 
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   downloadPDF(contentData: any) {
     fileSaver.saveAs(contentData.artifactUrl, contentData.name)
@@ -28,7 +28,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
 
   previewContent(contentData: any) {
     this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(contentData.mimeType)}/${contentData.identifier}`], {
-      queryParams : {
+      queryParams: {
         primaryCategory: this.primaryCategory.RESOURCE,
         playerPreview: true,
         collectionId: this.content.identifier,
@@ -39,9 +39,10 @@ export class AppTocTeachersNotesComponent implements OnInit {
   downloadAllContent() {
 
     this.content?.referenceNodes.forEach((ele: any) => {
-      if (ele?.resourceCategory === 'Teachers Resource') {
+      if (ele?.resourceCategory === 'Reference Resource') {
         fileSaver.saveAs(ele.artifactUrl, ele.name)
       }
+
     })
   }
 

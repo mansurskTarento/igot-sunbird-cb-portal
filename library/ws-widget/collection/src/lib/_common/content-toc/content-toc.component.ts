@@ -41,7 +41,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   selectedTabIndex = 0
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
   displayTeachersContent = false
-
+  teacherNotesFlag = false
+  referenceNotesFlag = false
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -76,8 +77,24 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.configService.userRoles.has('Mentor')
       && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
     } else {
+     
       this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
         this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
+      
+    }
+    if (this.content && this.content.referenceNodes) {
+      this.content.referenceNodes.forEach((item: any) => {
+        if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
+          this.teacherNotesFlag = true
+        }
+      })
+    }
+    if (this.content && this.content.referenceNodes) {
+      this.content.referenceNodes.forEach((item: any) => {
+        if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
+          this.referenceNotesFlag = true
+        }
+      })
     }
   }
 
