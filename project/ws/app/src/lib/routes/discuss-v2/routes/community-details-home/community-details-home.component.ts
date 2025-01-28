@@ -30,7 +30,7 @@ export class CommunityDetailsHomeComponent {
         "placeholder": "Start a discussion"
       },
       "postBtn": {
-        "text": "",
+        "text": "Post",
         "icon": "send",
         show: true
       },
