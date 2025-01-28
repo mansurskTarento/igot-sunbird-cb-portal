@@ -171,6 +171,8 @@ export class InitService {
     await this.fetchDefaultConfig()
     await this.profileNudgeConfig()
     await this.themeOverrideConfig()
+    await this.netCoreConfig()
+    
     // const authenticated = await this.authSvc.initAuth()
     // if (!authenticated) {
     //   this.settingsSvc.initializePrefChanges(environment.production)
@@ -374,6 +376,16 @@ export class InitService {
     return publicConfig
   }
 
+  private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
+    const publicConfig: any = await this.http
+      .get<any>(`${this.baseUrl}/netcore.json`)
+      .toPromise()
+    this.configSvc.netcoreConfig = publicConfig.netcoreConfig
+    return publicConfig
+  }
+
+  
+
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
       let userCourseEnrolmentInfo: any = {}
@@ -404,10 +416,16 @@ export class InitService {
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
         
       }
-      let netCoreUserSetupFlag:any = localStorage.getItem('netCoreUserSetup')  ? localStorage.getItem('netCoreUserSetup') : ''
-      if (netCoreUserSetupFlag === 'false' || netCoreUserSetupFlag === false || netCoreUserSetupFlag === '') {
-        this.netCoreUserLoginSetup()
+
+      if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+        && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
+      ) {
+        let netCoreUserSetupFlag:any = localStorage.getItem('netCoreUserSetup')  ? localStorage.getItem('netCoreUserSetup') : ''
+        if (netCoreUserSetupFlag === 'false' || netCoreUserSetupFlag === false || netCoreUserSetupFlag === '') {
+          this.netCoreUserLoginSetup()
+        }
       }
+      
       return res 
     }).catch((_err: any)=> {
       let userCourseEnrolmentInfo = {
@@ -1019,8 +1037,20 @@ export class InitService {
     }
     /* tslint:disable */
     console.log('userInfoPayload', userInfoPayload)
-    this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
-    this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())
+    if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive) {
+      this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
+    }
+
+    if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive 
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.user_signin
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.user_signin.isActive
+    ) {
+      this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())
+    }
+    
     // smartech('contact', '', {
     //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim().toLowerCase(),

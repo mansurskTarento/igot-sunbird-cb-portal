@@ -1678,8 +1678,14 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
      //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
      //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
      // })
- 
-     let payload:any = {}
+
+     if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+        let payload:any = {}
      if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
        payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
      }
@@ -1689,6 +1695,9 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
  
      this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
      this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
+    }
+ 
+     
   }
 
   netCoreUserProfileNameUpdateEvent() {
@@ -1699,7 +1708,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
     // })
-
+    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
     let payload:any = {}
     if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
       payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
@@ -1711,6 +1725,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.netCoreService.netCoreUserNameUpdate(payload)
     this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
   }
+  }
 
   netCoreUserProfileUpdateEvent() {
     /* tslint:disable */
@@ -1720,7 +1735,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
     // })
-
+    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
     let profileUpdateObj:any = {}
     let profileUpdateEventObj:any = {}
     if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
@@ -1817,6 +1837,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
    // this.netCoreService.netCoreUserProfileUpdateEvent(profileUpdateEventObj, 'profile_update',this.configService.unMappedUser.identifier.trim().toLowerCase())
     this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
   }
+  }
 
   toTitleCase(str: string): string {
     return str
@@ -1824,5 +1845,9 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  validateName(event:any) {
+    console.log('event', event)
   }
 }
