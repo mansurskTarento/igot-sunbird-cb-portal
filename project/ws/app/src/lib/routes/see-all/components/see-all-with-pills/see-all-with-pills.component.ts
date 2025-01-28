@@ -493,6 +493,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
     }
 
     pillClicked(stripMap: any,  pillIndex: any, tabIndex: any) {
+      this.pageSize = 50
       if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
         stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
@@ -532,6 +533,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       }
     }
     public tabClicked(tabIndex: any, stripMap: any, _stripKey: string, pillIndex: any) {
+
+      this.pageSize = 50
       if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
         stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
@@ -631,8 +634,9 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         && currentPillFromMap.request.payload.request.limit){
         delete currentPillFromMap.request.payload.request.limit
       }
+      let courses: any = []
       this.enrollSvc.fetchInternalEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
-        let courses: any = []
+        
         if(res && res.result && res.result.courses && res.result.courses.length){
           courses  = [...courses, ...res.result.courses]
         }
@@ -643,10 +647,16 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         },(_err: any) => {
-
+          if(courses && courses.length){
+            courses  = [...courses]
+            this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
+          }
         })
       },(_err: any) => {
-
+        if(courses && courses.length){
+          courses  = [...courses]
+          this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
+        }
       })
     }
   }
@@ -687,7 +697,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         contentTemp.lastReadContentStatus = c.lastReadContentStatus || '';
         contentTemp.lastReadContentId = c.lastReadContentId || '';
         contentTemp.lrcProgressDetails = c.lrcProgressDetails || '';
-        contentTemp.issuedCertificates = c.issuedCertificates || [];
+        contentTemp.issuedCertificates = c.issuedCertificates || c.issued_certificates || [];
         contentTemp.batchId = c.batchId || '';
         contentTemp.content = c.content || c.event || {};
         contentTemp.content.primaryCategory = c.content && c.content.primaryCategory || c.event && c.event.resourceType || '';

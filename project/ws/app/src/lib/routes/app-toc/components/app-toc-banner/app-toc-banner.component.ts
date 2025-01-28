@@ -402,7 +402,6 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       `Indian Postal Service`,
       `Indian Railway Accounts Service`,
       `Indian Railway Personnel Service`,
-      `Indian Railway Service`,
       `Indian Railway Service of Electrical Engineers`,
       `Indian Railway Service of Engineers`,
       `Indian Railway Service of Mechanical Engineers`,
@@ -416,7 +415,13 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       `Indian Telecom Service`,
       `Indian Trade Service`,
       `IP&T (Fin. & Accounts) Service`,
-      `Delhi, Andaman and Nicobar Islands, Lakshadweep, Daman & Diu, and Dadra & Nagar Haveli Civil Service (DANICS)`
+      `Central Company Law Service`,
+      `Central Engineering Service (Roads)`,
+      `Indian Broadcasting (Engineering) Service`,
+      `Indian Defence Service of Engineers`,
+      `Indian Ordnance Factory Service`,
+      `Central Secretariat Stenographers Service`,
+      `Indian P&T Finance & Accounts Service`
   ]
   }
 

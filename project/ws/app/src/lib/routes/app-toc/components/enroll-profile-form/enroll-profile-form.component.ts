@@ -653,7 +653,7 @@ export class EnrollProfileFormComponent implements OnInit {
     } else {
       this.cadreControllingAuthority = 'NA'
     }
-    if (this.selectedService && this.selectedService.cadreList && this.selectedService.cadreList.length === 0) {
+    if (this.selectedService && this.selectedService.cadreList.length === 0) {
       this.showBatchForNoCadre = true
       this.startBatch = this.selectedService.commonBatchStartYear
       this.endBatch = this.selectedService.commonBatchEndYear
@@ -983,7 +983,9 @@ export class EnrollProfileFormComponent implements OnInit {
               setTimeout(() => {
                 this.getService(this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
                 this.onServiceSelect({value: this.userProfileObject.profileDetails.cadreDetails.civilServiceName})
-                this.onCadreSelect(this.userProfileObject.profileDetails.cadreDetails.cadreName)
+                if (this.userProfileObject.profileDetails.cadreDetails.cadreName) {
+                  this.onCadreSelect(this.userProfileObject.profileDetails.cadreDetails.cadreName)
+                }
                 this.userDetailsForm.patchValue({
                   typeOfCivilService: this.userProfileObject.profileDetails.cadreDetails.civilServiceType,
                   serviceType: this.userProfileObject.profileDetails.cadreDetails.civilServiceName,

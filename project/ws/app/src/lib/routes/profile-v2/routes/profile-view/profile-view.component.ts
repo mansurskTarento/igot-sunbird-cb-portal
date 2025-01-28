@@ -997,7 +997,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userProfileService.editProfileDetails(payload)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
-        
+        // update cadre details in config service to enroll into Blended programs
+        if (this.configService.unMappedUser && this.configService.unMappedUser.profileDetails) {
+          this.configService.unMappedUser.profileDetails.cadreDetails = payload.request.profileDetails.cadreDetails
+        }
         this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdated'))
         this.portalProfile.personalDetails.isCadre = this.isCadreStatus
         this.editDetails = !this.editDetails

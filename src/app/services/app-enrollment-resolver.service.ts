@@ -34,6 +34,7 @@ export class AppEnrollmentResolverService
         } else {
             let request: any = {
                 "request": {
+                    "retiredCoursesEnabled": true,
                     "courseId": [_route.queryParams.collectionId],
                 }
               }
