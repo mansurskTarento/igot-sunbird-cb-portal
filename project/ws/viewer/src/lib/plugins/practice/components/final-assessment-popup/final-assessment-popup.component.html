@@ -1,5 +1,8 @@
 <div class="finalAssessment">
-    <button *ngIf="assessmentData?.assessmentType !== 'maxAttemptReached'" mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <button *ngIf="assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'optionalWeightage'" mat-icon-button class="close-button" [mat-dialog-close]="true">
+        <mat-icon class="close-icon">close</mat-icon>
+    </button>
+    <button *ngIf="assessmentData?.assessmentType === 'optionalWeightage'" mat-icon-button class="close-button" [mat-dialog-close]="'initial'">
         <mat-icon class="close-icon">close</mat-icon>
     </button>
     <ng-container *ngIf="assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'publicUserSuccess'">
