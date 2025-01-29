@@ -77,4 +77,8 @@ export class DiscussV2HomeComponent {
   showAllCommunityByTopic(topic: string) {
     this.router.navigate([`/app/discussion-forum-v2/all/${topic}`])
   }
+  communityCardClick(cardData: any) {
+    debugger
+    this.router.navigate(['/app/discussion-forum-v2/community', cardData.communityId])
+  }
 }
