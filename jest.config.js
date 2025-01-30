@@ -1,17 +1,22 @@
 module.exports = {
-  preset: 'ts-jest',
+  preset: 'jest-preset-angular',
   testEnvironment: 'jsdom',
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+  setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
+  transformIgnorePatterns: [
+    'node_modules/(?!.*\\.mjs$)',
+  ],
+  moduleNameMapper: {
+    '^@ws/(.*)$': '<rootDir>/project/ws/$1',
+    '@ws-widget/(.*)$': '<rootDir>/library/ws-widget/$1',
+    '@ws/author/(.*)$': '<rootDir>/project/ws/author/$1',
+    '@ws/app/(.*)$': '<rootDir>/project/ws/app/$1',
+    '@ws/viewer/(.*)$': '<rootDir>/project/ws/viewer/$1',
+    'worker-loader!.*': '<rootDir>/test/mocks/workerMock.js',
+    'pdfjs-dist/build/pdf.worker': '<rootDir>/test/mocks/workerMock.js',
+    "^src/environments/environment$": "<rootDir>/src/environments/environment.ts",
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  transformIgnorePatterns: ['/node_modules/'],
-  // moduleNameMapper: {
-  //   '^src/(.*)$': '/home/sujithsojan/Desktop/igot-jest/sunbird-cb-adminportal/src/$1',
-  // },
-  // setupFiles: ['/home/sujithsojan/Desktop/igot-jest/sunbird-cb-adminportal/src/jest.setup.ts'],
-  coverageDirectory: './coverage',
   coverageReporters: ["clover", "json", "lcov", "text", "text-summary"],
   collectCoverage: true,
   testResultsProcessor: "jest-sonar-reporter",
-}
+  setupFiles: ['zone.js', ]
+};
