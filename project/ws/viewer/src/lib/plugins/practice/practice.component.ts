@@ -2338,8 +2338,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             this.openSectionPopup(submitAssessment, getTime)
             break;
           case 'initial':
-           this.viewState = 'initial'
-           this.retakeAssessment()
+            this.isSubmitted = false
+            this.clearStorage()
+            this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
            break
           default :
             this.setQuestionStartTime()
