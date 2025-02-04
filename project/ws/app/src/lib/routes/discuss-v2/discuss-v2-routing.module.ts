@@ -43,7 +43,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'all/:topicId',
+    path: 'communities/:topicName?',
     // loadChildren: () => import('./wrapper/wrapper.module').then(u => u.WrapperModule),
     component: CommunitySearchComponent,
     data: {
