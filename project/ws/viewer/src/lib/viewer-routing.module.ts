@@ -370,19 +370,19 @@ const routes: Routes = [
       // profileData: ProfileResolverService,
     },
   },
-  {
-    path: '**',
-    data: {
-      resourceType: 'error',
-      module: 'Learn',
-      pageId: '404',
-    },
-    resolve: {
-      content: ViewerResolve,
-      // configData: ConfigurationsService,
-      // profileData: ProfileResolverService,
-    },
-  },
+  // {
+  //   path: '**',
+  //   data: {
+  //     resourceType: 'error',
+  //     module: 'Learn',
+  //     pageId: '404',
+  //   },
+  //   resolve: {
+  //     content: ViewerResolve,
+  //     // configData: ConfigurationsService,
+  //     // profileData: ProfileResolverService,
+  //   },
+  // },
 ]
 
 @NgModule({
