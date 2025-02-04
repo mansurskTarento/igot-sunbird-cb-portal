@@ -660,6 +660,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
     // this.quizJson.timeLimit = (_.get(this.quizSvc.paperSections, 'value.questionSet.expectedDuration') || 0)
     if (section) {
+      console.log('section', this.secQuestions)
       // this.quizSvc.currentSection.next(section)
       this.fetchingQuestionsStatus = 'fetching'
       this.selectedSection = section
@@ -676,6 +677,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         Promise.all(prom).then(qqr => {
           this.fetchingQuestionsStatus = 'done'
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
+          console.log('question', question)
           // console.log('question--', question)
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
           this.quizSvc.startSection(section)
@@ -758,6 +760,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   getOptions(question: NSPractice.IQuestionV2): NSPractice.IOption[] {
     const options: NSPractice.IOption[] = []
     if (question && question.qType) {
+      console.log('question', question)
       const qTyp = question.qType
       switch (qTyp) {
         // 'mcq-sca' | 'mcq-mca' | 'ftb' | 'mtf'
@@ -768,7 +771,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         case 'MCQ-MCA-W':
         case 'MCQ-SCA-TF':
         case 'MCQ':
-          _.each(this.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE && question.editorState
+          _.each(question.editorState
             // tslint:disable-next-line: align
             ? question.editorState.options : question.choices.options, o => {
               // const aHtml = document.createElement('div')
@@ -816,7 +819,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           // for (let i = 0; i < this.question.options.length; i += 1) {
           //     this.question.options[i].matchForView = arr[i]
           // }
-          _.each(this.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE && question.editorState
+          _.each(question.editorState
             // tslint:disable-next-line: align
             ? question.editorState.options : question.choices.options, (o, idx) => {
               options.push({
@@ -896,6 +899,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.setQuestionStartTime()
     }
     const questions = this.secQuestions
+    console.log('questions--', questions)
     if (this.assessmentType === 'optionalWeightage') {
       if (idx > 0) {
         if (questions && questions[idx - 1]) {
@@ -977,6 +981,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     }
+    console.log('this.currentQuestion', this.currentQuestion)
 
   }
 
