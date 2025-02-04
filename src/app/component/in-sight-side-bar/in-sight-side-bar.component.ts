@@ -548,7 +548,7 @@ export class InsightSideBarComponent implements OnInit {
 
   onInputChange(searchValue: string) {
     if (searchValue.length) {
-      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue))
+      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue.toLowerCase()))
       this.selectDesignation = searchValue
     } else {
       this.filterDesigantionList = this.designationList
