@@ -660,7 +660,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
     // this.quizJson.timeLimit = (_.get(this.quizSvc.paperSections, 'value.questionSet.expectedDuration') || 0)
     if (section) {
-      console.log('section', this.secQuestions)
       // this.quizSvc.currentSection.next(section)
       this.fetchingQuestionsStatus = 'fetching'
       this.selectedSection = section
@@ -677,7 +676,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         Promise.all(prom).then(qqr => {
           this.fetchingQuestionsStatus = 'done'
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
-          console.log('question', question)
           // console.log('question--', question)
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
           this.quizSvc.startSection(section)
@@ -760,7 +758,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   getOptions(question: NSPractice.IQuestionV2): NSPractice.IOption[] {
     const options: NSPractice.IOption[] = []
     if (question && question.qType) {
-      console.log('question', question)
       const qTyp = question.qType
       switch (qTyp) {
         // 'mcq-sca' | 'mcq-mca' | 'ftb' | 'mtf'
@@ -899,7 +896,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.setQuestionStartTime()
     }
     const questions = this.secQuestions
-    console.log('questions--', questions)
     if (this.assessmentType === 'optionalWeightage') {
       if (idx > 0) {
         if (questions && questions[idx - 1]) {
@@ -981,7 +977,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     }
-    console.log('this.currentQuestion', this.currentQuestion)
 
   }
 
@@ -1659,7 +1654,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           prom.push(this.getMultiQuestions(l))
         })
         Promise.all(prom).then(qqr => {
-          console.log('qqr', qqr)
           allPromiseResolvedCount++;
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
