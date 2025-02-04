@@ -58,7 +58,7 @@
     "@sunbird-cb/micro-surveys": "2.0.20-ang-9-12",
     "@sunbird-cb/rain-dashboards": "0.0.36-ang-13-16",
     "@sunbird-cb/resolver-v2": "0.0.7-ang-13-16",
-    "@sunbird-cb/utils-v2": "0.0.27-ang-13-16",
+    "@sunbird-cb/utils-v2": "0.0.28-ang-13-16",
     "@ckeditor/ckeditor5-angular": "^6.0.0",
     "@ckeditor/ckeditor5-build-classic": "^39.0.0",
     "@types/file-saver": "^2.0.1",

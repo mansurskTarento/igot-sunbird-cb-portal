@@ -34,6 +34,7 @@ import { RejectionReasonPopupComponent } from '../../components/rejection-reason
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { ProfileV2Service } from '../../services/profile-v2.servive'
 import { environment } from 'src/environments/environment'
+import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
 
 export const MY_FORMATS = {
@@ -218,6 +219,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private pipeImgUrl: PipeCertificateImageURL,
     private homeService: HomePageService,
     private profileService: ProfileV2Service,
+    private netCoreService: NetCoreService,
     private signupService: SignupService,
     private events: EventService
   ) {
@@ -789,8 +791,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         group: '',
         designation: '',
       })
-    }
-
+    }    
     // this.fetchCadreData()
   }
 
@@ -1009,6 +1010,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.portalProfile.personalDetails.isCadre = this.isCadreStatus
         this.editDetails = !this.editDetails
         this.prefillForm({ dataToSubmit, ...{ 'employeeCode': this.otherDetailsForm.value['employeeCode'] } })
+        this.netCoreUserProfileUpdateEvent()
       },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdateFailed'))
@@ -1482,6 +1484,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.editName = !this.editName
       })
+
+      this.netCoreUserProfileNameUpdateEvent()
   }
 
   async onSubmit() {
@@ -1498,6 +1502,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       (_res: any) => {
         this.matSnackBar.open(this.handleTranslateTo('profileImageUpdated'))
         this.portalProfile.profileImageUrl = (this.photoUrl as any)
+        this.netCoreUserProfilePhotoUpdateEvent()
 
       },
       (err: HttpErrorResponse) => {
@@ -1713,5 +1718,186 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAutoCompleteClosed() {
     this.isMatcompleteOpened = false
+  }
+
+  netCoreUserProfilePhotoUpdateEvent() {
+     /* tslint:disable */
+     console.log('this.content',this.portalProfile )
+     /* tslint:enable */
+     // smartech('contact', '2', {
+     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
+     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+     // })
+
+     if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+        let payload:any = {}
+     if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+       payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+     }
+     if(this.photoUrl) {
+       payload['PROFILE_PHOTO'] = this.photoUrl
+     }
+ 
+     this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
+     this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
+    }
+ 
+     
+  }
+
+  netCoreUserProfileNameUpdateEvent() {
+    /* tslint:disable */
+    console.log('this.content',this.portalProfile )
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
+    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+    let payload:any = {}
+    if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+      payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+    }
+    if(this.profileName) {
+      payload['FULL_NAME'] = this.toTitleCase(this.profileName.trim().toLowerCase())
+    }
+
+    this.netCoreService.netCoreUserNameUpdate(payload)
+    this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
+  }
+  }
+
+  netCoreUserProfileUpdateEvent() {
+    /* tslint:disable */
+    console.log('this.content',this.portalProfile )
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
+    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+      && this.configService.netcoreConfig.netcoreWebConfig.isActive
+      && this.configService.netcoreConfig.netcoreWebConfig.events
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+    let profileUpdateObj:any = {}
+    let profileUpdateEventObj:any = {}
+    if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+      profileUpdateObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+      profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+    }
+    if(this.profileName) {
+      profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+      profileUpdateEventObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+    }
+    if(this.photoUrl) {
+      profileUpdateObj['PROFILE_PHOTO'] = this.photoUrl
+      profileUpdateEventObj['PROFILE_PHOTO'] = this.photoUrl
+    }
+    if(this.portalProfile && 
+      this.portalProfile.personalDetails) {
+        if(this.portalProfile.personalDetails.gender) {
+          profileUpdateObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
+          profileUpdateEventObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
+        }
+        if(this.portalProfile.personalDetails.primaryEmail) {
+          profileUpdateObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
+          profileUpdateEventObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
+        }
+        if(this.portalProfile.personalDetails.mobile) {
+          profileUpdateObj['MOBILE'] = this.portalProfile.personalDetails.mobile
+          profileUpdateEventObj['MOBILE'] = this.portalProfile.personalDetails.mobile
+        }
+        if(this.portalProfile.personalDetails.dob) {
+          profileUpdateEventObj['DOB'] = this.portalProfile.personalDetails.dob.trim()
+        }
+        if(this.portalProfile.personalDetails.domicileMedium) {
+          profileUpdateObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
+          profileUpdateEventObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
+        }
+        if(this.portalProfile.personalDetails.category) {
+          profileUpdateEventObj['CATEGORY'] = this.toTitleCase(this.portalProfile.personalDetails.category.trim().toLowerCase())
+        }
+        if(this.portalProfile.personalDetails.pincode) {
+          profileUpdateEventObj['PIN_CODE'] = this.portalProfile.personalDetails.pincode.trim()
+        }
+        if(this.portalProfile.id) {
+          profileUpdateEventObj['EMPLOYEE_ID'] = this.portalProfile.employmentDetails?.employeeCode.trim()
+        }
+        if(this.portalProfile.personalDetails.hasOwnProperty('isCadre')) {
+          profileUpdateEventObj['IS_CADRE'] = this.portalProfile.personalDetails.hasOwnProperty('isCadre')
+        }
+        
+    }
+
+    if(this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileGroupStatus === 'VERIFIED') {
+      profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+      profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+    }
+
+    if(this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileDesignationStatus === 'VERIFIED') {
+      profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+      profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+    }
+    
+
+    if(this.portalProfile && 
+      this.portalProfile.cadreDetails) {
+        if(this.portalProfile.cadreDetails.civilServiceType) {
+          profileUpdateEventObj['CIVIL_SERVICE_TYPE'] = this.portalProfile.cadreDetails.civilServiceType
+        }
+        if(this.portalProfile.cadreDetails.civilServiceName) {
+          profileUpdateEventObj['CIVIL_SERVICE_NAME'] = this.portalProfile.cadreDetails.civilServiceName
+        }
+        if(this.portalProfile.cadreDetails.cadreName) {
+          profileUpdateEventObj['CADRE_NAME'] = this.portalProfile.cadreDetails.cadreName
+        }
+        if(this.portalProfile.cadreDetails.cadreBatch) {
+          profileUpdateEventObj['CADRE_BATCH'] = this.portalProfile.cadreDetails.cadreBatch
+        }
+        if(this.portalProfile.cadreDetails.cadreControllingAuthorityName) {
+          profileUpdateEventObj['CADRE_CONTROLLING_AUTHORITY'] = this.portalProfile.cadreDetails.cadreControllingAuthorityName
+        }        
+      }
+
+    if(this.portalProfile && this.portalProfile.additionalProperties) {
+      if(this.portalProfile.additionalProperties.externalSystemId) {
+        profileUpdateEventObj['EHRMS_ID'] = this.toTitleCase(this.portalProfile.additionalProperties.externalSystemId.trim().toLowerCase())
+      }
+      if(this.portalProfile.additionalProperties.externalSystemDor) {
+        profileUpdateEventObj['DOR'] = this.portalProfile.additionalProperties.externalSystemDor.trim()
+      }
+    }
+    
+    
+   
+
+    this.netCoreService.netCoreUserProfilepdate(profileUpdateObj)
+   // this.netCoreService.netCoreUserProfileUpdateEvent(profileUpdateEventObj, 'profile_update',this.configService.unMappedUser.identifier.trim().toLowerCase())
+    this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
+  }
+  }
+
+  toTitleCase(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  validateName(event:any) {
+    console.log('event', event)
   }
 }
