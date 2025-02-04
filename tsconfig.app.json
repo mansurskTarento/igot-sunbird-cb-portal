@@ -4,7 +4,8 @@
     "outDir": "./out-tsc/app",
     "types": ["node", "@types/zip.js"],
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true,
   },
   "angularCompilerOptions": {
     "enableIvy": false

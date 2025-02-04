@@ -77,7 +77,10 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+              "@ckeditor/ckeditor5-editor-classic"
+            ]
           },
           "configurations": {
             "nb": {
@@ -107,7 +110,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "4mb",
-                  "maximumError": "20mb"
+                  "maximumError": "25mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -165,7 +168,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "20mb"
+                  "maximumError": "25mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -194,7 +197,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "20mb"
+                  "maximumError": "25mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -223,7 +226,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "20mb"
+                  "maximumError": "25mb"
                 },
                 {
                   "type": "anyComponentStyle",
