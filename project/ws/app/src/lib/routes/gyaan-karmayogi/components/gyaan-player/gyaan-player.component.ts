@@ -60,7 +60,7 @@ export class GyaanPlayerComponent implements OnInit {
     if (!this.displayContents) {
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
-        { title: 'TOC age', disableTranslate: true,
+        { title: 'TOC page', disableTranslate: true,
           queryParams: {  }, url: `/app/toc/${this.collectionId}/overview`, icon: '' },
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
