@@ -2005,7 +2005,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.userEnrollmentList = res.result.courses
         this.dataTransferSvc.setEnrollData(this.userEnrollmentList)
         if(this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
-          let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
+          // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
+
+          const foundContent = this.userEnrollmentList && 
+             this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
+          let urlData = await this.contentLibSvc.getResourseLink(this.content, [foundContent], true)
+
+          // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
           if(urlData && urlData.url && urlData.url.includes('app/toc')) {
             this.checkIfUserEnrolled()
           } else {
