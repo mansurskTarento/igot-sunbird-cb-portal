@@ -105,6 +105,8 @@ export class CardHubsListComponent extends WidgetBaseComponent
             this.activeRoute = 'Home'
           } else if (event.url.includes('/page/learn') || event.url.includes('/app/toc')) {
             this.activeRoute = 'Learn'
+          } else if (event.url.includes('/app/discussion-forum-v2')) {
+            this.activeRoute = 'Discuss-V2'
           } else if (event.url.includes('/app/discussion-forum')) {
             this.activeRoute = 'Discuss'
           } else if (event.url.includes('app/network-v2')

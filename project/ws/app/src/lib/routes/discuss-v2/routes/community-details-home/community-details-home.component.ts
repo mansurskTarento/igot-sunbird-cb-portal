@@ -50,6 +50,14 @@ export class CommunityDetailsHomeComponent {
         redirectUrl: '/post/',
         id:''
       },
+
+      "avatarPhoto": {
+        "show": true,
+        "size": "ml",
+        "photoUrl": "https://portal.dev.karmayogibharat.net/assets/public/profileImage/1725443303744_images.jpeg",
+        "name": "Christopher Fernandes",
+        "color": "#006400"
+      },
       sliderData: {
         styleData: {
           "bannerMetaClass": "meta",
