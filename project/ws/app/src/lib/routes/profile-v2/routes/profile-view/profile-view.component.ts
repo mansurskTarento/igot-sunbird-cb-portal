@@ -281,7 +281,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageData = this.route.parent && this.route.parent.snapshot.data.pageData.data
     this.currentUser = this.configService && this.configService.userProfile
     if (this.configService && this.configService.userRoles) {
-        // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-length
       this.isMentor = (this.configService.userRoles.has('MENTOR') || this.configService.userRoles.has('mentor') || this.configService.userRoles.has('Mentor')) ? true : false
     }
 
@@ -328,8 +328,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getMasterLanguage()
     this.getGroupData()
     // this.getProfilePageMetaData()
-    //this.loadDesignations()
-    this.getMasterDesignation()
+    this.loadDesignations()
+    //this.getMasterDesignation()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getApprovedFields()
@@ -339,32 +339,32 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.configService && this.configService.unMappedUser
       && this.configService.unMappedUser.profileDetails
       && this.configService.unMappedUser.profileDetails.profileStatus) {
-        // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-length
       this.isNotMyUser = this.configService.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
     }
     if (this.configService && this.configService.unMappedUser
       && this.configService.unMappedUser.profileDetails
       && this.configService.unMappedUser.profileDetails.employmentDetails
       && this.configService.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        // tslint:disable-next-line:max-line-length
-        this.isIgotOrg = this.configService.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      // tslint:disable-next-line:max-line-length
+      this.isIgotOrg = this.configService.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
 
     this.primaryDetailsForm.get('designation')!.valueChanges
-    .pipe(
-      debounceTime(250),
-      distinctUntilChanged(),
-      startWith(''),
-    )
-    .subscribe(res => {
-      if (res) {
-        this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-          val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
-        )
-      } else {
-        this.filterDesignationsMeta =  this.designationsMeta
-      }
-    })
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        startWith(''),
+      )
+      .subscribe(res => {
+        if (res) {
+          this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+            val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+          )
+        } else {
+          this.filterDesignationsMeta = this.designationsMeta
+        }
+      })
 
     if (this.otherDetailsForm.get('domicileMedium')) {
       this.otherDetailsForm.get('domicileMedium')!.valueChanges
@@ -414,7 +414,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedServiceName = event.value
     if (this.serviceListData) {
       this.selectedService = this.serviceListData.find((service: any) => service.name === this.selectedServiceName)
-      this.civilServiceName =  this.selectedService.name
+      this.civilServiceName = this.selectedService.name
       this.civilServiceId = this.selectedService.id
       this.cadre = this.selectedService.cadreList.map((cadre: any) => cadre.name)
     }
@@ -434,8 +434,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.startBatch = this.selectedService.commonBatchStartYear
       this.endBatch = this.selectedService.commonBatchEndYear
       this.exclusionYear = this.selectedService.commonBatchExclusionYearList
-    // tslint:disable
-    this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
+      // tslint:disable
+      this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
         .filter(year => !this.exclusionYear.includes(year))
     } else {
       this.showBatchForNoCadre = false
@@ -449,43 +449,43 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (batchControl) { batchControl.reset() }
     if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
     this.selectedCadreName = event
-    if(this.selectedService) {
+    if (this.selectedService) {
       this.selectedCadre = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName)
       this.startBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).startBatchYear
       this.endBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).endBatchYear
       this.exclusionYear = this.selectedCadre.exculsionYearList
       // tslint:disable
       this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-          .filter(year => !this.exclusionYear.includes(year))
+        .filter(year => !this.exclusionYear.includes(year))
       this.cadreId = this.selectedCadre.id
     }
-  
+
   }
   // Sujith
   fetchCadreData() {
-  if(! this.portalProfile.hasOwnProperty('cadreDetails')) {
-    this.noCadreDetails = true
-    this.saveChanges = true
-  } else if(this.portalProfile.cadreDetails == null) {
-    this.noCadreDetails = false
-  }
-  else {
-    this.noCadreDetails = true
-  }
-   const cadreControllingAuthorityControl = this.otherDetailsForm.get('cadreControllingAuthority')
+    if (!this.portalProfile.hasOwnProperty('cadreDetails')) {
+      this.noCadreDetails = true
+      this.saveChanges = true
+    } else if (this.portalProfile.cadreDetails == null) {
+      this.noCadreDetails = false
+    }
+    else {
+      this.noCadreDetails = true
+    }
+    const cadreControllingAuthorityControl = this.otherDetailsForm.get('cadreControllingAuthority')
 
     if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
     this.profileService.fetchCadre().subscribe({
       next: response => {
         this.civilServiceData = response.result.response.value.civilServiceType
-      this.civilServiceTypes = this.civilServiceData.civilServiceTypeList.map((service: any) => service.name)
-        },
-        error: err => {
-          this.errorMessage = err
-        },
-      })
-    
-    
+        this.civilServiceTypes = this.civilServiceData.civilServiceTypeList.map((service: any) => service.name)
+      },
+      error: err => {
+        this.errorMessage = err
+      },
+    })
+
+
   }
 
   fetchDiscussionsData(): void {
@@ -552,7 +552,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           this.insightsDataLoading = false
         }
-      },         (_error: HttpErrorResponse) => {
+      }, (_error: HttpErrorResponse) => {
         this.insightsDataLoading = false
         this.matSnackBar.open(this.handleTranslateTo('insightsDataFail'))
       })
@@ -679,7 +679,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.nationalityData.push(item.name)
           })
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('unableFetchMasterNation'))
         }
@@ -692,7 +692,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res: any) => {
         this.masterLanguages = res.languages
         this.masterLanguageBackup = res.languages
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('unableFetchMasterLanguageData'))
         }
@@ -718,28 +718,28 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.portalProfile.employmentDetails.employeeCode = data.employeeCode
         this.portalProfile.employmentDetails.pinCode = data.dataToSubmit.pincode
       }
-      if(!this.portalProfile.hasOwnProperty('cadreDetails')) {
-        if(data && data.dataToSubmit) {
+      if (!this.portalProfile.hasOwnProperty('cadreDetails')) {
+        if (data && data.dataToSubmit) {
           this.portalProfile['cadreDetails'] = {
-            isCadre : false,
+            isCadre: false,
             civilServiceType: '',
-            civilServiceName:'',
-            cadreName:'',
-            cadreBatch:'',
-            cadreControllingAuthorityName:'',
-            typeOfCivilService:''
+            civilServiceName: '',
+            cadreName: '',
+            cadreBatch: '',
+            cadreControllingAuthorityName: '',
+            typeOfCivilService: ''
           }
-          this.portalProfile['cadreDetails']['isCadre'] = data.dataToSubmit.isCadre 
-          this.portalProfile['cadreDetails']['civilServiceType'] = data.dataToSubmit.typeOfCivilService 
+          this.portalProfile['cadreDetails']['isCadre'] = data.dataToSubmit.isCadre
+          this.portalProfile['cadreDetails']['civilServiceType'] = data.dataToSubmit.typeOfCivilService
           this.portalProfile['cadreDetails']['civilServiceName'] = data.dataToSubmit.serviceType
           this.portalProfile['cadreDetails']['cadreName'] = data.dataToSubmit.cadre
           this.portalProfile['cadreDetails']['cadreBatch'] = data.dataToSubmit.batch
           this.portalProfile['cadreDetails']['cadreControllingAuthorityName'] = this.cadreControllingAuthority
         }
       }
-      if(data && data.dataToSubmit) {
+      if (data && data.dataToSubmit) {
         if (this.portalProfile.cadreDetails) {
-          this.portalProfile.cadreDetails.isCadre = data.dataToSubmit.isCadre        
+          this.portalProfile.cadreDetails.isCadre = data.dataToSubmit.isCadre
           this.portalProfile.cadreDetails.civilServiceType = data.dataToSubmit.typeOfCivilService
           this.portalProfile.cadreDetails.civilServiceName = data.dataToSubmit.serviceType
           this.portalProfile.cadreDetails.cadreName = data.dataToSubmit.cadre
@@ -747,7 +747,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.portalProfile.cadreDetails.cadreControllingAuthorityName = this.cadreControllingAuthority
         }
       }
-      
+
     }
 
     // if (this.portalProfile.personalDetails.dob) {
@@ -766,7 +766,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       pincode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.pinCode : '',
       category: this.portalProfile.personalDetails.category ? this.portalProfile.personalDetails.category.toUpperCase() : '',
       isCadre: this.portalProfile.personalDetails.isCadre
-    });   
+    });
 
     // ...(this.portalProfile.cadreDetails ? {
     //   typeOfCivilService: this.portalProfile.cadreDetails.civilServiceType,
@@ -776,8 +776,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   isCadre: this.portalProfile.personalDetails.isCadre,
     //   cadreControllingAuthority: this.portalProfile.cadreDetails.cadreControllingAuthority,
     // } : {})
-    
-    if(this.portalProfile.personalDetails.isCadre) {
+
+    if (this.portalProfile.personalDetails.isCadre) {
       this.populateValues()
     }
 
@@ -791,7 +791,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         group: '',
         designation: '',
       })
-    }    
+    }
     // this.fetchCadreData()
   }
 
@@ -858,7 +858,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           this.matSnackBar.open(this.handleTranslateTo('otpSentMobile'))
         }
-      },         (error: any) => {
+      }, (error: any) => {
         if (!error.ok) {
           this.matSnackBar.open(_.get(error, 'error.params.errmsg') || 'Unable to resend OTP, please try again later!')
         }
@@ -880,7 +880,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (verifyType) {
                   this.handleVerifyOTP(verifyType, this.otherDetailsForm.value['primaryEmail'])
                 }
-              },         (error: HttpErrorResponse) => {
+              }, (error: HttpErrorResponse) => {
                 if (!error.ok) {
                   this.matSnackBar.open(this.handleTranslateTo('emailOTPSentFail'))
                 }
@@ -917,7 +917,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (verifyType) {
           this.handleVerifyOTP(verifyType, this.otherDetailsForm.value['mobile'])
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('mobileOTPSentFail'))
         }
@@ -942,7 +942,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((_res: any) => {
         this.portalProfile.personalDetails.primaryEmail = email
         this.matSnackBar.open(this.handleTranslateTo('emailUpdated'))
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('updateEmailFailed'))
         }
@@ -976,7 +976,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
             'mobile': this.otherDetailsForm.value['mobile'],
           },
           'cadreDetails': {
-                
+
           },
         },
       },
@@ -984,40 +984,40 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     payload.request.profileDetails.personalDetails = dataToSubmit
     payload.request.profileDetails.personalDetails['phoneVerified'] = this.verifyMobile ? 'false' : 'true';
 
-    if((this.otherDetailsForm.value['typeOfCivilService'] && this.otherDetailsForm.value['serviceType'] && this.otherDetailsForm.value['batch']) || (!this.otherDetailsForm.value['isCadre'])) {
-    if(this.isCadreStatus) {
-      payload.request.profileDetails.cadreDetails = {
-        'civilServiceTypeId': this.serviceId,
-        'civilServiceType': this.otherDetailsForm.value['typeOfCivilService'],
-        'civilServiceId': this.civilServiceId,
-        'civilServiceName': this.otherDetailsForm.value['serviceType'],
-        'cadreId': this.cadreId,
-        'cadreName': this.otherDetailsForm.value['cadre'],
-        'cadreBatch': this.otherDetailsForm.value['batch'],
-        'cadreControllingAuthorityName': this.cadreControllingAuthority
-      }
-    } else {
-      payload.request.profileDetails.cadreDetails = {}
-    }
-    this.userProfileService.editProfileDetails(payload)
-      .pipe(takeUntil(this.destroySubject$))
-      .subscribe((_res: any) => {
-        // update cadre details in config service to enroll into Blended programs
-        if (this.configService.unMappedUser && this.configService.unMappedUser.profileDetails) {
-          this.configService.unMappedUser.profileDetails.cadreDetails = payload.request.profileDetails.cadreDetails
+    if ((this.otherDetailsForm.value['typeOfCivilService'] && this.otherDetailsForm.value['serviceType'] && this.otherDetailsForm.value['batch']) || (!this.otherDetailsForm.value['isCadre'])) {
+      if (this.isCadreStatus) {
+        payload.request.profileDetails.cadreDetails = {
+          'civilServiceTypeId': this.serviceId,
+          'civilServiceType': this.otherDetailsForm.value['typeOfCivilService'],
+          'civilServiceId': this.civilServiceId,
+          'civilServiceName': this.otherDetailsForm.value['serviceType'],
+          'cadreId': this.cadreId,
+          'cadreName': this.otherDetailsForm.value['cadre'],
+          'cadreBatch': this.otherDetailsForm.value['batch'],
+          'cadreControllingAuthorityName': this.cadreControllingAuthority
         }
-        this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdated'))
-        this.portalProfile.personalDetails.isCadre = this.isCadreStatus
-        this.editDetails = !this.editDetails
-        this.prefillForm({ dataToSubmit, ...{ 'employeeCode': this.otherDetailsForm.value['employeeCode'] } })
-        this.netCoreUserProfileUpdateEvent()
-      },         (error: HttpErrorResponse) => {
-        if (!error.ok) {
-          this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdateFailed'))
+      } else {
+        payload.request.profileDetails.cadreDetails = {}
+      }
+      this.userProfileService.editProfileDetails(payload)
+        .pipe(takeUntil(this.destroySubject$))
+        .subscribe((_res: any) => {
+          // update cadre details in config service to enroll into Blended programs
+          if (this.configService.unMappedUser && this.configService.unMappedUser.profileDetails) {
+            this.configService.unMappedUser.profileDetails.cadreDetails = payload.request.profileDetails.cadreDetails
+          }
+          this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdated'))
+          this.portalProfile.personalDetails.isCadre = this.isCadreStatus
           this.editDetails = !this.editDetails
           this.prefillForm({ dataToSubmit, ...{ 'employeeCode': this.otherDetailsForm.value['employeeCode'] } })
-        }
-      })
+          this.netCoreUserProfileUpdateEvent()
+        }, (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open(this.handleTranslateTo('userDetailsUpdateFailed'))
+            this.editDetails = !this.editDetails
+            this.prefillForm({ dataToSubmit, ...{ 'employeeCode': this.otherDetailsForm.value['employeeCode'] } })
+          }
+        })
     }
     else {
       this.matSnackBar.open('Please fill in all mandatory cadre information to update your profile')
@@ -1078,7 +1078,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.groupData = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('groupDataFaile'))
         }
@@ -1105,12 +1105,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           const disOrderedList = _.get(organisationsList, '[0].children', [])
           this.designationsMeta = _.sortBy(disOrderedList, 'name')
           this.filterDesignationsMeta = this.designationsMeta
-        },(error: any) => {
+        }, (error: any) => {
           // tslint:disable-next-line
           console.error('Error occurred:', error)
         })
       }
-    },(error: any) => {
+    }, (error: any) => {
       // tslint:disable-next-line
       console.error('Error occurred:', error)
     })
@@ -1146,7 +1146,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.designationApprovedTime = (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.designationApprovedTime) ?
             obj.lastUpdatedOn : this.designationApprovedTime
         })
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('approvedStatusFailed'))
         }
@@ -1189,7 +1189,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableWR = true
         }
         this.skeletonLoader = false
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('approvalStatusFailed'))
         }
@@ -1221,7 +1221,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         }
         this.skeletonLoader = false
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('rejectedStatusFailed'))
         }
@@ -1392,7 +1392,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.portalProfile.verifiedKarmayogi = false
           this.getSendApprovalStatus()
           this.raiseTelemetry(this.primaryDetailsForm.value['designation'])
-        },         (error: HttpErrorResponse) => {
+        }, (error: HttpErrorResponse) => {
           if (!error.ok) {
             this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
           }
@@ -1440,7 +1440,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.unVerifiedObj.designation = ''
           this.matSnackBar.open(this.handleTranslateTo('withdrawRequestSuccess'))
           this.enableWR = false
-        },         (error: HttpErrorResponse) => {
+        }, (error: HttpErrorResponse) => {
           if (!error.ok) {
             this.matSnackBar.open(this.handleTranslateTo('unableWithdrawRequest'))
           }
@@ -1453,8 +1453,8 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     const regexMatch = this.profileName.match(this.noHtmlCharacter)
     if (regexMatch) {
       this.matSnackBar.open('HTML or Js is not allowed')
-      return 
-    } 
+      return
+    }
 
     const postData = {
       'request': {
@@ -1478,14 +1478,14 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getInitials()
         this.matSnackBar.open(this.handleTranslateTo('userNameUpdated'))
         this.editName = !this.editName
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('userNameUpdateFailed'))
         }
         this.editName = !this.editName
       })
 
-      this.netCoreUserProfileNameUpdateEvent()
+    this.netCoreUserProfileNameUpdateEvent()
   }
 
   async onSubmit() {
@@ -1608,78 +1608,78 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     window.open(`${environment.contentHost}/mentorship`, '_blank')
   }
 
-  getIsCadreStatus(value:boolean) {
-    this.isCadreStatus = value    
-    if(value) {
+  getIsCadreStatus(value: boolean) {
+    this.isCadreStatus = value
+    if (value) {
       this.otherDetailsForm.patchValue({
         typeOfCivilService: '',
         serviceType: '',
         cadre: '',
         batch: '',
         cadreControllingAuthority: '',
-      });       
+      });
     }
     else {
-    this.showBatchForNoCadre = false
+      this.showBatchForNoCadre = false
     }
   }
 
   populateValues() {
-    let cadreValues:any = this.portalProfile.cadreDetails;
+    let cadreValues: any = this.portalProfile.cadreDetails;
     this.profileService.fetchCadre().subscribe({
       next: response => {
-        let civilServiceTypeList:any = response.result.response.value.civilServiceType.civilServiceTypeList
+        let civilServiceTypeList: any = response.result.response.value.civilServiceType.civilServiceTypeList
         for (let index = 0; index < civilServiceTypeList.length; index++) {
           if (civilServiceTypeList[index].id === cadreValues.civilServiceTypeId) {
-            let popCivilServiceType:any = civilServiceTypeList[index];
-            this.civilServiceTypes  = civilServiceTypeList.map((service: any) => service.name)
-            this.serviceId= civilServiceTypeList[index].id       
+            let popCivilServiceType: any = civilServiceTypeList[index];
+            this.civilServiceTypes = civilServiceTypeList.map((service: any) => service.name)
+            this.serviceId = civilServiceTypeList[index].id
             for (let serviceIndex = 0; serviceIndex < popCivilServiceType.serviceList.length; serviceIndex++) {
               if (popCivilServiceType.serviceList[serviceIndex].id === cadreValues.civilServiceId) {
                 let popServiceType = popCivilServiceType.serviceList[serviceIndex];
                 this.serviceName = popCivilServiceType.serviceList.map((service: any) => service.name)
                 this.serviceListData = popCivilServiceType.serviceList
                 this.civilServiceId = popCivilServiceType.serviceList[serviceIndex].id
-                if(popCivilServiceType.serviceList[serviceIndex] && popCivilServiceType.serviceList[serviceIndex].name) {
+                if (popCivilServiceType.serviceList[serviceIndex] && popCivilServiceType.serviceList[serviceIndex].name) {
                   let civilServiceName = popCivilServiceType.serviceList[serviceIndex].name
-                  if((civilServiceName.trim() === 'Indian Administrative Service (IAS)') || 
+                  if ((civilServiceName.trim() === 'Indian Administrative Service (IAS)') ||
                     (civilServiceName.trim() === "Indian Police Service (IPS)") ||
                     (civilServiceName.trim() === "Indian Forest Service (IFoS)")) {
                     this.showBatchForNoCadre = false
                   }
                 }
-                
-                  if (!cadreValues.cadreName) {
-                    this.startBatch = popCivilServiceType.serviceList[serviceIndex].commonBatchStartYear
-                    this.endBatch = popCivilServiceType.serviceList[serviceIndex].commonBatchEndYear
-                    this.exclusionYear = popCivilServiceType.serviceList[serviceIndex].commonBatchExclusionYearList
-                    // tslint:disable
-                    this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-                        .filter(year => !this.exclusionYear.includes(year))
-                  } 
+
+                if (!cadreValues.cadreName) {
+                  this.startBatch = popCivilServiceType.serviceList[serviceIndex].commonBatchStartYear
+                  this.endBatch = popCivilServiceType.serviceList[serviceIndex].commonBatchEndYear
+                  this.exclusionYear = popCivilServiceType.serviceList[serviceIndex].commonBatchExclusionYearList
+                  // tslint:disable
+                  this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
+                    .filter(year => !this.exclusionYear.includes(year))
+                }
                 for (let cadreIndex = 0; cadreIndex < popServiceType.cadreList.length; cadreIndex++) {
                   if (popServiceType.cadreList[cadreIndex].id === cadreValues.cadreId) {
-                    let popCadre:any = popServiceType.cadreList[cadreIndex];
+                    let popCadre: any = popServiceType.cadreList[cadreIndex];
                     this.cadre = popServiceType.cadreList.map((cadre: any) => cadre.name)
                     this.cadreId = popServiceType.cadreList[cadreIndex].id
                     this.startBatch = popCadre.startBatchYear
                     this.endBatch = popCadre.endBatchYear
                     this.exclusionYear = popCadre.exculsionYearList
-                     // tslint:disable
+                    // tslint:disable
                     this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-                    .filter(year => !this.exclusionYear.includes(year)) 
-                  for (let index = 0; index < this.yearArray.length; index++) {
-                    if (this.yearArray[index] === cadreValues.cadreBatch) {                     
-                     }
+                      .filter(year => !this.exclusionYear.includes(year))
+                    for (let index = 0; index < this.yearArray.length; index++) {
+                      if (this.yearArray[index] === cadreValues.cadreBatch) {
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
-        }
         this.cadreControllingAuthority = cadreValues.cadreControllingAuthorityName
-        if(this.cadreControllingAuthority) {
+        if (this.cadreControllingAuthority) {
           this.otherDetailsForm.patchValue({
             typeOfCivilService: this.portalProfile.cadreDetails.civilServiceType,
             serviceType: this.portalProfile.cadreDetails.civilServiceName,
@@ -1687,16 +1687,16 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
             batch: this.portalProfile.cadreDetails.cadreBatch,
             isCadre: this.portalProfile.personalDetails.isCadre,
             cadreControllingAuthority: this.portalProfile.cadreDetails.cadreControllingAuthorityName,
-          }); 
-        }               
+          });
+        }
       },
       error: err => {
         this.errorMessage = err
       },
     })
 
-   
-    
+
+
   }
   // isEmailAllowed(email: string): boolean {
   //   const domain = this.extractDomain(email);
@@ -1721,172 +1721,172 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   netCoreUserProfilePhotoUpdateEvent() {
-     /* tslint:disable */
-     console.log('this.content',this.portalProfile )
-     /* tslint:enable */
-     // smartech('contact', '2', {
-     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
-     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
-     // })
+    /* tslint:disable */
+    console.log('this.content', this.portalProfile)
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
 
-     if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+    if (this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
       && this.configService.netcoreConfig.netcoreWebConfig.isActive
       && this.configService.netcoreConfig.netcoreWebConfig.events
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-        let payload:any = {}
-     if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
-       payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
-     }
-     if(this.photoUrl) {
-       payload['PROFILE_PHOTO'] = this.photoUrl
-     }
- 
-     this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
-     this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
+      let payload: any = {}
+      if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+        payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+      }
+      if (this.photoUrl) {
+        payload['PROFILE_PHOTO'] = this.photoUrl
+      }
+
+      this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
+      this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
     }
- 
-     
+
+
   }
 
   netCoreUserProfileNameUpdateEvent() {
     /* tslint:disable */
-    console.log('this.content',this.portalProfile )
+    console.log('this.content', this.portalProfile)
     /* tslint:enable */
     // smartech('contact', '2', {
     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
     // })
-    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+    if (this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
       && this.configService.netcoreConfig.netcoreWebConfig.isActive
       && this.configService.netcoreConfig.netcoreWebConfig.events
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-    let payload:any = {}
-    if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
-      payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
-    }
-    if(this.profileName) {
-      payload['FULL_NAME'] = this.toTitleCase(this.profileName.trim().toLowerCase())
-    }
+      let payload: any = {}
+      if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+        payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+      }
+      if (this.profileName) {
+        payload['FULL_NAME'] = this.toTitleCase(this.profileName.trim().toLowerCase())
+      }
 
-    this.netCoreService.netCoreUserNameUpdate(payload)
-    this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
-  }
+      this.netCoreService.netCoreUserNameUpdate(payload)
+      this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
+    }
   }
 
   netCoreUserProfileUpdateEvent() {
     /* tslint:disable */
-    console.log('this.content',this.portalProfile )
+    console.log('this.content', this.portalProfile)
     /* tslint:enable */
     // smartech('contact', '2', {
     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
     // })
-    if(this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
+    if (this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
       && this.configService.netcoreConfig.netcoreWebConfig.isActive
       && this.configService.netcoreConfig.netcoreWebConfig.events
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-    let profileUpdateObj:any = {}
-    let profileUpdateEventObj:any = {}
-    if(this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
-      profileUpdateObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
-      profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
-    }
-    if(this.profileName) {
-      profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
-      profileUpdateEventObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
-    }
-    if(this.photoUrl) {
-      profileUpdateObj['PROFILE_PHOTO'] = this.photoUrl
-      profileUpdateEventObj['PROFILE_PHOTO'] = this.photoUrl
-    }
-    if(this.portalProfile && 
-      this.portalProfile.personalDetails) {
-        if(this.portalProfile.personalDetails.gender) {
+      let profileUpdateObj: any = {}
+      let profileUpdateEventObj: any = {}
+      if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
+        profileUpdateObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+        profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+      }
+      if (this.profileName) {
+        profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+        profileUpdateEventObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+      }
+      if (this.photoUrl) {
+        profileUpdateObj['PROFILE_PHOTO'] = this.photoUrl
+        profileUpdateEventObj['PROFILE_PHOTO'] = this.photoUrl
+      }
+      if (this.portalProfile &&
+        this.portalProfile.personalDetails) {
+        if (this.portalProfile.personalDetails.gender) {
           profileUpdateObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
           profileUpdateEventObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
         }
-        if(this.portalProfile.personalDetails.primaryEmail) {
+        if (this.portalProfile.personalDetails.primaryEmail) {
           profileUpdateObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
           profileUpdateEventObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
         }
-        if(this.portalProfile.personalDetails.mobile) {
+        if (this.portalProfile.personalDetails.mobile) {
           profileUpdateObj['MOBILE'] = this.portalProfile.personalDetails.mobile
           profileUpdateEventObj['MOBILE'] = this.portalProfile.personalDetails.mobile
         }
-        if(this.portalProfile.personalDetails.dob) {
+        if (this.portalProfile.personalDetails.dob) {
           profileUpdateEventObj['DOB'] = this.portalProfile.personalDetails.dob.trim()
         }
-        if(this.portalProfile.personalDetails.domicileMedium) {
+        if (this.portalProfile.personalDetails.domicileMedium) {
           profileUpdateObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
           profileUpdateEventObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
         }
-        if(this.portalProfile.personalDetails.category) {
+        if (this.portalProfile.personalDetails.category) {
           profileUpdateEventObj['CATEGORY'] = this.toTitleCase(this.portalProfile.personalDetails.category.trim().toLowerCase())
         }
-        if(this.portalProfile.personalDetails.pincode) {
+        if (this.portalProfile.personalDetails.pincode) {
           profileUpdateEventObj['PIN_CODE'] = this.portalProfile.personalDetails.pincode.trim()
         }
-        if(this.portalProfile.id) {
+        if (this.portalProfile.id) {
           profileUpdateEventObj['EMPLOYEE_ID'] = this.portalProfile.employmentDetails?.employeeCode.trim()
         }
-        if(this.portalProfile.personalDetails.hasOwnProperty('isCadre')) {
+        if (this.portalProfile.personalDetails.hasOwnProperty('isCadre')) {
           profileUpdateEventObj['IS_CADRE'] = this.portalProfile.personalDetails.hasOwnProperty('isCadre')
         }
-        
-    }
 
-    if(this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileGroupStatus === 'VERIFIED') {
-      profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
-      profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
-    }
+      }
 
-    if(this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileDesignationStatus === 'VERIFIED') {
-      profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
-      profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
-    }
-    
+      if (this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileGroupStatus === 'VERIFIED') {
+        profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+        profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+      }
 
-    if(this.portalProfile && 
-      this.portalProfile.cadreDetails) {
-        if(this.portalProfile.cadreDetails.civilServiceType) {
+      if (this.portalProfile && this.portalProfile.profileDetails && this.portalProfile.profileDetails.profileDesignationStatus === 'VERIFIED') {
+        profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+        profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+      }
+
+
+      if (this.portalProfile &&
+        this.portalProfile.cadreDetails) {
+        if (this.portalProfile.cadreDetails.civilServiceType) {
           profileUpdateEventObj['CIVIL_SERVICE_TYPE'] = this.portalProfile.cadreDetails.civilServiceType
         }
-        if(this.portalProfile.cadreDetails.civilServiceName) {
+        if (this.portalProfile.cadreDetails.civilServiceName) {
           profileUpdateEventObj['CIVIL_SERVICE_NAME'] = this.portalProfile.cadreDetails.civilServiceName
         }
-        if(this.portalProfile.cadreDetails.cadreName) {
+        if (this.portalProfile.cadreDetails.cadreName) {
           profileUpdateEventObj['CADRE_NAME'] = this.portalProfile.cadreDetails.cadreName
         }
-        if(this.portalProfile.cadreDetails.cadreBatch) {
+        if (this.portalProfile.cadreDetails.cadreBatch) {
           profileUpdateEventObj['CADRE_BATCH'] = this.portalProfile.cadreDetails.cadreBatch
         }
-        if(this.portalProfile.cadreDetails.cadreControllingAuthorityName) {
+        if (this.portalProfile.cadreDetails.cadreControllingAuthorityName) {
           profileUpdateEventObj['CADRE_CONTROLLING_AUTHORITY'] = this.portalProfile.cadreDetails.cadreControllingAuthorityName
-        }        
+        }
       }
 
-    if(this.portalProfile && this.portalProfile.additionalProperties) {
-      if(this.portalProfile.additionalProperties.externalSystemId) {
-        profileUpdateEventObj['EHRMS_ID'] = this.toTitleCase(this.portalProfile.additionalProperties.externalSystemId.trim().toLowerCase())
+      if (this.portalProfile && this.portalProfile.additionalProperties) {
+        if (this.portalProfile.additionalProperties.externalSystemId) {
+          profileUpdateEventObj['EHRMS_ID'] = this.toTitleCase(this.portalProfile.additionalProperties.externalSystemId.trim().toLowerCase())
+        }
+        if (this.portalProfile.additionalProperties.externalSystemDor) {
+          profileUpdateEventObj['DOR'] = this.portalProfile.additionalProperties.externalSystemDor.trim()
+        }
       }
-      if(this.portalProfile.additionalProperties.externalSystemDor) {
-        profileUpdateEventObj['DOR'] = this.portalProfile.additionalProperties.externalSystemDor.trim()
-      }
+
+
+
+
+      this.netCoreService.netCoreUserProfilepdate(profileUpdateObj)
+      // this.netCoreService.netCoreUserProfileUpdateEvent(profileUpdateEventObj, 'profile_update',this.configService.unMappedUser.identifier.trim().toLowerCase())
+      this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
     }
-    
-    
-   
-
-    this.netCoreService.netCoreUserProfilepdate(profileUpdateObj)
-   // this.netCoreService.netCoreUserProfileUpdateEvent(profileUpdateEventObj, 'profile_update',this.configService.unMappedUser.identifier.trim().toLowerCase())
-    this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
-  }
   }
 
   toTitleCase(str: string): string {
@@ -1897,7 +1897,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       .join(' ');
   }
 
-  validateName(event:any) {
+  validateName(event: any) {
     console.log('event', event)
   }
 }
