@@ -104,7 +104,12 @@ export class CommunityDetailsHomeComponent {
           "photoUrl": "https://portal.dev.karmayogibharat.net/assets/public/profileImage/1725443303744_images.jpeg",
           "name": "Christopher Fernandes",
           "color": "#006400"
-        }
+        },
+        "bookmark": {
+          "show": true,
+          "showCount": true,
+          "icon": "bookmark_outline"
+        },
       },
       "repliesSection": {
         "show": true,
