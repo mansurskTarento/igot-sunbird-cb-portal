@@ -1344,8 +1344,30 @@ ngx-guided-tour {
     --mdc-snackbar-supporting-text-color: #fff;
   }
   &.error {
-    --mdc-snackbar-container-color: #891d1d;
+    --mdc-snackbar-container-color: #D12E2E;
     --mat-mdc-snack-bar-button-color: #fff;
     --mdc-snackbar-supporting-text-color: #fff;
   }
+}
+
+.course-success-snackbar {
+  box-shadow: 0px 8px 24px 0px #0000003D !important;
+  --mdc-snackbar-container-color: #1D8923 !important;
+}
+
+.course-error-snackbar {
+  box-shadow: 0px 8px 24px 0px #0000003D !important;
+  --mdc-snackbar-container-color: #D12E2E !important;
+}
+
+.mat-dialog-container {
+  border-radius: 12px !important;
+}
+
+.relevent-feedback-dialog {
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

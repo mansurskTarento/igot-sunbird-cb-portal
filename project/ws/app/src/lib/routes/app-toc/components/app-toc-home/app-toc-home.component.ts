@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import {  WidgetContentLibService } from '@sunbird-cb/consumption'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -48,6 +48,8 @@ import { TimerService } from '../../services/timer.service'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
+import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -217,7 +219,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   private destroySubject$ = new Subject<any>()
   timerUnsubscribe: any
   timer: any
-
+  isReleventBtnHovered = false
+  SAKSHAMAI_ICON_NORMAL = '/assets/images/sakshamAI/ai-icon.svg'
+  SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
+  recommendedCoursesId = ''
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -272,7 +277,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     public enrollSvc: WidgetEnrollService,
     public contentLibSvc: WidgetContentLibService,
     public dataTransferSvc: DataTransferService,
-    public netCoreService: NetCoreService
+    public netCoreService: NetCoreService,
+    private matSnackbarNew: MatSnackbarNew
   ) {
     this.historyData = history.state
     this.handleBreadcrumbs()
@@ -434,9 +440,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     this.routeSubscription = this.route.queryParamMap.subscribe(qParamsMap => {
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
+      const recommendedCoursesId = qParamsMap.get('g')
       if (contextId && contextPath) {
         this.contextId = contextId
         this.contextPath = contextPath
+      }
+      if (recommendedCoursesId) {
+        this.recommendedCoursesId = recommendedCoursesId
       }
     })
 
@@ -2235,5 +2245,47 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     return hDisplay + mDisplay + sDisplay; 
   }
 
+  handleAcceptRelevent() {
+    this.saveFeedback('', 1);
+  }
 
+  handleDeclineRelevent() {
+    const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
+      disableClose: true,
+      width: '502px',
+      panelClass: ['relevent-feedback-dialog'],
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result) {
+        this.saveFeedback(result, 0);
+        dialogRef.close();
+      } else {
+        dialogRef.close();
+      }
+    })
+  }
+
+
+  async saveFeedback(comment: string, rating = 0) {
+    const payload = {
+      "recommendation_id": this.recommendedCoursesId,
+      "course_id": this.courseID,
+      "rating": rating,
+      "comments": comment
+    }
+    const response = await this.contentLibSvc.saveFeedbackSakshamAI(payload).toPromise().catch(() => {})
+    if(response && response?.message) {
+      this.matSnackbarNew.open(
+        'Thank you for your feedback.', 'X',
+        { duration: 3000, panelClass: ['success'] }
+      );
+      this.router.navigate([], { queryParams: { g: null }, queryParamsHandling: 'merge' });
+      this.recommendedCoursesId = ''
+    } else if (!response) {
+      this.matSnackbarNew.open(
+        'Something is wrong. Please try again later.', 'X',
+        { duration: 3000, panelClass: ['error'] }
+      );
+    }
+  }
 }
