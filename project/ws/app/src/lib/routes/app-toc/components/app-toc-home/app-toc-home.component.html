@@ -423,8 +423,33 @@
           </div>
         </div>
       </ng-container>
+      <ng-container *ngIf="recommendedCoursesId">
+        <div class="px-4 py-3 mt-6 relevent-wrapper">
+          <div class="flex gap-4 items-center flex-wrap flex justify-center md:justify-start">
+            <img src="/assets/images/sakshamAI/lady-greet.svg" alt="greet" width="56.89" height="64">
+            <div class="relevent-info">
+              <span class="font-bolder text-sm relevent-heading block mb-1">{{ 'home.tocReleventHeading' | translate }}</span>
+              <span class="relevent-subinfo font-normal text-sm block">{{ 'home.tocReleventSubHeading' | translate }}</span>
+            </div>
+            <div class="flex flex-middle relevant-container">
+              <div class="flex flex-middle relevent-normal relevent-btn py-2 px-4 relevant-box"
+                (mouseenter)="isReleventBtnHovered = true"
+                (mouseleave)="isReleventBtnHovered = false" (click)="handleAcceptRelevent()">
+                <img
+                  [src]="isReleventBtnHovered && !isRelevent ? SAKSHAMAI_ICON_LOADER : SAKSHAMAI_ICON_NORMAL"
+                  alt="loader" width="16" height="16" class="mr-2">
+                <span class="text-relevent ff-lato text-sm font-bold">{{ 'home.relevent' | translate }}</span>
+              </div>
+  
+              <div class="flex flex-middle no-button ml-8" (click)="handleDeclineRelevent()">
+                <mat-icon class="mat-icon text-no mr-1">thumb_down</mat-icon>
+                <span class="text-no ff-lato text-sm font-bold">{{ 'home.no' | translate }}</span>
+              </div>  
+            </div>
+          </div>
+        </div>
+      </ng-container>
       <div class="pb-4 lg:py-4">
-
         <!-- Overall progress functionality -->
         <div class="mobile-progress">
           <ng-container [ngTemplateOutlet]="progressFunctionality"></ng-container>

@@ -142,6 +142,7 @@ import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dyn
 import { EnrollProfileFormComponent } from './components/enroll-profile-form/enroll-profile-form.component';
 import { SurveyFormQuestionComponent } from './components/survey-form-question/survey-form-question.component';
 import { SurveyFormSectionComponent } from './components/survey-form-section/survey-form-section.component'
+import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
 
 @NgModule({
   declarations: [
@@ -267,6 +268,7 @@ import { SurveyFormSectionComponent } from './components/survey-form-section/sur
     ReactiveFormsModule,
     DiscussionV2Module,
     SlidersDynamicModule,
+    NonReleventFeedbackDialogModule
   ],
   providers: [
     AppTocResolverService,

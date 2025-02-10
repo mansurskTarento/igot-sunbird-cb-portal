@@ -898,3 +898,75 @@ mat-divider {
       line-height: 16px;
   }
 }
+
+.relevent-wrapper {
+  background: #1B4CA129;
+  border-radius: 12px;
+
+  .relevent-info {
+    max-width: 400px;
+    margin-right: auto;
+    .relevent-heading {
+      font-family: Montserrat;
+      line-height: 17.07px;
+      font-weight: 600;
+      color: #000 !important;
+    }
+    .relevent-subinfo {
+      font-family: Lato;
+      line-height: 16.8px;
+      color: #545454;
+    }
+  }
+}
+
+
+.relevent-normal.relevent-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #276DE5;
+  background-color: white;
+  border-radius: 21px;
+  text-decoration: none;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    box-shadow: 0px 1px 10px 0px #276DE599;
+    }
+    cursor: pointer;
+}
+
+.relevent-normal.relevent-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px 2.5px;
+  border-radius: 21px;
+  background: linear-gradient(89.96deg, #F3962F 0.04%, #276DE5 99.96%);
+  -webkit-mask: linear-gradient(white, white) content-box, linear-gradient(white, white);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.relevent-normal.relevent-btn:hover::before {
+  opacity: 1;
+}
+
+.relevant-container {
+  width: max-content;
+}
+
+.no-button {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  color: #1B4CA1;
+  cursor: pointer;
+}
