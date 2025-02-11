@@ -4,6 +4,7 @@ import { DiscussV2HomeComponent } from './routes/discuss-v2-home/discuss-v2-home
 import { PostDetailsComponent } from './routes/post-details/post-details.component';
 import { CommunityDetailsHomeComponent } from './routes/community-details-home/community-details-home.component';
 import { CommunitySearchComponent } from './routes/community-search/community-search.component';
+import { TopicsAllComponent } from './routes/topics-all/topics-all.component';
 
 const routes: Routes = [
   {
@@ -44,8 +45,16 @@ const routes: Routes = [
   },
   {
     path: 'communities/:topicName',
-    // loadChildren: () => import('./wrapper/wrapper.module').then(u => u.WrapperModule),
     component: CommunitySearchComponent,
+    data: {
+      pageId: 'discussion-forum',
+      module: 'Discuss',
+    },
+  },
+
+  {
+    path: 'topics/all',
+    component: TopicsAllComponent,
     data: {
       pageId: 'discussion-forum',
       module: 'Discuss',
