@@ -84,4 +84,9 @@ export class DiscussV2HomeComponent {
     
     this.router.navigate(['/app/discussion-forum-v2/community', cardData.communityId])
   }
+
+  showAllTopics(_eventData: any){
+    this.router.navigate(['/app/discussion-forum-v2/topics/all'])
+
+  }
 }
