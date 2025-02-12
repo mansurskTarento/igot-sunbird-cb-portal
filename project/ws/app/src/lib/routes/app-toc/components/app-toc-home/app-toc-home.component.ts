@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -222,6 +222,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   SAKSHAMAI_ICON_NORMAL = '/assets/images/sakshamAI/ai-icon.svg'
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
   recommendedCoursesId = ''
+  feedbackGiven: any
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -276,7 +277,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     public enrollSvc: WidgetEnrollService,
     public contentLibSvc: WidgetContentLibService,
     public dataTransferSvc: DataTransferService,
-    private matSnackbarNew: MatSnackbarNew
+    private matSnackbarNew: MatSnackbarNew,
+    private userServiceLib: WidgetUserServiceLib,
   ) {
     this.historyData = history.state
     this.handleBreadcrumbs()
@@ -434,7 +436,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.isGoalsEnabled = !this.configSvc.restrictedFeatures.has('goals')
     }
 
-    this.routeSubscription = this.route.queryParamMap.subscribe(qParamsMap => {
+    this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
       const recommendedCoursesId = qParamsMap.get('g')
@@ -444,6 +446,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       }
       if (recommendedCoursesId) {
         this.recommendedCoursesId = recommendedCoursesId
+        const response = await this.userServiceLib.getRecommendedCoursesSakshamAI(recommendedCoursesId).toPromise()
+        if(response.feedbacks.length) {
+          this.feedbackGiven = response.feedbacks.find((feedback: any) => feedback?.course_id === this.courseID)
+        }
       }
     })
 
@@ -2194,8 +2200,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         'Thank you for your feedback.', 'X',
         { duration: 3000, panelClass: ['success'] }
       );
-      this.router.navigate([], { queryParams: { g: null }, queryParamsHandling: 'merge' });
-      this.recommendedCoursesId = ''
+      // this.router.navigate([], { queryParams: { g: null }, queryParamsHandling: 'merge' });
+      this.feedbackGiven = {course_id: this.courseID, rating: rating, comments: comment}
+      
     } else if (!response) {
       this.matSnackbarNew.open(
         'Something is wrong. Please try again later.', 'X',
