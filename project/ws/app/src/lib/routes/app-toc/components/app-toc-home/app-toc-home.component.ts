@@ -67,6 +67,7 @@ const flattenItems = (items: any[], key: string | number) => {
     // tslint:disable-next-line
   }, [])
 }
+const SNACKBAR_DURATION = 3000
 @Component({
   selector: 'ws-app-app-toc-home',
   templateUrl: './app-toc-home.component.html',
@@ -439,7 +440,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
-      const recommendedCoursesId = qParamsMap.get('g')
+      const recommendedCoursesId = qParamsMap.get('recommendationId')
       if (contextId && contextPath) {
         this.contextId = contextId
         this.contextPath = contextPath
@@ -2198,7 +2199,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     if(response && response?.message) {
       this.matSnackbarNew.open(
         'Thank you for your feedback.', 'X',
-        { duration: 3000, panelClass: ['success'] }
+        { duration: SNACKBAR_DURATION, panelClass: ['success'] }
       );
       // this.router.navigate([], { queryParams: { g: null }, queryParamsHandling: 'merge' });
       this.feedbackGiven = {course_id: this.courseID, rating: rating, comments: comment}
@@ -2206,7 +2207,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     } else if (!response) {
       this.matSnackbarNew.open(
         'Something is wrong. Please try again later.', 'X',
-        { duration: 3000, panelClass: ['error'] }
+        { duration: SNACKBAR_DURATION, panelClass: ['error'] }
       );
     }
   }

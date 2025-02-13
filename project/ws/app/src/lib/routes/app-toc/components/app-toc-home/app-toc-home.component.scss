@@ -900,7 +900,7 @@ mat-divider {
 }
 
 .relevent-wrapper {
-  background: #1B4CA129;
+  background: $brandAccentDarkShade;
   border-radius: 12px;
 
   .relevent-info {
@@ -915,7 +915,7 @@ mat-divider {
     .relevent-subinfo {
       font-family: Lato;
       line-height: 16.8px;
-      color: #545454;
+      color: $greyShadeSaksham;
     }
   }
 }
@@ -928,14 +928,14 @@ mat-divider {
   justify-content: center;
   font-size: 16px;
   font-weight: bold;
-  color: #276DE5;
+  color: $releventBtn;
   background-color: white;
   border-radius: 21px;
   text-decoration: none;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   &:hover {
-    box-shadow: 0px 1px 10px 0px #276DE599;
+    box-shadow: 0px 1px 10px 0px $releventBoxshadowHover;
     }
     cursor: pointer;
 }
@@ -946,7 +946,7 @@ mat-divider {
   inset: 0;
   padding: 2px 2.5px;
   border-radius: 21px;
-  background: linear-gradient(89.96deg, #F3962F 0.04%, #276DE5 99.96%);
+  background: linear-gradient(89.96deg, #F3962F 0.04%, $releventBtn 99.96%);
   -webkit-mask: linear-gradient(white, white) content-box, linear-gradient(white, white);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -967,6 +967,6 @@ mat-divider {
   opacity: 1;
   transform: scale(1);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  color: #1B4CA1;
+  color: $brandAccentColor;
   cursor: pointer;
 }
