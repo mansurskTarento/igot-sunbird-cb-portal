@@ -1,3 +1,5 @@
+@import '_ws-vars.scss';
+
 .overlay-text {
   font-family: Montserrat;
   font-weight: 600;
@@ -7,5 +9,5 @@
 }
 
 ::ng-deep .cdk-overlay-dark-backdrop {
-  background: #00000099;
+  background: $overleyDarkBackground;
 }
