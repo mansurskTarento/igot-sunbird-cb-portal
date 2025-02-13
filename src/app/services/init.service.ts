@@ -377,9 +377,19 @@ export class InitService {
   }
 
   private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: any = await this.http
-      .get<any>(`${this.baseUrl}/netcore.json`)
-      .toPromise()
+    // const publicConfig: any = await this.http
+    //   .get<any>(`${this.baseUrl}/netcore.json`)
+    //   .toPromise()
+    let payload  = {
+      "request":
+      {"type":"page",
+        "subType":"netcore",
+        "action":"page-configuration",
+        "component":"portal","rootOrgId":"*"
+      }
+    }
+    const publicConfig:any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
+    console.log('publicConfig', publicConfig)
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     return publicConfig
   }
