@@ -46,7 +46,7 @@ import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
-import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
+import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { HttpClient } from '@angular/common/http'
 
@@ -100,7 +100,7 @@ import { HttpClient } from '@angular/common/http'
     BtnPageBackNavModule,
     SkeletonLoaderModule,
     ContentProgressModule,
-    DiscussionV2Module,
+    WidgetCommentModule,
     InfiniteScrollModule,
     TranslateModule.forRoot({
       loader: {

@@ -1,0 +1,43 @@
+
+<div class="container-balanced mt-8 mb-12 mob-12">
+	<d-v2-widget-discussionv2-home  (cardClick)="communityCardClick($event)" 
+	(popularCommunityData)="communityCardClick($event)"
+	(topicCardClick)="showAllCommunityByTopicCard($event)" (showAllTopics)="showAllTopics($event)"
+	 (showAllByTopic)="showAllCommunityByTopic($event)" (searchText)="searchTextMethod($event)"></d-v2-widget-discussionv2-home>
+	<!-- <div class="flex flex-col lg:flex-row gap-8">
+		<div class="lg:w-64">
+			<d-v2-shortcuts [data]="shortCutData"></d-v2-shortcuts>
+		</div>
+		<div class="flex-1">
+			<div class="md:col-span-2">
+				<div class="mb-6">
+				   <div class="relative flex community-search">
+					  <input
+						 type="text"
+						 placeholder="Search Communities"
+						 class="w-full px-4 py-2 pl-10  rounded-full "
+						 />
+					  <mat-icon class="absolute left-3 top-1.5 h-5 w-5 text-gray-400">
+						 search
+					  </mat-icon>
+				   </div>
+				</div>
+			 </div>
+
+			center
+		</div>
+		<div class="lg:w-80">
+			<d-v2-trending-discussions [data]="trendingDiscussions"></d-v2-trending-discussions>
+		</div>
+	</div> -->
+</div>
+
+<!-- <div class="main-container">
+	<div class="editor-container editor-container_inline-editor editor-container_include-block-toolbar" #editorContainerElement>
+		<div class="editor-container__editor">
+			<div #editorElement>
+				<ckeditor [editor]="Editor" [config]="config" *ngIf="isLayoutReady" />
+			</div>
+		</div>
+	</div>
+</div> -->
