@@ -4,7 +4,7 @@ import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, Vali
 import { WelcomeUsersService } from './public-welcome.service'
 import { SignupService } from '../public-signup/signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
-import { debounceTime, distinctUntilChanged, startWith, map, pairwise } from 'rxjs/operators'
+import { startWith, map, pairwise } from 'rxjs/operators'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 // import { ReCaptchaV3Service } from 'ng-recaptcha'
 // import { DOCUMENT, isPlatformBrowser } from '@angular/common'
@@ -187,13 +187,15 @@ export class PublicWelcomeComponent implements OnInit, OnDestroy {
     ngOnInit() {
         if (this.registrationForm) {
             const instanceConfig = this.configSvc.instanceConfig
-            if (this.activatedRoute.snapshot.data.group.data) {
+            if (this.activatedRoute && this.activatedRoute.snapshot &&  this.activatedRoute.snapshot.data && 
+              this.activatedRoute.snapshot.data.group.data &&  this.activatedRoute.snapshot.data.group.data) {
               this.groupsOriginal = this.activatedRoute.snapshot.data.group.data.filter((ele: any) => ele !== 'Others')
+              this.masterGroup = this.groupsOriginal
             } else {
               this.groupsOriginal = []
             }
             this.OrgsSearchChange()
-            this.onGroupChange()
+            // this.onGroupChange()
             if (instanceConfig) {
                 this.telemetryConfig = instanceConfig.telemetryConfig
                 this.portalID = `${this.telemetryConfig.pdata.id}`
@@ -278,29 +280,29 @@ export class PublicWelcomeComponent implements OnInit, OnDestroy {
       }
     }
 
-    onGroupChange() {
-        // tslint:disable-next-line: no-non-null-assertion
-        this.masterGroup = this.registrationForm.get('group')!.valueChanges
-          .pipe(
-            debounceTime(500),
-            distinctUntilChanged(),
-            startWith(''),
-            map((value: any) => typeof (value) === 'string' ? value : (value && value.name ? value.name : '')),
-            map((name: any) => name ? this.filterGroups(name) : this.groupsOriginal.slice())
-          )
-        this.masterGroup.subscribe((event: any) => {
-          // tslint:disable-next-line: no-non-null-assertion
-          this.registrationForm.get('group')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
-          this.registrationForm.updateValueAndValidity()
-        })
-    }
-    private filterGroups(name: string): any {
-    if (name) {
-        const filterValue = name.toLowerCase()
-        return this.groupsOriginal.filter((option: any) => option.toLowerCase().includes(filterValue))
-    }
-    return this.groupsOriginal
-    }
+    // onGroupChange() {
+    //     // tslint:disable-next-line: no-non-null-assertion
+    //     this.masterGroup = this.registrationForm.get('group')!.valueChanges
+    //       .pipe(
+    //         debounceTime(500),
+    //         distinctUntilChanged(),
+    //         startWith(''),
+    //         map((value: any) => typeof (value) === 'string' ? value : (value && value.name ? value.name : '')),
+    //         map((name: any) => name ? this.filterGroups(name) : this.groupsOriginal.slice())
+    //       )
+    //     this.masterGroup.subscribe((event: any) => {
+    //       // tslint:disable-next-line: no-non-null-assertion
+    //       this.registrationForm.get('group')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
+    //       this.registrationForm.updateValueAndValidity()
+    //     })
+    // }
+    // private filterGroups(name: string): any {
+    // if (name) {
+    //     const filterValue = name.toLowerCase()
+    //     return this.groupsOriginal.filter((option: any) => option.toLowerCase().includes(filterValue))
+    // }
+    // return this.groupsOriginal
+    // }
 
     public confirmChange() {
         this.confirm = !this.confirm
