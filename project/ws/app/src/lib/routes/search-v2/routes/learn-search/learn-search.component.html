@@ -56,7 +56,7 @@
                 (scrolled)="onScrollEnd()">
 
                 <mat-card class="learn-card margin-bottom-m padding-remove position-relative"
-                    *ngFor="let content of searchResults" (click)="raiseTelemetry(content)">
+                    *ngFor="let content of searchResults; let i = index" (click)="raiseTelemetry(content, i)">
                     <!-- <div class="imageholder float-left">
                         <img mat-card-image class="margin-remove" [src]="content?.posterImage | pipePublicURL"
                             [wsUtilsDefaultThumbnail]="defaultThumbnail" alt="">
