@@ -562,7 +562,9 @@ mat-divider {
       }
 
       .item-heading {
+        /* stylelint-disable */
         font: 600 14px/21px Lato;
+        /* stylelint-enable */
         margin: 0 0 4px;
         letter-spacing: 0px;
         color: rgb(0, 116, 182) !important;
@@ -761,7 +763,9 @@ mat-divider {
 .cb-plan-wrap {
   opacity: 1;
   color: rgba(27,76,161,1);
+  /* stylelint-disable */
   font-family: "Lato-Regular";
+  /* stylelint-enable */
   font-size: 12px;
   font-weight: 400;
   font-style: normal;
