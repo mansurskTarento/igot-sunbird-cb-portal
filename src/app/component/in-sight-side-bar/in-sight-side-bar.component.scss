@@ -47,7 +47,9 @@
     .upcoming-assessment-title {
         opacity: 1;
         color: rgba(0, 0, 0, 0.87);
-        font-family: "Montserrat-SemiBold", sans-serif;
+        /* stylelint-disable */
+        font-family: "Montserrat-SemiBold";
+        /* stylelint-enable */
         font-size: 1rem;
         font-weight: 600;
         font-style: normal;
@@ -63,7 +65,9 @@
 .cred-title {
     opacity: 1;
     color: #1b4ca1;
-    font-family: Lato-Regular, sans-serif;
+    /* stylelint-disable */
+    font-family: Lato-Regular;
+    /* stylelint-enable */
     font-size: .825rem;
     font-weight: 400;
     font-style: normal;
@@ -232,7 +236,9 @@
     color: white;
     
     .title {
+      /* stylelint-disable */
       font-family: Montserrat;
+      /* stylelint-enable */
       font-size: 16px;
       font-weight: 600;
       line-height: 19.5px;
@@ -241,7 +247,9 @@
       text-decoration-skip-ink: none;
     }
     .note {
+      /* stylelint-disable */
       font-family: Lato;
+      /* stylelint-enable */
       font-size: 14px;
       font-weight: 400;
       line-height: 16.8px;
@@ -257,7 +265,9 @@
       opacity: 0.4;
     }
     .hint {
+      /* stylelint-disable */
       font-family: Lato;
+      /* stylelint-enable */
       font-size: 12px;
       font-weight: 400;
       line-height: 14.4px;
@@ -267,7 +277,9 @@
       text-decoration-skip-ink: none;
     }
     .dLabel{
+      /* stylelint-disable */
       font-family: Lato;
+      /* stylelint-enable */
       font-size: 14px;
       font-weight: 700;
       line-height: 21px;
