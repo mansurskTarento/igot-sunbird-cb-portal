@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowJs": true,
     "esModuleInterop": false,
     "allowJs": true,
     "skipLibCheck": true,

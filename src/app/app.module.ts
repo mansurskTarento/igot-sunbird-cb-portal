@@ -163,6 +163,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { PickerModule } from '@ctrl/ngx-emoji-mart'
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -341,7 +342,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     ProfileV3Module,
     MatSidenavModule,
-    PickerModule
+    PickerModule,
+    CKEditorModule
   ],
   exports: [
     TncComponent,

@@ -372,6 +372,15 @@ const routes: Routes = [
 
   },
   {
+    path: 'app/discussion-forum-v2',
+    loadChildren: () => import('./routes/route-app-discussion-v2.module').then(u => u.RouteAppDiscussionV2Module),
+    canActivate: [GeneralGuard],
+    data: {
+      pageId: 'pp/discussion-forum-v2',
+      module: 'Discuss',
+    },
+  },
+  {
     path: 'certs',
     data: {
       pageId: 'certs',
