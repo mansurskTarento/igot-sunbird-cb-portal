@@ -130,7 +130,7 @@
                               aria-label="Group Field label">
                               Group
                             </label>
-                            <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                            <!-- <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
                               <input id="group" matInput tab-directive type="text" placeholder="Select your group"
                                 i18n-placeholder="group" formControlName="group" [matAutocomplete]="groupAutocomplete"
                                 i18n-aria-label aria-label="Group" #group i18n-aria-label aria-label="Group Field input" maxlength="50" />
@@ -147,8 +147,8 @@
                                 aria-label="You must enter value from suggested list only.">
                                 Only alphabets, numbers, space and & - () are allowed.
                               </mat-error> 
-                            </mat-form-field>
-                            <mat-autocomplete #groupAutocomplete="matAutocomplete" autoActiveFirstOption="true" i18n-aria-label
+                            </mat-form-field> -->
+                            <!-- <mat-autocomplete #groupAutocomplete="matAutocomplete" autoActiveFirstOption="true" i18n-aria-label
                               aria-label="Group list masterGroup" [displayWith]="displayFnGroup">
                               <mat-option *ngFor="let option of masterGroup | async" [value]="option" i18n-aria-label
                                 aria-label="Group list autocomplete option">
@@ -159,7 +159,17 @@
                                 <ng-container [ngTemplateOutlet]="onlynoResult" [ngTemplateOutletContext]="{type: 'Group'}">
                                 </ng-container>
                               </mat-option>
-                            </mat-autocomplete>
+                            </mat-autocomplete> -->
+                            <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                                <mat-select placeholder="Select your group" id="group" #group i18n-placeholder="group" formControlName="group" >
+                                  <mat-option *ngFor="let option of masterGroup" [value]="option">{{option}}</mat-option>
+                                </mat-select>
+                                <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
+                                  *ngIf="registrationForm?.controls['group'].errors?.required" i18n-aria-label
+                                  aria-label="Group is mandatory">
+                                  Group is mandatory
+                                </mat-error>
+                              </mat-form-field>
                           </div>
                         <div class="flex flex-1 flex-row content-center flex-wrap">
                             <div class="flex flex-1 input-wrapper margin-top-s">
