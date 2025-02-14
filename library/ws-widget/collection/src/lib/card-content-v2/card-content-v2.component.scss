@@ -434,7 +434,9 @@ $secondary-color: #EF951E;
     border-top-right-radius: 8px;
   }
   .mat-subheading-1 {
+    /* stylelint-disable */
     font: 600 14px/24px Montserrat;
+    /* stylelint-enable */
   }
 
   .complexity {
@@ -1643,7 +1645,9 @@ $title-line-count: 2;
     border-top-right-radius: 8px;
   }
   .mat-subheading-1 {
+    /* stylelint-disable */
     font: 600 14px/24px Montserrat;
+    /* stylelint-enable */
   }
 .content-type-class  {
   color: rgba(0, 0, 0, 0.87);

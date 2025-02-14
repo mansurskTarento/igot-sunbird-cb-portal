@@ -69,8 +69,8 @@ export class EnrollProfileFormComponent implements OnInit {
   otpSent: boolean = false
   emailOtpSent: boolean = false
   otpEntered = ''
-  mVerified :boolean = false
-  eVerified :boolean = false
+  mVerified: boolean = false
+  eVerified: boolean = false
   @ViewChild('timerDiv', { static: false }) timerDiv !: any
   @ViewChild('emailTimerDiv', { static: false }) emailTimerDiv !: any
   timeLeft = 150
@@ -159,7 +159,7 @@ export class EnrollProfileFormComponent implements OnInit {
       group: new FormControl(''),
       designation: new FormControl(''),
       employeeCode: new FormControl(''),
-      primaryEmail: new FormControl('',[Validators.pattern(EMAIL_PATTERN)]),
+      primaryEmail: new FormControl('', [Validators.pattern(EMAIL_PATTERN)]),
       mobile: new FormControl(''),
       gender: new FormControl('', []),
       dob: new FormControl('', []),
@@ -176,7 +176,7 @@ export class EnrollProfileFormComponent implements OnInit {
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
-    
+
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
     })
@@ -188,7 +188,7 @@ export class EnrollProfileFormComponent implements OnInit {
     if (this.userDetailsForm.get('mobile')) {
       this.userDetailsForm.get('mobile')!.valueChanges
         .subscribe(res => {
-          if (res && res !== this.userProfileObject.profileDetails.personalDetails.mobile || 
+          if (res && res !== this.userProfileObject.profileDetails.personalDetails.mobile ||
             !this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
             if (MOBILE_PATTERN.test(res)) {
               this.verifyMobile = true
@@ -310,17 +310,17 @@ export class EnrollProfileFormComponent implements OnInit {
             let field = this.userDetailsForm.get('designation')
             if (field && field.value) {
               let _value = field.value.toLowerCase()
-              if (!this.designationsMeta.find((d: any)=> d.name.toLowerCase() === _value)) {
+              if (!this.designationsMeta.find((d: any) => d.name.toLowerCase() === _value)) {
                 field.patchValue('')
               }
             }
           }
-        },(error: any) => {
+        }, (error: any) => {
           // tslint:disable-next-line
           console.error('Error occurred:', error)
         })
       }
-    },(error: any) => {
+    }, (error: any) => {
       // tslint:disable-next-line
       console.error('Error occurred:', error)
     })
@@ -341,7 +341,7 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   selectDesignation(designation: any) {
-    this.userDetailsForm.patchValue({designation: designation})
+    this.userDetailsForm.patchValue({ designation: designation })
     const fieldControl = this.userDetailsForm.get('otherDesignation')
     if (this.showDoptChanges && designation === 'Others') {
       if (fieldControl) {
@@ -358,10 +358,10 @@ export class EnrollProfileFormComponent implements OnInit {
     }
     this.openDesignationDropdown = false
   }
- 
+
 
   selectLanguage(language: any) {
-    this.userDetailsForm.patchValue({domicileMedium: language})
+    this.userDetailsForm.patchValue({ domicileMedium: language })
     this.openLanguageDropdown = false
   }
 
@@ -386,12 +386,12 @@ export class EnrollProfileFormComponent implements OnInit {
                   this.startEmailTimer()
                   this.snackBar.open(this.handleTranslateTo('otpSentEmail'))
                 }
-              },(error: HttpErrorResponse) => {
+              }, (error: HttpErrorResponse) => {
                 if (!error.ok) {
                   this.snackBar.open(this.handleTranslateTo('emailOTPSentFail'))
                 }
               }
-            )
+              )
           } else {
             this.snackBar.open(this.handleTranslateTo('emailApprovedPopupMsg'))
           }
@@ -402,20 +402,20 @@ export class EnrollProfileFormComponent implements OnInit {
 
   handleGenerateOTP(verifyType?: string): void {
     this.otpService.sendOtp(this.userDetailsForm.value['mobile'])
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.snackBar.open(this.handleTranslateTo('otpSentMobile'))
-      this.otpForm.reset()
-      if (verifyType) {
-        this.otpSent = true
-        this.startTimer()
-        //this.handleVerifyOTP(verifyType, this.userDetailsForm.value['mobile'])
-      }
-    },         (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.snackBar.open(this.handleTranslateTo('mobileOTPSentFail'))
-      }
-    })
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.snackBar.open(this.handleTranslateTo('otpSentMobile'))
+        this.otpForm.reset()
+        if (verifyType) {
+          this.otpSent = true
+          this.startTimer()
+          //this.handleVerifyOTP(verifyType, this.userDetailsForm.value['mobile'])
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.snackBar.open(this.handleTranslateTo('mobileOTPSentFail'))
+        }
+      })
   }
 
   handleResendOTP(): void {
@@ -428,7 +428,7 @@ export class EnrollProfileFormComponent implements OnInit {
     otpValue$.pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
         this.snackBar.open(this.handleTranslateTo('otpSentMobile'))
-      },         (error: any) => {
+      }, (error: any) => {
         if (!error.ok) {
           this.snackBar.open(_.get(error, 'error.params.errmsg') || 'Unable to resend OTP, please try again later!')
         }
@@ -444,7 +444,7 @@ export class EnrollProfileFormComponent implements OnInit {
     otpValue$.pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
         this.snackBar.open(this.handleTranslateTo('otpSentEmail'))
-      },(error: any) => {
+      }, (error: any) => {
         if (!error.ok) {
           this.snackBar.open(_.get(error, 'error.params.errmsg') || 'Unable to resend OTP, please try again later!')
         }
@@ -453,35 +453,35 @@ export class EnrollProfileFormComponent implements OnInit {
 
   verifyEmailOTP(): void {
     this.otpService.verifyEmailOTP(this.emailOtpForm.controls['eOtp'].value, this.userDetailsForm.controls['primaryEmail'].value)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.snackBar.open(this.handleTranslateTo('OTPSentSuccess'))
-      this.verifyEmail = true
-      this.eVerified = true
-      this.emailOtpSent = false
-      this.contextToken = _res.result.contextToken
-      this.emailOtpForm.reset()
-    }, (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
-      }
-    })
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.snackBar.open(this.handleTranslateTo('OTPSentSuccess'))
+        this.verifyEmail = true
+        this.eVerified = true
+        this.emailOtpSent = false
+        this.contextToken = _res.result.contextToken
+        this.emailOtpForm.reset()
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+        }
+      })
   }
 
   verifyMobileOTP(): void {
     this.otpService.verifyOTP(this.otpForm.controls['otp'].value, this.userDetailsForm.controls['mobile'].value)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.snackBar.open(this.handleTranslateTo('OTPSentSuccess'))
-      this.verifyMobile = true
-      this.mVerified = true
-      this.otpSent = false
-      this.otpForm.reset()
-    }, (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
-      }
-    })
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.snackBar.open(this.handleTranslateTo('OTPSentSuccess'))
+        this.verifyMobile = true
+        this.mVerified = true
+        this.otpSent = false
+        this.otpForm.reset()
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.snackBar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+        }
+      })
   }
 
   startTimer() {
@@ -490,12 +490,12 @@ export class EnrollProfileFormComponent implements OnInit {
         this.timeLeft = this.timeLeft - 1
         if (this.timerDiv) {
           this.timerDiv.nativeElement.innerHTML = `${Math.floor(this.timeLeft / 60)}m: ${this.timeLeft % 60}s`
-        }        
+        }
       } else {
         clearInterval(this.interval)
         this.showResendOTP = true
       }
-    },                          1000)
+    }, 1000)
   }
 
   startEmailTimer() {
@@ -509,7 +509,7 @@ export class EnrollProfileFormComponent implements OnInit {
         clearInterval(this.emailInterval)
         this.showEmailResendOTP = true
       }
-    },1000)
+    }, 1000)
   }
 
   public checkAfterSubmit(_e: any) {
@@ -517,12 +517,12 @@ export class EnrollProfileFormComponent implements OnInit {
     // tslint:disable-next-line:no-console
     console.log('Form is submitted successfully')
     if (this.batchDetails.batchAttributes.userProfileFileds &&
-        this.batchDetails.batchAttributes.userProfileFileds === "Available user filled iGOT profile") {
+      this.batchDetails.batchAttributes.userProfileFileds === "Available user filled iGOT profile") {
       this.submitSurevy(true)
     }
     if (this.batchDetails.batchAttributes.userProfileFileds && !this.updateProfile &&
       (this.batchDetails.batchAttributes.userProfileFileds === "Full iGOT profile" ||
-      this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile")) {
+        this.batchDetails.batchAttributes.userProfileFileds === "Custom iGOT profile")) {
       this.submitSurevy(true)
     }
     this.openSnackbar('Form is submitted successfully')
@@ -544,13 +544,13 @@ export class EnrollProfileFormComponent implements OnInit {
     this.getGroupData()
     this.getPendingDetails()
     setTimeout(() => {
-      //this.loadDesignations()
-      this.getMasterDesignation()
+      this.loadDesignations()
+      //this.getMasterDesignation()
       this.getMasterLanguage()
     }, 500)
   }
 
-  fetchCadreData(){
+  fetchCadreData() {
     this.addLoader = this.addLoader + 1
     this.profileV2Svc.fetchCadre().subscribe((response: any) => {
       this.addLoader = this.addLoader - 1
@@ -559,9 +559,9 @@ export class EnrollProfileFormComponent implements OnInit {
     })
   }
 
-  getIsCadreStatus(value:boolean) {
-    this.isCadreStatus = value    
-    if(value) {
+  getIsCadreStatus(value: boolean) {
+    this.isCadreStatus = value
+    if (value) {
       this.userDetailsForm.patchValue({
         typeOfCivilService: '',
         serviceType: '',
@@ -571,10 +571,10 @@ export class EnrollProfileFormComponent implements OnInit {
       })
       this.addValidators()
     }
-    
+
     else {
-    this.showBatchForNoCadre = false
-    this.removeValidators()
+      this.showBatchForNoCadre = false
+      this.removeValidators()
     }
   }
 
@@ -627,7 +627,7 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   removeValidators() {
-    const fieldControl = this.userDetailsForm.get('typeOfCivilService')    
+    const fieldControl = this.userDetailsForm.get('typeOfCivilService')
     if (fieldControl) {
       fieldControl.clearValidators()
       fieldControl.updateValueAndValidity()
@@ -683,7 +683,7 @@ export class EnrollProfileFormComponent implements OnInit {
     if (this.serviceListData) {
       this.selectedService = this.serviceListData.find((service: any) => service.name === this.selectedServiceName)
       if (this.selectedService) {
-        this.civilServiceName =  this.selectedService.name
+        this.civilServiceName = this.selectedService.name
         this.civilServiceId = this.selectedService.id
         this.cadre = this.selectedService.cadreList ? this.selectedService.cadreList.map((cadre: any) => cadre.name) : []
       }
@@ -698,8 +698,8 @@ export class EnrollProfileFormComponent implements OnInit {
       this.startBatch = this.selectedService.commonBatchStartYear
       this.endBatch = this.selectedService.commonBatchEndYear
       this.exclusionYear = this.selectedService.commonBatchExclusionYearList
-    // tslint:disable
-    this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
+      // tslint:disable
+      this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
         .filter(year => !this.exclusionYear.includes(year))
     } else {
       this.showBatchForNoCadre = false
@@ -713,17 +713,17 @@ export class EnrollProfileFormComponent implements OnInit {
     if (batchControl) { batchControl.reset() }
     if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
     this.selectedCadreName = event
-    if(this.selectedService) {
+    if (this.selectedService) {
       this.selectedCadre = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName)
       this.startBatch = this.selectedCadre ? this.selectedCadre.startBatchYear : ''
       this.endBatch = this.selectedCadre ? this.selectedCadre.endBatchYear : ''
       this.exclusionYear = this.selectedCadre ? this.selectedCadre.exculsionYearList : ''
       // tslint:disable
       this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-          .filter(year => !this.exclusionYear.includes(year))
+        .filter(year => !this.exclusionYear.includes(year))
       this.cadreId = this.selectedCadre ? this.selectedCadre.id : ''
     }
-  
+
   }
 
   getPendingDetails() {
@@ -737,14 +737,14 @@ export class EnrollProfileFormComponent implements OnInit {
             if (user['group']) {
               let ctrl = this.userDetailsForm.get('group')
               if (ctrl) {
-                ctrl.patchValue({group: user['group']})
+                ctrl.patchValue({ group: user['group'] })
                 this.pGroup = user['group']
               }
             }
             if (user['designation']) {
               let ctrl = this.userDetailsForm.get('designation')
               if (ctrl) {
-                ctrl.patchValue({designation: user['designation']})
+                ctrl.patchValue({ designation: user['designation'] })
                 this.pDesignation = user['designation']
               }
             }
@@ -774,7 +774,7 @@ export class EnrollProfileFormComponent implements OnInit {
           fieldControl.setValue(this.userProfileObject.profileDetails.personalDetails.firstname)
           fieldControl.disable()
         }
-        if(this.profileFormType === 'Available user filled iGOT profile' &&
+        if (this.profileFormType === 'Available user filled iGOT profile' &&
           !this.userProfileObject.profileDetails.personalDetails.firstname
         ) {
           this.canShowName = false
@@ -782,7 +782,7 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(this.findAttr(customAttr, 'email')) {
+      if (this.findAttr(customAttr, 'email')) {
         this.canShowEmail = true
         const fieldControl = this.userDetailsForm.get('primaryEmail')
         if (fieldControl) {
@@ -808,7 +808,7 @@ export class EnrollProfileFormComponent implements OnInit {
           fieldControl.setValue(this.userProfileObject.profileDetails.employmentDetails.departmentName)
           fieldControl.disable()
         }
-        if(this.profileFormType === 'Available user filled iGOT profile' &&
+        if (this.profileFormType === 'Available user filled iGOT profile' &&
           !this.userProfileObject.profileDetails.employmentDetails.departmentName
         ) {
           this.canShowOrg = false
@@ -831,7 +831,7 @@ export class EnrollProfileFormComponent implements OnInit {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].group
-            ){
+            ) {
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
               if (this.profileFormType === 'Available user filled iGOT profile') {
                 this.canShowGroup = false
@@ -857,7 +857,7 @@ export class EnrollProfileFormComponent implements OnInit {
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
-              this.userProfileObject.profileDetails.professionalDetails[0].designation){
+              this.userProfileObject.profileDetails.professionalDetails[0].designation) {
               fieldControl.patchValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
               if (this.profileFormType === 'Available user filled iGOT profile') {
                 this.canShowDesignation = false
@@ -891,7 +891,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.canshowMobile = true
         const contrl = this.userDetailsForm.get('mobile')
         if (contrl) {
-          if(this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
+          if (this.userProfileObject.profileDetails.personalDetails.mobile && this.userProfileObject.profileDetails.personalDetails.phoneVerified) {
             contrl.setValue(this.userProfileObject.profileDetails.personalDetails.mobile)
             this.mVerified = true
             contrl.setValidators([Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]);
@@ -915,7 +915,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.canShowGender = true
         const contrl = this.userDetailsForm.get('gender')
         if (contrl) {
-          if(this.userProfileObject.profileDetails.personalDetails.gender) {
+          if (this.userProfileObject.profileDetails.personalDetails.gender) {
             contrl.setValue(this.userProfileObject.profileDetails.personalDetails.gender)
             contrl.setValidators([Validators.required])
             contrl.updateValueAndValidity()
@@ -926,14 +926,14 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.setValidators([Validators.required])
             contrl.updateValueAndValidity()
           }
-        }        
+        }
       }
-      
+
       if (this.findAttr(customAttr, 'dob')) {
         this.canShowDob = true
         const contrl = this.userDetailsForm.get('dob')
         if (contrl) {
-          if(this.userProfileObject.profileDetails.personalDetails.dob) {
+          if (this.userProfileObject.profileDetails.personalDetails.dob) {
             let _dob: any = this.userProfileObject.profileDetails.personalDetails.dob
             const [day, month, year] = _dob.split('-')
             const date = new Date(Number(year), Number(month) - 1, Number(day))
@@ -973,7 +973,7 @@ export class EnrollProfileFormComponent implements OnInit {
       }
 
       if (this.findAttr(customAttr, 'category')) {
-        this.canShowCategory= true
+        this.canShowCategory = true
         const contrl = this.userDetailsForm.get('category')
         if (contrl) {
           if (this.userProfileObject.profileDetails.personalDetails.category) {
@@ -987,11 +987,11 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.setValidators([Validators.required])
             contrl.updateValueAndValidity()
           }
-        }        
+        }
       }
 
       if (this.findAttr(customAttr, 'pinCode')) {
-        this.canShowpinCode= true
+        this.canShowpinCode = true
         const contrl = this.userDetailsForm.get('pinCode')
         if (contrl) {
           if (this.userProfileObject.profileDetails.employmentDetails.pinCode) {
@@ -1004,16 +1004,16 @@ export class EnrollProfileFormComponent implements OnInit {
             this.showPinCode = true
             contrl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)])
             contrl.updateValueAndValidity()
-          }          
+          }
         }
       }
 
       if (this.findAttr(customAttr, 'cadreDetails')) {
         this.canShowshowCadreDetails = true
         const contrl = this.userDetailsForm.get('isCadre')
-        if(contrl) {
+        if (contrl) {
           if (Object.keys(this.userProfileObject.profileDetails.personalDetails).includes('isCadre')) {
-            if(this.userProfileObject.profileDetails.personalDetails.isCadre === true) {
+            if (this.userProfileObject.profileDetails.personalDetails.isCadre === true) {
               contrl.setValue(true)
               this.isCadreStatus = true
               this.serviceId = this.userProfileObject.profileDetails.cadreDetails.civilServiceTypeId
@@ -1022,7 +1022,7 @@ export class EnrollProfileFormComponent implements OnInit {
               this.cadreControllingAuthority = this.userProfileObject.profileDetails.cadreDetails.cadreControllingAuthorityName
               setTimeout(() => {
                 this.getService(this.userProfileObject.profileDetails.cadreDetails.civilServiceType)
-                this.onServiceSelect({value: this.userProfileObject.profileDetails.cadreDetails.civilServiceName})
+                this.onServiceSelect({ value: this.userProfileObject.profileDetails.cadreDetails.civilServiceName })
                 if (this.userProfileObject.profileDetails.cadreDetails.cadreName) {
                   this.onCadreSelect(this.userProfileObject.profileDetails.cadreDetails.cadreName)
                 }
@@ -1045,52 +1045,52 @@ export class EnrollProfileFormComponent implements OnInit {
             contrl.setValidators([Validators.required])
             contrl.updateValueAndValidity()
           }
-        }     
+        }
       }
     }
   }
 
   findAttr(customAttr: any, fName: any) {
-    if(fName === 'name') {
+    if (fName === 'name') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.firstname')
     }
-    if(fName === 'email') {
+    if (fName === 'email') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.primaryEmail')
     }
-    if(fName === 'organisation') {
+    if (fName === 'organisation') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.departmentName')
     }
-    if(fName === 'group') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.professionalDetails.group') 
+    if (fName === 'group') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.professionalDetails.group')
     }
-    if(fName === 'designation') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.professionalDetails.designation') 
+    if (fName === 'designation') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.professionalDetails.designation')
     }
-    if(fName === 'employeeCode') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.employeeCode') 
+    if (fName === 'employeeCode') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.employeeCode')
     }
-    if(fName === 'mobile') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.mobile') 
+    if (fName === 'mobile') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.mobile')
     }
-    if(fName === 'gender') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.gender') 
+    if (fName === 'gender') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.gender')
     }
-    if(fName === 'dob') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.dob') 
+    if (fName === 'dob') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.dob')
     }
-    if(fName === 'domicileMedium') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.domicileMedium') 
+    if (fName === 'domicileMedium') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.domicileMedium')
     }
-    if(fName === 'category') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.category') 
+    if (fName === 'category') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.personalDetails.category')
     }
-    if(fName === 'pinCode') {
-      return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.pinCode') 
+    if (fName === 'pinCode') {
+      return customAttr.find((_field: any) => _field.field === 'profileDetails.employmentDetails.pinCode')
     }
-    if(fName === 'cadreDetails') {
+    if (fName === 'cadreDetails') {
       return customAttr.find((_field: any) => _field.field === 'profileDetails.cadreDetails.civilServiceType')
     }
-    
+
   }
 
   findInProfile(attr: string) {
@@ -1098,13 +1098,13 @@ export class EnrollProfileFormComponent implements OnInit {
       return this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
     }
     if (attr === 'group') {
-      return (!this.userProfileObject.profileDetails.profileGroupStatus ) ||
+      return (!this.userProfileObject.profileDetails.profileGroupStatus) ||
         this.userProfileObject.profileDetails.profileGroupStatus === 'NOT-VERIFIED' || (this.pGroup ? true : false)
     }
     if (attr === 'designation') {
       return (!this.userProfileObject.profileDetails.profileDesignationStatus) ||
         this.userProfileObject.profileDetails.profileDesignationStatus === 'NOT-VERIFIED' || (this.pDesignation ? true : false)
-    }    
+    }
   }
 
   getGroupData(): void {
@@ -1114,7 +1114,7 @@ export class EnrollProfileFormComponent implements OnInit {
       .subscribe((res: any) => {
         this.addLoader = this.addLoader - 1
         this.groupData = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('groupDataFaile'))
@@ -1131,7 +1131,7 @@ export class EnrollProfileFormComponent implements OnInit {
       (data: any) => {
         this.designationsMeta = data.responseData
         if (this.showDoptChanges) {
-          this.designationsMeta.push({name: 'Others', id: 0, description: 'Others'})
+          this.designationsMeta.push({ name: 'Others', id: 0, description: 'Others' })
         }
         this.filterDesignationsMeta = this.designationsMeta
       },
@@ -1145,7 +1145,7 @@ export class EnrollProfileFormComponent implements OnInit {
       .subscribe((res: any) => {
         this.masterLanguages = res.languages
         this.masterLanguageBackup = res.languages
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('unableFetchMasterLanguageData'))
         }
@@ -1154,7 +1154,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
   handleEmpty(type: string): void {
     if (type === 'mobile') {
-      if (this.userProfileObject.profileDetails.personalDetails.mobile &&!this.userDetailsForm.controls['mobile'].value) {
+      if (this.userProfileObject.profileDetails.personalDetails.mobile && !this.userDetailsForm.controls['mobile'].value) {
         this.userDetailsForm.controls['mobile'].setErrors({ valid: false })
       }
     }
@@ -1163,7 +1163,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.userDetailsForm.setErrors({ valid: false })
       }
     }
-  }  
+  }
   onSubmitForm(form: any) {
     /* tslint:disable */
     console.log(form)
@@ -1180,7 +1180,7 @@ export class EnrollProfileFormComponent implements OnInit {
                 console.log(resp.result.message)
               }
             }, (error: HttpErrorResponse) => {
-              if(error) {
+              if (error) {
                 this.addLoader = this.addLoader - 1
               }
             })
@@ -1194,7 +1194,7 @@ export class EnrollProfileFormComponent implements OnInit {
                 console.log(resp.result.message)
               }
             }, (error: HttpErrorResponse) => {
-              if(error) {
+              if (error) {
                 this.addLoader = this.addLoader - 1
               }
             })
@@ -1214,11 +1214,11 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   submitProfile(payload: any) {
-    if(payload && payload['request'] && payload['request']['profileDetails'] && payload['request']['profileDetails']['personalDetails'] && payload['request']['profileDetails']['personalDetails']['dob']) {
+    if (payload && payload['request'] && payload['request']['profileDetails'] && payload['request']['profileDetails']['personalDetails'] && payload['request']['profileDetails']['personalDetails']['dob']) {
       let dobFormat = payload['request']['profileDetails']['personalDetails']['dob'];
       let dob = `${new Date(dobFormat).getDate()}-${new Date(dobFormat).getMonth() + 1}-${new Date(dobFormat).getFullYear()}`
       payload['request']['profileDetails']['personalDetails']['dob'] = dob
-    }    
+    }
     if (this.updateProfile) {
       this.addLoader = this.addLoader + 1
       this.userProfileService.editProfileDetails(payload).subscribe((res: any) => {
@@ -1238,8 +1238,8 @@ export class EnrollProfileFormComponent implements OnInit {
   submitSurevy(status: any) {
     let surevyPayload = {
       dataObject: this.genereateSurveyPayload(status),
-        formId: this.data.batchData.batchAttributes.profileSurveyId,
-        timestamp: new Date().getTime(),
+      formId: this.data.batchData.batchAttributes.profileSurveyId,
+      timestamp: new Date().getTime(),
     }
     this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
@@ -1258,7 +1258,7 @@ export class EnrollProfileFormComponent implements OnInit {
       /* tslint:disable */
       console.log(error)
       this.snackBar.open("something went wrong!")
-    }) 
+    })
   }
 
   generateProfilePayload() {
@@ -1273,13 +1273,13 @@ export class EnrollProfileFormComponent implements OnInit {
       }
     }
     let _professionalDetails: any = {}
-    let updateProfessionalDetails : boolean = false
-    if(this.showGroup && this.userDetailsForm.controls['group'].value && !this.showDoptChanges) {
+    let updateProfessionalDetails: boolean = false
+    if (this.showGroup && this.userDetailsForm.controls['group'].value && !this.showDoptChanges) {
       _professionalDetails['group'] = this.userDetailsForm.controls['group'].value
       this.updateProfile = true
       updateProfessionalDetails = true
     }
-    if(this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.showDoptChanges) {
+    if (this.showDesignation && this.userDetailsForm.controls['designation'].value && !this.showDoptChanges) {
       _professionalDetails['designation'] = this.userDetailsForm.controls['designation'].value
       this.updateProfile = true
       updateProfessionalDetails = true
@@ -1287,20 +1287,20 @@ export class EnrollProfileFormComponent implements OnInit {
     if (updateProfessionalDetails) {
       payload.request.profileDetails['professionalDetails'] = [_professionalDetails]
     }
-    if(this.userDetailsForm.controls['employeeCode'].value) {
+    if (this.userDetailsForm.controls['employeeCode'].value) {
       payload.request.profileDetails.employmentDetails['employeeCode'] = this.userDetailsForm.controls['employeeCode'].value
       this.updateProfile = true
     }
-    if(this.userDetailsForm.controls['mobile'].value) {
+    if (this.userDetailsForm.controls['mobile'].value) {
       payload.request.profileDetails.personalDetails['mobile'] = this.userDetailsForm.controls['mobile'].value
       payload.request.profileDetails.personalDetails['phoneVerified'] = true
       this.updateProfile = true
     }
-    if(this.userDetailsForm.controls['gender'].value) {
+    if (this.userDetailsForm.controls['gender'].value) {
       payload.request.profileDetails.personalDetails['gender'] = this.userDetailsForm.controls['gender'].value
       this.updateProfile = true
     }
-    if(this.userDetailsForm.controls['dob'].value) {
+    if (this.userDetailsForm.controls['dob'].value) {
       payload.request.profileDetails.personalDetails['dob'] = this.userDetailsForm.controls['dob'].value
       this.updateProfile = true
     }
@@ -1312,12 +1312,12 @@ export class EnrollProfileFormComponent implements OnInit {
       payload.request.profileDetails.personalDetails['category'] = this.userDetailsForm.controls['category'].value
       this.updateProfile = true
     }
-    if(this.userDetailsForm.controls['pinCode'].value) {
+    if (this.userDetailsForm.controls['pinCode'].value) {
       payload.request.profileDetails.employmentDetails['pinCode'] = this.userDetailsForm.controls['pinCode'].value
       payload.request.profileDetails.personalDetails['pincode'] = this.userDetailsForm.controls['pinCode'].value
       this.updateProfile = true
     }
-    if(this.canShowshowCadreDetails && !this.showDoptChanges) {
+    if (this.canShowshowCadreDetails && !this.showDoptChanges) {
       let _cadreDetails: any = {}
       payload.request.profileDetails.personalDetails['isCadre'] = this.userDetailsForm.controls['isCadre'].value
       this.updateProfile = true
@@ -1347,15 +1347,15 @@ export class EnrollProfileFormComponent implements OnInit {
 
   genereateSurveyPayload(status: any) {
     let dataObject: any = {}
-    this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields.forEach((_field: any)  => {
-      if(_field.field === 'profileDetails.personalDetails.firstname') {
+    this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields.forEach((_field: any) => {
+      if (_field.field === 'profileDetails.personalDetails.firstname') {
         dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails.firstName || this.userProfileObject.profileDetails.personalDetails.firstname
       }
-      if(_field.field === 'profileDetails.employmentDetails.departmentName') {
+      if (_field.field === 'profileDetails.employmentDetails.departmentName') {
         dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.departmentName ?
           this.userProfileObject.profileDetails.employmentDetails.departmentName : "N/A"
       }
-      if(_field.field === 'profileDetails.professionalDetails.group') {
+      if (_field.field === 'profileDetails.professionalDetails.group') {
         if (this.showGroup && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['group'].value
         } else {
@@ -1363,10 +1363,10 @@ export class EnrollProfileFormComponent implements OnInit {
             this.userProfileObject.profileDetails.professionalDetails[0].group : "N/A"
         }
       }
-      if(_field.field === 'profileDetails.professionalDetails.designation') {
+      if (_field.field === 'profileDetails.professionalDetails.designation') {
         if (this.showDesignation && status) {
           if (this.showDoptChanges && this.userDetailsForm.controls['designation'] &&
-              this.userDetailsForm.controls['designation'].value ==='Others' && this.userDetailsForm.controls['otherDesignation']) {
+            this.userDetailsForm.controls['designation'].value === 'Others' && this.userDetailsForm.controls['otherDesignation']) {
             dataObject[_field.name] = this.userDetailsForm.controls['otherDesignation'].value
           } else {
             dataObject[_field.name] = this.userDetailsForm.controls['designation'].value
@@ -1377,29 +1377,29 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.employmentDetails.employeeCode') {
+      if (_field.field === 'profileDetails.employmentDetails.employeeCode') {
         if (this.showEmployeeCode && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['employeeCode'].value
         } else {
-          dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.employeeCode?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.employeeCode ?
             this.userProfileObject.profileDetails.employmentDetails.employeeCode : "N/A"
         }
       }
 
-      if(_field.field === 'profileDetails.personalDetails.primaryEmail') {
+      if (_field.field === 'profileDetails.personalDetails.primaryEmail') {
         dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails.primaryEmail
       }
 
-      if(_field.field === 'profileDetails.personalDetails.mobile') {
+      if (_field.field === 'profileDetails.personalDetails.mobile') {
         if (this.showMobile && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['mobile'].value
         } else {
-          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.mobile?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.mobile ?
             this.userProfileObject.profileDetails.personalDetails.mobile : "N/A"
         }
       }
 
-      if(_field.field === 'profileDetails.personalDetails.dob') {
+      if (_field.field === 'profileDetails.personalDetails.dob') {
         if (this.showDob && status) {
           let _dob: any = this.userDetailsForm.controls['dob'].value
           dataObject[_field.name] = this.formatDate(_dob)
@@ -1418,7 +1418,7 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.personalDetails.gender') {
+      if (_field.field === 'profileDetails.personalDetails.gender') {
         if (this.showGender && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['gender'].value
         } else {
@@ -1427,7 +1427,7 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.personalDetails.domicileMedium') {
+      if (_field.field === 'profileDetails.personalDetails.domicileMedium') {
         if (this.showDecimalMedium && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['domicileMedium'].value
         } else {
@@ -1436,25 +1436,25 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.personalDetails.category') {
+      if (_field.field === 'profileDetails.personalDetails.category') {
         if (this.showCategory && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['category'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.personalDetails && this.userProfileObject.profileDetails.personalDetails.category ?
-          this.userProfileObject.profileDetails.personalDetails.category : "N/A"
+            this.userProfileObject.profileDetails.personalDetails.category : "N/A"
         }
       }
 
-      if(_field.field === 'profileDetails.employmentDetails.pinCode') {
+      if (_field.field === 'profileDetails.employmentDetails.pinCode') {
         if (this.showPinCode && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['pinCode'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.employmentDetails && this.userProfileObject.profileDetails.employmentDetails.pinCode ?
-          this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
+            this.userProfileObject.profileDetails.employmentDetails.pinCode : "N/A"
         }
       }
 
-      if(_field.field === 'profileDetails.cadreDetails') {
+      if (_field.field === 'profileDetails.cadreDetails') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['isCadre'].value
         } else {
@@ -1462,7 +1462,7 @@ export class EnrollProfileFormComponent implements OnInit {
             this.userProfileObject.profileDetails.personalDetails.isCadre ? 'Yes' : 'No'
         }
       }
-      if(_field.field === 'profileDetails.cadreDetails.civilServiceType') {
+      if (_field.field === 'profileDetails.cadreDetails.civilServiceType') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['typeOfCivilService'].value
         } else {
@@ -1471,7 +1471,7 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.cadreDetails.civilServiceName') {
+      if (_field.field === 'profileDetails.cadreDetails.civilServiceName') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['serviceType'].value
         } else {
@@ -1480,24 +1480,24 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.cadreDetails.cadreName') {
+      if (_field.field === 'profileDetails.cadreDetails.cadreName') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreName'].value
         } else {
-          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails  && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
+          dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreName ?
             this.userProfileObject.profileDetails.cadreDetails.cadreName : 'N/A'
         }
       }
-      if(_field.field === 'profileDetails.cadreDetails.cadreBatch') {
+      if (_field.field === 'profileDetails.cadreDetails.cadreBatch') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.userDetailsForm.controls['cadreBatch'].value
         } else {
           dataObject[_field.name] = this.userProfileObject.profileDetails.cadreDetails && this.userProfileObject.profileDetails.cadreDetails.cadreBatch ?
-          JSON.stringify(this.userProfileObject.profileDetails.cadreDetails.cadreBatch) : 'N/A'
+            JSON.stringify(this.userProfileObject.profileDetails.cadreDetails.cadreBatch) : 'N/A'
         }
       }
 
-      if(_field.field === 'profileDetails.cadreDetails.cadreControllingAuthorityName') {
+      if (_field.field === 'profileDetails.cadreDetails.cadreControllingAuthorityName') {
         if (this.canShowshowCadreDetails && this.userDetailsForm.controls['isCadre'].value && status) {
           dataObject[_field.name] = this.cadreControllingAuthority
         } else {
@@ -1506,9 +1506,9 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.additionalProperties.externalSystemId') {
-        if (this.userProfileObject.profileDetails.additionalProperties && 
-            this.userProfileObject.profileDetails.additionalProperties.externalSystemId) {
+      if (_field.field === 'profileDetails.additionalProperties.externalSystemId') {
+        if (this.userProfileObject.profileDetails.additionalProperties &&
+          this.userProfileObject.profileDetails.additionalProperties.externalSystemId) {
           dataObject[_field.name] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemId
             ? this.userProfileObject.profileDetails.additionalProperties.externalSystemId : "N/A"
         } else {
@@ -1516,9 +1516,9 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
 
-      if(_field.field === 'profileDetails.additionalProperties.externalSystemDor') {
+      if (_field.field === 'profileDetails.additionalProperties.externalSystemDor') {
         if (this.userProfileObject.profileDetails.additionalProperties &&
-            this.userProfileObject.profileDetails.additionalProperties.externalSystemDor) {
+          this.userProfileObject.profileDetails.additionalProperties.externalSystemDor) {
           dataObject[_field.name] = this.userProfileObject.profileDetails.additionalProperties && this.userProfileObject.profileDetails.additionalProperties.externalSystemDor
             ? this.userProfileObject.profileDetails.additionalProperties.externalSystemDor : "N/A"
         } else {
@@ -1550,7 +1550,7 @@ export class EnrollProfileFormComponent implements OnInit {
         this.addLoader = this.addLoader - 1
         this.userProfileObject.profileDetails.personalDetails.primaryEmail = email
         this.snackBar.open(this.handleTranslateTo('emailUpdated'))
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         this.addLoader = this.addLoader - 1
         if (!error.ok) {
           this.snackBar.open(this.handleTranslateTo('updateEmailFailed'))
