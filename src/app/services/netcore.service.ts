@@ -30,7 +30,6 @@ export class NetCoreService {
             return (finalData)
             }),
             catchError((_error: any) => {
-                console.log('_error', _error)
             const baseUrl = this.configSvc.sitePath
             return this.http.get(`${baseUrl}/netcore.json`).pipe(
                 map(data => (data)),
