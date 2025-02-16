@@ -137,7 +137,7 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
+import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dynamic/sliders-dynamic.module'
 import { EnrollProfileFormComponent } from './components/enroll-profile-form/enroll-profile-form.component';
 import { SurveyFormQuestionComponent } from './components/survey-form-question/survey-form-question.component';
@@ -266,7 +266,7 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     KarmaPointsModule,
     TipsForLearnerModule,
     ReactiveFormsModule,
-    DiscussionV2Module,
+    WidgetCommentModule,
     SlidersDynamicModule,
     NonReleventFeedbackDialogModule
   ],

@@ -55,7 +55,7 @@ import { FormDataResolverService } from './services/form-data-resolver.service'
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
 
-const routes: Routes = [
+const routes: Routes = [  
   {
     path: '',
     redirectTo: 'page/home',
@@ -232,7 +232,6 @@ const routes: Routes = [
       pageData: PageResolve,
     },
   },
-
   {
     path: 'app/taxonomy',
     loadChildren: () =>
@@ -371,6 +370,15 @@ const routes: Routes = [
       module: 'Discuss',
     },
 
+  },
+  {
+    path: 'app/discussion-forum-v2',
+    loadChildren: () => import('./routes/route-app-discussion-v2.module').then(u => u.RouteAppDiscussionV2Module),
+    canActivate: [GeneralGuard],
+    data: {
+      pageId: 'pp/discussion-forum-v2',
+      module: 'Discuss',
+    },
   },
   {
     path: 'certs',
@@ -1162,6 +1170,7 @@ const routes: Routes = [
       errorType: 'notFound',
     },
   },
+ 
 ]
 @NgModule({
   imports: [

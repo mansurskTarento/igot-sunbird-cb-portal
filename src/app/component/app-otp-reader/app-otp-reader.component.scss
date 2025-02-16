@@ -6,7 +6,9 @@
   border-radius: 0.25rem;
   margin-right: 13px;
   color: #000;
+  /* stylelint-disable */
   border: 1px solid #00000066;
+  /* stylelint-enable */
 
   &:focus {
     border-color: #1b4ca1;

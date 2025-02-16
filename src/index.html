@@ -67,6 +67,7 @@
           window["env"]["assessmentBuffer"] = envJson.assessmentBuffer;
           window["env"]["cdnContentHost"] = envJson.cdnContentHost;
           window["env"]["cdnContentBucket"] = envJson.cdnContentBucket;
+          window["env"]["dicussV2Bucket"] = envJson.dicussV2Bucket;
           window["env"]["spvorgID"] = envJson.spvorgID;
           window["env"]["mdoChannelsBookmarkId"] = envJson.mdoChannelsBookmarkId;
           window["env"]["apiCache"] = envJson.apiCache;
@@ -90,13 +91,22 @@
     <link href="src\zoho-style.css">
     <script src='https://js.zohostatic.in/support/app/js/jqueryandencoder.ffa5afd5124fbedceea9.js' integrity="sha384-WxjccFdarXj9qC3CXtilb+x2qSQA3CMFOjT6vA0CkfexBVqYRAISERxH45f5VnmM" crossorigin="anonymous"></script>
    <script src="src\zoho-script.js"></script>
+   <script rel="preload" src='//cdnt.netcoresmartech.com/smartechclient.js'></script>
+  <script>
+   smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00' , "tin");
+    smartech('register', 'b632681d782c843e187fd5447c97ed4d');
+    smartech('identify', '');
+    smartech('dispatch',1,{});  
+  </script>
+
+   <!-- <script type='text/javascript' id="dota_js" src='https://dns.devnagri.com/dota.js'></script>
    <script type='text/javascript' id="dota_js" src='https://dns.devnagri.com/dota.js'></script>
     <script id="dota_init">
         var devnagri = Devnagri.initializeTranslation({
                                     apiKey: "devnagri_a868e56ebc5b11efb32842010aa00012",
                                     default_lang_code: "en"
         });
-    </script>
+    </script> -->
 </head>
 
 <body class="mat-app-background mat-body mat-typography custom-scroll" id="app-bg">
