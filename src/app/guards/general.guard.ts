@@ -61,7 +61,7 @@ export class GeneralGuard  {
       // } else {
       //   redirectUrl = document.baseURI
       // }
-      try {
+      try { //NOSONAR
         Promise.resolve(this.authSvc.loginV2('S', refAppend))
         // return true
       } catch (e) {

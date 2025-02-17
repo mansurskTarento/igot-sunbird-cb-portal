@@ -9,17 +9,25 @@
             [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData"></ws-widget-app-toc-content>
         </mat-tab>
     </ng-container>
-    <ng-container *ngIf="config?.commentsTab">
+    <ng-container *ngIf="config?.commentsTab && !forPreview">
         <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
             <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
                 <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
             </div>
         </mat-tab>
     </ng-container>
-    <ng-container *ngIf="displayTeachersContent && content?.referenceNodes">
-        <mat-tab label="{{ 'apptocsinglepage.teachersNote' | translate }}">
+    
+    <ng-container *ngIf="content?.referenceNodes && teacherNotesFlag && displayTeachersContent">
+        <mat-tab label="Teachers Note">
             <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
                 <ws-widget-app-toc-teachers-notes [content]="content"></ws-widget-app-toc-teachers-notes>
+            </div>
+        </mat-tab>
+    </ng-container>
+    <ng-container *ngIf="content?.referenceNodes && referenceNotesFlag">
+        <mat-tab label="Reference Note">
+            <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
+                <ws-widget-app-toc-reference-notes [content]="content"></ws-widget-app-toc-reference-notes>
             </div>
         </mat-tab>
     </ng-container>

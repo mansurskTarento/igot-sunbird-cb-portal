@@ -1339,13 +1339,35 @@ ngx-guided-tour {
   --mat-snack-bar-button-color: #fff;
 
   &.success {
-    --mdc-snackbar-container-color: #1d8923;
+    --mdc-snackbar-container-color: $snackBarSuccess;
     --mat-mdc-snack-bar-button-color: #fff;
     --mdc-snackbar-supporting-text-color: #fff;
   }
   &.error {
-    --mdc-snackbar-container-color: #891d1d;
+    --mdc-snackbar-container-color: $snackBarDanger;
     --mat-mdc-snack-bar-button-color: #fff;
     --mdc-snackbar-supporting-text-color: #fff;
   }
+}
+
+.course-success-snackbar {
+  box-shadow: 0px 8px 24px 0px $snackBarBoxshadow !important;
+  --mdc-snackbar-container-color: $snackBarSuccess !important;
+}
+
+.course-error-snackbar {
+  box-shadow: 0px 8px 24px 0px $snackBarBoxshadow !important;
+  --mdc-snackbar-container-color: $snackBarDanger !important;
+}
+
+.mat-dialog-container {
+  border-radius: 12px !important;
+}
+
+.relevent-feedback-dialog {
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

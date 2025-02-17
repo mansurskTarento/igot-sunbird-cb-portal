@@ -219,7 +219,7 @@ export class InsightSideBarComponent implements OnInit {
                 })
               } else {
                 if (this.configSvc.userProfile && this.configSvc.userProfile.professionalDetails &&
-                    this.configSvc.userProfile.professionalDetails[0]) {
+                    this.configSvc.userProfile.professionalDetails[0] && this.configSvc.userProfile.professionalDetails[0].designation) {
                   let designation = this.configSvc.userProfile.professionalDetails[0].designation
                   if (designation) {
                     let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
@@ -548,7 +548,7 @@ export class InsightSideBarComponent implements OnInit {
 
   onInputChange(searchValue: string) {
     if (searchValue.length) {
-      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue))
+      this.filterDesigantionList = this.designationList.filter((des: any) => des.name.toLowerCase().includes(searchValue.toLowerCase()))
       this.selectDesignation = searchValue
     } else {
       this.filterDesigantionList = this.designationList

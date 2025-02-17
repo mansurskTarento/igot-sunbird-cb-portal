@@ -768,7 +768,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         case 'MCQ-MCA-W':
         case 'MCQ-SCA-TF':
         case 'MCQ':
-          _.each(this.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE && question.editorState
+          _.each(question.editorState
             // tslint:disable-next-line: align
             ? question.editorState.options : question.choices.options, o => {
               // const aHtml = document.createElement('div')
@@ -816,7 +816,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           // for (let i = 0; i < this.question.options.length; i += 1) {
           //     this.question.options[i].matchForView = arr[i]
           // }
-          _.each(this.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE && question.editorState
+          _.each(question.editorState
             // tslint:disable-next-line: align
             ? question.editorState.options : question.choices.options, (o, idx) => {
               options.push({
@@ -1654,7 +1654,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           prom.push(this.getMultiQuestions(l))
         })
         Promise.all(prom).then(qqr => {
-          console.log('qqr', qqr)
           allPromiseResolvedCount++;
           const question = { questions: _.flatten(_.map(qqr, 'result.questions')) }
           const codes = _.compact(_.map(this.quizJson.questions, 'section') || [])
@@ -2337,6 +2336,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             const getTime = false
             this.openSectionPopup(submitAssessment, getTime)
             break;
+          case 'initial':
+            this.isSubmitted = false
+            this.clearStorage()
+            this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
+           break
           default :
             this.setQuestionStartTime()
         }

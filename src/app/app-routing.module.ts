@@ -55,7 +55,7 @@ import { FormDataResolverService } from './services/form-data-resolver.service'
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
 
-const routes: Routes = [
+const routes: Routes = [  
   {
     path: '',
     redirectTo: 'page/home',
@@ -232,7 +232,6 @@ const routes: Routes = [
       pageData: PageResolve,
     },
   },
-
   {
     path: 'app/taxonomy',
     loadChildren: () =>
@@ -1171,6 +1170,7 @@ const routes: Routes = [
       errorType: 'notFound',
     },
   },
+ 
 ]
 @NgModule({
   imports: [
