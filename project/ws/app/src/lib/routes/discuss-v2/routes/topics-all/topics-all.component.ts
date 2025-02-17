@@ -17,4 +17,9 @@ export class TopicsAllComponent {
   topicCardrClick(topicData: any){
     this.router.navigate([`/app/discussion-forum-v2/communities/${topicData.value}`])
   }
+
+  communityCardrClick(communityData: any) {
+    
+    this.router.navigate(['/app/discussion-forum-v2/community', communityData.communityId])
+  }
 }

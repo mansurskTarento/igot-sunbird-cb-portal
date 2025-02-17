@@ -25,45 +25,7 @@ export class DiscussV2HomeComponent {
     }
   ]
 
-  trendingDiscussions = [
-    {
-      author: 'Harshit T Rao',
-      time: 'Today, 10:21 AM',
-      title: "What are some merits and demerits of the Dicey's Rule of Law?",
-      likes: 598,
-      views: 43,
-      comments: 43,
-      avatar: 'https://portal.dev.karmayogibharat.net/assets/public/content/do_11408384025512345617/artifact/do_11408384025512345617_1719218781302_assessment1719218781448.jpg'
-    },
-    {
-      author: 'Harshit T Rao',
-      time: 'Today, 10:21 AM',
-      title: "What are some merits and demerits of the Dicey's Rule of Law?",
-      likes: 598,
-      views: 43,
-      comments: 43,
-      avatar: 'https://portal.dev.karmayogibharat.net/assets/public/content/do_11408384025512345617/artifact/do_11408384025512345617_1719218781302_assessment1719218781448.jpg'
-    },
-    {
-      author: 'Harshit T Rao',
-      time: 'Today, 10:21 AM',
-      title: "What are some merits and demerits of the Dicey's Rule of Law?",
-      likes: 598,
-      views: 43,
-      comments: 43,
-      avatar: 'https://portal.dev.karmayogibharat.net/assets/public/content/do_11408384025512345617/artifact/do_11408384025512345617_1719218781302_assessment1719218781448.jpg'
-    },
-    {
-      author: 'Harshit T Rao',
-      time: 'Today, 10:21 AM',
-      title: "What are some merits and demerits of the Dicey's Rule of Law?",
-      likes: 598,
-      views: 43,
-      comments: 43,
-      avatar: 'https://portal.dev.karmayogibharat.net/assets/public/content/do_11408384025512345617/artifact/do_11408384025512345617_1719218781302_assessment1719218781448.jpg'
-    },
-    // Add more discussions...
-  ]
+
 
 
   constructor(private router: Router) { }
