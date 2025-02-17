@@ -343,7 +343,7 @@ const routes: Routes = [
       module: 'explore',
     },
     resolve: {
-      pageData: PageResolve,
+      pageData: PageResolve, 
     },
   },
   {
@@ -378,6 +378,11 @@ const routes: Routes = [
     data: {
       pageId: 'pp/discussion-forum-v2',
       module: 'Discuss',
+      pageKey: 'discussion-v2',
+      pageType: 'feature',
+    },
+    resolve: {
+      pageData: FormDataResolverService,
     },
   },
   {
