@@ -2278,7 +2278,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       "recommendation_id": this.recommendedCoursesId,
       "course_id": this.courseID,
       "rating": rating,
-      "comments": comment
+      "comments": comment,
+      "user_id": this.configSvc.userProfile?.userId || ''
     }
     const response = await this.contentLibSvc.saveFeedbackSakshamAI(payload).toPromise().catch(() => {})
     if(response && response?.message) {
