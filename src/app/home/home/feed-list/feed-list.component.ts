@@ -49,9 +49,9 @@ export class FeedListComponent implements OnInit {
         let id = event.typeOfTelemetry === 'mdo-channels' ? event.identifier : event.orgId
         let type = event.typeOfTelemetry === 'mdo-channels' ? 'org/ministry' : event.title
         let _subType = event.typeOfTelemetry
-        if (event.typeOfTelemetry === 'cbpPlan' 
+        if ((event.typeOfTelemetry === 'cbpPlan' 
           || event.typeOfTelemetry === 'forYou' 
-          || event.typeOfTelemetry === 'continueLearning'
+          || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
         ) {
           id = event.identifier
           type = event.primaryCategory
