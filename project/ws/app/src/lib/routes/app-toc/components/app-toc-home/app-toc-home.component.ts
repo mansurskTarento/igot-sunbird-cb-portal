@@ -47,6 +47,7 @@ import { environment } from 'src/environments/environment'
 import { TimerService } from '../../services/timer.service'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -271,6 +272,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     public enrollSvc: WidgetEnrollService,
     public contentLibSvc: WidgetContentLibService,
     public dataTransferSvc: DataTransferService,
+    public netCoreService: NetCoreService
   ) {
     this.historyData = history.state
     this.handleBreadcrumbs()
@@ -364,6 +366,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             this.skeletonLoader = false
           } else {
             this.fetchUserEnrollmentData();
+            
           }
           this.initialrouteData = data
           this.banners = data.pageData.data.banners
@@ -486,6 +489,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }
     }
+
+    
   }
 
   // displayRandomlearnAdvisoryData(): void {
@@ -930,6 +935,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     })
 
     this.tocSvc.contentLoader.next(false)
+    
   }
 
   getUserRating(fireUpdate: boolean) {
@@ -940,12 +946,14 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (this.content && this.content.identifier && this.content.primaryCategory) {
         this.ratingSvc.getRating(this.content.identifier, this.content.primaryCategory, this.userId).subscribe(
           (res: any) => {
+            
             if (res && res.result && res.result.response) {
               this.userRating = res.result.response
               if (fireUpdate) {
                 this.tocSvc.changeUpdateReviews(true)
               }
             }
+            this.contentViewEventForNetCore('view')
           },
           (err: any) => {
             this.loggerSvc.error('USER RATING FETCH ERROR >', err)
@@ -1180,6 +1188,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.autoAssignEnroll()
       }
     }
+    this.contentViewEventForNetCore('enroll')
   }
 
   public autoEnrollCuratedProgram(programType: any, batchData: any) {
@@ -2145,9 +2154,81 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.enrollBtnLoading = false
         this.tocSvc.contentLoader.next(false)
       }
+
+     
     }
 
     this.skeletonLoader = false
+  }
+
+  contentViewEventForNetCore(eventType:any) {
+    console.log('this.content-->', this.content)
+    console.log('userEnrollmentList', this.userEnrollmentList)
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
+    ) { 
+      let payload: any = {}
+      if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
+        payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      }
+      console.log('payload', payload)
+      if(this.content && this.content.name) {
+        payload['content_name'] = this.content.name
+      }
+      if(this.content && this.content.courseCategory) {
+        payload['content_category'] = this.content.courseCategory
+      }
+      if(this.content && this.content.identifier) {
+        payload['content_id'] = this.content.identifier
+      }
+      if(this.content && this.content.name) {
+        payload['content_url'] = this.content.name
+      }
+      if(this.content && this.content.appIcon) {
+        payload['content_image'] = this.content.appIcon
+      }
+      if(this.content && this.content.duration) {
+        payload['content_duration'] = this.content.duration && Number(this.content.duration) > 0 ? this.secondsToTime(this.content.duration) : this.content.duration
+      } else {
+        payload['content_duration'] = 0
+      }
+      if(this.content && this.content.avgRating
+      ) {
+        payload['content_rating'] = this.content.avgRating
+      }
+      if(this.content && this.content.totalNoOfRating) {
+        console.log('payload', payload)
+        payload['no_users_rated'] = this.content.totalNoOfRating
+      }
+      // if(this.content && this.content.name) {
+        payload['learning_path_content'] = this.userEnrollmentList && this.userEnrollmentList.length ? true : false
+      // }
+      if(this.content && this.content.source) {
+        payload['content_provider_name'] = this.content.source
+      }
+      if(eventType === 'view') {
+        this.netCoreService.trackEventForContentAndEvent('content_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      } else if (eventType === 'enroll') {
+        this.netCoreService.trackEventForContentAndEvent('content_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      }
+      
+    }
+  }
+
+  secondsToTime(d:any)
+  {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+    return hDisplay + mDisplay + sDisplay; 
   }
 
 

@@ -106,4 +106,32 @@ export class NetCoreService {
         smartech('identify', userIdentifier)
         smartech('dispatch', eventName, payload)
     }
+
+    trackEventForContentAndEvent(eventName:any, userIdentifier:any, contentpayload?:any) {
+        // Get the current time (server time)
+        let serverTime = moment();
+        serverTime = serverTime.add(5, 'hours').add(30, 'minutes');
+
+        // Display the server time
+        /* tslint:disable */
+        console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
+        console.log('eventName', eventName)
+        console.log('userIdentifier', userIdentifier)
+        
+        let payload:any = {
+            'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
+            'action_device': 'Desktop'
+        }
+        console.log('payload', payload)
+
+        if(!Object.keys(contentpayload).length) {
+            contentpayload = {}
+        }
+
+        let mergedPayload = {...payload, ...contentpayload}
+        console.log('mergedPayload--', mergedPayload)
+        
+        smartech('identify', userIdentifier)
+        smartech('dispatch', eventName, mergedPayload)
+    }
 }
