@@ -46,37 +46,37 @@ export class NetCoreService {
 
     netCoreUserLoginSetup(payload:any) {
         /* tslint:disable */
-        console.log('this.configSvc.unMappedUser', payload)
+        // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
         smartech('contact', '', payload)
     }
 
     netCoreUserNameUpdate(payload:any) {
          /* tslint:disable */
-         console.log('this.configSvc.unMappedUser', payload)
+        //  console.log('this.configSvc.unMappedUser', payload)
          /* tslint:enable */        
         smartech('contact', '', payload)
     }
 
     netCoreUserProfilePhotoUpdate(payload:any) {
         /* tslint:disable */
-        console.log('this.configSvc.unMappedUser', payload)
+        // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */        
        smartech('contact', '', payload)
     }
 
     netCoreUserProfilepdate(payload:any) {
         /* tslint:disable */
-        console.log('this.configSvc.unMappedUser', payload)
+        // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
         smartech('contact', '', payload)
     }
     
     netCoreUserProfileUpdateEvent(payload:any, eventName: any, userIdentifier:any) {
         /* tslint:disable */
-        console.log('this.configSvc.unMappedUser', payload)
-        console.log('eventName', eventName)
-        console.log('userIdentifier', userIdentifier)
+        // console.log('this.configSvc.unMappedUser', payload)
+        // console.log('eventName', eventName)
+        // console.log('userIdentifier', userIdentifier)
         /* tslint:enable */
         smartech('identify', userIdentifier)
         smartech('dispatch', eventName, payload)
@@ -89,9 +89,9 @@ export class NetCoreService {
 
         // Display the server time
         /* tslint:disable */
-        console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
-        console.log('eventName', eventName)
-        console.log('userIdentifier', userIdentifier)
+        // console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
+        // console.log('eventName', eventName)
+        // console.log('userIdentifier', userIdentifier)
         
         let payload:any = {
             'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
@@ -114,9 +114,9 @@ export class NetCoreService {
 
         // Display the server time
         /* tslint:disable */
-        console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
-        console.log('eventName', eventName)
-        console.log('userIdentifier', userIdentifier)
+        // console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
+        // console.log('eventName', eventName)
+        // console.log('userIdentifier', userIdentifier)
         
         let payload:any = {
             'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
@@ -129,7 +129,7 @@ export class NetCoreService {
         }
 
         let mergedPayload = {...payload, ...contentpayload}
-        console.log('mergedPayload--', mergedPayload)
+        // console.log('mergedPayload--', mergedPayload)
         
         smartech('identify', userIdentifier)
         smartech('dispatch', eventName, mergedPayload)

@@ -317,10 +317,6 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   }
 
   contentViewEventForNetCore(eventType:any) {
-    console.log('this.content-->', this.extContentReadData)
-    console.log('eventType--', eventType)
-    console.log('(this.configSvc.netcoreConfig', this.configSvc.netcoreConfig)
-    console.log('userEnrollmentList', this.userExtCourseEnroll)
     if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
@@ -357,7 +353,6 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         payload['content_rating'] = this.extContentReadData.avgRating
       }
       if(this.extContentReadData && this.extContentReadData.totalNoOfRating) {
-        console.log('payload', payload)
         payload['no_users_rated'] = this.extContentReadData.totalNoOfRating
       }
       // if(Object.keys(this.userExtCourseEnroll).length) {
@@ -372,7 +367,6 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       } else {
         payload['content_provider_name'] =  'Karmayogi Bharat'
       }
-      console.log('payload--', payload)
       if(eventType === 'view') {
         this.netCoreService.trackEventForContentAndEvent('content_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       } else if (eventType === 'enroll') {

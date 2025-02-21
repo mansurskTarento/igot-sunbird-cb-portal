@@ -174,7 +174,6 @@ export class EventDetailComponent implements OnInit {
     if (this.eventData && userId) {
       this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
         /* tslint:disable */
-        console.log('data --- ', data)
         this.contentViewEventForNetCore('view')
         if (data && data.result && data.result.events && data.result.events.length > 0) {
           this.enrolledEvent = data.result.events.find((d: any) => d.contentId === this.eventData.identifier)
@@ -190,7 +189,6 @@ export class EventDetailComponent implements OnInit {
           }
           if( this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
-            console.log('this.enrolledEvent--', this.enrolledEvent)
             if(this.enrolledEvent && this.enrolledEvent.status === 2) {
               this.contentViewEventForNetCore('complete')
             }
@@ -314,8 +312,6 @@ export class EventDetailComponent implements OnInit {
     }
 
     contentViewEventForNetCore(eventType:any) {
-      console.log('this.eventData-->', this.eventData)
-      console.log('enrolledEvent', this.enrolledEvent)
       if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
         && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
         && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
@@ -326,7 +322,6 @@ export class EventDetailComponent implements OnInit {
         if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
           payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
         }
-        console.log('payload', payload)
         if(this.eventData && this.eventData.name) {
           payload['event_name'] = this.eventData.name
         }
@@ -348,7 +343,6 @@ export class EventDetailComponent implements OnInit {
         if(this.eventData && this.eventData.sourceName) {
           payload['event_provider_name'] = this.eventData.sourceName
         }
-        console.log('payload', payload)
         if(eventType === 'view') {
          this.netCoreService.trackEventForContentAndEvent('event_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
         } else if (eventType === 'enroll') {

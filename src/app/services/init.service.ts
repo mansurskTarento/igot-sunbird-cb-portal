@@ -389,7 +389,6 @@ export class InitService {
       }
     }
     const publicConfig:any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
-    console.log('publicConfig--', publicConfig)
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     return publicConfig
   }

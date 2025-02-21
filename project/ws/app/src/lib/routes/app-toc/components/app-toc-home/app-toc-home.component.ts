@@ -2015,7 +2015,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         
         let completedContentFlagData:any = this.userEnrollmentList && 
              this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
-             console.log('this.completedContentFlag--', completedContentFlagData)
         if(completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
           this.contentViewEventForNetCore('complete')
         }
@@ -2169,8 +2168,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   contentViewEventForNetCore(eventType:any) {
-    console.log('this.content-->', this.content)
-    console.log('userEnrollmentList', this.userEnrollmentList)
     if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
@@ -2181,7 +2178,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
         payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
       }
-      console.log('payload', payload)
       if(this.content && this.content.name) {
         payload['content_name'] = this.content.name
       }
@@ -2207,7 +2203,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         payload['content_rating'] = this.content.avgRating
       }
       if(this.content && this.content.totalNoOfRating) {
-        console.log('payload', payload)
         payload['no_users_rated'] = this.content.totalNoOfRating
       }
       // if(this.content && this.content.name) {
