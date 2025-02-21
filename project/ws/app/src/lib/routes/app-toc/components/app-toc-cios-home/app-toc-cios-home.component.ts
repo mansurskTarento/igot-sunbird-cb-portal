@@ -8,6 +8,7 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 import * as _ from 'lodash'
+import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 
 @Component({
   selector: 'ws-app-app-toc-cios-home',
@@ -66,6 +67,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
               public loader: LoaderService,
 
               public snackBar: MatSnackBar,
+              public netCoreService: NetCoreService
   ) {
     this.route.data.subscribe((data: any) => {
       if (data && data.extContent && data.extContent.data && data.extContent.data.content) {
@@ -86,7 +88,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         this.userExtCourseEnroll = data.userEnrollContent.data.result
         if (this.userExtCourseEnroll.completionpercentage === 100) {
           this.extContentReadData['completionStatus'] = 2
+
           this.downloadCert()
+          this.contentViewEventForNetCore('completion')
         }
       }
 
@@ -122,6 +126,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.isMobile = false
     }
+    this.contentViewEventForNetCore('view')
+
   }
 
   initializeDiscussData() {
@@ -184,6 +190,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.discussWidgetData.enrolledContent = true
       this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       this.getUserContentEnroll(content.contentId)
+      this.contentViewEventForNetCore('enroll')
     } else {
       this.loader.changeLoad.next(false)
       this.snackBar.open('Unable to enroll to the content')
@@ -307,6 +314,81 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   resetEnableShare(_eventData: any) {
     
     this.enableShare = false
+  }
+
+  contentViewEventForNetCore(eventType:any) {
+    console.log('this.content-->', this.extContentReadData)
+    console.log('eventType--', eventType)
+    console.log('(this.configSvc.netcoreConfig', this.configSvc.netcoreConfig)
+    console.log('userEnrollmentList', this.userExtCourseEnroll)
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
+    ) { 
+      let payload: any = {}
+      if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
+        payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      }
+      console.log('payload', payload)
+      if(this.extContentReadData && this.extContentReadData.name) {
+        payload['content_name'] = this.extContentReadData.name
+      }
+      if(this.extContentReadData && this.extContentReadData.courseCategory) {
+        payload['content_category'] = this.extContentReadData.courseCategory
+      }
+      if(this.extContentReadData && this.extContentReadData.externalId) {
+        payload['content_id'] = this.extContentReadData.externalId
+      }
+      // if(this.extContentReadData && this.extContentReadData.name) {
+        payload['content_url'] = window.location.href
+      // }
+      if(this.extContentReadData && this.extContentReadData.appIcon) {
+        payload['content_image'] = this.extContentReadData.appIcon
+      }
+      if(this.extContentReadData && this.extContentReadData.duration) {
+        payload['content_duration'] = this.extContentReadData.duration && Number(this.extContentReadData.duration) > 0 ? this.secondsToTime(this.extContentReadData.duration) : this.extContentReadData.duration
+      } else {
+        payload['content_duration'] = 0
+      }
+      if(this.extContentReadData && this.extContentReadData.avgRating
+      ) {
+        payload['content_rating'] = this.extContentReadData.avgRating
+      }
+      if(this.extContentReadData && this.extContentReadData.totalNoOfRating) {
+        console.log('payload', payload)
+        payload['no_users_rated'] = this.extContentReadData.totalNoOfRating
+      }
+      // if(Object.keys(this.userExtCourseEnroll).length) {
+       payload['learning_path_content'] = Object.keys(this.userExtCourseEnroll).length ? true : false
+      // }
+      if(this.extContentReadData && this.extContentReadData.source) {
+        payload['content_provider_name'] = this.extContentReadData.source
+      }
+      console.log('payload--', payload)
+      if(eventType === 'view') {
+        this.netCoreService.trackEventForContentAndEvent('content_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      } else if (eventType === 'enroll') {
+        this.netCoreService.trackEventForContentAndEvent('content_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      } else if (eventType === 'completion') {
+        this.netCoreService.trackEventForContentAndEvent('content_completion', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      }
+      
+    }
+  }
+
+  secondsToTime(d:any)
+  {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+    return hDisplay + mDisplay + sDisplay; 
   }
 
 }

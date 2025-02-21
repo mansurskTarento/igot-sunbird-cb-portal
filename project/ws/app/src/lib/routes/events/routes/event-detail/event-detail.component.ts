@@ -190,6 +190,10 @@ export class EventDetailComponent implements OnInit {
           }
           if( this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
+            console.log('this.enrolledEvent--', this.enrolledEvent)
+            if(this.enrolledEvent && this.enrolledEvent.status === 2) {
+              this.contentViewEventForNetCore('complete')
+            }
           }
 
       this.discussWidgetData.enrolledContent = true
@@ -332,9 +336,9 @@ export class EventDetailComponent implements OnInit {
         if(this.eventData && this.eventData.identifier) {
           payload['event_id'] = this.eventData.identifier
         }
-        if(this.eventData && this.eventData.name) {
-          payload['event_url'] = this.eventData.name
-        }
+        //if(this.eventData && this.eventData.name) {
+          payload['event_url'] = window.location.href
+        //}
         if(this.eventData && this.eventData.appIcon) {
           payload['event_image'] = this.eventData.appIcon
         }

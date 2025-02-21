@@ -2012,6 +2012,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       
       if(res && res.result && res.result.courses && res.result.courses.length) {
         this.userEnrollmentList = res.result.courses
+        
+        let completedContentFlagData:any = this.userEnrollmentList && 
+             this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
+             console.log('this.completedContentFlag--', completedContentFlagData)
+        if(completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
+          this.contentViewEventForNetCore('complete')
+        }
         this.dataTransferSvc.setEnrollData(this.userEnrollmentList)
         if(this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
           // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
@@ -2184,9 +2191,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if(this.content && this.content.identifier) {
         payload['content_id'] = this.content.identifier
       }
-      if(this.content && this.content.name) {
-        payload['content_url'] = this.content.name
-      }
+      // if(this.content && this.content.name) {
+        payload['content_url'] = window.location.href
+      // }
       if(this.content && this.content.appIcon) {
         payload['content_image'] = this.content.appIcon
       }
@@ -2213,6 +2220,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.netCoreService.trackEventForContentAndEvent('content_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       } else if (eventType === 'enroll') {
         this.netCoreService.trackEventForContentAndEvent('content_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      } else if (eventType === 'complete') {
+        this.netCoreService.trackEventForContentAndEvent('content_completion', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       }
       
     }
