@@ -28,7 +28,7 @@
         homeConfig?.leftSection?.active &&  homeConfig?.rightSection?.active ? 'right' :
         (!homeConfig?.rightSection?.active && !homeConfig?.leftSection?.active) ? 'full' : ''"
             *ngIf="homeConfig?.rightSection?.active">
-            <div class="flex flex-col gap-2 mt-3">
+            <div class="flex flex-col gap-1 mt-3">
                 <ng-container *ngIf="enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngFor="let vitem of sectionList;let j=index; trackBy j">
