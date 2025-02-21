@@ -32,7 +32,7 @@
                 <ng-container *ngIf="enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngFor="let vitem of sectionList;let j=index; trackBy j">
-                            <div class="section_{{i}}" *ngIf="i==j">
+                            <div class="section_{{i}}" *ngIf="i==j && vitem && vitem['section'] == 'section_'+i">
                                 <ng-container
                                     *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
                                     <ws-feed-list [widgetData]="item"></ws-feed-list>
