@@ -122,7 +122,7 @@ export class NetCoreService {
             'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
             'action_device': 'Desktop'
         }
-        console.log('payload', payload)
+        // console.log('payload', payload)
 
         if(!Object.keys(contentpayload).length) {
             contentpayload = {}
