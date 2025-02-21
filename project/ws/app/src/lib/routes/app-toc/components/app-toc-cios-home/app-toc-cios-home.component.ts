@@ -335,9 +335,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       if(this.extContentReadData && this.extContentReadData.name) {
         payload['content_name'] = this.extContentReadData.name
       }
-      if(this.extContentReadData && this.extContentReadData.courseCategory) {
-        payload['content_category'] = this.extContentReadData.courseCategory
-      }
+      // if(this.extContentReadData && this.extContentReadData.courseCategory) {
+        payload['content_category'] = 'External Course'
+      // }
       if(this.extContentReadData && this.extContentReadData.externalId) {
         payload['content_id'] = this.extContentReadData.externalId
       }
@@ -365,6 +365,12 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       // }
       if(this.extContentReadData && this.extContentReadData.source) {
         payload['content_provider_name'] = this.extContentReadData.source
+      } else if(this.extContentReadData && this.extContentReadData.contentPartner && 
+        this.extContentReadData.contentPartner.contentPartnerName
+      ){
+        payload['content_provider_name'] = this.extContentReadData.contentPartner.contentPartnerName
+      } else {
+        payload['content_provider_name'] =  'Karmayogi Bharat'
       }
       console.log('payload--', payload)
       if(eventType === 'view') {
