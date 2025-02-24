@@ -58,6 +58,8 @@ export class FeedListComponent implements OnInit {
           _subType = `${event.selectedTab}-${event.selectedPill}`
         }
         else if(event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
+          id = event.identifier
+          type = event.primaryCategory
           _subType = 'saksham_ai'
         } 
         else if(event.typeOfTelemetry === 'providers') {
