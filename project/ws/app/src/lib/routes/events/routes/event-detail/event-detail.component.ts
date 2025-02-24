@@ -15,6 +15,7 @@ import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 //import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 /* tslint:enable */
 
 @Component({
@@ -59,6 +60,7 @@ export class EventDetailComponent implements OnInit {
     private contentSvc: WidgetContentLibService,
     // private discussService: DiscussService,
     private snackBar: MatSnackBar,
+    private netCoreService: NetCoreService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -172,7 +174,7 @@ export class EventDetailComponent implements OnInit {
     if (this.eventData && userId) {
       this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
         /* tslint:disable */
-        console.log('data --- ', data)
+        this.contentViewEventForNetCore('view')
         if (data && data.result && data.result.events && data.result.events.length > 0) {
           this.enrolledEvent = data.result.events.find((d: any) => d.contentId === this.eventData.identifier)
           this.enrolledEvent = { ...this.enrolledEvent }
@@ -187,6 +189,9 @@ export class EventDetailComponent implements OnInit {
           }
           if( this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
+            if(this.enrolledEvent && this.enrolledEvent.status === 2) {
+              this.contentViewEventForNetCore('complete')
+            }
           }
 
       this.discussWidgetData.enrolledContent = true
@@ -304,5 +309,59 @@ export class EventDetailComponent implements OnInit {
           this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
           this.discussWidgetData = { ...this.discussWidgetData }
       }
+    }
+
+    contentViewEventForNetCore(eventType:any) {
+      if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
+        && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
+        && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
+        && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
+        && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
+      ) { 
+        let payload: any = {}
+        if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
+          payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+        }
+        if(this.eventData && this.eventData.name) {
+          payload['event_name'] = this.eventData.name
+        }
+        if(this.eventData && this.eventData.courseCategory) {
+          payload['event_category'] = this.eventData.resourceType
+        }
+        if(this.eventData && this.eventData.identifier) {
+          payload['event_id'] = this.eventData.identifier
+        }
+        //if(this.eventData && this.eventData.name) {
+          payload['event_url'] = window.location.href
+        //}
+        if(this.eventData && this.eventData.appIcon) {
+          payload['event_image'] = this.eventData.appIcon
+        }
+        // if(this.eventData && this.eventData.duration) {
+          payload['event_duration'] = this.eventData.duration > 0 ? this.secondsToTime(this.eventData.duration) : this.eventData.duration
+        // }
+        if(this.eventData && this.eventData.sourceName) {
+          payload['event_provider_name'] = this.eventData.sourceName
+        }
+        if(eventType === 'view') {
+         this.netCoreService.trackEventForContentAndEvent('event_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+        } else if (eventType === 'enroll') {
+         this.netCoreService.trackEventForContentAndEvent('event_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+        }
+        
+      }
+    }
+  
+    secondsToTime(d:any)
+    {
+      d = Number(d);
+      var h = Math.floor(d / 3600);
+      var m = Math.floor(d % 3600 / 60);
+      var s = Math.floor(d % 3600 % 60);
+  
+      var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+      var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+      var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+      return hDisplay + mDisplay + sDisplay; 
     }
 }
