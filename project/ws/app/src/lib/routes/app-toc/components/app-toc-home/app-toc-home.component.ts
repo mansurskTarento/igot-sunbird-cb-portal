@@ -2015,7 +2015,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         
         let completedContentFlagData:any = this.userEnrollmentList && 
              this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
-        if(completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
+        if(completedContentFlagData && completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
           this.contentViewEventForNetCore('complete')
         }
         this.dataTransferSvc.setEnrollData(this.userEnrollmentList)
