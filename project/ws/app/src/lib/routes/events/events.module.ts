@@ -48,7 +48,8 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http';
+import { ViewAllComponent } from './routes/view-all/view-all.component'
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { HttpClient } from '@angular/common/http'
     EventPlayerComponent,
     EventPdfPlayerComponent,
     EventYouTubeComponent,
+    ViewAllComponent,
   ],
   imports: [
     CommonModule,
