@@ -32,7 +32,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   childFields: any[] = []
   surveyFormIsValid = true
   addLoader = 0
-  wfClientVersion = 0
+  wfClientVersion = "0"
 
   constructor(
     private snackBar: MatSnackBar,
@@ -41,9 +41,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
     private appTocSvc: AppTocService,
     private fb: FormBuilder,
     // private datePipe: DatePipe
-  ) { 
+  ) {
     this.surveyId = data.surveyId
-    this.wfClientVersion = data.wfClientVersion
+    this.wfClientVersion = data.wfClientVersion.toLocaleString()
   }
 
   public checkAfterSubmit(_e: any) {
@@ -61,7 +61,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.wfClientVersion === 1.1) {
+    if (this.wfClientVersion === '1.1') {
       this.getFormDetails()
       this.otherFieldType = ['radio', 'boolean', 'rating']
     }
@@ -77,23 +77,23 @@ export class EnrollQuestionnaireComponent implements OnInit {
       }
       this.buildForm()
     }, (error: HttpErrorResponse) => {
-      if(error) {
+      if (error) {
         this.addLoader = this.addLoader - 1
       }
     })
   }
 
   buildForm() {
-    if(this.formDetails) {
+    if (this.formDetails) {
       this.surveyForm = this.fb.group({
         fields: this.fb.array([])
       })
       const questionsArray = this.questionsArray
       if (this.formDetails.fields) {
         this.formDetails.fields.forEach((field: any) => {
-          if(field.fieldType !== 'separator' && field.fieldType !== 'heading') {
+          if (field.fieldType !== 'separator' && field.fieldType !== 'heading') {
             const validatorsArray: any = []
-            if(field.isRequired) {
+            if (field.isRequired) {
               validatorsArray.push(Validators.required)
             }
 
@@ -121,12 +121,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
             field['controlIndex'] = questionsArray.length
             field['validatorsArray'] = validatorsArray
             questionsArray.push(questionGroup)
-            if(validatorsArray.length) {
+            if (validatorsArray.length) {
               this.surveyFormIsValid = false
             }
           }
 
-          if(field.parentId) {
+          if (field.parentId) {
             this.childFields.push(field)
           } else {
             this.parentalFields.push(field)
@@ -136,7 +136,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
   }
 
-  get questionsArray (): FormArray {
+  get questionsArray(): FormArray {
     if (this.surveyForm && this.surveyForm.controls.fields) {
       return this.surveyForm.controls.fields as FormArray
     }
@@ -144,7 +144,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   getChildQuestionsFormArray(sectionId: string): FormArray {
-    if(this.surveyForm && this.surveyForm.controls.fields) {
+    if (this.surveyForm && this.surveyForm.controls.fields) {
       const questionsArray = this.questionsArray
       const childQuestionsArray = questionsArray.controls.filter((question: any) => {
         return question.value && question.value.parentId === sectionId;
@@ -159,7 +159,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
 
   getChildFields(sectionId: string) {
     let sectionChilds: any = []
-    if(this.childFields) {
+    if (this.childFields) {
       sectionChilds = this.childFields.filter((field: any) => field.parentId === sectionId)
     }
     return sectionChilds
@@ -179,33 +179,33 @@ export class EnrollQuestionnaireComponent implements OnInit {
   submitForm() {
     this.surveyForm.markAllAsTouched()
     this.surveyForm.updateValueAndValidity()
-    if(this.surveyFormIsValid) {
+    if (this.surveyFormIsValid) {
       const formBody: any = {
         formId: this.surveyId,
         formData: '',
         timestamp: Date.now(),
         version: 4,
         dataObject: this.dataObject,
-        
+
       }
 
-      if(this.childFields.length) {
+      if (this.childFields.length) {
         formBody['meta'] = [
           {
-              key: '',
-              value: ''
+            key: '',
+            value: ''
           }
         ],
-        formBody['infoObject'] = {
+          formBody['infoObject'] = {
             '': ''
-        }
+          }
       }
-      
+
       this.addLoader = this.addLoader + 1
       this.appTocSvc.submitForm(formBody).subscribe({
         next: res => {
           this.addLoader = this.addLoader - 1
-          if(_.get(res, 'statusInfo.statusCode') === 200) {
+          if (_.get(res, 'statusInfo.statusCode') === 200) {
             this.openSnackbar('Form is submitted successfully')
             this.dialogRef.close(true)
           } else {
@@ -214,7 +214,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
         },
         error: (error: HttpErrorResponse) => {
           this.addLoader = this.addLoader - 1
-          if(error) {
+          if (error) {
             this.openSnackbar('Something went wrong please try again')
           }
         }
@@ -228,10 +228,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
     }
 
     const fields = _.get(this.surveyForm, 'value.fields', [])
-    if(fields ) {
+    if (fields) {
       fields.forEach((field: any) => {
         let value = field.isNA ? 'N/A' : field.answer
-        if(!field.isNA && field.fieldType === 'date' && value ) {
+        if (!field.isNA && field.fieldType === 'date' && value) {
           const formattedYear = value.getFullYear()
           const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
           const formattedDay = String(value.getDate()).padStart(2, '0')
@@ -252,7 +252,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   updateSurveyFormValidity() { // some times reactive forms not abale to detect value changes and validity in dynamic formArray
     this.surveyFormIsValid = true
     this.questionsArray.controls.forEach((form: any) => {
-      if(!form.controls.answer.valid) {
+      if (!form.controls.answer.valid) {
         this.surveyFormIsValid = false
       }
     })
