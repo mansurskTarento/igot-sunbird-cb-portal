@@ -13,12 +13,13 @@ import { InitResolver } from '@ws/author/src/lib/services/init-resolve.service'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { BtnPageBackModule, BtnPageBackNavModule, ContentProgressModule, ContentStripWithTabsModule, HttpLoaderFactory } from '@sunbird-cb/collection/src/public-api'
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module'
-import { PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
+import {
+  PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
   PipeFilterModule,
   PipeRelativeTimeModule,
   PipeFilterSearchModule,
   PipeOrderByModule,
- } from '@sunbird-cb/utils-v2'
+} from '@sunbird-cb/utils-v2'
 import { EventsCardComponent } from './components/events-card/events-card.component'
 import { TodayEventCardComponent } from './components/today-event-card/today-event-card.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
@@ -50,6 +51,7 @@ import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { HttpClient } from '@angular/common/http';
 import { ViewAllComponent } from './routes/view-all/view-all.component'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 
 @NgModule({
   declarations: [
@@ -84,6 +86,7 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
     MatDialogModule,
     MatButtonModule,
     MatSidenavModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     PipeFilterModule,
     PipeHtmlTagRemovalModule,

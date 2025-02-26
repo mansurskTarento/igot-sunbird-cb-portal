@@ -24,3 +24,17 @@
   letter-spacing: 0%;
 
 }
+
+.check-list {
+  padding: 4px 0;
+
+  ::ng-deep .mdc-label {
+    margin-left: 10px !important;
+  }
+}
+
+.view-more {
+  color: #1b4ca1;
+  cursor: pointer;
+  font-weight: 700;
+}
