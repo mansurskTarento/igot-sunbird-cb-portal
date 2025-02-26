@@ -16,17 +16,17 @@
             <ng-container *ngFor="let facet of facetsData  | keyvalue:returnZero">
               <div class="individual-block">
                 <div class="list mb-4">
-                  <div *ngIf="facet?.value?.values?.length">
-                    <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
-                    <ng-container
-                      *ngFor="let eType of (!facet.viewMore ? facet?.value?.values.slice(0,2) : facet?.value?.values); index as i">
-                      <div class="check-list">
-                        <mat-checkbox [checked]="eType?.checked"
-                          (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
-                          class="mat-gyaan-filter text-capitalize">{{eType.name}}</mat-checkbox>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="facet?.value?.name === 'Event Type'">
+                  <ng-container *ngIf="facet?.value?.name === 'Event Type'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container
+                        *ngFor="let eType of (!facet.viewMore ? facet?.value?.values.slice(0,2) : facet?.value?.values); index as i">
+                        <div class="check-list">
+                          <mat-checkbox [checked]="canCheck(facet?.key, eType)"
+                            (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
+                            class="mat-gyaan-filter">{{eType.name}}</mat-checkbox>
+                        </div>
+                      </ng-container>
                       <ng-container *ngIf="!facet.viewMore && facet?.value?.values?.length > 2">
                         <div class="pt-3">
                           <span class="view-more" (click)="facet.viewMore = true">View All</span>
@@ -37,9 +37,35 @@
                           <span class="view-more" (click)="facet.viewMore = false">View Less</span>
                         </div>
                       </ng-container>
-                    </ng-container>
-
-                  </div>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="facet?.value?.name === 'Date Range'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container *ngFor="let eType of facet?.value?.values; index as i">
+                        <div class="date-list">
+                          <label>{{eType?.name}}</label>
+                          <mat-form-field appearance="outline" class="w-full">
+                            <input matInput [matDatepicker]="startDate" placeholder="{{eType?.PlaceHolder}}">
+                            <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                            <mat-datepicker #startDate></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="facet?.value?.name !== 'Event Type' && facet?.value?.name !== 'Date Range'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container *ngFor="let eType of facet?.value?.values; index as i">
+                        <div class="check-list">
+                          <mat-checkbox [checked]="eType?.checked"
+                            (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
+                            class="mat-gyaan-filter">{{eType.name}}</mat-checkbox>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
                 </div>
               </div>
             </ng-container>

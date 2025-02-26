@@ -52,6 +52,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { HttpClient } from '@angular/common/http';
 import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDatepickerModule } from '@angular/material/datepicker'
 
 @NgModule({
   declarations: [
@@ -107,6 +108,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
     ContentProgressModule,
     WidgetCommentModule,
     InfiniteScrollModule,
+    MatDatepickerModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
