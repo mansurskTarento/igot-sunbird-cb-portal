@@ -625,14 +625,14 @@ const routes: Routes = [
   {
     path: 'app/globalsearch',
     loadChildren: () =>
-      // import('./routes/route-searchv3-app.module').then(u => u.RouteSearchV2AppModule),
+      // import('./routes/route-searchv2-app.module').then(u => u.RouteSearchV2AppModule),
       import('./routes/route-searchv3-app.module').then(u => u.RouteSearchV3AppModule),
     data: {
       pageType: 'feature',
       pageKey: 'globalsearch',
       pageId: 'app/globalsearch',
       module: 'Home',
-    },
+    }
   },
   {
     path: 'app/seeAll',

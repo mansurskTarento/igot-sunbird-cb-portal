@@ -13,9 +13,10 @@
     <form (submit)="updateQuery(queryControl.value)" class="mat-full-radius">
       <mat-form-field class="autocomplete-form" color="primary" appearance="outline">
         <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
-        <input matInput type="text" role="combobox" accesskey="S" #searchInput [attr.title]="placeHolder"
+        <input matInput type="text" role="combobox" accesskey="S" #searchInput [attr.title]="placeHolder" id="global-search-input"
           i18n-placeholder="search content" [placeholder]="placeHolder" i18-aria-label aria-label="search content"
-          [formControl]="queryControl" [matAutocomplete]="auto" maxlength="50" />
+          (blur)="openSearchTemplate = false" (focus)="openSearchTemplate = true" [formControl]="queryControl"
+          maxlength="50" />
         <mat-icon matSuffix (click)="clearSearchText()" class="cursor-pointer seach-close-icon"
           *ngIf="queryControl.value">close</mat-icon>
         <!-- <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
@@ -34,7 +35,7 @@
     </form>
 
     <div class="search-container">
-      <div class="search-results" *ngIf="queryControl.value">
+      <div class="search-results" *ngIf="queryControl.value && openSearchTemplate">
         <div class="search-categories mb-4">
           <mat-chip-list>
             <mat-chip *ngFor="let category of categories" [removable]="false"

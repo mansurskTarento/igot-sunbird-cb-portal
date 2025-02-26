@@ -1,0 +1,159 @@
+<div class="learnsearch  margin-top-l margin-bottom-l">
+    <ng-container *ngIf="!filtersPanel || filtersPanel !=='hide'">
+
+    </ng-container>
+
+    <mat-sidenav-container autosize class="container-balanced" [hasBackdrop]="false">
+        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened && totalResults !== 0" position="start"
+            class="custom-sidenav" *ngIf="(!filtersPanel || filtersPanel !=='hide') && totalResults !== 0">
+            <ng-container>
+                <ws-app-search-filters *ngIf="facets && facets.length > 0" [urlparamFilters]="paramFilters"
+                    [newfacets]="facets" (appliedFilter)="applyFilter($event)"
+                    [karmayogiBadge]="veifiedKarmayogi"></ws-app-search-filters>
+            </ng-container>
+        </mat-sidenav>
+
+        <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
+            <div class="ml-4">
+                <div class="result-meta my-3">
+                    <div class="" *ngIf="totalResults > 0">
+                        <span class="brand-color">"{{totalResults}}"</span>
+                        <span class="mx-1">{{'learnsearch.searchResultsFor' | translate}}</span>
+                        <span class="brand-color" *ngIf="param">{{param}}'</span>
+                    </div>
+                </div>
+
+                <div *ngIf="screenSizeIsLtMedium" class="flex justify-end">
+                    <button type="button" mat-icon-button (click)="sideNavBarOpened = !sideNavBarOpened"
+                        id="ws-auth-root-home-btn-menu" name="ws-auth-root-home-btn-menu">
+                        <mat-icon>menu</mat-icon>
+                    </button>
+                </div>
+                <!-- <div class="flex flex-5 marbot" [ngClass]="{'margin-top-56': currentRoute === 'home'}"> -->
+                <div *ngIf="totalResults > 0 && searchResults && searchResults.length > 0" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+
+                    <mat-card class="learn-card margin-bottom-m padding-remove position-relative"
+                        *ngFor="let content of searchResults; let i = index" (click)="raiseTelemetry(content, i)">
+                        <div *ngIf="content?.posterImage" class="imageholder float-left">
+                            <img mat-card-image class="margin-remove" [src]="content?.posterImage | pipePublicURL"
+                                alt="" />
+                        </div>
+                        <div *ngIf="!content?.posterImage" class="imageholder float-left">
+                            <ng-container *ngIf="content?.appIcon; else defaultImg" class="imageholder float-left">
+                                <img mat-card-image class="margin-remove" [src]="content?.appIcon | pipePublicURL"
+                                    alt="" />
+                            </ng-container>
+                            <ng-template #defaultImg>
+                                <img mat-card-image class="margin-remove"
+                                    src="/assets/instances/eagle/app_logos/default.png" alt="" />
+                            </ng-template>
+                        </div>
+                        <mat-card-content>
+
+                            <p class="mat-caption ws-mat-black60-text margin-bottom-xxs text-uppercase"
+                                *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event'">
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'audio/mpeg'">mic</mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'application/json' || content?.mimeType === 'application/quiz'">
+                                    assessment</mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'application/pdf'">picture_as_pdf</mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'video/mp4' || content?.mimeType === 'video/x-youtube' || content?.mimeType === 'application/x-mpegURL'">
+                                    videocam</mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'application/vnd.ekstep.content-collection'">video_library
+                                </mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'application/vnd.ekstep.html-archive' || content?.mimeType === 'application/vnd.ekstep.ecml-archive' || content?.mimeType === 'text/x-url'">
+                                    attachment</mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'image/jpeg' || content?.mimeType === 'image/png'">image
+                                </mat-icon>
+                                <mat-icon
+                                    class="mat-icon ws-mat-default-text margin-right-xs notranslate material-icons mat-icon-no-color"
+                                    *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
+                                </mat-icon>
+                                <span *ngIf="content?.contentType !== 'Event'">{{ translateLabels(content.courseCategory
+                                    ||
+                                    content.contentType, 'searchfilters') }}</span>
+                                <span
+                                    *ngIf="content?.contentType === 'Event' && pageConfig?.enrollFlowItems?.includes(content.resourceType)">{{
+                                    'event.karmayogiSaptah' | translate }}</span>
+                            </p>
+
+                            <p class="mat-subheading-1 margin-bottom-xs font-bold-imp cursor-pointer content-title">
+                                <a (click)="getRedirectUrlData(content)"
+                                    [matTooltip]="content?.name">{{content?.name}}</a>
+                            </p>
+                            <div class="bottomsection">
+                                <p class="mat-body-2 margin-bottom-xxs" *ngIf="content?.creator">{{'learnsearch.by' |
+                                    translate}} {{content?.creator}}</p>
+                                <p class="mat-body-2 margin-bottom-xxs" *ngIf="content?.organisation?.length">
+                                    {{'learnsearch.by' | translate}} {{content?.organisation[0]}}</p>
+                                <p class="mat-body-2 margin-bottom-xxs"
+                                    *ngIf="content?.contentPartner?.contentPartnerName">
+                                    {{'learnsearch.by' | translate}} {{content?.contentPartner?.contentPartnerName}}</p>
+                                <div class="contentdata margin-bottom-xm">
+                                    <ul
+                                        class="mat-body-2 margin-remove-top margin-bottom-xs padding-remove ws-mat-black60-text">
+                                        <!-- <li>Health social science</li> -->
+                                        <li *ngIf="content?.lastUpdatedOn">
+                                            <!-- <img src="/assets/icons/content/separator.svg">   -->
+                                            {{ content?.lastUpdatedOn | date: 'dd-MMM-yyyy' }}
+                                        </li>
+                                        <li *ngIf="content?.duration">
+                                            <img src="/assets/icons/content/separator.svg"> {{
+                                            checkForCiosDuration(content)
+                                            | pipeDurationTransform: 'hms' }}
+                                        </li>
+                                        <!-- <li><img src="/assets/icons/content/separator.svg">  Ratings</li> -->
+                                    </ul>
+                                </div>
+                                <div class="tags" *ngIf="content?.keywords && content?.keywords.length > 0">
+                                    <ul
+                                        class="mat-caption margin-remove-top margin-bottom-s padding-remove display-inline-block">
+                                        <li *ngFor="let tag of content?.keywords">{{tag}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+
+            <div class="ml-auto mr-auto mt-8 text-center max-w-330" *ngIf="totalResults === 0">
+                <img src="/assets/icons/no-data.svg" wsUtilsImageResponsive alt="No results"
+                    class="margin-top-l margin-bottom-s">
+                <div class="no-data-text font-bold text-sm my-4" i18n="search route no result">
+                    {{ noResultMessage }}</div>
+                <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText1'
+                    | translate}}</div>
+                <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText2'
+                    | translate}}</div>
+                <div class="action-search-btn flex gap-4 items-center mt-6">
+                    <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
+                        (click)="navigateTo('page/home')">
+                        {{'learnsearch.btnBackToHomepage' | translate}}</button>
+                    <button mat-flat-button class="mat-btn-flat cursor-pointer py-1">
+                        {{'learnsearch.btnExploreMore' | translate}}</button>
+                </div>
+
+            </div>
+
+
+        </mat-sidenav-content>
+
+
+    </mat-sidenav-container>
+</div>

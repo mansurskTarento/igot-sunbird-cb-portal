@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common'
-import { NgModule } from '@angular/core'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
   BtnChannelAnalyticsModule,
@@ -8,70 +8,59 @@ import {
   BtnContentLikeModule,
   BtnContentMailMeModule,
   BtnContentShareModule,
-  BtnGoalsModule, BtnKbModule,
+  BtnGoalsModule,
+  BtnKbModule,
   BtnPageBackModule,
   BtnPlaylistModule,
   DisplayContentTypeModule,
   PipeContentRouteModule,
   BtnKbAnalyticsModule,
   UserAutocompleteModule,
-} from '@sunbird-cb/collection'
-import { WidgetResolverModule } from '@sunbird-cb/resolver'
+} from '@sunbird-cb/collection';
+import { WidgetResolverModule } from '@sunbird-cb/resolver';
 import {
   DefaultThumbnailModule,
-  HorizontalScrollerModule, PipeDurationTransformModule, PipeLimitToModule, PipePartialContentModule,
-} from '@sunbird-cb/utils-v2'
-import { BlogsCardComponent } from './components/blogs-card/blogs-card.component'
-import { FilterDisplayComponent } from './components/filter-display/filter-display.component'
-import { ItemTileComponent } from './components/item-tile/item-tile.component'
-import { LearningCardComponent } from './components/learning-card/learning-card.component'
-import { QandaCardComponent } from './components/qanda-card/qanda-card.component'
-import { SearchInputComponent } from './components/search-input/search-input.component'
-import { HomeComponent } from './routes/home/home.component'
-import { KnowledgeComponent } from './routes/knowledge/knowledge.component'
-import { LearningComponent } from './routes/learning/learning.component'
-import { ProjectComponent } from './routes/project/project.component'
-import { SearchRootComponent } from './routes/search-root/search-root.component'
-import { SocialComponent } from './routes/social/social.component'
-import { SearchV3RoutingModule } from './search-v3-routing.module'
-import { PeopleComponent } from './routes/people/people.component'
-import { SearchInputHomeComponent } from './components/search-input-home/search-input-home.component'
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
-import { MatRippleModule } from '@angular/material/core'
-import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core'
-import { MatDividerModule } from '@angular/material/divider'
-import { MatExpansionModule } from '@angular/material/expansion'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
-import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
-import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+  HorizontalScrollerModule,
+  PipeDurationTransformModule,
+  PipeLimitToModule,
+  PipePartialContentModule,
+  PipePublicURLModule,
+} from '@sunbird-cb/utils-v2';
+import { GlobalSearchComponent } from './routes/global-search/global-search.component';
+import { LearnSearchComponent } from './routes/learn-search/learn-search.component';
+import { SearchFiltersComponent } from './components/search-filters/search-filters.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
+import { MatRippleModule } from '@angular/material/core';
+import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { SearchV3RoutingModule } from './search-v3-routing.module';
+import { SearchInputHomeComponent } from './components/search-input-home/search-input-home.component';
 
 @NgModule({
   declarations: [
-    SearchRootComponent,
-    SearchInputComponent,
+    GlobalSearchComponent,
+    LearnSearchComponent,
+    SearchFiltersComponent,
     SearchInputHomeComponent,
-    LearningComponent,
-    BlogsCardComponent,
-    FilterDisplayComponent,
-    ItemTileComponent,
-    KnowledgeComponent,
-    LearningCardComponent,
-    ProjectComponent,
-    QandaCardComponent,
-    SocialComponent,
-    HomeComponent,
-    PeopleComponent,
   ],
   imports: [
     CommonModule,
@@ -88,6 +77,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     MatIconModule,
     MatMenuModule,
     MatChipsModule,
+    MatListModule,
+    MatSelectModule,
     MatCardModule,
     MatExpansionModule,
     MatCheckboxModule,
@@ -108,6 +99,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     BtnContentMailMeModule,
     BtnKbAnalyticsModule,
     PipePartialContentModule,
+    PipePublicURLModule,
     HorizontalScrollerModule,
     MatProgressSpinnerModule,
     DisplayContentTypeModule,
@@ -116,8 +108,10 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     BtnChannelAnalyticsModule,
     MatDividerModule,
     UserAutocompleteModule,
+    InfiniteScrollModule,
+    TranslateModule,
   ],
-  exports: [ItemTileComponent, SearchInputComponent, SearchInputHomeComponent],
+  exports: [SearchInputHomeComponent],
   providers: [],
 })
-export class SearchV3Module { }
+export class SearchV3Module {}
