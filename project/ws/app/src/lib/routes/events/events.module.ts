@@ -100,7 +100,7 @@ import { HttpClient } from '@angular/common/http'
     BtnPageBackNavModule,
     SkeletonLoaderModule,
     ContentProgressModule,
-    DiscussionV2Module,,
+    DiscussionV2Module,
     InfiniteScrollModule,
     TranslateModule.forRoot({
       loader: {
