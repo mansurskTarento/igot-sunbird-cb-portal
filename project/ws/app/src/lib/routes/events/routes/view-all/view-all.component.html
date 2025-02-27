@@ -52,14 +52,16 @@
                           </mat-form-field>
                         </div>
                       </ng-container>
+                      <div class="line my-4"></div>
                     </div>
                   </ng-container>
                   <ng-container *ngIf="facet?.value?.name !== 'Event Type' && facet?.value?.name !== 'Date Range'">
                     <div *ngIf="facet?.value?.values?.length">
+                      <div class="line mb-4" *ngIf="facet?.value?.displayName === 'Event Status'"></div>
                       <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
                       <ng-container *ngFor="let eType of facet?.value?.values; index as i">
                         <div class="check-list">
-                          <mat-checkbox [checked]="eType?.checked"
+                          <mat-checkbox [checked]="canCheck(facet?.key, eType)"
                             (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
                             class="mat-gyaan-filter">{{eType.name}}</mat-checkbox>
                         </div>

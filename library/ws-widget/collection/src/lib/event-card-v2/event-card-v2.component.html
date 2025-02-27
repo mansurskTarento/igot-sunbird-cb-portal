@@ -1,0 +1,17 @@
+<div class="widget-card-content-new">
+  <ng-container *ngIf="widgetData && (((widgetData?.deletedMode || 'none') === 'hide' && !!!isLiveOrMarkForDeletion)
+  ? false
+  : !((widgetData?.intranetMode || 'none') === 'hide' && !!showIntranetContent))"
+    [ngSwitch]="( (widgetData && widgetData?.cardSubType) || 'cardStandard')">
+    <ng-container *ngSwitchCase="'card-resource'" [ngTemplateOutlet]="cardResource"></ng-container>
+    <ng-container *ngSwitchCase="'card-resource-skeleton'" [ngTemplateOutlet]="cardResourceSkeleton"></ng-container>
+  </ng-container>
+</div>
+
+<ng-template #cardResource>
+
+</ng-template>
+
+<ng-template #cardResourceSkeleton>
+
+</ng-template>

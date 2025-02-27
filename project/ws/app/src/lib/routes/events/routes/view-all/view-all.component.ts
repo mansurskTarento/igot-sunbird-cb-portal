@@ -126,7 +126,7 @@ export class ViewAllComponent {
   changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
     console.log('changeSelection', event, key, keyData, allKeyData)
     if (event) {
-      if (key === 'resourceType') {
+      if (['resourceType', 'eventStatus', 'eventDuration'].includes(key)) {
         if (this.selectedFilters[key]) {
           let slected = this.selectedFilters[key]
           slected.push(keyData.name)
@@ -134,12 +134,10 @@ export class ViewAllComponent {
         } else {
           this.selectedFilters[key] = [keyData.name]
         }
-      }
-      if (key === 'eventStatus') {
-        delete this.selectedFilters['resourceType']
+        delete this.selectedFilters.key
       }
     } else {
-      if (key === 'resourceType') {
+      if (['resourceType', 'eventStatus', 'eventDuration'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
@@ -155,6 +153,10 @@ export class ViewAllComponent {
     if (this.selectedFilters[key]) {
       return this.selectedFilters[key].includes(keyData.name)
     }
+  }
+
+  clearAll() {
+    this.selectedFilters = {}
   }
 
 

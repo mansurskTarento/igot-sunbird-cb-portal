@@ -53,6 +53,7 @@ import { HttpClient } from '@angular/common/http';
 import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
+import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
 
 @NgModule({
   declarations: [
@@ -109,6 +110,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker'
     WidgetCommentModule,
     InfiniteScrollModule,
     MatDatepickerModule,
+    EventCardV2Module,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
