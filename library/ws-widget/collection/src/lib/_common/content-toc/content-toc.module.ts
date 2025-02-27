@@ -10,7 +10,7 @@ import { HttpLoaderFactory } from 'src/app/app.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
 import { PipeDurationTransformModule, HorizontalScrollerV2Module,
   PipeRelativeTimeModule, PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
-import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
+import { DiscussionV2Module } from '@sunbird-cb/discussion-v2'
 import { AvatarPhotoModule } from '../avatar-photo/avatar-photo.module'
 import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
 import { RatingSummaryModule } from '../rating-summary/rating-summary.module'
@@ -92,7 +92,7 @@ import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc
       },
     }),
     PipeSafeSanitizerModule,
-    WidgetCommentModule,
+    DiscussionV2Module,
   ],
   exports: [
     ContentTocComponent,
