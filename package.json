@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy/localhost.proxy.json -o",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=16000 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy/localhost.proxy.json -o",
     "build-dev": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=dev --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
     "build-np": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=np --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
     "build-preprod": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=preprod --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
@@ -51,7 +51,7 @@
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-quml-player": "0.0.6",
     "@project-sunbird/telemetry-sdk": "0.0.26",
-    "@sunbird-cb/consumption": "0.0.131-ang-13-16",
+    "@sunbird-cb/consumption": "0.0.148-ang-13-16",
     "@sunbird-cb/design-system": "0.0.2",
     "@sunbird-cb/discussion-v2": "0.0.28-ang-13-16",
     "@sunbird-cb/discussions-ui-v8": "2.1.7-ang-9-12",
