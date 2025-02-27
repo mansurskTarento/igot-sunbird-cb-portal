@@ -990,11 +990,11 @@ export class InitService {
     if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
       userInfoPayload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
     }
-    if(userEnrollmentCount && 
-      userEnrollmentCount['userCourseEnrolmentInfo'] && 
-      userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
-      userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
-    }
+    // if(userEnrollmentCount && 
+    //   userEnrollmentCount['userCourseEnrolmentInfo'] && 
+    //   userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
+    //   userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
+    // }
     if(this.configSvc && this.configSvc.unMappedUser 
       && this.configSvc.unMappedUser.profileDetails 
       && this.configSvc.unMappedUser.profileDetails.personalDetails 
@@ -1002,9 +1002,9 @@ export class InitService {
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.firstname) {
         userInfoPayload['FULL_NAME'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim())
       }
-      if (this.configSvc.unMappedUser.profileDetails.personalDetails.gender) {
-        userInfoPayload['GENDER'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim())
-      }
+      // if (this.configSvc.unMappedUser.profileDetails.personalDetails.gender) {
+      //   userInfoPayload['GENDER'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim())
+      // }
       
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium) {
         userInfoPayload['MOTHER_TONGUE'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim())
@@ -1023,11 +1023,10 @@ export class InitService {
       if (this.configSvc.unMappedUser.profileDetails.profileStatus) {
         userInfoPayload['PROFILE_STATUS'] = this.configSvc.unMappedUser.profileDetails.profileStatus.trim()
       }
-      if (this.configSvc.unMappedUser.profileDetails.profileImageUrl) {
-        userInfoPayload['PROFILE_PHOTO'] = this.configSvc.unMappedUser.profileDetails.profileImageUrl.trim()
-      } 
+      // if (this.configSvc.unMappedUser.profileDetails.profileImageUrl) {
+      //   userInfoPayload['PROFILE_PHOTO'] = this.configSvc.unMappedUser.profileDetails.profileImageUrl.trim()
+      // } 
     }
-
 
     if(this.configSvc && this.configSvc.unMappedUser 
       && this.configSvc.unMappedUser.profileDetails 
@@ -1037,8 +1036,8 @@ export class InitService {
       if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation) {
         userInfoPayload['PROFILE_DESIGNATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation.trim())
       } 
-      if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].organisationType) {
-        userInfoPayload['ORGANISATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].organisationType.trim())
+      if (this.configSvc.unMappedUser.profileDetails && this.configSvc.unMappedUser.profileDetails.employmentDetails && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
+        userInfoPayload['ORGANISATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.trim())
       } 
       if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group) {
         userInfoPayload['PROFILE_GROUP'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group.trim())
