@@ -1190,6 +1190,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
       this.raiseEnrollTelemetry()
+      if(this.recommendedCoursesId) {
+        this.raiseEnrollTelementryForSakshamAIGenerated()
+      }
       const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
       if (this.content && this.content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
         this.autoEnrollCuratedProgram(NsContent.ECourseCategory.CURATED_PROGRAM, batchData)
@@ -1935,6 +1938,29 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       },
       {
         pageIdExt: `btn-enroll`,
+        module: WsEvents.EnumTelemetrymodules.CONTENT,
+      }
+    )
+  }
+
+  raiseEnrollTelementryForSakshamAIGenerated() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'enroll',
+        id: this.content ? this.content.identifier : '',
+        target: {
+          id: this.recommendedCoursesId, 
+          ver: "1.0",
+          type: "saksham_ai"
+         },
+      } as any,
+      {
+        id: this.content ? this.content.identifier : '',
+        type: this.content ? this.content.primaryCategory : '',
+      },
+      {
+        pageId: `/app/toc/${this.content?.identifier}/overview_btn-enroll`,        
         module: WsEvents.EnumTelemetrymodules.CONTENT,
       }
     )
