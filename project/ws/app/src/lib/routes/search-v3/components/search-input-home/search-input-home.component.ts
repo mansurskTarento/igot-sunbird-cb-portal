@@ -1,6 +1,8 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -28,6 +30,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   @Output() closed: EventEmitter<boolean> = new EventEmitter();
   queryControl: UntypedFormControl;
   languageSearch: string[] = [];
+  SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif';
 
   // filteredOptions$: Observable<string[]> = this.queryControl.valueChanges.pipe(
   //   startWith(this.queryControl.value),
@@ -63,16 +66,33 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   ];
   selectedSearchCategory = '';
   openSearchTemplate = false;
+  loaderSearching = false;
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.openSearchTemplate = false;
+    }
+  }
   constructor(
     private activated: ActivatedRoute,
     private router: Router,
     private searchServSvc: SearchServService,
     private configSvc: ConfigurationsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private eRef: ElementRef
   ) {
     this.queryControl = new UntypedFormControl(
       this.activated.snapshot.queryParams.q || ''
     );
+
+    this.queryControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe((value) => {
+        if (value) {
+          console.log(value);
+          this.loaderSearching = false;
+        }
+      });
   }
 
   ngOnInit() {
@@ -85,11 +105,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           };
         })
         .then(() => {
-          this.autoFilter();
+          // this.autoFilter();
           this.initialize();
         });
     } else {
-      this.autoFilter();
+      // this.autoFilter();
       this.initialize();
     }
   }
@@ -164,7 +184,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       } else {
         this.searchLocale = this.getActiveLocale();
       }
-      
+
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
         ? this.route.snapshot.data.searchPageData.data.search
             .isAutoCompleteAllowed
@@ -246,12 +266,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   getSearchAutoCompleteResults(q: string) {
     if (this.searchLocale.split(',').length === 1) {
       this.searchServSvc
-        .searchAutoComplete({
-          q,
-          l: this.searchLocale,
-        })
-        .then((result: ISearchAutoComplete[]) => {
+        .searchAutoComplete({ q, l: this.searchLocale }).then((result: ISearchAutoComplete[]) => {
           this.autoCompleteResults = result;
+          this.openSearchTemplate = false;
         })
         .catch(() => {});
     }
@@ -267,7 +284,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    // this.performSearch(this.searchForm.get('searchQuery')?.value);
   }
 
   addFilter(key: string, value: any, display: string) {
@@ -278,19 +294,14 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     } else {
       this.activeFilters.push({ key, value, display });
     }
-
-    // this.performSearch(this.searchForm.get('searchQuery')?.value);
   }
 
   removeFilter(filter: any) {
     this.activeFilters = this.activeFilters.filter((f) => f.key !== filter.key);
-    // this.performSearch(this.searchForm.get('searchQuery')?.value);
   }
 
   clearSearch() {
-    // this.searchForm.get('searchQuery')?.setValue('');
     this.activeFilters = [];
     this.selectedSearchCategory = 'All';
-    // this.searchResults.emit({ query: '', filters: [], category: 'All', results: [] });
   }
 }

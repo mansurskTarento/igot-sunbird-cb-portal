@@ -36,13 +36,29 @@
                             </ng-container>
                         </div>
                     </ng-container>
-    
+
                     <!-- event Card -->
                     <ng-container>
                         <div class="search-event-card">
                             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'Events(4)' | translate}}</p>
                             <ng-container>
                                 <ws-app-search-event-card></ws-app-search-event-card>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+
+                    <!-- // Peoples -->
+                    <ng-container>
+                        <div class="search-people-card overflow-x-hidden">
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'People(4)' | translate}}</p>
+                            <ng-container>
+                                <ws-utils-horizontal-scroller *ngIf="recommendedUsers.length" [loadStatus]="'done'">
+                                    <div class="card-container mr-6" *ngFor="let user of recommendedUsers"
+                                        (click)="changeWidget(data.id)">
+                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user"
+                                            (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
+                                    </div>
+                                </ws-utils-horizontal-scroller>
                             </ng-container>
                         </div>
                     </ng-container>

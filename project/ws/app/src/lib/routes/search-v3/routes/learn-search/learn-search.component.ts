@@ -102,7 +102,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   facetsData: any = [];
   veifiedKarmayogi = false;
   noResultMessage = '';
-
+  recommendedUsers: any
   constructor(
     private searchSrvc: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -160,6 +160,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     }
+
+    if (this.activated.snapshot.data.recommendedPeople && this.activated.snapshot.data.recommendedPeople.data.result) {
+      this.recommendedUsers = this.activated.snapshot.data.recommendedPeople.data.result.data.
+      find((item: any) => item.field === 'employmentDetails.departmentName').results
+      this.recommendedUsers.sort((a: any, b: any) => {
+        return this.getName(a.personalDetails).toLowerCase().localeCompare(this.getName(b.personalDetails).toLowerCase())
+      })
+    }
     // if (this.param) {
     //   this.getStartupData()
 
@@ -199,19 +207,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // ngOnChanges(props: SimpleChanges) {
-  //   for (const prop in props) {
-  //     if (prop === 'hierarchyMapData') {
-  //       if(_.isEmpty(props['hierarchyMapData'].currentValue)){
-  //         this.loadingOverallPRogress = true
-  //       } else {
-  //         const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-  //         this.activatedRoute.snapshot.queryParams.collectionId : ''
-  //         this.ComputeCompletedNodesAndPercent(collectionId)
-  //       }
-  //     }
-  //   }
-  // }
+  getName(userDetails: any) {
+    return userDetails.firstName ? userDetails.firstName : userDetails.firstname
+  }
 
   getFacets(facets: any) {
     facets.forEach((item: any) => {
@@ -628,5 +626,36 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   navigateTo(route: string) {
     this.router.navigate([route]);
+  }
+
+  connectionUpdatePeopleCard(_event: any) {
+    // if (event === 'connection-updated') {
+    //   // let usrDept = 'igot'
+    //   // if (this.me) {
+    //   //   usrDept = this.me.departmentName || 'igot'
+    //   // }
+    //   let req: NSNetworkDataV2.IRecommendedUserReq;
+    //   req = {
+    //     size: 50,
+    //     offset: 0,
+    //     search: [
+    //       {
+    //         field: 'employmentDetails.departmentName',
+    //         values: [this.currentUserDept],
+    //       },
+    //     ],
+    //   };
+    //   this.networkV2Service.fetchAllRecommendedUsers(req).subscribe(
+    //     (data: any) => {
+    //       this.recommendedUsers = data.result.data.find(
+    //         (item: any) => item.field === 'employmentDetails.departmentName'
+    //       ).results;
+    //       this.getAllConnectionRequests();
+    //     },
+    //     (_err: any) => {
+    //       // this.openSnackbar(err.error.message.split('|')[1] || this.defaultError)
+    //     }
+    //   );
+    // }
   }
 }

@@ -13,12 +13,18 @@
     <form (submit)="updateQuery(queryControl.value)" class="mat-full-radius">
       <mat-form-field class="autocomplete-form" color="primary" appearance="outline">
         <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
-        <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput [attr.title]="placeHolder" id="global-search-input"
-          i18n-placeholder="search content" [placeholder]="placeHolder" i18-aria-label aria-label="search content"
-          (blur)="openSearchTemplate = false" (focus)="openSearchTemplate = true" [formControl]="queryControl"
-          maxlength="50" />
-        <mat-icon matSuffix (click)="clearSearchText()" class="cursor-pointer seach-close-icon"
-          *ngIf="queryControl.value">close</mat-icon>
+        <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
+          [attr.title]="placeHolder" id="global-search-input" i18n-placeholder="search content"
+          [placeholder]="placeHolder" i18-aria-label aria-label="search content" (focus)="openSearchTemplate = true"
+          [formControl]="queryControl" maxlength="50" (input)="loaderSearching = true" />
+
+        <ng-container *ngIf="loaderSearching">
+          <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-close-icon">
+        </ng-container>
+        <ng-container>
+          <mat-icon matSuffix (click)="clearSearchText()" class="cursor-pointer search-close-icon"
+            *ngIf="queryControl.value && !loaderSearching">close</mat-icon>
+        </ng-container>
         <!-- <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
           (optionSelected)="updateQuery($event.option.value)">
           <mat-option *ngIf="queryControl.value" [value]="queryControl.value">{{ queryControl.value }}

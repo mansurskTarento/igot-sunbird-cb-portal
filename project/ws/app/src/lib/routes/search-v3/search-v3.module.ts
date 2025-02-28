@@ -16,6 +16,7 @@ import {
   PipeContentRouteModule,
   BtnKbAnalyticsModule,
   UserAutocompleteModule,
+  AvatarPhotoModule
 } from '@sunbird-cb/collection';
 import { WidgetResolverModule } from '@sunbird-cb/resolver';
 import {
@@ -56,7 +57,8 @@ import { SearchV3RoutingModule } from './search-v3-routing.module';
 import { SearchInputHomeComponent } from './components/search-input-home/search-input-home.component';
 import { CourseContentCardComponent } from './components/course-content-card/course-content-card.component';
 import { SearchEventCardComponent } from './components/search-event-card/search-event-card.component';
-
+import { PeopleConnectionCardComponent } from './components/people-connection-card/people-connection-card.component';
+import { ConnectionNameComponent } from '../network-v2/components/connection-name/connection-name.component';
 @NgModule({
   declarations: [
     GlobalSearchComponent,
@@ -65,6 +67,8 @@ import { SearchEventCardComponent } from './components/search-event-card/search-
     SearchInputHomeComponent,
     CourseContentCardComponent,
     SearchEventCardComponent,
+    PeopleConnectionCardComponent,
+    ConnectionNameComponent
   ],
   imports: [
     CommonModule,
@@ -114,6 +118,7 @@ import { SearchEventCardComponent } from './components/search-event-card/search-
     UserAutocompleteModule,
     InfiniteScrollModule,
     TranslateModule,
+    AvatarPhotoModule,
   ],
   exports: [SearchInputHomeComponent],
   providers: [],
