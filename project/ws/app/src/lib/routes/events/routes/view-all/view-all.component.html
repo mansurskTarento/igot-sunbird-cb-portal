@@ -66,14 +66,29 @@
                     <div *ngIf="facet?.value?.values?.length">
                       <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
                       <ng-container *ngFor="let eType of facet?.value?.values; index as i">
-                        <div class="date-list">
-                          <label>{{eType?.name}}</label>
-                          <mat-form-field appearance="outline" class="w-full">
-                            <input matInput [matDatepicker]="startDate" placeholder="{{eType?.PlaceHolder}}">
-                            <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-                            <mat-datepicker #startDate></mat-datepicker>
-                          </mat-form-field>
-                        </div>
+                        <ng-container *ngIf="eType.key === 'fromDate'">
+                          <div class="date-list">
+                            <label>{{eType?.name}}</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.PlaceHolder}}"
+                                (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="startDate">
+                              <mat-datepicker-toggle matSuffix [for]="sDate"></mat-datepicker-toggle>
+                              <mat-datepicker #sDate></mat-datepicker>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="eType.key === 'toDate'">
+                          <div class="date-list">
+                            <label>{{eType?.name}}</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.PlaceHolder}}"
+                                (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="endDate">
+                              <mat-datepicker-toggle matSuffix [for]="eDate"></mat-datepicker-toggle>
+                              <mat-datepicker #eDate></mat-datepicker>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
+
                       </ng-container>
                       <div class="line my-4"></div>
                     </div>

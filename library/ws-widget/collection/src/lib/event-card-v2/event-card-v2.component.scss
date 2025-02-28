@@ -1894,6 +1894,51 @@ $title-line-count: 2;
   }
 }
 
+.blink {
+  animation: blink-animation 1s steps(2, start) infinite;
+}
+
+@keyframes blink-animation {
+  0% {
+    font-size: 10px;
+    font-weight: normal;
+  }
+
+  50% {
+    font-size: 11px;
+    font-weight: bolder;
+  }
+
+  100% {
+    font-size: 10px;
+    font-weight: normal;
+  }
+}
+
+.fixed-live {
+  position: absolute;
+  top: 46%;
+  left: 35%;
+  background-color: rgb(209, 57, 36);
+  padding: 3px 22px;
+  border-radius: 21px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live {
+  font-family: Lato;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: rgba(206, 68, 68, 1);
+  text-transform: uppercase;
+}
+
 .card-resource-container-small {
   width: 272px !important;
   height: 350px !important;

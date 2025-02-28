@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { NsContent } from '@sunbird-cb/utils-v2';
 import { EventService } from '../../services/events.service';
 import * as _ from 'lodash'
+import { DatePipe } from '@angular/common';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 
 @Component({
   selector: 'ws-app-view-all',
   templateUrl: './view-all.component.html',
-  styleUrls: ['./view-all.component.scss']
+  styleUrls: ['./view-all.component.scss'],
+  providers: [DatePipe]
 })
 export class ViewAllComponent {
 
@@ -15,9 +18,12 @@ export class ViewAllComponent {
   facetsData: any
   selectedFilters: any = {}
   contentDataList: any = []
-  contnet: any = [
-  ]
-  constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,) {
+  contnet: any = []
+  startDate: any = ''
+  endDate: any = ''
+  constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
+    private datePipe: DatePipe, private snackbar: MatSnackBar,
+  ) {
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
       { title: 'Recommended Events', url: `none`, icon: '' },
@@ -97,6 +103,9 @@ export class ViewAllComponent {
             name: "To:",
             PlaceHolder: "Select Date",
           },
+          {
+            key: "button"
+          }
         ]
       },
       eventDuration: {
@@ -129,7 +138,6 @@ export class ViewAllComponent {
       }
     })
     console.log("selectedFilters", this.selectedFilters)
-    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
     this.fetchData()
   }
 
@@ -152,28 +160,64 @@ export class ViewAllComponent {
         limit: 500,
       },
     }
-    if (this.selectedFilters && this.selectedFilters.resourceType) {
+    if (this.selectedFilters) {
+      let startDate: any = ''
+      let endDate: any = ''
+      console.log(this.datePipe, startDate, endDate)
+      if (this.selectedFilters.eventDate && this.selectedFilters.eventDate.length) {
+        if (this.selectedFilters.eventDate.includes('Today') && !this.selectedFilters.eventDate.includes('Tomorrow')) {
+          startDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+          endDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+        }
+        if (!this.selectedFilters.eventDate.includes('Today') && this.selectedFilters.eventDate.includes('Tomorrow')) {
+          let tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          startDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
+          endDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
+        }
+        if (this.selectedFilters.eventDate.includes('Today') && this.selectedFilters.eventDate.includes('Tomorrow')) {
+          const today = new Date()
+          let tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
+          endDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
+        }
+      }
+      if (this.selectedFilters.dateRange && this.selectedFilters.dateRange.length) {
+        startDate = this.datePipe.transform(new Date(this.startDate), 'yyyy-MM-dd')
+        endDate = this.datePipe.transform(new Date(this.endDate), 'yyyy-MM-dd')
+      }
       requestBody = {
         ...requestBody,
         request: {
           ...requestBody.request,
           filters: {
             ...requestBody.request.filters,
-            resourceType: this.selectedFilters.resourceType,
+            resourceType: this.selectedFilters.resourceType ? this.selectedFilters.resourceType : [],
+            ...(startDate ? { "startDate": { ">=": [startDate] } } : {}),
+            ...(endDate ? { "endDate": { "<=": [endDate] } } : {}),
           },
         },
-      };
+      }
+
+
     }
     console.log("this.selectedFilters.resourceType ", requestBody)
     return requestBody
   }
 
   fetchData() {
+    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
     const requestBody = this.generateRequestBoday()
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
-      const response = _.get(resp, 'result.Event', [])
+      let response: any = _.get(resp, 'result.Event', [])
       if (response.length) {
-        this.contentDataList = this.transformContentsToWidgets(response, {})
+        if (this.selectedFilters.eventStatus) {
+          response = this.processResult(response)
+          this.contentDataList = this.transformContentsToWidgets(response, {})
+        } else {
+          this.contentDataList = this.transformContentsToWidgets(response, {})
+        }
       } else {
         this.contentDataList = this.transformContentsToWidgets([], {})
       }
@@ -184,6 +228,37 @@ export class ViewAllComponent {
     })
   }
 
+  processResult(events: any) {
+    let processedEvents: any = []
+    events.forEach((event: any) => {
+      if (event.startDate && event.endDate && event.startTime && event.endTime) {
+        // Conver current time into milliseconds
+        let currentTime = new Date().getTime() / 1000
+        // Combining date and time for start event
+        let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+        // Combining date and time for end event
+        let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+        console.log(" time ", event.startDate, currentTime, evenStarttDate, eventEndDate)
+        if (currentTime > eventEndDate) {
+          console.log("Past ",)
+          if (this.selectedFilters.eventStatus.includes('Past Events')) {
+            processedEvents.push(event)
+          }
+        } else if (currentTime <= eventEndDate && currentTime >= evenStarttDate) {
+          if (this.selectedFilters.eventStatus.includes('Live Events')) {
+            event.showLive = true
+            processedEvents.push(event)
+          }
+        } else {
+          if (this.selectedFilters.eventStatus.includes('Upcoming')) {
+            processedEvents.push(event)
+          }
+        }
+      }
+    })
+    return processedEvents
+  }
+
   returnZero() {
     return 0
   }
@@ -191,7 +266,7 @@ export class ViewAllComponent {
   changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
     console.log('changeSelection', event, key, keyData, allKeyData)
     if (event) {
-      if (['resourceType', 'eventStatus', 'eventDuration'].includes(key)) {
+      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
         if (this.selectedFilters[key]) {
           let slected = this.selectedFilters[key]
           slected.push(keyData.name)
@@ -199,10 +274,22 @@ export class ViewAllComponent {
         } else {
           this.selectedFilters[key] = [keyData.name]
         }
+        if (key === 'eventDate') {
+          delete this.selectedFilters.eventStatus
+          delete this.selectedFilters.dateRange
+          this.startDate = ''
+          this.endDate = ''
+        }
+        if (key === 'eventStatus') {
+          delete this.selectedFilters.dateRange
+          delete this.selectedFilters.eventDate
+          this.startDate = ''
+          this.endDate = ''
+        }
         delete this.selectedFilters.key
       }
     } else {
-      if (['resourceType', 'eventStatus', 'eventDuration'].includes(key)) {
+      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
@@ -211,7 +298,39 @@ export class ViewAllComponent {
         }
       }
     }
+    this.fetchData()
     console.log('selectedFilters', this.selectedFilters)
+  }
+
+
+  onDateChange(event: any, eType: any, facet: any) {
+    console.log(facet, eType, event)
+    if (eType.key === 'fromDate') {
+      this.startDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
+    }
+    if (eType.key === 'toDate') {
+      this.endDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
+    }
+    if (this.startDate && this.endDate) {
+      const date1 = new Date(this.startDate)
+      const date2 = new Date(this.endDate)
+      if (date1 > date2) {
+        this.snackbar.open('Start date should not greater than end date.')
+      } else {
+        delete this.selectedFilters.eventDate
+        delete this.selectedFilters.eventStatus
+        this.selectedFilters[facet.key] = ['fromDate', 'toDate']
+        this.fetchData()
+      }
+      console.log(this.selectedFilters)
+    } else {
+      if (!this.startDate) {
+        this.snackbar.open('Choose a valid start date')
+      }
+      if (!this.endDate) {
+        this.snackbar.open('Choose a valid end date')
+      }
+    }
   }
 
   canCheck(key: any, keyData: any) {
@@ -222,6 +341,8 @@ export class ViewAllComponent {
 
   clearAll() {
     this.selectedFilters = {}
+    this.startDate = ''
+    this.endDate = ''
   }
 
   private transformSkeletonToWidgets(

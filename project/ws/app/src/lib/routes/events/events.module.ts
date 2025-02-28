@@ -54,6 +54,7 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 
 @NgModule({
   declarations: [
@@ -111,6 +112,7 @@ import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/
     InfiniteScrollModule,
     MatDatepickerModule,
     EventCardV2Module,
+    MatSnackBarModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

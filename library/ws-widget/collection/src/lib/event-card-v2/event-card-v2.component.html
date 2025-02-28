@@ -30,14 +30,17 @@
                     {{ getTime(widgetData?.content?.duration)}}
                   </span>
                 </div>
+                <div *ngIf="widgetData?.content?.showLive" class="fixed-live">{{widgetData?.content?.status}}</div>
               </div>
             </div>
             <div class="padding-m">
-              <div class="pb-1">
+              <div class="pb-1 flex justify-between">
                 <div class="flex gap-1 resource-type">
                   <img src="assets/icons/handshake.svg" />
                   <span class="resource-text">{{widgetData?.content?.resourceType}}
                   </span>
+                </div>
+                <div *ngIf="widgetData?.content?.showLive" class="live blink">(( . )) {{widgetData?.content?.status}}
                 </div>
               </div>
               <div class="event-title capitalize">{{widgetData?.content?.name}} {{widgetData?.content?.name}}</div>
