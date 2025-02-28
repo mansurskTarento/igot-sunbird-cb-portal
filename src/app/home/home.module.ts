@@ -48,7 +48,7 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { SignupService } from '../routes/signup/signup.service'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
  
 
 @NgModule({
