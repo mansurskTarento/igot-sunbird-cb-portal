@@ -13,7 +13,7 @@
     <form (submit)="updateQuery(queryControl.value)" class="mat-full-radius">
       <mat-form-field class="autocomplete-form" color="primary" appearance="outline">
         <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
-        <input matInput type="text" role="combobox" accesskey="S" #searchInput [attr.title]="placeHolder" id="global-search-input"
+        <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput [attr.title]="placeHolder" id="global-search-input"
           i18n-placeholder="search content" [placeholder]="placeHolder" i18-aria-label aria-label="search content"
           (blur)="openSearchTemplate = false" (focus)="openSearchTemplate = true" [formControl]="queryControl"
           maxlength="50" />
@@ -54,8 +54,8 @@
             <span class="text-sm clear-all font-normal">Clear All</span>
           </div>
           <ng-container *ngFor="let query of recentSearches">
-            <mat-list-item class="flex justify-between items-center">
-              <div matLine class="text-xs font-normal recent-search-text">{{ query }}</div>
+            <mat-list-item class="w-full">
+              <div matLine class="text-left text-xs font-normal recent-search-text">{{ query }}</div>
               <button mat-icon-button>
                 <mat-icon>close</mat-icon>
               </button>

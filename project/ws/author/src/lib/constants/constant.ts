@@ -88,3 +88,39 @@ export const CATEGORY_TYPE = [
     ],
   },
 ];
+
+export const FILTER_RATING = [
+  { rating: '4.5', count: 999, ischecked: false },
+  { rating: '4.0', count: 999, ischecked: false },
+  { rating: '3.5', count: 999, ischecked: false },
+  { rating: '3.0', count: 999, ischecked: false },
+];
+
+export const FILTER_LANGUAGE = [
+  { lang: 'Hindi', count: 999, ischecked: false },
+  { lang: 'English', count: 999, ischecked: false },
+  { lang: 'Tamil', count: 999, ischecked: false },
+  { lang: 'Telugu', count: 999, ischecked: false },
+  { lang: 'Odia', count: 999, ischecked: false },
+];
+
+export const FILTER_CONTENT_PROVIDER = [
+  { provider: 'Karmayogi Bharat', count: 999, ischecked: false },
+  { provider: 'ISTM', count: 999, ischecked: false },
+  { provider: 'NADT', count: 999, ischecked: false },
+  { provider: 'SVPNPA', count: 999, ischecked: false },
+  { provider: 'Karmayogi Bharat', count: 999, ischecked: false },
+];
+
+export const FILTER_DURATION = [
+  { duration: '90 mins', count: 999, ischecked: false },
+  { duration: '60 - 90 mins', count: 999, ischecked: false },
+  { duration: '30 - 60 mins', count: 999, ischecked: false },
+  { duration: '0 - 30 mins', count: 999, ischecked: false },
+];
+
+export const FILTER_COMPETENCY_AREA = [
+  { comp: 'Behavioural', count: 999, ischecked: false },
+  { comp: 'Domain', count: 999, ischecked: false },
+  { comp: 'Functional', count: 999, ischecked: false },
+];

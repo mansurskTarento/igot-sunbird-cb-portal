@@ -160,6 +160,14 @@ export class InitService {
       'diversity_3',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/Jan-karmayogi-grey.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'handshake',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/handshake.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'certificate',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/certificate.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',

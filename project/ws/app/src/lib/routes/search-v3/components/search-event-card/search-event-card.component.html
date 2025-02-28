@@ -1,0 +1,76 @@
+<div class="course-content-card-wrapper">
+    <mat-card class="course-card mb-4 overflow-hidden max-w-full">
+        <div class="card-container p-4 flex relative">
+            <!-- Left side - Image -->
+            <div class="course-image-container relative overflow-hidden">
+                <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Course thumbnail"
+                    class="w-full h-full rounded-xl">
+                <div class="image-overlay rounded-xl"></div>
+                <div class="course-badges-new">
+                    <span class="badge new-badge font-normal">Live</span>
+                </div>
+            </div>
+
+            <!-- Right side - Content -->
+            <div class="course-content pl-0 md:pl-4">
+                <!-- <ng-container
+                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event'"> -->
+                <ng-container>
+                    <div class="flex justify-between items-center">
+                        <div class="saptha">
+                            <div class="event-tag">
+                                <mat-icon class="star-icon" svgIcon="handshake"></mat-icon>
+                                <span class="font-normal text-xs">Event Tag</span>
+                            </div>
+
+                        </div>
+                        <!-- Bookmark button -->
+                        <div class="bookmark-container">
+                            <button mat-icon-button aria-label="Bookmark this course"
+                                (click)="contentBookmarked = !contentBookmarked">
+                                <mat-icon [ngClass]="contentBookmarked ? 'marked':'unmarked'">{{contentBookmarked ?
+                                    'bookmark' :
+                                    'bookmark_border'}}</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <h2 class="course-title font-normal">
+                    India’s Economy
+                </h2>
+
+                <div class="course-tags mb-3 font-normal">
+                    To transform Indian civil services capacity civil services capacity...
+                </div>
+
+                <div class="course-author mb-3 flex items-center gap-2">
+                    <div class="author-avatar flex items-center justify-center">
+                        <img class="source-icon" alt="ong"
+                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="16">
+                    </div>
+                    <span class="organization-name">By Karmayogi Bharat</span>
+                </div>
+
+                <div class="course-stats flex items-center gap-4 flex-wrap">
+                    <div class="stats">
+                        <mat-icon class="star-icon" svgIcon="calender-event"></mat-icon>
+                        <span class="font-normal text-xs">Fri, Jan 24 6:00 pm </span>
+                    </div>
+
+                    <div class="stats">
+                        <mat-icon class="star-icon" svgIcon="certificate"></mat-icon>
+                        <span class="font-normal text-xs">Certification</span>
+                    </div>
+
+                    <div class="karmayogi-verified">
+                        <img class="source-icon" alt="ong"
+                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
+                        <span class="font-normal text-xs">iGOT</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </mat-card>
+</div>

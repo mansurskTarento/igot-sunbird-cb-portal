@@ -1372,7 +1372,7 @@ ngx-guided-tour {
   cursor: pointer;
 }
 
-.mat-full-radius{
+.mat-full-radius, .mat-full-radius-select {
   .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 30px;
   }
@@ -1400,5 +1400,11 @@ ngx-guided-tour {
 
   .mat-form-field-appearance-outline .mat-form-field-flex {
     padding: 0 16px 0 16px;
+  }
+}
+
+.mat-full-radius-select {
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 16px 0 16px 0 !important;
   }
 }

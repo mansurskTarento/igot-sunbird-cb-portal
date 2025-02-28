@@ -1,0 +1,104 @@
+<div class="course-content-card-wrapper">
+    <mat-card class="course-card mb-4 overflow-hidden max-w-full">
+        <div class="card-container p-4 flex relative">
+            <!-- Left side - Image -->
+            <div class="course-image-container relative overflow-hidden">
+                <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Course thumbnail"
+                    class="w-full h-full rounded-xl">
+                <div class="course-badges flex items-center gap-2">
+                    <span class="badge language-badge font-normal">Hindi</span>
+                    <span class="badge duration-badge font-normal">
+                        <mat-icon>schedule</mat-icon>
+                        14 hrs
+                    </span>
+                </div>
+                <div class="course-badges-new">
+                    <span class="badge new-badge font-normal">New</span>
+                </div>
+            </div>
+
+            <!-- Right side - Content -->
+            <div class="course-content pl-0 md:pl-4">
+                <!-- <ng-container
+                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event'"> -->
+                <ng-container>
+                    <div class="flex justify-between items-center">
+                        <div class="course-type font-normal">
+                            <mat-icon class="document-icon">video_library</mat-icon>
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'application/json' || content?.mimeType === 'application/quiz'">
+                                assessment</mat-icon>
+                            <mat-icon *ngIf="content?.mimeType === 'application/pdf'">picture_as_pdf</mat-icon>
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'video/mp4' || content?.mimeType === 'video/x-youtube' || content?.mimeType === 'application/x-mpegURL'">
+                                videocam</mat-icon>
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'application/vnd.ekstep.content-collection'">video_library
+                            </mat-icon>
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'application/vnd.ekstep.html-archive' || content?.mimeType === 'application/vnd.ekstep.ecml-archive' || content?.mimeType === 'text/x-url'">
+                                attachment</mat-icon>
+
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'image/jpeg' || content?.mimeType === 'image/png'">image
+                            </mat-icon>
+                            <mat-icon
+                                *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
+                            </mat-icon>
+                            Course
+                        </div>
+                        <!-- Bookmark button -->
+                        <div class="bookmark-container">
+                            <button mat-icon-button aria-label="Bookmark this course"
+                                (click)="contentBookmarked = !contentBookmarked">
+                                <mat-icon [ngClass]="contentBookmarked ? 'marked':'unmarked'">{{contentBookmarked ?
+                                    'bookmark' :
+                                    'bookmark_border'}}</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <h2 class="course-title font-normal">
+                    Effective Teaching Strategies for Anganwadi Educators: Enhancing Early Childhood Learning with
+                    Engaging Methods and Holistic Child Develo...
+                </h2>
+
+                <div class="course-tags mb-3 font-normal">
+                    Sub Theme - Design · UI · UX · Product · AI · Management · Developer · HTML · CSSDesign · UI · UX...
+                </div>
+
+                <div class="course-author mb-3 flex items-center gap-2">
+                    <div class="author-avatar flex items-center justify-center">
+                        <img class="source-icon" alt="ong"
+                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="16">
+                    </div>
+                    <span class="organization-name">By Karmayogi Bharat</span>
+                </div>
+
+                <div class="course-stats flex items-center gap-4 flex-wrap">
+                    <div class="rating">
+                        <mat-icon class="star-icon">star</mat-icon>
+                        <span class="font-normal text-xs">4.5 (234)</span>
+                    </div>
+
+                    <div class="enrollment">
+                        <mat-icon class="star-icon">people</mat-icon>
+                        <span class="font-normal text-xs">2,123 enrolled</span>
+                    </div>
+
+                    <div class="most-enrolled-tag">
+                        <mat-icon class="star-icon">whatshot</mat-icon>
+                        <span class="font-normal text-xs">Most Enrolled (2,123)</span>
+                    </div>
+
+                    <div class="karmayogi-verified">
+                        <img class="source-icon" alt="ong"
+                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
+                        <span class="font-normal text-xs">iGOT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card>
+</div>

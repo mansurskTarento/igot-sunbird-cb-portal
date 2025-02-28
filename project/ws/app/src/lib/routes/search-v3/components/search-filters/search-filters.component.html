@@ -2,8 +2,7 @@
     <p class="mat-subheading-1 margin-bottom-m font-bold-imp text-dark">{{'searchfilters.filterBy' | translate}}</p>
     <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}}</p>
 
-    <form class="filter-form">
-        <!-- <mat-accordion class="filter-section margin-bottom-m" *ngFor="let fs of filteroptions" open> -->
+    <div class="filter-form">
         <mat-accordion class="filter-section margin-bottom-m">
             <ng-container *ngFor="let category of (showAll ? categoryType : categoryType.slice(0, 4))">
                 <mat-expansion-panel *ngIf="category.filters.length > 0" class="">
@@ -23,12 +22,84 @@
                 </mat-expansion-panel>
             </ng-container>
         </mat-accordion>
-
-        <!-- Show More / Show Less Button -->
-        <div class="brand-color underline" (click)="toggleShowMore()">
+        <div class="brand-color underline cursor-pointer" (click)="toggleShowMore()">
             {{ showAll ? 'See Less' : 'See More' }}
         </div>
+    </div>
 
-    </form>
+    <div class="rating-filter">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.ratingTitle' | translate}}</p>
+        <mat-selection-list>
+            <section class="mat-body-2 margin-bottom-xs text-capitalize" *ngFor="let options of ratingFilter">
+                <mat-checkbox [checked]="options.ischecked">
+                    {{ options.rating + ' (' + options.count + ')' }}
+                </mat-checkbox>
+            </section>
+        </mat-selection-list>
+    </div>
+
+    <div class="languages-filter">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.languages' | translate}}</p>
+        <div class="mat-full-radius mb-2">
+            <mat-form-field appearance="outline" class="search-input-block">
+                <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage>
+                <mat-icon matPrefix class="search-icon">search</mat-icon>
+            </mat-form-field>
+        </div>
+        <mat-selection-list>
+            <section class="mat-body-2 margin-bottom-xs text-capitalize"
+                *ngFor="let options of (showAll ? languageFilter : languageFilter.slice(0, 4))">
+                <mat-checkbox [checked]="options.ischecked">
+                    {{ options.lang }}
+                </mat-checkbox>
+            </section>
+        </mat-selection-list>
+        <div class="brand-color underline cursor-pointer" (click)="toggleShowMore()">
+            {{ showAll ? 'See Less' : 'See More' }}
+        </div>
+    </div>
+
+    <div class="content-provider-filter">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.contentProvider' | translate}}</p>
+        <div class="mat-full-radius mb-2">
+            <mat-form-field appearance="outline" class="search-input-block">
+                <input matInput class="search-filter-input" placeholder="Search" #inputSearchContentProvider>
+                <mat-icon matPrefix class="search-icon">search</mat-icon>
+            </mat-form-field>
+        </div>
+        <mat-selection-list>
+            <section class="mat-body-2 margin-bottom-xs text-capitalize"
+                *ngFor="let options of (showAll ? contentProviderFilter : contentProviderFilter.slice(0, 4))">
+                <mat-checkbox [checked]="options.ischecked">
+                    {{ options.provider }}
+                </mat-checkbox>
+            </section>
+        </mat-selection-list>
+        <div class="brand-color underline cursor-pointer" (click)="toggleShowMore()">
+            {{ showAll ? 'See Less' : 'See More' }}
+        </div>
+    </div>
+
+    <div class="duration-filter">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.duration' | translate}}</p>
+        <mat-selection-list>
+            <section class="mat-body-2 margin-bottom-xs text-capitalize" *ngFor="let options of duartionFilter">
+                <mat-checkbox [checked]="options.ischecked">
+                    {{ options.duration }}
+                </mat-checkbox>
+            </section>
+        </mat-selection-list>
+    </div>
+
+    <div class="competency-area-filter">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.competencyArea' | translate}}</p>
+        <mat-selection-list>
+            <section class="mat-body-2 margin-bottom-xs text-capitalize" *ngFor="let options of competencyAreaFilter">
+                <mat-checkbox [checked]="options.ischecked">
+                    {{ options.comp }}
+                </mat-checkbox>
+            </section>
+        </mat-selection-list>
+    </div>
+
 </div>
-<!-- categoryType -->
