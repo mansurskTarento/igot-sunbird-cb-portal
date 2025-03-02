@@ -1,0 +1,14 @@
+<div  class="container-balanced">
+    <ng-container [wsResolverWidget]="banner"></ng-container>
+    <div class="flex gap-6 mt-4">
+        <div class="left flex flex-col gap-5">
+            <div>
+                <ws-app-events-engagement [engagementDetails]="engagementDetails"></ws-app-events-engagement>
+            </div>
+            <div>
+                <ws-app-events-calendar [eventsList]="eventsList"></ws-app-events-calendar>
+            </div>
+        </div>
+    </div>
+</div>
+

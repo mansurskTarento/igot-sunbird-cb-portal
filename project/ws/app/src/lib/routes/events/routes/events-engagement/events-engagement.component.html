@@ -1,0 +1,20 @@
+<div class="p-4 flex flex-col gap-4 engagement-card">
+    <div class="pb-4 engagement-header">My Event Engagement</div>
+    <div class="flex gap-6">
+        <div class="flex flex-col gap-2">
+            <img class="engagement-icons" src="/assets/icons/events_attended.svg" alt="">
+            <div class="events-attended">Events Attended</div>
+            <div class="events-value">{{engagementDetails?.eventsAttended}}</div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <img class="engagement-icons" src="/assets/icons/events_enrolled.svg" alt="">
+            <div class="events-attended">Events Enrolled</div>
+            <div class="events-value">{{engagementDetails?.eventsEnrolled}}</div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <mat-icon class="schedule-icon">schedule</mat-icon>
+            <div class="events-attended">Hours Watched</div>
+            <div class="events-value">{{engagementDetails?.hoursWatched}}</div>
+        </div>
+    </div>
+</div>

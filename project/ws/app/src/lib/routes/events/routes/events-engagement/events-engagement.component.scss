@@ -1,0 +1,39 @@
+.engagement-card {
+    border: 1px solid #00000014;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+}
+
+.engagement-header {
+    /* stylelint-disable */
+    font: 600 14px 'Montserrat';
+    /* stylelint-enable */
+    color: #212121;
+    border-bottom: 1px solid #00000014;
+}
+
+.engagement-icons {
+    width: 17px;
+    height: 17px;
+}
+
+.schedule-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: #F3962F;
+}
+
+.events-attended {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px 'Lato';
+    /* stylelint-enable */
+}
+
+.events-value {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px 'Lato';
+    /* stylelint-enable */
+}

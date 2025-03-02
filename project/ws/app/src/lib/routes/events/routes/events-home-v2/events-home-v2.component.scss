@@ -1,0 +1,20 @@
+@import 'ws-common';
+@import 'ws-vars';
+@import 'ws-mixins';
+
+.container-balanced {
+  @extend %page-center;
+  height: auto;
+  min-height: 400px;
+}
+
+.left {
+  width: 270px;
+}
+
+@media only screen and (max-width: 768px) {
+    .container-balanced {
+        margin-top: 0;
+        flex-direction: column;
+    }
+}

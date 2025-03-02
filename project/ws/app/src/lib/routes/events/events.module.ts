@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { CommonModule, DatePipe } from '@angular/common'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
@@ -48,7 +48,10 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http';
+import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component';
+import { EventsCalendarComponent } from './routes/events-calendar/events-calendar.component';
+import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
 
 @NgModule({
   declarations: [
@@ -63,6 +66,9 @@ import { HttpClient } from '@angular/common/http'
     EventPlayerComponent,
     EventPdfPlayerComponent,
     EventYouTubeComponent,
+    EventsHomeV2Component,
+    EventsCalendarComponent,
+    EventsEngagementComponent,
   ],
   imports: [
     CommonModule,
@@ -116,6 +122,7 @@ import { HttpClient } from '@angular/common/http'
     EventService,
     ViewerResolve,
     EventResolve,
+    DatePipe
   ],
 })
 export class EventsModule { }

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
-import { EventsHomeComponent } from './routes/events-home/events-home.component'
+// import { EventsHomeComponent } from './routes/events-home/events-home.component'
 import { EventsComponent } from './routes/events/events.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
 import { EventRecentResolve } from './resolvers/event-resolve'
@@ -10,11 +10,12 @@ import { EventPlayerComponent } from './routes/event-player/event-player.compone
 import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf-player.component'
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
+import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component'
 
 const routes: Routes = [
   {
     path: '',
-    component: EventsHomeComponent,
+    component: EventsHomeV2Component,
     data: {
       pageId: '',
       module: '',
