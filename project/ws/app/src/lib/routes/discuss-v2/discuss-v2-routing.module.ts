@@ -35,6 +35,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'community/:communityId/:discussionId',
+    // loadChildren: () => import('./wrapper/wrapper.module').then(u => u.WrapperModule),
+    component: CommunityDetailsHomeComponent,
+    data: {
+      pageId: 'discussion-forum',
+      module: 'Discuss',
+    },
+  },
+  {
     path: 'search',
     // loadChildren: () => import('./wrapper/wrapper.module').then(u => u.WrapperModule),
     component: CommunitySearchComponent,
