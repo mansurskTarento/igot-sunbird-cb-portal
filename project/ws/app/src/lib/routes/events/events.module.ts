@@ -54,7 +54,11 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { FiltersComponent } from './routes/events/filters/filters.component'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
 
 @NgModule({
   declarations: [
@@ -70,6 +74,8 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
     EventPdfPlayerComponent,
     EventYouTubeComponent,
     ViewAllComponent,
+    FiltersComponent,
+    MobileFiltersComponent,
   ],
   imports: [
     CommonModule,
@@ -113,6 +119,8 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
     MatDatepickerModule,
     EventCardV2Module,
     MatSnackBarModule,
+    MatMenuModule,
+    MatBottomSheetModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -122,6 +130,8 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
     }),
   ],
   providers: [
+    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
+    { provide: MatBottomSheetRef, useValue: {} },
     LoaderService,
     InitResolver,
     EventService,

@@ -4,7 +4,11 @@ import { NsContent } from '@sunbird-cb/utils-v2';
 import { EventService } from '../../services/events.service';
 import * as _ from 'lodash'
 import { DatePipe } from '@angular/common';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+//import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { UntypedFormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component';
 
 @Component({
   selector: 'ws-app-view-all',
@@ -21,8 +25,9 @@ export class ViewAllComponent {
   contnet: any = []
   startDate: any = ''
   endDate: any = ''
+  searchControl = new UntypedFormControl('')
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
-    private datePipe: DatePipe, private snackbar: MatSnackBar,
+    private datePipe: DatePipe, private bottomSheet: MatBottomSheet,
   ) {
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
@@ -132,11 +137,19 @@ export class ViewAllComponent {
   }
 
   ngOnInit() {
+
+    this.searchControl.valueChanges.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.fetchData()
+    })
     this.activateRoute.queryParamMap.subscribe((data: any) => {
       if (data.params.resourceType) {
         this.selectedFilters['resourceType'] = [data.params.resourceType]
       }
     })
+
     console.log("selectedFilters", this.selectedFilters)
     this.fetchData()
   }
@@ -148,7 +161,7 @@ export class ViewAllComponent {
       ],
       query: '',
       request: {
-        query: '',
+        query: this.searchControl && this.searchControl.value ? this.searchControl.value : '',
         filters: {
           status: ['Live'],
           contentType: 'Event',
@@ -183,9 +196,9 @@ export class ViewAllComponent {
           endDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
         }
       }
-      if (this.selectedFilters.dateRange && this.selectedFilters.dateRange.length) {
-        startDate = this.datePipe.transform(new Date(this.startDate), 'yyyy-MM-dd')
-        endDate = this.datePipe.transform(new Date(this.endDate), 'yyyy-MM-dd')
+      if (this.selectedFilters.dateRange && this.selectedFilters.dateRange.fromDate && this.selectedFilters.dateRange.toDate) {
+        startDate = this.datePipe.transform(new Date(this.selectedFilters.dateRange.fromDate), 'yyyy-MM-dd')
+        endDate = this.datePipe.transform(new Date(this.selectedFilters.dateRange.toDate), 'yyyy-MM-dd')
       }
       requestBody = {
         ...requestBody,
@@ -228,6 +241,19 @@ export class ViewAllComponent {
     })
   }
 
+  isLiveEvent(event: any) {
+    if (event.startDate && event.endDate && event.startTime && event.endTime) {
+      // Conver current time into milliseconds
+      let currentTime = new Date().getTime() / 1000
+      // Combining date and time for start event
+      let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+      // Combining date and time for end event
+      let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+      return (currentTime <= eventEndDate && currentTime >= evenStarttDate)
+    }
+    return false
+  }
+
   processResult(events: any) {
     let processedEvents: any = []
     events.forEach((event: any) => {
@@ -240,7 +266,6 @@ export class ViewAllComponent {
         let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
         console.log(" time ", event.startDate, currentTime, evenStarttDate, eventEndDate)
         if (currentTime > eventEndDate) {
-          console.log("Past ",)
           if (this.selectedFilters.eventStatus.includes('Past Events')) {
             processedEvents.push(event)
           }
@@ -259,90 +284,47 @@ export class ViewAllComponent {
     return processedEvents
   }
 
-  returnZero() {
-    return 0
-  }
-
-  changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
-    console.log('changeSelection', event, key, keyData, allKeyData)
-    if (event) {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
-        if (this.selectedFilters[key]) {
-          let slected = this.selectedFilters[key]
-          slected.push(keyData.name)
-          this.selectedFilters[key] = slected
-        } else {
-          this.selectedFilters[key] = [keyData.name]
-        }
-        if (key === 'eventDate') {
-          delete this.selectedFilters.eventStatus
-          delete this.selectedFilters.dateRange
-          this.startDate = ''
-          this.endDate = ''
-        }
-        if (key === 'eventStatus') {
-          delete this.selectedFilters.dateRange
-          delete this.selectedFilters.eventDate
-          this.startDate = ''
-          this.endDate = ''
-        }
-        delete this.selectedFilters.key
-      }
-    } else {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
-        let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
-        if (filtered.length === 0) {
-          delete this.selectedFilters[key]
-        } else {
-          this.selectedFilters[key] = filtered
-        }
-      }
-    }
+  filterChange(data: any) {
+    console.log(data)
+    this.selectedFilters = data
     this.fetchData()
-    console.log('selectedFilters', this.selectedFilters)
-  }
-
-
-  onDateChange(event: any, eType: any, facet: any) {
-    console.log(facet, eType, event)
-    if (eType.key === 'fromDate') {
-      this.startDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
-    }
-    if (eType.key === 'toDate') {
-      this.endDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
-    }
-    if (this.startDate && this.endDate) {
-      const date1 = new Date(this.startDate)
-      const date2 = new Date(this.endDate)
-      if (date1 > date2) {
-        this.snackbar.open('Start date should not greater than end date.')
-      } else {
-        delete this.selectedFilters.eventDate
-        delete this.selectedFilters.eventStatus
-        this.selectedFilters[facet.key] = ['fromDate', 'toDate']
-        this.fetchData()
-      }
-      console.log(this.selectedFilters)
-    } else {
-      if (!this.startDate) {
-        this.snackbar.open('Choose a valid start date')
-      }
-      if (!this.endDate) {
-        this.snackbar.open('Choose a valid end date')
-      }
-    }
-  }
-
-  canCheck(key: any, keyData: any) {
-    if (this.selectedFilters[key]) {
-      return this.selectedFilters[key].includes(keyData.name)
-    }
   }
 
   clearAll() {
     this.selectedFilters = {}
     this.startDate = ''
     this.endDate = ''
+  }
+
+  openBottomSheet(): void {
+    const bottomSheetRef = this.bottomSheet.open(MobileFiltersComponent, {
+      data: {
+        facetsData: this.facetsData,
+        selectedFilters: this.selectedFilters,
+        clonedFilters: this.selectedFilters,
+      },
+      panelClass: 'filter-bottomsheet',
+      disableClose: true
+    })
+    bottomSheetRef.afterDismissed().subscribe((result: any) => {
+      if (result && result.action === 'apply') {
+        this.selectedFilters = result.selectedFilters
+        this.fetchData()
+      }
+    })
+  }
+
+  sortType(type: any) {
+    if (type == 'asc') {
+      this.contentDataList = this.contentDataList.sort((a: any, b: any) =>
+        a.widgetData.content.name.localeCompare(b.widgetData.content.name))
+    } else if (type === 'short') {
+      this.contentDataList = this.contentDataList.sort(
+        (a: any, b: any) => a.widgetData.content.duration - b.widgetData.content.duration)
+    } else {
+      this.contentDataList = this.contentDataList.sort(
+        (a: any, b: any) => b.widgetData.content.duration - a.widgetData.content.duration)
+    }
   }
 
   private transformSkeletonToWidgets(
@@ -369,7 +351,10 @@ export class ViewAllComponent {
       widgetSubType: 'cardContent',
       widgetHostClass: 'mb-2',
       widgetData: {
-        content,
+        content: {
+          ...content,
+          showLive: this.isLiveEvent(content),
+        },
         ...(content.batch && {
           batch: content.batch,
         }),
@@ -388,3 +373,4 @@ export class ViewAllComponent {
 
 
 }
+
