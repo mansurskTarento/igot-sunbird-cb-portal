@@ -46,19 +46,33 @@ export class FeedListComponent implements OnInit {
           }
         )
       } else {
-        let id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
-        let type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
+        let id = event.typeOfTelemetry === 'mdo-channels' ? event.identifier : event.orgId
+        let type = event.typeOfTelemetry === 'mdo-channels' ? 'org/ministry' : event.title
         let _subType = event.typeOfTelemetry
-        if (event.typeOfTelemetry === 'cbpPlan') {
+        if ((event.typeOfTelemetry === 'cbpPlan' && !event?.sakshamAIGenerated
+          || event.typeOfTelemetry === 'forYou' 
+          || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
+        ) {
           id = event.identifier
           type = event.primaryCategory
           _subType = `${event.selectedTab}-${event.selectedPill}`
+        }
+        else if(event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
+          id = event.identifier
+          type = event.primaryCategory
+          _subType = 'saksham_ai'
+        } 
+        else if(event.typeOfTelemetry === 'providers') {
+          id = event.orgId
+          type = 'org'
+          _subType = `training-institutions`
         }
         this.events.raiseInteractTelemetry(
           {
             type: 'click',
             subType: _subType,
-            id: 'content-card',
+            id: 'card-content',
+            pageid: "/page/home"
           },
           {
             id,

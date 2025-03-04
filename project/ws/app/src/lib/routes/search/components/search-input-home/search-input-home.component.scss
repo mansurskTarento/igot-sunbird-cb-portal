@@ -75,15 +75,19 @@ ws-app-search-input-home .autocomplete-form {
     // background: #00A9F4 0% 0% no-repeat padding-box;
     // background: #00A9F4 0% 0% no-repeat padding-box;
     border-radius: 0px 4px 4px 0px;
-    padding: 8px;
-    margin-left: 16px;
-    margin-top: 27px;
+    padding: 8px 4px;
+    margin-left: 8px;
+    margin-top: 28px;
   }
 
   .mat-form-field-appearance-legacy .mat-form-field-wrapper {
     padding-bottom: 1.85em !important;
   }
   
+}
+
+.search .mat-form-field-label-wrapper {
+  top: -0.7em !important;
 }
 
 .x-large-typography .mat-form-field-prefix .mat-icon, .x-large-typography .mat-form-field-suffix .mat-icon {
@@ -134,7 +138,7 @@ ws-app-search-input-home .search-border {
   border: 1px solid rgba(0, 0, 0, 0.16);
   flex: 1;
   // max-width: 486px;
-  max-width: 286px;
+  max-width: 320px;
   height: 32px;
   margin-top: auto;
   margin-bottom: auto;
