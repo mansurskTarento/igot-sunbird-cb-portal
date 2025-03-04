@@ -3,8 +3,21 @@
         <div class="card-container p-4 flex relative">
             <!-- Left side - Image -->
             <div class="course-image-container relative overflow-hidden">
-                <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Course thumbnail"
-                    class="w-full h-full rounded-xl">
+                <ng-container *ngIf="content?.posterImage">
+                    <img [src]="content?.posterImage | pipePublicURL" alt="Course thumbnail"
+                        class="w-full h-full rounded-xl" [wsUtilsDefaultThumbnail]="defaultThumbnail">
+                </ng-container>
+                <ng-container *ngIf="!content?.posterImage">
+                    <ng-container *ngIf="content?.appIcon; else defaultImg">
+                        <img [src]="content?.appIcon | pipePublicURL" alt="Course thumbnail"
+                            class="w-full h-full rounded-xl" [wsUtilsDefaultThumbnail]="defaultThumbnail">
+                    </ng-container>
+                    <ng-template #defaultImg>
+                        <img mat-card-image alt="Course thumbnail" class="w-full h-full rounded-xl"
+                            src="/assets/instances/eagle/app_logos/default.png" />
+                    </ng-template>
+                </ng-container>
+
                 <div class="image-overlay rounded-xl"></div>
                 <div class="course-badges-new">
                     <span class="badge new-badge font-normal">Live</span>
@@ -13,14 +26,12 @@
 
             <!-- Right side - Content -->
             <div class="course-content pl-0 md:pl-4">
-                <!-- <ng-container
-                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event'"> -->
                 <ng-container>
                     <div class="flex justify-between items-center">
-                        <div class="saptha">
+                        <div class="saptha" *ngIf="content?.resourceType">
                             <div class="event-tag">
                                 <mat-icon class="star-icon" svgIcon="handshake"></mat-icon>
-                                <span class="font-normal text-xs">Event Tag</span>
+                                <span class="font-normal text-xs">{{translateLabels(content.resourceType, 'event')}}</span>
                             </div>
 
                         </div>
@@ -36,26 +47,28 @@
                     </div>
                 </ng-container>
 
-                <h2 class="course-title font-normal">
-                    India’s Economy
+                <h2 class="course-title font-normal text-ellipse">
+                    {{content?.name}}
                 </h2>
 
-                <div class="course-tags mb-3 font-normal">
-                    To transform Indian civil services capacity civil services capacity...
+                <div class="course-tags mb-3 font-normal text-ellipse">
+                    {{content?.description}}
                 </div>
 
                 <div class="course-author mb-3 flex items-center gap-2">
                     <div class="author-avatar flex items-center justify-center">
-                        <img class="source-icon" alt="ong"
-                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="16">
+                        <ng-container *ngIf="content?.appIcon">
+                            <img class="source-icon" alt="ong" [src]="content?.appIcon | pipePublicURL" width="16"
+                                [wsUtilsDefaultThumbnail]="defaultSLogo">
+                        </ng-container>
                     </div>
-                    <span class="organization-name">By Karmayogi Bharat</span>
+                    <span class="organization-name" *ngIf="content?.sourceName">{{'learnsearch.by' | translate}} {{content?.sourceName}}</span>
                 </div>
 
                 <div class="course-stats flex items-center gap-4 flex-wrap">
                     <div class="stats">
                         <mat-icon class="star-icon" svgIcon="calender-event"></mat-icon>
-                        <span class="font-normal text-xs">Fri, Jan 24 6:00 pm </span>
+                        <span class="font-normal text-xs">{{content?.startDate | date }} {{formattedTime}}</span>
                     </div>
 
                     <div class="stats">

@@ -32,7 +32,6 @@ import { LearnSearchComponent } from './routes/learn-search/learn-search.compone
 import { SearchFiltersComponent } from './components/search-filters/search-filters.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { TranslateModule } from '@ngx-translate/core';
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
@@ -59,6 +58,11 @@ import { CourseContentCardComponent } from './components/course-content-card/cou
 import { SearchEventCardComponent } from './components/search-event-card/search-event-card.component';
 import { PeopleConnectionCardComponent } from './components/people-connection-card/people-connection-card.component';
 import { ConnectionNameComponent } from '../network-v2/components/connection-name/connection-name.component';
+import { CommunityContentCardComponent } from './components/community-content-card/community-content-card.component';
+import {NumberShortenerPipe} from './pipes/number-shortener.pipe'
+import {PluralPipe} from './pipes/plural.pipe';
+import { PaginationComponent } from './components/pagination/pagination.component'
+
 @NgModule({
   declarations: [
     GlobalSearchComponent,
@@ -68,7 +72,11 @@ import { ConnectionNameComponent } from '../network-v2/components/connection-nam
     CourseContentCardComponent,
     SearchEventCardComponent,
     PeopleConnectionCardComponent,
-    ConnectionNameComponent
+    ConnectionNameComponent,
+    CommunityContentCardComponent,
+    NumberShortenerPipe,
+    PluralPipe,
+    PaginationComponent
   ],
   imports: [
     CommonModule,
@@ -80,7 +88,6 @@ import { ConnectionNameComponent } from '../network-v2/components/connection-nam
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatAutocompleteModule,
     MatOptionModule,
     MatIconModule,
     MatMenuModule,

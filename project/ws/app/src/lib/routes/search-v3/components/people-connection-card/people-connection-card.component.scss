@@ -3,7 +3,7 @@
 @import 'ws-mixins';
 
 .card-container {
-  height: 215px;
+  height: 175px;
   width: 172px;
   border: 1px solid #00000014;
   border-radius: 12px;
@@ -11,7 +11,7 @@
 }
 
 .name-container {
-  padding: $size-m;
+  padding: 0 $size-m;
   height: 75px;
 }
 .name-container-inner {
@@ -20,19 +20,21 @@
 }
 
 ::ng-deep .connection-name .name {
-  // font-size: 16px;
-  // width: 100% !important;
-
-  // white-space: nowrap;
-
-  // display: -webkit-box;
-  // -webkit-line-clamp: 2;
-  // -webkit-box-orient: vertical;
-  // min-height: 3rem;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  overflow: hidden;
+  word-break: break-word;
+  white-space: initial;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .designation {
-  font-family: Lato;
+   /* stylelint-disable */
+   font-family: Lato;
+   /* stylelint-enable */
   font-weight: 400;
   font-size: 12px;
   line-height: 14.4px;

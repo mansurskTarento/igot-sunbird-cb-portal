@@ -1,21 +1,22 @@
 <div class="learnsearch  margin-top-l margin-bottom-l">
     <mat-sidenav-container autosize class="container-balanced" [hasBackdrop]="false">
-        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened && totalResults !== 0" position="start"
-            class="custom-sidenav" *ngIf="(!filtersPanel || filtersPanel !=='hide') && totalResults !== 0">
+        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened && courseSearchTotalCount !== 0" position="start"
+            class="custom-sidenav" *ngIf="(!filtersPanel || filtersPanel !=='hide') && courseSearchTotalCount !== 0">
             <ng-container>
-                <ws-app-search-filters *ngIf="facets && facets.length > 0" [urlparamFilters]="paramFilters"
-                    [newfacets]="facets" (appliedFilter)="applyFilter($event)"
-                    [karmayogiBadge]="veifiedKarmayogi"></ws-app-search-filters>
+                <ws-app-search-filters *ngIf="true" [urlparamFilters]="paramFilters" [newfacets]=""
+                    (appliedFilter)="applyFilter($event)" [karmayogiBadge]="veifiedKarmayogi"></ws-app-search-filters>
             </ng-container>
         </mat-sidenav>
 
         <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
             <div class="ml-4">
                 <div class="result-meta my-3">
-                    <div class="" *ngIf="totalResults > 0">
-                        <span class="brand-color">"{{totalResults}}"</span>
+                    <div class=""
+                        *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
+                        <span class="brand-color">"{{(courseSearchTotalCount + eventSearchTotalCount +
+                            peopleSearchTotalCount + communitiesSearchTotalCount)}}"</span>
                         <span class="mx-1">{{'learnsearch.searchResultsFor' | translate}}</span>
-                        <span class="brand-color" *ngIf="param">{{param}}'</span>
+                        <span class="brand-color" *ngIf="searchQuery">{{searchQuery}}'</span>
                     </div>
                 </div>
 
@@ -26,47 +27,87 @@
                     </button>
                 </div>
 
-                <ng-container *ngIf="totalResults > 0">
+                <ng-container>
                     <!-- Content Card -->
-                    <ng-container>
+                    <ng-container
+                        *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'Content(4)' | translate}}</p>
-                            <ng-container>
-                                <ws-app-course-content-card></ws-app-course-content-card>
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark"> {{ 'learnsearch.content' |
+                                translate:{ count: courseSearchTotalCount } }}</p>
+                            <ng-container *ngFor="let course of courseSearchResults">
+                                <ws-app-course-content-card [content]="course"></ws-app-course-content-card>
                             </ng-container>
+                            <p class="see-all-results text-center font-normal brand-color cursor-pointer"
+                                *ngIf="!seeAllResult" (click)="seeAllResults('courses')"> {{ 'learnsearch.seeAllResults'
+                                | translate }}
+                            </p>
+                            <ws-app-pagination></ws-app-pagination>
                         </div>
                     </ng-container>
 
                     <!-- event Card -->
-                    <ng-container>
+                    <ng-container
+                        *ngIf="eventSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'events')">
                         <div class="search-event-card">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'Events(4)' | translate}}</p>
-                            <ng-container>
-                                <ws-app-search-event-card></ws-app-search-event-card>
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.event' |
+                                translate:{ count: eventSearchTotalCount } }}</p>
+                            <ng-container *ngFor="let event of eventsSearchResults">
+                                <ws-app-search-event-card [content]="event"></ws-app-search-event-card>
                             </ng-container>
+                            <p class="see-all-results text-center font-normal brand-color cursor-pointer"
+                                *ngIf="!seeAllResult" (click)="seeAllResults('events')"> {{ 'learnsearch.seeAllResults'
+                                | translate }}
+                            </p>
                         </div>
                     </ng-container>
 
                     <!-- // Peoples -->
-                    <ng-container>
+                    <ng-container
+                        *ngIf="peopleSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'peoples')">
                         <div class="search-people-card overflow-x-hidden">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'People(4)' | translate}}</p>
-                            <ng-container>
-                                <ws-utils-horizontal-scroller *ngIf="recommendedUsers.length" [loadStatus]="'done'">
-                                    <div class="card-container mr-6" *ngFor="let user of recommendedUsers"
-                                        (click)="changeWidget(data.id)">
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.peoples' |
+                                translate:{ count: peopleSearchTotalCount } }}</p>
+                            <ng-container *ngIf="peopleSearchTotalCount > 0">
+                                <ws-utils-horizontal-scroller [loadStatus]="'done'">
+                                    <div class="card-container mr-6" *ngFor="let user of peoplesSearchResults">
                                         <ws-app-people-connection-card class="mr-4 mb-5" [user]="user"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </ws-utils-horizontal-scroller>
                             </ng-container>
+                            <p class="see-all-results text-center font-normal brand-color cursor-pointer"
+                                *ngIf="!seeAllResult" (click)="seeAllResults('peoples')"> {{ 'learnsearch.seeAllResults'
+                                | translate }}
+                            </p>
+                        </div>
+                    </ng-container>
+
+                    <!-- Communities  -->
+                    <ng-container
+                        *ngIf="communitiesSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'communities')">
+                        <div class="communities-people-card overflow-x-hidden mb-3">
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.communities' |
+                                translate:{ count: communitiesSearchTotalCount } }}</p>
+                            <ng-container *ngIf="communitiesSearchTotalCount > 0">
+                                <ws-utils-horizontal-scroller [loadStatus]="'done'">
+                                    <div class="card-container mr-6" *ngFor="let community of communitiesSearchResults">
+                                        <ws-app-community-content-card
+                                            [community]="community" [orgDetails]="community?.additionalInfo"></ws-app-community-content-card>
+                                    </div>
+                                </ws-utils-horizontal-scroller>
+                            </ng-container>
+                            <p class="see-all-results text-center font-normal brand-color cursor-pointer mt-4"
+                                *ngIf="!seeAllResult" (click)="seeAllResults('communities')"> {{
+                                'learnsearch.seeAllResults' | translate }}
+                            </p>
                         </div>
                     </ng-container>
                 </ng-container>
 
             </div>
 
-            <div class="ml-auto mr-auto mt-8 text-center max-w-330" *ngIf="totalResults === 0">
+            <div class="ml-auto mr-auto mt-8 text-center max-w-330"
+                *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount === 0) && !isLoadingSearch">
                 <img src="/assets/icons/no-data.svg" wsUtilsImageResponsive alt="No results"
                     class="margin-top-l margin-bottom-s">
                 <div class="no-data-text font-bold text-sm my-4" i18n="search route no result">

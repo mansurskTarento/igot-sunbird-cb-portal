@@ -1408,3 +1408,11 @@ ngx-guided-tour {
     padding: 16px 0 16px 0 !important;
   }
 }
+
+.text-ellipse {
+  display: inline-block;
+  max-width: 40em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

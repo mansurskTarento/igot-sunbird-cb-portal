@@ -73,15 +73,20 @@
             <span class="text-sm recent-search-title font-normal">All Search Results</span>
           </div>
           <ng-container *ngFor="let result of allSearchResults">
+            <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
+              <div matLine class="text-xs font-normal py-1 recent-search-text">{{ getResultName(result) }}</div>
+            </mat-list-item>
+          </ng-container>
+          <ng-container *ngIf="allSearchResults.length === 0">
             <mat-list-item class="flex justify-between items-center py-2">
-              <div matLine class="text-xs font-normal py-1 recent-search-text">{{ result }}</div>
+              <div matLine class="text-xs font-normal py-1 recent-search-text">No results found</div>
             </mat-list-item>
           </ng-container>
         </mat-list>
 
-        <div class="no-results" *ngIf="!queryControl.value">
+        <!-- <div class="no-results" *ngIf="!queryControl.value">
           No results found
-        </div>
+        </div> -->
 
         <div class="see-all-results">
           <a mat-button>See all the results...</a>

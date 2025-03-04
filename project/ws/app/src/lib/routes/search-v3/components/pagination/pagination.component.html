@@ -1,0 +1,22 @@
+<div aria-label="ws-pagination-wrapper">
+    <ul class="pagination flex items-center justify-between">
+        <div class="pagination-listing flex items-center justify-between">
+            <ng-container
+                *ngFor="let count of pagination.paginationLength; let last = last; let first = first; let i = index">
+                <li class="page-item" *ngIf="first" (click)="previousPage(count)">
+                    <a class="page-link" aria-label="Previous">
+                        <span aria-hidden="true"><mat-icon>keyboard_arrow_left</mat-icon></span>
+                    </a>
+                </li>
+                <li class="page-item flex items-center justify-center" [ngClass]="count == currentPage? 'active' : '' ">
+                    <a class="page-link" (click)="goToPage(count)">{{count}}</a>
+                </li>
+                <li class="page-item" *ngIf="last" (click)="nextPage(count)">
+                    <a class="page-link" aria-label="Next">
+                        <span aria-hidden="true"><mat-icon>keyboard_arrow_right</mat-icon></span>
+                    </a>
+                </li>
+            </ng-container>
+        </div>
+    </ul>
+</div>

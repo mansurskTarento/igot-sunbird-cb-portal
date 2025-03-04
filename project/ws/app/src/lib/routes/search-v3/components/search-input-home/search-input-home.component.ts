@@ -14,8 +14,17 @@ import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ISearchAutoComplete } from '../../../search/models/search.model';
 import { SearchServService } from '../../../search/services/search-serv.service';
+import { GbSearchService } from '../../services/gb-search.service';
+import {
+  SearchCategory,
+  SearchCommunitiesRequest,
+  SearchEventfacet,
+  SearchEventFields,
+  SearchPeoplesRequest,
+  SearchV4Request,
+} from '../../models/search-v3.model';
+import { WidgetContentLibService } from '@sunbird-cb/consumption';
 
 @Component({
   selector: 'ws-app-search-v3-input-home',
@@ -32,39 +41,37 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   languageSearch: string[] = [];
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif';
 
-  // filteredOptions$: Observable<string[]> = this.queryControl.valueChanges.pipe(
-  //   startWith(this.queryControl.value),
-  //   debounceTime(500),
-  //   distinctUntilChanged(),
-  //   switchMap(() => [])
-  // );
-
-  autoCompleteResults: ISearchAutoComplete[] = [];
-  searchLocale = this.getActiveLocale();
-  lang = '';
   disableMenu = false;
-  activeFilters: any[] = [];
   recentSearches: string[] = [
     'AI Throttling Improves Deliverability',
     'AI Throttling Improves Deliverability',
     'AI Throttling Improves Deliverability',
   ];
-  allSearchResults: string[] = [
-    'AI Throttling Improves Deliverability',
-    'AI Throttling Improves Deliverability',
-    'AI Throttling Improves Deliverability',
+
+  allSearchResults: any[] = [];
+  categories = [
+    { label: 'All', value: SearchCategory.All, icon: '' },
+    { label: 'Courses', value: SearchCategory.Courses, icon: 'video-library' },
+    {
+      label: 'Programs',
+      value: SearchCategory.Programs,
+      icon: 'school-search',
+    },
+    { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
+    { label: 'People', value: SearchCategory.People, icon: 'people-search' },
+    {
+      label: 'Case Studies',
+      value: SearchCategory.CaseStudy,
+      icon: 'menu_book',
+    },
+    {
+      label: 'Communities',
+      value: SearchCategory.Communities,
+      icon: 'diversity_3',
+    },
   ];
 
-  categories = [
-    { label: 'All', value: '', icon: '' },
-    { label: 'Courses', value: 'courses', icon: 'video-library' },
-    { label: 'Programs', value: 'programs', icon: 'school-search' },
-    { label: 'Events', value: 'events', icon: 'calender-event' },
-    { label: 'People', value: 'people', icon: 'people-search' },
-    { label: 'Case Studies', value: 'case-studies', icon: 'menu_book' },
-    { label: 'Communities', value: 'communities', icon: 'diversity_3' },
-  ];
-  selectedSearchCategory = '';
+  selectedSearchCategory: string = SearchCategory.All;
   openSearchTemplate = false;
   loaderSearching = false;
   @HostListener('document:click', ['$event'])
@@ -79,7 +86,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     private searchServSvc: SearchServService,
     private configSvc: ConfigurationsService,
     private route: ActivatedRoute,
-    private eRef: ElementRef
+    private eRef: ElementRef,
+    private searchV3Service: GbSearchService,
+    private contSvc: WidgetContentLibService
   ) {
     this.queryControl = new UntypedFormControl(
       this.activated.snapshot.queryParams.q || ''
@@ -91,6 +100,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         if (value) {
           console.log(value);
           this.loaderSearching = false;
+          this.searchFromQuery(value);
         }
       });
   }
@@ -105,11 +115,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           };
         })
         .then(() => {
-          // this.autoFilter();
           this.initialize();
         });
     } else {
-      // this.autoFilter();
       this.initialize();
     }
   }
@@ -130,7 +138,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         this.queryControl.valueChanges
           .pipe(debounceTime(200), distinctUntilChanged())
           .subscribe((q) => {
-            this.getSearchAutoCompleteResults(q);
+            this.searchFromQuery(q);
           });
       }
     }
@@ -168,21 +176,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
       this.disableMenu = true;
-      // this.router.navigateByUrl('app/person-profile/me#profileInfo')
     } else {
       this.disableMenu = false;
     }
-    // document.getElementById('global-search-input')?.focus();
-
     this.activated.queryParamMap.subscribe((queryParam) => {
       if (queryParam.has('q')) {
         this.queryControl.setValue(queryParam.get('q') || '');
-      }
-
-      if (queryParam.has('lang')) {
-        this.searchLocale = queryParam.get('lang') || this.getActiveLocale();
-      } else {
-        this.searchLocale = this.getActiveLocale();
       }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
@@ -193,52 +192,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         typeof isAutoCompleteAllowed === 'undefined' ||
         (typeof isAutoCompleteAllowed === 'boolean' && isAutoCompleteAllowed)
       ) {
-        // this.getSearchAutoCompleteResults(this.queryControl.value)
       }
     });
-
-    this.languageSearch =
-      this.route.snapshot.data.searchPageData &&
-      this.route.snapshot.data.searchPageData.data.search.languageSearch.map(
-        (u: string) => u.toLowerCase()
-      );
-    this.languageSearch = this.languageSearch.sort();
-    this.swapRemove(this.languageSearch, this.languageSearch.indexOf('all'), 0);
-    if (
-      this.preferredLanguages &&
-      this.preferredLanguages.split(',').length > 1
-    ) {
-      this.languageSearch.splice(1, 0, this.preferredLanguages);
-    }
-  }
-
-  swapRemove(langArray: string[], from: number, to: number) {
-    langArray.splice(to, 0, langArray[from]);
-    langArray.splice(from + 1, 1);
-  }
-
-  getActiveLocale(): string {
-    const locale =
-      (this.configSvc.activeLocale && this.configSvc.activeLocale.locals[0]) ||
-      'en';
-    return this.searchServSvc.getLanguageSearchIndex(locale);
-  }
-
-  get preferredLanguages(): string | null {
-    if (
-      this.configSvc.userPreference &&
-      this.configSvc.userPreference.selectedLangGroup
-    ) {
-      let prefLang: string[] | string =
-        this.configSvc.userPreference.selectedLangGroup
-          .split(',')
-          .map((lang) => {
-            return this.searchServSvc.getLanguageSearchIndex(lang || 'en');
-          });
-      prefLang = prefLang.join(',');
-      return prefLang;
-    }
-    return null;
   }
 
   updateQuery(query: string) {
@@ -257,51 +212,151 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       });
     }
     localStorage.removeItem('activeRoute');
+    this.openSearchTemplate = false;
   }
 
   clearSearchText() {
     this.queryControl.reset();
   }
 
-  getSearchAutoCompleteResults(q: string) {
-    if (this.searchLocale.split(',').length === 1) {
-      this.searchServSvc
-        .searchAutoComplete({ q, l: this.searchLocale }).then((result: ISearchAutoComplete[]) => {
-          this.autoCompleteResults = result;
-          this.openSearchTemplate = false;
-        })
-        .catch(() => {});
-    }
-  }
-
-  searchLanguage(lang: string) {
-    this.router.navigate([], {
-      relativeTo: this.activated.parent,
-      queryParams: { lang, q: this.queryControl.value },
-      queryParamsHandling: 'merge',
-    });
-  }
-
   selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
+    this.searchFromQuery(this.queryControl.value);
   }
 
-  addFilter(key: string, value: any, display: string) {
-    const existingIndex = this.activeFilters.findIndex((f) => f.key === key);
+  async searchFromQuery(query: string) {
+    let courseSearchResult: any;
+    const searchRequest = new SearchV4Request();
+    searchRequest.request.query = query;
 
-    if (existingIndex > -1) {
-      this.activeFilters[existingIndex] = { key, value, display };
+    switch (this.selectedSearchCategory) {
+      case SearchCategory.Courses:
+      case SearchCategory.All:
+        break;
+
+      case SearchCategory.Programs:
+        searchRequest.request.filters.courseCategory = 'blended program';
+        break;
+
+      case SearchCategory.Events:
+        searchRequest.request.sort_by.startDate = 'desc';
+        searchRequest.request.filters.contentType = 'Event';
+        searchRequest.request.fields = SearchEventFields;
+        searchRequest.request.facets = SearchEventfacet;
+
+        delete searchRequest.request.filters?.courseCategory;
+        delete searchRequest.request.sort_by?.lastUpdatedOn;
+        break;
+
+      case SearchCategory.CaseStudy:
+        searchRequest.request.filters.courseCategory = 'case study';
+        break;
+    }
+
+    courseSearchResult = await this.searchV3Service.searchCoursesv4(
+      searchRequest
+    );
+
+    if (this.selectedSearchCategory === SearchCategory.People) {
+      if (courseSearchResult?.result?.content) {
+        const searchRequest = new SearchPeoplesRequest();
+        const departmentName = new Set<string>();
+
+        courseSearchResult.result.content.forEach((course: any) => {
+          course?.organisation?.forEach((element: any) => {
+            departmentName.add(element);
+          });
+        });
+
+        const uniqueDepartmentNames = Array.from(departmentName);
+        if (uniqueDepartmentNames.length > 0) {
+          searchRequest.search[0].values = uniqueDepartmentNames;
+
+          courseSearchResult = await this.searchV3Service.searchConnections(
+            searchRequest
+          );
+
+          const results = courseSearchResult?.result?.data?.[0]?.results;
+          this.allSearchResults = results || [];
+        } else {
+          this.allSearchResults = [];
+        }
+      } else {
+        this.allSearchResults = [];
+      }
+
+      return;
+    } else if (this.selectedSearchCategory === SearchCategory.Communities) {
+      if (courseSearchResult?.result?.content) {
+        const searchRequest = new SearchCommunitiesRequest();
+        const departmentName =
+          courseSearchResult.result.content[0].organisation[0];
+        if (departmentName) {
+          searchRequest.filterCriteriaMap.orgName = departmentName;
+
+          const communitySearchResult =
+            await this.searchV3Service.searchCommunity(searchRequest);
+
+          const results = communitySearchResult?.result?.search_results?.data;
+          this.allSearchResults = results || [];
+        } else {
+          this.allSearchResults = [];
+        }
+      } else {
+        this.allSearchResults = [];
+      }
+
+      return;
+    }
+
+    const validKeys = Object.keys(courseSearchResult?.result || {}).filter(
+      (key) =>
+        (key === 'Event' || key === 'content') &&
+        Array.isArray(courseSearchResult.result[key]) &&
+        courseSearchResult.result[key].length > 0
+    );
+
+    this.allSearchResults = validKeys.length
+      ? courseSearchResult.result[validKeys[0]]
+      : [];
+  }
+
+  getResultName(result: any): string {
+    if (this.selectedSearchCategory === SearchCategory.People) {
+      return result.personalDetails?.firstname ?? '';
+    } else if (this.selectedSearchCategory === SearchCategory.Communities) {
+      return result.communityName ?? '';
     } else {
-      this.activeFilters.push({ key, value, display });
+      return result.name ?? '';
     }
   }
 
-  removeFilter(filter: any) {
-    this.activeFilters = this.activeFilters.filter((f) => f.key !== filter.key);
+  redirectToContent(result: any) {
+    this.openSearchTemplate = false;
+    if (this.selectedSearchCategory === SearchCategory.People) {
+      this.goToUserProfile(result);
+    } else if (this.selectedSearchCategory === SearchCategory.Communities) {
+      // TODO: Route community 
+    } else {
+      this.getRedirectUrlData(result);
+    }
   }
 
-  clearSearch() {
-    this.activeFilters = [];
-    this.selectedSearchCategory = 'All';
+  goToUserProfile(user: any) {
+    this.router.navigate(
+      ['/app/person-profile', user.userId || user.id || user.wid],
+      { fragment: 'profileInfo' }
+    );
+  }
+
+  async getRedirectUrlData(content: any) {
+    if (content && content.objectType === 'Event' && content.identifier) {
+      this.router.navigate([`app/event-hub/home/${content.identifier}`]);
+    } else {
+      const urlData = await this.contSvc.getResourseLink(content);
+      this.router.navigate([urlData.url], {
+        queryParams: urlData.queryParams,
+      });
+    }
   }
 }
