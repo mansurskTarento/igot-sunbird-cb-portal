@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'ws-app-view-all',
@@ -29,7 +30,15 @@ export class ViewAllComponent {
   searchControl = new UntypedFormControl('')
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
+    private translate: TranslateService,
   ) {
+
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
+    }
+
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
       { title: 'Recommended Events', url: `none`, icon: '' },

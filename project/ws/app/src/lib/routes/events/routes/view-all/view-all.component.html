@@ -6,11 +6,12 @@
       <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 md:col-span-9">
           <div class="flex flex-row items-center justify-between search-block mb-3 gap-4 pl-2 md:pl-0 pr-0 md:pr-5">
-            <input type="text" [formControl]="searchControl" placeholder="Search Events" class="flex-1 search-input">
+            <input type="text" [formControl]="searchControl" placeholder="{{'events.searchEvents' | translate}}"
+              class="flex-1 search-input">
             <div class="md:hidden" (click)="openBottomSheet()"><mat-icon>filter_list</mat-icon></div>
           </div>
           <div class="flex justify-between mb-3 items-center" *ngIf="contentDataList.length">
-            <div class="results-header my-4 ml-3">Events
+            <div class="results-header my-4 ml-3">{{'events.events' | translate}}
               <span>({{contentDataList?.length}})</span>
             </div>
             <div class="item_dropdown_box pr-2 md:pr-6">
@@ -31,7 +32,7 @@
                     [matMenuTriggerFor]="appMenu">
                     <div class="flex items-center">
                       <span class="mr-1">
-                        <span>Sort by</span>
+                        <span>{{'events.sortBy' | translate}}</span>
                       </span>
                       <mat-icon matPrefix class="flex items-center justify-center ">sort
                       </mat-icon>
@@ -60,7 +61,7 @@
                 </ng-container>
               </ng-container>
               <ng-container *ngIf="showAll()">
-                <div class="clear cursor-pointer" (click)="clearAll()">Clear all</div>
+                <div class="clear cursor-pointer" (click)="clearAll()">{{'events.clearAll' | translate}}</div>
               </ng-container>
             </div>
           </div>
