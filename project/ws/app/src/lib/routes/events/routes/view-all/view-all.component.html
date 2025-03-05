@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="hidden md:block ">
-            <div class="flex mb-3 items-center gap-3 flex-wrap ">
+            <div class="flex mb-3 items-center gap-3 flex-wrap">
               <ng-container *ngFor="let filters of selectedFilters  | keyvalue:returnZero">
                 <ng-container
                   *ngIf="filters.key === 'resourceType' || filters.key === 'eventStatus' || filters.key === 'eventDate'">
@@ -58,6 +58,9 @@
                     <mat-icon class="close-btn" (click)="removeFilter(filters.key, filters.value)">close</mat-icon>
                   </div>
                 </ng-container>
+              </ng-container>
+              <ng-container *ngIf="showAll()">
+                <div class="clear cursor-pointer" (click)="clearAll()">Clear all</div>
               </ng-container>
             </div>
           </div>
@@ -85,8 +88,85 @@
           </div>
         </div>
         <div class="col-span-3 hidden md:block">
-          <ws-app-filters [facetsData]="facetsData" (filterChange)="filterChange($event)"
-            [selectedFilters]="selectedFilters"></ws-app-filters>
+          <div class="w-72 bg-white p-4 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-4">
+              <div class="filter-heading">Filter by</div>
+              <div class="clear cursor-pointer" (click)="clearAll()">Clear all</div>
+            </div>
+            <ng-container *ngFor="let facet of facetsData  | keyvalue:returnZero">
+              <div class="individual-block">
+                <div class="list mb-4">
+                  <ng-container *ngIf="facet?.value?.name === 'Event Type'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container
+                        *ngFor="let eType of (!facet.viewMore ? facet?.value?.values.slice(0,2) : facet?.value?.values); index as i">
+                        <div class="check-list">
+                          <mat-checkbox [checked]="canCheck(facet?.key, eType)"
+                            (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
+                            class="mat-gyaan-filter">{{eType.name}}</mat-checkbox>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!facet.viewMore && facet?.value?.values?.length > 2">
+                        <div class="pt-3">
+                          <span class="view-more" (click)="facet.viewMore = true">View All</span>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="facet.viewMore">
+                        <div class="pt-3">
+                          <span class="view-more" (click)="facet.viewMore = false">View Less</span>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="facet?.value?.name === 'Date Range'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container *ngFor="let eType of facet?.value?.values; index as i">
+                        <ng-container *ngIf="eType.key === 'fromDate'">
+                          <div class="date-list">
+                            <label>{{eType?.name}}</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.PlaceHolder}}"
+                                (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="startDate">
+                              <mat-datepicker-toggle matSuffix [for]="sDate"></mat-datepicker-toggle>
+                              <mat-datepicker #sDate></mat-datepicker>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="eType.key === 'toDate'">
+                          <div class="date-list">
+                            <label>{{eType?.name}}</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.PlaceHolder}}"
+                                (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="endDate">
+                              <mat-datepicker-toggle matSuffix [for]="eDate"></mat-datepicker-toggle>
+                              <mat-datepicker #eDate></mat-datepicker>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
+
+                      </ng-container>
+                      <div class="line my-4"></div>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="facet?.value?.name !== 'Event Type' && facet?.value?.name !== 'Date Range'">
+                    <div *ngIf="facet?.value?.values?.length">
+                      <div class="line mb-4" *ngIf="facet?.value?.displayName === 'Event Status'"></div>
+                      <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
+                      <ng-container *ngFor="let eType of facet?.value?.values; index as i">
+                        <div class="check-list">
+                          <mat-checkbox [checked]="canCheck(facet?.key, eType)"
+                            (change)="changeSelection($event?.checked,facet?.key, eType, facet?.value?.values)"
+                            class="mat-gyaan-filter">{{eType.name}}</mat-checkbox>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>

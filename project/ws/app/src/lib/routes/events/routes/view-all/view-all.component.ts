@@ -9,6 +9,7 @@ import { UntypedFormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'ws-app-view-all',
@@ -27,7 +28,7 @@ export class ViewAllComponent {
   endDate: any = ''
   searchControl = new UntypedFormControl('')
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
-    private datePipe: DatePipe, private bottomSheet: MatBottomSheet,
+    private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
   ) {
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
@@ -268,7 +269,6 @@ export class ViewAllComponent {
         let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
         // Combining date and time for end event
         let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
-        console.log(" time ", event.startDate, currentTime, evenStarttDate, eventEndDate)
         if (currentTime > eventEndDate) {
           if (this.selectedFilters.eventStatus.includes('Past Events')) {
             processedEvents.push(event)
@@ -288,6 +288,22 @@ export class ViewAllComponent {
     return processedEvents
   }
 
+  showAll(): boolean {
+    if (this.selectedFilters.resourceType && this.selectedFilters.resourceType.length) {
+      return true
+    }
+    if (this.selectedFilters.eventDate && this.selectedFilters.eventDate.length) {
+      return true
+    }
+    if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
+      return true
+    }
+    if (this.selectedFilters.dateRange) {
+      return true
+    }
+    return false
+  }
+
   filterChange(data: any) {
     console.log(data)
     this.selectedFilters = data
@@ -298,6 +314,7 @@ export class ViewAllComponent {
     this.selectedFilters = {}
     this.startDate = ''
     this.endDate = ''
+    this.fetchData()
   }
 
   openBottomSheet(): void {
@@ -341,6 +358,8 @@ export class ViewAllComponent {
     console.log(this.selectedFilters)
     if (key === 'dateRange') {
       delete this.selectedFilters.dateRange
+      this.startDate = ''
+      this.endDate = ''
     } else if (key === 'resourceType') {
       this.selectedFilters = {
         ... this.selectedFilters,
@@ -364,6 +383,79 @@ export class ViewAllComponent {
         this.selectedFilters = {
           ... this.selectedFilters,
           eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter)
+        }
+      }
+    }
+    this.fetchData()
+  }
+
+  canCheck(key: any, keyData: any) {
+    if (this.selectedFilters[key]) {
+      return this.selectedFilters[key].includes(keyData.name)
+    }
+  }
+
+  onDateChange(event: any, eType: any, facet: any) {
+    console.log(facet, eType, event)
+    if (eType.key === 'fromDate') {
+      this.startDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
+    }
+    if (eType.key === 'toDate') {
+      this.endDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
+    }
+    if (this.startDate && this.endDate) {
+      const date1 = new Date(this.startDate)
+      const date2 = new Date(this.endDate)
+      if (date1 > date2) {
+        this.snackbar.open('Start date should not greater than end date.')
+      } else {
+        delete this.selectedFilters.eventDate
+        delete this.selectedFilters.eventStatus
+        this.selectedFilters[facet.key] = { fromDate: date1, toDate: date2 }
+        this.fetchData()
+      }
+    } else {
+      if (!this.startDate) {
+        this.snackbar.open('Choose a valid start date.')
+      }
+      if (!this.endDate) {
+        this.snackbar.open('Choose a valid end date.')
+      }
+    }
+  }
+
+  changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
+    console.log('changeSelection', event, key, keyData, allKeyData)
+    if (event) {
+      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+        if (this.selectedFilters[key]) {
+          let slected = this.selectedFilters[key]
+          slected.push(keyData.name)
+          this.selectedFilters[key] = slected
+        } else {
+          this.selectedFilters[key] = [keyData.name]
+        }
+        if (key === 'eventDate') {
+          delete this.selectedFilters.eventStatus
+          delete this.selectedFilters.dateRange
+          this.startDate = ''
+          this.endDate = ''
+        }
+        if (key === 'eventStatus') {
+          delete this.selectedFilters.dateRange
+          delete this.selectedFilters.eventDate
+          this.startDate = ''
+          this.endDate = ''
+        }
+        delete this.selectedFilters.key
+      }
+    } else {
+      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+        let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
+        if (filtered.length === 0) {
+          delete this.selectedFilters[key]
+        } else {
+          this.selectedFilters[key] = filtered
         }
       }
     }

@@ -9,8 +9,7 @@
   <mat-card class="card-resource-container mr-5 padding-remove cursor-pointer {{ widgetData?.cardCustomeClass}}">
     <div class="display-contents">
       <ng-container *ngIf="widgetData?.content">
-        <a class="w-full"
-          (click)="raiseTelemetry();getRedirectUrlData(widgetData?.content,'resource'); $event.stopPropagation()"
+        <a class="w-full" (click)="raiseTelemetry();getRedirectUrlData(widgetData?.content); $event.stopPropagation()"
           role="link" i18n-aria-label>
           <mat-card-content class="min-top">
             <div class="relative">
