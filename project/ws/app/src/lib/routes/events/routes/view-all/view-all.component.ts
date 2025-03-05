@@ -377,7 +377,7 @@ export class ViewAllComponent {
     } else if (key === 'eventStatus') {
       const removeditems = this.selectedFilters.eventStatus.filter((item: any) => item !== filter)
       if (removeditems.length === 0) {
-        this.selectedFilters = delete this.selectedFilters.eventStatus
+        delete this.selectedFilters.eventStatus
       } else {
         this.selectedFilters = {
           ... this.selectedFilters,
@@ -387,7 +387,7 @@ export class ViewAllComponent {
     } else if (key === 'eventDate') {
       const removeditems = this.selectedFilters.eventDate.filter((item: any) => item !== filter)
       if (removeditems.length === 0) {
-        this.selectedFilters = delete this.selectedFilters.eventDate
+        delete this.selectedFilters.eventDate
       } else {
         this.selectedFilters = {
           ... this.selectedFilters,
