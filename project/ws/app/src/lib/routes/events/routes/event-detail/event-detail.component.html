@@ -244,35 +244,29 @@
         </ng-container>
       </mat-tab>
       <mat-tab label="{{'events.documents' | translate}}" *ngIf="eventData?.eventHandouts?.length">
-        <div class="flex flex-col my-4 gap-5">
-          <ng-container *ngFor="let handout of eventData?.eventHandouts">
-            <div class="reference-card flex gap-4 justify-between">
-              <div>
-                <div class="reference-title">{{handout?.title}}</div>
-                <div class="flex gap-2 pt-2">
-                  <mat-icon>visibility</mat-icon>
-                  <a target="_blank" href="{{handout?.content}}">
-                    <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
-                  </a>
-                </div>
+        <ng-container *ngFor="let handout of eventData?.eventHandouts">
+          <div class="reference-card flex gap-4 justify-between">
+            <div>
+              <div class="reference-title flex align-icon gap-2">
+                <div><img class="img-size" src="{{fileImage(handout?.content)}}" /></div>
+                <div>{{handout?.title}}</div>
               </div>
-              <div>
-                <div class="reference-download-icon">
-                  <a download="{{handout?.title}}" (click)="downloadPDF(handout)">
-                    {{'events.downloadPdf' | translate}}
-                  </a>
-                </div>
+              <div class="flex gap-2 pt-2">
+                <mat-icon>visibility</mat-icon>
+                <a target="_blank" href="{{handout?.content}}">
+                  <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
+                </a>
               </div>
-              <!-- <div class="flex flex-col my-4">
-                <div class="r-name text-truncate">{{handout?.title}}</div>
-                <div class="r-type flex items-center gap-2">
-                  <img class="img-size" src="{{fileImage(handout?.content)}}" />
-                  <a href="{{handout?.content}}" target="_blank">{{genrateMaterialName(handout?.content)}}</a>
-                </div>
-              </div> -->
             </div>
-          </ng-container>
-        </div>
+            <div>
+              <div class="reference-download-icon">
+                <a download="{{handout?.title}}" (click)="downloadPDF(handout)">
+                  {{'events.downloadPdf' | translate}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </ng-container>
       </mat-tab>
       <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
         <ng-container *ngIf="!skeletonLoader">
@@ -282,10 +276,6 @@
         </ng-container>
       </mat-tab>
     </mat-tab-group>
-
-
-
-
   </div>
 
 
