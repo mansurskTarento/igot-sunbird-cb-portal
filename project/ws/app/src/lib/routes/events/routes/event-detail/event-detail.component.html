@@ -223,6 +223,53 @@
           <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
             <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
           </div>
+
+          <ng-container *ngIf="skeletonLoader">
+            <div class="flex flex-col gap-3">
+              <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'"
+                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+              <div class="flex flex-row gap-3">
+                <ng-container *ngFor="let i of [1, 2]">
+                  <ws-widget-skeleton-loader [width]="'120px'" [height]="'32px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                </ng-container>
+              </div>
+              <div class="flex flex-row gap-4">
+                <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
+                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
+                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!skeletonLoader">
+            <ng-container *ngIf="!strip?.loaderWidgets?.length || !competenciesObject">
+              <div class="flex flex-col">
+                <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
+                {{ 'apptocsinglepage.noCompetencyFound' | translate }}
+              </div>
+            </ng-container>
+            <ng-container *ngIf="strip?.loaderWidgets?.length > 0">
+              <div class="flex flex-col gap-3">
+                <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
+                <div class="flex flex-row gap-3 sm:gap-4 mb-3">
+                  <ng-container *ngFor="let item of competenciesObject">
+                    <div class="themes-button" [ngClass]="{'theme-activated': competencySelected === item.key}"
+                      (click)="handleShowCompetencies(item, 'selected')">{{ item.key }}</div>
+                  </ng-container>
+                </div>
+                <ng-container *ngFor="let item of competenciesObject">
+                  <div *ngIf="item?.key === competencySelected">
+                    <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
+                      <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
+                        <ng-container [wsResolverWidget]="widget"></ng-container>
+                      </ng-container>
+                    </ws-utils-horizontal-scroller-v2>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
           <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
             <ng-container>
               <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
@@ -268,13 +315,13 @@
           </div>
         </ng-container>
       </mat-tab>
-      <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
+      <!-- <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
         <ng-container *ngIf="!skeletonLoader">
           <div class="flex flex-col ratings-div gap-10 mt-4" id="ratingsDiv" *ngIf="discussWidgetData">
             <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
           </div>
         </ng-container>
-      </mat-tab>
+      </mat-tab> -->
     </mat-tab-group>
   </div>
 
@@ -285,3 +332,12 @@
       [enrolledEvent]="enrolledEvent" *ngIf="eventData" (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
   </div>
 </div>
+
+<ng-template #competencyLabel>
+  <div class="pt-mweb-4 mat-subheading-1 flex items-center gap-2">
+    {{ 'apptocsinglepage.competencies' | translate }}
+    <mat-icon class="cursor-pointer ws-mat-black60-text info-icon mat-icon notranslate material-icons mat-icon-no-color"
+      [matTooltipPosition]="'below'" #tooltip="matTooltip" (click)="tooltip.toggle()"
+      matTooltip="{{ 'apptocsinglepage.competenciesTooltip' | translate }}">info_outline</mat-icon>
+  </div>
+</ng-template>

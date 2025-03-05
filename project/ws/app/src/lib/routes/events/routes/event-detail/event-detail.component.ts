@@ -9,6 +9,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import _ from 'lodash'
 import moment from 'moment'
 import * as fileSaver from 'file-saver'
+import { environment } from 'src/environments/environment'
 import { EventService } from '../../services/events.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -16,6 +17,8 @@ import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 //import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
 /* tslint:enable */
 
 @Component({
@@ -50,6 +53,36 @@ export class EventDetailComponent implements OnInit {
   downloadCertificateBool = false
   pageData!: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
+  competenciesObject: any = []
+  competencySelected = ''
+  compentencyKey!: NsContent.ICompentencyKeys
+  strip: NsContentStripWithTabs.IContentStripUnit = {
+    key: 'blendedPrograms',
+    logo: '',
+    title: 'Blended Program',
+    stripTitleLink: {
+      link: '',
+      icon: '',
+    },
+    sliderConfig: {
+      showNavs: true,
+      showDots: false,
+    },
+    loader: true,
+    stripBackground: '',
+    titleDescription: 'Blended Program',
+    stripConfig: {
+      cardSubType: 'standard',
+    },
+    viewMoreUrl: {
+      path: '',
+      viewMoreText: 'Show all',
+      queryParams: '',
+    },
+    tabs: [],
+    filters: [],
+  }
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -83,6 +116,8 @@ export class EventDetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.skeletonLoader = true
+    this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
     this.route.params.subscribe(params => {
       this.eventId = params.eventId
       // if (this.fetchNewData) {
@@ -98,6 +133,10 @@ export class EventDetailComponent implements OnInit {
       }
       if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
         this.batchId = this.eventData.batches[0].batchId || ''
+      }
+      if (this.eventData.competencies_v6) {
+        this.loadCompetencies()
+        this.skeletonLoader = false
       }
       /* tslint:disable */
       console.log(this.eventSvc)
@@ -325,5 +364,97 @@ export class EventDetailComponent implements OnInit {
 
   downloadPDF(handout: any) {
     fileSaver.saveAs(handout.content, handout.title)
+  }
+
+  checkValidJSON(str: any) {
+    try {
+      JSON.parse(str)
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  loadCompetencies(): void {
+    if (this.eventData && this.eventData[this.compentencyKey.vKey] && this.eventData[this.compentencyKey.vKey].length) {
+      const competenciesObject: any = {}
+      if (typeof this.eventData[this.compentencyKey.vKey] === 'string'
+        && this.checkValidJSON(this.eventData[this.compentencyKey.vKey])) {
+        this.eventData[this.compentencyKey.vKey] = JSON.parse(this.eventData[this.compentencyKey.vKey])
+      }
+      this.eventData[this.compentencyKey.vKey].forEach((_obj: any) => {
+        if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
+          if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+          [_obj[this.compentencyKey.vCompetencyTheme]]) {
+            const competencyTheme = competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
+            if (competencyTheme.indexOf(_obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
+              competencyTheme.push(_obj[this.compentencyKey.vCompetencySubTheme])
+            }
+          } else {
+            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]] = []
+            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
+              .push(_obj[this.compentencyKey.vCompetencySubTheme])
+          }
+        } else {
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]] = {}
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]] = []
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]]
+            .push(_obj[this.compentencyKey.vCompetencySubTheme])
+        }
+      })
+
+      for (const key in competenciesObject) {
+        if (competenciesObject.hasOwnProperty(key)) {
+          const _temp: any = {}
+          _temp['key'] = key
+          _temp['value'] = competenciesObject[key]
+          this.competenciesObject.push(_temp)
+        }
+      }
+      this.handleShowCompetencies(this.competenciesObject[0])
+    }
+  }
+
+  handleShowCompetencies(item: any): void {
+    this.competencySelected = item.key
+    const valueObj = item.value
+    const competencyArray = []
+    for (const key in valueObj) {
+      if (valueObj.hasOwnProperty(key)) {
+        const _tempObj: any = {}
+        _tempObj['key'] = key
+        _tempObj['value'] = valueObj[key]
+        competencyArray.push(_tempObj)
+      }
+    }
+
+    this.strip['loaderWidgets'] = this.transformCompetenciesToWidget(this.competencySelected, competencyArray, this.strip)
+  }
+
+  private transformCompetenciesToWidget(
+    competencyArea: string,
+    competencyArrObject: any,
+    strip: NsContentStripWithTabs.IContentStripUnit) {
+    return (competencyArrObject || []).map((content: any, idx: number) => (
+      content ? {
+        widgetType: 'card',
+        widgetSubType: 'competencyCard',
+        widgetHostClass: 'mr-4',
+        widgetData: {
+          content,
+          competencyArea,
+          cardCustomeClass: strip.customeClass ? strip.customeClass : '',
+          context: { pageSection: strip.key, position: idx },
+        },
+      } : {
+        widgetType: 'card',
+        widgetSubType: 'competencyCard',
+        widgetHostClass: 'mr-4',
+        widgetData: {},
+      }
+    ))
   }
 }
