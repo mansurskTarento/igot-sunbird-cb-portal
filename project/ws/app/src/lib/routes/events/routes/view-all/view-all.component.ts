@@ -154,6 +154,10 @@ export class ViewAllComponent {
     this.fetchData()
   }
 
+  returnZero() {
+    return 0
+  }
+
   generateRequestBoday() {
     let requestBody: any = {
       locale: [
@@ -325,6 +329,45 @@ export class ViewAllComponent {
       this.contentDataList = this.contentDataList.sort(
         (a: any, b: any) => b.widgetData.content.duration - a.widgetData.content.duration)
     }
+  }
+
+  customDate(dateRange: any) {
+    return `${this.datePipe.transform(dateRange.fromDate, 'dd/MM/yyyy')} -
+    ${this.datePipe.transform(dateRange.toDate, 'dd/MM/yyyy')}`
+  }
+
+  removeFilter(key: any, filter: any) {
+    console.log(key, filter)
+    console.log(this.selectedFilters)
+    if (key === 'dateRange') {
+      delete this.selectedFilters.dateRange
+    } else if (key === 'resourceType') {
+      this.selectedFilters = {
+        ... this.selectedFilters,
+        resourceType: this.selectedFilters.resourceType.filter((item: any) => item !== filter)
+      }
+    } else if (key === 'eventStatus') {
+      const removeditems = this.selectedFilters.eventStatus.filter((item: any) => item !== filter)
+      if (removeditems.length === 0) {
+        this.selectedFilters = delete this.selectedFilters.eventStatus
+      } else {
+        this.selectedFilters = {
+          ... this.selectedFilters,
+          eventStatus: removeditems
+        }
+      }
+    } else if (key === 'eventDate') {
+      const removeditems = this.selectedFilters.eventDate.filter((item: any) => item !== filter)
+      if (removeditems.length === 0) {
+        this.selectedFilters = delete this.selectedFilters.eventDate
+      } else {
+        this.selectedFilters = {
+          ... this.selectedFilters,
+          eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter)
+        }
+      }
+    }
+    this.fetchData()
   }
 
   private transformSkeletonToWidgets(

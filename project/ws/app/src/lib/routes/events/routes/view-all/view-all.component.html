@@ -1,16 +1,15 @@
 <ws-widget-btn-page-back [widgetData]="{ url: 'home', titles: titles  }">
 </ws-widget-btn-page-back>
-
 <div class="events-see-all-wrapper">
   <div class="flex ">
     <div class="container-balanced w-full">
       <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 md:col-span-9">
-          <div class="flex flex-row items-center justify-between search-block mb-5 gap-4 pl-2 md:pl-0 pr-0 md:pr-5">
+          <div class="flex flex-row items-center justify-between search-block mb-3 gap-4 pl-2 md:pl-0 pr-0 md:pr-5">
             <input type="text" [formControl]="searchControl" placeholder="Search Events" class="flex-1 search-input">
             <div class="md:hidden" (click)="openBottomSheet()"><mat-icon>filter_list</mat-icon></div>
           </div>
-          <div class="flex justify-between mb-5 items-center">
+          <div class="flex justify-between mb-3 items-center" *ngIf="contentDataList.length">
             <div class="results-header my-4 ml-3">Events
               <span>({{contentDataList?.length}})</span>
             </div>
@@ -43,6 +42,25 @@
               </div>
             </div>
           </div>
+          <div class="hidden md:block ">
+            <div class="flex mb-3 items-center gap-3 flex-wrap ">
+              <ng-container *ngFor="let filters of selectedFilters  | keyvalue:returnZero">
+                <ng-container
+                  *ngIf="filters.key === 'resourceType' || filters.key === 'eventStatus' || filters.key === 'eventDate'">
+                  <div class="filter-chip flex items-center cursor-pointer gap-2" *ngFor="let filter of filters?.value">
+                    <div>{{filter}}</div>
+                    <mat-icon class="close-btn" (click)="removeFilter(filters.key, filter)">close</mat-icon>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="filters.key === 'dateRange'">
+                  <div class="filter-chip flex items-center cursor-pointer gap-2">
+                    <div>{{customDate(filters?.value)}}</div>
+                    <mat-icon class="close-btn" (click)="removeFilter(filters.key, filters.value)">close</mat-icon>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
           <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
             <ng-container *ngIf="contentDataList.length;else noData">
               <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
@@ -66,9 +84,9 @@
             </ng-template>
           </div>
         </div>
-        <!-- hidden md:block -->
         <div class="col-span-3 hidden md:block">
-          <ws-app-filters [facetsData]="facetsData" (filterChange)="filterChange($event)"></ws-app-filters>
+          <ws-app-filters [facetsData]="facetsData" (filterChange)="filterChange($event)"
+            [selectedFilters]="selectedFilters"></ws-app-filters>
         </div>
       </div>
     </div>

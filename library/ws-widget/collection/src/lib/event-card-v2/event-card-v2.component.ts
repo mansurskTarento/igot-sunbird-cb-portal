@@ -6,6 +6,7 @@ import { NsCardContent } from './event-card-v2.model'
 /* tslint:disable*/
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'ws-widget-event-card-v2',
@@ -31,6 +32,7 @@ export class EventCardV2Component extends WidgetBaseComponent
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService,
     private translate: TranslateService,
+    private router: Router
 
   ) {
     super()
@@ -43,8 +45,8 @@ export class EventCardV2Component extends WidgetBaseComponent
     })
   }
 
-  async getRedirectUrlData(content: any, contentType?: any) {
-    console.log(content, contentType)
+  async getRedirectUrlData(content: any) {
+    this.router.navigate([`/app/event-hub/home/${content.identifier}`])
   }
   ngOnInit() {
     // this.widgetInstanceId=his.id
