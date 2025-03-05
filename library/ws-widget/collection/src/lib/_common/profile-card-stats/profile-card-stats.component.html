@@ -42,11 +42,12 @@
         <div class="profile-user-details">
         <div class="flex flex-middle padding-12">
             <div class="progress-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" *ngIf="userInfo.profileUpdateCompletion < 100" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 120 100" width="64" height="64">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 120 100" width="64" height="64">
                 <path class="grey" d="M55,90 A55,55 0 1,1 140,90" style="fill:none;"/>
                 <path class="progress-clr" d="M55,90 A55,55 0 1,1 140,90" style="fill:none;" />
               </svg>
-              <div class="user-img" [ngClass]="{'user-img-completion': userInfo.profileUpdateCompletion === 100}">
+              <!-- <div class="user-img" [ngClass]="{'user-img-completion': userInfo.profileUpdateCompletion === 100}"> -->
+              <div class="user-img">
                 <ws-widget-avatar-photo [datalen]="1" [name]="userInfo.firstName" [datalen]="" [randomColor]="true" [photoUrl]="userInfo?.profileImageUrl" size="round-m">
                 </ws-widget-avatar-photo>
                 <span class="percentage-block ">{{userInfo.profileUpdateCompletion}}%</span>
@@ -54,8 +55,8 @@
             </div>
             <div class="user-name flex margin-left-m">
                 <!-- <p class="margin-remove text-ellipses"  (click)="userInfo.profileUpdateCompletion < 100 && gotoUserProfile()">{{userInfo.firstName}} {{userInfo.lastName}}</p> -->
-                <p class="margin-remove text-ellipses"  (click)="userInfo.profileUpdateCompletion < 100 && gotoUserProfile()"> {{userFullName| titlecase}} </p>
-                <mat-icon *ngIf="userInfo.profileUpdateCompletion < 100" class="ws-mat-default-text mr-3" (click)="gotoUserProfile()">chevron_right</mat-icon>
+                <p class="margin-remove text-ellipses"  (click)="gotoUserProfile()"> {{userFullName| titlecase}} </p>
+                <mat-icon class="ws-mat-default-text mr-3" (click)="gotoUserProfile()">chevron_right</mat-icon>
             </div>
         </div>
         <hr class="divider">
@@ -101,18 +102,18 @@
         </div>
         <hr class="divider">
         <div class="profile-leader-board flex gap-1 items-center justify-center p-4">
-          <div class="text-center">
+          <div class="text-center cursor-default" (click)="showMyActivities()">
             <div class="stats-title-leader"> {{ 'weeklyclaps.leaderboard' | translate }}</div>
             <div class="stats-leader mt-2 flex gap-2 items-center">
               <img src="/assets/icons/leaderboard.svg" alt="icon" width="24" height="24"><span>{{currentUserRank?.rank ? (currentUserRank?.rank | pipeOrdinal) + ' ' + 'rank' : '--'}}</span></div>
           </div>
           <div class="divider-horizontal"></div>
-          <div class="text-center">
+          <div class="text-center cursor-default" (click)="showWeeklyClapsSection()">
             <p class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">{{ 'weeklyclaps.weeklyClapsTitle' | translate }}
               <img class="margin-left-s cursor-pointer" (click)="openInfo(myDialog)" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
           </p>
             <div class="stats-leader mt-2 flex gap-2 items-center">
-                <img class="cursor-pointer" (click)="showMyActivities()" width="24" height="24" [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_icon.svg' : 'assets/icons/home/clap_disable_icon.svg'"/>
+                <img class="cursor-pointer" width="24" height="24" [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_icon.svg' : 'assets/icons/home/clap_disable_icon.svg'"/>
                 <span  *ngIf="insightsData?.weeklyClaps?.total_claps > 1 else elseWeeklyClaps">{{insightsData?.weeklyClaps?.total_claps}} {{ 'weeklyclaps.weeks' | translate }}</span>
                 <ng-template #elseWeeklyClaps>{{insightsData?.weeklyClaps?.total_claps || 0}} {{ 'weeklyclaps.weeks' | translate }}</ng-template>
             </div>
@@ -124,7 +125,7 @@
         <div class="flex gap-2 items-center cursor-pointer" (click)="showMyActivities()">
           <mat-icon>bar_chart</mat-icon>{{'profileCardStats.ShowMyActivities' | translate}}
         </div>
-        <button mat-icon-button color="warn" (click)="toggle()">
+        <button mat-icon-button color="warn" class="upward-arrow-btn" (click)="toggle()">
           <mat-icon>{{collapsed ? 'arrow_downward' : 'arrow_upward'}}</mat-icon>
         </button>
       </div>
@@ -188,7 +189,7 @@
   <div class="user-data-list flex flex-middle flex-between ">
     <ng-container *ngFor="let stats of profileData?.profileStats">
       <ng-container *ngIf="stats.enable">
-        <div class="stats-data">
+        <div class="stats-data" (click)="redirectToContent(stats)">
           <img class="stats-icon" width="20" height="20" [src]="stats.icon">
           <div class="stats-title">{{translateLabels(stats.key, 'profileCardStats')}}</div>
           <div class="stats-count ws-mat-default-text text-bolder" *ngIf="countdata;else other_content">{{ countdata[stats.key] || 0}}</div>
