@@ -676,6 +676,13 @@ button.ws-mat-primary-background {
   color: #1B4CA1;
 }
 
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 590px;
+}
+
 .themes-button {
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.08);

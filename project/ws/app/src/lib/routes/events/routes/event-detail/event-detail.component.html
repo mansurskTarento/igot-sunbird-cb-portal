@@ -296,9 +296,9 @@
             <div>
               <div class="reference-title flex align-icon gap-2">
                 <div><img class="img-size" src="{{fileImage(handout?.content)}}" /></div>
-                <div>{{handout?.title}}</div>
+                <div class="text-truncate">{{handout?.title}} </div>
               </div>
-              <div class="flex gap-2 pt-2">
+              <div class="flex gap-2">
                 <mat-icon>visibility</mat-icon>
                 <a target="_blank" href="{{handout?.content}}">
                   <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
