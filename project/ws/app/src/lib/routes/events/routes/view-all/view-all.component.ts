@@ -159,8 +159,6 @@ export class ViewAllComponent {
         this.selectedFilters['resourceType'] = [data.params.resourceType]
       }
     })
-
-    console.log("selectedFilters", this.selectedFilters)
     this.fetchData()
   }
 
@@ -168,7 +166,7 @@ export class ViewAllComponent {
     return 0
   }
 
-  generateRequestBoday() {
+  generateRequestBody() {
     let requestBody: any = {
       locale: [
         'en',
@@ -190,7 +188,6 @@ export class ViewAllComponent {
     if (this.selectedFilters) {
       let startDate: any = ''
       let endDate: any = ''
-      console.log(this.datePipe, startDate, endDate)
       if (this.selectedFilters.eventDate && this.selectedFilters.eventDate.length) {
         if (this.selectedFilters.eventDate.includes('Today') && !this.selectedFilters.eventDate.includes('Tomorrow')) {
           startDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
@@ -235,7 +232,7 @@ export class ViewAllComponent {
 
   fetchData() {
     this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
-    const requestBody = this.generateRequestBoday()
+    const requestBody = this.generateRequestBody()
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
       let response: any = _.get(resp, 'result.Event', [])
       if (response.length) {
@@ -248,7 +245,6 @@ export class ViewAllComponent {
       } else {
         this.contentDataList = this.transformContentsToWidgets([], {})
       }
-      console.log("contentDataList ", this.contentDataList)
     }, error => {
       console.log("error", error)
       this.contentDataList = this.transformContentsToWidgets([], {})
@@ -363,8 +359,6 @@ export class ViewAllComponent {
   }
 
   removeFilter(key: any, filter: any) {
-    console.log(key, filter)
-    console.log(this.selectedFilters)
     if (key === 'dateRange') {
       delete this.selectedFilters.dateRange
       this.startDate = ''
@@ -405,7 +399,6 @@ export class ViewAllComponent {
   }
 
   onDateChange(event: any, eType: any, facet: any) {
-    console.log(facet, eType, event)
     if (eType.key === 'fromDate') {
       this.startDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
     }
@@ -433,8 +426,7 @@ export class ViewAllComponent {
     }
   }
 
-  changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
-    console.log('changeSelection', event, key, keyData, allKeyData)
+  changeSelection(event: any, key: any, keyData: any) {
     if (event) {
       if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
         if (this.selectedFilters[key]) {
@@ -514,7 +506,5 @@ export class ViewAllComponent {
       },
     }))
   }
-
-
 }
 

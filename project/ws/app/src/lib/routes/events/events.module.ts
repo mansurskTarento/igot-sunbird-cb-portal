@@ -59,7 +59,8 @@ import { FiltersComponent } from './routes/events/filters/filters.component'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -76,6 +77,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     ViewAllComponent,
     FiltersComponent,
     MobileFiltersComponent,
+    SeeAllComponent,
   ],
   imports: [
     CommonModule,

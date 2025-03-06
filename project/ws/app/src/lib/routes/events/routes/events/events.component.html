@@ -86,6 +86,9 @@
         </span>
     </div>
     <button mat-button (click)="viewAll()">View All</button>
+    <button mat-button (click)="seeAll('recommendedEvents')">Recommended</button>
+    <button mat-button (click)="seeAll('trendingEvents')">Trending</button>
+    <button mat-button (click)="seeAll('featuredEvents')">Featured</button>
     <div class="flex flex-1 flex-column margin-fix search">
         <form>
             <mat-form-field appearance="outline" class="autocomplete-form mat-body-2" color="primary"

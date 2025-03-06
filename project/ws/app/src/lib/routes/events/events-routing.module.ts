@@ -11,6 +11,7 @@ import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
 import { ViewAllComponent } from './routes/view-all/view-all.component'
+import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 
 const routes: Routes = [
   {
@@ -35,6 +36,14 @@ const routes: Routes = [
         },
         resolve: {
           topics: EventRecentResolve,
+        },
+      },
+      {
+        path: 'see-all',
+        component: SeeAllComponent,
+        data: {
+          pageId: 'see-all',
+          module: 'Events',
         },
       },
       {

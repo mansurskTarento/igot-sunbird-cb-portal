@@ -712,4 +712,8 @@ export class EventsComponent implements OnInit {
   viewAll() {
     this.router.navigate(['/app/event-hub/view-all'], { queryParams: { resourceType: 'Karmayogi Talks' } })
   }
+
+  seeAll(type: string) {
+    this.router.navigate(['/app/event-hub/see-all'], { queryParams: { category: type } })
+  }
 }
