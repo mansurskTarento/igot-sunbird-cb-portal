@@ -130,3 +130,12 @@ export class SearchCommunitiesRequest {
     this.searchString = null;
   }
 }
+
+export class SearchNLP {
+  query: string;
+  synonyms: boolean;
+  constructor() {
+    this.query = '';
+    this.synonyms = false;
+  }
+}

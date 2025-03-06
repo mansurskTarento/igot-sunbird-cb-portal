@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./global-search.component.scss'],
 })
 export class GlobalSearchComponent implements OnInit {
-  searchParam = '';
+  searchParam = { query: '', nlp: '' };
   userValue = '';
   searchparamFilters: any;
   filtersPanel!: string | null;
@@ -35,7 +35,7 @@ export class GlobalSearchComponent implements OnInit {
     this.compentencyKey =
       this.configService.compentency[environment.compentencyVersionKey];
     this.activated.queryParamMap.subscribe((queryParams) => {
-      this.searchParam = '';
+      this.searchParam = { query: '', nlp: '' };
       this.userValue = '';
       if (queryParams.has('tab')) {
         const tabn = queryParams.get('tab');
@@ -46,10 +46,10 @@ export class GlobalSearchComponent implements OnInit {
         });
       }
       if (queryParams.has('q')) {
-        this.searchParam = queryParams.get('q') || '';
+        this.searchParam = { query: queryParams.get('q') || '', nlp: queryParams.get('search') || '' };
       }
       if (queryParams.has('t')) {
-        this.searchParam = 'moderatedCourses' || '';
+        this.searchParam = { query: 'moderatedCourses', nlp: queryParams.get('search') || '' };
         this.userValue = 'moderatedCourses';
       }
       if (queryParams.has('f')) {

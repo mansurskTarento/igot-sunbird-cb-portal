@@ -74,7 +74,7 @@
           </div>
           <ng-container *ngFor="let result of allSearchResults">
             <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-              <div matLine class="text-xs font-normal py-1 recent-search-text">{{ getResultName(result) }}</div>
+              <div matLine class="text-xs font-normal py-1 recent-search-text text-ellipse">{{ getResultName(result) }}</div>
             </mat-list-item>
           </ng-container>
           <ng-container *ngIf="allSearchResults.length === 0">
@@ -89,7 +89,7 @@
         </div> -->
 
         <div class="see-all-results">
-          <a mat-button>See all the results...</a>
+          <a mat-button (click)="updateQuery(queryControl.value)">See all the results...</a>
         </div>
       </div>
 

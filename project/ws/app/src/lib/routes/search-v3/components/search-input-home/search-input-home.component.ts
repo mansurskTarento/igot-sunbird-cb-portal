@@ -21,6 +21,7 @@ import {
   SearchCommunitiesRequest,
   SearchEventfacet,
   SearchEventFields,
+  SearchNLP,
   SearchPeoplesRequest,
   SearchV4Request,
 } from '../../models/search-v3.model';
@@ -74,6 +75,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   selectedSearchCategory: string = SearchCategory.All;
   openSearchTemplate = false;
   loaderSearching = false;
+  responseNlpQuery = ''
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target)) {
@@ -95,12 +97,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     );
 
     this.queryControl.valueChanges
-      .pipe(debounceTime(200), distinctUntilChanged())
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((value) => {
         if (value) {
-          console.log(value);
           this.loaderSearching = false;
-          this.searchFromQuery(value);
+          // this.searchFromQuery(value);
+          this.searchInNLP(value)
         }
       });
   }
@@ -201,13 +203,13 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     if (this.ref === 'home') {
       this.closed.emit(false);
       this.router.navigate(['/app/globalsearch'], {
-        queryParams: { q: query.trim() },
+        queryParams: { q: query.trim(),  search: this.responseNlpQuery },
         queryParamsHandling: 'merge',
       });
     } else {
       this.router.navigate([], {
         relativeTo: this.activated.parent,
-        queryParams: { q: query.trim() },
+        queryParams: { q: query.trim(), search: this.responseNlpQuery },
         queryParamsHandling: 'merge',
       });
     }
@@ -221,7 +223,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    this.searchFromQuery(this.queryControl.value);
+    this.searchFromQuery(this.responseNlpQuery);
   }
 
   async searchFromQuery(query: string) {
@@ -358,5 +360,19 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         queryParams: urlData.queryParams,
       });
     }
+  }
+
+  searchInNLP(query: string) {
+    const searchRequest = new SearchNLP()
+    searchRequest.query = query
+    this.searchV3Service.nlpSearch(searchRequest).then(response => {
+      if(response?.data && response?.data?.keywords) {
+        this.responseNlpQuery = (response?.data?.keywords).join(' ')
+        console.log(this.responseNlpQuery);
+        if(this.responseNlpQuery) {
+          this.searchFromQuery(this.responseNlpQuery);
+        }
+      }
+    })
   }
 }

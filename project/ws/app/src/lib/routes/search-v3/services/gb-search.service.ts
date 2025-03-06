@@ -9,6 +9,7 @@ import {
 import { SearchApiService } from '../../search/apis/search-api.service';
 import {
   SearchCommunitiesRequest,
+  SearchNLP,
   SearchPeoplesRequest,
   SearchV4Request,
 } from '../models/search-v3.model';
@@ -18,7 +19,8 @@ const API_END_POINTS = {
   SEARCH_V4: `/apis/proxies/v8/sunbirdigot/v4/search`,
   SEARCH_EXT_CONTENT: `/apis/proxies/v8/cios/v1/search/content`,
   SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
-  SEARCH_cOMMUNITY: `/apis/proxies/v8/community/v1/search`,
+  SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
+  SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
 };
 
 @Injectable({
@@ -79,6 +81,10 @@ export class GbSearchService {
   }
 
   searchCommunity(params: SearchCommunitiesRequest): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_cOMMUNITY, params).toPromise();
+    return this.http.post(API_END_POINTS.SEARCH_COMMUNITY, params).toPromise();
+  }
+
+  nlpSearch(params: SearchNLP): Promise<any> {
+    return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise();
   }
 }

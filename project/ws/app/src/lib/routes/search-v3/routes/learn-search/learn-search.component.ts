@@ -35,7 +35,7 @@ import { map, mergeMap, toArray } from 'rxjs/operators';
   styleUrls: ['./learn-search.component.scss'],
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() searchQuery: any;
+  @Input() searchQuery!: { query: string; nlp: string };
   @Input() userValue = '';
   @Input() paramFilters: any = [];
   @Input() filtersPanel!: string;
@@ -95,7 +95,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.statedata = { param: this.searchQuery, path: 'Search' };
+    this.statedata = {
+      param: this.searchQuery?.nlp
+        ? this.searchQuery?.nlp
+        : this.searchQuery.query,
+      path: 'Search',
+    };
     const instanceConfig = this.configSvc.instanceConfig;
     this.defaultSideNavBarOpenedSubscription = this.isLtMedium$.subscribe(
       (isLtMedium) => {
@@ -122,7 +127,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     //       .localeCompare(this.getName(b.personalDetails).toLowerCase());
     //   });
     // }
-    this.updateNoResultMessage(this.searchQuery);
+    this.updateNoResultMessage(this.statedata.param);
   }
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -137,11 +142,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           : false;
     }
     if (
-      changes.searchQuery.currentValue !== changes.searchQuery.previousValue
+      changes.searchQuery.currentValue?.query !==
+      changes.searchQuery.previousValue?.query
     ) {
-      this.statedata = { param: this.searchQuery, path: 'Search' };
+      this.statedata = {
+        param: this.searchQuery?.nlp
+          ? this.searchQuery?.nlp
+          : this.searchQuery.query,
+        path: 'Search',
+      };
       this.isLoadingSearch = true;
-
       this.resetAllSearchParams();
       await this.searchCourses();
       await this.searchEvents();
@@ -247,7 +257,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchCourses() {
-    this.searchRequestCourse.request.query = this.searchQuery;
+    this.searchRequestCourse.request.query = this.statedata?.param;
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestCourse
     );
@@ -272,7 +282,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     delete this.searchRequestEvents.request.filters?.courseCategory;
     delete this.searchRequestEvents.request.sort_by?.lastUpdatedOn;
 
-    this.searchRequestEvents.request.query = this.searchQuery;
+    this.searchRequestEvents.request.query = this.statedata?.param || '';
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
     );
@@ -300,8 +310,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchcommunities() {
-    // const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
-    const uniqueDepartmentNames = ['Finance and Budget testing'];
+    const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
+    // const uniqueDepartmentNames = ['Finance and Budget testing'];
     this.searchRequestCommunities.pageSize = 10;
     if (uniqueDepartmentNames.length > 0) {
       from(uniqueDepartmentNames)
@@ -354,7 +364,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchEvents();
     } else if (category === SearchCategory.People) {
       this.searchRequestPeoples.size = 10;
-      this.searchPeople()
+      this.searchPeople();
     } else if (category === SearchCategory.Communities) {
       this.searchRequestCommunities.pageSize = 10;
       this.searchcommunities();
