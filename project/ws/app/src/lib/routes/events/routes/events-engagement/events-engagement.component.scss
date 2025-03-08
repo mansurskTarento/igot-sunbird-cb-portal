@@ -17,13 +17,6 @@
     height: 17px;
 }
 
-.schedule-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    color: #F3962F;
-}
-
 .events-attended {
     color: #00000099;
     /* stylelint-disable */
@@ -36,4 +29,9 @@
     /* stylelint-disable */
     font: 700 14px 'Lato';
     /* stylelint-enable */
+}
+
+::ng-deep .filter-bottomsheet {
+    height: 100vh;
+    position: relative !important;
 }

@@ -13,6 +13,7 @@ const API_END_POINTS = {
   ALL_EVENT_ENROLL_LIST: (userId: string) => `/apis/proxies/v8/v1/user/events/list/${userId}`,
   IS_ENROLLED: (userId: string, eventId: string, batchId?: string) =>
     `/apis/proxies/v8/user/event/read/${userId}?eventId=${eventId}&batchId=${batchId}`,
+  USER_ALL_ENROLL_EVENT_LIST: (userId: string) => `/apis/proxies/v8/user/events/list/${userId}`,
 
 }
 
@@ -40,6 +41,10 @@ export class EventService {
   
   AllEventEnrollList(userId: string): Observable<any> {
     return this.http.get<any>(`${API_END_POINTS.ALL_EVENT_ENROLL_LIST(userId)}`)
+  }
+
+  getUserEnrollEvents(userId: string, req: any) {
+    return this.http.post<any>(`${API_END_POINTS.USER_ALL_ENROLL_EVENT_LIST(userId)}`, req)
   }
 
   getIsEnrolled(userId: string, eventId: string, batchId?: string): Observable<any> {

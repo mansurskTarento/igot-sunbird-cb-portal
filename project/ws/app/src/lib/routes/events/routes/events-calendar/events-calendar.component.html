@@ -2,7 +2,7 @@
     <div class="header">My Event Calendar</div>
     <div class="month-selector flex items-center justify-between">
         <mat-icon (click)="prevMonth()">chevron_left</mat-icon>
-        <span>{{ getMonthYearText }}</span>
+        <span>{{ currentMonthYearText }}</span>
         <mat-icon (click)="nextMonth()">chevron_right</mat-icon>
     </div>
 
@@ -12,36 +12,46 @@
         </div>
 
         <div class="days-grid">
-            <div *ngFor="let date of daysInMonth" class="day-cell" [class.current-month]="isCurrentMonth(date)"
-                [class.today]="isToday(date)" [class.has-event]="hasEvent(date)"
-                [class.selected]="selected && date.getDate() === selected.getDate() && date.getMonth() === selected.getMonth()"
-                (click)="selectDate(date)">
-                {{ date.getDate() }}
+            <div *ngFor="let date of daysInMonth" class="day-cell" 
+                [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
+                'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
+                'selected': (selected && date?.date?.getTime() === selected.getTime())}" (click)="selectDate(date?.date)">
+                {{ date?.date?.getDate() }}
             </div>
         </div>
     </div>
 
     <div class="today-events mt-2 flex flex-col gap-3">
-        <div class="today">Today</div>
-        <ng-container *ngFor="let event of eventsList | slice:0:2">
-            <div class="event-item flex flex-col gap-3 pb-3">
-                <div class="flex justify-between items-center">
-                    <div class="eventName">{{event.eventName}}</div>
-                    <ng-container *ngIf="!event.eventTime">
-                        <div class="flex gap-1 live">
-                            <img src="/assets/icons/live.svg" alt="">
-                            <span>Live</span>
+        <div class="today">{{selectedDateText}}</div>
+        <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
+            <ng-container *ngFor="let event of selectedDateEvents | slice:0:2">
+                <div class="event-item flex flex-col gap-3 pb-3">
+                    <div class="flex justify-between items-center">
+                        <div class="eventName">{{event.name}}</div>
+                        <ng-container *ngIf="event.isLive">
+                            <div class="flex gap-1 live">
+                                <img src="/assets/icons/live.svg" alt="">
+                                <span>Live</span>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <span class="eventDescription">{{event.description}}</span>
+                    <ng-container *ngIf="!event.isLive && event.startTime">
+                        <div class="event-time flex items-center gap-2">
+                            <mat-icon class="event-time-icon">schedule</mat-icon>
+                            <span>{{event.startTime}}</span>
                         </div>
                     </ng-container>
                 </div>
-                <span class="eventDescription">{{event.eventDescription}}</span>
-                <ng-container *ngIf="event.eventTime">
-                    <div class="event-time">
-                        <mat-icon class="event-time-icon">schedule</mat-icon>
-                        <span>{{event.eventTime}}</span>
-                    </div>
-                </ng-container>
+            </ng-container>
+            <div class="flex justify-end items-center">
+                <span class="seeAll">See all</span>
             </div>
         </ng-container>
+        <ng-template #noEvents>
+            <div class="flex items-center justify-center">
+                <span class="eventDescription">No events found</span>
+            </div>
+        </ng-template>
     </div>
 </div>

@@ -12,6 +12,10 @@
     /* stylelint-enable */
     color: #212121;
 }
+
+.visibilityHidden {
+  visibility: hidden;
+}
   
 .month-selector {
     color: #1B2133;
@@ -85,6 +89,20 @@
           border-radius: 50%;
         }
       }
+
+      &.has-pre-event {
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0px;
+          width: 6px;
+          height: 6px;
+          background-color: #999999;
+          border-radius: 50%;
+        }
+      }
       
       &.selected {
         background-color: #F3962F;
@@ -128,4 +146,26 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+}
+
+.event-time {
+  color: #999999;
+  /* stylelint-disable */
+  font: 400 14px 'Lato';
+  /* stylelint-enable */
+  .event-time-icon {
+    color: #00000099 !important;
+    height: 15px;
+    width: 15px;
+    font-size: 15px;
+  }
+}
+
+.seeAll {
+  /* stylelint-disable */
+  font: 700 14px 'Lato';
+  /* stylelint-enable */
+  color: #1B4CA1;
+  border-bottom: 1px solid #1B4CA1;
+  cursor: pointer;
 }

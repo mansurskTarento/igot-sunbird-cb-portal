@@ -30,7 +30,7 @@ import { EventService } from './services/events.service'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+// import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
@@ -52,6 +52,10 @@ import { HttpClient } from '@angular/common/http';
 import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component';
 import { EventsCalendarComponent } from './routes/events-calendar/events-calendar.component';
 import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
+import { MatLegacySnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet'
+import { ContentStripWithTabsPillsModule, ContentStripWithTabsLibModule } from '@sunbird-cb/consumption'
+import { MatDialogModule } from '@angular/material/dialog'
 
 @NgModule({
   declarations: [
@@ -68,7 +72,7 @@ import { EventsEngagementComponent } from './routes/events-engagement/events-eng
     EventYouTubeComponent,
     EventsHomeV2Component,
     EventsCalendarComponent,
-    EventsEngagementComponent,
+    EventsEngagementComponent
   ],
   imports: [
     CommonModule,
@@ -108,6 +112,10 @@ import { EventsEngagementComponent } from './routes/events-engagement/events-eng
     ContentProgressModule,
     WidgetCommentModule,
     InfiniteScrollModule,
+    MatBottomSheetModule,
+    MatLegacySnackBarModule,
+    ContentStripWithTabsPillsModule,
+    ContentStripWithTabsLibModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -122,7 +130,8 @@ import { EventsEngagementComponent } from './routes/events-engagement/events-eng
     EventService,
     ViewerResolve,
     EventResolve,
-    DatePipe
+    DatePipe,
+    EventsEngagementComponent
   ],
 })
 export class EventsModule { }
