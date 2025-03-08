@@ -35,8 +35,7 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
      
     ) {
       this.sectionList = this.route.snapshot.data.formData.data.result.form.data.sectionList
-      this.nwlConfig = this.route.snapshot.data.formData.data.result.form.data &&  
-      this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
+     
     }
     this.route.params.subscribe(params => {
       this.channnelName = params['channel']
@@ -47,12 +46,16 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
     })
 
     if (this.route.snapshot.data
-      && this.route.snapshot.data.configData
-      && this.route.snapshot.data.configData.data
-      && this.route.snapshot.data.configData.data.nationalLearningWeek
+      && this.route.snapshot.data.formData
+      && this.route.snapshot.data.formData.data
+      && this.route.snapshot.data.formData.data.result
+      && this.route.snapshot.data.formData.data.result.form
+      && this.route.snapshot.data.formData.data.result.form.data
+      && this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig
     ) {
-    this.nwlConfig = this.route.snapshot.data.configData.data.nationalLearningWeek
+      this.nwlConfig = this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
   }
+  
   }
 
 }
