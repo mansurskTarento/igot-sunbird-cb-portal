@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-mdo-channels-microsite-v2',
@@ -18,8 +19,9 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
   channnelName = ''
   orgId = ''
   sectionList: any = []
+  nwlConfig: any
   constructor(
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute, public configService: ConfigurationsService) {
 
   }
 
@@ -30,8 +32,11 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
       && this.route.snapshot.data.formData.data.result.form
       && this.route.snapshot.data.formData.data.result.form.data
       && this.route.snapshot.data.formData.data.result.form.data.sectionList
+     
     ) {
       this.sectionList = this.route.snapshot.data.formData.data.result.form.data.sectionList
+      this.nwlConfig = this.route.snapshot.data.formData.data.result.form.data &&  
+      this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
     }
     this.route.params.subscribe(params => {
       this.channnelName = params['channel']
@@ -40,6 +45,14 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
         title: this.channnelName, icon: '', url: 'none', disableTranslate: true,
       })
     })
+
+    if (this.route.snapshot.data
+      && this.route.snapshot.data.configData
+      && this.route.snapshot.data.configData.data
+      && this.route.snapshot.data.configData.data.nationalLearningWeek
+    ) {
+    this.nwlConfig = this.route.snapshot.data.configData.data.nationalLearningWeek
+  }
   }
 
 }
