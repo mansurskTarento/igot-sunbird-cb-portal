@@ -8,6 +8,8 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 /* tslint:disable */
 import _ from 'lodash'
 import moment from 'moment'
+import * as fileSaver from 'file-saver'
+import { environment } from 'src/environments/environment'
 import { EventService } from '../../services/events.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -15,6 +17,8 @@ import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 //import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
+import { NsContent } from '@sunbird-cb/collection/src/public-api'
 /* tslint:enable */
 
 @Component({
@@ -49,6 +53,36 @@ export class EventDetailComponent implements OnInit {
   downloadCertificateBool = false
   pageData!: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
+  competenciesObject: any = []
+  competencySelected = ''
+  compentencyKey!: NsContent.ICompentencyKeys
+  strip: NsContentStripWithTabs.IContentStripUnit = {
+    key: 'blendedPrograms',
+    logo: '',
+    title: 'Blended Program',
+    stripTitleLink: {
+      link: '',
+      icon: '',
+    },
+    sliderConfig: {
+      showNavs: true,
+      showDots: false,
+    },
+    loader: true,
+    stripBackground: '',
+    titleDescription: 'Blended Program',
+    stripConfig: {
+      cardSubType: 'standard',
+    },
+    viewMoreUrl: {
+      path: '',
+      viewMoreText: 'Show all',
+      queryParams: '',
+    },
+    tabs: [],
+    filters: [],
+  }
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -82,6 +116,8 @@ export class EventDetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.skeletonLoader = true
+    this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
     this.route.params.subscribe(params => {
       this.eventId = params.eventId
       // if (this.fetchNewData) {
@@ -97,6 +133,10 @@ export class EventDetailComponent implements OnInit {
       }
       if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
         this.batchId = this.eventData.batches[0].batchId || ''
+      }
+      if (this.eventData.competencies_v6) {
+        this.loadCompetencies()
+        this.skeletonLoader = false
       }
       /* tslint:disable */
       console.log(this.eventSvc)
@@ -131,20 +171,20 @@ export class EventDetailComponent implements OnInit {
       if (this.isenrollFlow) {
         this.getUserIsEnrolled()
       } else {
-        
-      this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
-      this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+
+        this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
+        this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
         if (this.discussWidgetData) {
           if (this.eventData && this.eventData.identifier) {
             this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
-  
+
             if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
               this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
             }
           }
-            this.discussWidgetData.enrolledContent = true
-            this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-        
+          this.discussWidgetData.enrolledContent = true
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+
           this.discussWidgetData = { ...this.discussWidgetData }
         }
       }
@@ -157,7 +197,7 @@ export class EventDetailComponent implements OnInit {
       userId = this.configSvc.userProfile.userId || ''
     }
     this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
-    
+
     if (this.discussWidgetData) {
       if (this.eventData && this.eventData.identifier) {
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
@@ -166,8 +206,8 @@ export class EventDetailComponent implements OnInit {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
         }
       }
-       
-      
+
+
     }
     if (this.eventData && userId) {
       this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
@@ -176,24 +216,24 @@ export class EventDetailComponent implements OnInit {
         if (data && data.result && data.result.events && data.result.events.length > 0) {
           this.enrolledEvent = data.result.events.find((d: any) => d.contentId === this.eventData.identifier)
           this.enrolledEvent = { ...this.enrolledEvent }
-          if(this.enrolledEvent 
+          if (this.enrolledEvent
             && this.enrolledEvent.issuedCertificates
-            && this.enrolledEvent.issuedCertificates.length){
-              const certId = this.enrolledEvent.issuedCertificates[0].identifier
-              this.enrolledEvent['certificateObj'] = {
-                certData: '',
-                certId: certId,
-              }
+            && this.enrolledEvent.issuedCertificates.length) {
+            const certId = this.enrolledEvent.issuedCertificates[0].identifier
+            this.enrolledEvent['certificateObj'] = {
+              certData: '',
+              certId: certId,
+            }
           }
-          if( this.enrolledEvent && this.enrolledEvent.completionPercentage) {
+          if (this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
           }
 
-      this.discussWidgetData.enrolledContent = true
-      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-    
-      
-        }  else {
+          this.discussWidgetData.enrolledContent = true
+          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+
+
+        } else {
           this.discussWidgetData.enrolledContent = false
           this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
         }
@@ -226,23 +266,23 @@ export class EventDetailComponent implements OnInit {
 
     const currentTime = new Date().getHours() * 60 + new Date().getMinutes()
     const minustime = starttime - currentTime
-    if (eventData.startDate === todaysdate && minustime < 16 && (selectedStartDate > today || selectedEndDate < today))  {
+    if (eventData.startDate === todaysdate && minustime < 16 && (selectedStartDate > today || selectedEndDate < today)) {
       return true
     }
     return false
   }
 
   // fetchSingleCategoryDetails(cid: number) {
-    // this.fetchSingleCategoryLoader = true
-    // this.discussService.fetchSingleCategoryDetails(cid).subscribe(
-    //   (data: NSDiscussData.ICategoryData) => {
-    //     this.similarPosts = data.topics
-    //     this.fetchSingleCategoryLoader = false
-    //   },
-    //   (err: any) => {
-    //     this.openSnackbar(err.error.message.split('|')[1] || this.defaultError)
-    //     this.fetchSingleCategoryLoader = false
-    //   })
+  // this.fetchSingleCategoryLoader = true
+  // this.discussService.fetchSingleCategoryDetails(cid).subscribe(
+  //   (data: NSDiscussData.ICategoryData) => {
+  //     this.similarPosts = data.topics
+  //     this.fetchSingleCategoryLoader = false
+  //   },
+  //   (err: any) => {
+  //     this.openSnackbar(err.error.message.split('|')[1] || this.defaultError)
+  //     this.fetchSingleCategoryLoader = false
+  //   })
   // }
 
   // private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -251,58 +291,170 @@ export class EventDetailComponent implements OnInit {
   //   })
   // }
 
-    onStateChange(event: any) {
-      this.ytEvent = event.data
-    }
-    // savePlayer(player: any) {
-    //   this.player = player
-    // }
+  onStateChange(event: any) {
+    this.ytEvent = event.data
+  }
+  // savePlayer(player: any) {
+  //   this.player = player
+  // }
 
-    // playVideo() {
-    //   this.player.playVideo()
-    // }
+  // playVideo() {
+  //   this.player.playVideo()
+  // }
 
-    // pauseVideo() {
-    //   this.player.pauseVideo()
-    // }
+  // pauseVideo() {
+  //   this.player.pauseVideo()
+  // }
 
-    handleOpenCertificateDialog() {
-      this.downloadCertificateBool = true
-      const certId = this.enrolledEvent && this.enrolledEvent.certificateObj.certId
-      if (this.enrolledEvent && this.enrolledEvent.certificateObj && !this.enrolledEvent.certificateObj.certData) {
-        this.contentSvc.downloadCert(certId).subscribe(response => {
-          if (this.enrolledEvent) {
-            this.downloadCertificateBool = false
-            this.enrolledEvent['certificateObj']['certData'] = response.result.printUri
-            this.dialog.open(CertificateDialogComponent, {
-              width: '1200px',
-              data: { cet: response.result.printUri, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
-            })
-          }
-        },                                             (_error: any) => {
+  handleOpenCertificateDialog() {
+    this.downloadCertificateBool = true
+    const certId = this.enrolledEvent && this.enrolledEvent.certificateObj.certId
+    if (this.enrolledEvent && this.enrolledEvent.certificateObj && !this.enrolledEvent.certificateObj.certData) {
+      this.contentSvc.downloadCert(certId).subscribe(response => {
+        if (this.enrolledEvent) {
           this.downloadCertificateBool = false
-          // this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
-          this.snackBar.open('Unable to View Certificate, due to some error!')
-        })
-      } else {
+          this.enrolledEvent['certificateObj']['certData'] = response.result.printUri
+          this.dialog.open(CertificateDialogComponent, {
+            width: '1200px',
+            data: { cet: response.result.printUri, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
+          })
+        }
+      }, (_error: any) => {
         this.downloadCertificateBool = false
-        this.dialog.open(CertificateDialogComponent, {
-          width: '1200px',
-          data: { cet: this.enrolledEvent && this.enrolledEvent.certificateObj.certData, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
-        })
+        // this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
+        this.snackBar.open('Unable to View Certificate, due to some error!')
+      })
+    } else {
+      this.downloadCertificateBool = false
+      this.dialog.open(CertificateDialogComponent, {
+        width: '1200px',
+        data: { cet: this.enrolledEvent && this.enrolledEvent.certificateObj.certData, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
+      })
+    }
+  }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
+  }
+
+  enrollEvent(event: any) {
+    this.isEnrolled = event
+    if (this.discussWidgetData) {
+      this.discussWidgetData.enrolledContent = this.isEnrolled
+      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+      this.discussWidgetData = { ...this.discussWidgetData }
+    }
+  }
+
+  fileImage(name: string) {
+    return name.includes('.ppt') ? '/assets/icons/ppt.svg' :
+      (name.includes('.doc') ? '/assets/icons/doc.svg' : '/assets/icons/pdf.svg')
+  }
+
+  genrateMaterialName(url: string) {
+    let name = ''
+    if (url) {
+      const urlSplit = url.split('_')
+      if (urlSplit.length > 0) {
+        name = urlSplit[urlSplit.length - 1]
+      }
+    }
+    return name
+  }
+
+  downloadPDF(handout: any) {
+    fileSaver.saveAs(handout.content, handout.title)
+  }
+
+  checkValidJSON(str: any) {
+    try {
+      JSON.parse(str)
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  loadCompetencies(): void {
+    if (this.eventData && this.eventData[this.compentencyKey.vKey] && this.eventData[this.compentencyKey.vKey].length) {
+      const competenciesObject: any = {}
+      if (typeof this.eventData[this.compentencyKey.vKey] === 'string'
+        && this.checkValidJSON(this.eventData[this.compentencyKey.vKey])) {
+        this.eventData[this.compentencyKey.vKey] = JSON.parse(this.eventData[this.compentencyKey.vKey])
+      }
+      this.eventData[this.compentencyKey.vKey].forEach((_obj: any) => {
+        if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
+          if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+          [_obj[this.compentencyKey.vCompetencyTheme]]) {
+            const competencyTheme = competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
+            if (competencyTheme.indexOf(_obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
+              competencyTheme.push(_obj[this.compentencyKey.vCompetencySubTheme])
+            }
+          } else {
+            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]] = []
+            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
+              .push(_obj[this.compentencyKey.vCompetencySubTheme])
+          }
+        } else {
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]] = {}
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]] = []
+          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]]
+            .push(_obj[this.compentencyKey.vCompetencySubTheme])
+        }
+      })
+
+      for (const key in competenciesObject) {
+        if (competenciesObject.hasOwnProperty(key)) {
+          const _temp: any = {}
+          _temp['key'] = key
+          _temp['value'] = competenciesObject[key]
+          this.competenciesObject.push(_temp)
+        }
+      }
+      this.handleShowCompetencies(this.competenciesObject[0])
+    }
+  }
+
+  handleShowCompetencies(item: any): void {
+    this.competencySelected = item.key
+    const valueObj = item.value
+    const competencyArray = []
+    for (const key in valueObj) {
+      if (valueObj.hasOwnProperty(key)) {
+        const _tempObj: any = {}
+        _tempObj['key'] = key
+        _tempObj['value'] = valueObj[key]
+        competencyArray.push(_tempObj)
       }
     }
 
-    translateLabels(label: string, type: any) {
-      return this.langtranslations.translateActualLabel(label, type, '')
-    }
-  
-    enrollEvent(event: any) {
-      this.isEnrolled = event
-      if(this.discussWidgetData) {
-          this.discussWidgetData.enrolledContent = this.isEnrolled
-          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-          this.discussWidgetData = { ...this.discussWidgetData }
+    this.strip['loaderWidgets'] = this.transformCompetenciesToWidget(this.competencySelected, competencyArray, this.strip)
+  }
+
+  private transformCompetenciesToWidget(
+    competencyArea: string,
+    competencyArrObject: any,
+    strip: NsContentStripWithTabs.IContentStripUnit) {
+    return (competencyArrObject || []).map((content: any, idx: number) => (
+      content ? {
+        widgetType: 'card',
+        widgetSubType: 'competencyCard',
+        widgetHostClass: 'mr-4',
+        widgetData: {
+          content,
+          competencyArea,
+          cardCustomeClass: strip.customeClass ? strip.customeClass : '',
+          context: { pageSection: strip.key, position: idx },
+        },
+      } : {
+        widgetType: 'card',
+        widgetSubType: 'competencyCard',
+        widgetHostClass: 'mr-4',
+        widgetData: {},
       }
-    }
+    ))
+  }
 }

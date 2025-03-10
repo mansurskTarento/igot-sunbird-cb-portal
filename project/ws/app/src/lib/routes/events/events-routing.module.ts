@@ -11,6 +11,9 @@ import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
 import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component'
+import { ViewAllComponent } from './routes/view-all/view-all.component'
+import { SeeAllComponent } from './routes/events/see-all/see-all.component'
+import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 
 const routes: Routes = [
   {
@@ -35,6 +38,22 @@ const routes: Routes = [
         },
         resolve: {
           topics: EventRecentResolve,
+        },
+      },
+      {
+        path: 'see-all',
+        component: SeeAllComponent,
+        data: {
+          pageId: 'see-all',
+          module: 'Events',
+        },
+      },
+      {
+        path: 'view-all',
+        component: ViewAllComponent,
+        data: {
+          pageId: 'view-all',
+          module: 'Events',
         },
       },
       {
@@ -68,6 +87,18 @@ const routes: Routes = [
               resourceType: 'youtube',
               module: 'Events',
               pageId: 'youtube',
+            },
+            resolve: {
+              content: EventResolve,
+            },
+          },
+          {
+            path: 'video/:videoId',
+            component: EventVideoPlayerComponent,
+            data: {
+              resourceType: 'video',
+              module: 'Events',
+              pageId: 'video',
             },
             resolve: {
               content: EventResolve,
