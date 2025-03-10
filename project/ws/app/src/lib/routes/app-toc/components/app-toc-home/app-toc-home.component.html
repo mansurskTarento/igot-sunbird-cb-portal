@@ -330,12 +330,12 @@
             <ng-container *ngIf="!skeletonLoader">
               <div class="flex flex-row gap-2">
                 <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2">
-                  <mat-icon class="ws-mat-orange-text">video_library</mat-icon>
+                  <mat-icon class="ws-mat-orange-text nodtranslate">video_library</mat-icon>
                   <ng-container *ngIf="content?.courseCategory">
-                    <div class="text-xs font-bold text-white leading-3">{{ translateLabel(content?.courseCategory, 'searchfilters') }}</div>
+                    <div class="text-xs font-bold text-white leading-3 nodtranslate">{{ translateLabel(content?.courseCategory, 'searchfilters') }}</div>
                   </ng-container>
                   <ng-container *ngIf="!content?.courseCategory">
-                    <div class="text-xs font-bold text-white leading-3">{{ translateLabel(content?.primaryCategory, 'searchfilters') }}</div>
+                    <div class="text-xs font-bold text-white leading-3 nodtranslate">{{ translateLabel(content?.primaryCategory, 'searchfilters') }}</div>
                   </ng-container>
                 </div>
                 
