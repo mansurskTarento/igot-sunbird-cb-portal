@@ -29,6 +29,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 
 import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -50,6 +51,8 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
+import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -68,6 +71,7 @@ const flattenItems = (items: any[], key: string | number) => {
     // tslint:disable-next-line
   }, [])
 }
+const SNACKBAR_DURATION = 3000
 const SNACKBAR_DURATION = 3000
 @Component({
   selector: 'ws-app-app-toc-home',
@@ -220,6 +224,11 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   private destroySubject$ = new Subject<any>()
   timerUnsubscribe: any
   timer: any
+  isReleventBtnHovered = false
+  SAKSHAMAI_ICON_NORMAL = '/assets/images/sakshamAI/ai-icon.svg'
+  SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
+  recommendedCoursesId = ''
+  feedbackGiven: any
   isReleventBtnHovered = false
   SAKSHAMAI_ICON_NORMAL = '/assets/images/sakshamAI/ai-icon.svg'
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
@@ -441,12 +450,21 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
 
     this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
+    this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
+      const recommendedCoursesId = qParamsMap.get('recommendationId')
       const recommendedCoursesId = qParamsMap.get('recommendationId')
       if (contextId && contextPath) {
         this.contextId = contextId
         this.contextPath = contextPath
+      }
+      if (recommendedCoursesId) {
+        this.recommendedCoursesId = recommendedCoursesId
+        const response = await this.userServiceLib.getRecommendedCoursesSakshamAI(recommendedCoursesId).toPromise()
+        if(response.feedbacks.length) {
+          this.feedbackGiven = response.feedbacks.find((feedback: any) => feedback?.course_id === this.courseID)
+        }
       }
       if (recommendedCoursesId) {
         this.recommendedCoursesId = recommendedCoursesId
@@ -1190,6 +1208,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
       this.raiseEnrollTelemetry()
+      if(this.recommendedCoursesId) {
+        this.raiseEnrollTelementryForSakshamAIGenerated()
+      }
       if(this.recommendedCoursesId) {
         this.raiseEnrollTelementryForSakshamAIGenerated()
       }
@@ -1938,6 +1959,29 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       },
       {
         pageIdExt: `btn-enroll`,
+        module: WsEvents.EnumTelemetrymodules.CONTENT,
+      }
+    )
+  }
+
+  raiseEnrollTelementryForSakshamAIGenerated() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'enroll',
+        id: this.content ? this.content.identifier : '',
+        target: {
+          id: this.recommendedCoursesId, 
+          ver: "1.0",
+          type: "saksham_ai"
+         },
+      } as any,
+      {
+        id: this.content ? this.content.identifier : '',
+        type: this.content ? this.content.primaryCategory : '',
+      },
+      {
+        pageId: `/app/toc/${this.content?.identifier}/overview_btn-enroll`,        
         module: WsEvents.EnumTelemetrymodules.CONTENT,
       }
     )
