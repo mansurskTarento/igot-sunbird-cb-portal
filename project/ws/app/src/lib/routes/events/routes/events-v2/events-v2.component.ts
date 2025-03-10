@@ -7,7 +7,7 @@ import { EventsCalendarComponent } from '../events-calendar/events-calendar.comp
 import { EventService } from '../../services/events.service';
 import { NsWidgetResolver } from 'library/ws-widget/resolver/src/public-api'
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 
@@ -31,7 +31,8 @@ export class EventsV2Component {
   constructor(
     private activatedRoute: ActivatedRoute,
     private bottomSheet: MatBottomSheet,
-    private eventsService: EventService
+    private eventsService: EventService,
+    private router: Router
     ) {
     this.activatedRoute.data.subscribe(data => {
       if (data && data.pageData) {
@@ -98,6 +99,16 @@ export class EventsV2Component {
     this.bottomSheet.open(EventsCalendarComponent, {
       panelClass: 'calendar-bottomsheet',
     })
+  }
+
+  navigate(browseData: any) {
+    if(browseData && browseData.key) {
+      if(browseData.key !== 'all') {
+      this.router.navigate(['/app/event-hub/view-all'], {queryParams: {resourceType: browseData.key}})
+      } else {
+        this.router.navigate(['/app/event-hub/view-all'])
+      }
+    }
   }
 
   raiseTelemetryInteratEvent(event: any) {
