@@ -197,7 +197,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
-        subType: `btn-${name}`,
+        subType: `${name}`,
         id: this.eventData.identifier,
       },
       {
@@ -219,7 +219,11 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
 
   navigateToPLayer() {
     if (this.isenrollFlow) {
-      this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
+      if (this.eventData.registrationLink.includes('youtube.com')) {
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
+      } else {
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
+      }
     }
   }
 
@@ -249,19 +253,20 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       // console.log('req ::', req)
       /* tslint:disable */
       this.eventSvc.enrollEvent(req).subscribe(res => {
-          if (res.responseCode === 'OK' || res.result.response === 'SUCCESS') {
-            this.openSnackBar('Enrolled Successfully')
-            this.enrollEvent.emit(true)
-          }
-          if (this.batchId) {
-            // this.navigateToPlayerPage(batchId)
-            this.isEnrolled = true
-            this.navigateToSamePagewithBatchId(this.batchId)
-          }
-          this.enrollBtnLoading = false
+        if (res.responseCode === 'OK' || res.result.response === 'SUCCESS') {
+          this.openSnackBar('Enrolled Successfully')
+          this.raiseTelemetry('enroll-now')
+          this.enrollEvent.emit(true)
+        }
+        if (this.batchId) {
+          // this.navigateToPlayerPage(batchId)
+          this.isEnrolled = true
+          this.navigateToSamePagewithBatchId(this.batchId)
+        }
+        this.enrollBtnLoading = false
 
-        },
-                                               (err: any) => {
+      },
+        (err: any) => {
           this.enrollBtnLoading = false
           this.openSnackBar(err.error.params.errmsg || 'Something went wrong! please try again later.')
         }
@@ -274,10 +279,10 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       type: WsEvents.EnumInteractTypes.CLICK,
       id: 'event-enroll',
     },
-                                       {},
-                                       {
-      module: WsEvents.EnumTelemetrymodules.EVENTS,
-    })
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.EVENTS,
+      })
     this.eventSvc.eventEnrollEvent.next(true)
   }
 
@@ -300,15 +305,15 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get completedAfterExpiry() {
-    if(this.eventData && this.enrolledEvent) {
+    if (this.eventData && this.enrolledEvent) {
       console.log('completedAfterExpiry :: ')
       const eventEndTimestamp = new Date(this.eventData.endDate).getTime()
       const completedTimestamp = new Date(this.enrolledEvent.completedOn).getTime()
-     if(eventEndTimestamp < completedTimestamp) {
-      return true
-     } else {
-      return false
-     }
+      if (eventEndTimestamp < completedTimestamp) {
+        return true
+      } else {
+        return false
+      }
     } else {
       return false
     }
