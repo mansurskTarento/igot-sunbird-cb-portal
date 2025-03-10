@@ -12,6 +12,7 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { SeeAllComponent } from './routes/events/see-all/see-all.component'
+import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 
 const routes: Routes = [
   {
@@ -85,6 +86,18 @@ const routes: Routes = [
               resourceType: 'youtube',
               module: 'Events',
               pageId: 'youtube',
+            },
+            resolve: {
+              content: EventResolve,
+            },
+          },
+          {
+            path: 'video/:videoId',
+            component: EventVideoPlayerComponent,
+            data: {
+              resourceType: 'video',
+              module: 'Events',
+              pageId: 'video',
             },
             resolve: {
               content: EventResolve,

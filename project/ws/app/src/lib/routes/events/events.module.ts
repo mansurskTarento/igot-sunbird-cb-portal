@@ -60,7 +60,8 @@ import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-m
 import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
-import { SeeAllComponent } from './routes/events/see-all/see-all.component'
+import { SeeAllComponent } from './routes/events/see-all/see-all.component';
+import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -78,6 +79,7 @@ import { SeeAllComponent } from './routes/events/see-all/see-all.component'
     FiltersComponent,
     MobileFiltersComponent,
     SeeAllComponent,
+    EventVideoPlayerComponent,
   ],
   imports: [
     CommonModule,

@@ -1,55 +1,82 @@
-import { Component, ElementRef, OnInit, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '@sunbird-cb/collection/src/lib/_services/videojs-util';
+import { Subscription } from 'rxjs';
 import videoJs from 'video.js'
-/* tslint:disable */
-import 'videojs-youtube'
-/* tslint:enable */
-// videoJsInitializer
-import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, youtubeInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util'
-import { NsContent, ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { EventService } from './../../services/events.service'
 import moment from 'moment'
+import { EventService } from '../../services/events.service';
+import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2';
+import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service';
+interface IYTOptions extends videoJs.PlayerOptions {
+  youtube: {
+    ytControls: 0 | 1 | 2
+    customVars?: {
+      wmode: 'transparent'
+    }
+  }
+}
+
+const videoJsOptions: IYTOptions = {
+  controls: true,
+  autoplay: true,
+  preload: 'auto',
+  fluid: true,
+  techOrder: ['html5'],
+  height: 200,
+  playbackRates: [0.75, 0.85, 1, 1.25, 2, 3],
+  poster: '',
+  html5: {
+    hls: {
+      overrideNative: true,
+    },
+    nativeVideoTracks: false,
+    nativeAudioTracks: false,
+    nativeTextTracks: false,
+  },
+  nativeControlsForTouch: false,
+  youtube: {
+    ytControls: 0,
+    customVars: {
+      wmode: 'transparent',
+    },
+  },
+}
 
 @Component({
-  selector: 'app-event-you-tube',
-  templateUrl: './event-you-tube.component.html',
-  styleUrls: ['./event-you-tube.component.scss'],
+  selector: 'ws-app-event-video-player',
+  templateUrl: './event-video-player.component.html',
+  styleUrls: ['./event-video-player.component.scss']
 })
-export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
-  currentEvent = false
-  @Input() eventData: any
-  @Input() videoId: any
-  @ViewChild('youtubeTag', { static: false }) youtubeTag!: ElementRef
-  progressInterval: any
-  intervalStarted = false
+export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  eventData: any
+  @ViewChild('videoTag') videoTag!: ElementRef<HTMLVideoElement>
+  screenSubscription: Subscription | null = null
+  screenHeight: string | null = null
+  videoId: any
   isEnrolled = false
+  currentEvent = false
   resumeEventStatus = 0
-  rateToFire = 180
+  rateToFire = 15
+  intervalStarted = false
   private player: videoJs.Player | null = null
   private dispose: (() => void) | null = null
-  constructor(private route: ActivatedRoute, private eventService: EventService, private configSvc: ConfigurationsService) {
+  constructor(private route: ActivatedRoute,
+    private eventService: EventService,
+    private configSvc: ConfigurationsService,
+    private viewerSvc: ViewerUtilService,
+
+  ) {
+
   }
-
-  ngOnInit(): void {
-    /* tslint:disable */
-    console.log('eventData', this.route.snapshot.data.content.data)
-    /* tslint:enabel */
+  ngOnInit() {
     this.eventData = this.route.snapshot.data['content'].data
-    this.route.params.subscribe(params => {
-      this.videoId = params.videoId
-
-      // if (this.fetchNewData) {
-      //   this.getTIDData()
-      // }
-      // this.data = this.route.snapshot.data.topic.data
-    })
+    console.log("===== ", this.eventData)
+    this.videoId = this.eventData.registrationLink
     this.route.queryParams.subscribe(params => {
       this.isEnrolled = params['isEnrolled']
     })
-    // const isToday = this.compareDate(eventDate, eventendDate, this.eventData)
-    // if (isToday) {
-    //   this.currentEvent = true
-    // }
+
     const sDate = this.customDateFormat(this.eventData.startDate, this.eventData.startTime)
     // const eDate = this.customDateFormat(this.eventData.endDate, this.eventData.endTime)
     const msDate = Math.floor(moment(sDate).valueOf() / 1000)
@@ -62,7 +89,29 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.eventStateRead()
 
+  }
 
+  ngOnDestroy() {
+    if (this.player) {
+      this.player.dispose()
+    }
+    if (this.dispose) {
+      this.dispose()
+    }
+  }
+
+  ngAfterViewInit() { }
+
+
+  getBatchId() {
+    let batchId = ''
+    if (this.eventData && typeof this.eventData.batches === 'string') {
+      this.eventData.batches = JSON.parse(this.eventData.batches)
+    }
+    if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
+      batchId = this.eventData.batches[0].batchId || ''
+    }
+    return batchId
   }
 
   eventStateRead() {
@@ -72,7 +121,8 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
       batchId: this.getBatchId()
     }
     this.eventService.eventStateRead(req).subscribe((data) => {
-      if (data && data.result && data.result.events && datafireRProgress.result.events.length) {
+      debugger
+      if (data && data.result && data.result.events && data.result.events.length) {
         let resumeFrom = JSON.parse(data.result.events[0]['progressdetails'])['stateMetaData']
         this.resumeEventStatus = data.result.events[0]['status']
         resumeFrom = resumeFrom ? Number(resumeFrom) : 0
@@ -90,23 +140,14 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     })
   }
-  ngAfterViewInit() {
-    // let playerOptions = {
-    //         autoplay: false,
-    //         controls: true,
-    //         preload: 'auto',
-    //         techOrder: ['youtube'],
-    //         youtube: {ytControls: 2,rel:0,fs:0,modestbranding: 1},
-    //         sources: [{type: 'video/youtube',src: 'https://www.youtube.com/watch?v=OqfyN7c71HE'}]
-    //     }
-    //     videoJs(`youtubeTag`, playerOptions, () => {console.log('pronto')});
 
-    // this.initializePlayer('')
-    // this.player = new (<any>window).YT.Player
-    /* tslint:disable */
-    console.log('initObj', this.dispose)
-    /* tslint:enable */
+  customDateFormat(date: any, time: any) {
+    const stime = time.split('+')[0]
+    const hour = stime.substr(0, 2)
+    const min = stime.substr(2, 3)
+    return `${date} ${hour}${min}`
   }
+
 
   initializePlayer(resumeFrom: any) {
     let timeSpent = resumeFrom ? resumeFrom : 0
@@ -175,66 +216,49 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed)
       }
 
-
-
-
-
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      /* tslint:disable */
-      console.log(identifier, data)
-      /* tslint:enable */
-      // if (this.widgetData.identifier && identifier && data) {
-      //   this.viewerSvc
-      //     .realTimeProgressUpdate(identifier, data)
-      // }
+      const collectionId = this.route.snapshot.queryParams.collectionId ?
+        this.route.snapshot.queryParams.collectionId : ''
+      const batchId = this.route.snapshot.queryParams.batchId ?
+        this.route.snapshot.queryParams.batchId : ''
+
+      if (this.eventData.identifier && identifier && data) {
+        this.viewerSvc
+          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+      }
     }
-    const initObj = youtubeInitializer(
-      this.youtubeTag.nativeElement,
-      this.videoId,
+    const initObj = videoJsInitializer(
+      this.videoTag.nativeElement,
+      {
+        ...videoJsOptions,
+        poster: '',
+        sources: [
+          {
+            type: NsContent.EMimeTypes.MP4,
+            src: this.eventData.registrationLink
+            //src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          },
+        ],
+      },
       dispatcher,
       saveCLearning,
       fireRProgress,
-      { resumeFrom }, // passThrough Data,
-      '',
-      true, // enable telemetry,
-      {}, // widget data
-      NsContent.EMimeTypes.YOUTUBE, // type
-      '500px', // height
+      resumeFrom, // passThrough Data,
+      NsContent.EMimeTypes.MP4,
+      0, // enable telemetry,
+      true,
+      {},
+      NsContent.EMimeTypes.MP4,
+      '200px', // height
     )
+    this.player = initObj.player
     this.dispose = initObj.dispose
   }
 
   startInterval(timeSpent: any, lastTimeAccessed: any) {
     this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed, true)
-    // if (!this.intervalStarted) {
-    // this.progressInterval = setInterval(() => {
-    //   if (this.progressInterval) {
-    //     clearInterval(this.progressInterval)
-    //   }
-    //   this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed)
-    // },                                  1000 * 60)
-    // }
   }
-
-  getBatchId() {
-    let batchId = ''
-    if (this.eventData && typeof this.eventData.batches === 'string') {
-      this.eventData.batches = JSON.parse(this.eventData.batches)
-    }
-    if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
-      batchId = this.eventData.batches[0].batchId || ''
-    }
-    return batchId
-  }
-
-  customDateFormat(date: any, time: any) {
-    const stime = time.split('+')[0]
-    const hour = stime.substr(0, 2)
-    const min = stime.substr(2, 3)
-    return `${date} ${hour}${min}`
-  }
-
   saveProgressUpdate(progress: any, timeSpent: any, lastTimeAccessed: any, normalUpdate?: boolean) {
     let userId = ''
     let completionPercentage: any = 0
@@ -289,28 +313,6 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         /* tslint:disable */
         console.log('Already completed ', req)
       }
-    }
-  }
-
-  // @HostListener('window:beforeunload', ['$event'])
-  // beforeUnloadHandler() {
-  //   console.log('on unload')
-  //   this.ngOnDestroy()
-  // // event.preventDefault();
-  // // any other code / dialog logic
-  // }
-
-  ngOnDestroy() {
-    /* tslint:disable */
-    console.log(this.player)
-    /* tslint:enable */
-    // clearInterval(this.progressInterval)
-    this.intervalStarted = false
-    if (this.player) {
-      this.player.dispose()
-    }
-    if (this.dispose) {
-      this.dispose()
     }
   }
 
