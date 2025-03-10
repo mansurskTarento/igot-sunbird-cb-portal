@@ -304,7 +304,7 @@
 
       <ng-container *ngIf="resumeData || content?.completionPercentage">
         <button mat-stroked-button color="accent" type="button" class="rate-button" (click)="openFeedbackDialog(content)">
-          <mat-icon>star_purple500</mat-icon>
+          <mat-icon class="nodtranslate">star_purple500</mat-icon>
           <ng-container *ngIf="!userRating">
             <div>{{ 'apptocsinglepage.rateNow' | translate }}</div>
           </ng-container>
@@ -348,7 +348,7 @@
             </ng-container>
 
             <div class="flex items-center text-white mob-share" *ngIf="canShare">
-              <mat-icon (click)="onClickOfShare()">share</mat-icon>
+              <mat-icon class="nodtranslate" (click)="onClickOfShare()">share</mat-icon>
             </div>
           </div>
           <div class="flex flex-col gap-2">
@@ -359,8 +359,8 @@
                 [bindingClass]="'rounded blue-2-loader'"></ws-widget-skeleton-loader>
             </ng-container>
             <ng-container *ngIf="!skeletonLoader">
-              <div class="banner-text text-base sm:text-4xl leading-6 sm:leading-10 font-bold">{{ handleCapitalize(content?.name) }}</div>
-              <div class="text-sm sm:text-base source-text font-semibold break-words" #contentSource [ngClass]="{'sourceEllipsis': sourceEllipsis}" title="{{content?.source}}">{{ 'cardcontentv2.by' | translate }} {{ content?.source }}</div>
+              <div class="banner-text text-base sm:text-4xl leading-6 sm:leading-10 font-bold nodtranslate">{{ handleCapitalize(content?.name) }}</div>
+              <div class="text-sm sm:text-base source-text font-semibold break-words nodtranslate" #contentSource [ngClass]="{'sourceEllipsis': sourceEllipsis}" title="{{content?.source}}">{{ 'cardcontentv2.by' | translate }} {{ content?.source }}</div>
             </ng-container>
           </div>
 
@@ -374,7 +374,7 @@
               <div class="flex gap-4 items-center" *ngIf="content?.averageRating || content?.additionalTags?.length">
                 <div class="flex flex-row rating-chip py-2 items-center cursor-pointer" (click)="handleNavigateToReviews()" *ngIf="content?.averageRating">
                   <div class="flex flex-row gap-1 margin-left-s items-center">
-                    <mat-icon>grade</mat-icon>
+                    <mat-icon class="nodtranslate">grade</mat-icon>
                     <div class="text-white text-sm leading-4">{{ content?.averageRating }}</div>
                   </div>
                   <div class="separator"></div>
@@ -407,7 +407,7 @@
         selectedBatchData?.content[0]?.enrollmentEndDate">
         <div class="location-details mt-6">
           <div class="flex items-center gap-4 pb-3">
-            <mat-icon class="location-icon">
+            <mat-icon class="location-icon nodtranslate">
                 location_on
             </mat-icon>
             <div class="loc-desc">
@@ -415,7 +415,7 @@
             </div>
           </div>
           <div class="flex items-center gap-4">
-              <mat-icon class="event-icon">
+              <mat-icon class="event-icon nodtranslate">
                 event</mat-icon>
             <div class="loc-desc">
               Last date of enrollment - {{selectedBatchData?.content[0]?.enrollmentEndDate | date: 'dd/MM/yyyy'}}
@@ -442,7 +442,7 @@
               </div>
   
               <div class="flex flex-middle no-button ml-8" (click)="handleDeclineRelevent()">
-                <mat-icon class="mat-icon text-no mr-1">thumb_down</mat-icon>
+                <mat-icon class="mat-icon text-no mr-1 nodtranslate">thumb_down</mat-icon>
                 <span class="text-no ff-lato text-sm font-bold">{{ 'home.no' | translate }}</span>
               </div>  
             </div>
@@ -481,7 +481,7 @@
             <div class="flex flex-col justify-between text-container">
               <div class="flex items-center gap-4 justify-between" [ngClass]="{'justify-between': scrolled, 'justify-end': !scrolled}">
                 <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2" *ngIf="scrolled">
-                  <mat-icon class="ws-mat-orange-text">video_library</mat-icon>
+                  <mat-icon class="ws-mat-orange-text nodtranslate">video_library</mat-icon>
                   <ng-container *ngIf="content?.courseCategory">
                     <div class="text-xs font-bold text-white leading-3">{{ translateLabel(content?.courseCategory, 'searchfilters') }}</div>
                   </ng-container>
@@ -490,7 +490,7 @@
                   </ng-container>
                 </div>
                 <div (click)="onClickOfShare()" class="flex flex-row items-center justify-end gap-2 share-tag" *ngIf="canShare && !forPreview">
-                  <mat-icon>share</mat-icon>
+                  <mat-icon class="nodtranslate">share</mat-icon>
                   <div>{{ 'apptocsinglepage.share' | translate }}</div>
                 </div>
               </div>
@@ -574,15 +574,15 @@
           <ng-container *ngIf="!skeletonLoader">
             <div class="flex flex-col gap-4">
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="content?.isInIntranet && showIntranetMsg">
-                <mat-icon>info</mat-icon>
+                <mat-icon class="nodtranslate">info</mat-icon>
                 <ng-container >{{ 'apptochome.viewedInIntranet' | translate }}</ng-container>
               </div>
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="showInstructorLedMsg">
-                <mat-icon>info</mat-icon>&nbsp;
+                <mat-icon class="nodtranslate">info</mat-icon>&nbsp;
                 <ng-container >{{ 'apptochome.notAvailableOnline' | translate }}</ng-container>
               </div>
               <div class="flex flex-row items-center gap-2 info-div" *ngIf="showStart.msg === 'youtubeForbidden'">
-                <mat-icon>info</mat-icon>&nbsp;
+                <mat-icon class="nodtranslate">info</mat-icon>&nbsp;
                 <ng-container >{{ 'apptochome.youtubeContentBlocked' | translate }}</ng-container>
               </div>
               <div *ngIf="showBtn">
