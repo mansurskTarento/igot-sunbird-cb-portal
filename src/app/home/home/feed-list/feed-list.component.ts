@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { UtilityService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 
@@ -14,6 +14,7 @@ export class FeedListComponent implements OnInit {
   contentStripData = {}
   isMobile = false
   @Input() widgetData: any
+  @Output() telemetryRaisedLibrary = new EventEmitter()
   isTelemetryRaised = false
   constructor(private activatedRoute: ActivatedRoute,
               private events: EventService, private utilitySvc: UtilityService) { }
@@ -26,65 +27,7 @@ export class FeedListComponent implements OnInit {
   }
 
   raiseTelemetryInteratEvent(event: any) {
-    if (event && event.viewMoreUrl) {
-      this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
-    }
-    if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
-      if (event.contentId && event.contentId.includes("ext")) {
-        this.events.raiseInteractTelemetry(
-          {
-            type: 'click',
-            subType: 'providers',
-            id: 'card-content',
-          },
-          {
-            id: 'event.contentId',
-            type: 'External content'
-          },
-          {
-            module: WsEvents.EnumTelemetrymodules.HOME
-          }
-        )
-      } else {
-        let id = event.typeOfTelemetry === 'mdo-channels' ? event.identifier : event.orgId
-        let type = event.typeOfTelemetry === 'mdo-channels' ? 'org/ministry' : event.title
-        let _subType = event.typeOfTelemetry
-        if ((event.typeOfTelemetry === 'cbpPlan' && !event?.sakshamAIGenerated
-          || event.typeOfTelemetry === 'forYou' 
-          || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
-        ) {
-          id = event.identifier
-          type = event.primaryCategory
-          _subType = `${event.selectedTab}-${event.selectedPill}`
-        }
-        else if(event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
-          id = event.identifier
-          type = event.primaryCategory
-          _subType = 'saksham_ai'
-        } 
-        else if(event.typeOfTelemetry === 'providers') {
-          id = event.orgId
-          type = 'org'
-          _subType = `training-institutions`
-        }
-        this.events.raiseInteractTelemetry(
-          {
-            type: 'click',
-            subType: _subType,
-            id: 'card-content',
-            pageid: "/page/home"
-          },
-          {
-            id,
-            type,
-          },
-          {
-            module: WsEvents.EnumTelemetrymodules.HOME,
-          }
-        )
-      }
-    }
-    this.isTelemetryRaised = true
+    this.telemetryRaisedLibrary.emit(event)
   }
 
   raiseTelemetry(name: string, subtype: string) {
