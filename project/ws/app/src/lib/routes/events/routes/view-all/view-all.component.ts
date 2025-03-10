@@ -41,7 +41,6 @@ export class ViewAllComponent {
 
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
-      { title: 'Recommended Events', url: `none`, icon: '' },
     ]
 
     this.facetsData = {
@@ -58,7 +57,7 @@ export class ViewAllComponent {
           },
           {
             key: "karmayogiSaptah",
-            name: "karmayogi Saptah",
+            name: "Karmayogi Saptah",
           },
           {
             key: "webinar",
@@ -159,6 +158,7 @@ export class ViewAllComponent {
         this.selectedFilters['resourceType'] = [data.params.resourceType]
       }
     })
+    this.titles.push({ title: _.get(this.selectedFilters, 'resourceType[0]', 'All'), url: `none`, icon: '' },)
     this.fetchData()
   }
 
