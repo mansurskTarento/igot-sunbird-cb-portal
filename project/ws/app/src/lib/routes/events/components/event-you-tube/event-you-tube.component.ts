@@ -72,7 +72,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
       batchId: this.getBatchId()
     }
     this.eventService.eventStateRead(req).subscribe((data) => {
-      if (data && data.result && data.result.events && datafireRProgress.result.events.length) {
+      if (data && data.result && data.result.events && data.result.events.length) {
         let resumeFrom = JSON.parse(data.result.events[0]['progressdetails'])['stateMetaData']
         this.resumeEventStatus = data.result.events[0]['status']
         resumeFrom = resumeFrom ? Number(resumeFrom) : 0
