@@ -134,7 +134,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   addOnBlur = true
   separatorKeysCodes: number[] = [ENTER]
   userCtrl = new UntypedFormControl('')
-  filteredUsers: any []| undefined
+  filteredUsers: any[] | undefined
   users: any[] = []
   allUsers: any[] = []
   apiResponse: any
@@ -379,10 +379,10 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   getDoptEligibleServicesList() {
     this.doptEligibleServicesList = [
       `Indian Administrative Service (IAS)`,
-      `Indian Police Service (IPS)`,    
+      `Indian Police Service (IPS)`,
       `Indian Forest Service (IFoS)`,
       `Central Engineering Service(CPWD)`,
-      `Central Power Engineering Service`,    
+      `Central Power Engineering Service`,
       `Central Secretariat Service`,
       `Central Water Engineering Service`,
       `Geological Survey of India`,
@@ -422,7 +422,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       `Indian Ordnance Factory Service`,
       `Central Secretariat Stenographers Service`,
       `Indian P&T Finance & Accounts Service`
-  ]
+    ]
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -493,7 +493,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       }
     })
   }
-  
+
   openConformationDialog(message: string) {
     this.dialog.open(ConfirmDialogComponent, {
       width: '600px',
@@ -531,7 +531,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const surveyId = sID[1]
       const courseId = this.content.identifier
       const courseName = this.content.name
-      const wfClientVersion = _.get(this.content, 'wfClientVersion', 0)
+      const wfClientVersion = _.get(this.content, 'wfClientVersion', '0')
       const apiData = {
         // tslint:disable-next-line:prefer-template
         getAPI: '/apis/proxies/v8/forms/getFormById?id=' + surveyId,
@@ -569,8 +569,8 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       const isDoptContent = _.get(this.content, 'createdFor', []).includes(doptorgID)
       // const isDptUser = _.get(this.userProfileObject, 'rootOrgId') === doptorgID
       const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
-      if( isDoptContent) {
-        if(!civilServiceName) {
+      if (isDoptContent) {
+        if (!civilServiceName) {
           this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
           return
         } else if (!this.doptEligibleServicesList.includes(civilServiceName)) {
@@ -607,34 +607,34 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
     const batchData = this.batchControl.value
     if (this.content && this.content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-        // conflicts check start
-        const userList: any = this.userEnrollmentList && this.userEnrollmentList.filter(ele => {
-          if (ele.content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-            if (!(dayjs(batchData.startDate).isBefore(dayjs(ele.batch.startDate)) &&
+      // conflicts check start
+      const userList: any = this.userEnrollmentList && this.userEnrollmentList.filter(ele => {
+        if (ele.content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+          if (!(dayjs(batchData.startDate).isBefore(dayjs(ele.batch.startDate)) &&
             dayjs(batchData.endDate).isBefore(dayjs(ele.batch.startDate)) ||
             dayjs(batchData.startDate).isAfter(dayjs(ele.batch.endDate)) &&
             dayjs(batchData.endDate).isAfter(dayjs(ele.batch.endDate)))) {
-              return true
-            }
-            return false
+            return true
           }
           return false
-        })
-
-        // conflicts check end
-        if (userList && userList.length === 0) {
-          if (this.content && batchData.batchAttributes && batchData.batchAttributes.userProfileFileds) {
-            this.callBPProfileSurevy(batchData)
-          } else if (this.content && this.content.wfSurveyLink) {
-            this.callBPSurevy(batchData)
-          } else {
-            this.openRequestToEnroll(batchData)
-          }
-        } else {
-          if (userList && userList.length > 0) {
-            this.openSnackbar(`You cannot enroll in this blended program because it conflicts with your existing blended program.`)
-          }
         }
+        return false
+      })
+
+      // conflicts check end
+      if (userList && userList.length === 0) {
+        if (this.content && batchData.batchAttributes && batchData.batchAttributes.userProfileFileds) {
+          this.callBPProfileSurevy(batchData)
+        } else if (this.content && this.content.wfSurveyLink) {
+          this.callBPSurevy(batchData)
+        } else {
+          this.openRequestToEnroll(batchData)
+        }
+      } else {
+        if (userList && userList.length > 0) {
+          this.openSnackbar(`You cannot enroll in this blended program because it conflicts with your existing blended program.`)
+        }
+      }
     } else {
       this.programEnrollCall.emit(batchData)
     }
@@ -681,13 +681,13 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.withdrawOrEnroll.emit(action)
         this.getBatchUserCount(this.selectedBatch)
-        this.openSnackbar(`Request ${ action === this.WFBlendedProgramStatus.WITHDRAW ? 'withdrawn' : 'sent' } Successfully!`)
+        this.openSnackbar(`Request ${action === this.WFBlendedProgramStatus.WITHDRAW ? 'withdrawn' : 'sent'} Successfully!`)
         this.disableEnrollBtn = false
       } else {
         this.openSnackbar('Something went wrong, please try again later!')
         this.disableEnrollBtn = false
       }
-    },                                                               (error: any) => {
+    }, (error: any) => {
       this.openSnackbar(_.get(error, 'error.params.errmsg') ||
         _.get(error, 'error.result.errmsg') ||
         'Something went wrong, please try again later!')
@@ -804,13 +804,13 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
   checkBatchStartDate() {
     const batchStartDate = this.selectedBatchData && this.selectedBatchData.content
-    && this.selectedBatchData.content[0] && this.selectedBatchData.content[0].startDate
+      && this.selectedBatchData.content[0] && this.selectedBatchData.content[0].startDate
     const workFlow = this.batchData && this.batchData.workFlow && this.batchData.workFlow.wfItem
-    && this.batchData.workFlow.wfItem.currentStatus
+      && this.batchData.workFlow.wfItem.currentStatus
     const now = dayjs(this.serverDate).format('YYYY-MM-DD')
     const dateExtended = dayjs(now).isSameOrAfter(dayjs(batchStartDate))
-    if (dateExtended  && (workFlow && (workFlow !== this.WFBlendedProgramStatus.APPROVED)
-    && workFlow !== this.WFBlendedProgramStatus.WITHDRAWN)) {
+    if (dateExtended && (workFlow && (workFlow !== this.WFBlendedProgramStatus.APPROVED)
+      && workFlow !== this.WFBlendedProgramStatus.WITHDRAWN)) {
       const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
         width: '434px',
         data: {
@@ -834,7 +834,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
   public setBatchControl() {
     // on first load select first value in the batch list if its having valid enrollment Date
     if (this.content && (this.content.primaryCategory === this.primaryCategory.BLENDED_PROGRAM ||
-        this.content.primaryCategory === this.primaryCategory.PROGRAM)) {
+      this.content.primaryCategory === this.primaryCategory.PROGRAM)) {
       if (this.batchData && this.batchData.content.length) {
         if (!this.batchData.workFlow || (this.batchData.workFlow && !this.batchData.workFlow.wfInitiated)) {
           const batch = this.batchData.content.find((el: any) => {
@@ -908,9 +908,9 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       if (NsContent.WFBlendedProgramApprovalTypes.TWO_STEP_MDO_PC === this.batchData.workFlow.wfItem.serviceName &&
         status === this.WFBlendedProgramStatus.SEND_FOR_PC_APPROVAL) {
         return true
-      }  if (NsContent.WFBlendedProgramApprovalTypes.TWO_STEP_PC_MDO === this.batchData.workFlow.wfItem.serviceName &&
+      } if (NsContent.WFBlendedProgramApprovalTypes.TWO_STEP_PC_MDO === this.batchData.workFlow.wfItem.serviceName &&
         status === this.WFBlendedProgramStatus.SEND_FOR_MDO_APPROVAL) {
-          return true
+        return true
       }
     }
     return false
@@ -967,9 +967,9 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       if (status === this.WFBlendedProgramStatus.APPROVED ||
         status === this.WFBlendedProgramStatus.SEND_FOR_MDO_APPROVAL ||
         status === this.WFBlendedProgramStatus.SEND_FOR_PC_APPROVAL ||
-        (status === this.WFBlendedProgramStatus.WITHDRAWN  && this.checkWithdrawn(this.batchData)) ||
-        (status === this.WFBlendedProgramStatus.REMOVED  && this.showRejected) ||
-        (status === this.WFBlendedProgramStatus.REJECTED  && this.showRejected)) {
+        (status === this.WFBlendedProgramStatus.WITHDRAWN && this.checkWithdrawn(this.batchData)) ||
+        (status === this.WFBlendedProgramStatus.REMOVED && this.showRejected) ||
+        (status === this.WFBlendedProgramStatus.REJECTED && this.showRejected)) {
         return true
       }
     }
@@ -1056,13 +1056,13 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     return false
   }
 
-   getBatchUserCount(batchData: any) {
+  getBatchUserCount(batchData: any) {
     if (batchData && batchData.batchId) {
       const req = {
         serviceName: 'blendedprogram',
         applicationStatus: '',
         applicationIds: [
-            batchData.batchId,
+          batchData.batchId,
         ],
         limit: 100,
         offset: 0,
@@ -1076,12 +1076,12 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
         if (res.result && res.result.data) {
           res.result.data.forEach((ele: any) => {
             if (ele.currentStatus === 'APPROVED') {
-              usercount.enrolled =  ele.statusCount
+              usercount.enrolled = ele.statusCount
             } else if (ele.currentStatus === 'REJECTED') {
               usercount.rejected = ele.statusCount
             }
             if (ele.currentStatus !== 'WITHDRAWN') {
-              usercount.totalApplied =  usercount.totalApplied + ele.statusCount
+              usercount.totalApplied = usercount.totalApplied + ele.statusCount
             }
           })
           if (this.selectedBatchData) {
@@ -1346,21 +1346,21 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       // },100)
       let t = 0
       if (this.timerIntervalClear) {
-            clearInterval(this.timerIntervalClear)
+        clearInterval(this.timerIntervalClear)
       }
-      this.timerIntervalClear =  setInterval(() => {
+      this.timerIntervalClear = setInterval(() => {
         this.targetTime = ''
-      if (this.batchControl && this.batchControl.value && this.batchControl.value.startDate) {
+        if (this.batchControl && this.batchControl.value && this.batchControl.value.startDate) {
 
-        // console.log(this.selectedBatch.startDate,'----')
-        this.targetDate = new Date(this.batchControl.value.startDate)
-        const convertedDate = dayjs(this.batchControl.value.startDate).format('YYYY-MM-DD HH:mm:ss')
+          // console.log(this.selectedBatch.startDate,'----')
+          this.targetDate = new Date(this.batchControl.value.startDate)
+          const convertedDate = dayjs(this.batchControl.value.startDate).format('YYYY-MM-DD HH:mm:ss')
 
-        this.targetTime = new Date(convertedDate).getTime()
-      }
+          this.targetTime = new Date(convertedDate).getTime()
+        }
         this.timerFunc(this.serverDate + t * 1000)
         t = t + 1
-      },                                     1000)
+      }, 1000)
 
     }
   }
@@ -1453,7 +1453,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
         if (el != null) {
           setTimeout(() => {
             el[0].scrollTop = el[0].scrollHeight
-          },         200)
+          }, 200)
         }
       } else {
         this.openSnackbar(this.translateLabels('invalidEmail', 'contentSharing', ''))
@@ -1488,7 +1488,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     if (el != null) {
       setTimeout(() => {
         el[0].scrollTop = el[0].scrollHeight
-      },         200)
+      }, 200)
     }
   }
 
@@ -1510,7 +1510,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       courseProvider = this.configSvc.userProfile.rootOrgName || ''
     }
     if (this.content) {
-        courseId = this.content.identifier,
+      courseId = this.content.identifier,
         courseName = this.content.name,
         coursePosterImageUrl = this.content.posterImage || '',
         primaryCategory = this.content.primaryCategory
@@ -1551,7 +1551,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       }, error => {
         // tslint:disable
         console.log(error)
-        this.openSnackbar(this.translateLabels('error','contentSharing',''))
+        this.openSnackbar(this.translateLabels('error', 'contentSharing', ''))
       })
     }
   }
@@ -1573,7 +1573,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     textArea.select()
     document.execCommand('copy')
     document.body.removeChild(textArea)
-    this.openSnackbar(this.translateLabels('linkCopied','contentSharing',''))
+    this.openSnackbar(this.translateLabels('linkCopied', 'contentSharing', ''))
     this.raiseTelemetry('copyToClipboard')
   }
 
@@ -1616,7 +1616,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.timerIntervalClear) {
       clearInterval(this.timerIntervalClear);
       // this.timerIntervalClear.unsubscribe()
-      this.targetTime=''
+      this.targetTime = ''
     }
 
     if (this.selectedBatchSubscription) {
@@ -1626,7 +1626,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
     this.batchControl.updateValueAndValidity()
     this.selectedBatch = {}
   }
-  
+
   translateLabel(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
   }
