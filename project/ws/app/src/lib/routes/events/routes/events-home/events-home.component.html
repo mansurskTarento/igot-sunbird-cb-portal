@@ -1,13 +1,11 @@
 <!-- <ws-widget-btn-page-back [widgetData]="{ url: 'home',titles: titles }">
 </ws-widget-btn-page-back> -->
-{{pageLayout | json}}
 <div [ngClass]="!detailPageFlag ? 'container-balanced' : ''">
     <!-- <div *ngIf="currentRoute === 'home'" class="container-balanced-banner"> -->
     <ng-container *ngIf="currentRoute === 'home'" [wsResolverWidget]="banner"></ng-container>
     <!-- </div> -->
     <div class="">
-        <!-- <router-outlet></router-outlet> -->
-        <div style="margin-bottom: 100px;">dddd</div>
+        <router-outlet></router-outlet>
         <ng-container [wsResolverWidget]="pageLayout"></ng-container>
     </div>
 </div>
