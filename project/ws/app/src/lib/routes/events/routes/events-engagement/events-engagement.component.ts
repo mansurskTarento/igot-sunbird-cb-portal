@@ -17,7 +17,8 @@ export class EventsEngagementComponent implements OnInit {
     // private bottomSheetRef: MatBottomSheetRef<any>
   ) {
     if(this.data) {
-      this.myEngagements = this.data
+      this.myEngagements = this.data.engagements
+      this.engagementDetails = this.data.engagementDetails
     }
   }
 

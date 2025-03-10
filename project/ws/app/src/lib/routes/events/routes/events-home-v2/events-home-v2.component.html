@@ -35,52 +35,58 @@
                 </div>
             </ng-container>
             <div class="flex flex-col gap-6 right">
-                <div class="search">
-                    <div class=rsearch>
-                    <mat-icon class="search-icon">search</mat-icon>
-                    <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
-                        placeholder="search events">
+                <ng-container *ngIf="eventsHome?.data?.rightSection?.data?.search?.enabled">
+                    <div class="search">
+                        <div class=rsearch>
+                        <mat-icon class="search-icon">search</mat-icon>
+                        <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
+                            [placeholder]="eventsHome?.data?.rightSection?.data?.search?.placeHolder">
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="hidden md:block" *ngIf="eventsHome?.data?.rightSection?.data?.browse?.enabled">
+                    <div class="category-header">
+                        {{eventsHome?.data?.rightSection?.data?.browse?.title}}
+                    </div>
+
+                    <div class="flex gap-4">
+                        <ng-container *ngFor="let browseData of eventsHome?.data?.rightSection?.data?.browse?.data">
+                            <ng-container *ngIf="browseData.enabled">
+                                <div class="flex gap-3 px-3 items-center categories-card">
+                                    <img [src]="browseData.icon">
+                                    {{browseData.title}}
+                                </div>
+                            </ng-container>
+                        </ng-container>
                     </div>
                 </div>
 
-                <div class="category-header">
-                    Browse Events By Categories
-                </div>
+                <div class="block md:hidden" *ngIf="eventsHome?.data?.rightSection?.data?.mBrowse?.enabled">
+                    <div class="category-header">
+                        {{eventsHome?.data?.rightSection?.data?.mBrowse?.title}}
+                    </div>
 
-                <div class="flex gap-4">
-                    <div class="flex gap-3 px-3 items-center categories-card">
-                        <img src="/assets/icons/karmayogi_sapth_logo.svg">
-                        Karmayogi Saptah
-                    </div>
-                    <div class="flex gap-3 px-3 items-center categories-card">
-                        <img src="/assets/icons/karmayogi_talks_logo.svg">
-                        Karmayogi Talks
-                    </div>
-                    <div class="flex gap-3 px-3 items-center categories-card">
-                        <img src="/assets/icons/all_events.svg">
-                        All Events
+                    <div class="flex gap-4">
+                        <ng-container *ngFor="let browseData of eventsHome?.data?.rightSection?.data?.browse?.data">
+                            <ng-container *ngIf="browseData.enabled">
+                                <div class="flex gap-3 px-3 items-center categories-card">
+                                    <img [src]="browseData.icon">
+                                    {{browseData.title}}
+                                </div>
+                            </ng-container>
+                        </ng-container>
                     </div>
                 </div>
 
-                <!-- <ng-container *ngFor="let widgetData of eventsHome?.data?.rightSection?.data?.eventStrips">
-                    <ng-container *ngIf="widgetData && widgetData.enabled">
-                        <sb-uic-content-strip-with-tabs-pills [widgetData]="widgetData"
-                            (telemtryResponse)="raiseTelemetryInteratEvent($event)"></sb-uic-content-strip-with-tabs-pills>
-                    </ng-container>
-                </ng-container> -->
-
-                <ng-container *ngFor="let widgetData of dummyWidgetData?.column">
+                <ng-container *ngFor="let widgetData of eventsHome?.data?.rightSection?.data?.eventStrips">
                     <ng-container *ngIf="widgetData && widgetData.enabled">
                         <sb-uic-content-strip-with-tabs 
                             (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-                            [widgetData]="widgetData.data">
+                            [widgetData]="widgetData">
                         </sb-uic-content-strip-with-tabs>
                     </ng-container>
                 </ng-container>
-                <!-- <sb-uic-content-strip-with-tabs 
-                    (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-                    [widgetData]="dummyWidgetData.column[0].data">
-                </sb-uic-content-strip-with-tabs> -->
 
             </div>
         </div>

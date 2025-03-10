@@ -12,10 +12,6 @@
   width: 270px;
 }
 
-.right {
-  width: calc(100% - 293px);
-}
-
 .rsearch {
   display: flex;
   position: relative;
@@ -80,4 +76,12 @@
         margin-top: 0;
         flex-direction: column;
     }
+}
+
+@media only screen and (min-width: 769px) {
+
+  .right {
+    width: calc(100% - 293px);
+  }
+
 }

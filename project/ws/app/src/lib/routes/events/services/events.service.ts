@@ -9,6 +9,7 @@ const API_END_POINTS = {
   ENROLL_EVENT: '/apis/proxies/v8/event/batch/enroll',
   SAVE_EVENT_PROGRESS_UPDATE: 'apis/proxies/v8/eventprogress/v1/event/state/update',
   CONTENT_STATE_UPDATE_READ: 'apis/proxies/v8/user/event/state/read',
+  ENROLL_SUMMARY: 'apis/proxies/v8/user/events/enroll/summary',
   CONTENT_STATE_UPDATE: (eventId: string) => `/apis/proxies/v8/event-progres/${eventId}`,
   ALL_EVENT_ENROLL_LIST: (userId: string) => `/apis/proxies/v8/v1/user/events/list/${userId}`,
   IS_ENROLLED: (userId: string, eventId: string, batchId?: string) =>
@@ -67,6 +68,10 @@ export class EventService {
     let batchId = req.batchId
     let eventId = req.eventId
     return this.http.post<any>(`${API_END_POINTS.CONTENT_STATE_UPDATE_READ}?batchId=${batchId}&eventId=${eventId}`,req)
+  }
+
+  getEventEngagements() {
+    return this.http.get<any>(`${API_END_POINTS.ENROLL_SUMMARY}`)
   }
 
   async getKeySpeakerJson(): Promise<any> {
