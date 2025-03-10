@@ -13,12 +13,13 @@ import { InitResolver } from '@ws/author/src/lib/services/init-resolve.service'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { BtnPageBackModule, BtnPageBackNavModule, ContentProgressModule, ContentStripWithTabsModule, HttpLoaderFactory } from '@sunbird-cb/collection/src/public-api'
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module'
-import { PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
+import {
+  PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
   PipeFilterModule,
   PipeRelativeTimeModule,
   PipeFilterSearchModule,
   PipeOrderByModule,
- } from '@sunbird-cb/utils-v2'
+} from '@sunbird-cb/utils-v2'
 import { EventsCardComponent } from './components/events-card/events-card.component'
 import { TodayEventCardComponent } from './components/today-event-card/today-event-card.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
@@ -48,8 +49,18 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
-import { HttpClient } from '@angular/common/http'
-
+import { HttpClient } from '@angular/common/http';
+import { ViewAllComponent } from './routes/view-all/view-all.component'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { FiltersComponent } from './routes/events/filters/filters.component'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -63,6 +74,10 @@ import { HttpClient } from '@angular/common/http'
     EventPlayerComponent,
     EventPdfPlayerComponent,
     EventYouTubeComponent,
+    ViewAllComponent,
+    FiltersComponent,
+    MobileFiltersComponent,
+    SeeAllComponent,
   ],
   imports: [
     CommonModule,
@@ -82,6 +97,7 @@ import { HttpClient } from '@angular/common/http'
     MatDialogModule,
     MatButtonModule,
     MatSidenavModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     PipeFilterModule,
     PipeHtmlTagRemovalModule,
@@ -102,6 +118,12 @@ import { HttpClient } from '@angular/common/http'
     ContentProgressModule,
     WidgetCommentModule,
     InfiniteScrollModule,
+    MatDatepickerModule,
+    EventCardV2Module,
+    MatSnackBarModule,
+    MatMenuModule,
+    MatBottomSheetModule,
+    MatTooltipModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -111,6 +133,8 @@ import { HttpClient } from '@angular/common/http'
     }),
   ],
   providers: [
+    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
+    { provide: MatBottomSheetRef, useValue: {} },
     LoaderService,
     InitResolver,
     EventService,
