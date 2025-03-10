@@ -1,5 +1,5 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
-import { Component, OnInit } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { HomePageService } from 'src/app/services/home-page.service'
 import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
@@ -100,6 +100,8 @@ export class InsightSideBarComponent implements OnInit {
   desigantionUnderApproval: any
   filterDesigantionList: any = []
   isMatcompleteOpened = false
+  @Output() telemetryRaisedLibrary = new EventEmitter()
+  
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -613,4 +615,7 @@ export class InsightSideBarComponent implements OnInit {
     })
   }
 
+  raiseTelemetryInteratEvent(event: any) {
+    this.telemetryRaisedLibrary.emit(event)
+  }
 }
