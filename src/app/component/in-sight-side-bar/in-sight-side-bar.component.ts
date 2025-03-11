@@ -90,6 +90,8 @@ export class InsightSideBarComponent implements OnInit {
   isIgotOrg = false
   nwlConfiguration: any
   canShowNlwCard = false
+  slwConfiguration: any
+  canShowSlwCard = false
   totlaDays = 0
   daysCompleted = 0
   currentLang: any = ''
@@ -138,12 +140,19 @@ export class InsightSideBarComponent implements OnInit {
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
+      this.slwConfiguration = this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek &&
+      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek[0]
+
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
       }
       if (this.updateDesignationCard && this.updateDesignationCard.enabled) {
         this.getMasterDesignation()
       }
+      if (this.slwConfiguration && this.slwConfiguration.enabled) {
+        this.getSlwConfig()
+      }
+
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
@@ -195,6 +204,28 @@ export class InsightSideBarComponent implements OnInit {
       }
     }
   }
+
+  getSlwConfig() {
+    const startDate = moment(this.slwConfiguration.startDate, 'DD-MMYYYY')
+    const endDate = moment(this.slwConfiguration.endDate, 'DD-MMYYYY')
+    this.totlaDays = endDate.diff(startDate, 'days')
+    const currentDate = moment()
+    if (currentDate.isBetween(startDate, endDate, null, '[]')) {
+      const daysPassed = currentDate.diff(startDate, 'days')
+      this.canShowSlwCard = true
+      this.daysCompleted = daysPassed
+
+    } else if (currentDate.isBefore(startDate)) {
+      this.canShowSlwCard = false
+    } else if (currentDate.isAfter(endDate)) {
+      const daysPassed = currentDate.diff(endDate, 'days')
+      if (daysPassed === 0) {
+        this.canShowSlwCard = true
+        this.daysCompleted = this.totlaDays
+      }
+    }
+  }
+
   getMasterDesignation() {
     this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
       if (result && result.frameworkid) {
@@ -484,6 +515,21 @@ export class InsightSideBarComponent implements OnInit {
     )
 
     this.router.navigateByUrl('app/learn/karmayogi-saptah')
+  }
+
+  navigateToStatelLearning() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'state-learning-week',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+
+    this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
   }
 
   updateDesignation() {
