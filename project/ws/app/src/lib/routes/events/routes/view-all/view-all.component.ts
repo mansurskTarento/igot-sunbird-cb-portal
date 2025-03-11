@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NsContent } from '@sunbird-cb/utils-v2';
 import { EventService } from '../../services/events.service';
 import * as _ from 'lodash'
@@ -30,7 +30,7 @@ export class ViewAllComponent {
   searchControl = new UntypedFormControl('')
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
-    private translate: TranslateService,
+    private translate: TranslateService, private router: Router,
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -150,12 +150,22 @@ export class ViewAllComponent {
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged()
-    ).subscribe(() => {
+    ).subscribe((data: any) => {
+      this.router.navigate([], {
+        relativeTo: this.activateRoute,
+        queryParams: { query: data },
+        queryParamsHandling: 'merge',
+      })
       this.fetchData()
     })
     this.activateRoute.queryParamMap.subscribe((data: any) => {
-      if (data.params.resourceType) {
+      if (data.params && data.params.resourceType) {
         this.selectedFilters['resourceType'] = [data.params.resourceType]
+      }
+      if (data.params && data.params.query) {
+        this.searchControl.setValue(data.params.query)
+      } else {
+        this.searchControl.setValue(null)
       }
     })
     this.titles.push({ title: _.get(this.selectedFilters, 'resourceType[0]', 'All'), url: `none`, icon: '' },)
