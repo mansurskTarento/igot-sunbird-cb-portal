@@ -24,13 +24,13 @@
     <div class="today-events mt-2 flex flex-col gap-3">
         <div class="today">{{selectedDateText}}</div>
         <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
-            <ng-container *ngFor="let event of selectedDateEvents | slice:0:2">
+            <ng-container *ngFor="let event of selectedDateEvents">
                 <div class="event-item flex flex-col gap-3 pb-3">
                     <div class="flex justify-between items-center">
                         <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
-                        <ng-container *ngIf="event.isLive">
-                            <div class="flex gap-1 live">
-                                <img src="/assets/icons/live.svg" alt="">
+                        <ng-container *ngIf="!event.isLive">
+                            <div class="flex gap-1 live blink">
+                                <img class='img' src="/assets/icons/live.svg" alt="">
                                 <span>Live</span>
                             </div>
                         </ng-container>
@@ -44,9 +44,6 @@
                     </ng-container>
                 </div>
             </ng-container>
-            <div class="flex justify-end items-center">
-                <span class="seeAll">See all</span>
-            </div>
         </ng-container>
         <ng-template #noEvents>
             <div class="flex items-center justify-center">
