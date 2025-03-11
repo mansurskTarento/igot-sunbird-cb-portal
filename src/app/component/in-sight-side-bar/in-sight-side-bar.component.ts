@@ -536,8 +536,10 @@ export class InsightSideBarComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
-
-    this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
+      if(this.slwConfiguration && this.slwConfiguration.orgName && this.slwConfiguration.orgId) {
+        this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
+      }
+    
   }
 
   updateDesignation() {
