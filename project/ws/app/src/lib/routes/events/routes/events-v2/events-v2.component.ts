@@ -24,7 +24,7 @@ export class EventsV2Component {
     eventsAttended: '200',
     eventsEnrolled: '15',
     hoursSpentOnEvents: '8h 45m'
-  } 
+  }
 
   searchControl = new FormControl()
 
@@ -33,13 +33,13 @@ export class EventsV2Component {
     private bottomSheet: MatBottomSheet,
     private eventsService: EventService,
     private router: Router
-    ) {
+  ) {
     this.activatedRoute.data.subscribe(data => {
       if (data && data.pageData) {
         _.get(data, 'pageData.data.version2.sectionList', []).forEach((section: any) => {
           if (section.key === 'eventsHome') {
             this.eventsHome = section
-          } else if(section.key === 'banner') {
+          } else if (section.key === 'banner') {
             this.banner = section
           }
         });
@@ -51,33 +51,35 @@ export class EventsV2Component {
     this.searchControl.valueChanges
       .pipe(debounceTime(500))
       .subscribe(value => {
-        console.log(value)
+        if (value) {
+          this.router.navigate(['/app/event-hub/view-all'], { queryParams: { query: value } })
+        }
       })
-      this.getEventsEngagemeants()
+    this.getEventsEngagemeants()
   }
 
   getEventsEngagemeants() {
     this.eventsService.getEventEngagements().pipe(map((res: any) => {
       let result: any = {}
-      if(_.get(res, 'result.userEventEnrolmentInfo')) {
+      if (_.get(res, 'result.userEventEnrolmentInfo')) {
         result = _.get(res, 'result.userEventEnrolmentInfo')
         result['hoursSpentOnEvents'] = this.convertMinutesToHoursAndMinutes(result['hoursSpentOnEvents'])
       }
       return result
     })).subscribe({
       next: (res: any) => {
-        if(res) {
+        if (res) {
           this.engagementDetails = res
         }
       }, error: (error: HttpErrorResponse) => {
-        if(error) {}
+        if (error) { }
       }
     })
   }
 
   convertMinutesToHoursAndMinutes(minutes: number): string {
     let convertedTime = '0h 0m'
-    if(minutes) {
+    if (minutes) {
       const hours = Math.floor(minutes / 60);
       const remainingMinutes = minutes % 60;
       convertedTime = `${hours}h ${remainingMinutes}m`
@@ -102,9 +104,9 @@ export class EventsV2Component {
   }
 
   navigate(browseData: any) {
-    if(browseData && browseData.key) {
-      if(browseData.key !== 'all') {
-      this.router.navigate(['/app/event-hub/view-all'], {queryParams: {resourceType: browseData.key}})
+    if (browseData && browseData.key) {
+      if (browseData.key !== 'all') {
+        this.router.navigate(['/app/event-hub/view-all'], { queryParams: { resourceType: browseData.key } })
       } else {
         this.router.navigate(['/app/event-hub/view-all'])
       }

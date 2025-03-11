@@ -12,10 +12,10 @@
         </div>
 
         <div class="days-grid">
-            <div *ngFor="let date of daysInMonth" class="day-cell" 
-                [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
+            <div *ngFor="let date of daysInMonth" class="day-cell" [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
                 'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
-                'selected': (selected && date?.date?.getTime() === selected.getTime())}" (click)="selectDate(date?.date)">
+                'selected': (selected && date?.date?.getTime() === selected.getTime())}"
+                (click)="selectDate(date?.date)">
                 {{ date?.date?.getDate() }}
             </div>
         </div>
@@ -27,7 +27,7 @@
             <ng-container *ngFor="let event of selectedDateEvents | slice:0:2">
                 <div class="event-item flex flex-col gap-3 pb-3">
                     <div class="flex justify-between items-center">
-                        <div class="eventName">{{event.name}}</div>
+                        <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
                         <ng-container *ngIf="event.isLive">
                             <div class="flex gap-1 live">
                                 <img src="/assets/icons/live.svg" alt="">
