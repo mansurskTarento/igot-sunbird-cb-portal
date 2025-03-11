@@ -92,7 +92,7 @@ export class InsightSideBarComponent implements OnInit {
   canShowNlwCard = false
   slwConfiguration: any
   canShowSlwCard = false
-  totlaDays = 0
+  totalDays = 0
   daysCompleted = 0
   currentLang: any = ''
   updateDesignationCard: any
@@ -140,8 +140,16 @@ export class InsightSideBarComponent implements OnInit {
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
-      this.slwConfiguration = this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek &&
-      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek[0]
+      let slwConfigurationLocal:any = this.activatedRoute.snapshot.data.pageData.data &&
+      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
+
+      if(slwConfigurationLocal && slwConfigurationLocal.length) {
+        for(let item of slwConfigurationLocal) {
+          if(item.orgId === this.userData.rootOrgId) {
+            this.slwConfiguration = item
+          }
+        }
+      }
 
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
@@ -187,7 +195,7 @@ export class InsightSideBarComponent implements OnInit {
   getNlwConfig() {
     const startDate = moment(this.nwlConfiguration.startDate, 'DD-MMYYYY')
     const endDate = moment(this.nwlConfiguration.endDate, 'DD-MMYYYY')
-    this.totlaDays = endDate.diff(startDate, 'days')
+    this.totalDays = endDate.diff(startDate, 'days')
     const currentDate = moment()
     if (currentDate.isBetween(startDate, endDate, null, '[]')) {
       const daysPassed = currentDate.diff(startDate, 'days')
@@ -200,7 +208,7 @@ export class InsightSideBarComponent implements OnInit {
       const daysPassed = currentDate.diff(endDate, 'days')
       if (daysPassed === 0) {
         this.canShowNlwCard = true
-        this.daysCompleted = this.totlaDays
+        this.daysCompleted = this.totalDays
       }
     }
   }
@@ -208,7 +216,7 @@ export class InsightSideBarComponent implements OnInit {
   getSlwConfig() {
     const startDate = moment(this.slwConfiguration.startDate, 'DD-MMYYYY')
     const endDate = moment(this.slwConfiguration.endDate, 'DD-MMYYYY')
-    this.totlaDays = endDate.diff(startDate, 'days')
+    this.totalDays = endDate.diff(startDate, 'days')
     const currentDate = moment()
     if (currentDate.isBetween(startDate, endDate, null, '[]')) {
       const daysPassed = currentDate.diff(startDate, 'days')
@@ -221,7 +229,7 @@ export class InsightSideBarComponent implements OnInit {
       const daysPassed = currentDate.diff(endDate, 'days')
       if (daysPassed === 0) {
         this.canShowSlwCard = true
-        this.daysCompleted = this.totlaDays
+        this.daysCompleted = this.totalDays
       }
     }
   }
