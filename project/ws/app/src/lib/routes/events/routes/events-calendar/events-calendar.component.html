@@ -1,27 +1,34 @@
 <div class="calendar-container flex flex-col gap-4">
-    <div class="header">My Event Calendar</div>
-    <div class="month-selector flex items-center justify-between">
-        <mat-icon (click)="prevMonth()">chevron_left</mat-icon>
-        <span>{{ currentMonthYearText }}</span>
-        <mat-icon (click)="nextMonth()">chevron_right</mat-icon>
+    <div class="md:pb-4 callendar-header">
+        <div class="block md:hidden">
+            <mat-icon class="backArrow" (click)="closeDiaolg()">arrow_back</mat-icon>
+        </div>
+        {{eventCalendarDetails?.title}}
     </div>
-
-    <div class="calendar-grid">
-        <div class="weekday-header">
-            <div *ngFor="let day of weekdays" class="weekday">{{ day }}</div>
+    <div class="flex flex-col gap-3 m-calendar-view mt-2">
+        <div class="month-selector flex items-center justify-between">
+            <mat-icon (click)="prevMonth()">chevron_left</mat-icon>
+            <span>{{ currentMonthYearText }}</span>
+            <mat-icon (click)="nextMonth()">chevron_right</mat-icon>
         </div>
 
-        <div class="days-grid">
-            <div *ngFor="let date of daysInMonth" class="day-cell" [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
-                'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
-                'selected': (selected && date?.date?.getTime() === selected.getTime())}"
-                (click)="selectDate(date?.date)">
-                {{ date?.date?.getDate() }}
+        <div class="calendar-grid">
+            <div class="weekday-header">
+                <div *ngFor="let day of weekdays" class="weekday">{{ day }}</div>
+            </div>
+
+            <div class="days-grid">
+                <div *ngFor="let date of daysInMonth" class="day-cell" [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
+                    'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
+                    'selected': (selected && date?.date?.getTime() === selected.getTime())}"
+                    (click)="selectDate(date?.date)">
+                    {{ date?.date?.getDate() }}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="today-events mt-2 flex flex-col gap-3">
+    <div class="today-events flex flex-col gap-3">
         <div class="today">{{selectedDateText}}</div>
         <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
             <ng-container *ngFor="let event of selectedDateEvents">

@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { EventService } from '../../services/events.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { Router } from '@angular/router';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'ws-app-events-calendar',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./events-calendar.component.scss']
 })
 export class EventsCalendarComponent implements OnInit {
+  @Input() eventCalendarDetails: any
   selected = new Date();
   selectedDateText = 'Today'
   currentMonth = new Date();
@@ -32,8 +34,14 @@ export class EventsCalendarComponent implements OnInit {
     private eventService: EventService,
     private matSnackBar: MatLegacySnackBar,
     private configSvc: ConfigurationsService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private bottomSheetRef: MatBottomSheetRef<any>,
+    @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any,
+  ) { 
+    if(this.data) {
+      this.eventCalendarDetails = this.data
+    }
+  }
 
   ngOnInit() {
     this.getEnrolledEvents()
@@ -206,6 +214,10 @@ export class EventsCalendarComponent implements OnInit {
 
   private openSnackBar(message: string) {
     this.matSnackBar.open(message)
+  }
+
+  closeDiaolg() {
+    this.bottomSheetRef.dismiss()
   }
 
 }
