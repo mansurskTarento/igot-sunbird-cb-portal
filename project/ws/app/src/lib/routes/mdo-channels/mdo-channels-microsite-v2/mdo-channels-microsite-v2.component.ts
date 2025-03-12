@@ -19,7 +19,7 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
   channnelName = ''
   orgId = ''
   sectionList: any = []
-  nwlConfig: any
+  slwConfig: any
   constructor(
     private route: ActivatedRoute, public configService: ConfigurationsService) {
 
@@ -53,7 +53,7 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
       && this.route.snapshot.data.formData.data.result.form.data
       && this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig
     ) {
-      this.nwlConfig = this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
+      this.slwConfig = this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
   }
   
   }
