@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core'
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, EventService, NsInstanceConfig, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '../_services/widget-content.model'
@@ -16,6 +16,7 @@ import { Router } from '@angular/router'
 export class EventCardV2Component extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<NsCardContent.ICard> {
   @Input() widgetData!: NsCardContent.ICard
+  @Output() handleTelemetry = new EventEmitter<any>()
   @HostBinding('id')
   primaryCategory = NsContent.EPrimaryCategory
   acbpConstants = NsCardContent.ACBPConst
@@ -46,6 +47,7 @@ export class EventCardV2Component extends WidgetBaseComponent
   }
 
   async getRedirectUrlData(content: any) {
+    this.handleTelemetry.emit(content)
     this.router.navigate([`/app/event-hub/home/${content.identifier}`])
   }
   ngOnInit() {

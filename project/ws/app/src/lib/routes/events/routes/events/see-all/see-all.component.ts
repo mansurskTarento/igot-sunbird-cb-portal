@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../services/events.service';
-import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2';
+import { MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash'
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-see-all',
@@ -21,7 +22,8 @@ export class SeeAllComponent {
     private activateRoute: ActivatedRoute,
     private translate: TranslateService,
     private eventSvc: EventService,
-    private langtranslations: MultilingualTranslationsService
+    private langtranslations: MultilingualTranslationsService,
+    private events: libEventService,
   ) {
     this.titles = [
       { title: 'events', url: '/app/event-hub/home', icon: 'event' },
@@ -41,8 +43,8 @@ export class SeeAllComponent {
         })
       }
     })
-    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
     if (this.category === 'featuredEvents' || this.category === 'trendingEvents') {
+      this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
       this.apiCall().pipe(
         map(response => {
           return _.get(response, 'result.events', [])
@@ -114,6 +116,31 @@ export class SeeAllComponent {
 
   translateLabels(label: string, type: any, subtype: any) {
     return this.langtranslations.translateActualLabel(label, type, subtype)
+  }
+
+  raiseTelemetry(event: any) {
+    let subType = ''
+    if (this.category === 'featuredEvents') {
+      subType = 'featured-events'
+    } else if (this.category === 'trendingEvents') {
+      subType = 'trending-events'
+    } else {
+      subType = 'recommended-events'
+    }
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: subType,
+        id: "card-content",
+      },
+      {
+        id: _.get(event, event.identifier || ''),
+        type: "event"
+      },
+      {
+        module: WsEvents.EnumTelemetrymodules.EVENTS,
+      }
+    )
   }
 
   private transformSkeletonToWidgets(
