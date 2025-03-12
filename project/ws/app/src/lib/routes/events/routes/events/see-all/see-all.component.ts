@@ -4,6 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../services/events.service';
 import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash'
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'ws-app-see-all',
@@ -39,9 +41,33 @@ export class SeeAllComponent {
         })
       }
     })
-    this.fetchData()
+    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
+    if (this.category === 'featuredEvents' || this.category === 'trendingEvents') {
+      this.apiCall().pipe(
+        map(response => {
+          return _.get(response, 'result.events', [])
+        }),
+        catchError(error => {
+          console.error('Error in API 1:', error)
+          this.contentDataList = this.transformContentsToWidgets([], {})
+          return of(null)
+        })
+      ).subscribe(ids => {
+        if (ids.length) {
+          this.fetchData(ids);
+        }
+      })
+    }
   }
-  fetchData() {
+
+  apiCall() {
+    if (this.category === 'featuredEvents') {
+      return this.eventSvc.getFeaturedEvents()
+    } else {
+      return this.eventSvc.getTrendingEvents()
+    }
+  }
+  fetchData(response: any) {
     let requestBody: any = {
       locale: [
         'en',
@@ -52,8 +78,7 @@ export class SeeAllComponent {
         filters: {
           status: ['Live'],
           contentType: 'Event',
-          category: 'Event',
-          resourceType: "Karmayogi talks"
+          identifier: response
         },
         sort_by: {
           startDate: 'desc',
@@ -61,7 +86,6 @@ export class SeeAllComponent {
         limit: 500,
       },
     }
-    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
       let response: any = _.get(resp, 'result.Event', [])
       if (response.length) {
