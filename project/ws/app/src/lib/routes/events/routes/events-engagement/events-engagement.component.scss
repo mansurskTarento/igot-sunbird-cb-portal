@@ -1,0 +1,79 @@
+.engagement-card {
+    border: 1px solid #00000014;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+}
+
+.engagement-header {
+    /* stylelint-disable */
+    font: 600 14px 'Montserrat';
+    /* stylelint-enable */
+    color: #212121;
+    border-bottom: 1px solid #00000014;
+}
+
+.engagement-icons {
+    width: 17px;
+    height: 17px;
+}
+
+.events-attended {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px 'Lato';
+    /* stylelint-enable */
+}
+
+.events-value {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px 'Lato';
+    /* stylelint-enable */
+}
+
+.engagement-details-card {
+    height: 99px;
+    width: 90%;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+
+    .engagement-icons-div {
+        height: 67px;
+        padding-right: 20px;
+        margin-right: 20px;
+        border-right: 1px solid #0000003D;
+        
+        .mEngagement-icons {
+            width: 30px;
+        }
+
+        .mEvents-attended {
+            color: #00000099;
+            /* stylelint-disable */
+            font: 600 16px 'Montserrat';
+            /* stylelint-enable */
+        }
+
+        .mEvents-value {
+            color: #1B4CA1;
+            /* stylelint-disable */
+            font: 600 24px 'Lato';
+            /* stylelint-enable */
+        }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .engagement-card {
+        border: 0px; 
+    }
+
+    .engagement-header {
+        border-bottom: 0px;
+    }
+}
+
+::ng-deep .engagement-bottomsheet {
+    height: 100vh;
+    position: relative !important;
+}
