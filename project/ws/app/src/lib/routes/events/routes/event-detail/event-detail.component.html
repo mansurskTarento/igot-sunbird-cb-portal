@@ -223,8 +223,7 @@
           <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
             <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
           </div>
-
-          <ng-container *ngIf="skeletonLoader">
+          <ng-container *ngIf="eventData?.[compentencyKey.vKey] && skeletonLoader">
             <div class="flex flex-col gap-3">
               <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'"
                 [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
