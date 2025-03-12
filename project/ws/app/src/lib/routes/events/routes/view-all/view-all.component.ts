@@ -35,6 +35,9 @@ export class ViewAllComponent {
   isLoading = false
   total = 0
   showNextPage = false
+  sortOptions: any = {
+    startDate: 'desc'
+  }
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -208,9 +211,7 @@ export class ViewAllComponent {
           contentType: 'Event',
           category: 'Event',
         },
-        sort_by: {
-          startDate: 'desc',
-        },
+        sort_by: this.sortOptions,
         limit: this.pageLimit || 9,
         offset: (this.pageLimit * this.currentPage) || 0
       },
@@ -259,6 +260,8 @@ export class ViewAllComponent {
     console.log("this.selectedFilters.resourceType ", requestBody)
     return requestBody
   }
+
+
 
   fetchData() {
     if (!this.isLoading) {
@@ -386,8 +389,9 @@ export class ViewAllComponent {
 
   sortType(type: any) {
     if (type == 'asc') {
-      this.contentDataList = this.contentDataList.sort((a: any, b: any) =>
-        a.widgetData.content.name.localeCompare(b.widgetData.content.name))
+      this.sortOptions = { name: 'asc' }
+      this.resetData()
+      this.fetchData()
     } else if (type === 'short') {
       this.contentDataList = this.contentDataList.sort(
         (a: any, b: any) => a.widgetData.content.duration - b.widgetData.content.duration)
