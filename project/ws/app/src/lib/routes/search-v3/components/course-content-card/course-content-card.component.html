@@ -78,7 +78,6 @@
                 </h2>
 
                 <div class="course-tags mb-3 font-normal text-ellipse" *ngIf="content?.keywords && content?.keywords.length > 0">
-                    <!-- Sub Theme - Design · UI · UX · Product · AI · Management · Developer · HTML · CSSDesign · UI · UX... -->
                     <ng-container *ngFor="let keyword of content.keywords; let isLast = last">
                         <span class=""> {{keyword}} <span *ngIf="!isLast"> · </span></span>
                     </ng-container>
@@ -97,9 +96,9 @@
                 </div>
 
                 <div class="course-stats flex items-center gap-4 flex-wrap">
-                    <div class="rating">
+                    <div class="rating" *ngIf="content?.avgRating">
                         <mat-icon class="star-icon">star</mat-icon>
-                        <span class="font-normal text-xs">4.5 (234)</span>
+                        <span class="font-normal text-xs">{{content?.avgRating | number:'1.1-1'}}</span>
                     </div>
 
                     <div class="enrollment">

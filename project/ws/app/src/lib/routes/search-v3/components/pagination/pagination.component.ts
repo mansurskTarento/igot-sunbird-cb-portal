@@ -1,25 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { PageChangeEmitter } from '../../models/search-v3.model';
 @Component({
   selector: 'ws-app-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent implements OnInit {
+  @Input() defaultPaginationSize: number = 10;
+  @Input() defaultPaginationSizeOptions: number[] = [];
+  @Input() totalItemsCount: number = 0
+
+  @Output() pageChange: EventEmitter<PageChangeEmitter> = new EventEmitter();
+
   currentPage: number = 1;
   pagination: any = [];
   rangeWithDots: any;
   showingArray: any[] = [];
-  totalSearchedProducts = 100;
+  lastPage = 0;
+  firstPage = 0;
+  previousPage = 0;
   ngOnInit(): void {
     this.paginationInListing();
   }
 
-  public paginationInListing() {
+  paginationInListing() {
     let lower = 0;
     let upper = 0;
-    let limit = 12;
-    let items = this.totalSearchedProducts;
+    let limit = this.defaultPaginationSize;
+    let items = this.totalItemsCount;
     this.showingArray = [];
 
     for (let i = 0; i < items; i++) {
@@ -33,17 +41,20 @@ export class PaginationComponent implements OnInit {
         this.showingArray.push([lower, upper]);
       }
     }
-    let dividedPagination = Math.ceil(this.totalSearchedProducts / limit);
+
+    let dividedPagination = Math.ceil(this.totalItemsCount / limit);
     let paginationLength = this.paginationDup(
       this.currentPage,
       dividedPagination
     );
 
     let currentIndex = this.showingArray[this.currentPage - 1];
-
     let lowerPagination =
-      this.totalSearchedProducts > 0 ? currentIndex[0] + 1 : '';
-    let upperPagination = this.totalSearchedProducts > 0 ? currentIndex[1] : '';
+      this.totalItemsCount > 0 ? currentIndex[0] + 1 : '';
+    let upperPagination = this.totalItemsCount > 0 ? currentIndex[1] : '';
+
+    this.lastPage = paginationLength[paginationLength.length - 1];
+    this.firstPage = paginationLength[0];
 
     this.pagination = {
       dividedPagination: dividedPagination,
@@ -53,7 +64,7 @@ export class PaginationComponent implements OnInit {
     };
   }
 
-  public paginationDup(c: any, m: any) {
+  paginationDup(c: any, m: any) {
     let current = c;
     let last = m;
     let delta = 5;
@@ -81,5 +92,69 @@ export class PaginationComponent implements OnInit {
       l = i;
     }
     return this.rangeWithDots;
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.pageChange.emit({
+      currentPage: this.currentPage,
+      previousPage: this.previousPage,
+      limit: this.defaultPaginationSize,
+    });
+    this.paginationInListing();
+  }
+
+  // TODO: May need to implement in future
+  navigateToLastPage(page: number) {
+    if (page != this.currentPage) {
+      this.goToPage(page);
+    }
+  }
+
+  // TODO: May need to implement in future
+  navigateToFirstPage(page: number) {
+    if (page != this.currentPage) {
+      this.goToPage(page);
+    }
+  }
+
+  navigateToNextPage(page: number) {
+    if (
+      page <=
+      (this.pagination.paginationLength &&
+        this.pagination.paginationLength[
+          this.pagination.paginationLength.length - 1
+        ])
+    ) {
+      this.currentPage = this.currentPage + 1;
+      this.previousPage = page;
+      this.goToPage(this.currentPage);
+    }
+  }
+
+  navigateToPrevPage(page: number) {
+    if (
+      page <=
+      (this.pagination.paginationLength &&
+        this.pagination.paginationLength[
+          this.pagination.paginationLength.length - 1
+        ])
+    ) {
+      this.currentPage = this.currentPage - 1;
+      this.previousPage = page;
+      this.goToPage(this.currentPage);
+    }
+  }
+
+  onChangePageSize(event: any) {
+    this.defaultPaginationSize = event.value;
+    this.currentPage = 1;
+    this.previousPage = 0;
+    this.paginationInListing();
+    this.pageChange.emit({
+      currentPage: this.currentPage,
+      previousPage: this.previousPage,
+      limit: this.defaultPaginationSize,
+    });
   }
 }

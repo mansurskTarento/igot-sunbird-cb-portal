@@ -38,6 +38,11 @@
     font-size: 14px;
     line-height: 16.8px;
     color: $overleyDarkBackground;
+    display: inline-block;
+    max-width: 14em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .mat-checkbox-checked.mat-accent .mat-checkbox-background {

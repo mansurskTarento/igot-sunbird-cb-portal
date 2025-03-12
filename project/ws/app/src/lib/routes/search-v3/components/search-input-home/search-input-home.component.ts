@@ -75,7 +75,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   selectedSearchCategory: string = SearchCategory.All;
   openSearchTemplate = false;
   loaderSearching = false;
-  responseNlpQuery = ''
+  responseNlpQuery = '';
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target)) {
@@ -97,12 +97,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     );
 
     this.queryControl.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
+      .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe((value) => {
         if (value) {
           this.loaderSearching = false;
-          // this.searchFromQuery(value);
-          this.searchInNLP(value)
+          this.searchFromQuery(value);
+          // this.searchInNLP(value)
         }
       });
   }
@@ -198,15 +198,18 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     });
   }
 
-  updateQuery(query: string) {
+  async updateQuery(query: string) {
+    if (!query) return;
     document.getElementById('global-search-input')?.blur();
     if (this.ref === 'home') {
       this.closed.emit(false);
+      await this.searchInNLP(query);
       this.router.navigate(['/app/globalsearch'], {
-        queryParams: { q: query.trim(),  search: this.responseNlpQuery },
+        queryParams: { q: query.trim(), search: this.responseNlpQuery },
         queryParamsHandling: 'merge',
       });
     } else {
+      await this.searchInNLP(query);
       this.router.navigate([], {
         relativeTo: this.activated.parent,
         queryParams: { q: query.trim(), search: this.responseNlpQuery },
@@ -228,12 +231,16 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async searchFromQuery(query: string) {
     let courseSearchResult: any;
-    const searchRequest = new SearchV4Request();
+    const searchRequest = new SearchV4Request([]);
     searchRequest.request.query = query;
 
     switch (this.selectedSearchCategory) {
       case SearchCategory.Courses:
+        searchRequest.request.filters.courseCategory = 'course';
+        break;
       case SearchCategory.All:
+        searchRequest.request.filters.courseCategory = [];
+        searchRequest.request.filters.contentType = ['Course', 'Event'];
         break;
 
       case SearchCategory.Programs:
@@ -241,7 +248,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         break;
 
       case SearchCategory.Events:
-        searchRequest.request.sort_by.startDate = 'desc';
         searchRequest.request.filters.contentType = 'Event';
         searchRequest.request.fields = SearchEventFields;
         searchRequest.request.facets = SearchEventfacet;
@@ -338,7 +344,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     if (this.selectedSearchCategory === SearchCategory.People) {
       this.goToUserProfile(result);
     } else if (this.selectedSearchCategory === SearchCategory.Communities) {
-      // TODO: Route community 
+      // TODO: Route community
     } else {
       this.getRedirectUrlData(result);
     }
@@ -362,17 +368,19 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
-  searchInNLP(query: string) {
-    const searchRequest = new SearchNLP()
-    searchRequest.query = query
-    this.searchV3Service.nlpSearch(searchRequest).then(response => {
-      if(response?.data && response?.data?.keywords) {
-        this.responseNlpQuery = (response?.data?.keywords).join(' ')
-        console.log(this.responseNlpQuery);
-        if(this.responseNlpQuery) {
-          this.searchFromQuery(this.responseNlpQuery);
+  async searchInNLP(query: string) {
+    const searchRequest = new SearchNLP();
+    searchRequest.query = query;
+    await this.searchV3Service
+      .nlpSearch(searchRequest)
+      .then(async (response) => {
+        if (response?.data && response?.data?.keywords) {
+          this.responseNlpQuery = (response?.data?.keywords).join(' ');
+          if (this.responseNlpQuery) {
+            await this.searchFromQuery(this.responseNlpQuery);
+          }
         }
-      }
-    })
+      })
+      .catch();
   }
 }

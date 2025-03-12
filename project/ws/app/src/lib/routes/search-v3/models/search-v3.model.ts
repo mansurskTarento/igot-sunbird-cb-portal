@@ -1,8 +1,8 @@
 export class SearchV4Request {
   request: RequestParams;
   locale?: string[];
-  constructor() {
-    this.request = new RequestParams();
+  constructor(competenciesKey: any) {
+    this.request = new RequestParams(competenciesKey);
   }
 }
 
@@ -15,10 +15,10 @@ export class RequestParams {
   offset: number;
   sort_by: SortBy;
 
-  constructor() {
+  constructor(competenciesKey: any) {
     this.filters = new Filters();
     this.fields = [];
-    this.facets = SearchOthersFacet;
+    this.facets = [...SearchOthersFacet, ...competenciesKey];
     this.query = '';
     this.limit = 3;
     this.offset = 0;
@@ -27,13 +27,17 @@ export class RequestParams {
 }
 
 export class Filters {
-  contentType: string;
-  courseCategory?: string;
+  contentType: any;
+  courseCategory?: any;
   status: string[];
   sourceName?: string;
+  avgRating?: { [key: string]: string };
+  language?: string[];
+  organisation?: string[];
+  [key: string]: any;
   constructor() {
-    this.contentType = 'course';
-    this.courseCategory = 'course';
+    this.contentType = ['Course'];
+    this.courseCategory = [];
     this.status = ['Live'];
   }
 }
@@ -41,8 +45,9 @@ export class Filters {
 export class SortBy {
   lastUpdatedOn?: string;
   startDate?: string;
+  avgRating?: string;
   constructor() {
-    this.lastUpdatedOn = 'desc';
+    // this.lastUpdatedOn = 'desc';
   }
 }
 
@@ -58,7 +63,7 @@ export enum SearchCategory {
 
 export const SearchOthersFacet = [
   'duration',
-  'rating',
+  'avgRating',
   'language',
   'organisation',
 ];
@@ -139,3 +144,18 @@ export class SearchNLP {
     this.synonyms = false;
   }
 }
+
+export interface PageChangeEmitter {
+  currentPage: number;
+  previousPage: number;
+  limit: number;
+}
+
+export type Facet = {
+  name: string;
+  values: { name: string; count: number }[];
+};
+
+export type FormattedFacets = {
+  [key: string]: { name: string; count: number }[];
+};

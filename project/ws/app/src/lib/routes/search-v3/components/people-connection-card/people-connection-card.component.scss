@@ -5,9 +5,9 @@
 .card-container {
   height: 175px;
   width: 172px;
-  border: 1px solid #00000014;
+  border: 1px solid $matCardBorderColor;
   border-radius: 12px;
-  background: #ffffff;
+  background: $white;
 }
 
 .name-container {
@@ -19,7 +19,7 @@
   box-sizing: border-box;
 }
 
-::ng-deep .connection-name .name {
+::ng-deep .connection-name span {
   margin-top: 8px !important;
   margin-bottom: 8px !important;
   overflow: hidden;

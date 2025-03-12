@@ -10,7 +10,8 @@
             <div class="" i18n-aria-label role="link" tabindex="0" (click)="goToUserProfile(user)">
               
                 <div class="connection-name">
-                    <ws-app-connection-name [hoverUser]="user"></ws-app-connection-name>
+                    <!-- <ws-app-connection-name [hoverUser]="user"></ws-app-connection-name> -->
+                    <span class="mat-body-1 name text-center font-bold">{{user?.personalDetails?.firstname | titlecase }}</span>
                 </div>
                 <div class="designation ws-mat-black60-text mat-body-2" *ngIf="user?.employmentDetails">
                     {{user?.employmentDetails?.departmentName}}

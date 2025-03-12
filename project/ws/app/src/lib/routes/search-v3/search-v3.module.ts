@@ -61,7 +61,8 @@ import { ConnectionNameComponent } from '../network-v2/components/connection-nam
 import { CommunityContentCardComponent } from './components/community-content-card/community-content-card.component';
 import {NumberShortenerPipe} from './pipes/number-shortener.pipe'
 import {PluralPipe} from './pipes/plural.pipe';
-import { PaginationComponent } from './components/pagination/pagination.component'
+import { PaginationComponent } from './components/pagination/pagination.component';
+import { SearchSortInputComponent } from './components/search-sort-input/search-sort-input.component'
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     CommunityContentCardComponent,
     NumberShortenerPipe,
     PluralPipe,
-    PaginationComponent
+    PaginationComponent,
+    SearchSortInputComponent
   ],
   imports: [
     CommonModule,
