@@ -28,7 +28,7 @@
                 <div class="event-item flex flex-col gap-3 pb-3">
                     <div class="flex justify-between items-center">
                         <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
-                        <ng-container *ngIf="!event.isLive">
+                        <ng-container *ngIf="event.isLive">
                             <div class="flex gap-1 live blink">
                                 <img class='img' src="/assets/icons/live.svg" alt="">
                                 <span>Live</span>
