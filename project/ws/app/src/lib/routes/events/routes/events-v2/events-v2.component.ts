@@ -10,7 +10,7 @@ import { NsWidgetResolver } from 'library/ws-widget/resolver/src/public-api'
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-events-v2',
@@ -34,7 +34,8 @@ export class EventsV2Component {
     private bottomSheet: MatBottomSheet,
     private eventsService: EventService,
     private router: Router,
-    private events: libEventService
+    private events: libEventService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
     this.activatedRoute.data.subscribe(data => {
       if (data && data.pageData) {
@@ -70,6 +71,10 @@ export class EventsV2Component {
         if (error) { }
       }
     })
+  }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 
   convertMinutesToHoursAndMinutes(minutes: number): string {
