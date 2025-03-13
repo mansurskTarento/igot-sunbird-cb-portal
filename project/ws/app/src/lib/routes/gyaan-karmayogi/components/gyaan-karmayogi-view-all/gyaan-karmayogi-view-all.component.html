@@ -15,7 +15,6 @@
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 md:col-span-9">
                     <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
-                        contentDataList - {{contentDataList | json}}
                         <ng-container *ngIf="contentDataList.length;else noData">
                             <div class="w-full hidden md:block">
                                 <p class="mat-subheading-1 margin-remove inline-block">
