@@ -7,6 +7,8 @@ import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { Router } from '@angular/router';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+
 
 @Component({
   selector: 'ws-app-events-calendar',
@@ -37,6 +39,7 @@ export class EventsCalendarComponent implements OnInit {
     private router: Router,
     private bottomSheetRef: MatBottomSheetRef<any>,
     @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any,
+    private langtranslations: MultilingualTranslationsService,
   ) { 
     if(this.data) {
       this.eventCalendarDetails = this.data
@@ -120,23 +123,6 @@ export class EventsCalendarComponent implements OnInit {
       }
       this.daysInMonth.push(details);
     }
-
-    // const remaining = 42 - this.daysInMonth.length; // 6 rows × 7 days
-    // for (let i = 1; i <= remaining; i++) {
-    //   const date = new Date(year, month, -i)
-    //   const details: {
-    //     date: Date,
-    //     isPrevisDate: Boolean,
-    //     hasRegisteredEvent: Boolean,
-    //     isCurrentMonth: Boolean
-    //   } = {
-    //     date: date,
-    //     hasRegisteredEvent: this.hasEvent(date),
-    //     isPrevisDate: date.getTime() < today.getTime(),
-    //     isCurrentMonth: false
-    //   }
-    //   this.daysInMonth.push(details);
-    // }
   }
 
   hasEvent(dateToCheck: Date): boolean {
@@ -206,6 +192,10 @@ export class EventsCalendarComponent implements OnInit {
         }
       })
     }
+  }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 
   redirectTo(myEvent: any) {

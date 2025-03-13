@@ -1,6 +1,8 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import * as _ from 'lodash'
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+
 
 @Component({
   selector: 'ws-app-events-engagement',
@@ -15,6 +17,7 @@ export class EventsEngagementComponent implements OnInit {
   constructor(
     private bottomSheetRef: MatBottomSheetRef<any>,
     @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any,
+    private langtranslations: MultilingualTranslationsService,
   ) {
     if(this.data) {
       this.myEngagements = this.data.engagements
@@ -24,6 +27,10 @@ export class EventsEngagementComponent implements OnInit {
 
   ngOnInit(): void {
     
+  }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 
   getValue(key: string) : string {
