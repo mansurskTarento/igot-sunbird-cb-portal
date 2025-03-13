@@ -144,9 +144,14 @@ export class InsightSideBarComponent implements OnInit {
       this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
 
       if(slwConfigurationLocal && slwConfigurationLocal.length) {
-        for(let item of slwConfigurationLocal) {
-          if(item.orgId === this.userData.rootOrgId) {
-            this.slwConfiguration = item
+        let userData = this.configSvc.unMappedUser
+        if(userData && userData.profileDetails 
+          && userData.profileDetails.refRootOrg 
+          && userData.profileDetails.refRootOrg.orgId) {
+          for(let item of slwConfigurationLocal) {
+            if(item.orgId === userData.profileDetails.refRootOrg.orgId) {
+              this.slwConfiguration = item
+            }
           }
         }
       }
@@ -235,6 +240,7 @@ export class InsightSideBarComponent implements OnInit {
   }
 
   getMasterDesignation() {
+    debugger
     this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
       if (result && result.frameworkid) {
         this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
