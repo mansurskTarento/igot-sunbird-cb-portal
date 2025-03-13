@@ -427,7 +427,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   getLanguages() {
     this.displayLoader = true
     this.chatbotService.getLangugages().subscribe((resp: any) => {
-      if (resp.status.code === 200) {
+      if (resp && resp.status && resp.status.code === 200) {
         this.language = resp.payload.languages
         localStorage.setItem('faq-languages', JSON.stringify(resp.payload.languages))
         localStorage.setItem('selectedLanguage', this.selectedLaguage)
