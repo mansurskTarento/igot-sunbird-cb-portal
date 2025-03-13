@@ -574,7 +574,6 @@ export class EventsComponent implements OnInit {
       futureEvents = this.sortEventsAsc(futureEvents)
       pastEvents = this.sortEvents(pastEvents)
       rajyaKarmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
-      console.log('rajyaKarmayogiSaptahEvents', rajyaKarmayogiSaptahEvents)
 
     }
     if (this.allEvents['karmayogiTalksEvents'] && this.allEvents['karmayogiTalksEvents'].length > 0) {
