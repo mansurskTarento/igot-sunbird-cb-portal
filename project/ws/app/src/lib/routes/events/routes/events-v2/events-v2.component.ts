@@ -114,8 +114,10 @@ export class EventsV2Component {
     }
   }
 
-  searchEvents(event: string) {
-    this.router.navigate(['/app/event-hub/view-all'], { queryParams: { query: event } })
+  searchEvents(event: any) {
+    if (event.target && event.target.value) {
+      this.router.navigate(['/app/event-hub/view-all'], { queryParams: { query: event.target.value } })
+    }
   }
 
   raiseTelemetryInteratEvent(event: any) {

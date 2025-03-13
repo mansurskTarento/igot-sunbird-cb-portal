@@ -11,7 +11,7 @@
           <ng-container *ngIf="contentDataList.length;else noData">
             <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
               <div class="mr-3 mb-5" *ngFor="let c of contentDataList">
-                <ws-widget-event-card-v2 [widgetData]="c?.widgetData">
+                <ws-widget-event-card-v2 [widgetData]="c?.widgetData" (handleTelemetry)="raiseTelemetry($event)">
                 </ws-widget-event-card-v2>
               </div>
             </div>
@@ -23,8 +23,6 @@
                   class="margin-top-l margin-bottom-s">
                 <h2 class="mat-h2" i18n="search route no result">{{'learnsearch.noResults' |
                   translate}}</h2>
-                <h3 class="mat-h3" i18n="search route you may try">{{'learnsearch.removeFilters' |
-                  translate}}</h3>
               </div>
             </div>
           </ng-template>

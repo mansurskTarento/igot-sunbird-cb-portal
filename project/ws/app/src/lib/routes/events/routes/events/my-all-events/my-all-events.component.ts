@@ -4,20 +4,19 @@ import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../services/events.service';
 import { MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash'
-import { catchError, map } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-see-all',
-  templateUrl: './see-all.component.html',
-  styleUrls: ['./see-all.component.scss']
+  selector: 'ws-app-my-all-events',
+  templateUrl: './my-all-events.component.html',
+  styleUrls: ['./my-all-events.component.scss']
 })
-export class SeeAllComponent {
+export class MyAllEventsComponent {
   titles: any = []
   contentDataList: any = []
   contnet: any = []
-  category: string = ''
+  tabSelected: string = ''
+  tabIndex = 0
   constructor(
     private activateRoute: ActivatedRoute,
     private translate: TranslateService,
@@ -27,6 +26,7 @@ export class SeeAllComponent {
   ) {
     this.titles = [
       { title: 'events', url: '/app/event-hub/home', icon: 'event' },
+      { title: this.translateLabels("myEvents", 'events', ''), url: `none`, icon: '' }
     ]
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -36,40 +36,22 @@ export class SeeAllComponent {
   }
   ngOnInit() {
     this.activateRoute.queryParamMap.subscribe((data: any) => {
-      if (data.params.category) {
-        this.category = data.params.category
-        this.titles.push({
-          title: this.translateLabels(this.category, 'events', ''), url: `none`, icon: ''
-        })
-      }
+      this.tabSelected = _.get(data, 'params.tabSelected', 'Today')
     })
-    if (this.category === 'featuredEvents' || this.category === 'trendingEvents') {
-      this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
-      this.apiCall().pipe(
-        map(response => {
-          return _.get(response, 'result.events', [])
-        }),
-        catchError(error => {
-          console.error('Error in API 1:', error)
-          this.contentDataList = this.transformContentsToWidgets([], {})
-          return of(null)
-        })
-      ).subscribe(ids => {
-        if (ids.length) {
-          this.fetchData(ids);
-        }
-      })
-    }
+    this.fetchData()
   }
-
-  apiCall() {
-    if (this.category === 'featuredEvents') {
-      return this.eventSvc.getFeaturedEvents()
-    } else {
-      return this.eventSvc.getTrendingEvents()
+  fetchData() {
+    let resourceType = ''
+    if (this.tabSelected === 'Today') {
+      this.tabIndex = 0
+      resourceType = 'Karmayogi Talks'
+    } else if (this.tabSelected === 'Upcoming') {
+      resourceType = 'Karmayogi Saptah'
+      this.tabIndex = 1
+    } else if (this.tabSelected === 'Past') {
+      resourceType = 'Webinar'
+      this.tabIndex = 2
     }
-  }
-  fetchData(response: any) {
     let requestBody: any = {
       locale: [
         'en',
@@ -80,7 +62,8 @@ export class SeeAllComponent {
         filters: {
           status: ['Live'],
           contentType: 'Event',
-          identifier: response
+          category: 'Event',
+          resourceType: resourceType
         },
         sort_by: {
           startDate: 'desc',
@@ -88,6 +71,7 @@ export class SeeAllComponent {
         limit: 500,
       },
     }
+    this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
       let response: any = _.get(resp, 'result.Event', [])
       if (response.length) {
@@ -120,9 +104,9 @@ export class SeeAllComponent {
 
   raiseTelemetry(event: any) {
     let subType = ''
-    if (this.category === 'featuredEvents') {
+    if (this.tabSelected === 'featuredEvents') {
       subType = 'featured-events'
-    } else if (this.category === 'trendingEvents') {
+    } else if (this.tabSelected === 'trendingEvents') {
       subType = 'trending-events'
     } else {
       subType = 'recommended-events'
@@ -143,10 +127,22 @@ export class SeeAllComponent {
     )
   }
 
+  tabClick(tab: any) {
+    this.tabIndex = tab.index
+    if (tab.index === 0) {
+      this.tabSelected = 'Today'
+    } else if (tab.index === 1) {
+      this.tabSelected = 'Upcoming'
+    } else if (tab.index === 2) {
+      this.tabSelected = 'Past'
+    }
+    this.fetchData()
+  }
+
   private transformSkeletonToWidgets(
     strip: any
   ) {
-    return [1, 2, 3, 4, 5, 6, 7, 8].map(_content => ({
+    return [0, 1, 2, 3, 4, 5, 6, 7, 8].map(_content => ({
       widgetType: 'card',
       widgetSubType: 'cardContent',
       widgetHostClass: 'mb-2',
