@@ -33,7 +33,7 @@
                             [engagementDetails]="engagementDetails"></ws-app-events-engagement>
                     </div>
                     <div *ngIf="eventsHome?.data?.leftSection?.data?.eventsCalendar?.enabled">
-                        <ws-app-events-calendar></ws-app-events-calendar>
+                        <ws-app-events-calendar [eventCalendarDetails]="eventsHome?.data?.leftSection?.data?.eventsCalendar"></ws-app-events-calendar>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                     <div class=rsearch>
                         <mat-icon class="search-icon">search</mat-icon>
                         <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
-                            [placeholder]="eventsHome?.data?.rightSection?.data?.search?.placeHolder">
+                            [placeholder]="eventsHome?.data?.rightSection?.data?.search?.placeHolder" (keydown.enter)="searchEvents($event)">
                     </div>
                 </div>
             </ng-container>
@@ -85,8 +85,7 @@
 
             <ng-container *ngFor="let widgetData of eventsHome?.data?.rightSection?.data?.eventStrips">
                 <ng-container *ngIf="widgetData && widgetData.enabled">
-                    <sb-uic-content-strip-with-tabs (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-                        [widgetData]="widgetData">
+                    <sb-uic-content-strip-with-tabs [widgetData]="widgetData" (telemtryResponse)="raiseTelemetryInteratEvent($event)">
                     </sb-uic-content-strip-with-tabs>
                 </ng-container>
             </ng-container>

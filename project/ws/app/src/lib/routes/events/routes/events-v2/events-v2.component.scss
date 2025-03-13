@@ -85,3 +85,11 @@
   }
 
 }
+
+::ng-deep .events-bottomsheet {
+  height: 100vh;
+  
+  .mat-bottom-sheet-container {
+    background-color: #eff3f9 !important;
+  }
+}
