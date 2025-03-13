@@ -240,7 +240,6 @@ export class InsightSideBarComponent implements OnInit {
   }
 
   getMasterDesignation() {
-    debugger
     this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
       if (result && result.frameworkid) {
         this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
