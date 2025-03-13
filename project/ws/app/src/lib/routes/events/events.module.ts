@@ -62,7 +62,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { FiltersComponent } from './routes/events/filters/filters.component'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
@@ -88,7 +87,6 @@ import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-event
     EventsCalendarComponent,
     EventsEngagementComponent,
     ViewAllComponent,
-    FiltersComponent,
     MobileFiltersComponent,
     SeeAllComponent,
     EventVideoPlayerComponent,
