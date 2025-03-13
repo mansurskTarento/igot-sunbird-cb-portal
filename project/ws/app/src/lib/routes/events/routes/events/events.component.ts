@@ -32,6 +32,7 @@ export class EventsComponent implements OnInit {
   curatedEvents: any = []
   karmayogiSaptahEvents: any = []
   karmayogiTalksEvents: any = []
+  rajyaKarmayogiSaptahEvents:any = []
   alltypeEvents: any = []
   currentFilterSort = 'desc'
   departmentID: any
@@ -195,6 +196,7 @@ export class EventsComponent implements OnInit {
             const featuredEvents: any = []
             const curatedEvents: any = []
             const karmayogiSaptahEvents: any = []
+            const rajyaKarmayogiSaptahEvents:any = []
             const karmayogiTalksEvents: any = []
             Object.keys(data).forEach((index: any) => {
               const obj = data[index]
@@ -254,6 +256,9 @@ export class EventsComponent implements OnInit {
               if (obj.resourceType && obj.resourceType === 'Karmayogi Talks') {
                 karmayogiTalksEvents.push(eventDataObj)
               }
+              if (obj.resourceType && obj.resourceType === 'Rajya Karmayogi Saptah') {
+                rajyaKarmayogiSaptahEvents.push(eventDataObj)
+              }
 
             })
             this.alltypeEvents = filterData
@@ -261,6 +266,7 @@ export class EventsComponent implements OnInit {
             this.karmayogiTalksEvents = karmayogiTalksEvents
             this.featuredEvents = featuredEvents
             this.curatedEvents = curatedEvents
+            this.rajyaKarmayogiSaptahEvents = rajyaKarmayogiSaptahEvents
           }
 
       })
@@ -338,6 +344,7 @@ export class EventsComponent implements OnInit {
       this.allEvents['curatedEvents'] = []
       this.allEvents['karmayogiSaptahEvents'] = []
       this.allEvents['karmayogiTalksEvents'] = []
+      this.allEvents['rajyaKarmayogiSaptahEvents'] = []
       Object.keys(data).forEach((index: any) => {
         const obj = data[index]
         const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
@@ -394,6 +401,9 @@ export class EventsComponent implements OnInit {
         if (obj.resourceType && obj.resourceType === 'Karmayogi Talks') {
           this.allEvents['karmayogiTalksEvents'].push(eventDataObj)
         }
+        if (obj.resourceType && obj.resourceType === 'Rajya Karmayogi Saptah') {
+          this.allEvents['rajyaKarmayogiSaptahEvents'].push(eventDataObj)
+        }
 
         const now = new Date()
         const today = moment(now).format('YYYY-MM-DD HH:mm')
@@ -408,6 +418,7 @@ export class EventsComponent implements OnInit {
       this.filter('featuredEvents')
       this.filter('curatedEvents')
       this.filter('karmayogiSaptahEvents')
+      this.filter('rajyaKarmayogiSaptahEvents')
       this.filter('karmayogiTalksEvents')
     }
     this.totalpages = Math.ceil(this.totalResults / 20)
@@ -433,6 +444,7 @@ export class EventsComponent implements OnInit {
     let featuredEvents: any[] = []
     let curatedEvents: any[] = []
     let karmayogiSaptahEvents: any[] = []
+    let rajyaKarmayogiSaptahEvents:any[] = []
     let karmayogiTalksEvents: any[] = []
     if (this.allEvents['all'] && this.allEvents['all'].length > 0) {
       this.allEvents['all'].forEach((event: any) => {
@@ -523,6 +535,48 @@ export class EventsComponent implements OnInit {
       karmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
 
     }
+    if (this.allEvents['rajyaKarmayogiSaptahEvents'] && this.allEvents['rajyaKarmayogiSaptahEvents'].length > 0) {
+      this.allEvents['rajyaKarmayogiSaptahEvents'].forEach((event: any) => {
+        event['isEventPast'] = false
+        event['isEventLive'] = false
+        event['isEventFuture'] = false
+        this.addCustomDateAndTime(event)
+        const now = new Date()
+        const today = moment(now).format('YYYY-MM-DD HH:mm')
+        if (moment(today).isBetween(event.eventCustomStartDate, event.eventCustomEndDate)) {
+          event['isEventLive'] = true
+          if (today >= event.eventCustomStartDate) {
+            if (event.recordedLinks && event.recordedLinks.length > 0) {
+              event['isEventLive']  = false
+            }
+          }
+        } else if (today >= event.eventCustomEndDate) {
+          event['isEventLive']  = false
+          if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
+            event['isEventPast'] = true
+          }
+        } else {
+          if (moment(today).isBefore(event.eventCustomStartDate) && moment(today).isBefore(event.eventCustomEndDate)) {
+            event['isEventFuture'] = true
+          }
+        }
+        rajyaKarmayogiSaptahEvents.push(event)
+      })
+
+      let liveEvents: any = []
+      let pastEvents: any = []
+      let futureEvents: any = []
+
+      liveEvents = rajyaKarmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventLive)
+      pastEvents = rajyaKarmayogiSaptahEvents.filter((pastEvent: any) => pastEvent.isEventPast)
+      futureEvents = rajyaKarmayogiSaptahEvents.filter((futureEvent: any) => futureEvent.isEventFuture)
+      liveEvents = this.sortEventsAsc(liveEvents)
+      futureEvents = this.sortEventsAsc(futureEvents)
+      pastEvents = this.sortEvents(pastEvents)
+      rajyaKarmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      console.log('rajyaKarmayogiSaptahEvents', rajyaKarmayogiSaptahEvents)
+
+    }
     if (this.allEvents['karmayogiTalksEvents'] && this.allEvents['karmayogiTalksEvents'].length > 0) {
       this.allEvents['karmayogiTalksEvents'].forEach((event: any) => {
         event['isEventPast'] = false
@@ -584,6 +638,9 @@ export class EventsComponent implements OnInit {
         case 'karmayogiSaptahEvents':
           this.karmayogiSaptahEvents = karmayogiSaptahEvents
           break
+        case 'rajyaKarmayogiSaptahEvents':
+          this.rajyaKarmayogiSaptahEvents = rajyaKarmayogiSaptahEvents
+          break          
         case 'karmayogiTalksEvents':
           this.karmayogiTalksEvents = karmayogiTalksEvents
           break

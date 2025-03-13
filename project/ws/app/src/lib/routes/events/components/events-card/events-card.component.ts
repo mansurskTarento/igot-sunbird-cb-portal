@@ -20,6 +20,7 @@ export class EventsCardComponent implements OnInit {
    }
 
   ngOnInit() {
+    console.log('eventData',this.eventData)
   }
 
   getEventDetails(eventID: any) {
