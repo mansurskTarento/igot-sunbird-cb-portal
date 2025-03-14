@@ -10,6 +10,7 @@ import { EventPlayerComponent } from './routes/event-player/event-player.compone
 import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf-player.component'
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
 import { EventResolve } from './services/event-resolver.resolve'
+import { AppEventPageResolverService } from 'src/app/services/app-event-page-resolver.service'
 
 const routes: Routes = [
   {
@@ -70,6 +71,7 @@ const routes: Routes = [
             },
             resolve: {
               content: EventResolve,
+              pageData: AppEventPageResolverService,
             },
           },
         ],

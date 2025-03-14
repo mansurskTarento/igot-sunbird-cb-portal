@@ -301,7 +301,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
 
   get completedAfterExpiry() {
     if(this.eventData && this.enrolledEvent) {
-      console.log('completedAfterExpiry :: ')
+      // console.log('completedAfterExpiry :: ')
       const eventEndTimestamp = new Date(this.eventData.endDate).getTime()
       const completedTimestamp = new Date(this.enrolledEvent.completedOn).getTime()
      if(eventEndTimestamp < completedTimestamp) {
