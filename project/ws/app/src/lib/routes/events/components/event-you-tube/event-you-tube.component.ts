@@ -25,8 +25,8 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   isEnrolled = false
   resumeEventStatus = 0
   rateToFire = 180
-  private player: videoJs.Player | null = null
-  private dispose: (() => void) | null = null
+  player: videoJs.Player | null = null
+  dispose: (() => void) | null = null
   constructor(private route: ActivatedRoute, private eventService: EventService, private configSvc: ConfigurationsService) {
   }
 

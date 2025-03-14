@@ -1,3 +1,6 @@
-.video-player {
-  height: 557px !important;
+.fixed-video {
+  height: 500px;
+  width: auto;
+  overflow: hidden;
+  /* Keeps aspect ratio */
 }
