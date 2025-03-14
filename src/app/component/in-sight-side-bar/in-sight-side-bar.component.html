@@ -92,9 +92,10 @@
 <!-- STATE LEARNING WEEK -->
 <div class="margin-top-m" *ngIf="slwConfiguration?.enabled && canShowSlwCard">
     <div class="nlw-container cursor-pointer" (click)="navigateToStatelLearning()">
-        <div class="flex">
+        <div class="flex justify-between">
             <div class="nlw-title gap-3">
-                {{currentLang === 'hi'? slwConfiguration?.titleHi : slwConfiguration?.title}}
+                <p class="margin-remove mat-subheading-1 {{slwConfiguration?.celebrateClass}}">{{currentLang === 'hi'? slwConfiguration?.celebrateHi : slwConfiguration?.celebrate}}</p>
+                <p class="{{slwConfiguration?.titleClass}}">{{currentLang === 'hi'? slwConfiguration?.titleHi : slwConfiguration?.title}}</p>
             </div>
             <div class="nlw-title">
                 <img class="nlw-animation" src="assets/images/national-learning/nlw.gif" alt=""/>
