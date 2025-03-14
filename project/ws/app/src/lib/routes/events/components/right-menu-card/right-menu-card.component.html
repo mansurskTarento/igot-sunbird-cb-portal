@@ -4,6 +4,10 @@
     <div class="event-image">
       <img src="{{eventData?.appIcon | pipePublicURL}}" class="event-card-image" *ngIf="eventData?.appIcon">
       <img src="/assets/icons/Events_default.png" class="event-card-image" *ngIf="!eventData?.appIcon">
+      <div (click)="copyUrl()" class="flex flex-row items-center justify-end gap-2 share-tag">
+        <mat-icon>share</mat-icon>
+        <div>{{ 'apptocsinglepage.share' | translate }}</div>
+      </div>
     </div>
     <ng-container *ngIf="isenrollFlow">
 

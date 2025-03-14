@@ -6,6 +6,27 @@
   background-color: #ccc;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  position: relative;
+
+  .share-tag {
+    font-weight: bold;
+    background-color: #000;
+    border: 1px solid #FFF;
+    border-radius: 20px;
+    padding: 6px 16px;
+    width: 70px;
+    color: #FFF;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    mat-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+  }
   
 }
 
@@ -21,7 +42,7 @@
   // padding-right: 20px;
   position: absolute;
   top:15%;
-  width: 20%;
+  width: 350px;
   border-radius: 12px;
   padding: 0;
 
