@@ -1,5 +1,5 @@
 <div *ngIf="!profileData?.displayOnlyStats">
-  <div class="profile-wrapper" *ngIf="!isLoading">
+  <div class="profile-wrapper mb-6" *ngIf="!isLoading">
     <div *ngIf="!showrepublicBanner" class="expand-icon invisible md:visible" (click)="toggle()">
         <mat-icon class="">{{ collapsed ?'expand_more': 'expand_less'}}</mat-icon>
     </div>
