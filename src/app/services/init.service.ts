@@ -132,6 +132,10 @@ export class InitService {
       'verified',
       domSanitizer.bypassSecurityTrustResourceUrl('fusion-assets/icons/verified.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'info-outline',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/icon-wrapper.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',

@@ -448,13 +448,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchSrvc.notifyOther(this.rfilter)
   }
 
-  raiseTelemetry(content: any) {
+  raiseTelemetry(content: any, i: number) {
     if (content) {
       this.events.raiseInteractTelemetry(
         {
           type: 'click',
           subType: `card-learnSearch`,
-          id: `${_.camelCase(content.primaryCategory)}-card`,
+          // id: `${_.camelCase(content.primaryCategory)}-card`,
+          id: `course-card-${i + 1}`,
+          pageid: `/app/globalsearch_${content.primaryCategory}-card`
         },
         {
           id: content.identifier || '',
@@ -463,7 +465,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ver: `${content.version}${''}`,
         },
         {
-          pageIdExt: `${content.primaryCategory}-card`,
+          // pageIdExt: `${content.primaryCategory}-card`,
           module: content.primaryCategory,
       })
     }

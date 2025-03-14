@@ -418,44 +418,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.isKPPanelenabled = false
   }
 
-  raiseTelemetryInteratEvent(event: any) {
-    if (event && event.viewMoreUrl) {
-      this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
-    }
-    if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
-      const id = event.typeOfTelemetry === 'mdo-channel' ? event.identifier : event.orgId
-      const type = event.typeOfTelemetry === 'mdo-channel' ? event.orgName : event.title
-      this.events.raiseInteractTelemetry(
-        {
-          type: 'click',
-          subType: event.typeOfTelemetry,
-          id: 'content-card',
-        },
-        {
-          id,
-          type,
-        },
-        {
-          module: WsEvents.EnumTelemetrymodules.HOME,
-        }
-      )
-    }
-    this.isTelemetryRaised = true
-  }
-
-  raiseTelemetry(name: string, subtype: string) {
-    this.events.raiseInteractTelemetry(
-      {
-        type: 'click',
-        subType: subtype,
-        id: `${_.kebabCase(name).toLocaleLowerCase()}`,
-      },
-      {},
-      {
-        module: WsEvents.EnumTelemetrymodules.HOME,
-      }
-    )
-  }
 
   handleMDOMsgstatus() {
     const reqUpdates = {
@@ -536,4 +498,83 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       })
     }
+
+    raiseTelemetryInteratEvent(event: any) {
+        if (event && event.viewMoreUrl) {
+          this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
+        }
+        if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
+          if (event.contentId && event.contentId.includes("ext")) {
+            this.events.raiseInteractTelemetry(
+              {
+                type: 'click',
+                subType: event.typeOfTelemetry,
+                id: 'card-content',
+              },
+              {
+                id: event.contentId || event.identifier,
+                type: 'External content'
+              },
+              {
+                module: WsEvents.EnumTelemetrymodules.HOME
+              }
+            )
+          } else {
+            let id = event.typeOfTelemetry === 'mdoChannel' ? event.identifier : event.orgId
+            let type = event.typeOfTelemetry === 'mdoChannel' ? 'org/ministry' : event.title
+            let _subType = event.typeOfTelemetry === 'mdoChannel' ? 'mdo-channel' :
+             event.typeOfTelemetry === 'karmaProgram' ? 'karma-programs' : event.typeOfTelemetry
+            if ((event.typeOfTelemetry === 'cbpPlan' && !event?.sakshamAIGenerated
+              || event.typeOfTelemetry === 'forYou' 
+              || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
+            ) {
+              id = event.identifier
+              type = event.primaryCategory
+              _subType = `${event.selectedTab}-${event.selectedPill}`
+            }
+            else if(event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
+              id = event.identifier
+              type = event.primaryCategory
+              _subType = 'igot-ai'
+            } 
+            else if(event.typeOfTelemetry === 'providers') {
+              id = event.orgId
+              type = 'org'
+              _subType = `training-institutions`
+            }
+    
+            this.events.raiseInteractTelemetry(
+              {
+                type: 'click',
+                subType: _subType,
+                id: 'card-content',
+                pageid: "/page/home"
+              },
+              {
+                id,
+                type,
+              },
+              {
+                module: WsEvents.EnumTelemetrymodules.HOME,
+              }
+            )
+          }
+        }
+        this.isTelemetryRaised = true
+        
+      }
+    
+      raiseTelemetry(name: string, subtype: string) {
+        this.events.raiseInteractTelemetry(
+          {
+            type: 'click',
+            subType: subtype,
+            id: `${_.kebabCase(name).toLocaleLowerCase()}`,
+          },
+          {},
+          {
+            module: WsEvents.EnumTelemetrymodules.HOME,
+          }
+        )
+      }
 }
