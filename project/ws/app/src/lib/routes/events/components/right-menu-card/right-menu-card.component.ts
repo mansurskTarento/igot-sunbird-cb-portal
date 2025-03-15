@@ -218,8 +218,11 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   navigateToPLayer() {
+    
     if (this.isenrollFlow) {
       this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
+    } else {
+      window.open(this.getLink(), "_blank")
     }
   }
 
