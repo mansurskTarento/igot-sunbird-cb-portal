@@ -90,7 +90,9 @@ export class InsightSideBarComponent implements OnInit {
   isIgotOrg = false
   nwlConfiguration: any
   canShowNlwCard = false
-  totlaDays = 0
+  slwConfiguration: any
+  canShowSlwCard = false
+  totalDays = 0
   daysCompleted = 0
   currentLang: any = ''
   updateDesignationCard: any
@@ -140,12 +142,32 @@ export class InsightSideBarComponent implements OnInit {
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
+      let slwConfigurationLocal:any = this.activatedRoute.snapshot.data.pageData.data &&
+      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
+
+      if(slwConfigurationLocal && slwConfigurationLocal.length) {
+        let userData = this.configSvc.unMappedUser
+        if(userData && userData.profileDetails 
+          && userData.profileDetails.refRootOrg 
+          && userData.profileDetails.refRootOrg.orgId) {
+          for(let item of slwConfigurationLocal) {
+            if(item.orgId === userData.profileDetails.refRootOrg.orgId) {
+              this.slwConfiguration = item
+            }
+          }
+        }
+      }
+
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
       }
       if (this.updateDesignationCard && this.updateDesignationCard.enabled) {
         this.getMasterDesignation()
       }
+      if (this.slwConfiguration && this.slwConfiguration.enabled) {
+        this.getSlwConfig()
+      }
+
     }
     // console.log(' this.userData--', this.configSvc.unMappedUser,  this.configSvc.unMappedUser.profileDetails.profileStatus)
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
@@ -180,7 +202,7 @@ export class InsightSideBarComponent implements OnInit {
   getNlwConfig() {
     const startDate = moment(this.nwlConfiguration.startDate, 'DD-MMYYYY')
     const endDate = moment(this.nwlConfiguration.endDate, 'DD-MMYYYY')
-    this.totlaDays = endDate.diff(startDate, 'days')
+    this.totalDays = endDate.diff(startDate, 'days')
     const currentDate = moment()
     if (currentDate.isBetween(startDate, endDate, null, '[]')) {
       const daysPassed = currentDate.diff(startDate, 'days')
@@ -193,10 +215,32 @@ export class InsightSideBarComponent implements OnInit {
       const daysPassed = currentDate.diff(endDate, 'days')
       if (daysPassed === 0) {
         this.canShowNlwCard = true
-        this.daysCompleted = this.totlaDays
+        this.daysCompleted = this.totalDays
       }
     }
   }
+
+  getSlwConfig() {
+    const startDate = moment(this.slwConfiguration.startDate, 'DD-MMYYYY')
+    const endDate = moment(this.slwConfiguration.endDate, 'DD-MMYYYY')
+    this.totalDays = endDate.diff(startDate, 'days')
+    const currentDate = moment()
+    if (currentDate.isBetween(startDate, endDate, null, '[]')) {
+      const daysPassed = currentDate.diff(startDate, 'days')
+      this.canShowSlwCard = true
+      this.daysCompleted = daysPassed
+
+    } else if (currentDate.isBefore(startDate)) {
+      this.canShowSlwCard = false
+    } else if (currentDate.isAfter(endDate)) {
+      const daysPassed = currentDate.diff(endDate, 'days')
+      if (daysPassed === 0) {
+        this.canShowSlwCard = true
+        this.daysCompleted = this.totalDays
+      }
+    }
+  }
+
   getMasterDesignation() {
     this.signupService.getOrgReadData(this.userData.rootOrgId).subscribe((result: any) => {
       if (result && result.frameworkid) {
@@ -486,6 +530,23 @@ export class InsightSideBarComponent implements OnInit {
     )
 
     this.router.navigateByUrl('app/learn/karmayogi-saptah')
+  }
+
+  navigateToStatelLearning() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'state-learning-week',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+      if(this.slwConfiguration && this.slwConfiguration.orgName && this.slwConfiguration.orgId) {
+        this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
+      }
+    
   }
 
   updateDesignation() {
