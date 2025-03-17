@@ -2,14 +2,14 @@
     <div class="md:pb-4 engagement-header">
         <div class="block md:hidden ">
             <mat-icon class="backArrow" (click)="closeDiaolg()">arrow_back</mat-icon>
-        </div> {{translateLabels(myEngagements?.title, 'events')}}
+        </div> {{translateLabels(myEngagements?.title?.id, 'events')}}
     </div>
     <div class="flex flex-col md:flex-row gap-6">
         <ng-container *ngFor="let element of myEngagements?.data">
             <div class="hidden md:block ">
                 <div class="flex flex-col gap-2">
                     <img class="engagement-icons" [src]="element?.icon" alt="">
-                    <div class="events-attended">{{translateLabels(element?.title, 'events')}}</div>
+                    <div class="events-attended">{{translateLabels(element?.title?.id, 'events')}}</div>
                     <div class="events-value">{{getValue(element?.key)}}</div>
                 </div>
             </div>
@@ -19,7 +19,7 @@
                         <img class="mEngagement-icons" [src]="element?.icon" alt="">
                     </div>
                     <div class="flex flex-col gap-2 w-full">
-                        <div class="mEvents-attended">{{translateLabels(element?.title, 'events')}}</div>
+                        <div class="mEvents-attended">{{translateLabels(element?.title?.id, 'events')}}</div>
                         <div class="mEvents-value">{{getValue(element?.key)}}</div>
                     </div>
                 </div>

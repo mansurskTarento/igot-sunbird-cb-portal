@@ -12,7 +12,8 @@
                         <div class="flex flex-col gap-3 items-center">
                             <img class="engagement-icon"
                                 [src]="eventsHome?.data?.leftSection?.data?.mMyEngagements?.icon" alt="">
-                            <span>{{translateLabels(eventsHome?.data?.leftSection?.data?.mMyEngagements?.title, 'events')}}</span>
+                            <span>{{translateLabels(eventsHome?.data?.leftSection?.data?.mMyEngagements?.title?.id,
+                                'events')}}</span>
                         </div>
                     </div>
                     <div *ngIf="eventsHome?.data?.leftSection?.data?.mEventsCalendar?.enabled"
@@ -21,7 +22,8 @@
                         <div class="flex flex-col gap-3 items-center">
                             <img class="engagement-icon"
                                 [src]="eventsHome?.data?.leftSection?.data?.mEventsCalendar?.icon" alt="">
-                            <span>{{translateLabels(eventsHome?.data?.leftSection?.data?.mEventsCalendar?.title, 'events')}}</span>
+                            <span>{{translateLabels(eventsHome?.data?.leftSection?.data?.mEventsCalendar?.title?.id,
+                                'events')}}</span>
                         </div>
                     </div>
                 </div>
@@ -33,7 +35,8 @@
                             [engagementDetails]="engagementDetails"></ws-app-events-engagement>
                     </div>
                     <div *ngIf="eventsHome?.data?.leftSection?.data?.eventsCalendar?.enabled">
-                        <ws-app-events-calendar [eventCalendarDetails]="eventsHome?.data?.leftSection?.data?.eventsCalendar"></ws-app-events-calendar>
+                        <ws-app-events-calendar
+                            [eventCalendarDetails]="eventsHome?.data?.leftSection?.data?.eventsCalendar"></ws-app-events-calendar>
                     </div>
                 </div>
             </div>
@@ -45,15 +48,16 @@
                         <mat-icon class="search-icon">search</mat-icon>
                         <!-- <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
                             [placeholder]=" eventsHome?.data?.rightSection?.data?.search?.placeHolder" (keydown.enter)="searchEvents($event)"> -->
-                            <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
-                            [placeholder]="translateLabels(eventsHome?.data?.rightSection?.data?.search?.placeHolder, 'events')" (keydown.enter)="searchEvents($event)">
+                        <input class="sinput w-full" type="Standard" label="" [formControl]="searchControl"
+                            [placeholder]="translateLabels(eventsHome?.data?.rightSection?.data?.search?.placeHolder, 'events')"
+                            (keydown.enter)="searchEvents($event)">
                     </div>
                 </div>
             </ng-container>
 
             <div class="hidden md:block" *ngIf="eventsHome?.data?.rightSection?.data?.browse?.enabled">
                 <div class="category-header mb-4">
-                    {{translateLabels(eventsHome?.data?.rightSection?.data?.browse?.title, 'events')}}
+                    {{translateLabels(eventsHome?.data?.rightSection?.data?.browse?.title?.id, 'events')}}
                 </div>
 
                 <div class="flex gap-4">
@@ -61,7 +65,7 @@
                         <ng-container *ngIf="browseData.enabled">
                             <div class="flex gap-3 px-3 items-center categories-card" (click)="navigate(browseData)">
                                 <img [src]="browseData.icon">
-                                {{translateLabels(browseData.title, 'events')}}
+                                {{translateLabels(browseData.title?.id, 'events')}}
                             </div>
                         </ng-container>
                     </ng-container>
@@ -70,7 +74,7 @@
 
             <div class="block md:hidden" *ngIf="eventsHome?.data?.rightSection?.data?.mBrowse?.enabled">
                 <div class="category-header mb-4">
-                    {{translateLabels(eventsHome?.data?.rightSection?.data?.mBrowse?.title, 'events')}}
+                    {{translateLabels(eventsHome?.data?.rightSection?.data?.mBrowse?.title?.id, 'events')}}
                 </div>
 
                 <div class="flex gap-4">
@@ -78,7 +82,7 @@
                         <ng-container *ngIf="browseData.enabled">
                             <div class="flex gap-3 px-3 items-center categories-card" (click)="navigate(browseData)">
                                 <img [src]="browseData.icon">
-                                {{translateLabels(browseData.title, 'events')}}
+                                {{translateLabels(browseData.title?.id, 'events')}}
                             </div>
                         </ng-container>
                     </ng-container>
@@ -87,7 +91,8 @@
 
             <ng-container *ngFor="let widgetData of eventsHome?.data?.rightSection?.data?.eventStrips">
                 <ng-container *ngIf="widgetData && widgetData.enabled">
-                    <sb-uic-content-strip-with-tabs [widgetData]="widgetData" (telemtryResponse)="raiseTelemetryInteratEvent($event)">
+                    <sb-uic-content-strip-with-tabs [widgetData]="widgetData"
+                        (telemtryResponse)="raiseTelemetryInteratEvent($event)">
                     </sb-uic-content-strip-with-tabs>
                 </ng-container>
             </ng-container>
