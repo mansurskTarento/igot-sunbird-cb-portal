@@ -248,6 +248,10 @@ mat-toolbar {
 .mat-select-panel,
 textarea {
   @extend .custom-scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 }
 
 // Override Side nav bar

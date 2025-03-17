@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NsUser } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, NsUser } from '@sunbird-cb/utils-v2';
 import { NSNetworkDataV2 } from '../../../network-v2/models/network-v2.model';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
-// import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar';
 
+const SNACKBAR_DURATION = 3000;
 @Component({
   selector: 'ws-app-people-connection-card',
   templateUrl: './people-connection-card.component.html',
@@ -14,22 +15,17 @@ import { TranslateService } from '@ngx-translate/core';
 export class PeopleConnectionCardComponent {
   @Input() user!: NSNetworkDataV2.INetworkUser;
   @Output() connection = new EventEmitter<string>();
-  // @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>;
-  // @ViewChild('toastError', { static: true }) toastError!: ElementRef<any>;
-  me!: NsUser.IUserProfile;
+  currentUser!: NsUser.IUserProfile;
   howerUser!: any;
   unmappedUser!: any;
 
   constructor(
     private networkV2Service: NetworkV2Service,
-    // private snackBar: MatSnackBar,
+    private configSvc: ConfigurationsService,
     private router: Router,
-    private activeRoute: ActivatedRoute,
-    private translate: TranslateService // private connectionHoverService: ConnectionHoverService, //  private configSvc: ConfigurationsService,
+    private translate: TranslateService,
+    private matSnackbarNew: MatSnackbarNew
   ) {
-    if (this.activeRoute.parent) {
-      this.me = this.activeRoute.parent.snapshot.data.me;
-    }
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
       const lang = localStorage.getItem('websiteLanguage')!;
@@ -38,6 +34,10 @@ export class PeopleConnectionCardComponent {
   }
 
   ngOnInit() {
+    if (this.configSvc.userProfile) {
+      this.currentUser = this.configSvc.userProfile;
+    }
+
     this.howerUser = this.user;
     this.unmappedUser = this.user;
   }
@@ -101,32 +101,35 @@ export class PeopleConnectionCardComponent {
     return name;
   }
   connetToUser() {
+    debugger;
     const req = {
       connectionId: this.user.id || this.user.identifier || this.user.wid,
-      userIdFrom: this.me ? this.me.userId : '',
-      userNameFrom: this.me ? this.me.userId : '',
+      userIdFrom: this.currentUser ? this.currentUser.userId : '',
+      userNameFrom: this.currentUser ? this.currentUser.userId : '',
       userDepartmentFrom:
-        this.me && this.me.departmentName ? this.me.departmentName : '',
+        this.currentUser && this.currentUser.departmentName
+          ? this.currentUser.departmentName
+          : '',
       userIdTo: this.unmappedUser.userId,
       userNameTo: this.user.id || this.user.identifier || this.user.wid,
       userDepartmentTo: this.unmappedUser.employmentDetails.departmentName,
     };
     this.networkV2Service.createConnection(req).subscribe(
       () => {
-        // this.openSnackbar(this.toastSuccess.nativeElement.value);
         this.connection.emit('connection-updated');
+        this.matSnackbarNew.open('Connection request sent.', 'X', {
+          duration: SNACKBAR_DURATION,
+          panelClass: ['success'],
+        });
       },
       () => {
-        // this.openSnackbar(this.toastError.nativeElement.value);
+        this.matSnackbarNew.open('Could not send connection request', 'X', {
+          duration: SNACKBAR_DURATION,
+          panelClass: ['error'],
+        });
       }
     );
   }
-
-  // private openSnackbar(primaryMsg: string, duration: number = 5000) {
-  //   this.snackBar.open(primaryMsg, 'X', {
-  //     duration,
-  //   });
-  // }
 
   goToUserProfile(user: any) {
     this.router.navigate(

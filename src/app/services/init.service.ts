@@ -168,6 +168,10 @@ export class InitService {
       'certificate',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/certificate.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'download',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/download.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',

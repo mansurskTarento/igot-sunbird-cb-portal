@@ -19,7 +19,7 @@
   box-sizing: border-box;
 }
 
-::ng-deep .connection-name span {
+.connection-name .name {
   margin-top: 8px !important;
   margin-bottom: 8px !important;
   overflow: hidden;
@@ -29,12 +29,17 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  /* stylelint-disable */
+  font-family: Montserrat;
+  /* stylelint-enable */
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .designation {
-   /* stylelint-disable */
-   font-family: Lato;
-   /* stylelint-enable */
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
   font-weight: 400;
   font-size: 12px;
   line-height: 14.4px;

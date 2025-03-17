@@ -1,5 +1,5 @@
 <div class="course-content-card-wrapper">
-    <mat-card class="course-card mb-4 overflow-hidden max-w-full">
+    <mat-card class="course-card mb-4 overflow-hidden max-w-full" (click)="getRedirectUrlData(content)">
         <div class="card-container p-4 flex relative">
             <!-- Left side - Image -->
             <div class="course-image-container relative overflow-hidden">
@@ -26,7 +26,7 @@
                         {{checkForCiosDuration(content) | pipeDurationTransform: 'hms'}}
                     </span>
                 </div>
-                <div class="course-badges-new">
+                <div class="course-badges-new" *ngIf="checkIfContentIsNew(content?.createdOn)">
                     <span class="badge new-badge font-normal">New</span>
                 </div>
             </div>
@@ -62,13 +62,29 @@
                             {{content?.primaryCategory}}
                         </div>
                         <!-- Bookmark button -->
-                        <div class="bookmark-container">
-                            <button mat-icon-button aria-label="Bookmark this course"
-                                (click)="contentBookmarked = !contentBookmarked">
-                                <mat-icon [ngClass]="contentBookmarked ? 'marked':'unmarked'">{{contentBookmarked ?
-                                    'bookmark' :
-                                    'bookmark_border'}}</mat-icon>
-                            </button>
+                        <div class="flex items-center gap-3">
+                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates?.length > 0">
+                                <div matRipple (click)="downloadCertificate(courseEnrollment)"
+                                    class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
+                                    <mat-icon [svgIcon]="'download'" class="mb-1"
+                                        *ngIf="!downloadCertificateLoading"></mat-icon>
+                                    <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
+                                        <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
+                                    </div>
+                                    <span>Download Certificate</span>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
+                                <div class="inprogress-course font-stats rounded">In - Progress</div>
+                            </ng-container>
+                            <!-- <div class="bookmark-container">
+                                <button mat-icon-button aria-label="Bookmark this course"
+                                    (click)="contentBookmarked = !contentBookmarked">
+                                    <mat-icon [ngClass]="contentBookmarked ? 'marked':'unmarked'">{{contentBookmarked ?
+                                        'bookmark' :
+                                        'bookmark_border'}}</mat-icon>
+                                </button>
+                            </div> -->
                         </div>
                     </div>
                 </ng-container>
@@ -76,10 +92,12 @@
                 <h2 class="course-title font-normal text-ellipse">
                     {{content?.name}}
                 </h2>
-
-                <div class="course-tags mb-3 font-normal text-ellipse" *ngIf="content?.keywords && content?.keywords.length > 0">
-                    <ng-container *ngFor="let keyword of content.keywords; let isLast = last">
-                        <span class=""> {{keyword}} <span *ngIf="!isLast"> · </span></span>
+                <div class="course-tags mb-3 font-normal text-ellipse"
+                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey].length > 0">
+                    <span>Sub Theme - </span>
+                    <ng-container *ngFor="let keyword of content[compentencyKey.vKey]; let isLast = last">
+                        <span class=""> {{keyword[compentencyKey.vCompetencySubTheme]}} <span *ngIf="!isLast"> ·
+                            </span></span>
                     </ng-container>
                 </div>
 
@@ -90,9 +108,14 @@
                                 [wsUtilsDefaultThumbnail]="defaultSLogo">
                         </ng-container>
                     </div>
-                    <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}} {{content?.creator}}</span>
-                    <span class="organization-name" *ngIf="!content?.creator && content?.organisation?.length">{{'learnsearch.by' | translate}} {{content?.organisation[0]}}</span>
-                    <span class="organization-name" *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}} {{content?.contentPartner?.contentPartnerName}}</span>
+                    <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
+                        {{content?.creator}}</span>
+                    <span class="organization-name"
+                        *ngIf="!content?.creator && content?.organisation?.length">{{'learnsearch.by' | translate}}
+                        {{content?.organisation[0]}}</span>
+                    <span class="organization-name"
+                        *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
+                        {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
 
                 <div class="course-stats flex items-center gap-4 flex-wrap">
@@ -101,17 +124,18 @@
                         <span class="font-normal text-xs">{{content?.avgRating | number:'1.1-1'}}</span>
                     </div>
 
-                    <div class="enrollment">
+                    <!-- <div class="enrollment">
                         <mat-icon class="star-icon">people</mat-icon>
                         <span class="font-normal text-xs">2,123 enrolled</span>
-                    </div>
+                    </div> -->
 
-                    <div class="most-enrolled-tag">
+                    <div class="most-enrolled-tag"
+                        *ngIf="content?.additionalTags && content?.additionalTags.includes('mostEnrolled')">
                         <mat-icon class="star-icon">whatshot</mat-icon>
-                        <span class="font-normal text-xs">Most Enrolled (2,123)</span>
+                        <span class="font-normal text-xs">Most Enrolled</span>
                     </div>
 
-                    <div class="karmayogi-verified">
+                    <div class="karmayogi-verified" *ngIf="isIgot">
                         <img class="source-icon" alt="ong"
                             src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
                         <span class="font-normal text-xs">iGOT</span>

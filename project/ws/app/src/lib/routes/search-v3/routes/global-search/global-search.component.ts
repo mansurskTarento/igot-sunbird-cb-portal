@@ -11,14 +11,14 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./global-search.component.scss'],
 })
 export class GlobalSearchComponent implements OnInit {
-  searchParam = { query: '', nlp: '' };
+  searchParam = { query: '', nlp: '', searchCategory: '' };
   userValue = '';
   searchparamFilters: any;
   filtersPanel!: string | null;
   selectedTab = 1;
   tabs = ['All', 'Learn', 'Network', 'Discuss', 'Careers'];
   compentencyKey!: NsContent.ICompentencyKeys;
-
+  searchCategory: string = '';
   constructor(
     private activated: ActivatedRoute,
     private translate: TranslateService,
@@ -35,7 +35,6 @@ export class GlobalSearchComponent implements OnInit {
     this.compentencyKey =
       this.configService.compentency[environment.compentencyVersionKey];
     this.activated.queryParamMap.subscribe((queryParams) => {
-      this.searchParam = { query: '', nlp: '' };
       this.userValue = '';
       if (queryParams.has('tab')) {
         const tabn = queryParams.get('tab');
@@ -46,10 +45,19 @@ export class GlobalSearchComponent implements OnInit {
         });
       }
       if (queryParams.has('q')) {
-        this.searchParam = { query: queryParams.get('q') || '', nlp: queryParams.get('search') || '' };
+        this.searchParam = {
+          query: queryParams.get('q') || '',
+          nlp: queryParams.get('search') || '',
+          searchCategory: queryParams.get('category') || ''
+        };
       }
       if (queryParams.has('t')) {
-        this.searchParam = { query: 'moderatedCourses', nlp: queryParams.get('search') || '' };
+        this.searchParam = {
+          query: 'moderatedCourses',
+          nlp: queryParams.get('search') || '',
+          searchCategory: queryParams.get('category') || ''
+
+        };
         this.userValue = 'moderatedCourses';
       }
       if (queryParams.has('f')) {
@@ -82,6 +90,8 @@ export class GlobalSearchComponent implements OnInit {
       if (queryParams.has('filtersPanel')) {
         this.filtersPanel = queryParams.get('filtersPanel');
       }
+
+      
     });
   }
 

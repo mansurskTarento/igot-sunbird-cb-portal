@@ -157,5 +157,19 @@ export type Facet = {
 };
 
 export type FormattedFacets = {
-  [key: string]: { name: string; count: number }[];
+  [key: string]: { name: string; count: number }[] | null;
 };
+
+export enum FacetType {
+  Organization = 'organisation',
+  Language = 'language',
+  AvgRating = 'avgRating',
+  Duration = 'duration',
+}
+
+export enum SortType {
+  MostRelevent = 'most_relevant',
+  RecentlyAdded = 'recently_added_newest',
+  HighestRated = 'highest_rated',
+  MostEnrolled = 'most_enrolled',
+}

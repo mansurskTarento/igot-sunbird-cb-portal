@@ -13,7 +13,7 @@ import {
 import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
 import {
@@ -52,12 +52,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   allSearchResults: any[] = [];
   categories = [
     { label: 'All', value: SearchCategory.All, icon: '' },
-    { label: 'Courses', value: SearchCategory.Courses, icon: 'video-library' },
-    {
-      label: 'Programs',
-      value: SearchCategory.Programs,
-      icon: 'school-search',
-    },
+    { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
+    // {
+    //   label: 'Programs',
+    //   value: SearchCategory.Programs,
+    //   icon: 'school-search',
+    // },
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
     { label: 'People', value: SearchCategory.People, icon: 'people-search' },
     {
@@ -97,12 +97,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     );
 
     this.queryControl.valueChanges
-      .pipe(debounceTime(200), distinctUntilChanged())
-      .subscribe((value) => {
+      .pipe(debounceTime(500), distinctUntilChanged(), skip(1))
+      .subscribe(async (value) => {
         if (value) {
+          await this.searchFromQuery(value);
           this.loaderSearching = false;
-          this.searchFromQuery(value);
-          // this.searchInNLP(value)
         }
       });
   }
@@ -185,6 +184,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       if (queryParam.has('q')) {
         this.queryControl.setValue(queryParam.get('q') || '');
       }
+      if (queryParam.has('category')) {
+        this.selectedSearchCategory = queryParam.get('category') || '';
+      }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
         ? this.route.snapshot.data.searchPageData.data.search
@@ -200,40 +202,49 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async updateQuery(query: string) {
     if (!query) return;
+
     document.getElementById('global-search-input')?.blur();
+
+    await this.searchInNLP(query.trim());
+
+    const queryParams = {
+      q: query.trim(),
+      search: this.responseNlpQuery || null,
+      category: this.selectedSearchCategory || null,
+    };
+
     if (this.ref === 'home') {
       this.closed.emit(false);
-      await this.searchInNLP(query);
       this.router.navigate(['/app/globalsearch'], {
-        queryParams: { q: query.trim(), search: this.responseNlpQuery },
+        queryParams,
         queryParamsHandling: 'merge',
       });
     } else {
-      await this.searchInNLP(query);
       this.router.navigate([], {
         relativeTo: this.activated.parent,
-        queryParams: { q: query.trim(), search: this.responseNlpQuery },
+        queryParams,
         queryParamsHandling: 'merge',
       });
     }
+
     localStorage.removeItem('activeRoute');
     this.openSearchTemplate = false;
   }
-
   clearSearchText() {
     this.queryControl.reset();
+    document.getElementById('global-search-input')?.blur();
   }
 
-  selectSearchCategory(category: string) {
+  async selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    this.searchFromQuery(this.responseNlpQuery);
+    // this.searchFromQuery(this.responseNlpQuery);
+    this.updateQuery(this.queryControl.value);
   }
 
   async searchFromQuery(query: string) {
     let courseSearchResult: any;
     const searchRequest = new SearchV4Request([]);
     searchRequest.request.query = query;
-
     switch (this.selectedSearchCategory) {
       case SearchCategory.Courses:
         searchRequest.request.filters.courseCategory = 'course';
@@ -375,10 +386,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       .nlpSearch(searchRequest)
       .then(async (response) => {
         if (response?.data && response?.data?.keywords) {
-          this.responseNlpQuery = (response?.data?.keywords).join(' ');
-          if (this.responseNlpQuery) {
-            await this.searchFromQuery(this.responseNlpQuery);
+          if(response?.data?.keywords.length > 0) {
+            this.responseNlpQuery = response?.data?.keywords[0]?.keyword;
           }
+        } else {
+          this.responseNlpQuery = '';
         }
       })
       .catch();

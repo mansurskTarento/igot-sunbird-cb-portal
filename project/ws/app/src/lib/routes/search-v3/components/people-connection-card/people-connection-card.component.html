@@ -11,7 +11,7 @@
               
                 <div class="connection-name">
                     <!-- <ws-app-connection-name [hoverUser]="user"></ws-app-connection-name> -->
-                    <span class="mat-body-1 name text-center font-bold">{{user?.personalDetails?.firstname | titlecase }}</span>
+                    <span class="mat-body-1 name text-center">{{user?.personalDetails?.firstname | titlecase }}</span>
                 </div>
                 <div class="designation ws-mat-black60-text mat-body-2" *ngIf="user?.employmentDetails">
                     {{user?.employmentDetails?.departmentName}}
@@ -28,7 +28,7 @@
                 <span class="ws-mat-default-text">{{'connectionPeopleCard.connect' | translate}}</span>
             </button>
 
-            <button mat-flat-button color=" accent" type="button" class="mat-btn-outline cursor-pointer" disabled
+            <button mat-flat-button color="accent" type="button" class="mat-btn-outline cursor-pointer" disabled
                 *ngIf="user?.requestSent">
                 <span class="">{{'connectionPeopleCard.connectionSent' | translate}}</span>
             </button>

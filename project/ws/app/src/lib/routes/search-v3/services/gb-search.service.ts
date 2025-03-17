@@ -21,6 +21,9 @@ const API_END_POINTS = {
   SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
   SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
   SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
+  ENROLLMENT_API(userId: string): string {
+    return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`;
+  },
 };
 
 @Injectable({
@@ -86,5 +89,9 @@ export class GbSearchService {
 
   nlpSearch(params: SearchNLP): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise();
+  }
+
+  enrollment(request: any, userId: string): any {
+    return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request)
   }
 }

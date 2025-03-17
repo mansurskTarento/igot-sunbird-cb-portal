@@ -63,6 +63,7 @@ import {NumberShortenerPipe} from './pipes/number-shortener.pipe'
 import {PluralPipe} from './pipes/plural.pipe';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { SearchSortInputComponent } from './components/search-sort-input/search-sort-input.component'
+import { DialogComponentsModule } from '@sunbird-cb/consumption';
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import { SearchSortInputComponent } from './components/search-sort-input/search-
     InfiniteScrollModule,
     TranslateModule,
     AvatarPhotoModule,
+    DialogComponentsModule,
   ],
   exports: [SearchInputHomeComponent],
   providers: [],
