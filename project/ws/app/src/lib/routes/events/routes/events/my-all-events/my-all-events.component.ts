@@ -43,7 +43,7 @@ export class MyAllEventsComponent {
   }
   ngOnInit() {
     this.activateRoute.queryParamMap.subscribe((data: any) => {
-      this.tabSelected = _.get(data, 'params.tabSelected', 'Today')
+      this.tabSelected = _.get(data, 'params.tabSelected', 'today')
     })
     this.fetchData()
   }
@@ -63,13 +63,13 @@ export class MyAllEventsComponent {
     }
     console.log("tabSelected ", this.tabSelected)
     let resourceType = ''
-    if (this.tabSelected === 'Today') {
+    if (this.tabSelected === 'today') {
       this.tabIndex = 0
       resourceType = 'Karmayogi Talks'
-    } else if (this.tabSelected === 'Upcoming') {
+    } else if (this.tabSelected === 'upcoming') {
       resourceType = 'Karmayogi Saptah'
       this.tabIndex = 1
-    } else if (this.tabSelected === 'Past') {
+    } else if (this.tabSelected === 'past') {
       resourceType = 'Webinar'
       this.tabIndex = 2
     }
@@ -163,11 +163,11 @@ export class MyAllEventsComponent {
   tabClick(tab: any) {
     this.tabIndex = tab.index
     if (tab.index === 0) {
-      this.tabSelected = 'Today'
+      this.tabSelected = 'today'
     } else if (tab.index === 1) {
-      this.tabSelected = 'Upcoming'
+      this.tabSelected = 'upcoming'
     } else if (tab.index === 2) {
-      this.tabSelected = 'Past'
+      this.tabSelected = 'past'
     }
     this.resetData()
     this.fetchData()
