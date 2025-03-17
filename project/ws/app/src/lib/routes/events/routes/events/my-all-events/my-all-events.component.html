@@ -12,7 +12,7 @@
           <mat-tab-group (selectedTabChange)="tabClick($event)" [(selectedIndex)]="tabIndex">
             <mat-tab label="{{'events.toDay' | translate}}">
               <div class="flex flex-row flex-wrap justify-center md:justify-start content-container mt-5"
-                *ngIf="tabSelected === 'Today'">
+                *ngIf="tabSelected === 'today'">
                 <ng-container *ngIf="contentDataList.length;else noData">
                   <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
                     <div class="mr-3 mb-5" *ngFor="let c of contentDataList">
@@ -35,7 +35,7 @@
             </mat-tab>
             <mat-tab label="{{'events.upcoming' | translate}}">
               <div class="flex flex-row flex-wrap justify-center md:justify-start content-container mt-5"
-                *ngIf="tabSelected === 'Upcoming'">
+                *ngIf="tabSelected === 'upcoming'">
                 <ng-container *ngIf="contentDataList.length;else noData">
                   <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
                     <div class="mr-3 mb-5" *ngFor="let c of contentDataList">
@@ -58,7 +58,7 @@
             </mat-tab>
             <mat-tab label="{{'events.past' | translate}}">
               <div class="flex flex-row flex-wrap justify-center md:justify-start content-container mt-5"
-                *ngIf="tabSelected === 'Past'">
+                *ngIf="tabSelected === 'past'">
                 <ng-container *ngIf="contentDataList.length;else noData">
                   <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
                     <div class="mr-3 mb-5" *ngFor="let c of contentDataList">
