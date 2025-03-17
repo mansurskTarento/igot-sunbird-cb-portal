@@ -11,9 +11,9 @@ export class EventResolve
     private eventService: EventService
   ) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IResolveResponse<NsContent.IContent>> | null {
+  resolve(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IResolveResponse<NsContent.IContent>> | null {
     /* tslint:disable */
-    console.log('route', route, state.url)
+    // console.log('route', route, state.url)
     /* tslint:enable */
     const urlStr = state.url.split('/')
     let eventId = ''
@@ -24,7 +24,7 @@ export class EventResolve
       }
     }
     /* tslint:disable */
-    console.log('eventId', eventId)
+    // console.log('eventId', eventId)
     /* tslint:enable */
     return (
       this.eventService.getEventData(eventId

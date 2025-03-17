@@ -114,6 +114,7 @@ const routes: Routes = [
             },
             resolve: {
               content: EventResolve,
+              pageData: AppEventPageResolverService,
             },
           },
           {

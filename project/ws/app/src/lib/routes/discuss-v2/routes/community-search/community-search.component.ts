@@ -20,4 +20,7 @@ export class CommunitySearchComponent {
   cardClick(cardData: any) {
     this.router.navigate(['/app/discussion-forum-v2/community', cardData.communityId])
   }
+  goBackMethod(_event: any) {
+    this.router.navigate(['/app/discussion-forum-v2'])
+  }
 }
