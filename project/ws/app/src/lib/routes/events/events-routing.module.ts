@@ -16,6 +16,7 @@ import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 import { EventsV2Component } from './routes/events-v2/events-v2.component'
 import { AppEventPageResolverService } from 'src/app/services/app-event-page-resolver.service'
+import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 
 const routes: Routes = [
   {
@@ -64,6 +65,14 @@ const routes: Routes = [
         },
       },
       {
+        path: 'my-events',
+        component: MyAllEventsComponent,
+        data: {
+          pageId: 'my-events',
+          module: 'Events',
+        },
+      },
+      {
         path: 'view-all',
         component: ViewAllComponent,
         data: {
@@ -105,6 +114,7 @@ const routes: Routes = [
             },
             resolve: {
               content: EventResolve,
+              pageData: AppEventPageResolverService,
             },
           },
           {

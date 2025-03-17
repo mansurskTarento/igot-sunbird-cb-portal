@@ -129,6 +129,20 @@
                 </section>
             </ng-template>
         </mat-tab>
+        <mat-tab label="{{ translateLabels('rajyaKarmayogiSaptah', 'event') }}" *ngIf="rajyaKarmayogiSaptahEvents?.length">
+            <ng-template matTabContent>
+                <section id="content">
+                    <div class="w-full margin-top-xl margin-bottom-m" infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollEnd()">
+                        <ng-container *ngFor="let event of rajyaKarmayogiSaptahEvents">
+                            <ws-app-events-card class="w-fix" [eventData]="event" *ngIf="event !== -1"></ws-app-events-card>
+                            <h4 class="w-full text-center ws-mat-black60-text" *ngIf="event === -1">{{ 'msg.noSearchResultFound' | translate }}</h4>
+                        </ng-container>
+                    </div>
+                </section>
+            </ng-template>
+        </mat-tab>
         <mat-tab label="{{ translateLabels('karmayogiSaptah', 'event') }}" *ngIf="karmayogiSaptahEvents?.length">
             <ng-template matTabContent>
                 <section id="content">

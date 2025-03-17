@@ -25,16 +25,21 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   isEnrolled = false
   resumeEventStatus = 0
   rateToFire = 180
-  private player: videoJs.Player | null = null
-  private dispose: (() => void) | null = null
+  player: videoJs.Player | null = null
+  dispose: (() => void) | null = null
+  pageConfigData: any = {}
   constructor(private route: ActivatedRoute, private eventService: EventService, private configSvc: ConfigurationsService) {
   }
 
   ngOnInit(): void {
     /* tslint:disable */
-    console.log('eventData', this.route.snapshot.data.content.data)
+    // console.log('eventData', this.route.snapshot.data.content.data)
     /* tslint:enabel */
     this.eventData = this.route.snapshot.data['content'].data
+    this.pageConfigData = this.route.snapshot.data['pageData'] && this.route.snapshot.data['pageData'].data || {}
+    if(this.pageConfigData && this.pageConfigData.fireUpdate) {
+      this.rateToFire = this.pageConfigData.fireUpdate
+    }
     this.route.params.subscribe(params => {
       this.videoId = params.videoId
 
@@ -162,7 +167,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const saveCLearning: saveContinueLearningFunction = data => {
       /* tslint:disable */
-      console.log(data, timeSpent)
+      // console.log(data, timeSpent)
       const dataobj: any = JSON.parse(data.data)
       if (dataobj && dataobj.timestamp) {
         // let progress = ''
@@ -180,9 +185,9 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     }
-    const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
+    const fireRProgress: fireRealTimeProgressFunction = (_identifier, _data) => {
       /* tslint:disable */
-      console.log(identifier, data)
+      // console.log(identifier, data)
       /* tslint:enable */
       // if (this.widgetData.identifier && identifier && data) {
       //   this.viewerSvc
@@ -285,10 +290,10 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.resumeEventStatus = 2
           }
         })
-      } else {
-        /* tslint:disable */
-        console.log('Already completed ', req)
-      }
+    } else {
+      /* tslint:disable */
+      // console.log('Already completed ', req)
+    }
     }
   }
 

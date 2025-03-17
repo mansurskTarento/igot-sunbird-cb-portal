@@ -1,15 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { debounceTime, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import * as _ from 'lodash'
 import { EventsEngagementComponent } from '../events-engagement/events-engagement.component';
 import { EventsCalendarComponent } from '../events-calendar/events-calendar.component';
 import { EventService } from '../../services/events.service';
+import { WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from 'library/ws-widget/resolver/src/public-api'
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-events-v2',
@@ -32,7 +33,9 @@ export class EventsV2Component {
     private activatedRoute: ActivatedRoute,
     private bottomSheet: MatBottomSheet,
     private eventsService: EventService,
-    private router: Router
+    private router: Router,
+    private events: libEventService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
     this.activatedRoute.data.subscribe(data => {
       if (data && data.pageData) {
@@ -48,13 +51,6 @@ export class EventsV2Component {
   }
 
   ngOnInit(): void {
-    this.searchControl.valueChanges
-      .pipe(debounceTime(500))
-      .subscribe(value => {
-        if (value) {
-          this.router.navigate(['/app/event-hub/view-all'], { queryParams: { query: value } })
-        }
-      })
     this.getEventsEngagemeants()
   }
 
@@ -77,6 +73,10 @@ export class EventsV2Component {
     })
   }
 
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
+  }
+
   convertMinutesToHoursAndMinutes(minutes: number): string {
     let convertedTime = '0h 0m'
     if (minutes) {
@@ -90,16 +90,17 @@ export class EventsV2Component {
   openEventEngagementBottomSheet() {
     this.bottomSheet.open(EventsEngagementComponent, {
       data: {
-        engagements: _.get(this.eventsHome, 'data.leftSection.data.myEngagements', {}),
+        engagements: _.get(this.eventsHome, 'data.leftSection.data.mMyEngagements', {}),
         engagementDetails: this.engagementDetails
       },
-      panelClass: 'engagement-bottomsheet',
+      panelClass: 'events-bottomsheet',
     })
   }
 
   openEventCalendartBottomSheet() {
     this.bottomSheet.open(EventsCalendarComponent, {
-      panelClass: 'calendar-bottomsheet',
+      panelClass: 'events-bottomsheet',
+      data: _.get(this.eventsHome, 'data.leftSection.data.mEventsCalendar', {})
     })
   }
 
@@ -113,8 +114,42 @@ export class EventsV2Component {
     }
   }
 
+  searchEvents(event: any) {
+    if (event.target && event.target.value) {
+      this.router.navigate(['/app/event-hub/view-all'], { queryParams: { query: event.target.value } })
+    }
+  }
+
   raiseTelemetryInteratEvent(event: any) {
-    console.log(event)
+    let subType = 'my-events'
+    switch (_.get(event, 'context.pageSection')) {
+      case 'myEvents':
+        subType = 'my-events'
+        break
+      case 'recommendedEvents':
+        subType = 'recommended-events'
+        break
+      case 'trendingEvents':
+        subType = 'trending-events'
+        break
+      case 'featuredEvents':
+        subType = 'featured-events'
+        break
+    }
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: subType,
+        id: "card-content",
+      },
+      {
+        id: _.get(event, 'content.identifier'),
+        type: "event"
+      },
+      {
+        module: WsEvents.EnumTelemetrymodules.EVENTS,
+      }
+    )
   }
 
 }

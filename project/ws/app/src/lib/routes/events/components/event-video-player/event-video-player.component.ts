@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '@sunbird-cb/collection/src/lib/_services/videojs-util';
+import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util';
 import { Subscription } from 'rxjs';
 import videoJs from 'video.js'
 import moment from 'moment'
 import { EventService } from '../../services/events.service';
 import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2';
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service';
+
 interface IYTOptions extends videoJs.PlayerOptions {
   youtube: {
     ytControls: 0 | 1 | 2
@@ -59,12 +59,12 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   resumeEventStatus = 0
   rateToFire = 15
   intervalStarted = false
+  widgetData: any = {}
   private player: videoJs.Player | null = null
   private dispose: (() => void) | null = null
   constructor(private route: ActivatedRoute,
     private eventService: EventService,
     private configSvc: ConfigurationsService,
-    private viewerSvc: ViewerUtilService,
 
   ) {
 
@@ -100,7 +100,10 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
     }
   }
 
-  ngAfterViewInit() { }
+  ngAfterViewInit() {
+
+
+  }
 
 
   getBatchId() {
@@ -121,13 +124,30 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
       batchId: this.getBatchId()
     }
     this.eventService.eventStateRead(req).subscribe((data) => {
-      debugger
       if (data && data.result && data.result.events && data.result.events.length) {
         let resumeFrom = JSON.parse(data.result.events[0]['progressdetails'])['stateMetaData']
         this.resumeEventStatus = data.result.events[0]['status']
         resumeFrom = resumeFrom ? Number(resumeFrom) : 0
         if (!this.currentEvent && !this.isEnrolled) {
           resumeFrom = 0
+        }
+
+        this.widgetData = {
+          "isVideojs": true,
+          "disableTelemetry": false,
+          "url": this.eventData.registrationLink,
+          "identifier": this.eventData.identifier,
+          "mimeType": "video/mp4",
+          "resumePoint": 0,
+          "continueLearning": true,
+          "subtitles": [],
+          "collectionId": this.eventData.identifier,
+          "contentType": "Event",
+          "primaryCategory": "Event",
+          "channel": this.eventData.channel,
+          "version": "2",
+          "size": "31",
+          "hideUpNext": false
         }
         this.initializePlayer(resumeFrom)
       } else {
@@ -161,7 +181,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
     const dispatcher: telemetryEventDispatcherFunction = (event: any) => {
       /* tslint:disable */
-      console.log(event['data'])
+      console.log("dispatcher", event['data'])
 
       if (event['data']['passThroughData'] && event['data']['passThroughData']['timeSpent']) {
         timeSpent = event['data']['passThroughData']['timeSpent']
@@ -186,6 +206,8 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         }
 
       }
+
+      console.log("event['data'] ", event['data'])
       /* tslint:disable */
       if (event['data'] && event['data']['playerStatus'] === 'ENDED') {
         if (this.currentEvent) {
@@ -203,7 +225,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
     }
     const saveCLearning: saveContinueLearningFunction = data => {
       /* tslint:disable */
-      console.log(data, timeSpent)
+      console.log("saveCLearning", data, timeSpent)
       const dataobj: any = JSON.parse(data.data)
       if (dataobj && dataobj.timestamp) {
         // let progress = ''
@@ -218,15 +240,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      const collectionId = this.route.snapshot.queryParams.collectionId ?
-        this.route.snapshot.queryParams.collectionId : ''
-      const batchId = this.route.snapshot.queryParams.batchId ?
-        this.route.snapshot.queryParams.batchId : ''
-
-      if (this.eventData.identifier && identifier && data) {
-        this.viewerSvc
-          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
-      }
+      console.log(identifier, data)
     }
     const initObj = videoJsInitializer(
       this.videoTag.nativeElement,
@@ -236,19 +250,19 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         sources: [
           {
             type: NsContent.EMimeTypes.MP4,
-            src: this.eventData.registrationLink
-            //src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            //src: this.eventData.registrationLink
+            src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           },
         ],
       },
       dispatcher,
       saveCLearning,
       fireRProgress,
-      resumeFrom, // passThrough Data,
+      { resumeFrom: resumeFrom },
       NsContent.EMimeTypes.MP4,
-      0, // enable telemetry,
-      true,
-      {},
+      resumeFrom, // passThrough Data,
+      true, // enable telemetry,
+      this.widgetData,
       NsContent.EMimeTypes.MP4,
       '200px', // height
     )
@@ -266,6 +280,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
     if (this.configSvc.userProfile) {
       userId = this.configSvc.userProfile.userId || ''
     }
+    console.log("progress ", progress + timeSpent + lastTimeAccessed + normalUpdate)
     if (timeSpent) {
       // completionPercentage = (timeSpent / (this.eventData.duration * 60)) * 100
       completionPercentage = normalUpdate ?

@@ -62,14 +62,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { FiltersComponent } from './routes/events/filters/filters.component'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { SeeAllComponent } from './routes/events/see-all/see-all.component';
 import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component';
-import { EventsV2Component } from './routes/events-v2/events-v2.component'
+import { EventsV2Component } from './routes/events-v2/events-v2.component';
+import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -87,11 +87,11 @@ import { EventsV2Component } from './routes/events-v2/events-v2.component'
     EventsCalendarComponent,
     EventsEngagementComponent,
     ViewAllComponent,
-    FiltersComponent,
     MobileFiltersComponent,
     SeeAllComponent,
     EventVideoPlayerComponent,
     EventsV2Component,
+    MyAllEventsComponent,
   ],
   imports: [
     CommonModule,
