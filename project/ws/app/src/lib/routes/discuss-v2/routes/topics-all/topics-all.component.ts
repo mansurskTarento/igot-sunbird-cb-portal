@@ -22,4 +22,8 @@ export class TopicsAllComponent {
     
     this.router.navigate(['/app/discussion-forum-v2/community', communityData.communityId])
   }
+
+  goBackMethod(_event: any) {
+    this.router.navigate(['/app/discussion-forum-v2'])
+  }
 }

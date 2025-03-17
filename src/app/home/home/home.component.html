@@ -21,7 +21,7 @@
                         jan26Change?.mWeb?.logoText}}</span>
                 </div>
             </ng-container>
-            <ws-in-sight-side-bar></ws-in-sight-side-bar>
+            <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar>
         </div>
 
         <div class="bg-primary" [ngClass]="
@@ -35,7 +35,7 @@
                             <div class="section_{{i}}" *ngIf="i==j && vitem && vitem['section'] == 'section_'+i">
                                 <ng-container
                                     *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item"></ws-feed-list>
+                                    <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -73,7 +73,7 @@
                 <ng-container *ngIf="!enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item"></ws-feed-list>
+                            <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
                     </ng-container>
 
@@ -110,7 +110,7 @@
                             <span class="section_{{i}}" *ngIf="i==j">
                                 <ng-container
                                     *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item"></ws-feed-list>
+                                    <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                                 </ng-container>
                             </span>
                         </ng-container>
@@ -148,7 +148,7 @@
                 <ng-container *ngIf="!enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item"></ws-feed-list>
+                            <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
                     </ng-container>
 
@@ -175,7 +175,7 @@
         homeConfig?.leftSection?.active &&  homeConfig?.rightSection?.active ? 'left' :
         (homeConfig?.leftSection?.active &&  !homeConfig?.rightSection?.active) ? 'full' : ''"
             *ngIf="homeConfig?.leftSection?.active">
-            <ws-in-sight-side-bar></ws-in-sight-side-bar>
+            <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar>
         </div>
     </ng-container>
 </div>
