@@ -6,7 +6,6 @@ import videoJs from 'video.js'
 import moment from 'moment'
 import { EventService } from '../../services/events.service';
 import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2';
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service';
 
 interface IYTOptions extends videoJs.PlayerOptions {
   youtube: {
@@ -66,7 +65,6 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   constructor(private route: ActivatedRoute,
     private eventService: EventService,
     private configSvc: ConfigurationsService,
-    private viewerSvc: ViewerUtilService,
 
   ) {
 
@@ -193,7 +191,6 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         //   this.saveProgressUpdate(this.eventData.duration,timeSpent,lastTimeAccessed)
         // }
         if (this.eventData) {
-          debugger
           if (this.eventData.startDate && this.eventData.startTime) {
             let eventDateTime = this.eventData.startDate + ' ' + this.eventData.startTime
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
@@ -243,16 +240,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      console.log("fireRProgress ")
-      const collectionId = this.route.snapshot.queryParams.collectionId ?
-        this.route.snapshot.queryParams.collectionId : ''
-      const batchId = this.route.snapshot.queryParams.batchId ?
-        this.route.snapshot.queryParams.batchId : ''
-
-      if (this.eventData.identifier && identifier && data) {
-        this.viewerSvc
-          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
-      }
+      console.log(identifier, data)
     }
     const initObj = videoJsInitializer(
       this.videoTag.nativeElement,
@@ -270,7 +258,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
       dispatcher,
       saveCLearning,
       fireRProgress,
-      this.widgetData.passThroughData,
+      { resumeFrom: resumeFrom },
       NsContent.EMimeTypes.MP4,
       resumeFrom, // passThrough Data,
       true, // enable telemetry,
