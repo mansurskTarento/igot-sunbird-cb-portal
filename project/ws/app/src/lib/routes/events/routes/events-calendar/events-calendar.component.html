@@ -3,7 +3,7 @@
         <div class="block md:hidden">
             <mat-icon class="backArrow" (click)="closeDiaolg()">arrow_back</mat-icon>
         </div>
-        {{translateLabels(eventCalendarDetails?.title, 'events')}}
+        {{translateLabels(eventCalendarDetails?.title?.id, 'events')}}
     </div>
     <div class="flex flex-col gap-3 m-calendar-view mt-2">
         <div class="month-selector flex items-center justify-between">
@@ -54,7 +54,8 @@
         </ng-container>
         <ng-template #noEvents>
             <div class="flex items-center justify-center">
-                <span class="eventDescription">{{translateLabels(eventCalendarDetails?.noEvents, 'events')}}</span>
+                <span class="eventDescription">{{translateLabels(eventCalendarDetails?.noEvents,
+                    'events')}}</span>
             </div>
         </ng-template>
     </div>
