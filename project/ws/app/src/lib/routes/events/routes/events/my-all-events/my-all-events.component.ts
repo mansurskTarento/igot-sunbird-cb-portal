@@ -23,7 +23,7 @@ export class MyAllEventsComponent {
   total = 0
   showNextPage = false
   isLoading = false
-  private dataScription: Subscription | null = null
+  dataScription: Subscription | null = null
   constructor(
     private activateRoute: ActivatedRoute,
     private translate: TranslateService,
