@@ -80,7 +80,7 @@
   position: absolute;
   top: 40px;
   z-index: 9999;
-  width: 585px;
+  width: 630px;
 }
 
 .search-categories {
@@ -106,6 +106,10 @@
   .mat-chip.mat-standard-chip.selected-search-category {
     background-color: $brandAccentColor !important;
     color: $white !important;
+  }
+
+  .mat-chip-list-wrapper {
+    justify-content: center;
   }
 }
 
@@ -205,9 +209,9 @@ mat-list-item {
 }
 
 .disabled-search-btn {
-  background-color: #ffffff !important;
+  background-color: $white !important;
   color: #999999 !important;
-  border: 1px solid #00000029 !important;
+  border: 1px solid $borderColor !important;
 }
 
 .disabled-search-btn.mat-flat-button[disabled] {
