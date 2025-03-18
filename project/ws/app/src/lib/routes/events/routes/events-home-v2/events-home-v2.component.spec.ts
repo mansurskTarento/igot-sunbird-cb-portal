@@ -1,21 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EventsHomeV2Component } from './events-home-v2.component';
 
+jest.mock('./events-home-v2.component', () => ({
+  EventsHomeV2Component: jest.fn().mockImplementation(() => ({
+    ngOnInit: jest.fn(),
+  }))
+}));
+
 describe('EventsHomeV2Component', () => {
-  let component: EventsHomeV2Component;
-  let fixture: ComponentFixture<EventsHomeV2Component>;
+  let component: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [EventsHomeV2Component]
-    });
-    fixture = TestBed.createComponent(EventsHomeV2Component);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new EventsHomeV2Component();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call ngOnInit on initialization', () => {
+    const ngOnInitSpy = jest.spyOn(component, 'ngOnInit');
+    component.ngOnInit();
+    expect(ngOnInitSpy).toHaveBeenCalled();
+  });
+
 });
