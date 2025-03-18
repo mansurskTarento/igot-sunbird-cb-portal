@@ -120,7 +120,7 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
     return now >= startDateTime && now <= endDateTime;
   }
 
-  navigateToEvent() {debugger
+  navigateToEvent() {
     const eventId = this.content?.identifier;
     if (eventId) {
       this.router.navigate([`/app/event-hub/home/${eventId}`]);

@@ -4,7 +4,7 @@ export const AVAILABLE_LOCALES = ['en'];
 export const CATEGORY_TYPE = [
   {
     displayName: 'Contents',
-    name: 'Course',
+    name: 'courses',
     count: 0,
     isChecked: false,
     filters: [
@@ -60,27 +60,27 @@ export const CATEGORY_TYPE = [
   },
   {
     displayName: 'Events',
-    name: 'Events',
+    name: 'events',
     count: 0,
     isChecked: false,
     filters: [],
   },
   {
-    name: 'Peoples',
+    name: 'peoples',
     count: 0,
     isChecked: false,
     displayName: 'Peoples',
     filters: [],
   },
   {
-    name: 'Case Study',
+    name: 'case-studies',
     count: 0,
     isChecked: false,
     displayName: 'Case Study',
     filters: [],
   },
   {
-    name: 'Communities',
+    name: 'communities',
     count: 0,
     isChecked: false,
     displayName: 'Communities',
@@ -93,4 +93,25 @@ export const SEARCH_SORT_DROPDOWN = [
   { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
   { name: 'Highest Rated', value: 'highest_rated' },
   // { name: 'Most Enrolled', value: 'most_enrolled' },
+];
+
+export const TypeOfEvents = [
+  {
+    name: 'live',
+    count: 0,
+    isChecked: false,
+    displayName: 'Live',
+  },
+  {
+    name: 'upcoming',
+    count: 0,
+    isChecked: false,
+    displayName: 'Upcoming',
+  },
+  {
+    name: 'past events',
+    count: 0,
+    isChecked: false,
+    displayName: 'Past Events',
+  },
 ];

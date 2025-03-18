@@ -8,10 +8,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-// import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-// import { GbSearchService } from '../../services/gb-search.service';
-// import { ActivatedRoute, Router } from '@angular/router';
 // tslint:disable-next-line
 import _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,11 +16,20 @@ import {
   ConfigurationsService,
   MultilingualTranslationsService,
 } from '@sunbird-cb/utils-v2';
-import { CATEGORY_TYPE } from '../../../../../../../author/src/lib/constants/constant';
-import { Facet, FacetType, FormattedFacets } from '../../models/search-v3.model';
+import {
+  CATEGORY_TYPE,
+  TypeOfEvents,
+} from '../../../../../../../author/src/lib/constants/constant';
+import {
+  Facet,
+  FacetType,
+  FormattedFacets,
+  SearchCategory,
+} from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { environment } from 'src/environments/environment';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'ws-app-search-filters',
   templateUrl: './search-filters.component.html',
@@ -33,12 +39,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Input() newfacets!: any;
   @Input() urlparamFilters!: any;
   @Output() appliedFilter = new EventEmitter<{ [key: string]: any }>();
+  @Output() constructQueryParam = new EventEmitter<string>();
   @Input() karmayogiBadge: any;
 
   private subscription: Subscription = new Subscription();
   queryParams: any;
 
   categoryType = CATEGORY_TYPE;
+  categoryTypeDup = CATEGORY_TYPE;
   showAllLanguage = false;
 
   formattedFacets: any = {};
@@ -52,9 +60,11 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllCompetencySubTheme: boolean = false;
 
   selectedFilterChips: any;
+  filterQueryOrganisation = '';
+  filterQueryLanguage = '';
   constructor(
     // private searchSrvc: GbSearchService,
-    // private activated: ActivatedRoute,
+    private activated: ActivatedRoute,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService
@@ -86,6 +96,37 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
     } else {
       this.formattedFacets = {};
+    }
+
+    this.setCategoryType();
+  }
+
+  setCategoryType() {
+    const params = this.activated.snapshot.queryParams;
+    const searchCategory = params['category'];
+    if (searchCategory) {
+      this.categoryType = this.categoryTypeDup.filter(
+        (type) => type.name === searchCategory
+      );
+      this.categoryType[0].isChecked = true;
+      this.selectedFilters[this.categoryType[0].name] = [
+        this.categoryType[0].name,
+      ];
+      this.selectedFilterChips = [
+        {
+          value: this.categoryType[0].displayName,
+          type: this.categoryType[0].name,
+        },
+      ];
+
+      if (searchCategory === SearchCategory.Events) {
+        this.formattedFacets['typeOfEvents'] = TypeOfEvents;
+      }
+    } else {
+      this.categoryType = this.categoryTypeDup.map((cat) => ({
+        ...cat,
+        isChecked: false,
+      }));
     }
   }
 
@@ -187,7 +228,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (!this.selectedFilters[categoryType]) {
       this.selectedFilters[categoryType] = [];
     }
-
     if (event.checked) {
       if (!this.selectedFilters[categoryType].includes(type)) {
         this.selectedFilters[categoryType].push(type);
@@ -199,8 +239,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.appliedFilter.emit(this.selectedFilters);
-
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+
+    const types = this.categoryTypeDup.map((category) => category.name);
+    if (types.includes(type) && !option.isChecked) {
+      this.constructQueryParam.emit('');
+    }
   }
 
   get filtersAppliedCount(): number {
@@ -226,13 +270,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   clearFilterChip(item: { type: string; value: string }) {
     let facets;
-
-    if (item.type === 'Contents') {
+    const types = this.categoryTypeDup.map((category) => category.name);
+    if (types.includes(item.type)) {
       facets = this.categoryType;
 
       const category = _.find(facets, { displayName: item.type });
 
-      if (!category) return;
+      if (!category) {
+        this.categoryType[0].isChecked = false;
+        if (_.has(this.selectedFilters, item.type)) {
+          _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
+          if (_.isEmpty(this.selectedFilters[item.type])) {
+            delete this.selectedFilters[item.type];
+          }
+        }
+        this.appliedFilter.emit(this.selectedFilters);
+        this.selectedFilterChips = this.refactorFilterData(
+          this.selectedFilters
+        );
+        this.constructQueryParam.emit('');
+        return;
+      }
 
       const foundFilter = _.find(category.filters, { name: item.value });
       if (foundFilter) {
@@ -250,7 +308,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           this.selectedFilters
         );
       }
-    } else {
+    } else {debugger
       facets = this.formattedFacets;
       const allFilters = _.flatMap(facets);
 
@@ -281,7 +339,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.selectedFilters[key] = [];
     });
     _.forEach(this.categoryType, (category) => {
-      category.isChecked = false
+      category.isChecked = false;
       _.forEach(category.filters, (filter) => {
         filter.isChecked = false;
       });
@@ -295,5 +353,25 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = [];
+    this.constructQueryParam.emit('');
+  }
+
+  get filteredOrganisations() {
+    let filteredList = this.formattedFacets['organisation'].filter(
+      (item: any) =>
+        item.name
+          .toLowerCase()
+          .includes(this.filterQueryOrganisation.toLowerCase())
+    );
+
+    return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredLanguages() {
+    let filteredList = this.formattedFacets['language'].filter((item: any) =>
+      item.name.toLowerCase().includes(this.filterQueryLanguage.toLowerCase())
+    );
+
+    return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
 }

@@ -5,6 +5,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { GbSearchService } from '../../services/gb-search.service';
 import {
@@ -13,7 +15,7 @@ import {
   MultilingualTranslationsService,
   ValueService,
 } from '@sunbird-cb/utils-v2';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 // tslint:disable-next-line
 import _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,6 +50,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() userValue = '';
   @Input() paramFilters: any = [];
   @Input() filtersPanel!: string;
+  @Output() queryParamChange = new EventEmitter<any>();
 
   // searchResults: any = [];
   defaultThumbnail = '';
@@ -67,7 +70,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   veifiedKarmayogi = false;
   noResultMessage = '';
   recommendedUsers: any;
-  seeAllResult: string[] = [];
+  seeAllResult: string = '';
   allResultsDepartmentName = new Set<string>();
 
   courseSearchTotalCount = 0;
@@ -88,6 +91,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   initialPaginationSize = 10;
   initialPaginationSizeOptions = [10, 20, 50, 100];
+  initialPaginationPage = 1;
 
   coursesFacets = [];
   eventsFacets = [];
@@ -102,11 +106,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   currentUserDept = '';
   connectionRequestsSent!: any;
+  queryParams: any;
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
     private events: EventService,
-    // private activated: ActivatedRoute,
+    private activated: ActivatedRoute,
     private valueSvc: ValueService,
     private translate: TranslateService,
     private router: Router,
@@ -258,7 +263,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   async searchCourses() {
     this.searchRequestCourse.request.query = this.statedata?.param;
-    // this.searchRequestCourse.request.filters.contentType = ['Course']
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestCourse
     );
@@ -276,6 +280,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.courseSearchResults = [];
       this.courseSearchTotalCount = 0;
+      this.coursesFacets = result.result?.facets || [];
     }
   }
 
@@ -320,8 +325,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchcommunities() {
-    // const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
-    const uniqueDepartmentNames = ['Finance and Budget testing'];
+    const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
+    // const uniqueDepartmentNames = ['Finance and Budget testing'];
     this.searchRequestCommunities.pageSize = 10;
     if (uniqueDepartmentNames.length > 0) {
       from(uniqueDepartmentNames)
@@ -399,21 +404,25 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         } else if (key === this.competencySubThemeKey) {
           this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
             selectedFilters[key];
-        } else if (key === 'Events') {
-          this.seeAllResult.push('events');
-          this.searchRequestEvents.request.limit = 3;
-        } else if (key === 'Contents') {
-          this.seeAllResult.push('courses');
-          this.searchRequestCourse.request.limit = 3;
-          this.searchRequestCourse.request.filters.courseCategory!.push(
+        } else if (key === SearchCategory.Events) {
+          this.constructQueryParam('events');
+          this.seeAllResult = SearchCategory.Events;
+        } else if (key === SearchCategory.Courses) {
+          this.constructQueryParam('courses');
+          this.seeAllResult = SearchCategory.Courses;
+        } else if (key === SearchCategory.CaseStudy) {
+          this.constructQueryParam('case-studies');
+          this.seeAllResult = SearchCategory.CaseStudy;
+        } else if (key === SearchCategory.People) {
+          this.constructQueryParam('peoples');
+          this.seeAllResult = SearchCategory.People;
+        } else if (key === SearchCategory.Communities) {
+          this.constructQueryParam('communities');
+          this.seeAllResult = SearchCategory.Communities;
+        } else if (key === 'typeOfEvents') {
+          this.searchRequestEvents.request.filters.status.push(
             ...selectedFilters[key]
           );
-        } else if (key === 'Peoples') {
-          this.seeAllResult.push('peoples');
-          this.searchRequestPeoples.size = this.initialPaginationSize;
-        } else if (key === 'Communities') {
-          this.seeAllResult.push('communities');
-          this.searchRequestCommunities.pageSize = this.initialPaginationSize;
         } else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -422,17 +431,21 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
+    if (!Object.keys(selectedFilters).includes('typeOfEvents')) {
+      this.searchRequestEvents.request.filters.status = [];
+    }
+
     this.deleteFilterKeys();
     if (
-      this.seeAllResult.includes(SearchCategory.Courses) ||
-      this.seeAllResult.includes(SearchCategory.CaseStudy)
+      this.seeAllResult === SearchCategory.Courses ||
+      this.seeAllResult === SearchCategory.CaseStudy
     ) {
       this.searchCourses();
-    } else if (this.seeAllResult.includes(SearchCategory.Events)) {
+    } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchEvents();
-    } else if (this.seeAllResult.includes(SearchCategory.People)) {
+    } else if (this.seeAllResult === SearchCategory.People) {
       this.searchPeople();
-    } else if (this.seeAllResult.includes(SearchCategory.Communities)) {
+    } else if (this.seeAllResult === SearchCategory.Communities) {
       this.searchcommunities();
     } else {
       this.searchCourses();
@@ -485,7 +498,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async seeAllResults(category: string) {
-    this.seeAllResult.push(category);
+    // this.seeAllResult.push(category);
+    this.seeAllResult = category;
     if (category === SearchCategory.Courses) {
       this.eventSearchTotalCount = 0;
       this.peopleSearchTotalCount = 0;
@@ -498,6 +512,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peopleSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
       this.searchRequestCourse.request.limit = this.initialPaginationSize;
+      this.searchRequestCourse.request.filters.courseCategory = ['Case Study'];
       await this.searchCourses();
       this.combinedFacets = [this.coursesFacets];
     } else if (category === SearchCategory.Events) {
@@ -550,24 +565,24 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.peopleSearchTotalCount = 0;
     this.communitiesSearchTotalCount = 0;
 
-    this.seeAllResult = [];
+    this.seeAllResult = '';
     this.allResultsDepartmentName = new Set<string>();
   }
 
   onPageChange(event: PageChangeEmitter) {
-    if (this.seeAllResult.includes(SearchCategory.Courses)) {
+    if (this.seeAllResult === SearchCategory.Courses) {
       this.searchRequestCourse.request.limit = event.limit;
       this.searchRequestCourse.request.offset = event.currentPage * event.limit;
       this.searchCourses();
-    } else if (this.seeAllResult.includes(SearchCategory.Events)) {
+    } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
       this.searchRequestEvents.request.offset = event.currentPage * event.limit;
       this.searchEvents();
-    } else if (this.seeAllResult.includes(SearchCategory.People)) {
+    } else if (this.seeAllResult === SearchCategory.People) {
       this.searchRequestPeoples.size = event.limit;
       this.searchRequestPeoples.offset = event.currentPage * event.limit;
       this.searchPeople();
-    } else if (this.seeAllResult.includes(SearchCategory.Communities)) {
+    } else if (this.seeAllResult === SearchCategory.Communities) {
       this.searchRequestCommunities.pageSize = event.limit;
       this.searchRequestCommunities.pageNumber = event.currentPage;
       this.searchcommunities();
@@ -576,48 +591,54 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onChangeSortSearch(event: string) {
+    this.resetPagination();
     this.searchRequestCourse.request.sort_by = {};
+    this.searchRequestCourse.request.limit = this.initialPaginationSize;
+    this.searchRequestCourse.request.offset = 0;
+
     this.searchRequestEvents.request.sort_by = {};
+    this.searchRequestEvents.request.limit = this.initialPaginationSize;
+    this.searchRequestEvents.request.offset = 0;
     if (event === SortType.MostRelevent) {
-      if (this.seeAllResult.length === 0) {
+      if (this.seeAllResult === '') {
         this.searchCourses();
         this.searchEvents();
         this.searchPeople();
         this.searchcommunities();
-      } else if (this.seeAllResult.includes(SearchCategory.Courses)) {
+      } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by = {};
         this.searchCourses();
-      } else if (this.seeAllResult.includes(SearchCategory.Events)) {
+      } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by = {};
         this.searchEvents();
       }
     } else if (event === SortType.RecentlyAdded) {
-      if (this.seeAllResult.length === 0) {
+      if (this.seeAllResult === '') {
         this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
         this.searchRequestEvents.request.sort_by.startDate = 'desc';
         this.searchCourses();
         this.searchEvents();
         this.searchPeople();
         this.searchcommunities();
-      } else if (this.seeAllResult.includes(SearchCategory.Courses)) {
+      } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
         this.searchCourses();
-      } else if (this.seeAllResult.includes(SearchCategory.Events)) {
+      } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.startDate = 'desc';
         this.searchEvents();
       }
     } else if (event === SortType.HighestRated) {
-      if (this.seeAllResult.length === 0) {
+      if (this.seeAllResult === '') {
         this.searchRequestCourse.request.sort_by.avgRating = 'desc';
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
         this.searchCourses();
         this.searchEvents();
         this.searchPeople();
         this.searchcommunities();
-      } else if (this.seeAllResult.includes(SearchCategory.Courses)) {
+      } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.avgRating = 'desc';
         this.searchCourses();
-      } else if (this.seeAllResult.includes(SearchCategory.Events)) {
+      } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
         this.searchEvents();
       }
@@ -684,5 +705,22 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  constructQueryParam(category: any) {
+    const params = this.activated.snapshot.queryParams;
+    this.queryParams = {
+      q: params['q'].trim(),
+      search: params['search'] || null,
+      category: category || null,
+    };
+    this.queryParamChange.emit(this.queryParams);
+  }
+
+  resetPagination() {
+    this.initialPaginationPage = 2;
+    setTimeout(() => {
+      this.initialPaginationPage = 1;
+    });
   }
 }

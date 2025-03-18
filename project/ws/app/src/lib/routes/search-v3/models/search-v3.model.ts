@@ -38,7 +38,7 @@ export class Filters {
   constructor() {
     this.contentType = ['Course'];
     this.courseCategory = [];
-    this.status = ['Live'];
+    this.status = [];
   }
 }
 
@@ -56,7 +56,7 @@ export enum SearchCategory {
   Courses = 'courses',
   Programs = 'programs',
   Events = 'events',
-  People = 'people',
+  People = 'peoples',
   CaseStudy = 'case-studies',
   Communities = 'communities',
 }

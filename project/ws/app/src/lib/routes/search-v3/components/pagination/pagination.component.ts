@@ -6,19 +6,31 @@ import { PageChangeEmitter } from '../../models/search-v3.model';
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent implements OnInit {
+  private _currentPage: number = 1;
+
   @Input() defaultPaginationSize: number = 10;
   @Input() defaultPaginationSizeOptions: number[] = [];
-  @Input() totalItemsCount: number = 0
+  @Input() totalItemsCount: number = 0;
+  @Input()
+  set currentPage(value: number) {
+    if (this._currentPage !== value) {
+      this._currentPage = value;
+      this.paginationInListing();
+    }
+  }
+  get currentPage(): number {
+    return this._currentPage;
+  }
 
   @Output() pageChange: EventEmitter<PageChangeEmitter> = new EventEmitter();
 
-  currentPage: number = 1;
   pagination: any = [];
   rangeWithDots: any;
   showingArray: any[] = [];
   lastPage = 0;
   firstPage = 0;
   previousPage = 0;
+
   ngOnInit(): void {
     this.paginationInListing();
   }
@@ -49,8 +61,7 @@ export class PaginationComponent implements OnInit {
     );
 
     let currentIndex = this.showingArray[this.currentPage - 1];
-    let lowerPagination =
-      this.totalItemsCount > 0 ? currentIndex[0] + 1 : '';
+    let lowerPagination = this.totalItemsCount > 0 ? currentIndex[0] + 1 : '';
     let upperPagination = this.totalItemsCount > 0 ? currentIndex[1] : '';
 
     this.lastPage = paginationLength[paginationLength.length - 1];

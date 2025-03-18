@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
@@ -22,7 +22,9 @@ export class GlobalSearchComponent implements OnInit {
   constructor(
     private activated: ActivatedRoute,
     private translate: TranslateService,
-    private configService: ConfigurationsService
+    private configService: ConfigurationsService,
+    private router: Router,
+
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -99,5 +101,13 @@ export class GlobalSearchComponent implements OnInit {
     // tslint:disable-next-line: prefer-template
     const translationKey = 'globalsearch.' + menuName.replace(/\s/g, '');
     return this.translate.instant(translationKey);
+  }
+
+  filterSelectcategory(queryParams: any) {
+    this.router.navigate([], {
+      relativeTo: this.activated.parent,
+      queryParams,
+      queryParamsHandling: 'merge',
+    });
   }
 }
