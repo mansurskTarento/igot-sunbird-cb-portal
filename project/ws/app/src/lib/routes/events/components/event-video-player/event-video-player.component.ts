@@ -60,8 +60,8 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   rateToFire = 15
   intervalStarted = false
   widgetData: any = {}
-  private player: videoJs.Player | null = null
-  private dispose: (() => void) | null = null
+  player: videoJs.Player | null = null
+  dispose: (() => void) | null = null
   constructor(private route: ActivatedRoute,
     private eventService: EventService,
     private configSvc: ConfigurationsService,
