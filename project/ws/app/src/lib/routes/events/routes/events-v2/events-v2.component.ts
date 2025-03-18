@@ -22,9 +22,6 @@ export class EventsV2Component {
   eventsHome!: NsWidgetResolver.IWidgetData<any>
   banner!: NsWidgetResolver.IWidgetData<any>
   engagementDetails: any = {
-    eventsAttended: '200',
-    eventsEnrolled: '15',
-    hoursSpentOnEvents: '8h 45m'
   }
 
   searchControl = new FormControl()
@@ -59,7 +56,9 @@ export class EventsV2Component {
       let result: any = {}
       if (_.get(res, 'result.userEventEnrolmentInfo')) {
         result = _.get(res, 'result.userEventEnrolmentInfo')
-        result['hoursSpentOnEvents'] = this.convertMinutesToHoursAndMinutes(result['hoursSpentOnEvents'])
+        if(result['hoursSpentOnEvents']) {
+          result['hoursSpentOnEvents'] = this.convertMinutesToHoursAndMinutes(result['hoursSpentOnEvents'])
+        }
       }
       return result
     })).subscribe({
@@ -90,7 +89,7 @@ export class EventsV2Component {
   openEventEngagementBottomSheet() {
     this.bottomSheet.open(EventsEngagementComponent, {
       data: {
-        engagements: _.get(this.eventsHome, 'data.leftSection.data.mMyEngagements', {}),
+        engagements: _.get(this.eventsHome, 'data.leftSection.data.myEngagements', {}),
         engagementDetails: this.engagementDetails
       },
       panelClass: 'events-bottomsheet',
@@ -100,7 +99,7 @@ export class EventsV2Component {
   openEventCalendartBottomSheet() {
     this.bottomSheet.open(EventsCalendarComponent, {
       panelClass: 'events-bottomsheet',
-      data: _.get(this.eventsHome, 'data.leftSection.data.mEventsCalendar', {})
+      data: _.get(this.eventsHome, 'data.leftSection.data.eventsCalendar', {})
     })
   }
 

@@ -26,7 +26,6 @@ export class EventsEngagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
   }
 
   translateLabels(label: string, type: any) {

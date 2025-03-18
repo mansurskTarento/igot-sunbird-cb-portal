@@ -28,7 +28,7 @@ export class EventsCalendarComponent implements OnInit {
     isCurrentMonth: Boolean
   }[] = [];
   weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  userEventsList = []
+  userEventsList: any = []
   selectedDateEvents: any = []
 
   constructor(
