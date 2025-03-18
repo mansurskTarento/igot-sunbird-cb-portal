@@ -44,9 +44,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   disableMenu = false;
   recentSearches: string[] = [
-    'AI Throttling Improves Deliverability',
-    'AI Throttling Improves Deliverability',
-    'AI Throttling Improves Deliverability',
+    // 'AI Throttling Improves Deliverability',
+    // 'AI Throttling Improves Deliverability',
+    // 'AI Throttling Improves Deliverability',
   ];
 
   allSearchResults: any[] = [];
@@ -230,9 +230,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     localStorage.removeItem('activeRoute');
     this.openSearchTemplate = false;
   }
+
   clearSearchText() {
+    setTimeout(() => {
+      this.openSearchTemplate = true;
+    }, 0);
     this.queryControl.reset();
-    document.getElementById('global-search-input')?.blur();
   }
 
   async selectSearchCategory(category: string) {

@@ -10,7 +10,7 @@
   </div>
 
   <div class="w-full search relative">
-    <form (submit)="updateQuery(queryControl.value)" class="mat-full-radius flex gap-3 items-center">
+    <form (submit)="updateQuery(queryControl.value)" class="mat-full-radius flex items-center">
       <mat-form-field class="autocomplete-form w-full" color="primary" appearance="outline">
         <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
         <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
@@ -21,18 +21,19 @@
         <ng-container *ngIf="loaderSearching">
           <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-close-icon">
         </ng-container>
-        <ng-container>
-          <mat-icon matSuffix (click)="clearSearchText()" class="cursor-pointer search-close-icon"
-            *ngIf="queryControl.value && !loaderSearching">close</mat-icon>
+        <ng-container *ngIf="queryControl.value && !loaderSearching">
+          <mat-icon matSuffix (click)="clearSearchText();" class="cursor-pointer search-close-icon"
+            >close</mat-icon>
         </ng-container>
-
+        
       </mat-form-field>
-      <!-- <button mat-flat-button type="submit" class="mat-btn-flat global-search">Search</button> -->
-
+      <button mat-flat-button type="submit" class="mat-btn-flat global-search">
+        <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-button">
+      </button>
     </form>
 
-    <div class="search-container">
-      <div class="search-results" *ngIf="openSearchTemplate">
+    <div class="search-container" [hidden]="!openSearchTemplate">
+      <div class="search-results">
         <div class="search-categories mb-4">
           <mat-chip-list>
             <mat-chip *ngFor="let category of categories" [removable]="false"
@@ -45,7 +46,7 @@
         </div>
 
         <!-- Display search results here -->
-        <mat-list>
+        <mat-list *ngIf="recentSearches.length">
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
             <span class="text-sm clear-all font-normal">Clear All</span>
@@ -66,7 +67,8 @@
             </div>
             <ng-container *ngFor="let result of allSearchResults">
               <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-                <div matLine class="text-xs font-normal py-1 recent-search-text text-ellipse">{{ getResultName(result) }}
+                <div matLine class="text-xs font-normal py-1 recent-search-text text-ellipse">{{ getResultName(result)
+                  }}
                 </div>
               </mat-list-item>
             </ng-container>
