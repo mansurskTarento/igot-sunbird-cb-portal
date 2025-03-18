@@ -143,7 +143,7 @@ export class EventsV2Component {
         id: "card-content",
       },
       {
-        id: _.get(event, 'content.identifier'),
+        id: _.get(event, 'content.contentId'),
         type: "event"
       },
       {

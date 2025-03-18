@@ -4,10 +4,11 @@ import { EventService } from '../../services/events.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import * as _ from 'lodash'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, WsEvents } from '@sunbird-cb/utils-v2';
 import { Router } from '@angular/router';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
 
 @Component({
@@ -40,8 +41,9 @@ export class EventsCalendarComponent implements OnInit {
     private bottomSheetRef: MatBottomSheetRef<any>,
     @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any,
     private langtranslations: MultilingualTranslationsService,
-  ) { 
-    if(this.data) {
+    private events: libEventService,
+  ) {
+    if (this.data) {
       this.eventCalendarDetails = this.data
     }
   }
@@ -199,6 +201,20 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   redirectTo(myEvent: any) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'calendar-section',
+        id: "card-content",
+      },
+      {
+        id: _.get(myEvent, 'identifier'),
+        type: "event"
+      },
+      {
+        module: WsEvents.EnumTelemetrymodules.EVENTS,
+      }
+    )
     this.router.navigate([`/app/event-hub/home/${myEvent.identifier}`])
   }
 
