@@ -134,7 +134,7 @@ export class SeeAllComponent {
         id: "card-content",
       },
       {
-        id: _.get(event, event.identifier || ''),
+        id: _.get(event, 'widgetData.content.identifier', ''),
         type: "event"
       },
       {

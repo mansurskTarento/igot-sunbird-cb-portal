@@ -136,22 +136,14 @@ export class MyAllEventsComponent {
   }
 
   raiseTelemetry(event: any) {
-    let subType = ''
-    if (this.tabSelected === 'featuredEvents') {
-      subType = 'featured-events'
-    } else if (this.tabSelected === 'trendingEvents') {
-      subType = 'trending-events'
-    } else {
-      subType = 'recommended-events'
-    }
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
-        subType: subType,
+        subType: 'my-events',
         id: "card-content",
       },
       {
-        id: _.get(event, event.identifier || ''),
+        id: _.get(event, 'widgetData.content.identifier', ''),
         type: "event"
       },
       {
