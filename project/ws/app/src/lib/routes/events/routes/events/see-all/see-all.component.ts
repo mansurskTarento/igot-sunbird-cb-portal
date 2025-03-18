@@ -134,7 +134,7 @@ export class SeeAllComponent {
         id: "card-content",
       },
       {
-        id: _.get(event, event.identifier || ''),
+        id: _.get(event, 'widgetData.content.identifier', ''),
         type: "event"
       },
       {
@@ -143,7 +143,7 @@ export class SeeAllComponent {
     )
   }
 
-  private transformSkeletonToWidgets(
+  transformSkeletonToWidgets(
     strip: any
   ) {
     return [1, 2, 3, 4, 5, 6, 7, 8].map(_content => ({
@@ -158,7 +158,7 @@ export class SeeAllComponent {
     }))
   }
 
-  private transformContentsToWidgets(
+  transformContentsToWidgets(
     contents: NsContent.IContent[],
     strip: any,
   ) {

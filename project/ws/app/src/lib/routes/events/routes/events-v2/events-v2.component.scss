@@ -71,6 +71,15 @@
   }
 }
 
+.mBrowse {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.myEngagements-sm {
+  text-align: center;
+}
+
 @media only screen and (max-width: 768px) {
     .container-balanced {
         margin-top: 0;
