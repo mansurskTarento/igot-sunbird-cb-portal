@@ -1,8 +1,9 @@
-$font-family-sans: -apple-system, Lato, Montserrat, BlinkMacSystemFont, 'Segoe UI', Roboto,
-  'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-  'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-sans: -apple-system, Lato, Montserrat, BlinkMacSystemFont,
+  'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+  'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 $font-family-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
-$font-family-mono: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+$font-family-mono: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+  monospace;
 $font-family-open-sans: 'Open Sans';
 $font-family-lato: 'Lato';
 $font-family-montserrat: 'Montserrat';
@@ -30,17 +31,31 @@ $card-discuss-home-width: 400px;
 $letter-spacing: -0.05em;
 $word-spacing: 5px;
 $colorOrange: rgba(246, 153, 83, 1);
-$text-primary: #1B4CA1;
+$text-primary: #1b4ca1;
 $colorGreen: #5fa800;
-$colorRed: #D13924;
+$colorRed: #d13924;
 $overleyDarkBackground: #00000099;
 
-$brandAccentColor: #1B4CA1;
-$brandAccentDarkShade: #1B4CA129;
+$brandAccentColor: #1b4ca1;
+$brandAccentDarkShade: #1b4ca129;
 $greyShadeSaksham: #545454;
-$releventBtn: #276DE5;
-$releventBoxshadowHover: #276DE599;
+$releventBtn: #276de5;
+$releventBoxshadowHover: #276de599;
+$white: #ffffff;
+$black: #000000;
+$primaryDark600: #194593;
+$textRecentSearch: #241c15;
+$borderColor: #00000029;
+$textGreyShade1: #666666;
 
-$snackBarSuccess: #1D8923;
-$snackBarDanger: #D12E2E;
-$snackBarBoxshadow: #0000003D;
+$courseYellow: #f3962f;
+
+$snackBarSuccess: #1d8923;
+$snackBarSuccessShade: #1d892329;
+
+$snackBarDanger: #d12e2e;
+$snackBarBoxshadow: #0000003d;
+
+$chipStandardBackground: #eef1f6;
+
+$matCardBorderColor: #00000014;

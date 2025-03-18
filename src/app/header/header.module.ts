@@ -5,7 +5,7 @@ import { AppNavBarComponent } from '../component/app-nav-bar/app-nav-bar.compone
 import { RouterModule } from '@angular/router'
 import { GridLayoutModule, BtnFeatureModule, ErrorResolverModule, TourModule, StickyHeaderModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import { SearchModule } from '@ws/app/src/public-api'
+import { SearchV3Module, SearchModule } from '@ws/app/src/public-api'
 import { SharedModule } from '../shared/shared.module'
 import { FontSettingComponent } from './../component/font-setting/font-setting.component'
 import { TopRightNavBarComponent } from './../component/top-right-nav-bar/top-right-nav-bar.component'
@@ -38,6 +38,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     WidgetResolverModule,
     StickyHeaderModule,
     SearchModule,
+    SearchV3Module,
     RouterModule,
     GridLayoutModule,
     SharedModule,

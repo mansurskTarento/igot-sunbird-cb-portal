@@ -163,6 +163,7 @@ export class ProfileCardStatsComponent implements OnInit {
       this.countdata = {
         certificate: enrollList.userCourseEnrolmentInfo.certificatesIssued,
         inProgress: enrollList.userCourseEnrolmentInfo.coursesInProgress,
+        karmaPoints: enrollList.userCourseEnrolmentInfo.karmaPoints,
         learningHours: this.pipDuration.transform(enrollList.userCourseEnrolmentInfo.timeSpentOnCompletedCourses, 'hms'),
       }
     }
@@ -213,4 +214,12 @@ export class ProfileCardStatsComponent implements OnInit {
   redirectTo(name: string) {
     this.router.navigateByUrl(`app/person-profile/me?tab=1#${name}`)
   }
+
+  showMyActivities(): void {
+    const element = document.getElementById('weekly-wrapper');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  
 }

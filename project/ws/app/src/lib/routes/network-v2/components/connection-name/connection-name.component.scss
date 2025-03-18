@@ -28,16 +28,18 @@
 
 .name {
     text-transform: capitalize;
-    display: block;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-    overflow: hidden;
-    max-height: 3.6em;
-    line-height: 1.2em;
-    max-width: calc(100% - 30px);
-    display: inline-block;
     cursor: pointer;
-}
+    display: block;
+    display: -webkit-box;
+    max-width: 100%;
+    height: 2.1rem;
+    margin: 0 auto;
+    line-height: 1;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
 .designation {
     line-height: 21px;
