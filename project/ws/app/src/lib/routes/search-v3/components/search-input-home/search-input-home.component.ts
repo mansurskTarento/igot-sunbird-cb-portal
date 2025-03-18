@@ -102,6 +102,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         if (value) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
+        } else {
+          this.loaderSearching = false;
         }
       });
   }
@@ -389,7 +391,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       .nlpSearch(searchRequest)
       .then(async (response) => {
         if (response?.data && response?.data?.keywords) {
-          if(response?.data?.keywords.length > 0) {
+          if (response?.data?.keywords.length > 0) {
             this.responseNlpQuery = response?.data?.keywords[0]?.keyword;
           }
         } else {

@@ -199,15 +199,17 @@ mat-list-item {
 }
 
 .global-search {
-  height: 33px !important;
+  height: 30px !important;
   position: absolute !important;
-  right: 0;
-  border-radius: 0 99px 99px 0 !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) !important;
+  right: 3px;
 }
 
-.search-home-button {
-  margin-bottom: 2px;
+.disabled-search-btn {
+  background-color: #ffffff !important;
+  color: #999999 !important;
+  border: 1px solid #00000029 !important;
+}
+
+.disabled-search-btn.mat-flat-button[disabled] {
+  opacity: 100% !important;
 }
