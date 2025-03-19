@@ -38,7 +38,7 @@ export class Filters {
   constructor() {
     this.contentType = ['Course'];
     this.courseCategory = [];
-    this.status = [];
+    this.status = ['Live'];
   }
 }
 
@@ -117,22 +117,27 @@ export class SearchPeoplesRequest {
 export class SearchCommunitiesRequest {
   filterCriteriaMap: {
     status: string;
-    orgName: string;
+    orgName?: string[];
+    competencyArea?: string[]
+    topicName?: string[]
   };
   requestedFields: any[];
   pageNumber: number;
   pageSize: number;
+  facets: string[];
   searchString: string | null;
+  orderBy?: string;
+  orderDirection?: string;
 
   constructor() {
     this.filterCriteriaMap = {
       status: 'active',
-      orgName: '',
     };
     this.requestedFields = [];
     this.pageNumber = 0;
     this.pageSize = 3;
     this.searchString = null;
+    this.facets = ['topicName', 'orgName', 'competencyArea'];
   }
 }
 

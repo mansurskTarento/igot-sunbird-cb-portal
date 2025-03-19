@@ -31,13 +31,12 @@ import {
   SearchV4Request,
   SortType,
 } from '../../models/search-v3.model';
-import { forkJoin, from } from 'rxjs';
-import { map, mergeMap, toArray } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import {
   NsContent,
   WidgetUserService,
 } from '@sunbird-cb/collection/src/public-api';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../../../../../../../src/environments/environment';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
 
 @Component({
@@ -95,6 +94,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   coursesFacets = [];
   eventsFacets = [];
+  communitiesFacets = [];
   combinedFacets: any[] = [];
   compentencyKey!: NsContent.ICompentencyKeys;
   enrollmentDetails: any = [];
@@ -107,6 +107,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   currentUserDept = '';
   connectionRequestsSent!: any;
   queryParams: any;
+  typesOfEventsFilters: string[] = [];
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -298,8 +299,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestEvents
     );
     if (result.result && result.result?.Event) {
-      this.eventsSearchResults = result.result?.Event || [];
-      this.eventSearchTotalCount = result.result?.count;
+      if (this.typesOfEventsFilters.length) {
+        this.eventsSearchResults = this.processEventsResult(
+          result.result?.Event
+        );
+        this.eventSearchTotalCount = this.eventsSearchResults.length;
+      } else {
+        this.eventsSearchResults = result.result?.Event || [];
+        this.eventSearchTotalCount = result.result?.count;
+      }
       this.eventsFacets = result.result?.facets;
       this.eventsSearchResults.forEach((event: any) => {
         this.allResultsDepartmentName.add(event?.sourceName);
@@ -325,46 +333,33 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchcommunities() {
-    const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
-    // const uniqueDepartmentNames = ['Finance and Budget testing'];
-    this.searchRequestCommunities.pageSize = 10;
-    if (uniqueDepartmentNames.length > 0) {
-      from(uniqueDepartmentNames)
-        .pipe(
-          mergeMap((deptName) => {
-            const request = { ...this.searchRequestCommunities };
-            request.filterCriteriaMap.orgName = deptName;
-            return this.searchV3Service.searchCommunity(request);
-          }),
-          map((response) => {
-            const data = response?.result?.search_results?.data || [];
-            const totalCount =
-              response?.result?.search_results?.totalCount || 0;
-            const additionalInfo =
-              (response?.result?.search_results?.additionalInfo &&
-                response?.result?.search_results?.additionalInfo[0]) ||
-              [];
-
-            const enrichedData = data.map((item: any) => ({
-              ...item,
-              additionalInfo: additionalInfo,
-            }));
-
-            return { enrichedData, totalCount };
-          }),
-          toArray()
-        )
-        .subscribe((allResults) => {
-          this.communitiesSearchResults = allResults.reduce(
-            (acc, curr) => acc.concat(curr.enrichedData),
-            []
-          );
-          this.communitiesSearchTotalCount = allResults.reduce(
-            (sum, curr) => sum + curr.totalCount,
-            0
-          );
-        });
+    this.searchRequestCommunities.pageSize = this.initialPaginationSize;
+    this.searchRequestCommunities.searchString = this.statedata?.param || '';
+    const result = await this.searchV3Service.searchCommunity(
+      this.searchRequestCommunities
+    );
+    if (
+      result.result &&
+      result.result?.search_results?.data &&
+      result.result?.search_results?.data.length
+    ) {
+      this.communitiesSearchResults = result.result?.search_results?.data || [];
+      this.communitiesSearchTotalCount =
+        result.result?.search_results?.totalCount;
+      this.communitiesFacets = this.processCommunityFacets(
+        result.result?.search_results?.facets
+      );
+    } else {
+      this.communitiesSearchResults = [];
+      this.communitiesSearchTotalCount = 0;
     }
+  }
+
+  processCommunityFacets(facets: Record<string, any[]>): any {
+    return Object.keys(facets).map((key) => ({
+      name: key,
+      values: facets[key].map(({ value, count }) => ({ name: value, count })),
+    }));
   }
 
   applySearchFilter(selectedFilters: { [key: string]: any }) {
@@ -420,9 +415,19 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.constructQueryParam('communities');
           this.seeAllResult = SearchCategory.Communities;
         } else if (key === 'typeOfEvents') {
-          this.searchRequestEvents.request.filters.status.push(
-            ...selectedFilters[key]
-          );
+          this.typesOfEventsFilters = [...selectedFilters[key]];
+        } else if (key === 'competencyArea') {
+          this.searchRequestCommunities.filterCriteriaMap.competencyArea = [
+            ...selectedFilters[key],
+          ];
+        } else if (key === 'orgName') {
+          this.searchRequestCommunities.filterCriteriaMap.orgName = [
+            ...selectedFilters[key],
+          ];
+        } else if (key === 'topicName') {
+          this.searchRequestCommunities.filterCriteriaMap.topicName = [
+            ...selectedFilters[key],
+          ];
         } else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -432,7 +437,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     if (!Object.keys(selectedFilters).includes('typeOfEvents')) {
-      this.searchRequestEvents.request.filters.status = [];
+      this.typesOfEventsFilters = [];
     }
 
     this.deleteFilterKeys();
@@ -455,6 +460,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  // Delete the empty request param from resuest body
   deleteFilterKeys() {
     if (
       this.searchRequestCourse.request.filters.avgRating &&
@@ -495,10 +501,28 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.competencySubThemeKey
       ];
     }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap.competencyArea &&
+      this.searchRequestCommunities.filterCriteriaMap.competencyArea.length ===
+        0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap.competencyArea;
+    }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap.orgName &&
+      this.searchRequestCommunities.filterCriteriaMap.orgName.length === 0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap.orgName;
+    }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap.topicName &&
+      this.searchRequestCommunities.filterCriteriaMap.topicName.length === 0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap.topicName;
+    }
   }
 
   async seeAllResults(category: string) {
-    // this.seeAllResult.push(category);
     this.seeAllResult = category;
     if (category === SearchCategory.Courses) {
       this.eventSearchTotalCount = 0;
@@ -533,7 +557,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.eventSearchTotalCount = 0;
       this.peopleSearchTotalCount = 0;
       this.searchRequestCommunities.pageSize = this.initialPaginationSize;
-      this.searchcommunities();
+      await this.searchcommunities();
+      this.combinedFacets = [this.communitiesFacets];
     }
     this.isLoadingSearch = false;
     this.scrollToTop();
@@ -623,9 +648,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
         this.searchCourses();
-      } else if (this.seeAllResult === SearchCategory.Events) {
+      } 
+      else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.startDate = 'desc';
         this.searchEvents();
+      }
+      else if (this.seeAllResult === SearchCategory.Communities) {
+        this.searchRequestCommunities.orderDirection = 'desc'
+        this.searchcommunities();
       }
     } else if (event === SortType.HighestRated) {
       if (this.seeAllResult === '') {
@@ -722,5 +752,44 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     setTimeout(() => {
       this.initialPaginationPage = 1;
     });
+  }
+
+  processEventsResult(events: any) {
+    let processedEvents: any = [];
+    events.forEach((event: any) => {
+      if (
+        event.startDate &&
+        event.endDate &&
+        event.startTime &&
+        event.endTime
+      ) {
+        // Conver current time into milliseconds
+        let currentTime = new Date().getTime() / 1000;
+        // Combining date and time for start event
+        let evenStarttDate =
+          new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000;
+        // Combining date and time for end event
+        let eventEndDate =
+          new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000;
+        if (currentTime > eventEndDate) {
+          if (this.typesOfEventsFilters.includes('past events')) {
+            processedEvents.push(event);
+          }
+        } else if (
+          currentTime <= eventEndDate &&
+          currentTime >= evenStarttDate
+        ) {
+          if (this.typesOfEventsFilters.includes('live')) {
+            event.showLive = true;
+            processedEvents.push(event);
+          }
+        } else {
+          if (this.typesOfEventsFilters.includes('upcoming')) {
+            processedEvents.push(event);
+          }
+        }
+      }
+    });
+    return processedEvents;
   }
 }

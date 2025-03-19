@@ -136,7 +136,7 @@
   font-family: Lato;
   /* stylelint-enable */
   line-height: 16.8px;
-  color: #000000de;
+  color: $black-87;
 }
 
 .max-w-330 {
@@ -162,7 +162,8 @@
     font-weight: 600;
     font-size: 20px;
     line-height: 24.38px;
-    color: #4e5562;
+    color: $textGreyShade4;
+    margin-bottom: 8px;
   }
 }
 

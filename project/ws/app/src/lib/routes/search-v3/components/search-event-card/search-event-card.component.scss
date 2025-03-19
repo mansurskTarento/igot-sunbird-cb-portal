@@ -58,7 +58,7 @@
 }
 
 .course-content {
-//   padding-left: 16px;
+  //   padding-left: 16px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -95,7 +95,7 @@
   width: 24px;
   height: 24px;
   border-radius: 8px;
-  border: 1px solid #00000029;
+  border: 1px solid $borderColor;
 }
 
 .organization-name {
@@ -140,7 +140,7 @@
 }
 
 .karmayogi-verified span {
-  color: #1b2133;
+  color: $blueGrayDark;
   font-size: 10px;
   line-height: 12px;
 }

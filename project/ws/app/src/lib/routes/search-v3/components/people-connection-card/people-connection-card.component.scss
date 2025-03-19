@@ -63,11 +63,11 @@
 }
 
 .focus-btn {
-  border: 1px solid #1b4ca1 !important;
+  border: 1px solid $brandAccentColor !important;
 }
 
 .action-container .mat-btn-outline {
   height: 32px !important;
   padding: 8px 28px !important;
-  background: #1b4ca11a !important;
+  background: $brandAccentDarkShade2 !important;
 }

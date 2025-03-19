@@ -26,7 +26,7 @@ jest.mock('@ngx-translate/core', () => ({
 }), { virtual: true });
 
 // Mock environment
-jest.mock('src/environments/environment', () => ({
+jest.mock('../../../../../../../../../src/environments/environment', () => ({
   environment: {
     compentencyVersionKey: 'v4'
   }

@@ -188,6 +188,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
       if (queryParam.has('category')) {
         this.selectedSearchCategory = queryParam.get('category') || '';
+      } else {
+        this.selectedSearchCategory = '';
       }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
@@ -242,8 +244,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    // this.searchFromQuery(this.responseNlpQuery);
-    this.updateQuery(this.queryControl.value);
+    if (this.queryControl.value) {
+      this.updateQuery(this.queryControl.value);
+    } else {
+      this.searchFromQuery(this.responseNlpQuery);
+    }
   }
 
   async searchFromQuery(query: string) {
@@ -311,21 +316,18 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
       return;
     } else if (this.selectedSearchCategory === SearchCategory.Communities) {
-      if (courseSearchResult?.result?.content) {
-        const searchRequest = new SearchCommunitiesRequest();
-        const departmentName =
-          courseSearchResult.result.content[0].organisation[0];
-        if (departmentName) {
-          searchRequest.filterCriteriaMap.orgName = departmentName;
-
-          const communitySearchResult =
-            await this.searchV3Service.searchCommunity(searchRequest);
-
-          const results = communitySearchResult?.result?.search_results?.data;
-          this.allSearchResults = results || [];
-        } else {
-          this.allSearchResults = [];
-        }
+      const searchRequestCommunities = new SearchCommunitiesRequest();
+      searchRequestCommunities.searchString = query;
+      const result = await this.searchV3Service
+        .searchCommunity(searchRequestCommunities)
+        .catch(() => (this.allSearchResults = []));
+      if (
+        result.result &&
+        Object.keys(result.result).length > 0 &&
+        result.result?.search_results?.data &&
+        result.result?.search_results?.data.length
+      ) {
+        this.allSearchResults = result.result?.search_results?.data;
       } else {
         this.allSearchResults = [];
       }
@@ -399,5 +401,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         }
       })
       .catch();
+  }
+
+  openSearchTemplateF() {
+    this.openSearchTemplate = true
+    if(!this.selectedSearchCategory) {
+      this.searchFromQuery(this.responseNlpQuery);
+    }
   }
 }

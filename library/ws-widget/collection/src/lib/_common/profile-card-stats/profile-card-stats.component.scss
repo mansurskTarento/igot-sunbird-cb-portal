@@ -85,7 +85,7 @@
   position: relative;
   background-color: #e0e0e0;
   // height: 200px;
-  border-radius: 12px;
+  border-radius: 16px;
   // padding: 16px;
   position: relative;
   // border: 1px solid rgba(0, 0, 0, 0.08);
@@ -226,13 +226,15 @@
 .divider {
     // margin-top: 16px;
     border: 1px solid rgba(0,0,0, 0.08);
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 
 .profile-user-stats {
-  padding: 0 12px;
+  padding: 0 16px;
     .user-data-list {
-        padding: 8px 0;
+        padding: 10px 0;
         flex-wrap: wrap;
         .stats-data {
           // width: 33%;
@@ -683,4 +685,10 @@
   font-weight: 700;
   font-size: 16px;
   line-height: 16.8px;
+}
+
+.upward-arrow-btn {
+  height: 36px;
+  width: 36px;
+  padding: 6px !important;
 }

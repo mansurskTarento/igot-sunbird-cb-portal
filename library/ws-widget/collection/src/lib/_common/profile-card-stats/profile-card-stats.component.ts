@@ -216,10 +216,24 @@ export class ProfileCardStatsComponent implements OnInit {
   }
 
   showMyActivities(): void {
-    const element = document.getElementById('weekly-wrapper');
+    const element = document.getElementById('user-leaderboard');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
   
+  showWeeklyClapsSection() {
+    const element = document.getElementById('weekly-wrapper');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  redirectToContent(stats: any) {
+    if (stats?.key === 'karmaPoints') {
+      this.router.navigate(['/app/person-profile/karma-points']);
+    } else {
+      this.router.navigate(['/app/seeAll/new'], { queryParams: { key: 'continueLearning' } });
+    }
+  }
 }
