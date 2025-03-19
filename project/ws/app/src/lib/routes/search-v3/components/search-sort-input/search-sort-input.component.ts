@@ -21,13 +21,13 @@ export class SearchSortInputComponent implements AfterViewInit {
   @ViewChild('sortSelect') sortSelect!: ElementRef;
 
   ngAfterViewInit() {
-    this.adjustSelectWidth();
+    // this.adjustSelectWidth();
   }
 
   onChange(event: Event): void {
     this.selectedOption = (event.target as HTMLSelectElement).value;
     this.searchSorter.emit(this.selectedOption);
-    this.adjustSelectWidth();
+    // this.adjustSelectWidth();
   }
 
   adjustSelectWidth() {

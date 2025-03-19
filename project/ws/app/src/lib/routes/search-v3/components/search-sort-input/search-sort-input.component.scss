@@ -6,8 +6,9 @@
   border-radius: 8px;
   padding: 8px 8px 8px 0;
   display: inline-block;
-  min-width: 100px;
-  max-width: fit-content;
+  // min-width: 100px;
+  // max-width: fit-content;
+  max-width: 150px;
 }
 
 .sort-by-label {
@@ -42,7 +43,8 @@
 }
 
 .sort-select {
-  width: auto;
+  // width: auto;
+  width: 150px;
   padding: 0 24px 0 8px;
   appearance: none;
   -webkit-appearance: none;

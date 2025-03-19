@@ -310,7 +310,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           this.selectedFilters
         );
       }
-    } else {debugger
+    } else {
       facets = this.formattedFacets;
       const allFilters = _.flatMap(facets);
 
