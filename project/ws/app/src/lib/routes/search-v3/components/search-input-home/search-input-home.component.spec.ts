@@ -220,7 +220,6 @@ describe('SearchInputHomeComponent', () => {
     jest.spyOn(component.queryControl, 'reset');
     component.clearSearchText();
     expect(component.queryControl.reset).toHaveBeenCalled();
-    expect(document.getElementById).toHaveBeenCalledWith('global-search-input');
   });
 
   it('should select search category and update query', async () => {

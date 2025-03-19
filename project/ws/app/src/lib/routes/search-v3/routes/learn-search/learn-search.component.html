@@ -12,7 +12,7 @@
 
         <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
             <div class="ml-4">
-                <div class="result-meta my-3 flex items-center justify-between flex-wrap"
+                <div class="result-meta flex items-center justify-between flex-wrap"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
                     <div class="">
                         <span class="brand-color">"{{(courseSearchTotalCount + eventSearchTotalCount +
@@ -38,7 +38,7 @@
                     <ng-container
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-studies')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark"> {{ 'learnsearch.content' |
+                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> {{ 'learnsearch.content' |
                                 translate:{ count: courseSearchTotalCount } }}</p>
                             <ng-container *ngFor="let course of courseSearchResults">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
@@ -158,16 +158,16 @@
                     class="margin-top-l margin-bottom-s">
                 <div class="no-data-text font-bold text-sm my-4" i18n="search route no result">
                     {{ noResultMessage }}</div>
-                <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText1'
+                <!-- <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText1'
                     | translate}}</div>
                 <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText2'
-                    | translate}}</div>
-                <div class="action-search-btn flex gap-4 items-center mt-6">
+                    | translate}}</div> -->
+                <div class="action-search-btn flex gap-4 items-center mt-6 justify-center">
                     <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
                         (click)="navigateTo('page/home')">
                         {{'learnsearch.btnBackToHomepage' | translate}}</button>
-                    <button mat-flat-button class="mat-btn-flat cursor-pointer py-1">
-                        {{'learnsearch.btnExploreMore' | translate}}</button>
+                    <!-- <button mat-flat-button class="mat-btn-flat cursor-pointer py-1">
+                        {{'learnsearch.btnExploreMore' | translate}}</button> -->
                 </div>
 
             </div>
