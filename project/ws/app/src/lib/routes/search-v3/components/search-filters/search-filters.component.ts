@@ -28,7 +28,7 @@ import {
 } from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../../../../../../../src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'ws-app-search-filters',
@@ -108,16 +108,18 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.categoryType = this.categoryTypeDup.filter(
         (type) => type.name === searchCategory
       );
-      this.categoryType[0].isChecked = true;
-      this.selectedFilters[this.categoryType[0].name] = [
-        this.categoryType[0].name,
-      ];
-      this.selectedFilterChips = [
-        {
-          value: this.categoryType[0].displayName,
-          type: this.categoryType[0].name,
-        },
-      ];
+      if(this.categoryType.length) {
+        this.categoryType[0].isChecked = true;
+        this.selectedFilters[this.categoryType[0].name] = [
+          this.categoryType[0].name,
+        ];
+        this.selectedFilterChips = [
+          {
+            value: this.categoryType[0].displayName,
+            type: this.categoryType[0].name,
+          },
+        ];
+      }
 
       if (searchCategory === SearchCategory.Events) {
         this.formattedFacets['typeOfEvents'] = TypeOfEvents;

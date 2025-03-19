@@ -114,7 +114,7 @@
 }
 
 .recent-search-title {
-  color: #241c15a6;
+  color: $textGreyShade3;
   /* stylelint-disable */
   font-family: Lato;
   /* stylelint-enable */
@@ -141,7 +141,7 @@ mat-list-item {
   padding: 0 10px;
   border-radius: 4px;
   &:hover {
-    background-color: #e8edf6;
+    background-color: $matListHoverBg;
   }
 }
 

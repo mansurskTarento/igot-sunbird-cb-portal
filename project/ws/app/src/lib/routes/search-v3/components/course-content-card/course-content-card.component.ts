@@ -19,6 +19,9 @@ import { CertificateService } from '../../../certificate/services/certificate.se
 import { Router } from '@angular/router';
 import { WidgetContentLibService } from '@sunbird-cb/consumption';
 // import { CertificateDialogComponent } from '@sunbird-cb/consumption/lib/_common/dialog-components/certificate-dialog/certificate-dialog.component';
+
+const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
+const NEW_CONTENT_THRESHOLD_DAYS = 14;
 @Component({
   selector: 'ws-app-course-content-card',
   templateUrl: './course-content-card.component.html',
@@ -42,8 +45,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private events: EventService,
     private certificateService: CertificateService,
     private router: Router,
-    private contSvc: WidgetContentLibService,
-
+    private contSvc: WidgetContentLibService
   ) {}
 
   ngOnInit(): void {
@@ -121,9 +123,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     const createdDate = new Date(createdOn);
     const currentDate = new Date();
     const diffInMs = currentDate.getTime() - createdDate.getTime();
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    const diffInDays = diffInMs / MILLISECONDS_IN_A_DAY;
 
-    return diffInDays <= 14;
+    return diffInDays <= NEW_CONTENT_THRESHOLD_DAYS;
   }
 
   async getRedirectUrlData(content: any) {

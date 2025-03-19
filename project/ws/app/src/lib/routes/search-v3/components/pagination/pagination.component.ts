@@ -61,8 +61,8 @@ export class PaginationComponent implements OnInit {
     );
 
     let currentIndex = this.showingArray[this.currentPage - 1];
-    let lowerPagination = this.totalItemsCount > 0 ? currentIndex[0] + 1 : '';
-    let upperPagination = this.totalItemsCount > 0 ? currentIndex[1] : '';
+    let lowerPagination = this.totalItemsCount ? currentIndex[0] + 1 : '';
+    let upperPagination = this.totalItemsCount ? currentIndex[1] : '';
 
     this.lastPage = paginationLength[paginationLength.length - 1];
     this.firstPage = paginationLength[0];
@@ -81,7 +81,7 @@ export class PaginationComponent implements OnInit {
     let delta = 5;
     let left = current - delta;
     let right = current + delta + 1;
-    let range = [];
+    let range: any = [];
     let l;
     this.rangeWithDots = [];
 

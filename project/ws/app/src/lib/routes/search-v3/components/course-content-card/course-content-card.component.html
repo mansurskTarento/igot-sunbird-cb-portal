@@ -63,7 +63,7 @@
                         </div>
                         <!-- Bookmark button -->
                         <div class="flex items-center gap-3">
-                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates?.length > 0">
+                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates">
                                 <div matRipple (click)="downloadCertificate(courseEnrollment)"
                                     class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
                                     <mat-icon [svgIcon]="'download'" class="mb-1"
@@ -93,7 +93,7 @@
                     {{content?.name}}
                 </h2>
                 <div class="course-tags mb-3 font-normal text-ellipse"
-                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey].length > 0">
+                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]">
                     <span>Sub Theme - </span>
                     <ng-container *ngFor="let keyword of content[compentencyKey.vKey]; let isLast = last">
                         <span class=""> {{keyword[compentencyKey.vCompetencySubTheme]}} <span *ngIf="!isLast"> ·
