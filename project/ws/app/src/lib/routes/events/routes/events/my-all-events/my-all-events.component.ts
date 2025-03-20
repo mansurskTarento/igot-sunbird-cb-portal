@@ -2,10 +2,11 @@ import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../../services/events.service';
-import { MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash'
 import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'ws-app-my-all-events',
@@ -30,6 +31,8 @@ export class MyAllEventsComponent {
     private eventSvc: EventService,
     private langtranslations: MultilingualTranslationsService,
     private events: libEventService,
+    private configSvc: ConfigurationsService,
+    private datePipe: DatePipe,
   ) {
     this.titles = [
       { title: 'events', url: '/app/event-hub/home', icon: 'event' },
@@ -62,60 +65,51 @@ export class MyAllEventsComponent {
       this.contentDataList = [...this.contentDataList, ...this.transformSkeletonToWidgets(this.contnet)]
     }
     console.log("tabSelected ", this.tabSelected)
-    let resourceType = ''
+    let eventType = ''
     if (this.tabSelected === 'today') {
       this.tabIndex = 0
-      resourceType = 'Karmayogi Talks'
+      eventType = 'presentEvent'
     } else if (this.tabSelected === 'upcoming') {
-      resourceType = 'Karmayogi Saptah'
+      eventType = 'futureEvent'
       this.tabIndex = 1
     } else if (this.tabSelected === 'past') {
-      resourceType = 'Webinar'
+      eventType = 'pastEvent'
       this.tabIndex = 2
     }
-    let requestBody: any = {
-      locale: [
-        'en',
-      ],
-      query: '',
+    const requestBody = {
       request: {
-        query: '',
-        filters: {
-          status: ['Live'],
-          contentType: 'Event',
-          category: 'Event',
-          resourceType: resourceType
-        },
-        sort_by: {
-          startDate: 'desc',
-        },
-        limit: this.pageLimit || 12,
-        offset: (this.pageLimit * this.currentPage) || 0
-      },
+        retiredCoursesEnabled: true,
+        status: 'All',
+        calendarEventEnabled: false,
+        eventType: eventType,
+        eventEndDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+      }
     }
     if (this.dataScription) {
       this.dataScription.unsubscribe()
       this.dataScription = null
     }
     this.isLoading = true
-    //this.contentDataList = this.transformSkeletonToWidgets(this.contnet)
-    this.dataScription = this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
-      let response: any = _.get(resp, 'result.Event', [])
-      this.contentDataList = this.contentDataList.slice(0, -12)
-      this.total = this.contentDataList.length
-      this.showNextPage = this.total < _.get(resp, 'result.count', 0)
-      if (response.length) {
-        this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(response, {})]
-        this.currentPage = this.currentPage + 1
-      } else {
+    if (_.get(this.configSvc, 'userProfile.userId')) {
+      this.eventSvc.getUserEnrollEvents(_.get(this.configSvc, 'userProfile.userId'), requestBody).subscribe((resp: any) => {
+        let response: any = _.get(resp, 'result.events', [])
+        this.contentDataList = this.contentDataList.slice(0, -12)
+        this.total = this.contentDataList.length
+        this.showNextPage = this.total < _.get(resp, 'result.count', 0)
+        if (response.length) {
+          this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(response, {})]
+          this.currentPage = this.currentPage + 1
+        } else {
+          this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
+        }
+        this.isLoading = false
+      }, error => {
+        console.log("error", error)
+        this.contentDataList = this.contentDataList.slice(0, -12)
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
-      }
-      this.isLoading = false
-    }, error => {
-      console.log("error", error)
-      this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
-      this.isLoading = false
-    })
+        this.isLoading = false
+      })
+    }
   }
 
   isLiveEvent(event: any) {
