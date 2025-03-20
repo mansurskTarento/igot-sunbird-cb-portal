@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { EventsHomeV2Component } from './events-home-v2.component';
 
 jest.mock('./events-home-v2.component', () => ({
@@ -8,9 +9,13 @@ jest.mock('./events-home-v2.component', () => ({
 
 describe('EventsHomeV2Component', () => {
   let component: any;
+  let mockRouter: jest.Mocked<Router>;
 
   beforeEach(() => {
-    component = new EventsHomeV2Component();
+    mockRouter = {
+      navigate: jest.fn(),
+    } as any;
+    component = new EventsHomeV2Component(mockRouter);
   });
 
   it('should create the component', () => {
