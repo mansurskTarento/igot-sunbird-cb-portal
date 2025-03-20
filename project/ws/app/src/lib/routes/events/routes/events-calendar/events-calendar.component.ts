@@ -28,9 +28,11 @@ export class EventsCalendarComponent implements OnInit {
     hasRegisteredEvent: Boolean,
     isCurrentMonth: Boolean
   }[] = [];
+  calandarLoaders = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
   weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   userEventsList: any = []
   selectedDateEvents: any = []
+  calendarLoading = false
 
   constructor(
     private datePipe: DatePipe,
@@ -57,19 +59,29 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   getEnrolledEvents() {
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+
+    const firstDay = this.datePipe.transform(new Date(year, month, 1), 'yyyy-MM-dd');
+    const lastDay = this.datePipe.transform(new Date(year, month + 1, 0), 'yyyy-MM-dd');
     const requestBody = {
       request: {
         retiredCoursesEnabled: true,
-        status: 'All'
+        status: 'All',
+        calendarEventEnabled: false,
+        eventStartDate: firstDay,
+        eventEndDate: lastDay
       }
     }
+    this.userEventsList = []
+    this.calendarLoading = true
 
     if (_.get(this.configSvc, 'userProfile.userId')) {
       this.eventService.getUserEnrollEvents(_.get(this.configSvc, 'userProfile.userId'), requestBody).subscribe({
         next: (res: any) => {
           this.userEventsList = _.get(res, 'result.events')
           this.generateCalendarDays();
-          this.getSelectedDateEvents()
+          this.getSelectedDateEvents() 
         },
         error: (error: HttpErrorResponse) => {
           this.generateCalendarDays();
@@ -125,6 +137,7 @@ export class EventsCalendarComponent implements OnInit {
       }
       this.daysInMonth.push(details);
     }
+    this.calendarLoading = false
   }
 
   hasEvent(dateToCheck: Date): boolean {
@@ -147,13 +160,13 @@ export class EventsCalendarComponent implements OnInit {
   prevMonth() {
     this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
     this.currentMonthYearText = this.datePipe.transform(this.currentMonth, 'MMM yyyy') as string;
-    this.generateCalendarDays();
+    this.getEnrolledEvents();
   }
 
   nextMonth() {
     this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
     this.currentMonthYearText = this.datePipe.transform(this.currentMonth, 'MMM yyyy') as string;
-    this.generateCalendarDays();
+    this.getEnrolledEvents();
   }
 
   isToday(date: Date): boolean {
