@@ -194,7 +194,7 @@ export class MyAllEventsComponent {
       widgetHostClass: 'mb-2',
       widgetData: {
         content: {
-          ...content,
+          ...content.event,
           showLive: this.isLiveEvent(content),
         },
         ...(content.batch && {

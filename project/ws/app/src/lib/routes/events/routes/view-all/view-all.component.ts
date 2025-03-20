@@ -133,26 +133,6 @@ export class ViewAllComponent {
           }
         ]
       },
-      eventDuration: {
-        name: "Event Duration",
-        displayName: "Event Duration",
-        label: "Event Duration",
-        viewMore: false,
-        values: [
-          {
-            key: "lessThanHour",
-            name: "Less than a hour",
-          },
-          {
-            key: "2to3hrs",
-            name: "2 to 3hr",
-          },
-          {
-            key: "3to5hts",
-            name: "3 to 5hr",
-          }
-        ]
-      },
     }
   }
 
