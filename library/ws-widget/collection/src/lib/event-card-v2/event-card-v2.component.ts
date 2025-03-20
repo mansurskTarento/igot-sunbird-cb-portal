@@ -24,6 +24,7 @@ export class EventCardV2Component extends WidgetBaseComponent
   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
   defaultThumbnail = ''
   defaultSLogo = ''
+  event: any
 
   sourceLogos: NsInstanceConfig.ISourceLogo[] | undefined
 
@@ -58,6 +59,7 @@ export class EventCardV2Component extends WidgetBaseComponent
       this.sourceLogos = instanceConfig.sources
       this.defaultSLogo = instanceConfig.logos.defaultSourceLogo || ''
     }
+    this.event = this.widgetData.content
   }
 
   getTime(minutes: number): string {
