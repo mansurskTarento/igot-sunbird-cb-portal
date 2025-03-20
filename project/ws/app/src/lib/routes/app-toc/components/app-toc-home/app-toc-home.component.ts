@@ -213,7 +213,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   mobile1200: any
   assessmentStrip: any
   learnAdvisoryData: any
-  contentCreatorData: any =  []
+  contentCreatorData: any = []
   // randomlearnAdvisoryObj: any
   // learnAdvisoryDataLength: any
 
@@ -300,7 +300,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           if (ratingsDiv) {
             this.scrollLimit = ratingsDiv.getBoundingClientRect().bottom as any
           }
-        },         500)
+        }, 500)
       }
 
       if (document.getElementById('contentContainer')) {
@@ -360,7 +360,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
-          },                                                                      (error: HttpErrorResponse) => {
+          }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
             }
@@ -375,7 +375,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
             this.skeletonLoader = false
           } else {
             this.fetchUserEnrollmentData();
-            
+
           }
           this.initialrouteData = data
           this.banners = data.pageData.data.banners
@@ -451,14 +451,14 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (recommendedCoursesId) {
         this.recommendedCoursesId = recommendedCoursesId
         const response = await this.userServiceLib.getRecommendedCoursesSakshamAI(recommendedCoursesId).toPromise()
-        if(response.feedbacks.length) {
+        if (response.feedbacks.length) {
           this.feedbackGiven = response.feedbacks.find((feedback: any) => feedback?.course_id === this.courseID)
         }
       }
       if (recommendedCoursesId) {
         this.recommendedCoursesId = recommendedCoursesId
         const response = await this.userServiceLib.getRecommendedCoursesSakshamAI(recommendedCoursesId).toPromise()
-        if(response.feedbacks.length) {
+        if (response.feedbacks.length) {
           this.feedbackGiven = response.feedbacks.find((feedback: any) => feedback?.course_id === this.courseID)
         }
       }
@@ -481,7 +481,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     if (this.content) {
       const contentName = this.content.name.trim()
       if (this.content.creatorContacts) {
-       this.contentCreatorData =  this.handleParseJsonData(this.content.creatorContacts)
+        this.contentCreatorData = this.handleParseJsonData(this.content.creatorContacts)
       }
       if ((contentName).toLowerCase() === this.dakshtaName.toLowerCase()) {
         this.showBtn = true
@@ -514,7 +514,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       }
     }
 
-    
+
   }
 
   // displayRandomlearnAdvisoryData(): void {
@@ -650,7 +650,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.openSnackbar('Karma points are successfully claimed.')
       // this.getUserEnrollmentList()
       this.checkIfUserEnrolled()
-    },                                                  (error: any) => {
+    }, (error: any) => {
       // tslint:disable:no-console
       console.log(error)
       this.openSnackbar('something went wrong.')
@@ -664,10 +664,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
     // Get Time for the batch
     this.timerUnsubscribe = this.timerService.getTimerData()
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_timer: any) => {
-      this.timer = _timer
-    })
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_timer: any) => {
+        this.timer = _timer
+      })
   }
 
   handleBreadcrumbs() {
@@ -755,9 +755,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           const minutes = Math.floor((this.startDateDifference % (1000 * 60 * 60)) / (1000 * 60))
           return (`${days} Days : ${hours} Hours : ${minutes} Minutes`)
         }
-          return 'NA'
-      }
         return 'NA'
+      }
+      return 'NA'
       // if (_.get(batch, 'startDate') && moment(_.get(batch, 'startDate')).isAfter()) {
       //   return moment(_.get(batch, 'startDate')).from(now)
       // }
@@ -812,7 +812,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.endDate = (_.get(batch, 'endDate'))
         if (this.endDate) {
           const startDateTime = this.startDate && new Date(this.startDate).getTime()
-          const endDateTime = this.endDate && new Date(this.endDate).getTime()
+          let endDate = this.endDate && new Date(this.endDate)
+          endDate.setHours(23, 59, 59, 999)
+          const endDateTime = endDate.getTime()
           this.startDateDifference = now - startDateTime
           this.endDateDifference = endDateTime - now
           if (this.endDateDifference > 0 && this.startDateDifference > 0 && batch.status !== 2) {
@@ -959,7 +961,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     })
 
     this.tocSvc.contentLoader.next(false)
-    
+
   }
 
   getUserRating(fireUpdate: boolean) {
@@ -970,7 +972,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (this.content && this.content.identifier && this.content.primaryCategory) {
         this.ratingSvc.getRating(this.content.identifier, this.content.primaryCategory, this.userId).subscribe(
           (res: any) => {
-            
+
             if (res && res.result && res.result.response) {
               this.userRating = res.result.response
               if (fireUpdate) {
@@ -990,7 +992,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (this.contentSource && this.contentSource.nativeElement.offsetHeight > 44) {
         this.sourceEllipsis = true
       }
-    },         250)
+    }, 250)
   }
 
   // private getUserEnrollmentList() {
@@ -1197,10 +1199,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.enrollBtnLoading = true
       this.changeTab = !this.changeTab
       this.raiseEnrollTelemetry()
-      if(this.recommendedCoursesId) {
+      if (this.recommendedCoursesId) {
         this.raiseEnrollTelementryForSakshamAIGenerated()
       }
-      if(this.recommendedCoursesId) {
+      if (this.recommendedCoursesId) {
         this.raiseEnrollTelementryForSakshamAIGenerated()
       }
       const batchData = this.contentReadData && this.contentReadData.batches && this.contentReadData.batches[0]
@@ -1252,8 +1254,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
                 })
               setTimeout(() => {
                 // this.getUserEnrollmentList()
-                   this.checkIfUserEnrolled()
-              },         2000)
+                this.checkIfUserEnrolled()
+              }, 2000)
             } else {
               this.navigateToPlayerPage(req.request.batchId)
             }
@@ -1827,7 +1829,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       }
       this.findACPB()
       this.getKarmapointsLimit()
-    },                                    (_err: any) => {
+    }, (_err: any) => {
       this.tocSvc.changeServerDate(new Date().getTime())
     })
   }
@@ -1960,17 +1962,17 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         subType: 'enroll',
         id: this.content ? this.content.identifier : '',
         target: {
-          id: this.recommendedCoursesId, 
+          id: this.recommendedCoursesId,
           ver: "1.0",
           type: "igot-ai"
-         },
+        },
       } as any,
       {
         id: this.content ? this.content.identifier : '',
         type: this.content ? this.content.primaryCategory : '',
       },
       {
-        pageId: `/app/toc/${this.content?.identifier}/overview_btn-enroll`,        
+        pageId: `/app/toc/${this.content?.identifier}/overview_btn-enroll`,
         module: WsEvents.EnumTelemetrymodules.CONTENT,
       }
     )
@@ -2044,8 +2046,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       {
         type: 'click',
         id: "view-assessment",
-        subType:"anonymous-assessment",
-      },{},
+        subType: "anonymous-assessment",
+      }, {},
       {
         module: 'Landing Page',
       })
@@ -2057,34 +2059,34 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     let request: any = {
       "request": {
         "retiredCoursesEnabled": true,
-          "courseId": [identifier]
+        "courseId": [identifier]
       }
     }
     this.enrollSvc.fetchEnrollContentData(request).subscribe(async (res: any) => {
-    
-      
-      if(res && res.result && res.result.courses && res.result.courses.length) {
+
+
+      if (res && res.result && res.result.courses && res.result.courses.length) {
         this.userEnrollmentList = res.result.courses
-        
-        let completedContentFlagData:any = this.userEnrollmentList && 
-             this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
-        if(completedContentFlagData && completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
+
+        let completedContentFlagData: any = this.userEnrollmentList &&
+          this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
+        if (completedContentFlagData && completedContentFlagData.completionPercentage && completedContentFlagData.completionPercentage === 100) {
           this.contentViewEventForNetCore('complete')
         }
         this.dataTransferSvc.setEnrollData(this.userEnrollmentList)
-        if(this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
+        if (this.contentLibSvc && this.contentLibSvc.oneStepResumeEnable) {
           // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
 
-          const foundContent = this.userEnrollmentList && 
-             this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
+          const foundContent = this.userEnrollmentList &&
+            this.userEnrollmentList.find((el: any) => el.collectionId === this.content?.identifier)
           let urlData = await this.contentLibSvc.getResourseLink(this.content, [foundContent], true)
 
           // let urlData = await this.contentLibSvc.getResourseLink(this.content, this.userEnrollmentList, true)
-          if(urlData && urlData.url && urlData.url.includes('app/toc')) {
+          if (urlData && urlData.url && urlData.url.includes('app/toc')) {
             this.checkIfUserEnrolled()
           } else {
             this.contentLibSvc.oneStepResumeEnable = false
-            if (urlData && urlData.url ) {
+            if (urlData && urlData.url) {
               this.router.navigate(
                 [urlData.url],
                 {
@@ -2092,15 +2094,15 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
                 })
             }
           }
-          
+
         } else {
-        this.checkIfUserEnrolled()
+          this.checkIfUserEnrolled()
         }
       } else {
         this.userEnrollmentList = []
         this.checkIfUserEnrolled()
       }
-     }) 
+    })
   }
 
 
@@ -2148,7 +2150,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         if (enrolledCourse && enrolledCourse.issuedCertificates &&
           enrolledCourse.issuedCertificates.length) {
           const certificate: any = enrolledCourse.issuedCertificates.sort((a: any, b: any) =>
-              new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
+            new Date(b.lastIssuedOn).getTime() - new Date(a.lastIssuedOn).getTime())
           const certId = certificate[0].identifier
           this.certId = certId
           if (this.content) {
@@ -2214,7 +2216,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.tocSvc.contentLoader.next(false)
       }
 
-     
+
     }
 
     this.skeletonLoader = false
@@ -2231,7 +2233,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       panelClass: ['relevent-feedback-dialog'],
     })
     dialogRef.afterClosed().subscribe((result: any) => {
-      if(result) {
+      if (result) {
         this.saveFeedback(result, 0);
         dialogRef.close();
       } else {
@@ -2239,65 +2241,64 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       }
     })
   }
-  
-  contentViewEventForNetCore(eventType:any) {
+
+  contentViewEventForNetCore(eventType: any) {
     if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
       && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
-    ) { 
+    ) {
       let payload: any = {}
       // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
       //   payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
       // }
-      if(this.content && this.content.name) {
+      if (this.content && this.content.name) {
         payload['content_name'] = this.content.name
       }
-      if(this.content && this.content.courseCategory) {
+      if (this.content && this.content.courseCategory) {
         payload['content_category'] = this.content.courseCategory
       }
-      if(this.content && this.content.identifier) {
+      if (this.content && this.content.identifier) {
         payload['content_id'] = this.content.identifier
       }
       // if(this.content && this.content.name) {
-        payload['content_url'] = window.location.href
+      payload['content_url'] = window.location.href
       // }
-      if(this.content && this.content.appIcon) {
+      if (this.content && this.content.appIcon) {
         payload['content_image'] = this.content.appIcon
       }
-      if(this.content && this.content.duration) {
+      if (this.content && this.content.duration) {
         payload['content_duration'] = this.content.duration && Number(this.content.duration) > 0 ? Number(this.content.duration) : 0
       } else {
         payload['content_duration'] = 0
       }
-      if(this.content && this.content.avgRating
+      if (this.content && this.content.avgRating
       ) {
         payload['content_rating'] = this.content.avgRating
       }
-      if(this.content && this.content.totalNoOfRating) {
+      if (this.content && this.content.totalNoOfRating) {
         payload['no_users_rated'] = this.content.totalNoOfRating
       }
       // if(this.content && this.content.name) {
-        payload['learning_path_content'] = this.userEnrollmentList && this.userEnrollmentList.length ? true : false
+      payload['learning_path_content'] = this.userEnrollmentList && this.userEnrollmentList.length ? true : false
       // }
-      if(this.content && this.content.source) {
+      if (this.content && this.content.source) {
         payload['content_provider_name'] = this.content.source
       }
       console.log('payload', payload)
-      if(eventType === 'view') {
+      if (eventType === 'view') {
         this.netCoreService.trackEventForContentAndEvent('content_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       } else if (eventType === 'enroll') {
         this.netCoreService.trackEventForContentAndEvent('content_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       } else if (eventType === 'complete') {
         this.netCoreService.trackEventForContentAndEvent('content_completion', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
       }
-      
+
     }
   }
 
-  secondsToTime(d:any)
-  {
+  secondsToTime(d: any) {
     d = Number(d);
     var h = Math.floor(d / 3600);
     var m = Math.floor(d % 3600 / 60);
@@ -2306,7 +2307,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
     var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
     var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return hDisplay + mDisplay + sDisplay; 
+    return hDisplay + mDisplay + sDisplay;
   }
 
 
@@ -2318,15 +2319,15 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       "comments": comment,
       "user_id": this.configSvc.userProfile?.userId || ''
     }
-    const response = await this.contentLibSvc.saveFeedbackSakshamAI(payload).toPromise().catch(() => {})
-    if(response && response?.message) {
+    const response = await this.contentLibSvc.saveFeedbackSakshamAI(payload).toPromise().catch(() => { })
+    if (response && response?.message) {
       this.matSnackbarNew.open(
         'Thank you for your feedback.', 'X',
         { duration: SNACKBAR_DURATION, panelClass: ['success'] }
       );
       // this.router.navigate([], { queryParams: { g: null }, queryParamsHandling: 'merge' });
-      this.feedbackGiven = {course_id: this.courseID, rating: rating, comments: comment}
-      
+      this.feedbackGiven = { course_id: this.courseID, rating: rating, comments: comment }
+
     } else if (!response) {
       this.matSnackbarNew.open(
         'Something is wrong. Please try again later.', 'X',

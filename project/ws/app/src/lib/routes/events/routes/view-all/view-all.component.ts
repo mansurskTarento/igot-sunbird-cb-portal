@@ -31,7 +31,7 @@ export class ViewAllComponent {
   currentPage: number = 0
   pageLimit: number = 9
   searchControl = new UntypedFormControl('')
-  private dataScription: Subscription | null = null
+  dataScription: Subscription | null = null
   isLoading = false
   total = 0
   showNextPage = false

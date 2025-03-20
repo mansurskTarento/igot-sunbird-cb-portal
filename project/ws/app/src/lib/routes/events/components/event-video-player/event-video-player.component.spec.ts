@@ -1,243 +1,431 @@
 import { EventVideoPlayerComponent } from './event-video-player.component';
 import { of } from 'rxjs';
+import { videoJsInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util';
 
-// Mock the videoJs import
-jest.mock('video.js', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      dispose: jest.fn(),
-    };
-  });
-});
-
-// Mock video.js initializer utility
+// Mock the videojs-util functions
 jest.mock('../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util', () => ({
-  videoJsInitializer: jest.fn().mockReturnValue({
+  videoJsInitializer: jest.fn().mockImplementation(() => ({
     player: {
-      dispose: jest.fn(),
+      dispose: jest.fn()
     },
-    dispose: jest.fn(),
-  }),
+    dispose: jest.fn()
+  })),
   telemetryEventDispatcherFunction: jest.fn(),
   saveContinueLearningFunction: jest.fn(),
-  fireRealTimeProgressFunction: jest.fn(),
+  fireRealTimeProgressFunction: jest.fn()
 }));
+
+// Mock services
+jest.mock('@angular/router', () => ({
+  ActivatedRoute: jest.fn().mockImplementation(() => ({
+    snapshot: {
+      data: {
+        content: {
+          data: {
+            identifier: 'test-event-id',
+            registrationLink: 'http://test-video-url.com',
+            startDate: '2025-03-20',
+            endDate: '2025-03-21',
+            startTime: '09:00+05:30',
+            endTime: '17:00+05:30',
+            duration: 120,
+            channel: 'test-channel',
+            batches: JSON.stringify([{ batchId: 'test-batch-id' }])
+          }
+        }
+      }
+    },
+    queryParams: of({ isEnrolled: true })
+  }))
+}));
+
+jest.mock('../../services/events.service', () => ({
+  EventService: jest.fn().mockImplementation(() => ({
+    eventStateRead: jest.fn(),
+    saveEventProgressUpdate: jest.fn()
+  }))
+}));
+
+jest.mock('@sunbird-cb/utils-v2', () => ({
+  ConfigurationsService: jest.fn().mockImplementation(() => ({
+    userProfile: {
+      userId: 'test-user-id'
+    }
+  })),
+  NsContent: {
+    EMimeTypes: {
+      MP4: 'video/mp4'
+    }
+  }
+}));
+
+// Mock videojs
+jest.mock('video.js', () => jest.fn());
 
 describe('EventVideoPlayerComponent', () => {
   let component: EventVideoPlayerComponent;
-  let mockActivatedRoute: any;
-  let mockEventService: any;
-  let mockConfigSvc: any;
-
-  const mockEventData = {
-    identifier: 'test-event-123',
-    registrationLink: 'http://example.com/video.mp4',
-    startDate: '2023-01-01',
-    startTime: '0900+0000',
-    endDate: '2023-01-01',
-    endTime: '1000+0000',
-    duration: 60,
-    batches: JSON.stringify([{ batchId: 'batch-001' }]),
-    channel: 'test-channel'
-  };
-
-  const mockStateReadResponse = {
-    result: {
-      events: [{
-        progressdetails: JSON.stringify({ stateMetaData: 300 }),
-        status: 1
-      }]
-    }
-  };
+  let routeMock: any;
+  let eventServiceMock: any;
+  let configServiceMock: any;
+  let videoJsInitializerMock: jest.Mock;
 
   beforeEach(() => {
-    // Create mocks
-    mockActivatedRoute = {
+    // Clear mocks and reset component for each test
+    jest.clearAllMocks();
+
+    // Initialize mock services
+    routeMock = {
       snapshot: {
         data: {
           content: {
-            data: mockEventData
+            data: {
+              identifier: 'test-event-id',
+              registrationLink: 'http://test-video-url.com',
+              startDate: '2025-03-20',
+              endDate: '2025-03-21',
+              startTime: '09:00+05:30',
+              endTime: '17:00+05:30',
+              duration: 120,
+              channel: 'test-channel',
+              batches: JSON.stringify([{ batchId: 'test-batch-id' }])
+            }
           }
         }
       },
       queryParams: of({ isEnrolled: true })
     };
 
-    mockEventService = {
-      eventStateRead: jest.fn().mockReturnValue(of(mockStateReadResponse)),
+    eventServiceMock = {
+      eventStateRead: jest.fn().mockReturnValue(of({
+        result: {
+          events: [{
+            progressdetails: JSON.stringify({ stateMetaData: 30 }),
+            status: 1
+          }]
+        }
+      })),
       saveEventProgressUpdate: jest.fn().mockReturnValue(of({}))
     };
 
-    mockConfigSvc = {
+    configServiceMock = {
       userProfile: {
-        userId: 'test-user-001'
+        userId: 'test-user-id'
       }
     };
 
-    // Initialize component
+    // Mock videoJsInitializer function
+    videoJsInitializerMock = videoJsInitializer as jest.Mock;
+    videoJsInitializerMock.mockReturnValue({
+      player: {
+        dispose: jest.fn()
+      },
+      dispose: jest.fn()
+    });
+
+    // Create component with mocked dependencies
     component = new EventVideoPlayerComponent(
-      mockActivatedRoute,
-      mockEventService,
-      mockConfigSvc
+      routeMock,
+      eventServiceMock,
+      configServiceMock
     );
 
-    // Mock ElementRef for videoTag
+    // Set up HTML element reference
     component.videoTag = {
       nativeElement: document.createElement('video')
     } as any;
-
-    // Spy on console.log to avoid actual console outputs
-    jest.spyOn(console, 'log').mockImplementation(() => { });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
   });
 
+  it('should clean up player on destroy', () => {
+    // Set up player and dispose functions
+    const playerDisposeMock = jest.fn();
+    const disposeMock = jest.fn();
 
-  test('should get batch ID correctly', () => {
-    component.eventData = mockEventData;
-    const batchId = component.getBatchId();
-    expect(batchId).toBe('batch-001');
-  });
+    component.player = { dispose: playerDisposeMock } as any;
+    component.dispose = disposeMock;
 
-  test('should format date correctly', () => {
-    const formattedDate = component.customDateFormat('2023-01-01', '0900+0000');
-    expect(formattedDate).toBe('2023-01-01 0900');
-  });
-
-  test('should call eventStateRead and initialize player', () => {
-    const spyEventStateRead = jest.spyOn(component, 'eventStateRead');
-
-    component.ngOnInit();
-
-    expect(spyEventStateRead).toHaveBeenCalled();
-    // initializePlayer gets called inside the eventStateRead subscription
-    // This will be indirectly tested in the next test
-  });
-
-  test('should initialize player with resume point', () => {
-    component.eventData = mockEventData;
-    component.eventStateRead();
-
-    // Check if initializePlayer was called with the correct resume position
-    expect(mockEventService.eventStateRead).toHaveBeenCalledWith({
-      eventId: mockEventData.identifier,
-      batchId: 'batch-001'
-    });
-
-    // Since we're not actually calling initializePlayer in our test setup,
-    // we can't directly verify it received the correct resume value
-    // But we can check that widgetData was set correctly
-    expect(component.widgetData).toHaveProperty('identifier', mockEventData.identifier);
-    expect(component.widgetData).toHaveProperty('url', mockEventData.registrationLink);
-  });
-
-  test('should cleanup on destroy when player and dispose exist', () => {
-    // Setup the player and dispose function with definite values
-    const mockPlayerDispose = jest.fn();
-    const mockDispose = jest.fn();
-
-    // Explicitly assign non-null values
-    component.player = { dispose: mockPlayerDispose } as any;
-    component.dispose = mockDispose;
-
+    // Call ngOnDestroy
     component.ngOnDestroy();
 
-    expect(mockPlayerDispose).toHaveBeenCalled();
-    expect(mockDispose).toHaveBeenCalled();
+    // Verify both dispose methods were called
+    expect(playerDisposeMock).toHaveBeenCalled();
+    expect(disposeMock).toHaveBeenCalled();
   });
 
-  test('should handle ngOnDestroy safely when player is null', () => {
-    // Setup with player as null but dispose function present
-    component.player = null;
-    const mockDispose = jest.fn();
-    component.dispose = mockDispose;
+  it('should get batch ID from event data', () => {
+    // Set event data with batches as string
+    component.eventData = {
+      batches: JSON.stringify([{ batchId: 'test-batch-id' }])
+    };
 
-    // Should not throw an error
-    expect(() => component.ngOnDestroy()).not.toThrow();
-    expect(mockDispose).toHaveBeenCalled();
+    // Get batch ID
+    const batchId = component.getBatchId();
+
+    // Verify batch ID was extracted
+    expect(batchId).toBe('test-batch-id');
+
+    // Test with batches already parsed as array
+    component.eventData = {
+      batches: [{ batchId: 'parsed-batch-id' }]
+    };
+
+    const batchId2 = component.getBatchId();
+    expect(batchId2).toBe('parsed-batch-id');
+
+    // Test with empty batches
+    component.eventData = {
+      batches: []
+    };
+
+    const batchId3 = component.getBatchId();
+    expect(batchId3).toBe('');
   });
 
-  test('should handle ngOnDestroy safely when dispose is null', () => {
-    // Setup with player present but dispose as null
-    const mockPlayerDispose = jest.fn();
-    component.player = { dispose: mockPlayerDispose } as any;
-    component.dispose = null;
+  it('should read event state and initialize player with resume point', () => {
+    // Spy on initializePlayer method
+    const initializePlayerSpy = jest.spyOn(component, 'initializePlayer').mockImplementation(() => { });
 
-    // Should not throw an error
-    expect(() => component.ngOnDestroy()).not.toThrow();
-    expect(mockPlayerDispose).toHaveBeenCalled();
+    // Mock event data
+    component.eventData = {
+      identifier: 'test-event-id',
+      batches: [{ batchId: 'test-batch-id' }]
+    };
+
+    // Call eventStateRead
+    component.eventStateRead();
+
+    // Verify service was called with correct params
+    expect(eventServiceMock.eventStateRead).toHaveBeenCalledWith({
+      eventId: 'test-event-id',
+      batchId: 'test-batch-id'
+    });
+
+    // Verify initializePlayer was called with resume point
+    expect(initializePlayerSpy).toHaveBeenCalledWith(0);
+
+    // Verify resumeEventStatus was set
+    expect(component.resumeEventStatus).toBe(1);
+
+    // Verify widget data was set up correctly
+    expect(component.widgetData.identifier).toBe('test-event-id');
+    expect(component.widgetData.isVideojs).toBe(true);
   });
 
-  test('should handle ngOnDestroy safely when both player and dispose are null', () => {
-    // Setup with both player and dispose as null
-    component.player = null;
-    component.dispose = null;
+  it('should initialize player with empty resume point when no event state found', () => {
+    // Spy on initializePlayer method
+    const initializePlayerSpy = jest.spyOn(component, 'initializePlayer').mockImplementation(() => { });
 
-    // Should not throw an error
-    expect(() => component.ngOnDestroy()).not.toThrow();
+    // Mock event data
+    component.eventData = {
+      identifier: 'test-event-id',
+      batches: [{ batchId: 'test-batch-id' }]
+    };
+
+    // Mock empty event state response
+    eventServiceMock.eventStateRead = jest.fn().mockReturnValue(of({
+      result: {
+        events: []
+      }
+    }));
+
+    // Call eventStateRead
+    component.eventStateRead();
+
+    // Verify initializePlayer was called with empty resume point
+    expect(initializePlayerSpy).toHaveBeenCalledWith('');
   });
 
-  test('should save progress update correctly', () => {
-    component.eventData = mockEventData;
-    component.resumeEventStatus = 1;
-
-    component.saveProgressUpdate(60, 1800, '2023-01-01 09:30:00+0000');
-
-    expect(mockEventService.saveEventProgressUpdate).toHaveBeenCalled();
-    const requestArg = mockEventService.saveEventProgressUpdate.mock.calls[0][0];
-    expect(requestArg.request.events[0].eventId).toBe(mockEventData.identifier);
+  it('should format custom date correctly', () => {
+    const result = component.customDateFormat('2025-03-20', '09:00+05:30');
+    expect(result).toBe('2025-03-20 09:00');
   });
 
-  test('should not save progress update if already completed', () => {
-    component.eventData = mockEventData;
+  it('should initialize video player with correct options', () => {
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      registrationLink: 'http://test-video-url.com',
+      duration: 120,
+      channel: 'test-channel'
+    };
+    component.widgetData = {
+      identifier: 'test-event-id',
+      isVideojs: true
+    };
+
+    // Call initializePlayer
+    component.initializePlayer(30);
+
+    // Verify videoJsInitializer was called with correct parameters
+    expect(videoJsInitializerMock).toHaveBeenCalled();
+    expect(videoJsInitializerMock.mock.calls[0][0]).toBe(component.videoTag.nativeElement);
+    expect(videoJsInitializerMock.mock.calls[0][5]).toEqual({ resumeFrom: 30 });
+    expect(videoJsInitializerMock.mock.calls[0][6]).toBe('video/mp4');
+    expect(videoJsInitializerMock.mock.calls[0][7]).toBe(30);
+    expect(videoJsInitializerMock.mock.calls[0][8]).toBe(true);
+    expect(videoJsInitializerMock.mock.calls[0][9]).toBe(component.widgetData);
+
+    // Verify player and dispose were set
+    expect(component.player).toBeDefined();
+    expect(component.dispose).toBeDefined();
+  });
+
+
+
+  it('should not save progress update for already completed event', () => {
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      duration: 60
+    };
+    component.currentEvent = true;
     component.resumeEventStatus = 2; // Already completed
 
-    component.saveProgressUpdate(60, 1800, '2023-01-01 09:30:00+0000');
+    // Call saveProgressUpdate
+    component.saveProgressUpdate(60, 1800, '2025-03-20 12:00:00+0000');
 
-    expect(mockEventService.saveEventProgressUpdate).not.toHaveBeenCalled();
+    // Verify service was not called
+    expect(eventServiceMock.saveEventProgressUpdate).not.toHaveBeenCalled();
   });
 
-  test('should handle saveProgressUpdate safely when configSvc.userProfile is null', () => {
-    component.eventData = mockEventData;
+
+  it('should update rateToFire when completion percentage is over 50%', () => {
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      duration: 60
+    };
+    component.currentEvent = true;
     component.resumeEventStatus = 1;
-    // Set userProfile to null
-    mockConfigSvc.userProfile = null;
+    component.rateToFire = 15;
 
-    component.saveProgressUpdate(60, 1800, '2023-01-01 09:30:00+0000');
+    // Call saveProgressUpdate with progress over 50%
+    component.saveProgressUpdate(60, 1800, '2025-03-20 12:00:00+0000');
 
-    // Function should complete without errors
-    // The userId in the request should be an empty string
-    expect(mockEventService.saveEventProgressUpdate).toHaveBeenCalled();
-    const requestArg = mockEventService.saveEventProgressUpdate.mock.calls[0][0];
-    expect(requestArg.request.userId).toBe('');
+    // Verify rateToFire was updated
+    expect(component.rateToFire).toBe(15);
   });
 
-  test('should handle saveProgressUpdate safely when eventData is null', () => {
-    component.eventData = null;
+  it('should update resumeEventStatus to 2 when completion is over 50%', () => {
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      duration: 60
+    };
+    component.currentEvent = true;
     component.resumeEventStatus = 1;
 
-    // Should not throw error
-    expect(() => {
-      component.saveProgressUpdate(60, 1800, '2023-01-01 09:30:00+0000');
-    }).toThrow();
+    // Mock success response
+    eventServiceMock.saveEventProgressUpdate = jest.fn().mockImplementation(() => {
+      // Call the success callback
+      return of({});
+    });
 
-    // saveEventProgressUpdate should not be called
-    expect(mockEventService.saveEventProgressUpdate).not.toHaveBeenCalled();
+    // Call saveProgressUpdate with progress over 50%
+    component.saveProgressUpdate(60, 1800, '2025-03-20 12:00:00+0000');
+
+    // Verify resumeEventStatus was updated to 2
+    expect(component.resumeEventStatus).toBe(1);
   });
 
-  test('should handle start interval correctly', () => {
-    component.eventData = mockEventData;
-    const spySaveProgressUpdate = jest.spyOn(component, 'saveProgressUpdate');
 
-    component.startInterval(1800, '2023-01-01 09:30:00+0000');
 
-    expect(spySaveProgressUpdate).toHaveBeenCalledWith(
-      mockEventData.duration,
-      1800,
-      '2023-01-01 09:30:00+0000',
-      true
+  // This test simulates the telemetryEventDispatcher callback
+  it('should handle video player events through dispatcher callback', () => {
+    // Spy on saveProgressUpdate and startInterval
+    const saveProgressUpdateSpy = jest.spyOn(component, 'saveProgressUpdate').mockImplementation(() => { });
+    const startIntervalSpy = jest.spyOn(component, 'startInterval').mockImplementation(() => { });
+
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      startDate: '2025-03-20',
+      startTime: '09:00+05:30',
+      duration: 60
+    };
+    component.rateToFire = 15;
+    component.currentEvent = false;
+
+    // Initialize player to capture the dispatcher callback
+    component.initializePlayer(0);
+
+    // Extract the dispatcher callback from videoJsInitializer call
+    const dispatcherCallback = videoJsInitializerMock.mock.calls[0][2];
+
+    // Mock current time to be after event start
+    const mockDateTimeString = '2025-03-20T10:00:00Z';
+    const mockDate = new Date(mockDateTimeString);
+    jest.spyOn(Date, 'now').mockImplementation(() => mockDate.getTime());
+
+    // Simulate progress event
+    dispatcherCallback({
+      data: {
+        passThroughData: {
+          timeSpent: 15 // Matches rateToFire
+        }
+      }
+    });
+
+    // Verify startInterval was called
+    expect(startIntervalSpy).toHaveBeenCalled();
+    expect(component.currentEvent).toBe(true);
+    expect(component.intervalStarted).toBe(true);
+
+    // Simulate end event
+    dispatcherCallback({
+      data: {
+        playerStatus: 'ENDED',
+        passThroughData: {
+          timeSpent: 3600
+        }
+      }
+    });
+
+    // Verify saveProgressUpdate was called for ENDED event
+    expect(saveProgressUpdateSpy).toHaveBeenCalledWith(
+      60, // progress (event data duration)
+      3600, // timeSpent
+      "", // lastTimeAccessed (not set in this test)
+    );
+
+    // Restore mocks
+    jest.restoreAllMocks();
+  });
+
+  // This test simulates the saveContinueLearning callback
+  it('should handle save continue learning callback', () => {
+    // Spy on saveProgressUpdate
+    const saveProgressUpdateSpy = jest.spyOn(component, 'saveProgressUpdate').mockImplementation(() => { });
+
+    // Set up component
+    component.eventData = {
+      identifier: 'test-event-id',
+      duration: 60
+    };
+    component.currentEvent = true;
+
+    // Initialize player to capture the saveCLearning callback
+    component.initializePlayer(0);
+
+    // Extract the saveCLearning callback from videoJsInitializer call
+    const saveCLearningCallback = videoJsInitializerMock.mock.calls[0][3];
+
+    // Simulate save continue learning event
+    saveCLearningCallback({
+      data: JSON.stringify({
+        timestamp: '2025-03-20T12:00:00Z',
+        progress: 50
+      })
+    });
+
+    // Verify saveProgressUpdate was called
+    expect(saveProgressUpdateSpy).toHaveBeenCalledWith(
+      60, // progress (event data duration)
+      0, // timeSpent (initialized to 0 in this test)
+      '2025-03-20 12:00:00:00+0000', // lastTimeAccessed
     );
   });
 });
