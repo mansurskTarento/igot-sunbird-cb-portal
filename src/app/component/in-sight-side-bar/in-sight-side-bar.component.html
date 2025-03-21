@@ -220,10 +220,10 @@
         </div>
         
     </div>
-    <section class="collapsible" [@collapsDiscuss]="collapsed" [ngClass]="{'':!collapsed}" *ngIf="!discussion?.error">
+    <!-- <section class="collapsible" [@collapsDiscuss]="collapsed" [ngClass]="{'':!collapsed}" *ngIf="!discussion?.error">
         <div class="flex flex-col discussion-card">
             <div class="flex mat-subheading-1 p-4">
-                <!-- //NOSONAR --><div class="flex flex-row gap-1 mat-subheading-1 cursor-pointer feed-title"
+                <div class="flex flex-row gap-1 mat-subheading-1 cursor-pointer feed-title"
                     (click)="navigate(); raiseTelemetry('discussions')">
                     {{ 'home.myDiscussions' | translate }}
                     <mat-icon
@@ -232,11 +232,11 @@
                     </mat-icon>
                 </div>
             </div>
-            <!-- <ng-container>
+            <ng-container>
                 <ws-widget-discussions [discussion]="discussion" [count]="2"></ws-widget-discussions>
-            </ng-container> -->
+            </ng-container>
         </div>
-    </section>
+    </section> -->
     <section class="collapsible" [@collapse]="collapsed" [ngClass]="{'padding-top-m margin-bottom-m':!collapsed}">
         <ws-widget-pending-request [pendingRequestData]="pendingRequestData"
             [isLoading]="pendingRequestSkeleton"></ws-widget-pending-request>
