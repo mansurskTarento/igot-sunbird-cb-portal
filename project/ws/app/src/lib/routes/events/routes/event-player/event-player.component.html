@@ -51,50 +51,46 @@
         </div>
       </div>
     </div>
-    <mat-tab-group>
-      <mat-tab label="{{'events.eventInfo' | translate}}">
-        <div class="flex flex-1 flex-column mb-2">
-          <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
+    <!-- <div class="flex flex-1 flex-column mt-5">
+        <div class="flex flex-1 filter">
+            <a href="javascript:void(0)" role="button" class="filter-option" mat-button>
+              OVERVIEW
+            </a>
+            <a href="javascript:void(0)" role="button" class="filter-option" mat-button>
+              PARTICIPANTS
+            </a>
         </div>
-        <div class="flex flex-wrap">
-          <ng-container>
-            <div class="flex mb-5">
-              <p class="word-break">{{eventData?.description}}</p>
-            </div>
-          </ng-container>
+    </div> -->
+    <div class="flex flex-1 flex-column mb-2">
+      <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
+    </div>
+    <div class="flex flex-wrap">
+      <ng-container>
+        <div class="flex mb-5">
+          <p class="word-break">{{eventData?.description}}</p>
         </div>
-        <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
-          <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
+      </ng-container>
+    </div>
+    <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
+      <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
+    </div>
+    <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
+      <ng-container>
+        <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
+          <app-presenter-card [userData]="user"
+            class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
         </div>
-        <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
-          <ng-container>
-            <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
-              <app-presenter-card [userData]="user"
-                class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
-            </div>
-          </ng-container>
+      </ng-container>
+    </div>
+    <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.learningObjective">
+      <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
+    </div>
+    <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
+      <ng-container>
+        <div class="flex mb-5">
+          <p class="word-break">{{eventData?.learningObjective}}</p>
         </div>
-        <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.eventAgenda">
-          <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }} </span>
-        </div>
-        <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.eventAgenda">
-          <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
-        </div>
-        <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
-          <ng-container>
-            <div class="flex mb-5">
-              <p class="word-break">{{eventData?.learningObjective}}</p>
-            </div>
-          </ng-container>
-        </div>
-      </mat-tab>
-      <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
-        <ng-container *ngIf="!skeletonLoader">
-          <div class="flex flex-col ratings-div gap-10 mt-4" id="ratingsDiv" *ngIf="discussWidgetData">
-            <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
-          </div>
-        </ng-container>
-      </mat-tab>
-    </mat-tab-group>
+      </ng-container>
+    </div>
   </div>
 </div>
