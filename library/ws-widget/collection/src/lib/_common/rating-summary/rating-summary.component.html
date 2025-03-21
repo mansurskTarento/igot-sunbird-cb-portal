@@ -1,7 +1,7 @@
 <ng-container *ngIf="ratingSummary">
     <div class="flex flex-col gap-6">
         <div class="flex flex-row gap-4 items-center">
-            <div class="rating-value ws-mat-default-text">{{ ratingSummary?.avgRating }}</div>
+            <div class="rating-value ws-mat-default-text nodtranslate">{{ ratingSummary?.avgRating }}</div>
             <div class="flex flex-col gap-1">
                 <div class="flex flex-row gap-2">
                     <mat-icon class="mat-icon material-icons rating-icon ws-mat-black16-text nodtranslate"
@@ -10,7 +10,7 @@
                         {{ getRatingIcon(rating, ratingSummary?.avgRating) }}
                     </mat-icon>
                 </div>
-                <div class="text-base ">{{ ratingSummary?.total_number_of_ratings | pipeCountTransform }}
+                <div class="text-base nodtranslate">{{ ratingSummary?.total_number_of_ratings | pipeCountTransform }}
                     {{'ratingsummary.ratings' | translate}}
                 </div>
             </div>
@@ -19,7 +19,7 @@
             <ng-container *ngFor="let rating of ratingSummary?.breakDown?.slice().reverse()">
                 <div class="flex flex-row gap-4 items-center">
                     <div class="flex-none font-bold nodtranslate">{{ rating.key }} {{ 'ratingsummary.star' | translate }}</div>
-                    <div class="flex items-center rating-progress">
+                    <div class="flex items-center rating-progress nodtranslate">
                         <mat-progress-bar [mode]="'determinate'" [matTooltip]="rating?.percent + ' %'"
                             [value]="rating?.percent" class="rating-bar"
                             [attr.aria-labelledby]="'m-c-'+ contentId"
