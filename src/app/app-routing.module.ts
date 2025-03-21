@@ -361,16 +361,16 @@ const routes: Routes = [
       pageData: PageResolve,
     },
   },
-  {
-    path: 'app/discussion-forum',
-    pathMatch: 'full',
-    redirectTo: 'app/discussion',
-    data: {
-      pageId: '',
-      module: 'Discuss',
-    },
+  // {
+  //   path: 'app/discussion-forum',
+  //   pathMatch: 'full',
+  //   redirectTo: 'app/discussion',
+  //   data: {
+  //     pageId: '',
+  //     module: 'Discuss',
+  //   },
 
-  },
+  // },
   {
     path: 'app/discussion-forum-v2',
     loadChildren: () => import('./routes/route-app-discussion-v2.module').then(u => u.RouteAppDiscussionV2Module),
