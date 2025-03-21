@@ -122,7 +122,7 @@
                           <div class="date-list">
                             <label>{{eType?.name}}</label>
                             <mat-form-field appearance="outline" class="w-full">
-                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.PlaceHolder}}"
+                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.placeHolder}}"
                                 (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="startDate">
                               <mat-datepicker-toggle matSuffix [for]="sDate"></mat-datepicker-toggle>
                               <mat-datepicker #sDate></mat-datepicker>
@@ -133,7 +133,7 @@
                           <div class="date-list">
                             <label>{{eType?.name}}</label>
                             <mat-form-field appearance="outline" class="w-full">
-                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.PlaceHolder}}"
+                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.placeHolder}}"
                                 (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="endDate">
                               <mat-datepicker-toggle matSuffix [for]="eDate"></mat-datepicker-toggle>
                               <mat-datepicker #eDate></mat-datepicker>

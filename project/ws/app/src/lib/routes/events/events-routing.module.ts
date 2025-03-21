@@ -79,6 +79,9 @@ const routes: Routes = [
           pageId: 'view-all',
           module: 'Events',
         },
+        resolve: {
+          pageData: AppEventPageResolverService,
+        },
       },
       {
         path: 'home/:eventId',

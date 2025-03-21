@@ -38,6 +38,7 @@ export class ViewAllComponent {
   sortOptions: any = {
     startDate: 'desc'
   }
+  pageConfigData: any = {}
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -53,87 +54,6 @@ export class ViewAllComponent {
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
     ]
-
-    this.facetsData = {
-      resourceType: {
-        name: "Event Type",
-        displayName: "Event Type",
-        label: "Event Type",
-        placeHolder: "Seach Event Type",
-        viewMore: false,
-        values: [
-          {
-            key: "karmayogiTalks",
-            name: "Karmayogi Talks",
-          },
-          {
-            key: "karmayogiSaptah",
-            name: "Karmayogi Saptah",
-          },
-          {
-            key: "webinar",
-            name: "Webinar",
-          }
-        ]
-      },
-      eventStatus: {
-        name: "Event Status",
-        displayName: "Event Status",
-        label: "Event Status",
-        viewMore: false,
-        values: [
-          {
-            key: "upcoming",
-            name: "Upcoming",
-          },
-          {
-            key: "liveEvents",
-            name: "Live Events",
-          },
-          {
-            key: "pastEvents",
-            name: "Past Events",
-          }
-        ]
-      },
-      eventDate: {
-        name: "Event Date/Time",
-        displayName: "Event Date/Time",
-        label: "Event Date/Time",
-        viewMore: false,
-        values: [
-          {
-            key: "toDay",
-            name: "Today",
-          },
-          {
-            key: "tomorrow",
-            name: "Tomorrow",
-          },
-        ]
-      },
-      dateRange: {
-        name: "Date Range",
-        displayName: "Choose Date Range",
-        label: "Choose Date Range",
-        viewMore: false,
-        values: [
-          {
-            key: "fromDate",
-            name: "From:",
-            PlaceHolder: "Select Date",
-          },
-          {
-            key: "toDate",
-            name: "To:",
-            PlaceHolder: "Select Date",
-          },
-          {
-            key: "button"
-          }
-        ]
-      },
-    }
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -147,7 +67,8 @@ export class ViewAllComponent {
   }
 
   ngOnInit() {
-
+    this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
+    this.facetsData = _.get(this.pageConfigData, 'version2.filterFacetsData', {})
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged()
@@ -237,12 +158,8 @@ export class ViewAllComponent {
 
 
     }
-    console.log("this.selectedFilters.resourceType ", requestBody)
     return requestBody
   }
-
-
-
   fetchData() {
     if (!this.isLoading) {
       this.contentDataList = [...this.contentDataList, ...this.transformSkeletonToWidgets(this.contnet)]
