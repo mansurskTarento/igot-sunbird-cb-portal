@@ -8,8 +8,8 @@
   // background-color: inherit !important;
 }
 .word-break {
-  word-break: break-all;
-  white-space: pre-line;
+  word-break: break-word;
+  white-space: initial;
 }
 .white-bg {
   background: #fff !important;
