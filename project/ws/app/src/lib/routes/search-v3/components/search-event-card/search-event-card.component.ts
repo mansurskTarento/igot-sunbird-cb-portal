@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -19,7 +21,7 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 export class SearchEventCardComponent implements OnInit, OnChanges {
   @Input() content: any;
   @Input() cbpPlans: any[] = [];
-
+  @Output() telemetry = new EventEmitter<any>();
   defaultThumbnail = '/assets/instances/eagle/app_logos/default.png';
   defaultSLogo = '/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg';
   formattedTime: string | null = '';
@@ -123,7 +125,9 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
   navigateToEvent() {
     const eventId = this.content?.identifier;
     if (eventId) {
+      this.content.contentType = 'Events'
       this.router.navigate([`/app/event-hub/home/${eventId}`]);
+      this.telemetry.emit(this.content)
     }
   }
 }

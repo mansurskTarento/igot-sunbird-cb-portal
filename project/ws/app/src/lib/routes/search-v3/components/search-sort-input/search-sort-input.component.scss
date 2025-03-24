@@ -8,7 +8,6 @@
   display: inline-block;
   // min-width: 100px;
   // max-width: fit-content;
-  max-width: 150px;
 }
 
 .sort-by-label {
@@ -44,7 +43,6 @@
 
 .sort-select {
   // width: auto;
-  width: 150px;
   padding: 0 24px 0 8px;
   appearance: none;
   -webkit-appearance: none;
@@ -57,6 +55,7 @@
   font-weight: 400;
   font-size: 14px;
   color: $brandAccentColor;
+  cursor: pointer;
 }
 
 .sort-select:focus {
@@ -65,4 +64,12 @@
 
 .sort-select::-ms-expand {
   display: none;
+}
+
+.select-width-max {
+  max-width: 195px;
+}
+
+.select-width-max-people {
+  max-width: 150px;
 }

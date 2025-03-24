@@ -95,6 +95,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   coursesFacets = [];
   eventsFacets = [];
   communitiesFacets = [];
+  peoplesFacets = [];
+
   combinedFacets: any[] = [];
   compentencyKey!: NsContent.ICompentencyKeys;
   enrollmentDetails: any = [];
@@ -199,8 +201,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchEvents();
         await this.searchPeople();
         await this.searchcommunities();
-        this.isLoadingSearch = false;
       }
+
+      this.updateNoResultMessage(this.statedata.param);
+      this.isLoadingSearch = false;
     }
   }
 
@@ -210,26 +214,26 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       : userDetails.firstname;
   }
 
+  applyTelemetry(event: any, index: number) {
+    this.raiseTelemetry(event, index);
+  }
+
   raiseTelemetry(content: any, i: number) {
     if (content) {
       this.events.raiseInteractTelemetry(
         {
           type: 'click',
           subType: `card-learnSearch`,
-          // id: `${_.camelCase(content.primaryCategory)}-card`,
-          id: `course-card-${i + 1}`,
-          pageid: `/app/globalsearch_${content.primaryCategory}-card`,
+          id: `search-card-${i + 1}`,
+          pageid: `/app/globalsearch`,
         },
         {
           id: content.identifier || '',
-          type: content.primaryCategory,
+          type: content.contentType,
           rollup: {},
-          ver: `${content.version}${''}`,
+          ver: content.version ? `${content.version}${''}` : '',
         },
-        {
-          // pageIdExt: `${content.primaryCategory}-card`,
-          module: content.primaryCategory,
-        }
+        {}
       );
     }
   }
@@ -319,16 +323,19 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchPeople() {
-    const uniqueDepartmentNames = Array.from(this.allResultsDepartmentName);
-    if (uniqueDepartmentNames.length > 0) {
-      this.searchRequestPeoples.search[0].values = uniqueDepartmentNames;
-      this.searchRequestPeoples.size = 10;
-      let response = await this.searchV3Service.searchConnections(
-        this.searchRequestPeoples
-      );
-      this.peoplesSearchResults = response?.result?.data?.[0]?.results || [];
-      this.peopleSearchTotalCount = this.peoplesSearchResults.length;
+    this.searchRequestPeoples.query = this.statedata?.param || '';
+    const result = await this.searchV3Service.searchConnections(
+      this.searchRequestPeoples
+    );
+
+    if (result.result && result.result?.response?.content) {
+      this.peoplesSearchResults = result.result?.response?.content || [];
+      this.peopleSearchTotalCount = result.result?.response?.count;
+      this.peoplesFacets = result.result?.response.facets;
       this.getAllConnectionRequests();
+    } else {
+      this.peoplesSearchResults = [];
+      this.peopleSearchTotalCount = 0;
     }
   }
 
@@ -424,10 +431,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestCommunities.filterCriteriaMap.orgName = [
             ...selectedFilters[key],
           ];
-        } else if (key === 'topicName') {
-          this.searchRequestCommunities.filterCriteriaMap.topicName = [
-            ...selectedFilters[key],
-          ];
+        } else if (key === 'profileDetails.professionalDetails.designation') {
+          this.searchRequestPeoples.filters[key] = [...selectedFilters[key]];
+        } else if (key === 'rootOrgName') {
+          this.searchRequestPeoples.filters[key] = [...selectedFilters[key]];
         } else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -520,6 +527,24 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     ) {
       delete this.searchRequestCommunities.filterCriteriaMap.topicName;
     }
+    if (
+      this.searchRequestPeoples.filters[
+        'profileDetails.professionalDetails.designation'
+      ] &&
+      this.searchRequestPeoples.filters[
+        'profileDetails.professionalDetails.designation'
+      ].length === 0
+    ) {
+      delete this.searchRequestPeoples.filters[
+        'profileDetails.professionalDetails.designation'
+      ];
+    }
+    if (
+      this.searchRequestPeoples.filters['rootOrgName'] &&
+      this.searchRequestPeoples.filters['rootOrgName'].length === 0
+    ) {
+      delete this.searchRequestPeoples.filters['rootOrgName'];
+    }
   }
 
   async seeAllResults(category: string) {
@@ -550,8 +575,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchTotalCount = 0;
       this.eventSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
-      this.searchRequestPeoples.size = this.initialPaginationSize;
-      this.searchPeople();
+      this.searchRequestPeoples.limit = this.initialPaginationSize;
+      await this.searchPeople();
+      this.combinedFacets = [this.peoplesFacets];
     } else if (category === SearchCategory.Communities) {
       this.courseSearchTotalCount = 0;
       this.eventSearchTotalCount = 0;
@@ -597,15 +623,17 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   onPageChange(event: PageChangeEmitter) {
     if (this.seeAllResult === SearchCategory.Courses) {
       this.searchRequestCourse.request.limit = event.limit;
-      this.searchRequestCourse.request.offset = event.currentPage * event.limit;
+      this.searchRequestCourse.request.offset =
+        (event.currentPage - 1) * event.limit;
       this.searchCourses();
     } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
-      this.searchRequestEvents.request.offset = event.currentPage * event.limit;
+      this.searchRequestEvents.request.offset =
+        (event.currentPage - 1) * event.limit;
       this.searchEvents();
     } else if (this.seeAllResult === SearchCategory.People) {
-      this.searchRequestPeoples.size = event.limit;
-      this.searchRequestPeoples.offset = event.currentPage * event.limit;
+      this.searchRequestPeoples.limit = event.limit;
+      this.searchRequestPeoples.offset = (event.currentPage - 1) * event.limit;
       this.searchPeople();
     } else if (this.seeAllResult === SearchCategory.Communities) {
       this.searchRequestCommunities.pageSize = event.limit;
@@ -628,7 +656,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (this.seeAllResult === '') {
         this.searchCourses();
         this.searchEvents();
-        this.searchPeople();
         this.searchcommunities();
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by = {};
@@ -643,18 +670,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestEvents.request.sort_by.startDate = 'desc';
         this.searchCourses();
         this.searchEvents();
-        this.searchPeople();
         this.searchcommunities();
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
         this.searchCourses();
-      } 
-      else if (this.seeAllResult === SearchCategory.Events) {
+      } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.startDate = 'desc';
         this.searchEvents();
-      }
-      else if (this.seeAllResult === SearchCategory.Communities) {
-        this.searchRequestCommunities.orderDirection = 'desc'
+      } else if (this.seeAllResult === SearchCategory.Communities) {
+        this.searchRequestCommunities.orderDirection = 'desc';
         this.searchcommunities();
       }
     } else if (event === SortType.HighestRated) {
@@ -663,7 +687,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
         this.searchCourses();
         this.searchEvents();
-        this.searchPeople();
         this.searchcommunities();
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.avgRating = 'desc';
@@ -672,7 +695,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
         this.searchEvents();
       }
-    } else if (event === SortType.MostEnrolled) {
+    } else if (event === SortType.Ascending) {
+      this.searchRequestPeoples.sort_by.firstName = SortType.Ascending;
+      this.searchPeople();
+    } else if (event === SortType.Descending) {
+      this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
+      this.searchPeople();
     }
   }
 
