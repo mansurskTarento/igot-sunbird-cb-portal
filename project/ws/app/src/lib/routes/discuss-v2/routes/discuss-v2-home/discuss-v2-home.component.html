@@ -8,7 +8,7 @@
 </div> -->
 <div class="container-balanced mb-12 mob-12">
 	<d-v2-widget-discussionv2-landing-page  (cardClick)="communityCardClick($event)" 
-	(popularCommunityData)="communityCardClick($event)"
+	(popularCommunityData)="communityCardClick($event)" [feedWidgetData]="feedsWidgetData"
 	(topicCardClick)="showAllCommunityByTopicCard($event)" (showAllTopics)="showAllTopics($event)"
 	 (showAllByTopic)="showAllCommunityByTopic($event)" (searchText)="searchTextMethod($event)"></d-v2-widget-discussionv2-landing-page>
 </div>
