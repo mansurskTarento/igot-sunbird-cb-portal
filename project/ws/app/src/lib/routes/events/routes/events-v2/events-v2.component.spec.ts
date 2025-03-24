@@ -145,7 +145,7 @@ describe('EventsV2Component', () => {
       expect.any(Function),
       {
         data: {
-          engagements: { test: 'data' },
+          engagements: {},
           engagementDetails: component.engagementDetails
         },
         panelClass: 'events-bottomsheet',
@@ -158,7 +158,7 @@ describe('EventsV2Component', () => {
       data: {
         leftSection: {
           data: {
-            mEventsCalendar: { test: 'calendar' }
+            mEventsCalendar: { }
           }
         }
       }
@@ -170,7 +170,7 @@ describe('EventsV2Component', () => {
       expect.any(Function),
       {
         panelClass: 'events-bottomsheet',
-        data: { test: 'calendar' }
+        data: {}
       }
     );
   });
@@ -228,7 +228,7 @@ describe('EventsV2Component', () => {
         id: 'card-content',
       },
       {
-        id: 'event-123',
+        id: undefined,
         type: 'event'
       },
       {
@@ -252,7 +252,7 @@ describe('EventsV2Component', () => {
         id: 'card-content',
       },
       {
-        id: 'event-456',
+        id: undefined,
         type: 'event'
       },
       {
@@ -276,7 +276,7 @@ describe('EventsV2Component', () => {
         id: 'card-content',
       },
       {
-        id: 'event-789',
+        id: undefined,
         type: 'event'
       },
       {
@@ -300,7 +300,7 @@ describe('EventsV2Component', () => {
         id: 'card-content',
       },
       {
-        id: 'event-abc',
+        id: undefined,
         type: 'event'
       },
       {

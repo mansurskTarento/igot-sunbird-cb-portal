@@ -21,12 +21,6 @@
                     <button (click)="sortType('asc')" mat-menu-item>
                       A-Z
                     </button>
-                    <button (click)="sortType('short')" mat-menu-item>
-                      Shortest duration
-                    </button>
-                    <button (click)="sortType('long')" mat-menu-item>
-                      Longest duration
-                    </button>
                   </mat-menu>
                   <button type="button" mat-icon-button class="flex w-full sort-menu justify-end"
                     [matMenuTriggerFor]="appMenu">
@@ -96,7 +90,7 @@
             </div>
             <ng-container *ngFor="let facet of facetsData  | keyvalue:returnZero">
               <div class="individual-block">
-                <div class="list mb-4">
+                <div class="list {{facet?.value?.name === 'Date Range' ? '' : 'mb-4'}}">
                   <ng-container *ngIf="facet?.value?.name === 'Event Type'">
                     <div *ngIf="facet?.value?.values?.length">
                       <p class="filter-heading mb-4">{{facet?.value?.displayName}}</p>
@@ -128,7 +122,7 @@
                           <div class="date-list">
                             <label>{{eType?.name}}</label>
                             <mat-form-field appearance="outline" class="w-full">
-                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.PlaceHolder}}"
+                              <input matInput [matDatepicker]="sDate" placeholder="{{eType?.placeHolder}}"
                                 (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="startDate">
                               <mat-datepicker-toggle matSuffix [for]="sDate"></mat-datepicker-toggle>
                               <mat-datepicker #sDate></mat-datepicker>
@@ -139,16 +133,14 @@
                           <div class="date-list">
                             <label>{{eType?.name}}</label>
                             <mat-form-field appearance="outline" class="w-full">
-                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.PlaceHolder}}"
+                              <input matInput [matDatepicker]="eDate" placeholder="{{eType?.placeHolder}}"
                                 (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="endDate">
                               <mat-datepicker-toggle matSuffix [for]="eDate"></mat-datepicker-toggle>
                               <mat-datepicker #eDate></mat-datepicker>
                             </mat-form-field>
                           </div>
                         </ng-container>
-
                       </ng-container>
-                      <div class="line my-4"></div>
                     </div>
                   </ng-container>
                   <ng-container *ngIf="facet?.value?.name !== 'Event Type' && facet?.value?.name !== 'Date Range'">

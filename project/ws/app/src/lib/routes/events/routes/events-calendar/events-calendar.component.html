@@ -18,44 +18,63 @@
             </div>
 
             <div class="days-grid">
-                <div *ngFor="let date of daysInMonth" class="day-cell" [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
-                    'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
-                    'selected': (selected && date?.date?.getTime() === selected.getTime())}"
-                    (click)="selectDate(date?.date)">
-                    {{ date?.date?.getDate() }}
-                </div>
+                <ng-container *ngIf="!calendarLoading; else CalendarSkeleton">
+                    <div *ngFor="let date of daysInMonth" class="day-cell" [ngClass]="{'current-month': !date?.isPrevisDate, 'today': isToday(date?.date), 'visibilityHidden': !date?.isCurrentMonth,
+                        'has-event': date?.hasRegisteredEvent && !date?.isPrevisDate, 'has-pre-event': date?.hasRegisteredEvent && date?.isPrevisDate, 
+                        'selected': (selected && date?.date?.getTime() === selected.getTime())}"
+                        (click)="selectDate(date?.date)">
+                        {{ date?.date?.getDate() }}
+                    </div>
+                </ng-container>
+                <ng-template #CalendarSkeleton>
+                    <ng-container *ngFor="let i of calandarLoaders ">
+                        <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'30px'"
+                        [height]="'30px'"></ws-widget-skeleton-loader>
+                    </ng-container>
+                </ng-template>
             </div>
         </div>
     </div>
 
     <div class="today-events flex flex-col gap-3">
         <div class="today">{{selectedDateText}}</div>
-        <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
-            <ng-container *ngFor="let event of selectedDateEvents">
-                <div class="event-item flex flex-col gap-3 pb-3">
-                    <div class="flex justify-between items-center">
-                        <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
-                        <ng-container *ngIf="event.isLive">
-                            <div class="flex gap-1 live blink">
-                                <img class='img' src="/assets/icons/live.svg" alt="">
-                                <span>Live</span>
+        <ng-container *ngIf="!calendarLoading; else eventsSkeleton">
+            <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
+                <ng-container *ngFor="let event of selectedDateEvents">
+                    <div class="event-item flex flex-col gap-3 pb-3">
+                        <div class="flex justify-between items-center">
+                            <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
+                            <ng-container *ngIf="event.isLive">
+                                <div class="flex gap-1 live blink">
+                                    <img class='img' src="/assets/icons/live.svg" alt="">
+                                    <span>Live</span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <span class="eventDescription">{{event.description}}</span>
+                        <ng-container *ngIf="!event.isLive && event.startTime">
+                            <div class="event-time flex items-center gap-2">
+                                <mat-icon class="event-time-icon">schedule</mat-icon>
+                                <span>{{event.startTime}}</span>
                             </div>
                         </ng-container>
                     </div>
-                    <span class="eventDescription">{{event.description}}</span>
-                    <ng-container *ngIf="!event.isLive && event.startTime">
-                        <div class="event-time flex items-center gap-2">
-                            <mat-icon class="event-time-icon">schedule</mat-icon>
-                            <span>{{event.startTime}}</span>
-                        </div>
-                    </ng-container>
-                </div>
+                </ng-container>
             </ng-container>
+            <ng-template #noEvents>
+                <div class="flex items-center justify-center">
+                    <span class="eventDescription">{{translateLabels(eventCalendarDetails?.noEvents,
+                        'events')}}</span>
+                </div>
+            </ng-template>
         </ng-container>
-        <ng-template #noEvents>
-            <div class="flex items-center justify-center">
-                <span class="eventDescription">{{translateLabels(eventCalendarDetails?.noEvents,
-                    'events')}}</span>
+        <ng-template #eventsSkeleton>
+            <div class="flex flex-col gap-3 pb-3">
+                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" 
+                [height]="'20px'"></ws-widget-skeleton-loader>
+
+                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" 
+                [height]="'20px'"></ws-widget-skeleton-loader>
             </div>
         </ng-template>
     </div>
