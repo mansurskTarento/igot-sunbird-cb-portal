@@ -125,6 +125,7 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
   navigateToEvent() {
     const eventId = this.content?.identifier;
     if (eventId) {
+      this.content.contentType = 'Events'
       this.router.navigate([`/app/event-hub/home/${eventId}`]);
       this.telemetry.emit(this.content)
     }

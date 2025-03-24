@@ -180,6 +180,7 @@ export enum FacetType {
   Language = 'language',
   AvgRating = 'avgRating',
   Duration = 'duration',
+  Designation = 'designation',
 }
 
 export enum SortType {

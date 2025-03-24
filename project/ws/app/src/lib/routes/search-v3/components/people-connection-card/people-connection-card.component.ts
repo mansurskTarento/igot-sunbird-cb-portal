@@ -14,6 +14,7 @@ const SNACKBAR_DURATION = 3000;
 export class PeopleConnectionCardComponent {
   @Input() user!: any;
   @Output() connection = new EventEmitter<string>();
+  @Output() telemetry = new EventEmitter<any>();
   currentUser!: NsUser.IUserProfile;
   howerUser!: any;
   unmappedUser!: any;
@@ -136,10 +137,14 @@ export class PeopleConnectionCardComponent {
   }
 
   goToUserProfile(user: any) {
+    user.contentType = 'People'
+    user.identifier = user.userId
+    this.telemetry.emit(user)
     this.router.navigate(
       ['/app/person-profile', user.userId || user.id || user.wid],
       { fragment: 'profileInfo' }
     );
+
   }
 
   get usr() {

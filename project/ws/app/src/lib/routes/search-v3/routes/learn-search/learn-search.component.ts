@@ -224,20 +224,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         {
           type: 'click',
           subType: `card-learnSearch`,
-          // id: `${_.camelCase(content.primaryCategory)}-card`,
-          id: `course-card-${i + 1}`,
-          pageid: `/app/globalsearch_${content.primaryCategory}-card`,
+          id: `search-card-${i + 1}`,
+          pageid: `/app/globalsearch`,
         },
         {
           id: content.identifier || '',
-          type: content.primaryCategory,
+          type: content.contentType,
           rollup: {},
-          ver: `${content.version}${''}`,
+          ver: content.version ? `${content.version}${''}` : '',
         },
-        {
-          // pageIdExt: `${content.primaryCategory}-card`,
-          module: content.primaryCategory,
-        }
+        {}
       );
     }
   }
@@ -627,11 +623,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   onPageChange(event: PageChangeEmitter) {
     if (this.seeAllResult === SearchCategory.Courses) {
       this.searchRequestCourse.request.limit = event.limit;
-      this.searchRequestCourse.request.offset = (event.currentPage - 1) * event.limit;
+      this.searchRequestCourse.request.offset =
+        (event.currentPage - 1) * event.limit;
       this.searchCourses();
     } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
-      this.searchRequestEvents.request.offset = (event.currentPage - 1) * event.limit;
+      this.searchRequestEvents.request.offset =
+        (event.currentPage - 1) * event.limit;
       this.searchEvents();
     } else if (this.seeAllResult === SearchCategory.People) {
       this.searchRequestPeoples.limit = event.limit;

@@ -302,8 +302,9 @@
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'userProfile.designation' | translate}}
             </p>
             <mat-selection-list>
+                
                 <section class="mat-body-2 margin-bottom-xs text-capitalize"
-                    *ngFor="let options of formattedFacets['profileDetails.professionalDetails.designation']">
+                    *ngFor="let options of (showAllDesignation ? formattedFacets['profileDetails.professionalDetails.designation'] : formattedFacets['profileDetails.professionalDetails.designation'].slice(0, 4))">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, 'profileDetails.professionalDetails.designation')">
                         <span class="min-width-adjust">
@@ -312,6 +313,10 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
+             <div *ngIf="formattedFacets['profileDetails.professionalDetails.designation'].length > 4" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore('designation')">
+                {{ showAllDesignation ? 'See Less' : 'See More' }}
+            </div>
         </div>
     </ng-container>
 
@@ -322,7 +327,7 @@
             </p>
             <mat-selection-list>
                 <section class="mat-body-2 margin-bottom-xs text-capitalize"
-                    *ngFor="let options of formattedFacets['rootOrgName']">
+                    *ngFor="let options of (showAllOrganisation ? formattedFacets['rootOrgName'] : formattedFacets['rootOrgName'].slice(0, 4))">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, 'rootOrgName')">
                         <span class="min-width-adjust">
@@ -331,6 +336,10 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
+             <div *ngIf="formattedFacets['rootOrgName'].length > 4" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore('organisation')">
+                {{ showAllOrganisation ? 'See Less' : 'See More' }}
+            </div>
         </div>
     </ng-container>
 

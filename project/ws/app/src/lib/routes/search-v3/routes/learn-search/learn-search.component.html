@@ -93,17 +93,17 @@
                                 translate:{ count: peopleSearchTotalCount } }}</p>
                             <ng-container *ngIf="peopleSearchTotalCount > 0 && !seeAllResult">
                                 <ws-utils-horizontal-scroller [loadStatus]="'done'">
-                                    <div class="card-container mr-6" *ngFor="let user of peoplesSearchResults">
-                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user"
+                                    <div class="card-container mr-6" *ngFor="let user of peoplesSearchResults; let index=index">
+                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user" (telemetry)="applyTelemetry($event, index)"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </ws-utils-horizontal-scroller>
                             </ng-container>
 
                             <ng-container *ngIf="seeAllResult === 'peoples'">
-                                <div class="flex flex-wrap gap-x-2 gap-y-3">
+                                <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-between">
                                     <div class="card-container" *ngFor="let user of peoplesSearchResults">
-                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user"
+                                        <ws-app-people-connection-card class="mr-6 mb-5" [user]="user"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </div>
@@ -114,7 +114,12 @@
                                 {{ 'learnsearch.seeAllResults'
                                 | translate }}
                             </p>
-
+                            <ng-container *ngIf="seeAllResult && peopleSearchTotalCount > initialPaginationSize">
+                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                    [totalItemsCount]="this.peopleSearchTotalCount" [currentPage]="initialPaginationPage"
+                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                            </ng-container>
                         </div>
                     </ng-container>
 
@@ -126,8 +131,8 @@
                                 translate:{ count: communitiesSearchTotalCount } }}</p>
                             <ng-container *ngIf="communitiesSearchTotalCount > 0 && !seeAllResult">
                                 <ws-utils-horizontal-scroller [loadStatus]="'done'">
-                                    <div class="card-container mr-6" *ngFor="let community of communitiesSearchResults">
-                                        <ws-app-community-content-card [community]="community"
+                                    <div class="card-container mr-6" *ngFor="let community of communitiesSearchResults; let index=index">
+                                        <ws-app-community-content-card [community]="community" (telemetry)="applyTelemetry($event, index)"
                                             [orgDetails]="community?.additionalInfo"></ws-app-community-content-card>
                                     </div>
                                 </ws-utils-horizontal-scroller>
@@ -145,7 +150,12 @@
                                 (click)="constructQueryParam('communities')"> {{
                                 'learnsearch.seeAllResults' | translate }}
                             </p>
-
+                            <ng-container *ngIf="seeAllResult && communitiesSearchTotalCount > initialPaginationSize">
+                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                    [totalItemsCount]="this.communitiesSearchTotalCount" [currentPage]="initialPaginationPage"
+                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                            </ng-container>
                         </div>
                     </ng-container>
                 </ng-container>
