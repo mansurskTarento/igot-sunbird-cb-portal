@@ -15,13 +15,13 @@
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
                     <div class="">
-                        <span class="brand-color">"{{(courseSearchTotalCount + eventSearchTotalCount +
-                            peopleSearchTotalCount + communitiesSearchTotalCount)}}"</span>
+                        <span class="brand-color">“{{(courseSearchTotalCount + eventSearchTotalCount +
+                            peopleSearchTotalCount + communitiesSearchTotalCount)}}”</span>
                         <span class="mx-1">{{'learnsearch.searchResultsFor' | translate}}</span>
-                        <span class="brand-color" *ngIf="searchQuery.query">{{searchQuery.query}}'</span>
+                        <span class="brand-color" *ngIf="searchQuery.query">“{{searchQuery.query}}”</span>
                     </div>
                     <div class="sort-search">
-                        <ws-app-search-sort-input
+                        <ws-app-search-sort-input [category]="seeAllResult"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
                         <div class="search-content-card">
                             <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> {{ 'learnsearch.content' |
                                 translate:{ count: courseSearchTotalCount } }}</p>
-                            <ng-container *ngFor="let course of courseSearchResults">
-                                <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
+                            <ng-container *ngFor="let course of courseSearchResults; let index = index">
+                                <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails" (telemetry)="applyTelemetry($event, index)"
                                     [cbpPlans]="cbpPlanList"></ws-app-course-content-card>
                             </ng-container>
                             <p class="see-all-results text-center font-normal brand-color cursor-pointer"
@@ -67,8 +67,8 @@
                         <div class="search-event-card">
                             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.event' |
                                 translate:{ count: eventSearchTotalCount } }}</p>
-                            <ng-container *ngFor="let event of eventsSearchResults">
-                                <ws-app-search-event-card [content]="event"></ws-app-search-event-card>
+                            <ng-container *ngFor="let event of eventsSearchResults; let index = index">
+                                <ws-app-search-event-card [content]="event" (telemetry)="applyTelemetry($event, index)"></ws-app-search-event-card>
                             </ng-container>
                             <p class="see-all-results text-center font-normal brand-color cursor-pointer"
                                 *ngIf="!seeAllResult && eventSearchTotalCount > 3"
@@ -158,10 +158,6 @@
                     class="margin-top-l margin-bottom-s">
                 <div class="no-data-text font-bold text-sm my-4" i18n="search route no result">
                     {{ noResultMessage }}</div>
-                <!-- <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText1'
-                    | translate}}</div>
-                <div class="no-data-text font-bolder text-sm" i18n="search route you may try">{{'learnsearch.extraText2'
-                    | translate}}</div> -->
                 <div class="action-search-btn flex gap-4 items-center mt-6 justify-center">
                     <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
                         (click)="navigateTo('page/home')">

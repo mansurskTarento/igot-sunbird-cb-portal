@@ -27,7 +27,9 @@
                             <mat-checkbox [checked]="category?.isChecked"
                                 (change)="onSelectionFilter($event, category, category?.name);"
                                 (click)="$event.stopPropagation();">
-                                <label>{{ category.displayName}}</label>
+                                <span class="min-width-adjust">
+                                    {{ category?.displayName }}
+                                </span>
                             </mat-checkbox>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
@@ -36,7 +38,9 @@
                             *ngFor="let options of category.filters">
                             <mat-checkbox [checked]="options.isChecked"
                                 (change)="onSelectionFilter($event, options, category?.displayName)">
-                                <label>{{ options.displayName }}</label>
+                                <span class="min-width-adjust">
+                                    {{ options?.displayName }}
+                                </span>
                             </mat-checkbox>
                         </section>
                     </mat-selection-list>
@@ -46,7 +50,9 @@
                         <section class="mat-body-2 margin-bottom-xs text-capitalize">
                             <mat-checkbox [checked]="category?.isChecked"
                                 (change)="onSelectionFilter($event, category, category?.name)">
-                                <label>{{ category?.displayName }}</label>
+                                <span class="min-width-adjust">
+                                    {{ category?.displayName }}
+                                </span>
                             </mat-checkbox>
                         </section>
                     </mat-selection-list>
@@ -67,7 +73,9 @@
                     *ngFor="let options of formattedFacets['typeOfEvents']">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'typeOfEvents')">
-                        {{ options.name }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -83,7 +91,9 @@
                     *ngFor="let options of formattedFacets['avgRating']">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'avgRating')">
-                        {{ options.name + ' & above' + ' (' + options.count + ')' }}
+                        <span class="min-width-adjust">
+                            {{ options.name + ' & above' + ' (' + options.count + ')' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -95,7 +105,7 @@
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.languages' | translate}}</p>
             <div class="mat-full-radius mb-2" *ngIf="formattedFacets['language'].length > 4">
                 <mat-form-field appearance="outline" class="search-input-block">
-                    <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage>
+                    <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage [(ngModel)]="filterQueryLanguage">
                     <mat-icon matPrefix class="search-icon">search</mat-icon>
                 </mat-form-field>
             </div>
@@ -103,11 +113,13 @@
                 <section class="mat-body-2 margin-bottom-xs text-capitalize" *ngFor="let options of filteredLanguages">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'language')">
-                        {{ options?.name }}
+                        <span class="min-width-adjust">
+                            {{ options?.name + ' (' + options.count + ')'}}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
-            <div *ngIf="formattedFacets['language'].length > 4" class="brand-color underline cursor-pointer"
+            <div *ngIf="(filteredLanguages?.length > 4) || (!filterQueryLanguage && formattedFacets?.['language']?.length > 4)" class="brand-color underline cursor-pointer"
                 (click)="toggleShowMore('language')">
                 {{ showAllLanguage ? 'See Less' : 'See More' }}
             </div>
@@ -130,19 +142,22 @@
                     *ngFor="let options of filteredOrganisations">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'organisation')">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">{{ options?.name ? capitalizeFirstLetter(options?.name) : ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options.count + ')'}}</span>  <!-- {{ options?.name ? capitalizeFirstLetter(options?.name) + ' (' + options.count + ')': '' }} -->
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
-            <div *ngIf="formattedFacets['organisation'].length > 4" class="brand-color underline cursor-pointer"
+            <div *ngIf="(filteredOrganisations?.length > 4) || (!filterQueryOrganisation && formattedFacets?.['organisation']?.length > 4)"
+                class="brand-color underline cursor-pointer"
                 (click)="toggleShowMore('organisation')">
-                {{ showAllOrganisation ? 'See Less' : 'See More' }}
-            </div>
+               {{ showAllOrganisation ? 'See Less' : 'See More' }}
+           </div>
+           
 
         </div>
     </ng-container>
 
-    <ng-container *ngIf="formattedFacets['duration'] && formattedFacets['duration'].length">
+    <!-- <ng-container *ngIf="formattedFacets['duration'] && formattedFacets['duration'].length">
         <div class="duration-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.duration' | translate}}</p>
             <mat-selection-list>
@@ -154,7 +169,7 @@
                 </section>
             </mat-selection-list>
         </div>
-    </ng-container>
+    </ng-container> -->
 
     <ng-container *ngIf="formattedFacets[competencyAreaNameKey] && formattedFacets[competencyAreaNameKey].length">
         <div class="competency-filter">
@@ -165,7 +180,9 @@
                     *ngFor="let options of formattedFacets[competencyAreaNameKey]">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, competencyAreaNameKey)">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -181,7 +198,9 @@
                     *ngFor="let options of formattedFacets['competencyArea']">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, 'competencyArea')">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -198,7 +217,9 @@
                     *ngFor="let options of (showAllCompetencyTheme ? formattedFacets[competencyThemeKey] : formattedFacets[competencyThemeKey].slice(0, 4))">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, competencyThemeKey)">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -219,7 +240,9 @@
                     *ngFor="let options of (showAllCompetencySubTheme ? formattedFacets[competencySubThemeKey] : formattedFacets[competencySubThemeKey].slice(0, 4))">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, competencySubThemeKey)">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -240,14 +263,16 @@
                     *ngFor="let options of formattedFacets['topicName']">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, 'topicName')">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
         </div>
     </ng-container>
 
-    
+
     <ng-container *ngIf="formattedFacets['orgName'] && formattedFacets['orgName'].length">
         <div class="competency-area-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' |
@@ -258,7 +283,9 @@
                     *ngFor="let options of (showAllOrganisation ? formattedFacets['orgName'] : formattedFacets['orgName'].slice(0, 4))">
                     <mat-checkbox [checked]="options.isChecked"
                         (change)="onSelectionFilter($event, options, 'orgName')">
-                        {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -269,6 +296,42 @@
         </div>
     </ng-container>
 
-  
+    <ng-container
+        *ngIf="formattedFacets['profileDetails.professionalDetails.designation'] && formattedFacets['profileDetails.professionalDetails.designation'].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'userProfile.designation' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 margin-bottom-xs text-capitalize"
+                    *ngFor="let options of formattedFacets['profileDetails.professionalDetails.designation']">
+                    <mat-checkbox [checked]="options.isChecked"
+                        (change)="onSelectionFilter($event, options, 'profileDetails.professionalDetails.designation')">
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+
+    <ng-container
+        *ngIf="formattedFacets['rootOrgName'] && formattedFacets['rootOrgName'].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 margin-bottom-xs text-capitalize"
+                    *ngFor="let options of formattedFacets['rootOrgName']">
+                    <mat-checkbox [checked]="options.isChecked"
+                        (change)="onSelectionFilter($event, options, 'rootOrgName')">
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
 
 </div>

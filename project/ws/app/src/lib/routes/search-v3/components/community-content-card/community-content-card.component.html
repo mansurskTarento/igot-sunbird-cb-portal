@@ -1,4 +1,4 @@
-<div class="community-card" (click)="communityCardClick()">
+<div class="community-card cursor-pointer" (click)="communityCardClick()">
     <div class="card-img-block relative">
         <img [src]="community?.imageUrl || community?.data?.imageUrl" class="w-full h-full"
         (error)="changeToDefaultThumbnailImg($event)" alt="logo">
