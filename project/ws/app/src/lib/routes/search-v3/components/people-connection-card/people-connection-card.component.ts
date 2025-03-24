@@ -13,6 +13,7 @@ const SNACKBAR_DURATION = 3000;
 })
 export class PeopleConnectionCardComponent {
   @Input() user!: any;
+  @Input() category!: any;
   @Output() connection = new EventEmitter<string>();
   @Output() telemetry = new EventEmitter<any>();
   currentUser!: NsUser.IUserProfile;
@@ -149,5 +150,16 @@ export class PeopleConnectionCardComponent {
 
   get usr() {
     return this.howerUser;
+  }
+
+  get userDesignation(): string {
+    const professionalDetails = this.user?.profileDetails?.professionalDetails;
+  
+    if (professionalDetails?.length) {
+      const designationItem = professionalDetails.find((item: any) => 'designation' in item);
+      return designationItem?.designation ?? this.user?.rootOrgName ?? ''; 
+    }
+  
+    return this.user?.rootOrgName ?? '';
   }
 }

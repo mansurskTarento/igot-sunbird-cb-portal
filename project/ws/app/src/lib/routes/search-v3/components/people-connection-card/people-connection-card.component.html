@@ -1,5 +1,5 @@
 <div class="flex flex-col item-center mt-10">
-    <div class="flex flex-col card-container cursor-pointer all-result-peoples">
+    <div class="flex flex-col card-container cursor-pointer" [ngClass]="{'all-result-peoples': category && category === 'peoples'}">
         <div class="photo-container flex items-center justify-center cursor-pointer" (click)="goToUserProfile(user)">
 
             <ws-widget-avatar-photo i18n-aria-label role="link" tabindex="0" [name]="getUseravatarName()"
@@ -12,14 +12,10 @@
                     <!-- <ws-app-connection-name [hoverUser]="user"></ws-app-connection-name> -->
                     <span class="mat-body-1 name text-center">{{user?.firstName | titlecase }}</span>
                 </div>
+                <div class="designation ws-mat-black60-text mat-body-2 text-ellipse m-auto">
+                    {{userDesignation}}
+                </div>
             </div>
-        </div>
-        <div class="designation ws-mat-black60-text mat-body-2 text-ellipse m-auto"
-            *ngIf="user?.profileDetails?.professionalDetails.length">
-            {{user?.profileDetails?.professionalDetails[0]?.designation}}
-        </div>
-        <div class="designation ws-mat-black60-text mat-body-2 m-auto text-ellipse" *ngIf="!(user?.profileDetails?.professionalDetails.length)">
-            {{user?.rootOrgName}}
         </div>
         <div class="action-container flex items-center justify-center">
             <button mat-flat-button color="accent" type="button" class="mat-btn-outline cursor-pointer"
