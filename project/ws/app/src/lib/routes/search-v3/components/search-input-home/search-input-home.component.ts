@@ -63,12 +63,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     {
       label: 'Case Studies',
       value: SearchCategory.CaseStudy,
-      icon: 'menu_book',
+      icon: 'diversity_3',
     },
     {
       label: 'Communities',
       value: SearchCategory.Communities,
-      icon: 'diversity_3',
+      icon: 'menu_book',
     },
   ];
 

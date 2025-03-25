@@ -4,7 +4,7 @@
         (combinedFacets.length > 0 || 
         (courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0)">
             <ng-container>
-                <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
+                <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets" [competencyFactet]="competencyFactet"
                     (appliedFilter)="applySearchFilter($event)"
                     [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"></ws-app-search-filters>
             </ng-container>
@@ -101,9 +101,9 @@
                             </ng-container>
 
                             <ng-container *ngIf="seeAllResult === 'peoples'">
-                                <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-between">
-                                    <div class="card-container" *ngFor="let user of peoplesSearchResults">
-                                        <ws-app-people-connection-card class="mr-6 mb-5" [user]="user" [category]="seeAllResult" (telemetry)="applyTelemetry($event, index)"
+                                <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-start">
+                                    <div class="card-container flex-grow" *ngFor="let user of peoplesSearchResults">
+                                        <ws-app-people-connection-card class="mb-5" [user]="user" [category]="seeAllResult" (telemetry)="applyTelemetry($event, index)"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </div>
@@ -115,10 +115,12 @@
                                 | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && peopleSearchTotalCount > initialPaginationSize">
-                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
-                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
-                                    [totalItemsCount]="this.peopleSearchTotalCount" [currentPage]="initialPaginationPage"
-                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                <div class="mt-4">
+                                    <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                        [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                        [totalItemsCount]="this.peopleSearchTotalCount" [currentPage]="initialPaginationPage"
+                                        (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                </div>
                             </ng-container>
                         </div>
                     </ng-container>
@@ -172,8 +174,8 @@
                     <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
                         (click)="navigateTo('page/home')">
                         {{'learnsearch.btnBackToHomepage' | translate}}</button>
-                    <!-- <button mat-flat-button class="mat-btn-flat cursor-pointer py-1">
-                        {{'learnsearch.btnExploreMore' | translate}}</button> -->
+                    <button mat-flat-button class="mat-btn-flat cursor-pointer py-1" (click)="navigateTo('page/home')">
+                        {{'learnsearch.btnExploreMore' | translate}}</button>
                 </div>
 
             </div>

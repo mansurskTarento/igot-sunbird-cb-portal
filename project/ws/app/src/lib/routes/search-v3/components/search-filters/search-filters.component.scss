@@ -40,10 +40,11 @@
       line-height: 16.8px;
       color: $overleyDarkBackground;
       display: inline-block;
-      max-width: 14em;
+      max-width: 12em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-top: 6px;
     }
   }
 
@@ -145,4 +146,12 @@
 
 .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:not([aria-disabled=true]):hover {
   background-color: transparent !important;
+}
+
+.padding-top-0 {
+  padding-top: 0 !important;
+}
+
+.padding-remove {
+  padding: 0 4px 0 0 !important;
 }

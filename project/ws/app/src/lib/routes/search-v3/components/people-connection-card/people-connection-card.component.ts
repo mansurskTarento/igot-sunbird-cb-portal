@@ -157,7 +157,9 @@ export class PeopleConnectionCardComponent {
   
     if (professionalDetails?.length) {
       const designationItem = professionalDetails.find((item: any) => 'designation' in item);
-      return designationItem?.designation ?? this.user?.rootOrgName ?? ''; 
+      const designation = designationItem?.designation ?? '';
+      const rootOrgName = this.user?.rootOrgName ?? '';
+      return designation ? `${designation} at ${rootOrgName}` : rootOrgName;
     }
   
     return this.user?.rootOrgName ?? '';

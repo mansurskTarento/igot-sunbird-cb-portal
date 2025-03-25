@@ -12,7 +12,7 @@ import {
   SEARCH_SORT_DROPDOWN,
   SEARCH_SORT_PEOPLES,
 } from '../../../../../../../author/src/lib/constants/constant';
-import { SortType } from '../../models/search-v3.model';
+import { SearchCategory, SortType } from '../../models/search-v3.model';
 
 @Component({
   selector: 'ws-app-search-sort-input',
@@ -30,9 +30,12 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   constructor() {}
 
   ngOnChanges(): void {
-    if (this.category === 'peoples') {
+    if (this.category === SearchCategory.People) {
       this.options = SEARCH_SORT_PEOPLES;
       this.selectedOption = SortType.Ascending;
+    } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
+      this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
+      this.selectedOption = SortType.MostRelevent;
     } else {
       this.options = SEARCH_SORT_DROPDOWN;
       this.selectedOption = SortType.MostRelevent;

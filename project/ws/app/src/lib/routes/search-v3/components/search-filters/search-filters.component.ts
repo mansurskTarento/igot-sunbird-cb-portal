@@ -41,6 +41,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() appliedFilter = new EventEmitter<{ [key: string]: any }>();
   @Output() constructQueryParam = new EventEmitter<string>();
   @Input() karmayogiBadge: any;
+  @Input() competencyFactet: any;
 
   private subscription: Subscription = new Subscription();
   queryParams: any;
@@ -86,7 +87,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['newfacets'].currentValue) {
+    if (changes['newfacets'] && changes['newfacets'].currentValue) {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -95,9 +96,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           ...this.formattedFacets['sourceName'],
         ];
       }
-    } else {
-      this.formattedFacets = {};
     }
+    if (
+      changes['competencyFactet'] &&
+      changes['competencyFactet'].currentValue
+    ) {
+    } 
 
     this.setCategoryType();
   }
@@ -109,7 +113,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.categoryType = this.categoryTypeDup.filter(
         (type) => type.name === searchCategory
       );
-      if(this.categoryType.length) {
+      if (this.categoryType.length) {
         this.categoryType[0].isChecked = true;
         this.selectedFilters[this.categoryType[0].name] = [
           this.categoryType[0].name,
@@ -144,11 +148,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
     } else if (togglesection === FacetType.Language) {
       this.showAllLanguage = !this.showAllLanguage;
-    }
-     else if (togglesection === FacetType.Organization) {
+    } else if (togglesection === FacetType.Organization) {
       this.showAllOrganisation = !this.showAllOrganisation;
-    }
-     else if (togglesection === FacetType.Designation) {
+    } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
     }
   }
@@ -292,9 +294,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
         this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
+        this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
         this.constructQueryParam.emit('');
         return;
       }
@@ -311,9 +311,44 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
+        this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+      }
+    } else if (item.type === this.competencyAreaNameKey || item.type === this.competencyThemeKey || item.type === this.competencySubThemeKey) {
+      facets = this.competencyFactet;
+
+      let competency;
+      if (item.type === this.competencyAreaNameKey) {
+        competency = facets.find((facet: any) => (facet[item.type]?.name).toLowerCase() === (item.value).toLowerCase());
+      } else {
+        competency = facets.find((facet: any) => {
+          if (facet[item.type]) {
+            return facet[item.type].find((subFacet: any) => (subFacet.name).toLowerCase() === (item.value).toLowerCase());
+          }
+          return false;
+        });
+      }
+
+      if (competency) {
+        if (item.type === this.competencyAreaNameKey) {
+          competency[item.type].isChecked = false;
+        } else {
+          const subFacet = competency[item.type].find((subFacet: any) => (subFacet.name).toLowerCase() === (item.value).toLowerCase());
+          if (subFacet) {
+            subFacet.isChecked = false;
+          }
+        }
+
+        if (this.selectedFilters[item.type]) {
+          this.selectedFilters[item.type] = this.selectedFilters[item.type].filter(
+            (filter: string) => (filter).toLowerCase() !== (item.value).toLowerCase()
+          );
+          if (this.selectedFilters[item.type].length === 0) {
+            delete this.selectedFilters[item.type];
+          }
+        }
+
+        this.appliedFilter.emit(this.selectedFilters);
+        this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
       }
     } else {
       facets = this.formattedFacets;
@@ -334,9 +369,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
+        this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
       }
     }
   }
@@ -355,6 +388,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     _.forEach(this.formattedFacets, (filters) => {
       _.forEach(filters, (filter) => {
         filter.isChecked = false;
+      });
+    });
+
+    _.forEach(this.competencyFactet, (competency) => {
+      competency[this.competencyAreaNameKey].isChecked = false;
+      _.forEach(competency[this.competencyThemeKey], (theme) => {
+        theme.isChecked = false;
+      });
+      _.forEach(competency[this.competencySubThemeKey], (subTheme) => {
+        subTheme.isChecked = false;
       });
     });
 

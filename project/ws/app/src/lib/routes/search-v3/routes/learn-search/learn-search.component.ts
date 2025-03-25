@@ -110,6 +110,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   connectionRequestsSent!: any;
   queryParams: any;
   typesOfEventsFilters: string[] = [];
+  competencyFactet: any = [];
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -277,11 +278,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchTotalCount = result.result?.count;
       this.coursesFacets = result.result?.facets || [];
 
-      this.courseSearchResults.forEach((course: any) => {
-        course?.organisation?.forEach((element: any) => {
-          this.allResultsDepartmentName.add(element);
-        });
-      });
+      // this.courseSearchResults.forEach((course: any) => {
+      //   course?.organisation?.forEach((element: any) => {
+      //     this.allResultsDepartmentName.add(element);
+      //   });
+      // });
     } else {
       this.courseSearchResults = [];
       this.courseSearchTotalCount = 0;
@@ -313,9 +314,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.eventSearchTotalCount = result.result?.count;
       }
       this.eventsFacets = result.result?.facets;
-      this.eventsSearchResults.forEach((event: any) => {
-        this.allResultsDepartmentName.add(event?.sourceName);
-      });
+      // this.eventsSearchResults.forEach((event: any) => {
+      //   this.allResultsDepartmentName.add(event?.sourceName);
+      // });
     } else {
       this.eventsSearchResults = [];
       this.eventSearchTotalCount = 0;
@@ -342,9 +343,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   async searchcommunities() {
     this.searchRequestCommunities.pageSize = this.initialPaginationSize;
     this.searchRequestCommunities.searchString = this.statedata?.param || '';
-    const result = await this.searchV3Service.searchCommunity(
-      this.searchRequestCommunities
-    );
+    const result = await this.searchV3Service
+      .searchCommunity(this.searchRequestCommunities)
+      .catch(() => {
+        return {
+          result: { search_results: { data: [], totalCount: 0, facets: {} } },
+        };
+      });
+
     if (
       result.result &&
       result.result?.search_results?.data &&
@@ -360,6 +366,54 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.communitiesSearchResults = [];
       this.communitiesSearchTotalCount = 0;
     }
+  }
+
+  async getCompetencyHierichy() {
+    const competency = ['Functional', 'Domain', 'Behavioural'];
+    let competencyFactet: any = [];
+    for (const element of competency) {
+      this.searchRequestCourse.request.query = this.statedata?.param;
+      this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+        element;
+      const result = await this.searchV3Service.searchCoursesv4(
+        this.searchRequestCourse
+      );
+
+      const competencyThemeFacet = result.result?.facets.find(
+        (facet: any) => facet.name === this.competencyThemeKey
+      );
+      const competencySubThemeFacet = result.result?.facets.find(
+        (facet: any) => facet.name === this.competencySubThemeKey
+      );
+
+      const competencyThemeName = competencyThemeFacet
+        ? competencyThemeFacet.values.map((value: any) => ({
+            name: value.name,
+            count: value.count,
+            isChecked: false,
+          }))
+        : [];
+      const competencySubThemeName = competencySubThemeFacet
+        ? competencySubThemeFacet.values.map((value: any) => ({
+            name: value.name,
+            count: value.count,
+            isChecked: false,
+          }))
+        : [];
+
+      if (competencyThemeName.length || competencySubThemeName.length) {
+        competencyFactet.push({
+          [this.competencyAreaNameKey]: {
+            name: element,
+            count: result.result?.count || 0,
+            isChecked: false,
+          },
+          [this.competencyThemeKey]: competencyThemeName,
+          [this.competencySubThemeKey]: competencySubThemeName,
+        });
+      }
+    }
+    this.competencyFactet = competencyFactet;
   }
 
   processCommunityFacets(facets: Record<string, any[]>): any {
@@ -380,6 +434,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.filters.avgRating = {};
 
     Object.keys(selectedFilters).forEach((key) => {
+      debugger;
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
         if (key === FacetType.AvgRating) {
           const ratings = selectedFilters[key]
@@ -429,6 +484,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ];
         } else if (key === 'orgName') {
           this.searchRequestCommunities.filterCriteriaMap.orgName = [
+            ...selectedFilters[key],
+          ];
+        } else if (key === 'topicName') {
+          this.searchRequestCommunities.filterCriteriaMap.topicName = [
             ...selectedFilters[key],
           ];
         } else if (key === 'profileDetails.professionalDetails.designation') {
@@ -528,6 +587,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       delete this.searchRequestCommunities.filterCriteriaMap.topicName;
     }
     if (
+      this.searchRequestCommunities.filterCriteriaMap.topicName &&
+      this.searchRequestCommunities.filterCriteriaMap.topicName.length === 0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap.topicName;
+    }
+    if (
       this.searchRequestPeoples.filters[
         'profileDetails.professionalDetails.designation'
       ] &&
@@ -556,6 +621,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestCourse.request.limit = this.initialPaginationSize;
       await this.searchCourses();
       this.combinedFacets = [this.coursesFacets];
+      this.getCompetencyHierichy();
     } else if (category === SearchCategory.CaseStudy) {
       this.eventSearchTotalCount = 0;
       this.peopleSearchTotalCount = 0;
@@ -618,6 +684,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.seeAllResult = '';
     this.allResultsDepartmentName = new Set<string>();
+    this.competencyFactet = [];
   }
 
   onPageChange(event: PageChangeEmitter) {
