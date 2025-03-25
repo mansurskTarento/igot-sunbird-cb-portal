@@ -11,7 +11,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'ws-app-view-all',
@@ -39,6 +39,7 @@ export class ViewAllComponent {
     startDate: 'desc'
   }
   pageConfigData: any = {}
+  private scrollSubject = new Subject<Event>()
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -54,17 +55,26 @@ export class ViewAllComponent {
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
     ]
+    this.scrollSubject.pipe(debounceTime(500)).subscribe((event: any) => {
+      console.log("event ", event)
+      this.onDebouncedScroll()
+    })
   }
 
   @HostListener('window:scroll', ['$event'])
 
-  onScroll(): void {
+  onScroll(event: Event): void {
     if (
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 700 && !this.isLoading && this.showNextPage
     ) {
-      this.fetchData()
+      this.scrollSubject.next(event)
     }
   }
+
+  onDebouncedScroll() {
+    this.fetchData()
+  }
+
 
   ngOnInit() {
     this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
