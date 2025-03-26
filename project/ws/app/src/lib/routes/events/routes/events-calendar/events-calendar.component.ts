@@ -33,6 +33,8 @@ export class EventsCalendarComponent implements OnInit {
   userEventsList: any = []
   selectedDateEvents: any = []
   calendarLoading = false
+  showAllEvents = false
+  bottomSheet = false
 
   constructor(
     private datePipe: DatePipe,
@@ -41,12 +43,14 @@ export class EventsCalendarComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private router: Router,
     private bottomSheetRef: MatBottomSheetRef<any>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any,
+    @Inject(MAT_BOTTOM_SHEET_DATA) @Optional() public data: any = null,
     private langtranslations: MultilingualTranslationsService,
     private events: libEventService,
   ) {
-    if (this.data) {
+    if (Object.keys(this.data).length !== 0) {
       this.eventCalendarDetails = this.data
+      this.bottomSheet = true
+      this.showAllEvents = true
     }
   }
 
@@ -81,7 +85,7 @@ export class EventsCalendarComponent implements OnInit {
         next: (res: any) => {
           this.userEventsList = _.get(res, 'result.events')
           this.generateCalendarDays();
-          this.getSelectedDateEvents() 
+          this.getSelectedDateEvents()
         },
         error: (error: HttpErrorResponse) => {
           this.generateCalendarDays();
@@ -177,6 +181,7 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   selectDate(date: Date) {
+    this.showAllEvents = false
     this.selected = date;
     const formattedSelectedDate = this.datePipe.transform(this.selected, 'dd MMM yyyy')
     const formattedToday = this.datePipe.transform(new Date(), 'dd MMM yyyy');

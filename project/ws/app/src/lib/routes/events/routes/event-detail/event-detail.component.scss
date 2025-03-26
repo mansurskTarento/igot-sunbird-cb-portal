@@ -242,6 +242,11 @@ button.ws-mat-primary-background {
   .no-right-marging {
     margin-right: 0 !important;
   }
+
+  .reference-inner-card {
+    width: calc(100vw - 150px);
+  }
+
 }
 
 .certificate-container {
