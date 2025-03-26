@@ -14,7 +14,7 @@ const API_END_POINTS = {
   ALL_EVENT_ENROLL_LIST: (userId: string) => `/apis/proxies/v8/v1/user/events/list/${userId}`,
   IS_ENROLLED: (userId: string, eventId: string, batchId?: string) =>
     `/apis/proxies/v8/user/event/read/${userId}?eventId=${eventId}&batchId=${batchId}`,
-  USER_ALL_ENROLL_EVENT_LIST: (userId: string) => `/apis/proxies/v8/user/events/list/${userId}`,
+  USER_ALL_ENROLL_EVENT_LIST: (userId: string) => `/apis/proxies/v8/user/events/v2/list/${userId}`,
   TRENDING: `/apis/proxies/v8/user/mdo/trending/events`,
   FEATURED: `/apis/proxies/v8/user/featured/events`,
 

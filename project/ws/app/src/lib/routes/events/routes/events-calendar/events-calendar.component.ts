@@ -58,7 +58,7 @@ export class EventsCalendarComponent implements OnInit {
     this.getEnrolledEvents()
     this.selected = new Date()
     this.selected.setHours(0, 0, 0, 0)
-    this.selectedDateText = this.datePipe.transform(this.selected, 'dd MMM yyyy') as string
+    // this.selectedDateText = this.datePipe.transform(this.selected, 'dd MMM yyyy') as string
     this.currentMonthYearText = this.datePipe.transform(this.currentMonth, 'MMM yyyy') as string;
   }
 
@@ -72,7 +72,7 @@ export class EventsCalendarComponent implements OnInit {
       request: {
         retiredCoursesEnabled: true,
         status: 'All',
-        calendarEventEnabled: false,
+        calendarEventEnabled: true,
         eventStartDate: firstDay,
         eventEndDate: lastDay
       }
@@ -181,9 +181,15 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   selectDate(date: Date) {
-    this.selected = date
-    this.selectedDateText = this.datePipe.transform(this.selected, 'dd MMM yyyy') as string
     this.showAllEvents = false
+    this.selected = date;
+    const formattedSelectedDate = this.datePipe.transform(this.selected, 'dd MMM yyyy')
+    const formattedToday = this.datePipe.transform(new Date(), 'dd MMM yyyy');
+    if (formattedSelectedDate === formattedToday) {
+      this.selectedDateText = 'Today'
+    } else {
+      this.selectedDateText = formattedSelectedDate as string
+    }
     this.getSelectedDateEvents()
   }
 
@@ -196,11 +202,13 @@ export class EventsCalendarComponent implements OnInit {
           eventData.setHours(0, 0, 0, 0)
           if (this.selected.getTime() === eventData.getTime()) {
             const eventDetails = JSON.parse(JSON.stringify(_.get(event, 'event')))
-            if (eventDetails && eventDetails.startDateTime && eventDetails.endDateTime) {
+            const eventStartDateTime = _.get(eventDetails, 'startDateTime', this.convertToUTC(_.get(eventDetails, 'startDate'), _.get(eventDetails, 'startTime')))
+            const eventEndDateTime = _.get(eventDetails, 'endDateTime', this.convertToUTC(_.get(eventDetails, 'endDate'), _.get(eventDetails, 'endTime')))
+            if (eventStartDateTime && eventEndDateTime) {
               const currentTime = new Date();
-              const startTime = new Date(eventDetails.startDateTime);
-              const endTime = new Date(eventDetails.endDateTime);
-              eventDetails['startTime'] = this.datePipe.transform(eventDetails.startDateTime, 'hh:mm a')
+              const startTime = new Date(eventStartDateTime);
+              const endTime = new Date(eventEndDateTime);
+              eventDetails['startTime'] = this.datePipe.transform(eventStartDateTime, 'hh:mm a')
               eventDetails['isLive'] = currentTime >= startTime && currentTime <= endTime
             }
             if (eventDetails['isLive']) {
@@ -212,6 +220,17 @@ export class EventsCalendarComponent implements OnInit {
         }
       })
     }
+  }
+
+  convertToUTC(date: string, time: string): string {
+    if (date && time) {
+      const isoString = `${date}T${time}`;
+      const localDate = new Date(isoString);
+      const utcDate = localDate.toISOString();
+      const formattedDate = utcDate.replace('Z', '+0000');
+      return formattedDate;
+    }
+    return ''
   }
 
   translateLabels(label: string, type: any) {
@@ -233,6 +252,10 @@ export class EventsCalendarComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
       }
     )
+    if(this.bottomSheetRef) {
+      this.bottomSheetRef.dismiss()
+    }
+
     this.router.navigate([`/app/event-hub/home/${myEvent.identifier}`])
   }
 
