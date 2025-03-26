@@ -12,6 +12,7 @@ const API_END_POINTS = {
   TRENDING_DISCUSSION: `apis/proxies/v8/discussion/popular`,
   ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`,
   LEADER_BOARD: `apis/proxies/v8/halloffame/learnerleaderboard`,
+  EVENT_ENROLL: `apis/proxies/v8/user/events/enroll/summary`
 }
 
 @Injectable({
@@ -25,6 +26,9 @@ export class HomePageService {
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
     return result
+  }
+  geteventsHoursData(): Observable<any> {
+    return this.http.get(API_END_POINTS.EVENT_ENROLL)
   }
 
   getDiscussionsData(username: string): Observable<any> {
