@@ -56,7 +56,7 @@
               <div class="flex w-full flex-wrap gap-1 flex-middle pb-1 pt-1 opacity-75">
                 <mat-icon class="resource-type-icon">date_range</mat-icon>
                 <span class="resource-text"
-                  *nhIf="event?.startDate && event?.startTime">{{getStartDate(event?.startDate,
+                  *ngIf="event?.startDate && event?.startTime">{{getStartDate(event?.startDate,
                   event?.startTime) | date: 'EEE, MMM d hh:mm a'}}</span>
               </div>
               <div class="flex w-full flex-wrap gap-1 flex-middle pb-1 pt-1 opacity-75">
