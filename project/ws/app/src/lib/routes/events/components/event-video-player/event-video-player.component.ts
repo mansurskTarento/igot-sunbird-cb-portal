@@ -57,11 +57,12 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   isEnrolled = false
   currentEvent = false
   resumeEventStatus = 0
-  rateToFire = 15
+  rateToFire = 180
   intervalStarted = false
   widgetData: any = {}
   player: videoJs.Player | null = null
   dispose: (() => void) | null = null
+  pageConfigData: any = {}
   constructor(private route: ActivatedRoute,
     private eventService: EventService,
     private configSvc: ConfigurationsService,
@@ -71,7 +72,10 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   }
   ngOnInit() {
     this.eventData = this.route.snapshot.data['content'].data
-    console.log("===== ", this.eventData)
+    this.pageConfigData = this.route.snapshot.data['pageData'] && this.route.snapshot.data['pageData'].data || {}
+    if (this.pageConfigData && this.pageConfigData.fireUpdate) {
+      this.rateToFire = this.pageConfigData.fireUpdate
+    }
     this.videoId = this.eventData.registrationLink
     this.route.queryParams.subscribe(params => {
       this.isEnrolled = params['isEnrolled']

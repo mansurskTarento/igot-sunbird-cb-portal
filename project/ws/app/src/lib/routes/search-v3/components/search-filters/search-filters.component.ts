@@ -58,6 +58,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllCompetencyTheme: boolean = false;
   showAllOrganisation: boolean = false;
   showAllCompetencySubTheme: boolean = false;
+  showAllDesignation: boolean = false;
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
@@ -143,8 +144,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
     } else if (togglesection === FacetType.Language) {
       this.showAllLanguage = !this.showAllLanguage;
-    } else if (togglesection === FacetType.Organization) {
+    }
+     else if (togglesection === FacetType.Organization) {
       this.showAllOrganisation = !this.showAllOrganisation;
+    }
+     else if (togglesection === FacetType.Designation) {
+      this.showAllDesignation = !this.showAllDesignation;
     }
   }
 

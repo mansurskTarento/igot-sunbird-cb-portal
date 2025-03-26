@@ -18,7 +18,8 @@ const API_END_POINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
   SEARCH_V4: `/apis/proxies/v8/sunbirdigot/v4/search`,
   SEARCH_EXT_CONTENT: `/apis/proxies/v8/cios/v1/search/content`,
-  SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
+  // SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
+  SEARCH_PEOPLE: `/apis/proxies/v8/user/v5/public/search`,
   SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
   SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
   ENROLLMENT_API(userId: string): string {
@@ -80,7 +81,9 @@ export class GbSearchService {
   }
 
   searchConnections(params: SearchPeoplesRequest): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_PEOPLE, params).toPromise();
+    return this.http
+      .post(API_END_POINTS.SEARCH_PEOPLE, { request: params })
+      .toPromise();
   }
 
   searchCommunity(params: SearchCommunitiesRequest): Promise<any> {
@@ -92,6 +95,6 @@ export class GbSearchService {
   }
 
   enrollment(request: any, userId: string): any {
-    return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request)
+    return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request);
   }
 }

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ConfigurationsService, NsUser } from '@sunbird-cb/utils-v2';
-import { NSNetworkDataV2 } from '../../../network-v2/models/network-v2.model';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,8 +12,9 @@ const SNACKBAR_DURATION = 3000;
   styleUrls: ['./people-connection-card.component.scss'],
 })
 export class PeopleConnectionCardComponent {
-  @Input() user!: NSNetworkDataV2.INetworkUser;
+  @Input() user!: any;
   @Output() connection = new EventEmitter<string>();
+  @Output() telemetry = new EventEmitter<any>();
   currentUser!: NsUser.IUserProfile;
   howerUser!: any;
   unmappedUser!: any;
@@ -41,6 +41,7 @@ export class PeopleConnectionCardComponent {
     this.howerUser = this.user;
     this.unmappedUser = this.user;
   }
+
   getUseravatarName() {
     let name = '';
     if (this.user && !this.user.personalDetails) {
@@ -100,10 +101,10 @@ export class PeopleConnectionCardComponent {
     }
     return name;
   }
+
   connetToUser() {
-    debugger;
     const req = {
-      connectionId: this.user.id || this.user.identifier || this.user.wid,
+      connectionId: this.user.userId || this.user.identifier || this.user.wid,
       userIdFrom: this.currentUser ? this.currentUser.userId : '',
       userNameFrom: this.currentUser ? this.currentUser.userId : '',
       userDepartmentFrom:
@@ -111,8 +112,12 @@ export class PeopleConnectionCardComponent {
           ? this.currentUser.departmentName
           : '',
       userIdTo: this.unmappedUser.userId,
-      userNameTo: this.user.id || this.user.identifier || this.user.wid,
-      userDepartmentTo: this.unmappedUser.employmentDetails.departmentName,
+      userNameTo: this.user.userId || this.user.identifier || this.user.wid,
+      userDepartmentTo: this.unmappedUser.profileDetails?.professionalDetails
+        .length
+        ? this.unmappedUser.profileDetails?.professionalDetails[0]
+            ?.designation
+        : '',
     };
     this.networkV2Service.createConnection(req).subscribe(
       () => {
@@ -132,10 +137,14 @@ export class PeopleConnectionCardComponent {
   }
 
   goToUserProfile(user: any) {
+    user.contentType = 'People'
+    user.identifier = user.userId
+    this.telemetry.emit(user)
     this.router.navigate(
       ['/app/person-profile', user.userId || user.id || user.wid],
       { fragment: 'profileInfo' }
     );
+
   }
 
   get usr() {

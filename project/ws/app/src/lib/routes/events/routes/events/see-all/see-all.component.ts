@@ -57,6 +57,8 @@ export class SeeAllComponent {
       ).subscribe(ids => {
         if (ids.length) {
           this.fetchData(ids);
+        } else {
+          this.contentDataList = this.transformContentsToWidgets([], {})
         }
       })
     }

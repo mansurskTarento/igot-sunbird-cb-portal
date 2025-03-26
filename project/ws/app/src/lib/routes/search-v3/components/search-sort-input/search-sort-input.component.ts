@@ -3,23 +3,41 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
+  OnChanges,
   Output,
   ViewChild,
 } from '@angular/core';
-import { SEARCH_SORT_DROPDOWN } from '../../../../../../../author/src/lib/constants/constant';
+import {
+  SEARCH_SORT_DROPDOWN,
+  SEARCH_SORT_PEOPLES,
+} from '../../../../../../../author/src/lib/constants/constant';
+import { SortType } from '../../models/search-v3.model';
 
 @Component({
   selector: 'ws-app-search-sort-input',
   templateUrl: './search-sort-input.component.html',
   styleUrls: ['./search-sort-input.component.scss'],
 })
-export class SearchSortInputComponent implements AfterViewInit {
+export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @Output() searchSorter = new EventEmitter();
-  selectedOption = 'most_relevant';
+  @Input() category!: string;
+  selectedOption: string = SortType.MostRelevent;
   options = SEARCH_SORT_DROPDOWN;
 
   @ViewChild('sortSelect') sortSelect!: ElementRef;
 
+  constructor() {}
+
+  ngOnChanges(): void {
+    if (this.category === 'peoples') {
+      this.options = SEARCH_SORT_PEOPLES;
+      this.selectedOption = SortType.Ascending;
+    } else {
+      this.options = SEARCH_SORT_DROPDOWN;
+      this.selectedOption = SortType.MostRelevent;
+    }
+  }
   ngAfterViewInit() {
     // this.adjustSelectWidth();
   }
@@ -48,5 +66,4 @@ export class SearchSortInputComponent implements AfterViewInit {
       select.style.width = `${width + 40}px`;
     });
   }
-
 }

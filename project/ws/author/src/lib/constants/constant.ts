@@ -56,6 +56,12 @@ export const CATEGORY_TYPE = [
         isChecked: false,
         displayName: 'Standalone Assessment',
       },
+      {
+        name: 'Case Study',
+        count: 0,
+        isChecked: false,
+        displayName: 'Case Study',
+      },
     ],
   },
   {
@@ -72,13 +78,7 @@ export const CATEGORY_TYPE = [
     displayName: 'Peoples',
     filters: [],
   },
-  {
-    name: 'case-studies',
-    count: 0,
-    isChecked: false,
-    displayName: 'Case Study',
-    filters: [],
-  },
+ 
   {
     name: 'communities',
     count: 0,
@@ -93,6 +93,11 @@ export const SEARCH_SORT_DROPDOWN = [
   { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
   { name: 'Highest Rated', value: 'highest_rated' },
   // { name: 'Most Enrolled', value: 'most_enrolled' },
+];
+
+export const SEARCH_SORT_PEOPLES = [
+  { name: 'Asc', value: 'asc' },
+  { name: 'Desc', value: 'desc' },
 ];
 
 export const TypeOfEvents = [

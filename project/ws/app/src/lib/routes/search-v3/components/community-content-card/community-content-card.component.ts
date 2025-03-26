@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,7 +9,8 @@ import { Router } from '@angular/router';
 export class CommunityContentCardComponent {
   @Input() community: any;
   @Input() orgDetails: any;
-
+  @Output() telemetry = new EventEmitter<any>();
+  
   defaultThumbnail = '/assets/instances/eagle/app_logos/default.png';
   defaultSLogo = '/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg';
 
@@ -23,6 +24,9 @@ export class CommunityContentCardComponent {
   }
 
   communityCardClick() {
+    this.community.identifier = this.community?.communityId
+    this.community.contentType = 'Community'
+    this.telemetry.emit(this.community)
     this.router.navigate([
       '/app/discussion-forum-v2/community',
       this.community.communityId,

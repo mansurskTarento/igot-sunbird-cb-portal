@@ -4,8 +4,8 @@
   <div class="flex ">
     <div class="container-balanced w-full">
       <div class="col-span-12">
-        <div class="results-header my-4"> {{ translateLabels(category, 'events', '') }}
-          <span>({{contentDataList?.length}})</span>
+        <div class="results-header my-4 pl-4 md:pl-0 lg:pl-0"> {{ translateLabels(category, 'events', '') }}
+          <span *ngIf="contentDataList?.length">({{contentDataList?.length}})</span>
         </div>
         <div class="flex flex-row flex-wrap justify-center md:justify-start content-container">
           <ng-container *ngIf="contentDataList.length;else noData">

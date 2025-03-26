@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
@@ -12,13 +14,11 @@ import {
   EventService,
   WsEvents,
 } from '@sunbird-cb/utils-v2';
-// import { CertificateDialogComponent } from '@sunbird-cb/consumption';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component';
 import { CertificateService } from '../../../certificate/services/certificate.service';
 import { Router } from '@angular/router';
 import { WidgetContentLibService } from '@sunbird-cb/consumption';
-// import { CertificateDialogComponent } from '@sunbird-cb/consumption/lib/_common/dialog-components/certificate-dialog/certificate-dialog.component';
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 const NEW_CONTENT_THRESHOLD_DAYS = 14;
@@ -31,6 +31,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   @Input() content: any;
   @Input() enrollment: any[] = [];
   @Input() cbpPlans: any[] = [];
+  @Output() telemetry = new EventEmitter<any>();
   contentBookmarked = false;
   defaultThumbnail = '/assets/instances/eagle/app_logos/default.png';
   defaultSLogo = '/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg';
@@ -132,6 +133,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     if (content && content.objectType === 'Event' && content.identifier) {
       this.router.navigate([`app/event-hub/home/${content.identifier}`]);
     } else {
+      this.telemetry.emit(content);
       const urlData = await this.contSvc.getResourseLink(content);
       this.router.navigate([urlData.url], {
         queryParams: urlData.queryParams,
