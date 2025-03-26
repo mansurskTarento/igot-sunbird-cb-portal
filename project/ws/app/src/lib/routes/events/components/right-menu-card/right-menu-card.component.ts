@@ -38,6 +38,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   isEnrolled = false
   batchId = ''
   pageConfig: any = {}
+  enableShare = false
+  rootOrgId: any
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -56,6 +58,9 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
+    }
+    if (this.configSvc.userProfile) {
+      this.rootOrgId = this.configSvc.userProfile.rootOrgId
     }
   }
   ngOnInit(): void {
@@ -323,18 +328,12 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  copyUrl(): void {
-    const currentUrl = window.location.href;  // Get the current URL
-    navigator.clipboard.writeText(currentUrl)
-    .then(
-      () => {
-        this.openSnackBar('URL copied to clipboard')
-      },
-      (err) => {
-        // Failed to copy
-        console.error('Failed to copy URL: ', err);
-      }
-    );
+  onClickOfShare() {
+    this.enableShare = true
+  }
+
+  resetEnableShare(_eventData: any) {
+    this.enableShare = false
   }
 
 
