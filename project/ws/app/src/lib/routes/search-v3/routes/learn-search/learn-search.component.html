@@ -7,7 +7,7 @@
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets" [competencyFactet]="competencyFactet"
                     (appliedFilter)="applySearchFilter($event)"
                     [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"></ws-app-search-filters>
-            </ng-container>
+            </ng-container> 
         </mat-sidenav>
 
         <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">

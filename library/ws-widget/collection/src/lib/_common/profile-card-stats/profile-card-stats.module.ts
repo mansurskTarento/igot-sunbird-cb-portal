@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
     declarations: [ProfileCardStatsComponent],
@@ -25,7 +26,8 @@ import { MatButtonModule } from '@angular/material/button'
         WeeklyClapsModule,
         TranslateModule,
         PipeOrdinalModule,
-        MatButtonModule
+        MatButtonModule,
+        MatTooltipModule
     ],
     exports: [
         ProfileCardStatsComponent,
