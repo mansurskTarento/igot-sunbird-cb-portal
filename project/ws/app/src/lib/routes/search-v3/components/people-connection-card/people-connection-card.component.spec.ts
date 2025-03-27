@@ -209,13 +209,13 @@ describe('PeopleConnectionCardComponent', () => {
 
       // Assert
       expect(mockNetworkV2Service.createConnection).toHaveBeenCalledWith({
-        connectionId: 'user456',
+        connectionId: 'id456',
         userIdFrom: 'user123',
         userNameFrom: 'user123',
         userDepartmentFrom: 'Engineering',
         userIdTo: 'user456',
-        userNameTo: 'user456',
-        userDepartmentTo: 'Marketing'
+        userNameTo: 'id456',
+        userDepartmentTo: ''
       });
 
       expect(emitSpy).toHaveBeenCalledWith('connection-updated');
@@ -299,6 +299,69 @@ describe('PeopleConnectionCardComponent', () => {
 
       // Act & Assert
       expect(component.usr).toBe(component.howerUser);
+    });
+  });
+
+  describe('userDesignation getter', () => {
+    it('should return designation with rootOrgName when professionalDetails has designation', () => {
+      // Arrange
+      component.user = {
+        profileDetails: {
+          professionalDetails: [
+            { designation: 'Software Engineer' }
+          ]
+        },
+        rootOrgName: 'Tech Corp'
+      };
+
+      // Act
+      const result = component.userDesignation;
+
+      // Assert
+      expect(result).toBe('Software Engineer at Tech Corp');
+    });
+
+    it('should return only rootOrgName when professionalDetails has no designation', () => {
+      // Arrange
+      component.user = {
+        profileDetails: {
+          professionalDetails: [{}]
+        },
+        rootOrgName: 'Tech Corp'
+      };
+
+      // Act
+      const result = component.userDesignation;
+
+      // Assert
+      expect(result).toBe('Tech Corp');
+    });
+
+    it('should return only rootOrgName when professionalDetails is empty', () => {
+      // Arrange
+      component.user = {
+        profileDetails: {
+          professionalDetails: []
+        },
+        rootOrgName: 'Tech Corp'
+      };
+
+      // Act
+      const result = component.userDesignation;
+
+      // Assert
+      expect(result).toBe('Tech Corp');
+    });
+
+    it('should return an empty string when rootOrgName and professionalDetails are missing', () => {
+      // Arrange
+      component.user = {};
+
+      // Act
+      const result = component.userDesignation;
+
+      // Assert
+      expect(result).toBe('');
     });
   });
 });

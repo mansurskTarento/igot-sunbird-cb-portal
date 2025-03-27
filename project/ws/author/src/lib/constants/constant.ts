@@ -75,7 +75,7 @@ export const CATEGORY_TYPE = [
     name: 'peoples',
     count: 0,
     isChecked: false,
-    displayName: 'Peoples',
+    displayName: 'People',
     filters: [],
   },
  
@@ -96,8 +96,9 @@ export const SEARCH_SORT_DROPDOWN = [
 ];
 
 export const SEARCH_SORT_PEOPLES = [
-  { name: 'Asc', value: 'asc' },
-  { name: 'Desc', value: 'desc' },
+  { name: 'A-Z', value: 'asc' },
+  { name: 'Z-A', value: 'desc' },
+  { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
 ];
 
 export const TypeOfEvents = [

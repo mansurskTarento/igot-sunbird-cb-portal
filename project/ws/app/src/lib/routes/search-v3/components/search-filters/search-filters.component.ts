@@ -41,12 +41,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() appliedFilter = new EventEmitter<{ [key: string]: any }>();
   @Output() constructQueryParam = new EventEmitter<string>();
   @Input() karmayogiBadge: any;
+  @Input() competencyFactet: any;
 
   private subscription: Subscription = new Subscription();
   queryParams: any;
 
   categoryType = CATEGORY_TYPE;
   categoryTypeDup = CATEGORY_TYPE;
+  categoryTypeEnum = SearchCategory;
   showAllLanguage = false;
 
   formattedFacets: any = {};
@@ -63,6 +65,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   selectedFilterChips: any;
   filterQueryOrganisation = '';
   filterQueryLanguage = '';
+  filterQueryDesignation = '';
+  filterQueryRootOrgName = '';
+  searchCategory = '';
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
@@ -86,17 +91,20 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['newfacets'].currentValue) {
+    if (changes['newfacets'] && changes['newfacets'].currentValue) {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
-      if (this.formattedFacets && this.formattedFacets['sourceName']) {
-        this.formattedFacets['organisation'] = [
-          ...this.formattedFacets['sourceName'],
-        ];
-      }
-    } else {
-      this.formattedFacets = {};
+      // if (this.formattedFacets && this.formattedFacets['sourceName']) {
+      //   this.formattedFacets['organisation'] = [
+      //     ...this.formattedFacets['sourceName'],
+      //   ];
+      // }
+    }
+    if (
+      changes['competencyFactet'] &&
+      changes['competencyFactet'].currentValue
+    ) {
     }
 
     this.setCategoryType();
@@ -104,12 +112,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
-    const searchCategory = params['category'];
-    if (searchCategory) {
+    this.searchCategory = params['category'];
+    if (this.searchCategory) {
       this.categoryType = this.categoryTypeDup.filter(
-        (type) => type.name === searchCategory
+        (type) => type.name === this.searchCategory
       );
-      if(this.categoryType.length) {
+      if (this.categoryType.length) {
         this.categoryType[0].isChecked = true;
         this.selectedFilters[this.categoryType[0].name] = [
           this.categoryType[0].name,
@@ -122,7 +130,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         ];
       }
 
-      if (searchCategory === SearchCategory.Events) {
+      if (this.searchCategory === SearchCategory.Events) {
         this.formattedFacets['typeOfEvents'] = TypeOfEvents;
       }
     } else {
@@ -144,11 +152,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
     } else if (togglesection === FacetType.Language) {
       this.showAllLanguage = !this.showAllLanguage;
-    }
-     else if (togglesection === FacetType.Organization) {
+    } else if (togglesection === FacetType.Organization) {
       this.showAllOrganisation = !this.showAllOrganisation;
-    }
-     else if (togglesection === FacetType.Designation) {
+    } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
     }
   }
@@ -315,6 +321,65 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           this.selectedFilters
         );
       }
+    } else if (
+      item.type === this.competencyAreaNameKey ||
+      item.type === this.competencyThemeKey ||
+      item.type === this.competencySubThemeKey
+    ) {
+      facets = this.competencyFactet;
+
+      let competency;
+      if (item.type && item.type === this.competencyAreaNameKey) {
+        if(facets?.length) {
+          competency = facets.find(
+            (facet: any) =>
+              (facet[item.type]?.name).toLowerCase() === item?.value.toLowerCase()
+          );
+        }
+      } else {
+        if(facets?.length) {
+          competency = facets.find((facet: any) => {
+            if (facet[item.type]) {
+              return facet[item.type].find(
+                (subFacet: any) =>
+                  subFacet?.name.toLowerCase() === item?.value.toLowerCase()
+              );
+            }
+            return false;
+          });
+        }
+      }
+
+      if (competency) {
+        if (item.type && item.type === this.competencyAreaNameKey) {
+          competency[item.type].isChecked = false;
+        } else {
+          const subFacet = competency[item.type].find(
+            (subFacet: any) =>
+              subFacet?.name.toLowerCase() === item?.value.toLowerCase()
+          );
+          if (subFacet) {
+            subFacet.isChecked = false;
+          }
+        }
+
+        if (this.selectedFilters[item.type]) {
+          this.selectedFilters[item.type] = this.selectedFilters[
+            item.type
+          ].filter(
+            (filter: string) =>
+              filter.toLowerCase() !== item?.value.toLowerCase()
+          );
+          if (this.selectedFilters[item.type].length === 0) {
+            delete this.selectedFilters[item.type];
+          }
+        }
+
+        this.appliedFilter.emit(this.selectedFilters);
+        this.selectedFilterChips = this.refactorFilterData(
+          this.selectedFilters
+        );
+      }
     } else {
       facets = this.formattedFacets;
       const allFilters = _.flatMap(facets);
@@ -358,27 +423,58 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       });
     });
 
+    _.forEach(this.competencyFactet, (competency) => {
+      competency[this.competencyAreaNameKey].isChecked = false;
+      _.forEach(competency[this.competencyThemeKey], (theme) => {
+        theme.isChecked = false;
+      });
+      _.forEach(competency[this.competencySubThemeKey], (subTheme) => {
+        subTheme.isChecked = false;
+      });
+    });
+
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = [];
     this.constructQueryParam.emit('');
   }
 
   get filteredOrganisations() {
-    let filteredList = this.formattedFacets['organisation'].filter(
-      (item: any) =>
-        item.name
-          .toLowerCase()
-          .includes(this.filterQueryOrganisation.toLowerCase())
+    let data: any;
+    if (this.searchCategory === SearchCategory.Events) {
+      data = this.formattedFacets[FacetType.SourceName];
+    } else {
+      data = this.formattedFacets[FacetType.Organization];
+    }
+    let filteredList = data.filter((item: any) =>
+      item.name
+        .toLowerCase()
+        .includes(this.filterQueryOrganisation.toLowerCase())
     );
 
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredLanguages() {
-    let filteredList = this.formattedFacets['language'].filter((item: any) =>
+    let filteredList = this.formattedFacets[FacetType.Language].filter((item: any) =>
       item.name.toLowerCase().includes(this.filterQueryLanguage.toLowerCase())
     );
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredDesignations() {
+    let filteredList = this.formattedFacets['profileDetails.professionalDetails.designation']?.filter((item: any) =>
+        item?.name.toLowerCase().includes(this.filterQueryDesignation.toLowerCase())
+    );
+
+    return this.showAllDesignation ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredRootOrgNames() {
+    let filteredList = this.formattedFacets['rootOrgName']?.filter((item: any) =>
+        item?.name.toLowerCase().includes(this.filterQueryRootOrgName.toLowerCase())
+    );
+
+    return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 }

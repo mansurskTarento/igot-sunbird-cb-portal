@@ -106,6 +106,10 @@
   .mat-chip.mat-standard-chip.selected-search-category {
     background-color: $brandAccentColor !important;
     color: $white !important;
+
+    mat-icon {
+      color: $white !important;
+    }
   }
 
   .mat-chip-list-wrapper {

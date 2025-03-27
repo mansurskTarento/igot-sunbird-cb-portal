@@ -63,12 +63,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     {
       label: 'Case Studies',
       value: SearchCategory.CaseStudy,
-      icon: 'menu_book',
+      icon: 'diversity_3',
     },
     {
       label: 'Communities',
       value: SearchCategory.Communities,
-      icon: 'diversity_3',
+      icon: 'menu_book',
     },
   ];
 
@@ -205,7 +205,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-    if (!query) return;
 
     document.getElementById('global-search-input')?.blur();
 
@@ -333,8 +332,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   getResultName(result: any): string {
+    if (!result) {
+      return '';
+    }
+
     if (this.selectedSearchCategory === SearchCategory.People) {
-      return result.firstName ?? '';
+      return result.personalDetails?.firstname ?? result.firstName ?? '';
     } else if (this.selectedSearchCategory === SearchCategory.Communities) {
       return result.communityName ?? '';
     } else {

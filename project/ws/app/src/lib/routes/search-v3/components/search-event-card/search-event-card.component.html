@@ -20,10 +20,21 @@
 
                 <ng-container *ngIf="isCurrentlyActive()">
                     <div class="image-overlay rounded-xl"></div>
-                    <div class="course-badges-new">
+                    <div class="course-badges-live">
                         <span class="badge new-badge font-normal">Live</span>
                     </div>
                 </ng-container>
+                <div class="course-badges-new" *ngIf="checkIfContentIsNew(content?.createdOn)">
+                    <span class="badge new-badge font-normal">New</span>
+                </div>
+
+                <div class="course-badges flex items-center gap-2" *ngIf="eventDuration">
+                    <span class="badge duration-badge font-normal">
+                        <mat-icon>schedule</mat-icon>
+                        {{eventDuration | pipeDurationTransform: 'hms'}}
+                    </span>
+                </div>
+
             </div>
 
             <!-- Right side - Content -->
@@ -73,10 +84,10 @@
                         <span class="font-normal text-xs">{{content?.startDate | date }} {{formattedTime}}</span>
                     </div>
 
-                    <div class="stats">
+                    <!-- <div class="stats">
                         <mat-icon class="star-icon" svgIcon="certificate"></mat-icon>
                         <span class="font-normal text-xs">Certification</span>
-                    </div>
+                    </div> -->
 
                     <div class="karmayogi-verified" *ngIf="isIgot">
                         <img class="source-icon" alt="ong"

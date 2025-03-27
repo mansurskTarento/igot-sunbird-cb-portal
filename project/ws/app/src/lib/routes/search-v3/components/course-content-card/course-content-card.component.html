@@ -59,11 +59,16 @@
                                 *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
                             </mat-icon>
 
-                            {{content?.primaryCategory}}
+                            <ng-container *ngIf="content?.courseCategory">
+                                {{content?.courseCategory}}
+                            </ng-container>
+                            <ng-container *ngIf="!content?.courseCategory">
+                                {{content?.primaryCategory}}
+                            </ng-container>
                         </div>
                         <!-- Bookmark button -->
                         <div class="flex items-center gap-3">
-                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates">
+                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                 <div matRipple (click)="downloadCertificate(courseEnrollment)"
                                     class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
                                     <mat-icon [svgIcon]="'download'" class="mb-1"
@@ -76,6 +81,9 @@
                             </ng-container>
                             <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
                                 <div class="inprogress-course font-stats rounded">In - Progress</div>
+                            </ng-container>
+                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
+                                <div class="inprogress-course font-stats rounded">Completed</div>
                             </ng-container>
                             <!-- <div class="bookmark-container">
                                 <button mat-icon-button aria-label="Bookmark this course"
@@ -93,12 +101,10 @@
                     {{content?.name}}
                 </h2>
                 <div class="course-tags mb-3 font-normal text-ellipse"
-                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]">
+                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]"
+                    [matTooltip]="'Sub Theme - ' + generateCompetencySubThemeString()">
                     <span>Sub Theme - </span>
-                    <ng-container *ngFor="let keyword of content[compentencyKey.vKey]; let isLast = last">
-                        <span class=""> {{keyword[compentencyKey.vCompetencySubTheme]}} <span *ngIf="!isLast"> ·
-                            </span></span>
-                    </ng-container>
+                    <span>{{generateCompetencySubThemeString()}}</span>
                 </div>
 
                 <div class="course-author mb-3 flex items-center gap-2">

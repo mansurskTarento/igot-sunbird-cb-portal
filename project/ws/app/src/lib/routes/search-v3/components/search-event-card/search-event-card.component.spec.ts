@@ -105,15 +105,17 @@ describe('SearchEventCardComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should call formatStartTime', () => {
+    it('should call formatStartTime and getDurationFromStartandEndDates', () => {
       // Arrange
       const formatStartTimeSpy = jest.spyOn(component, 'formatStartTime');
+      const getDurationSpy = jest.spyOn(component, 'getDurationFromStartandEndDates');
       
       // Act
       component.ngOnInit();
       
       // Assert
       expect(formatStartTimeSpy).toHaveBeenCalled();
+      expect(getDurationSpy).toHaveBeenCalled();
     });
   });
 
@@ -388,6 +390,69 @@ describe('SearchEventCardComponent', () => {
       
       // Assert
       expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
+
+    it('should navigate to event detail page and emit telemetry when identifier is present', () => {
+      // Arrange
+      component.content = { identifier: 'event123', contentType: '' };
+      const telemetrySpy = jest.spyOn(component.telemetry, 'emit');
+
+      // Act
+      component.navigateToEvent();
+
+      // Assert
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/app/event-hub/home/event123']);
+      expect(component.content.contentType).toBe('Events');
+      expect(telemetrySpy).toHaveBeenCalledWith(component.content);
+    });
+
+    it('should not navigate or emit telemetry when identifier is not present', () => {
+      // Arrange
+      component.content = {};
+      const telemetrySpy = jest.spyOn(component.telemetry, 'emit');
+
+      // Act
+      component.navigateToEvent();
+
+      // Assert
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+      expect(telemetrySpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkIfContentIsNew', () => {
+    it('should return true if content is created within the threshold days', () => {
+      // Arrange
+      const recentDate = new Date();
+      recentDate.setDate(recentDate.getDate() - 7); // Within 14 days
+      const createdOn = recentDate.toISOString();
+
+      // Act
+      const result = component.checkIfContentIsNew(createdOn);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false if content is created beyond the threshold days', () => {
+      // Arrange
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 30); // Beyond 14 days
+      const createdOn = oldDate.toISOString();
+
+      // Act
+      const result = component.checkIfContentIsNew(createdOn);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false if createdOn is not provided', () => {
+      // Act
+      const result = component.checkIfContentIsNew('');
+
+      // Assert
+      expect(result).toBe(false);
     });
   });
 });

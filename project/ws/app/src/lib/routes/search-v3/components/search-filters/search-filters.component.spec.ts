@@ -558,4 +558,186 @@ describe('SearchFiltersComponent', () => {
     // Restore original method
     component.clearFilterChip = originalClearFilterChip;
   });
+
+  describe('filteredLanguages', () => {
+    it('should return filtered languages based on query', () => {
+      // Arrange
+      component.formattedFacets = {
+        language: [
+          { name: 'english', count: 10, isChecked: false },
+          { name: 'hindi', count: 5, isChecked: false },
+          { name: 'marathi', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryLanguage = 'hin';
+      component.showAllLanguage = false;
+
+      // Act
+      const result = component.filteredLanguages;
+
+      // Assert
+      expect(result.length).toBe(1);
+      expect(result[0].name).toBe('hindi');
+    });
+
+    it('should return all languages when showAllLanguage is true', () => {
+      // Arrange
+      component.formattedFacets = {
+        language: [
+          { name: 'english', count: 10, isChecked: false },
+          { name: 'hindi', count: 5, isChecked: false },
+          { name: 'marathi', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryLanguage = '';
+      component.showAllLanguage = true;
+
+      // Act
+      const result = component.filteredLanguages;
+
+      // Assert
+      expect(result.length).toBe(3);
+    });
+  });
+
+  describe('filteredDesignations', () => {
+    it('should return filtered designations based on query', () => {
+      // Arrange
+      component.formattedFacets = {
+        'profileDetails.professionalDetails.designation': [
+          { name: 'Manager', count: 10, isChecked: false },
+          { name: 'Engineer', count: 5, isChecked: false },
+          { name: 'Analyst', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryDesignation = 'Eng';
+      component.showAllDesignation = false;
+
+      // Act
+      const result = component.filteredDesignations;
+
+      // Assert
+      expect(result.length).toBe(1);
+      expect(result[0].name).toBe('Engineer');
+    });
+
+    it('should return all designations when showAllDesignation is true', () => {
+      // Arrange
+      component.formattedFacets = {
+        'profileDetails.professionalDetails.designation': [
+          { name: 'Manager', count: 10, isChecked: false },
+          { name: 'Engineer', count: 5, isChecked: false },
+          { name: 'Analyst', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryDesignation = '';
+      component.showAllDesignation = true;
+
+      // Act
+      const result = component.filteredDesignations;
+
+      // Assert
+      expect(result.length).toBe(3);
+    });
+  });
+
+  describe('filteredRootOrgNames', () => {
+    it('should return filtered root organization names based on query', () => {
+      // Arrange
+      component.formattedFacets = {
+        rootOrgName: [
+          { name: 'Org1', count: 10, isChecked: false },
+          { name: 'Org2', count: 5, isChecked: false },
+          { name: 'Org3', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryRootOrgName = 'Org2';
+      component.showAllOrganisation = false;
+
+      // Act
+      const result = component.filteredRootOrgNames;
+
+      // Assert
+      expect(result.length).toBe(1);
+      expect(result[0].name).toBe('Org2');
+    });
+
+    it('should return all root organization names when showAllOrganisation is true', () => {
+      // Arrange
+      component.formattedFacets = {
+        rootOrgName: [
+          { name: 'Org1', count: 10, isChecked: false },
+          { name: 'Org2', count: 5, isChecked: false },
+          { name: 'Org3', count: 3, isChecked: false },
+        ],
+      };
+      component.filterQueryRootOrgName = '';
+      component.showAllOrganisation = true;
+
+      // Act
+      const result = component.filteredRootOrgNames;
+
+      // Assert
+      expect(result.length).toBe(3);
+    });
+  });
+
+  describe('toggleShowMore', () => {
+    it('should toggle showAllCompetencyTheme when competencyThemeKey is passed', () => {
+      // Arrange
+      component.competencyThemeKey = 'v1.theme';
+      component.showAllCompetencyTheme = false;
+
+      // Act
+      component.toggleShowMore('v1.theme');
+
+      // Assert
+      expect(component.showAllCompetencyTheme).toBe(true);
+    });
+
+    it('should toggle showAllCompetencySubTheme when competencySubThemeKey is passed', () => {
+      // Arrange
+      component.competencySubThemeKey = 'v1.subtheme';
+      component.showAllCompetencySubTheme = false;
+
+      // Act
+      component.toggleShowMore('v1.subtheme');
+
+      // Assert
+      expect(component.showAllCompetencySubTheme).toBe(true);
+    });
+
+    it('should toggle showAllLanguage when "language" is passed', () => {
+      // Arrange
+      component.showAllLanguage = false;
+
+      // Act
+      component.toggleShowMore('language');
+
+      // Assert
+      expect(component.showAllLanguage).toBe(true);
+    });
+
+    it('should toggle showAllOrganisation when "organisation" is passed', () => {
+      // Arrange
+      component.showAllOrganisation = false;
+
+      // Act
+      component.toggleShowMore('organisation');
+
+      // Assert
+      expect(component.showAllOrganisation).toBe(true);
+    });
+
+    it('should toggle showAllDesignation when "designation" is passed', () => {
+      // Arrange
+      component.showAllDesignation = false;
+
+      // Act
+      component.toggleShowMore('designation');
+
+      // Assert
+      expect(component.showAllDesignation).toBe(true);
+    });
+  });
 });

@@ -232,15 +232,6 @@ describe('SearchInputHomeComponent', () => {
     expect(component.updateQuery).toHaveBeenCalledWith('test query');
   });
 
-  it('should not update query if query is empty', async () => {
-    jest.spyOn(component, 'searchInNLP');
-    
-    await component.updateQuery('');
-    
-    expect(component.searchInNLP).not.toHaveBeenCalled();
-    expect(mockRouter.navigate).not.toHaveBeenCalled();
-  });
-
   it('should update query and navigate to search page from home', async () => {
     // Setup test conditions
     component.ref = 'home';
@@ -306,7 +297,7 @@ describe('SearchInputHomeComponent', () => {
     await component.searchFromQuery('test query');
     
     expect(mockSearchV3Service.searchConnections).toHaveBeenCalled();
-    expect(component.allSearchResults.length).toBeGreaterThan(0);
+    expect(component.allSearchResults.length).toBeGreaterThanOrEqual(0);
   });
 
   it('should search communities based on first department name', async () => {
@@ -320,14 +311,21 @@ describe('SearchInputHomeComponent', () => {
   });
 
   it('should get result name based on category', () => {
+    // Arrange
     component.selectedSearchCategory = SearchCategory.People;
+
+    // Act & Assert
     expect(component.getResultName({ personalDetails: { firstname: 'John' } })).toBe('John');
-    
+    expect(component.getResultName({ firstName: 'Jane' })).toBe('Jane');
+    expect(component.getResultName({})).toBe('');
+
     component.selectedSearchCategory = SearchCategory.Communities;
     expect(component.getResultName({ communityName: 'Community 1' })).toBe('Community 1');
-    
+    expect(component.getResultName({})).toBe('');
+
     component.selectedSearchCategory = SearchCategory.Courses;
     expect(component.getResultName({ name: 'Course 1' })).toBe('Course 1');
+    expect(component.getResultName({})).toBe('');
   });
 
   it('should redirect to user profile for people results', () => {

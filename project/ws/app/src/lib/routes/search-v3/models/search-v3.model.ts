@@ -30,7 +30,7 @@ export class Filters {
   contentType: any;
   courseCategory?: any;
   status: string[];
-  sourceName?: string;
+  sourceName?: string[];
   avgRating?: { [key: string]: string };
   language?: string[];
   organisation?: string[];
@@ -181,6 +181,7 @@ export enum FacetType {
   AvgRating = 'avgRating',
   Duration = 'duration',
   Designation = 'designation',
+  SourceName = 'sourceName',
 }
 
 export enum SortType {

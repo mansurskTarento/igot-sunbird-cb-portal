@@ -1,17 +1,17 @@
-<div class="learnsearch  margin-top-l margin-bottom-l">
+<div class="learnsearch margin-top-l margin-bottom-l">
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
         <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav" *ngIf="(!filtersPanel || filtersPanel !== 'hide') && 
         (combinedFacets.length > 0 || 
         (courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0)">
             <ng-container>
-                <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
+                <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets" [competencyFactet]="competencyFactet"
                     (appliedFilter)="applySearchFilter($event)"
                     [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"></ws-app-search-filters>
-            </ng-container>
+            </ng-container> 
         </mat-sidenav>
 
-        <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
-            <div class="ml-4">
+        <mat-sidenav-content #mainContainer class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
+            <div #contentWrapper class="ml-4 content-wrapper">
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
                     <div class="">
@@ -94,16 +94,16 @@
                             <ng-container *ngIf="peopleSearchTotalCount > 0 && !seeAllResult">
                                 <ws-utils-horizontal-scroller [loadStatus]="'done'">
                                     <div class="card-container mr-6" *ngFor="let user of peoplesSearchResults; let index=index">
-                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user" (telemetry)="applyTelemetry($event, index)"
+                                        <ws-app-people-connection-card class="mr-4 mb-5" [user]="user" (telemetry)="applyTelemetry($event, index)" [category]="seeAllResult"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </ws-utils-horizontal-scroller>
                             </ng-container>
 
                             <ng-container *ngIf="seeAllResult === 'peoples'">
-                                <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-between">
-                                    <div class="card-container" *ngFor="let user of peoplesSearchResults">
-                                        <ws-app-people-connection-card class="mr-6 mb-5" [user]="user"
+                                <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-start">
+                                    <div class="card-container flex-grow" *ngFor="let user of peoplesSearchResults">
+                                        <ws-app-people-connection-card class="mb-5" [user]="user" [category]="seeAllResult" (telemetry)="applyTelemetry($event, index)"
                                             (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                     </div>
                                 </div>
@@ -115,10 +115,12 @@
                                 | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && peopleSearchTotalCount > initialPaginationSize">
-                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
-                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
-                                    [totalItemsCount]="this.peopleSearchTotalCount" [currentPage]="initialPaginationPage"
-                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                <div class="mt-4">
+                                    <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                        [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                        [totalItemsCount]="this.peopleSearchTotalCount" [currentPage]="initialPaginationPage"
+                                        (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                </div>
                             </ng-container>
                         </div>
                     </ng-container>
@@ -140,7 +142,7 @@
                             <ng-container *ngIf="seeAllResult === 'communities'">
                                 <div class="flex flex-wrap gap-x-2 gap-y-3">
                                     <div class="card-container" *ngFor="let community of communitiesSearchResults">
-                                        <ws-app-community-content-card [community]="community"
+                                        <ws-app-community-content-card [community]="community" (telemetry)="applyTelemetry($event, index)"
                                             [orgDetails]="community?.additionalInfo"></ws-app-community-content-card>
                                     </div>
                                 </div>
@@ -172,8 +174,8 @@
                     <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
                         (click)="navigateTo('page/home')">
                         {{'learnsearch.btnBackToHomepage' | translate}}</button>
-                    <!-- <button mat-flat-button class="mat-btn-flat cursor-pointer py-1">
-                        {{'learnsearch.btnExploreMore' | translate}}</button> -->
+                    <button mat-flat-button class="mat-btn-flat cursor-pointer py-1" (click)="navigateTo('page/home')">
+                        {{'learnsearch.btnExploreMore' | translate}}</button>
                 </div>
 
             </div>

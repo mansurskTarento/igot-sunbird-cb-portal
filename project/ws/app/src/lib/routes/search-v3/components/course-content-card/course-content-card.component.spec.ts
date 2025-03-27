@@ -135,6 +135,46 @@ class CourseContentCardComponent {
       });
     }
   }
+
+  generateCompetencySubThemeString(): string {
+    if (!this.content || !this.content.vKey) {
+      return '';
+    }
+    return this.content.vKey
+      .map((item: any) => item.vCompetencySubTheme)
+      .join(' · ');
+  }
+
+  isCurrentlyActive(content: any): boolean {
+    if (
+      !content?.startDate ||
+      !content?.startTime ||
+      !content?.endDate ||
+      !content?.endTime
+    ) {
+      return false;
+    }
+
+    const now = new Date();
+    let startDateTime: Date;
+    let endDateTime: Date;
+
+    if (content.startTime.includes('Z')) {
+      startDateTime = new Date(`${content.startDate}T${content.startTime}`);
+    } else {
+      const [startTimeStr, startOffset] = content.startTime.split('+');
+      startDateTime = new Date(`${content.startDate}T${startTimeStr}+${startOffset}`);
+    }
+
+    if (content.endTime.includes('Z')) {
+      endDateTime = new Date(`${content.endDate}T${content.endTime}`);
+    } else {
+      const [endTimeStr, endOffset] = content.endTime.split('+');
+      endDateTime = new Date(`${content.endDate}T${endTimeStr}+${endOffset}`);
+    }
+
+    return now >= startDateTime && now <= endDateTime;
+  }
 }
 
 // The actual test suite
@@ -374,21 +414,82 @@ describe('CourseContentCardComponent', () => {
       expect(mockDialog.open).not.toHaveBeenCalled();
       expect(component.downloadCertificateLoading).toBe(false);
     });
+
+    it('should download the latest certificate when multiple certificates exist', () => {
+      const certificateData = {
+        issuedCertificates: [
+          { identifier: 'cert-1', lastIssuedOn: '2023-01-01' },
+          { identifier: 'cert-2', lastIssuedOn: '2023-02-01' },
+        ],
+      };
+
+      const mockResponse = {
+        result: { printUri: 'https://example.com/certificate' },
+      };
+
+      mockCertificateService.downloadCertificate_v2.mockReturnValue({
+        subscribe: (callback: any) => callback(mockResponse),
+      });
+
+      component.downloadCertificate(certificateData);
+
+      expect(mockCertificateService.downloadCertificate_v2).toHaveBeenCalledWith('cert-1');
+      expect(mockDialog.open).toHaveBeenCalledWith(CertificateDialogComponent, {
+        width: '1300px',
+        data: { cet: 'https://example.com/certificate', certId: 'cert-1' },
+      });
+    });
+
+    it('should download the earliest issued certificate when multiple certificates exist', () => {
+      const certificateData = {
+        issuedCertificates: [
+          { identifier: 'cert-1', lastIssuedOn: '2023-02-01T00:00:00Z' },
+          { identifier: 'cert-2', lastIssuedOn: '2023-01-01T00:00:00Z' },
+        ],
+      };
+
+      const mockResponse = {
+        result: { printUri: 'https://example.com/certificate' },
+      };
+
+      mockCertificateService.downloadCertificate_v2.mockReturnValue({
+        subscribe: (callback: any) => callback(mockResponse),
+      });
+
+      component.downloadCertificate(certificateData);
+
+      // Ensure the earliest certificate (cert-2) is selected
+      expect(mockCertificateService.downloadCertificate_v2).toHaveBeenCalledWith('cert-2');
+      expect(mockDialog.open).toHaveBeenCalledWith(CertificateDialogComponent, {
+        width: '1300px',
+        data: { cet: 'https://example.com/certificate', certId: 'cert-2' },
+      });
+    });
   });
 
   describe('checkIfContentIsNew', () => {
     beforeEach(() => {
-      // Mock Date to have a fixed value for testing
-      jest.spyOn(global, 'Date').mockImplementation(() => {
-        return new Date('2023-01-15') as any;
-      });
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-01-15')); // Mock current date
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      jest.useRealTimers();
     });
 
-    it('should return false if creation date is not provided', () => {
+    it('should return true if content is created within the threshold days', () => {
+      const createdOn = new Date('2023-01-10'); // 5 days ago
+      const result = component.checkIfContentIsNew(createdOn.toISOString());
+      expect(result).toBe(true);
+    });
+
+    it('should return false if content is created beyond the threshold days', () => {
+      const createdOn = new Date('2022-12-31'); // More than 14 days ago
+      const result = component.checkIfContentIsNew(createdOn.toISOString());
+      expect(result).toBe(false);
+    });
+
+    it('should return false if createdOn is not provided', () => {
       const result = component.checkIfContentIsNew('');
       expect(result).toBe(false);
     });
@@ -426,6 +527,73 @@ describe('CourseContentCardComponent', () => {
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/content/view'], {
         queryParams: { contentId: 'content-123' }
       });
+    });
+  });
+
+  describe('generateCompetencySubThemeString', () => {
+    it('should return a concatenated string of sub-themes separated by " · "', () => {
+      component.content = {
+        vKey: [
+          { vCompetencySubTheme: 'SubTheme1' },
+          { vCompetencySubTheme: 'SubTheme2' },
+        ],
+      };
+      const result = component.generateCompetencySubThemeString();
+      expect(result).toBe('SubTheme1 · SubTheme2');
+    });
+
+    it('should return an empty string if content or vKey is missing', () => {
+      component.content = null;
+      const result = component.generateCompetencySubThemeString();
+      expect(result).toBe('');
+    });
+  });
+
+  describe('checkForCiosDuration', () => {
+    it('should return duration in seconds for external content', () => {
+      const item = { contentId: 'ext_123', duration: 5 };
+      const result = component.checkForCiosDuration(item);
+      expect(result).toBe(300); // 5 * 60
+    });
+
+    it('should return original duration for non-external content', () => {
+      const item = { contentId: 'internal_123', duration: 5 };
+      const result = component.checkForCiosDuration(item);
+      expect(result).toBe(5);
+    });
+  });
+
+  describe('isCurrentlyActive', () => {
+    it('should return true if current time is within start and end time', () => {
+      const now = new Date();
+      const startDate = new Date(now.getTime() - 1000 * 60 * 60); // 1 hour ago
+      const endDate = new Date(now.getTime() + 1000 * 60 * 60); // 1 hour later
+
+      const content = {
+        startDate: startDate.toISOString().split('T')[0],
+        startTime: startDate.toISOString().split('T')[1],
+        endDate: endDate.toISOString().split('T')[0],
+        endTime: endDate.toISOString().split('T')[1],
+      };
+
+      const result = component.isCurrentlyActive(content);
+      expect(result).toBe(true);
+    });
+
+    it('should return false if current time is outside start and end time', () => {
+      const now = new Date();
+      const startDate = new Date(now.getTime() - 1000 * 60 * 60 * 2); // 2 hours ago
+      const endDate = new Date(now.getTime() - 1000 * 60 * 60); // 1 hour ago
+
+      const content = {
+        startDate: startDate.toISOString().split('T')[0],
+        startTime: startDate.toISOString().split('T')[1],
+        endDate: endDate.toISOString().split('T')[0],
+        endTime: endDate.toISOString().split('T')[1],
+      };
+
+      const result = component.isCurrentlyActive(content);
+      expect(result).toBe(false);
     });
   });
 });
