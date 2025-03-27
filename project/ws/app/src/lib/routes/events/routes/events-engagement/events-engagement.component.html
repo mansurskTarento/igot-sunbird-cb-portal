@@ -9,7 +9,11 @@
             <div class="hidden md:block ">
                 <div class="flex flex-col gap-2">
                     <img class="engagement-icons" [src]="element?.icon" alt="">
-                    <div class="events-attended">{{translateLabels(element?.title?.id, 'events')}}</div>
+                    <div class="events-attended cursor-pointer" (click)="redirectToEvents()"
+                        *ngIf="element?.title?.id === 'hoursWatched'">
+                        {{translateLabels(element?.title?.id, 'events')}}</div>
+                    <div class="events-attended" *ngIf="element?.title?.id !== 'hoursWatched'">
+                        {{translateLabels(element?.title?.id, 'events')}}</div>
                     <div class="events-value">{{getValue(element?.key)}}</div>
                 </div>
             </div>

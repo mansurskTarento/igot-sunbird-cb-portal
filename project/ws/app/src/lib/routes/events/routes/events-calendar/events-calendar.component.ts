@@ -252,7 +252,7 @@ export class EventsCalendarComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
       }
     )
-    if(this.bottomSheetRef) {
+    if(this.bottomSheetRef && this.bottomSheet) {
       this.bottomSheetRef.dismiss()
     }
 
