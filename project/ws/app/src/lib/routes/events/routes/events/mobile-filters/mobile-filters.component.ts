@@ -33,6 +33,7 @@ export class MobileFiltersComponent {
   startDate: any = ''
   endDate: any = ''
   @Output() filterChange = new EventEmitter<any>()
+  selectedValue: any
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private snackbar: MatSnackBar,
@@ -49,6 +50,9 @@ export class MobileFiltersComponent {
       if (this.selectedFilters.dateRange) {
         this.startDate = this.datePipe.transform(this.selectedFilters.dateRange.fromDate, 'yyyy-MM-dd')
         this.endDate = this.datePipe.transform(this.selectedFilters.dateRange.toDate, 'yyyy-MM-dd')
+      }
+      if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
+        this.selectedValue = this.selectedFilters.eventStatus[0]
       }
     }
     console.log("data ", this.datePipe)
@@ -67,7 +71,7 @@ export class MobileFiltersComponent {
   changeSelection(event: any, key: any, keyData: any, allKeyData: any) {
     console.log('changeSelection', event, key, keyData, allKeyData)
     if (event) {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+      if (['resourceType', 'eventDate'].includes(key)) {
         if (this.selectedFilters[key]) {
           let slected = this.selectedFilters[key]
           slected.push(keyData.name)
@@ -80,6 +84,7 @@ export class MobileFiltersComponent {
           delete this.selectedFilters.dateRange
           this.startDate = ''
           this.endDate = ''
+          this.selectedValue = null
         }
         if (key === 'eventStatus') {
           delete this.selectedFilters.dateRange
@@ -90,7 +95,7 @@ export class MobileFiltersComponent {
         delete this.selectedFilters.key
       }
     } else {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+      if (['resourceType', 'eventDate'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
@@ -111,10 +116,21 @@ export class MobileFiltersComponent {
       this.endDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
       this.selectedFilters['dateRange'] = { toDate: this.endDate }
     }
+    this.selectedValue = null
   }
 
   clearAll() {
     this.selectedFilters = {}
+    this.startDate = ''
+    this.endDate = ''
+    this.selectedValue = null
+  }
+
+  changeStatus(value: any, key: any) {
+    this.selectedValue = value
+    this.selectedFilters[key] = [value.name]
+    delete this.selectedFilters.dateRange
+    delete this.selectedFilters.eventDate
     this.startDate = ''
     this.endDate = ''
   }

@@ -71,6 +71,7 @@ import { EventVideoPlayerComponent } from './components/event-video-player/event
 import { EventsV2Component } from './routes/events-v2/events-v2.component';
 import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 import { ShareDiscussionModule } from '@sunbird-cb/discussion-v2'
+import { MatRadioModule } from '@angular/material/radio'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -112,6 +113,7 @@ import { ShareDiscussionModule } from '@sunbird-cb/discussion-v2'
     MatDialogModule,
     MatButtonModule,
     MatSidenavModule,
+    MatRadioModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
     PipeFilterModule,

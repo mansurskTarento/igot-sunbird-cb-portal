@@ -40,6 +40,7 @@ export class ViewAllComponent {
   }
   pageConfigData: any = {}
   private scrollSubject = new Subject<Event>()
+  selectedValue: any
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -153,6 +154,22 @@ export class ViewAllComponent {
         startDate = this.datePipe.transform(new Date(this.selectedFilters.dateRange.fromDate), 'yyyy-MM-dd')
         endDate = this.datePipe.transform(new Date(this.selectedFilters.dateRange.toDate), 'yyyy-MM-dd')
       }
+      if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Upcoming') {
+        const today = new Date()
+        today.setDate(today.getDate() + 1)
+        startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
+      }
+      if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Past Events') {
+        const today = new Date()
+        today.setDate(today.getDate() - 1)
+        endDate = this.datePipe.transform(today, 'yyyy-MM-dd')
+      }
+      if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Live Events') {
+        const today = new Date()
+        today.setDate(today.getDate())
+        startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
+        endDate = this.datePipe.transform(today, 'yyyy-MM-dd')
+      }
       requestBody = {
         ...requestBody,
         request: {
@@ -187,7 +204,7 @@ export class ViewAllComponent {
       this.total = this.contentDataList.length
       this.showNextPage = this.total < _.get(resp, 'result.count', 0)
       if (response.length) {
-        if (this.selectedFilters.eventStatus) {
+        if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Live Events') {
           response = this.processResult(response)
         }
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(response, {})]
@@ -271,6 +288,7 @@ export class ViewAllComponent {
     this.selectedFilters = {}
     this.startDate = ''
     this.endDate = ''
+    this.selectedValue = null
     this.resetData()
     this.fetchData()
   }
@@ -382,6 +400,7 @@ export class ViewAllComponent {
         this.selectedFilters[facet.key] = { fromDate: date1, toDate: date2 }
         this.resetData()
         this.fetchData()
+        this.selectedValue = null
       }
     } else {
       if (!this.startDate) {
@@ -393,9 +412,19 @@ export class ViewAllComponent {
     }
   }
 
+  changeStatus(value: any, key: any) {
+    this.selectedFilters[key] = [value.name]
+    delete this.selectedFilters.dateRange
+    delete this.selectedFilters.eventDate
+    this.startDate = ''
+    this.endDate = ''
+    this.resetData()
+    this.fetchData()
+  }
+
   changeSelection(event: any, key: any, keyData: any) {
     if (event) {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+      if (['resourceType', 'eventDate'].includes(key)) {
         if (this.selectedFilters[key]) {
           let slected = this.selectedFilters[key]
           slected.push(keyData.name)
@@ -408,6 +437,7 @@ export class ViewAllComponent {
           delete this.selectedFilters.dateRange
           this.startDate = ''
           this.endDate = ''
+          this.selectedValue = null
         }
         if (key === 'eventStatus') {
           delete this.selectedFilters.dateRange
@@ -418,7 +448,7 @@ export class ViewAllComponent {
         delete this.selectedFilters.key
       }
     } else {
-      if (['resourceType', 'eventDate', 'eventStatus'].includes(key)) {
+      if (['resourceType', 'eventDate'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
