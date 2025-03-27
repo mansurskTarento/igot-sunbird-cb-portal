@@ -64,7 +64,8 @@
             </ng-container>
             <div *ngIf="selectedDateEvents.length > 2 && !bottomSheet" (click)="showAllEvents = !showAllEvents"
                 class="toggle-btn">
-                {{ showAllEvents ? 'View less' : 'View all' }}
+                {{ showAllEvents ? translateLabels('seeLess', 'events') :
+                translateLabels('seeAll', 'events') }}
             </div>
             <ng-template #noEvents>
                 <div class="flex items-center justify-center">
