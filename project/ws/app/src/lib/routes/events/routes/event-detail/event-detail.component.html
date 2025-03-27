@@ -258,7 +258,7 @@
                   </ng-container>
                 </div>
                 <ng-container *ngFor="let item of competenciesObject">
-                  <div *ngIf="item?.key === competencySelected">
+                  <div class="px-5 md:px-0" *ngIf="item?.key === competencySelected">
                     <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
                       <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
                         <ng-container [wsResolverWidget]="widget"></ng-container>
@@ -292,7 +292,7 @@
       <mat-tab label="{{'events.documents' | translate}}" *ngIf="eventData?.eventHandouts?.length">
         <ng-container *ngFor="let handout of eventData?.eventHandouts">
           <div class="reference-card flex gap-4 justify-between">
-            <div>
+            <div class="reference-inner-card">
               <div class="reference-title flex align-icon gap-2">
                 <div><img class="img-size" src="{{fileImage(handout?.content)}}" /></div>
                 <div class="text-truncate">{{handout?.title}} </div>

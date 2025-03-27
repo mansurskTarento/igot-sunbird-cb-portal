@@ -1,5 +1,5 @@
 <div class="calendar-container flex flex-col gap-4">
-    <div class="md:pb-4 callendar-header">
+    <div class="callendar-header">
         <div class="block md:hidden">
             <mat-icon class="backArrow" (click)="closeDiaolg()">arrow_back</mat-icon>
         </div>
@@ -29,7 +29,7 @@
                 <ng-template #CalendarSkeleton>
                     <ng-container *ngFor="let i of calandarLoaders ">
                         <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'30px'"
-                        [height]="'30px'"></ws-widget-skeleton-loader>
+                            [height]="'30px'"></ws-widget-skeleton-loader>
                     </ng-container>
                 </ng-template>
             </div>
@@ -40,7 +40,8 @@
         <div class="today">{{selectedDateText}}</div>
         <ng-container *ngIf="!calendarLoading; else eventsSkeleton">
             <ng-container *ngIf="selectedDateEvents?.length > 0; else noEvents">
-                <ng-container *ngFor="let event of selectedDateEvents">
+                <ng-container
+                    *ngFor="let event of (showAllEvents ? selectedDateEvents : selectedDateEvents?.slice(0, 2))">
                     <div class="event-item flex flex-col gap-3 pb-3">
                         <div class="flex justify-between items-center">
                             <div (click)="redirectTo(event)" class="eventName cursor-pointer">{{event.name}}</div>
@@ -61,6 +62,10 @@
                     </div>
                 </ng-container>
             </ng-container>
+            <div *ngIf="selectedDateEvents.length > 2 && !bottomSheet" (click)="showAllEvents = !showAllEvents"
+                class="toggle-btn">
+                {{ showAllEvents ? 'View less' : 'View all' }}
+            </div>
             <ng-template #noEvents>
                 <div class="flex items-center justify-center">
                     <span class="eventDescription">{{translateLabels(eventCalendarDetails?.noEvents,
@@ -70,11 +75,11 @@
         </ng-container>
         <ng-template #eventsSkeleton>
             <div class="flex flex-col gap-3 pb-3">
-                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" 
-                [height]="'20px'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'"
+                    [height]="'20px'"></ws-widget-skeleton-loader>
 
-                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" 
-                [height]="'20px'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [bindingClass]="'flex rounded'"
+                    [height]="'20px'"></ws-widget-skeleton-loader>
             </div>
         </ng-template>
     </div>

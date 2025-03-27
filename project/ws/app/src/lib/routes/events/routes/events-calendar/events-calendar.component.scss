@@ -29,6 +29,22 @@
   }
 }
 
+.toggle-btn {
+  color: #1B4CA1;
+  cursor: pointer;
+  text-align: right;
+  font-family: Lato;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-offset: 0%;
+  text-decoration-thickness: 0%;
+
+}
+
 .weekday-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -204,26 +220,26 @@
   }
 
   .callendar-header {
-      border-bottom: 0px;
-      background-color: #ffffff;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      width: calc(100% + 12px);
-      margin-left: -16px;
-      padding-left: 20px;
-      color: #000000DE;
-      /* stylelint-disable */
-      font: 700 16px 'Lato';
-      /* stylelint-enable */
+    border-bottom: 0px;
+    background-color: #ffffff;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    width: calc(100% + 12px);
+    margin-left: -16px;
+    padding-left: 20px;
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 700 16px 'Lato';
+    /* stylelint-enable */
 
-      .backArrow {
-          color: #00000099;
-          font-size: 24px;
-          margin-right: 10px;
-          pointer-events: all;
-          cursor: pointer;
-      }
+    .backArrow {
+      color: #00000099;
+      font-size: 24px;
+      margin-right: 10px;
+      pointer-events: all;
+      cursor: pointer;
+    }
   }
 
   .m-calendar-view {
