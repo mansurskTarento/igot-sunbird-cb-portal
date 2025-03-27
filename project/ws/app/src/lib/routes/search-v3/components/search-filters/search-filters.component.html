@@ -89,7 +89,7 @@
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'avgRating')">
                         <span class="min-width-adjust">
-                            {{ options.name + ' & above' + ' (' + options.count + ')' }}
+                            {{ options?.name + ' & above' + ' (' + options?.count + ')' }}
                         </span>
                     </mat-checkbox>
                 </section>
@@ -142,7 +142,7 @@
                         (change)="onSelectionFilter($event, options, 'organisation')">
                         <span class="min-width-adjust">{{ options?.name ? capitalizeFirstLetter(options?.name) :
                             ''}}</span>
-                        <span class="min-width-adjust">{{' (' + options.count + ')'}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
