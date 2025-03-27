@@ -18,7 +18,7 @@ import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption/lib/_com
   templateUrl: './see-all-with-pills.component.html',
   styleUrls: ['./see-all-with-pills.component.scss'],
 })
-export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
+export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
   seeAllPageConfig: any
   keyData: any
@@ -55,7 +55,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       this.tabSelected = (res.tabSelected) ? res.tabSelected : ''
       this.pillSelected = (res.pillSelected) ? res.pillSelected : ''
     })
-    const configData = await this.seeAllSvc.getSeeAllConfigJson().catch(_error => {})
+    const configData = await this.seeAllSvc.getSeeAllConfigJson().catch(_error => { })
     // configData.homeStrips.forEach((ele: any) => {
     //   if (ele && ele.strips.length > 0) {
     //     ele.strips.forEach((subEle: any) => {
@@ -95,19 +95,20 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
       this.seeAllPageConfig.tabs.length
-      ) {
-        this.tabResults = this.seeAllPageConfig.tabs
-        this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.value === this.tabSelected)
-      }
-      if (
-        this.tabSelected &&
-        this.seeAllPageConfig.tabs &&
-        this.seeAllPageConfig.tabs.length
-        ) {
-          this.pillResults = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData
-          this.dynamicPillIndex = _.findIndex(this.pillResults, (v: any) => v.value === this.pillSelected)
-          this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData[this.dynamicPillIndex]['selected'] = true
-        }
+    ) {
+      this.tabResults = this.seeAllPageConfig.tabs
+      this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.value === this.tabSelected)
+    }
+    if (
+      this.tabSelected &&
+      this.seeAllPageConfig.tabs &&
+      this.seeAllPageConfig.tabs.length
+    ) {
+      this.pillResults = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData
+      this.dynamicPillIndex = _.findIndex(this.pillResults, (v: any) => v.value === this.pillSelected)
+      this.resetSelectedPill(this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData)
+      this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData[this.dynamicPillIndex]['selected'] = true
+    }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
 
     if (this.seeAllPageConfig.request && this.seeAllPageConfig.key === 'forYou') {
@@ -152,8 +153,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       widgetSubType: 'cardContent',
       widgetHostClass: 'mb-2',
       widgetData: {
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.loaderConfig
-        && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.loaderConfig
+          && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
       },
     }))
   }
@@ -171,8 +172,8 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         ...(content.batch && {
           batch: content.batch,
         }),
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.stripConfig
-        && strip.viewMoreUrl.stripConfig.cardSubType,
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.stripConfig
+          && strip.viewMoreUrl.stripConfig.cardSubType,
         context: {
           pageSection: strip.key,
           position: idx,
@@ -198,12 +199,12 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
   }
 
   async searchV6Request(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                        request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-                        _calculateParentStatus: boolean
-  ): Promise <any> {
+    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
+  ): Promise<any> {
     const originalFilters: any = []
     // console.log('calling -- ')
-    return new Promise <any>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       if (request && request.searchV6) {
         this.seeAllSvc.searchV6(request.searchV6).subscribe(results => {
           const showViewMore = Boolean(
@@ -232,7 +233,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        },                                                  (error: any) => {
+        }, (error: any) => {
           reject(error)
         })
       }
@@ -259,20 +260,20 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
           if (this.seeAllPageConfig.tabs) {
             const allTabs = this.seeAllPageConfig.tabs
             const currentTabFromMap = (allTabs && allTabs.length &&
-               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabsAndPills.IContentStripTab
+              allTabs[this.dynamicTabIndex]) as NsContentStripWithTabsAndPills.IContentStripTab
             this.getTabDataByNewReqTrending(strip, this.dynamicTabIndex, 0, currentTabFromMap,
-                                            calculateParentStatus)
+              calculateParentStatus)
           }
         }
 
       } else {
-      try {
-        const response = await this.trendingSearchRequest(strip, strip.request, calculateParentStatus)
-        if (response && response.results && response.results.response) {
-          const content = response.results.response[strip.request.trendingSearch.responseKey] || []
-          this.contentDataList = this.transformContentsToWidgets(content, strip)
-        }
-      } catch (error) {}
+        try {
+          const response = await this.trendingSearchRequest(strip, strip.request, calculateParentStatus)
+          if (response && response.results && response.results.response) {
+            const content = response.results.response[strip.request.trendingSearch.responseKey] || []
+            this.contentDataList = this.transformContentsToWidgets(content, strip)
+          }
+        } catch (error) { }
       }
     }
   }
@@ -289,7 +290,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label.toLowerCase(), type, '')
@@ -332,7 +333,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
         const content = response.results.response[currentTab.value] || []
         const widgets = this.transformContentsToWidgets(content, strip)
 
-        if (this.seeAllPageConfig  && this.seeAllPageConfig.tabs) {
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
           const allTabs = this.seeAllPageConfig.tabs
           const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
           this.resetSelectedPill(allPills)
@@ -353,7 +354,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
           }
         }
       } else {
-        if (this.seeAllPageConfig  && this.seeAllPageConfig.tabs) {
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
           const allTabs = this.seeAllPageConfig.tabs
           const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
           this.resetSelectedPill(allPills)
@@ -392,7 +393,7 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       const response = await this.searchV6Request(strip, currentTab.request, calculateParentStatus)
       if (response && response.results) {
         const widgets = this.transformContentsToWidgets(response.results.result.content, strip)
-        if (this.seeAllPageConfig  && this.seeAllPageConfig.tabs) {
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
           const allTabs = this.seeAllPageConfig.tabs
           const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
           this.resetSelectedPill(allPills)
@@ -422,196 +423,197 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
   }
 
   async trendingSearchRequest(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                              request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-                              _calculateParentStatus: boolean
-    ): Promise<any> {
-      const originalFilters: any = []
-      return new Promise<any>((resolve, reject) => {
-        if (request && request.trendingSearch) {
+    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
+  ): Promise<any> {
+    const originalFilters: any = []
+    return new Promise<any>((resolve, reject) => {
+      if (request && request.trendingSearch) {
         // check for the request if it has dynamic values]
-          if (request.trendingSearch.request.filters.organisation &&
+        if (request.trendingSearch.request.filters.organisation &&
           request.trendingSearch.request.filters.organisation.indexOf('<orgID>') >= 0
-          ) {
+        ) {
           let userRootOrgId
           if (this.configSvc.userProfile) {
-          userRootOrgId = this.configSvc.userProfile.rootOrgId
+            userRootOrgId = this.configSvc.userProfile.rootOrgId
           }
           request.trendingSearch.request.filters.organisation = userRootOrgId
-          }
-          this.seeAllSvc.trendingContentSearch(request.trendingSearch).subscribe((result: any) => {
-            let results: any = result
-            const showViewMore = Boolean(
+        }
+        this.seeAllSvc.trendingContentSearch(request.trendingSearch).subscribe((result: any) => {
+          let results: any = result
+          const showViewMore = Boolean(
             results.result &&
             strip.request &&
             results.result[strip.request.trendingSearch.responseKey] &&
             results.result[strip.request.trendingSearch.responseKey].length > 5 &&
             strip.stripConfig && strip.stripConfig.postCardForSearch,
-            )
+          )
 
-            const viewMoreUrl = showViewMore
+          const viewMoreUrl = showViewMore
             ? {
-            path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
-            queryParams: {
-            tab: 'Learn',
-            q: strip.viewMoreUrl && strip.viewMoreUrl.queryParams,
-            f:
-            request &&
-            request.trendingSearch &&
-            request.trendingSearch.request &&
-            request.trendingSearch.request.filters
-            ? JSON.stringify(
-            this.transformSearchV6FiltersV2(
-            originalFilters,
-            )
-            )
-            : {},
-            },
+              path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
+              queryParams: {
+                tab: 'Learn',
+                q: strip.viewMoreUrl && strip.viewMoreUrl.queryParams,
+                f:
+                  request &&
+                    request.trendingSearch &&
+                    request.trendingSearch.request &&
+                    request.trendingSearch.request.filters
+                    ? JSON.stringify(
+                      this.transformSearchV6FiltersV2(
+                        originalFilters,
+                      )
+                    )
+                    : {},
+              },
             }
             : null
 
-            const proccesedResult: any = []
-            if (results && results.response && results.response.certifications) {
-              results = { response: { certifications: proccesedResult } }
-            }
-            resolve({ results, viewMoreUrl })
-          },                                                                     (error: any) => {
-            if (error.error && error.error.status === 400) {
-              // this.processStrip(strip, [], 'done', calculateParentStatus, null);
-            }
-            // this.processStrip(strip, [], 'done', calculateParentStatus, null)
-            reject(error)
-          })
-        }
+          const proccesedResult: any = []
+          if (results && results.response && results.response.certifications) {
+            results = { response: { certifications: proccesedResult } }
+          }
+          resolve({ results, viewMoreUrl })
+        }, (error: any) => {
+          if (error.error && error.error.status === 400) {
+            // this.processStrip(strip, [], 'done', calculateParentStatus, null);
+          }
+          // this.processStrip(strip, [], 'done', calculateParentStatus, null)
+          reject(error)
+        })
+      }
+    })
+  }
+  resetSelectedPill(pillData: any) {
+    if (pillData && pillData.length) {
+      pillData.forEach((pill: any) => {
+        pill['selected'] = false
       })
     }
-    resetSelectedPill(pillData: any) {
-      if (pillData && pillData.length) {
-        pillData.forEach((pill: any) => {
-          pill['selected'] = false
-        })
-      }
+  }
+
+  pillClicked(stripMap: any, pillIndex: any, tabIndex: any) {
+    debugger
+    this.pageSize = 50
+    if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
+      stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
+      stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
+      stripMap.showOnLoader = true
     }
+    const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex]
+    const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex].pillsData[pillIndex]
+    const currentStrip = this.seeAllPageConfig
 
-    pillClicked(stripMap: any,  pillIndex: any, tabIndex: any) {
-      this.pageSize = 50
-      if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
-        stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
-        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
-        stripMap.showOnLoader = true
-      }
-      const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex]
-      const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex].pillsData[pillIndex]
-      const currentStrip = this.seeAllPageConfig
-
-      if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick && currentPillFromMap) {
-        if (currentPillFromMap.requestRequired && currentPillFromMap.request) {
-          // call API to get tab data and process
-          // this.processStrip(currentStrip, [], 'fetching', true, null)
-          if (currentPillFromMap.request.searchV6) {
-            this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
-          } else if (currentPillFromMap.request.trendingSearch) {
-            this.getTabDataByNewReqTrending(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
-          }   else if (currentPillFromMap.request.type === 'enrollment') {
-            this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-            stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
-            stripMap.showOnLoader = false;
-          }  else if (currentPillFromMap.request.type === 'eventEnrollment') {
-            this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-          }
-          // if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
-          //   stripMap.tabs[tabIndex].tabLoading = false;
-          // }
+    if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick && currentPillFromMap) {
+      if (currentPillFromMap.requestRequired && currentPillFromMap.request) {
+        // call API to get tab data and process
+        // this.processStrip(currentStrip, [], 'fetching', true, null)
+        if (currentPillFromMap.request.searchV6) {
+          this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.trendingSearch) {
+          this.getTabDataByNewReqTrending(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.type === 'enrollment') {
+          this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
+          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
+          stripMap.showOnLoader = false;
+        } else if (currentPillFromMap.request.type === 'eventEnrollment') {
+          this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
+        }
+        // if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
+        //   stripMap.tabs[tabIndex].tabLoading = false;
+        // }
 
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
-        } else {
-          stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'done'
-          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
-          stripMap.showOnLoader = false
-          this.resetSelectedPill(stripMap.tabs[tabIndex].pillsData)
-          stripMap.tabs[tabIndex].pillsData[pillIndex]['selected'] = true
-        }
+      } else {
+        stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'done'
+        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
+        stripMap.showOnLoader = false
+        this.resetSelectedPill(stripMap.tabs[tabIndex].pillsData)
+        stripMap.tabs[tabIndex].pillsData[pillIndex]['selected'] = true
       }
     }
-    public tabClicked(tabIndex: any, stripMap: any, _stripKey: string, pillIndex: any) {
+  }
+  public tabClicked(tabIndex: any, stripMap: any, _stripKey: string, pillIndex: any) {
 
-      this.pageSize = 50
-      if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
-        stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
-        stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
-        stripMap.showOnLoader = true
+    this.pageSize = 50
+    if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
+      stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
+      stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
+      stripMap.showOnLoader = true
+    }
+    const data: WsEvents.ITelemetryTabData = {
+      label: `${stripMap.tabs[tabIndex].textLabel}`,
+      index: tabIndex,
+    }
+    this.eventSvc.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        subType: WsEvents.EnumInteractSubTypes.HOME_PAGE_STRIP_TABS,
+        id: `${_.camelCase(data.label)}-tab`,
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
       }
-      const data: WsEvents.ITelemetryTabData = {
-        label: `${stripMap.tabs[tabIndex].textLabel}`,
-        index: tabIndex,
-      }
-      this.eventSvc.raiseInteractTelemetry(
-        {
-          type: WsEvents.EnumInteractTypes.CLICK,
-          subType: WsEvents.EnumInteractSubTypes.HOME_PAGE_STRIP_TABS,
-          id: `${_.camelCase(data.label)}-tab`,
-        },
-        {},
-        {
-          module: WsEvents.EnumTelemetrymodules.HOME,
+    )
+
+    const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex]
+    const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex].pillsData[pillIndex]
+    const currentStrip = this.seeAllPageConfig
+
+    if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick && currentPillFromMap) {
+      if (currentPillFromMap.requestRequired && currentPillFromMap.request) {
+        // call API to get tab data and process
+        // this.processStrip(currentStrip, [], 'fetching', true, null)
+        if (currentPillFromMap.request.searchV6) {
+          this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, 0, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.trendingSearch) {
+          this.getTabDataByNewReqTrending(currentStrip, tabIndex, 0, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.type === 'enrollment') {
+          this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
+          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
+          stripMap.showOnLoader = false;
+        } else if (currentPillFromMap.request.type === 'eventEnrollment') {
+          this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
         }
-      )
-
-      const currentTabFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex]
-      const currentPillFromMap: any = stripMap.tabs && stripMap.tabs[tabIndex].pillsData[pillIndex]
-      const currentStrip = this.seeAllPageConfig
-
-      if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick && currentPillFromMap) {
-        if (currentPillFromMap.requestRequired && currentPillFromMap.request) {
-          // call API to get tab data and process
-          // this.processStrip(currentStrip, [], 'fetching', true, null)
-          if (currentPillFromMap.request.searchV6) {
-            this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, 0, currentPillFromMap, true)
-          } else if (currentPillFromMap.request.trendingSearch) {
-            this.getTabDataByNewReqTrending(currentStrip, tabIndex, 0, currentPillFromMap, true)
-          }  else if (currentPillFromMap.request.type === 'enrollment') {
-            this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-            stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
-            stripMap.showOnLoader = false;
-          }  else if (currentPillFromMap.request.type === 'eventEnrollment') {
-            this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-          }
 
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
-        } else if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
-          // call API to get tab data and process
-          // this.processStrip(currentStrip, [], 'fetching', true, null)
-          if (currentTabFromMap.request.enrollmentList) {
-            this.fetchFromInternalEnrollmentList(currentStrip,  tabIndex, pillIndex,  true)
-          } else if (currentTabFromMap.request.eventEnrollmentList) {
-            this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-          }
+      } else if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
+        // call API to get tab data and process
+        // this.processStrip(currentStrip, [], 'fetching', true, null)
+        if (currentTabFromMap.request.enrollmentList) {
+          this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
+        } else if (currentTabFromMap.request.eventEnrollmentList) {
+          this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
+        }
 
         stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
-        }
       }
     }
+  }
 
-    getSelectedPillIndex(tabdata: any) {
-      if (tabdata.pillsData && tabdata.pillsData.length) {
-        const index = tabdata.pillsData.findIndex((pill: any) => {
-            return pill.selected
-        })
-        return index
-      }
-      return 0
+  getSelectedPillIndex(tabdata: any) {
+    if (tabdata.pillsData && tabdata.pillsData.length) {
+      const index = tabdata.pillsData.findIndex((pill: any) => {
+        return pill.selected
+      })
+      return index
     }
+    return 0
+  }
 
   // MY learning Strip methods starts here
   fetchUserEnrolledData(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                        tabIndex: number, pillIndex: any, calculateParentStatus = true) {
+    tabIndex: number, pillIndex: any, calculateParentStatus = true) {
     if (strip.request && strip.request.enrollmentList
       && Object.keys(strip.request.enrollmentList).length) {
-       if(strip && strip.tabs && strip.tabs.length && strip.tabs[tabIndex].pillsData){
-        if(strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length){
-          let currentPillFromMap : any = strip.tabs[tabIndex].pillsData[pillIndex]
-          if(currentPillFromMap.request && currentPillFromMap.request.type === 'enrollment'){
+      if (strip && strip.tabs && strip.tabs.length && strip.tabs[tabIndex].pillsData) {
+        if (strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length) {
+          let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
+          if (currentPillFromMap.request && currentPillFromMap.request.type === 'enrollment') {
             this.fetchFromInternalEnrollmentList(strip, tabIndex, pillIndex, calculateParentStatus)
-          } else if(currentPillFromMap.request && currentPillFromMap.request.type === 'eventEnrollment'){
+          } else if (currentPillFromMap.request && currentPillFromMap.request.type === 'eventEnrollment') {
             this.fetchEventEnrollmentList(strip, tabIndex, pillIndex, calculateParentStatus)
           }
         }
@@ -623,38 +625,38 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
 
 
   fetchFromInternalEnrollmentList(strip: NsContentStripWithTabsAndPills.IContentStripUnit, tabIndex: number, pillIndex: number, calculateParentStatus = true) {
-    if(strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]){
-      let currentPillFromMap : any = strip.tabs[tabIndex].pillsData[pillIndex]
+    if (strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]) {
+      let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId;
       }
-      if(currentPillFromMap.request.payload 
+      if (currentPillFromMap.request.payload
         && currentPillFromMap.request.payload.request
-        && currentPillFromMap.request.payload.request.limit){
+        && currentPillFromMap.request.payload.request.limit) {
         delete currentPillFromMap.request.payload.request.limit
       }
       let courses: any = []
       this.enrollSvc.fetchInternalEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
-        
-        if(res && res.result && res.result.courses && res.result.courses.length){
-          courses  = [...courses, ...res.result.courses]
+
+        if (res && res.result && res.result.courses && res.result.courses.length) {
+          courses = [...courses, ...res.result.courses]
         }
-        this.enrollSvc.fetchExternalEnrollmentData( currentPillFromMap.request.payload).subscribe((res: any) => {
-          
-          if(res && res.result && res.result.courses && res.result.courses.length){
-            courses  = [...courses, ...res.result.courses]
+        this.enrollSvc.fetchExternalEnrollmentData(currentPillFromMap.request.payload).subscribe((res: any) => {
+
+          if (res && res.result && res.result.courses && res.result.courses.length) {
+            courses = [...courses, ...res.result.courses]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
-        },(_err: any) => {
-          if(courses && courses.length){
-            courses  = [...courses]
+        }, (_err: any) => {
+          if (courses && courses.length) {
+            courses = [...courses]
             this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
           }
         })
-      },(_err: any) => {
-        if(courses && courses.length){
-          courses  = [...courses]
+      }, (_err: any) => {
+        if (courses && courses.length) {
+          courses = [...courses]
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         }
       })
@@ -662,31 +664,31 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
   }
 
   fetchEventEnrollmentList(strip: NsContentStripWithTabsAndPills.IContentStripUnit, tabIndex: number, pillIndex: number, calculateParentStatus = true) {
-    if(strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]){
-      let currentPillFromMap : any = strip.tabs[tabIndex].pillsData[pillIndex]
+    if (strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]) {
+      let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId;
       }
-      if(currentPillFromMap.request.payload 
+      if (currentPillFromMap.request.payload
         && currentPillFromMap.request.payload.request
-        && currentPillFromMap.request.payload.request.limit){
+        && currentPillFromMap.request.payload.request.limit) {
         delete currentPillFromMap.request.payload.request.limit
       }
       this.enrollSvc.fetchEventsEnrollmentData(userId, currentPillFromMap.request.payload).subscribe((res: any) => {
         let events: any = []
-        if(res && res.result && res.result.events && res.result.events.length){
-          events  = [...events, ...res.result.events]
+        if (res && res.result && res.result.events && res.result.events.length) {
+          events = [...events, ...res.result.events]
         }
         this.formatNewEnrollmentData(strip, tabIndex, pillIndex, events, calculateParentStatus)
-      },(_err: any) => {
+      }, (_err: any) => {
 
       })
     }
   }
 
-  formatNewEnrollmentData(strip: any, tabIndex:number, pillIndex: number, courses: any, _calculateParentStatus: any = true){
-    let content:any = [];
+  formatNewEnrollmentData(strip: any, tabIndex: number, pillIndex: number, courses: any, _calculateParentStatus: any = true) {
+    let content: any = [];
     if (courses && courses.length) {
       content = courses.map((c: any) => {
         const contentTemp: NsContent.IContent = c.content || c.event || {};
@@ -705,31 +707,31 @@ export class SeeAllWithPillsComponent  implements OnInit, OnDestroy {
       });
     }
 
-    let sortedContent : any = (content || []).sort((a: any, b: any) => {
+    let sortedContent: any = (content || []).sort((a: any, b: any) => {
       const dateA: any = new Date(a.lastContentAccessTime || 0);
       const dateB: any = new Date(b.lastContentAccessTime || 0);
       return dateB - dateA;
     });
-    
-    if(strip && strip.tabs && strip.tabs.length){
-      if(strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length){
-        let currentPillFromMap : any = strip.tabs[tabIndex].pillsData[pillIndex]
+
+    if (strip && strip.tabs && strip.tabs.length) {
+      if (strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length) {
+        let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
         currentPillFromMap['fetchTabStatus'] = 'done'
         this.resetSelectedPill(strip.tabs[tabIndex].pillsData)
         strip.tabs[tabIndex].pillsData[pillIndex]['selected'] = true
         let widgets = this.transformContentsToWidgets(sortedContent, strip)
         strip.tabs[tabIndex].pillsData[pillIndex]['widgets'] = widgets
-       
+
         this.resetSelectedPill(strip.tabs[tabIndex].pillsData)
         this.tabResults = strip.tabs
         strip.tabs[tabIndex].pillsData[pillIndex]['selected'] = true
         this.contentDataList = strip.tabs[tabIndex].pillsData[pillIndex].widgets
       }
-      }
+    }
   }
 
   loadMore() {
-    if(this.pageSize < this.contentDataList.length){
+    if (this.pageSize < this.contentDataList.length) {
       this.pageSize = this.pageSize + 50
     }
   }
