@@ -329,30 +329,34 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       facets = this.competencyFactet;
 
       let competency;
-      if (item.type === this.competencyAreaNameKey) {
-        competency = facets.find(
-          (facet: any) =>
-            (facet[item.type]?.name).toLowerCase() === item.value.toLowerCase()
-        );
+      if (item.type && item.type === this.competencyAreaNameKey) {
+        if(facets?.length) {
+          competency = facets.find(
+            (facet: any) =>
+              (facet[item.type]?.name).toLowerCase() === item?.value.toLowerCase()
+          );
+        }
       } else {
-        competency = facets.find((facet: any) => {
-          if (facet[item.type]) {
-            return facet[item.type].find(
-              (subFacet: any) =>
-                subFacet.name.toLowerCase() === item.value.toLowerCase()
-            );
-          }
-          return false;
-        });
+        if(facets?.length) {
+          competency = facets.find((facet: any) => {
+            if (facet[item.type]) {
+              return facet[item.type].find(
+                (subFacet: any) =>
+                  subFacet?.name.toLowerCase() === item?.value.toLowerCase()
+              );
+            }
+            return false;
+          });
+        }
       }
 
       if (competency) {
-        if (item.type === this.competencyAreaNameKey) {
+        if (item.type && item.type === this.competencyAreaNameKey) {
           competency[item.type].isChecked = false;
         } else {
           const subFacet = competency[item.type].find(
             (subFacet: any) =>
-              subFacet.name.toLowerCase() === item.value.toLowerCase()
+              subFacet?.name.toLowerCase() === item?.value.toLowerCase()
           );
           if (subFacet) {
             subFacet.isChecked = false;
@@ -364,7 +368,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             item.type
           ].filter(
             (filter: string) =>
-              filter.toLowerCase() !== item.value.toLowerCase()
+              filter.toLowerCase() !== item?.value.toLowerCase()
           );
           if (this.selectedFilters[item.type].length === 0) {
             delete this.selectedFilters[item.type];
@@ -459,16 +463,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredDesignations() {
-    let filteredList = this.formattedFacets['profileDetails.professionalDetails.designation'].filter((item: any) =>
-        item.name.toLowerCase().includes(this.filterQueryDesignation.toLowerCase())
+    let filteredList = this.formattedFacets['profileDetails.professionalDetails.designation']?.filter((item: any) =>
+        item?.name.toLowerCase().includes(this.filterQueryDesignation.toLowerCase())
     );
 
     return this.showAllDesignation ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredRootOrgNames() {
-    let filteredList = this.formattedFacets['rootOrgName'].filter((item: any) =>
-        item.name.toLowerCase().includes(this.filterQueryRootOrgName.toLowerCase())
+    let filteredList = this.formattedFacets['rootOrgName']?.filter((item: any) =>
+        item?.name.toLowerCase().includes(this.filterQueryRootOrgName.toLowerCase())
     );
 
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);

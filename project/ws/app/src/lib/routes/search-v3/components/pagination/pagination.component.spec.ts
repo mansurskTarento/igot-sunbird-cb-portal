@@ -230,6 +230,23 @@ describe('PaginationComponent', () => {
       expect(goToPageSpy).toHaveBeenCalledWith(4);
     });
 
+    it('should not navigate before the first page', () => {
+      // Arrange
+      component.totalItemsCount = 0; // No items
+      component.defaultPaginationSize = 10;
+      component.currentPage = 1; // First page
+      component.paginationInListing(); // Initialize pagination
+
+      const initialPage = component.currentPage;
+      const goToPageSpy = jest.spyOn(component, 'goToPage');
+
+      // Act
+      component.navigateToPrevPage(0); // Try to go before the first page
+
+      // Assert
+      expect(component.currentPage).toBe(initialPage);
+      expect(goToPageSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('onChangePageSize', () => {

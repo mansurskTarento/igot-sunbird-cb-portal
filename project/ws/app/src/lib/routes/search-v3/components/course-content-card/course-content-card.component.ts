@@ -142,9 +142,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   generateCompetencySubThemeString(): string {
-    if (this.content && this.content[this.compentencyKey.vKey]) {
-        return this.content[this.compentencyKey.vKey]
-            .map((keyword: any) => keyword[this.compentencyKey.vCompetencySubTheme])
+    if (this.content && this.content[this.compentencyKey?.vKey]) {
+        return this.content[this.compentencyKey?.vKey]
+            .map((keyword: any) => keyword[this.compentencyKey?.vCompetencySubTheme])
             .join(' · ');
     }
     return '';

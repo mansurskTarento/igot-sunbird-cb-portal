@@ -824,7 +824,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestCommunities.orderDirection = 'desc';
         this.searchcommunities();
       } else if (this.seeAllResult === SearchCategory.People) {
-        delete this.searchRequestPeoples.sort_by.firstName;
+        delete this.searchRequestPeoples?.sort_by?.firstName;
         this.searchRequestPeoples.sort_by.lastUpdatedOn = 'desc';
         this.searchPeople();
       }

@@ -145,21 +145,26 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
   }
 
   getDurationFromStartandEndDates() {
+    if (!this.content?.startTime || !this.content?.endTime) {
+      this.eventDuration = '';
+      return;
+    }
+
     let startDateTime: Date;
     let endDateTime: Date;
 
-    if (this.content?.startTime.includes('Z')) {
-        startDateTime = new Date(`${this.content?.startDate}T${this.content?.startTime}`);
+    if (this.content.startTime.includes('Z')) {
+      startDateTime = new Date(`${this.content.startDate}T${this.content.startTime}`);
     } else {
-        const [startTimeStr, startOffset] = this.content?.startTime.split('+');
-        startDateTime = new Date(`${this.content?.startDate}T${startTimeStr}+${startOffset}`);
+      const [startTimeStr, startOffset] = this.content.startTime.split('+');
+      startDateTime = new Date(`${this.content.startDate}T${startTimeStr}+${startOffset}`);
     }
 
-    if (this.content?.endTime.includes('Z')) {
-        endDateTime = new Date(`${this.content?.endDate}T${this.content?.endTime}`);
+    if (this.content.endTime.includes('Z')) {
+      endDateTime = new Date(`${this.content.endDate}T${this.content.endTime}`);
     } else {
-        const [endTimeStr, endOffset] = this.content?.endTime.split('+');
-        endDateTime = new Date(`${this.content?.endDate}T${endTimeStr}+${endOffset}`);
+      const [endTimeStr, endOffset] = this.content.endTime.split('+');
+      endDateTime = new Date(`${this.content.endDate}T${endTimeStr}+${endOffset}`);
     }
 
     const durationInSeconds = (endDateTime.getTime() - startDateTime.getTime()) / 1000;

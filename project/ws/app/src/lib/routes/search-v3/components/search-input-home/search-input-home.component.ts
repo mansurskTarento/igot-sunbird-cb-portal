@@ -332,8 +332,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   getResultName(result: any): string {
+    if (!result) {
+      return '';
+    }
+
     if (this.selectedSearchCategory === SearchCategory.People) {
-      return result.firstName ?? '';
+      return result.personalDetails?.firstname ?? result.firstName ?? '';
     } else if (this.selectedSearchCategory === SearchCategory.Communities) {
       return result.communityName ?? '';
     } else {
