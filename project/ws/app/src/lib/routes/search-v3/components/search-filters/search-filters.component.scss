@@ -82,7 +82,9 @@
 
 ::ng-deep {
   .content-provider-filter .mat-full-radius,
-  .languages-filter .mat-full-radius {
+  .languages-filter .mat-full-radius,
+  .designation-filter .mat-full-radius,
+  .root-org-name-filter .mat-full-radius {
     position: relative;
     .mat-form-field-appearance-outline {
       .mat-form-field-flex {

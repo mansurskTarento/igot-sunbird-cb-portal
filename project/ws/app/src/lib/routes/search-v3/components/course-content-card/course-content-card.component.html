@@ -101,12 +101,10 @@
                     {{content?.name}}
                 </h2>
                 <div class="course-tags mb-3 font-normal text-ellipse"
-                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]">
+                    *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]"
+                    [matTooltip]="'Sub Theme - ' + generateCompetencySubThemeString()">
                     <span>Sub Theme - </span>
-                    <ng-container *ngFor="let keyword of content[compentencyKey.vKey]; let isLast = last">
-                        <span class=""> {{keyword[compentencyKey.vCompetencySubTheme]}} <span *ngIf="!isLast"> ·
-                            </span></span>
-                    </ng-container>
+                    <span>{{generateCompetencySubThemeString()}}</span>
                 </div>
 
                 <div class="course-author mb-3 flex items-center gap-2">

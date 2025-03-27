@@ -1,11 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { PageChangeEmitter } from '../../models/search-v3.model';
 @Component({
   selector: 'ws-app-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
 })
-export class PaginationComponent implements OnInit {
+export class PaginationComponent implements OnInit, OnChanges {
   private _currentPage: number = 1;
 
   @Input() defaultPaginationSize: number = 10;
@@ -33,6 +41,15 @@ export class PaginationComponent implements OnInit {
 
   ngOnInit(): void {
     this.paginationInListing();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes.totalItemsCount &&
+      changes.totalItemsCount.currentValue !==
+        changes.totalItemsCount.previousValue
+    ) {
+      this.paginationInListing();
+    }
   }
 
   paginationInListing() {

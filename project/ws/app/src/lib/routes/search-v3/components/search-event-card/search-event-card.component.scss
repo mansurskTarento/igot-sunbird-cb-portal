@@ -31,14 +31,33 @@
   background: #00000066;
 }
 
-.course-badges-new {
+.course-badges {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: $black-87;
+  border-radius: 4px;
+}
+
+.course-badges-live {
   position: absolute;
   top: 45%;
   left: 45%;
 }
 
+.course-badges-new {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+
+  .new-badge {
+    padding: 4px 8px !important;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+}
+
 .badge {
-  padding: 4px 8px;
   border-radius: 16px;
   color: $white;
   display: flex;
@@ -55,6 +74,24 @@
 
 .new-badge {
   background: $colorRed;
+}
+
+.duration-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
+  font-weight: 400 !important; 
+  font-size: 12px;
+  padding: 4px 8px !important
+}
+
+.duration-badge mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
 }
 
 .course-content {

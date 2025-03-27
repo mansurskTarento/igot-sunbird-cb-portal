@@ -65,6 +65,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   selectedFilterChips: any;
   filterQueryOrganisation = '';
   filterQueryLanguage = '';
+  filterQueryDesignation = '';
+  filterQueryRootOrgName = '';
   searchCategory = '';
   constructor(
     // private searchSrvc: GbSearchService,
@@ -454,5 +456,21 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredDesignations() {
+    let filteredList = this.formattedFacets['profileDetails.professionalDetails.designation'].filter((item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryDesignation.toLowerCase())
+    );
+
+    return this.showAllDesignation ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredRootOrgNames() {
+    let filteredList = this.formattedFacets['rootOrgName'].filter((item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryRootOrgName.toLowerCase())
+    );
+
+    return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 }

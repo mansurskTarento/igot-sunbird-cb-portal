@@ -1,4 +1,4 @@
-<div class="learnsearch  margin-top-l margin-bottom-l">
+<div class="learnsearch margin-top-l margin-bottom-l">
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
         <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav" *ngIf="(!filtersPanel || filtersPanel !== 'hide') && 
         (combinedFacets.length > 0 || 
@@ -10,8 +10,8 @@
             </ng-container> 
         </mat-sidenav>
 
-        <mat-sidenav-content class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
-            <div class="ml-4">
+        <mat-sidenav-content #mainContainer class="custom-sidecontent" [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
+            <div #contentWrapper class="ml-4 content-wrapper">
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
                     <div class="">

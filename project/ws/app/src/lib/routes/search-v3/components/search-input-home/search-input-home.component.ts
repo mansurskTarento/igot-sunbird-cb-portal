@@ -205,7 +205,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-    if (!query) return;
 
     document.getElementById('global-search-input')?.blur();
 
