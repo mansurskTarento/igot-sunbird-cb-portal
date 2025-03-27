@@ -143,4 +143,12 @@
   ::ng-deep .mat-form-field-suffix {
     margin-right: -10px !important;
   }
+
+
+}
+
+.radio-list {
+  ::ng-deep .mat-mdc-radio-button .mdc-radio {
+    padding: 0px !important
+  }
 }
