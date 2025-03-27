@@ -45,7 +45,7 @@
           </div>
           <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all " *ngIf="pastEvent">
             <a mat-button class="flex-1 action-button" target="_blank"
-              (click)="navigateToPLayer();raiseTelemetry('join-event')">
+              (click)="navigateToPLayer();raiseTelemetry('view-recording')">
               <span i18n>{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
             </a>
           </div>
@@ -166,4 +166,5 @@
     </mat-card-content> -->
 </mat-card>
 
-<d-v2-share-discussion *ngIf="enableShare" [shareType]="'copy'" [rootOrgId]="rootOrgId" (resetEnableShare)="resetEnableShare($event)"></d-v2-share-discussion>
+<d-v2-share-discussion *ngIf="enableShare" [shareType]="'copy'" [rootOrgId]="rootOrgId"
+  (resetEnableShare)="resetEnableShare($event)"></d-v2-share-discussion>
