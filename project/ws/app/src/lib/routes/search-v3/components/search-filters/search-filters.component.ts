@@ -95,19 +95,70 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
-      // if (this.formattedFacets && this.formattedFacets['sourceName']) {
-      //   this.formattedFacets['organisation'] = [
-      //     ...this.formattedFacets['sourceName'],
-      //   ];
-      // }
-    }
-    if (
-      changes['competencyFactet'] &&
-      changes['competencyFactet'].currentValue
-    ) {
+
+      if (this.formattedFacets?.sectorId?.length) {
+        const coursesCategory = _.find(this.categoryTypeDup, {
+          name: 'courses',
+        });
+
+        if (!coursesCategory) return;
+
+        const caseStudyCategory = _.find(coursesCategory.filters, {
+          name: 'caseStudy',
+        });
+
+        const sectorFilters = this.formattedFacets.sectorId.map(
+          (sector: any) => ({
+            name: sector.name,
+            count: sector.count,
+            isChecked: sector.isChecked,
+            displayName: this.formatSectorName(sector.name),
+          })
+        );
+
+        if (!caseStudyCategory) {
+          coursesCategory.filters.push({
+            displayName: 'Case Study',
+            name: SearchCategory.CaseStudy,
+            count: 0,
+            isChecked: false,
+            filters: sectorFilters,
+          });
+        } else {
+          caseStudyCategory.filters = sectorFilters;
+        }
+      }
+
+      // Handle nested filters for other categories
+      if (this.formattedFacets?.nestedCategory?.length) {
+        const nestedCategory = _.find(this.categoryTypeDup, {
+          name: 'nestedCategory',
+        });
+
+        if (nestedCategory) {
+          nestedCategory.filters = this.formattedFacets.nestedCategory.map(
+            (filter: any) => ({
+              name: filter.name,
+              count: filter.count,
+              isChecked: filter.isChecked,
+              displayName: this.formatSectorName(filter.name),
+            })
+          );
+        }
+      }
     }
 
     this.setCategoryType();
+  }
+
+  formatSectorName(name: string): string {
+    if (name.startsWith('sector-fw_sector_')) {
+      name = name.replace('sector-fw_sector_', '');
+    }
+    return name
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   setCategoryType() {
@@ -136,7 +187,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.categoryType = this.categoryTypeDup.map((cat) => ({
         ...cat,
-        isChecked: false,
+        isChecked: cat.name === SearchCategory.All ? true : false,
       }));
     }
   }
@@ -330,14 +381,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
       let competency;
       if (item.type && item.type === this.competencyAreaNameKey) {
-        if(facets?.length) {
+        if (facets?.length) {
           competency = facets.find(
             (facet: any) =>
-              (facet[item.type]?.name).toLowerCase() === item?.value.toLowerCase()
+              (facet[item.type]?.name).toLowerCase() ===
+              item?.value.toLowerCase()
           );
         }
       } else {
-        if(facets?.length) {
+        if (facets?.length) {
           competency = facets.find((facet: any) => {
             if (facet[item.type]) {
               return facet[item.type].find(
@@ -383,18 +435,24 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       facets = this.formattedFacets;
       const allFilters = _.flatMap(facets);
-
-      const foundFilter: any = _.find(allFilters, {
+      let foundFilter: any;
+      foundFilter = _.find(allFilters, {
         name: item.value.toLowerCase(),
       });
 
-      if (foundFilter) {
+      if (!foundFilter) {
+        foundFilter = _.find(allFilters, {
+          name: item.value,
+        });
+      }
+
+      if (foundFilter && !foundFilter?.name.startsWith('sector-fw_sector_')) {
         foundFilter.isChecked = false;
 
         if (_.has(this.selectedFilters, item.type)) {
           _.pull(this.selectedFilters[item.type], foundFilter.name);
           if (_.isEmpty(this.selectedFilters[item.type])) {
-            delete this.selectedFilters[item.type];
+            // delete this.selectedFilters[item.type];
           }
         }
 
@@ -402,6 +460,36 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.selectedFilterChips = this.refactorFilterData(
           this.selectedFilters
         );
+      } else {
+        const foundCategory = _.find(this.categoryTypeDup, {
+          name: SearchCategory.Courses,
+        });
+        if (foundCategory) {
+          const found = this.recursivelySetIsCheckedFalse(
+            foundCategory.filters,
+            item.value.toLowerCase()
+          );
+          if (found) {
+            found.isChecked = false;
+            if (_.has(this.selectedFilters, item.type)) {
+              if (item.value.toLowerCase().startsWith('sector-fw_sector_')) {
+                _.pull(
+                  this.selectedFilters[item.type],
+                  item.value.toLowerCase()
+                );
+              } else {
+                _.pull(this.selectedFilters[item.type], item.value);
+              }
+              if (_.isEmpty(this.selectedFilters[item.type])) {
+                delete this.selectedFilters[item.type];
+              }
+            }
+            this.appliedFilter.emit(this.selectedFilters);
+            this.selectedFilterChips = this.refactorFilterData(
+              this.selectedFilters
+            );
+          }
+        }
       }
     }
   }
@@ -455,26 +543,53 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredLanguages() {
-    let filteredList = this.formattedFacets[FacetType.Language].filter((item: any) =>
-      item.name.toLowerCase().includes(this.filterQueryLanguage.toLowerCase())
+    let filteredList = this.formattedFacets[FacetType.Language].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryLanguage.toLowerCase())
     );
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredDesignations() {
-    let filteredList = this.formattedFacets['profileDetails.professionalDetails.designation']?.filter((item: any) =>
-        item?.name.toLowerCase().includes(this.filterQueryDesignation.toLowerCase())
+    let filteredList = this.formattedFacets[
+      'profileDetails.professionalDetails.designation'
+    ]?.filter((item: any) =>
+      item?.name
+        .toLowerCase()
+        .includes(this.filterQueryDesignation.toLowerCase())
     );
 
     return this.showAllDesignation ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredRootOrgNames() {
-    let filteredList = this.formattedFacets['rootOrgName']?.filter((item: any) =>
-        item?.name.toLowerCase().includes(this.filterQueryRootOrgName.toLowerCase())
+    let filteredList = this.formattedFacets['rootOrgName']?.filter(
+      (item: any) =>
+        item?.name
+          .toLowerCase()
+          .includes(this.filterQueryRootOrgName.toLowerCase())
     );
 
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
+  }
+
+  private recursivelySetIsCheckedFalse(filters: any[], name: string): any {
+    for (const filter of filters) {
+      if ((filter?.name).toLowerCase() === name.toLowerCase()) {
+        filter.isChecked = false;
+        return filter;
+      }
+      if (filter.filters?.length) {
+        const found = this.recursivelySetIsCheckedFalse(
+          filter.filters,
+          name.toLowerCase()
+        );
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return null;
   }
 }

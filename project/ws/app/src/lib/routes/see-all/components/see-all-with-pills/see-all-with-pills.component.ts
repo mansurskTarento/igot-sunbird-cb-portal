@@ -494,7 +494,6 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   pillClicked(stripMap: any, pillIndex: any, tabIndex: any) {
-    debugger
     this.pageSize = 50
     if (stripMap && stripMap.tabs && stripMap.tabs[tabIndex]) {
       stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'

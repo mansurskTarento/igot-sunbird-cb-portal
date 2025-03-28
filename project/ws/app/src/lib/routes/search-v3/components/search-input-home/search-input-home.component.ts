@@ -300,7 +300,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
       return;
     } else if (this.selectedSearchCategory === SearchCategory.Communities) {
-      const searchRequestCommunities = new SearchCommunitiesRequest();
+      const searchRequestCommunities = new SearchCommunitiesRequest([]);
       searchRequestCommunities.searchString = query;
       const result = await this.searchV3Service
         .searchCommunity(searchRequestCommunities)

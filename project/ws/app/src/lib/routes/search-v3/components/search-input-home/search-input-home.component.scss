@@ -55,7 +55,7 @@
   }
   input.global-search-input-element {
     margin-top: 8px;
-    padding-left: 1.5rem;
+    padding-left: 1.5rem !important;
     max-width: 80%;
   }
 }
@@ -80,7 +80,11 @@
   position: absolute;
   top: 40px;
   z-index: 9999;
-  width: 650px;
+  max-width: 650px;
+  min-width: 650px;
+  @media (max-width: 768px) {
+    min-width: 375px;
+  }
 }
 
 .search-categories {
@@ -147,6 +151,13 @@ mat-list-item {
   &:hover {
     background-color: $matListHoverBg;
   }
+
+  .mat-icon {
+    color: $overleyDarkBackground;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
 }
 
 .active-filters {
@@ -164,7 +175,7 @@ mat-list-item {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 16px;
 
   .see-all-results {

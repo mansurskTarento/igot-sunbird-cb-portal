@@ -34,6 +34,7 @@ export class Filters {
   avgRating?: { [key: string]: string };
   language?: string[];
   organisation?: string[];
+  sectorId?: string[];
   [key: string]: any;
   constructor() {
     this.contentType = ['Course'];
@@ -67,6 +68,7 @@ export const SearchOthersFacet = [
   'avgRating',
   'language',
   'organisation',
+  'sectorId',
 ];
 
 // Events
@@ -130,6 +132,7 @@ export class SearchCommunitiesRequest {
     orgName?: string[];
     competencyArea?: string[];
     topicName?: string[];
+      [key: string]: any;
   };
   requestedFields: any[];
   pageNumber: number;
@@ -139,7 +142,7 @@ export class SearchCommunitiesRequest {
   orderBy?: string;
   orderDirection?: string;
 
-  constructor() {
+  constructor(competenciesKey: any) {
     this.filterCriteriaMap = {
       status: 'active',
     };
@@ -147,7 +150,7 @@ export class SearchCommunitiesRequest {
     this.pageNumber = 0;
     this.pageSize = 3;
     this.searchString = null;
-    this.facets = ['topicName', 'orgName', 'competencyArea'];
+    this.facets = ['topicName', 'orgName', ...competenciesKey];
   }
 }
 
@@ -190,5 +193,5 @@ export enum SortType {
   HighestRated = 'highest_rated',
   MostEnrolled = 'most_enrolled',
   Ascending = 'asc',
-  Descending = 'desc'
+  Descending = 'desc',
 }

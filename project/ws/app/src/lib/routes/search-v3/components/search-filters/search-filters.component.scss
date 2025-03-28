@@ -21,31 +21,11 @@
 
 ::ng-deep.mat-expansion-panel-body {
   padding: 0 16px !important;
-  min-height: 74px;
-  overflow-y: auto;
-  max-height: calc(100vh - 75vh);
 }
 
 :host ::ng-deep {
   .mat-checkbox-frame {
     border: 1px solid $overleyDarkBackground;
-  }
-  .mat-checkbox-label {
-    .min-width-adjust {
-      /* stylelint-disable */
-      font-family: Lato;
-      /* stylelint-enable */
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 16.8px;
-      color: $overleyDarkBackground;
-      display: inline-block;
-      max-width: 12em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-top: 6px;
-    }
   }
 
   .mat-checkbox-checked.mat-accent .mat-checkbox-background {
@@ -161,4 +141,20 @@
 
 .padding-remove {
   padding: 0 4px 0 0 !important;
+}
+
+.min-width-adjust {
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: $overleyDarkBackground;
+  display: inline-block;
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 6px;
 }

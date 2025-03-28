@@ -9,7 +9,7 @@
     <div class="filter-list flex items-center flex-wrap gap-2" *ngIf="filtersAppliedCount > 0">
         <ng-container *ngFor="let item of selectedFilterChips">
             <div class="filter-pill flex items-center">
-                <span class="font-normal text-xs">{{item?.value}}</span>
+                <span class="font-normal text-xs" [matTooltip]="item?.value">{{item?.value}}</span>
                 <button mat-icon-button color="primary" (click)="clearFilterChip(item)">
                     <mat-icon>close</mat-icon>
                 </button>
@@ -21,46 +21,72 @@
     <div class="filter-form">
         <mat-accordion class="filter-section margin-bottom-m">
             <ng-container *ngFor="let category of categoryType">
-                <mat-expansion-panel *ngIf="category.filters.length > 0" class="">
-                    <mat-expansion-panel-header class="padding-remove">
+              <mat-expansion-panel *ngIf="category.filters.length > 0" class="">
+                <mat-expansion-panel-header class="padding-remove">
+                  <mat-panel-title>
+                    <mat-checkbox
+                      [checked]="category?.isChecked"
+                      (change)="onSelectionFilter($event, category, category?.name);"
+                      (click)="$event.stopPropagation();"
+                    >
+                      <span class="min-width-adjust" >
+                        {{ category?.displayName }}
+                      </span>
+                    </mat-checkbox>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-selection-list class="padding-top-0">
+                  <ng-container *ngFor="let options of category.filters">
+                    <mat-expansion-panel>
+                      <mat-expansion-panel-header class="padding-remove">
                         <mat-panel-title>
-                            <mat-checkbox [checked]="category?.isChecked"
-                                (change)="onSelectionFilter($event, category, category?.name);"
-                                (click)="$event.stopPropagation();">
-                                <span class="min-width-adjust">
-                                    {{ category?.displayName }}
-                                </span>
-                            </mat-checkbox>
+                          <!-- <mat-checkbox
+                            [checked]="options?.isChecked"
+                            (change)="onSelectionFilter($event, options, category?.displayName)"
+                            (click)="$event.stopPropagation();"
+                          >
+                        </mat-checkbox> -->
+                        <span class="min-width-adjust hierichal-filter-label">
+                          {{ options?.displayName }}
+                        </span>
                         </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <mat-selection-list class="padding-top-0">
-                        <section class="mat-body-2 text-capitalize" *ngFor="let options of category.filters">
-                            <mat-checkbox [checked]="options?.isChecked"
-                                (change)="onSelectionFilter($event, options, category?.displayName)">
-                                <span class="min-width-adjust">
-                                    {{ options?.displayName }}
-                                </span>
+                      </mat-expansion-panel-header>
+                      <!-- Nested filters -->
+                      <mat-selection-list class="padding-top-0 nested-filters" *ngIf="options.filters?.length > 0">
+                        <ng-container *ngFor="let subOption of options.filters">
+                          <section class="mat-body-2 text-capitalize">
+                            <mat-checkbox
+                              [checked]="subOption?.isChecked"
+                              (change)="onSelectionFilter($event, subOption, options?.displayName)"
+                            >
+                              <span class="min-width-adjust" [matTooltip]="subOption?.displayName" [matTooltipPosition]="'right'">
+                                {{ subOption?.displayName }}
+                              </span>
                             </mat-checkbox>
-                        </section>
-                    </mat-selection-list>
-                </mat-expansion-panel>
-                <ng-container *ngIf="category.filters.length === 0">
-                    <mat-selection-list class="padding-top-0">
-                        <section class="mat-body-2 text-capitalize">
-                            <mat-checkbox [checked]="category?.isChecked"
-                                (change)="onSelectionFilter($event, category, category?.name)">
-                                <span class="min-width-adjust">
-                                    {{ category?.displayName }}
-                                </span>
-                            </mat-checkbox>
-                        </section>
-                    </mat-selection-list>
-                </ng-container>
+                          </section>
+                        </ng-container>
+                      </mat-selection-list>
+                    </mat-expansion-panel>
+                  </ng-container>
+                </mat-selection-list>
+              </mat-expansion-panel>
+              <ng-container *ngIf="category.filters.length === 0">
+                <mat-selection-list class="padding-top-0">
+                  <section class="mat-body-2 text-capitalize">
+                    <mat-checkbox
+                      [checked]="category?.isChecked"
+                      [disabled]="category?.disabled"
+                      (change)="onSelectionFilter($event, category, category?.name)"
+                    >
+                      <span class="min-width-adjust">
+                        {{ category?.displayName }}
+                      </span>
+                    </mat-checkbox>
+                  </section>
+                </mat-selection-list>
+              </ng-container>
             </ng-container>
-        </mat-accordion>
-        <!-- <div class="brand-color underline cursor-pointer" (click)="toggleShowMore()">
-            {{ showAll ? 'See Less' : 'See More' }}
-        </div> -->
+          </mat-accordion>
     </div>
 
     <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length">
@@ -139,7 +165,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredOrganisations">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'organisation')">
-                        <span class="min-width-adjust">{{ options?.name ? capitalizeFirstLetter(options?.name) :
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
                             ''}}</span>
                         <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
@@ -167,7 +193,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredOrganisations">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'sourceName')">
-                        <span class="min-width-adjust">{{ options?.name ? capitalizeFirstLetter(options?.name) :
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">{{ options?.name ? capitalizeFirstLetter(options?.name) :
                             ''}}</span>
                         <span class="min-width-adjust">{{' (' + options.count + ')'}}</span>
                     </mat-checkbox>
@@ -220,7 +246,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['competencyArea']">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'competencyArea')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
                             {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
                         </span>
                     </mat-checkbox>
@@ -284,7 +310,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['topicName']">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'topicName')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
                             {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
                         </span>
                     </mat-checkbox>
@@ -295,7 +321,7 @@
 
 
     <ng-container *ngIf="formattedFacets && formattedFacets['orgName'] && formattedFacets['orgName'].length">
-        <div class="competency-area-filter">
+        <div class="competency-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' |
                 translate}}
             </p>
@@ -304,7 +330,7 @@
                     *ngFor="let options of (showAllOrganisation ? formattedFacets['orgName'] : formattedFacets['orgName'].slice(0, 4))">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'orgName')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
                             {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
                         </span>
                     </mat-checkbox>
@@ -333,7 +359,7 @@
                     *ngFor="let options of filteredDesignations">
                     <mat-checkbox [checked]="options?.isChecked" *ngIf="options?.name"
                         (change)="onSelectionFilter($event, options, 'profileDetails.professionalDetails.designation')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
                             {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
                         </span>
                     </mat-checkbox>
@@ -363,7 +389,7 @@
                     *ngFor="let options of filteredRootOrgNames">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'rootOrgName')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
                             {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
                         </span>
                     </mat-checkbox>
@@ -401,8 +427,8 @@
                             *ngFor="let theme of competency[competencyThemeKey]">
                             <mat-checkbox [checked]="theme?.isChecked"
                                 (change)="onSelectionFilter($event, theme, competencyThemeKey)">
-                                <span class="min-width-adjust">
-                                    {{ theme.name }}
+                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">
+                                    {{ theme?.name }}
                                 </span>
                             </mat-checkbox>
                         </section>
@@ -413,8 +439,8 @@
                             *ngFor="let subTheme of competency[competencySubThemeKey]">
                             <mat-checkbox [checked]="subTheme?.isChecked"
                                 (change)="onSelectionFilter($event, subTheme, competencySubThemeKey)">
-                                <span class="min-width-adjust">
-                                    {{ subTheme.name }}
+                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(subTheme?.name)" [matTooltipPosition]="'right'">
+                                    {{ subTheme?.name }}
                                 </span>
                             </mat-checkbox>
                         </section>

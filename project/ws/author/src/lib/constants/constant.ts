@@ -3,66 +3,93 @@ export const AVAILABLE_LOCALES = ['en'];
 
 export const CATEGORY_TYPE = [
   {
+    displayName: 'All',
+    name: '',
+    count: 0,
+    isChecked: true,
+    filters: [],
+    disabled: true,
+  },
+  {
     displayName: 'Contents',
     name: 'courses',
     count: 0,
     isChecked: false,
     filters: [
       {
-        name: 'Moderated Course',
+        displayName: 'Course',
+        name: 'course',
         count: 0,
         isChecked: false,
-        displayName: 'Moderated Courses',
+        filters: [
+          {
+            name: 'Moderated Course',
+            count: 0,
+            isChecked: false,
+            displayName: 'Moderated Courses',
+          },
+          {
+            name: 'Invite-Only Course',
+            count: 0,
+            isChecked: false,
+            displayName: 'Invite Only Course',
+          },
+        ],
       },
       {
-        name: 'Invite-Only Course',
+        displayName: 'Programs',
+        name: 'programs',
         count: 0,
         isChecked: false,
-        displayName: 'Invite Only Course',
+        filters: [
+          {
+            name: 'Moderated Program',
+            count: 0,
+            isChecked: false,
+            displayName: 'Moderated Program',
+          },
+          {
+            name: 'Invite-Only Program',
+            count: 0,
+            isChecked: false,
+            displayName: 'Invite Only Program',
+          },
+          {
+            name: 'Blended Program',
+            count: 0,
+            isChecked: false,
+            displayName: 'Blended Program',
+          },
+          {
+            name: 'Curated Program',
+            count: 0,
+            isChecked: false,
+            displayName: 'Curated Program',
+          },
+        ],
       },
       {
-        name: 'Moderated Program',
+        displayName: 'Assessments',
+        name: 'assessments',
         count: 0,
         isChecked: false,
-        displayName: 'Moderated Program',
-      },
-      {
-        name: 'Invite-Only Program',
-        count: 0,
-        isChecked: false,
-        displayName: 'Invite Only Program',
-      },
-      {
-        name: 'Blended Program',
-        count: 0,
-        isChecked: false,
-        displayName: 'Blended Program',
-      },
-      {
-        name: 'Curated Program',
-        count: 0,
-        isChecked: false,
-        displayName: 'Curated Program',
-      },
-      {
-        name: 'Moderated Assessment',
-        count: 0,
-        isChecked: false,
-        displayName: 'Moderated Assessment',
-      },
-      {
-        name: 'Standalone Assessment',
-        count: 0,
-        isChecked: false,
-        displayName: 'Standalone Assessment',
-      },
-      {
-        name: 'Case Study',
-        count: 0,
-        isChecked: false,
-        displayName: 'Case Study',
+        filters: [
+          {
+            name: 'Moderated Assessment',
+            count: 0,
+            isChecked: false,
+            displayName: 'Moderated Assessment',
+          },
+          {
+            name: 'Standalone Assessment',
+            count: 0,
+            isChecked: false,
+            displayName: 'Standalone Assessment',
+          },
+        ],
       },
     ],
+    disabled: false,
   },
   {
     displayName: 'Events',
@@ -70,6 +97,7 @@ export const CATEGORY_TYPE = [
     count: 0,
     isChecked: false,
     filters: [],
+    disabled: false,
   },
   {
     name: 'peoples',
@@ -77,14 +105,15 @@ export const CATEGORY_TYPE = [
     isChecked: false,
     displayName: 'People',
     filters: [],
+    disabled: false,
   },
- 
   {
     name: 'communities',
     count: 0,
     isChecked: false,
     displayName: 'Communities',
     filters: [],
+    disabled: false,
   },
 ];
 
