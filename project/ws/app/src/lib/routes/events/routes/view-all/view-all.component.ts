@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NsContent } from '@sunbird-cb/utils-v2';
+import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2';
 import { EventService } from '../../services/events.service';
 import * as _ from 'lodash'
 import { DatePipe } from '@angular/common';
@@ -45,6 +45,7 @@ export class ViewAllComponent {
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
     private translate: TranslateService, private router: Router,
+    private langtranslations: MultilingualTranslationsService,
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -459,6 +460,28 @@ export class ViewAllComponent {
     }
     this.resetData()
     this.fetchData()
+  }
+
+  getName(filters: any, filter: any) {
+    if (filters.key === 'resourceType') {
+      return filter
+    } else if (filters.key === 'eventStatus' || filters.key === 'eventDate') {
+      return this.translateLabels(this.toCamelCase(filter), 'events')
+    }
+  }
+
+  toCamelCase(str: string): string {
+    return str
+      .toLowerCase()
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) =>
+        index === 0 ? match.toLowerCase() : match.toUpperCase()
+      )
+      .replace(/\s+/g, '');
+  }
+
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 
   private transformSkeletonToWidgets(
