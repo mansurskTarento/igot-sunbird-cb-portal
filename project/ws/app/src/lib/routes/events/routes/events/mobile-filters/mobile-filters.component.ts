@@ -4,6 +4,8 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bott
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { TranslateService } from '@ngx-translate/core';
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 
 export const MY_FORMATS = {
   parse: {
@@ -38,11 +40,17 @@ export class MobileFiltersComponent {
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private snackbar: MatSnackBar,
     private datePipe: DatePipe,
+    private translate: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
     private bottomSheetRef: MatBottomSheetRef<any>
-  ) { }
+  ) {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
+    }
+  }
   ngOnInit() {
-    console.log(this.snackbar)
-    console.log("data ", this.data)
     if (this.data) {
       this.facetsData = this.data.facetsData
       this.selectedFilters = JSON.parse(JSON.stringify(this.data.selectedFilters))
@@ -168,4 +176,9 @@ export class MobileFiltersComponent {
       })
     }
   }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
+  }
+
 }
