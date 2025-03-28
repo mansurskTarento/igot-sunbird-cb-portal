@@ -14,6 +14,7 @@ export class EventsEngagementComponent implements OnInit {
 
   @Input() myEngagements: any
   @Input() engagementDetails: any
+  bottomSheet = false
 
   constructor(
     private bottomSheetRef: MatBottomSheetRef<any>,
@@ -24,6 +25,7 @@ export class EventsEngagementComponent implements OnInit {
     if (this.data) {
       this.myEngagements = this.data.engagements
       this.engagementDetails = this.data.engagementDetails
+      this.bottomSheet = true
     }
   }
 
@@ -47,6 +49,9 @@ export class EventsEngagementComponent implements OnInit {
   }
 
   redirectToEvents() {
+    if (this.bottomSheetRef && this.bottomSheet) {
+      this.bottomSheetRef.dismiss()
+    }
     this.router.navigate([`app/seeAll/new`], {
       queryParams: { key: 'continueLearning', tabSelected: 'Events', pillSelected: 'completed' }
     })
