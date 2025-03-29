@@ -380,54 +380,9 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       && this.selectedBatch.batchAttributes.cadreList
       && this.selectedBatch.batchAttributes.cadreList.length > 0) {
         this.doptEligibleServicesList = this.selectedBatch.batchAttributes.cadreList
-      }else{
-      this.doptEligibleServicesList = [
-        `Indian Administrative Service (IAS)`,
-        `Indian Police Service (IPS)`,
-        `Indian Forest Service (IFoS)`,
-        `Central Engineering Service(CPWD)`,
-        `Central Power Engineering Service`,
-      `Central Secretariat Service`,
-      `Central Water Engineering Service`,
-      `Geological Survey of India`,
-      `Indian Audit & Accounts Service`,
-      `Indian Broadcasting Engineer Service`,
-      `Indian Broadcasting Programme Service`,
-      `Indian Civil Accounts Service`,
-      `Indian Corporate Law Service`,
-      `Indian Cost Account Service`,
-      `Indian Defence Accounts Service`,
-      `Indian Defence Estates Service`,
-      `Indian Defence S. of Engineer`,
-      `Indian Economic Service`,
-      `Indian Information Service`,
-      `Indian Inspection Service`,
-      `Indian Ordnance Factories Service`,
-      `Indian Postal Service`,
-      `Indian Railway Accounts Service`,
-      `Indian Railway Personnel Service`,
-      `Indian Railway Service of Electrical Engineers`,
-      `Indian Railway Service of Engineers`,
-      `Indian Railway Service of Mechanical Engineers`,
-      `Indian Railway Service of Signal Engineers`,
-      `Indian Railway Store Service`,
-      `Indian Railway Traffic Service`,
-      `Indian Revenue Service (C&CE)`,
-      `Indian Revenue Service (IT)`,
-      `Indian Statistical Service`,
-      `Indian Supply Service`,
-      `Indian Telecom Service`,
-      `Indian Trade Service`,
-      `IP&T (Fin. & Accounts) Service`,
-      `Central Company Law Service`,
-      `Central Engineering Service (Roads)`,
-      `Indian Broadcasting (Engineering) Service`,
-      `Indian Defence Service of Engineers`,
-      `Indian Ordnance Factory Service`,
-      `Central Secretariat Stenographers Service`,
-      `Indian P&T Finance & Accounts Service`
-    ]
-  }
+      } else{
+      this.doptEligibleServicesList = []
+    }
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -576,7 +531,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
 
     this.getDoptEligibleServicesList()
       const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
-      // if (isDoptContent) {
+      if (this.doptEligibleServicesList && this.doptEligibleServicesList.length > 0) {
         if (!civilServiceName) {
           this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
           return
@@ -584,7 +539,7 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
           this.openConformationDialog(`You are not eligible for the ${this.content.name} with the current service in your profile. If your service details are incorrect, please update your profile and apply.`)
           return
         }
-      // }
+      }
       const courseName = this.content.name
       // const showDoptChanges = (isDoptContent && isDptUser) ? true : false
       const profileForm = this.dialog.open(EnrollProfileFormComponent, {
