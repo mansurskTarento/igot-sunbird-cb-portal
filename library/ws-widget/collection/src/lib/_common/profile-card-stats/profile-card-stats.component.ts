@@ -25,6 +25,8 @@ export class ProfileCardStatsComponent implements OnInit {
   collapsed = false
   userInfo: any
   countdata: any
+  eventcountdata: any
+  mergedCountData: any
   enrollInterval: any
   showrepublicBanner: any = false
   republicDayData: any = {}
@@ -78,7 +80,7 @@ export class ProfileCardStatsComponent implements OnInit {
           this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
         }
       })
-
+      this.fetchAndMergeData()
   }
 
   getTimelyNudge() {
@@ -164,10 +166,41 @@ export class ProfileCardStatsComponent implements OnInit {
         certificate: enrollList.userCourseEnrolmentInfo.certificatesIssued,
         inProgress: enrollList.userCourseEnrolmentInfo.coursesInProgress,
         karmaPoints: enrollList.userCourseEnrolmentInfo.karmaPoints,
-        learningHours: this.pipDuration.transform(enrollList.userCourseEnrolmentInfo.timeSpentOnCompletedCourses, 'hms'),
+        learningHours: enrollList.userCourseEnrolmentInfo.timeSpentOnCompletedCourses,
       }
     }
   }
+  async getEventEnrollData(): Promise<void> {
+    try {
+      const res: any = await this.homePageSvc.geteventsHoursData().toPromise()
+      const resdata = res?.result?.userEventEnrolmentInfo || {}
+      this.eventcountdata = {
+        certificate: resdata.eventsAttended ?? 0,
+        inProgress: (resdata.eventsEnrolled ?? 0) - (resdata.eventsAttended ?? 0),
+        learningHours: resdata.hoursSpentOnEvents ?? 0,
+      };
+    } catch (error) {
+       /* tslint:disable */
+      console.error('Error fetching event data:', error)
+      this.eventcountdata = { certificate: 0, inProgress: 0, learningHours: 0 }
+    }
+  }
+
+mergeCounts(): void {
+  this.mergedCountData = {
+    certificate: (this.countdata?.certificate ?? 0) + (this.eventcountdata?.certificate ?? 0),
+    inProgress: (this.countdata?.inProgress ?? 0) + (this.eventcountdata?.inProgress ?? 0),
+    learningHours: this.pipDuration.transform(
+      (parseFloat(this.countdata?.learningHours) || 0) + (parseFloat(this.eventcountdata?.learningHours) || 0),
+      'hms'
+    ),
+  }
+}
+async fetchAndMergeData(): Promise<void> {
+  await this.getEventEnrollData()
+  await this.getCounts()
+  this.mergeCounts()
+}
 
   gotoUserProfile() {
     // this.router.navigate(['/app/person-profile/me'])
