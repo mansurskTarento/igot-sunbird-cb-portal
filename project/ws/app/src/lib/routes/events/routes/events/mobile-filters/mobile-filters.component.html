@@ -68,8 +68,7 @@
             <mat-radio-group (change)="changeStatus($event.value, facet?.key)">
               <ng-container *ngFor="let eType of facet?.value?.values; index as i">
                 <div class="check-list">
-                  <mat-radio-button [value]="eType" class="mat-gyaan-filter"
-                    [checked]="selectedValue?.name === eType?.name">
+                  <mat-radio-button [value]="eType" class="mat-gyaan-filter" [checked]="selectedValue === eType?.name">
                     {{ translateLabels(eType.key, 'events') }}
                   </mat-radio-button>
                 </div>
