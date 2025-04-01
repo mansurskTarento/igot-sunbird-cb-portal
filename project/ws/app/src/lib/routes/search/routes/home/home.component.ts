@@ -5,6 +5,7 @@ import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { ISearchAutoComplete, ISearchQuery, ISuggestedFilters } from '../../models/search.model'
 import { SearchServService } from '../../services/search-serv.service'
+import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'ws-app-home',
   templateUrl: './home.component.html',
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private searchSvc: SearchServService,
+    private translate: TranslateService,
   ) {
     const isAutoCompleteAllowed = this.route.snapshot.data.pageData.data.search.isAutoCompleteAllowed
     if (typeof isAutoCompleteAllowed === 'undefined' ||
@@ -39,6 +41,12 @@ export class HomeComponent implements OnInit {
         this.searchQuery.q = q
         this.getAutoCompleteResults()
       })
+    }
+
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
     }
   }
 

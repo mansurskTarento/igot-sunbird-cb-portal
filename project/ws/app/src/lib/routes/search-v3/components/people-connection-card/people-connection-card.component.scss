@@ -84,3 +84,14 @@
   padding: 8px 28px !important;
   background: $brandAccentDarkShade2 !important;
 }
+
+@media screen and (max-width: 576px) {
+  .all-result-peoples {
+    margin: 0 auto;
+    width: 335px !important;
+  }
+
+  .designation {
+    max-width: 18em;
+  }
+}

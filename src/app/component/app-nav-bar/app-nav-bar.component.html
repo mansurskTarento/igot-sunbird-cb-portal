@@ -22,10 +22,10 @@
           </ng-template>
         </a>
 
-        <div class="sm:flex md:hidden" [ngClass]="{'flex items-center': hideKPOnNav}" >
+        <!-- <div class="sm:flex md:hidden" [ngClass]="{'flex items-center': hideKPOnNav}" >
           <ng-container [ngTemplateOutlet]="karmaBadge">
           </ng-container>
-        </div>
+        </div> -->
         
         <ng-container *ngIf="primaryNavbarConfig?.mediumScreen">
           <ng-container [ngTemplateOutlet]="navbarSide" [ngTemplateOutletContext]="{ item: item }"

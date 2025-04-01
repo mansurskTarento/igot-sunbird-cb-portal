@@ -67,8 +67,12 @@
             </div>
             <ng-container *ngFor="let result of allSearchResults">
               <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-                <div matLine class="text-xs font-normal py-1 recent-search-text text-ellipse">{{ getResultName(result)
-                  }}
+                
+                <div matLine class="py-1 flex">
+                  <mat-icon class="mr-3">search</mat-icon>
+                  <span class="text-xs font-normal recent-search-text text-ellipse">
+                    {{ getResultName(result)}}
+                  </span>
                 </div>
               </mat-list-item>
             </ng-container>

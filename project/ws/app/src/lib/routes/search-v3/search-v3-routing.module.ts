@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PageResolve } from '@sunbird-cb/utils-v2';
+// import { PageResolve } from '@sunbird-cb/utils-v2';
 import { GlobalSearchComponent } from './routes/global-search/global-search.component';
 import { CommonModule } from '@angular/common';
 // import { MyMdoResolveService } from '../network-v2/resolvers/my-mdo-resolve.service';
@@ -16,7 +16,7 @@ const routes: Routes = [
       pageId: '',
     },
     resolve: {
-      searchPageData: PageResolve,
+      // searchPageData: PageResolve,
       // recommendedPeople: MyMdoResolveService
     },
   },

@@ -85,7 +85,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   searchRequestCourse = new SearchV4Request([]);
   searchRequestEvents = new SearchV4Request([]);
   searchRequestPeoples = new SearchPeoplesRequest();
-  searchRequestCommunities = new SearchCommunitiesRequest();
+  searchRequestCommunities = new SearchCommunitiesRequest([]);
   isLoadingSearch = true;
 
   initialPaginationSize = 10;
@@ -407,9 +407,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         searchRequestEvents.request.query = this.statedata?.param;
         searchRequestEvents.request.filters[this.competencyAreaNameKey] =
           element;
-        searchRequestEvents.request.query = this.statedata?.param;
-        searchRequestEvents.request.filters[this.competencyAreaNameKey] =
-          element;
         result = await this.searchV3Service.searchCoursesv4(
           searchRequestEvents
         );
@@ -419,18 +416,40 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         competencySubThemeFacet = result.result?.facets.find(
           (facet: any) => facet.name === this.competencySubThemeKey
         );
+      } else if (this.seeAllResult === SearchCategory.Communities) {
+        const searchRequestCommunity = new SearchCommunitiesRequest([
+          this.competencyAreaNameKey,
+          this.competencyThemeKey,
+          this.competencySubThemeKey,
+        ]);
+        searchRequestCommunity.searchString = this.statedata?.param;
+        searchRequestCommunity.filterCriteriaMap[this.competencyAreaNameKey] =
+          element;
+        result = await this.searchV3Service.searchCommunity(
+          searchRequestCommunity
+        );
+        competencyThemeFacet = result.result?.search_results?.facets[
+          this.competencyThemeKey
+        ].length
+          ? { values: result.result?.search_results?.facets[this.competencyThemeKey] }
+          : { values: [] };
+        competencySubThemeFacet = result.result?.search_results?.facets[
+          this.competencySubThemeKey
+        ].length
+          ? { values: result.result?.search_results?.facets[this.competencySubThemeKey] }
+          : { values: [] };
       }
 
       const competencyThemeName = competencyThemeFacet
         ? competencyThemeFacet.values.map((value: any) => ({
-            name: value.name,
+            name: value?.name || value?.value,
             count: value.count,
             isChecked: false,
           }))
         : [];
       const competencySubThemeName = competencySubThemeFacet
         ? competencySubThemeFacet.values.map((value: any) => ({
-            name: value.name,
+            name: value?.name || value?.value,
             count: value.count,
             isChecked: false,
           }))
@@ -491,25 +510,35 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             selectedFilters[key];
           this.searchRequestEvents.request.filters[this.competencyAreaNameKey] =
             selectedFilters[key];
+          this.searchRequestCommunities.filterCriteriaMap[
+            this.competencyAreaNameKey
+          ] = selectedFilters[key];
         } else if (key === this.competencyThemeKey) {
           this.searchRequestCourse.request.filters[this.competencyThemeKey] =
             selectedFilters[key];
           this.searchRequestEvents.request.filters[this.competencyThemeKey] =
             selectedFilters[key];
+          this.searchRequestCommunities.filterCriteriaMap[
+            this.competencyThemeKey
+          ] = selectedFilters[key];
         } else if (key === this.competencySubThemeKey) {
           this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
             selectedFilters[key];
           this.searchRequestEvents.request.filters[this.competencySubThemeKey] =
             selectedFilters[key];
+          this.searchRequestCommunities.filterCriteriaMap[
+            this.competencySubThemeKey
+          ] = selectedFilters[key];
         } else if (key === SearchCategory.Events) {
           this.constructQueryParam('events');
           this.seeAllResult = SearchCategory.Events;
         } else if (key === SearchCategory.Courses) {
           this.constructQueryParam('courses');
           this.seeAllResult = SearchCategory.Courses;
-        } else if (key === SearchCategory.CaseStudy) {
-          this.constructQueryParam('case-studies');
-          this.seeAllResult = SearchCategory.CaseStudy;
+        } else if (key === 'Case Study') {
+          this.searchRequestCourse.request.filters.sectorId = [
+            ...selectedFilters[key],
+          ];
         } else if (key === SearchCategory.People) {
           this.constructQueryParam('peoples');
           this.seeAllResult = SearchCategory.People;
@@ -617,6 +646,27 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         0
     ) {
       delete this.searchRequestCommunities.filterCriteriaMap.competencyArea;
+    }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap[this.competencyAreaNameKey] &&
+      this.searchRequestCommunities.filterCriteriaMap[this.competencyAreaNameKey].length ===
+        0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap[this.competencyAreaNameKey];
+    }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap[this.competencyThemeKey] &&
+      this.searchRequestCommunities.filterCriteriaMap[this.competencyThemeKey].length ===
+        0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap[this.competencyThemeKey];
+    }
+    if (
+      this.searchRequestCommunities.filterCriteriaMap[this.competencySubThemeKey] &&
+      this.searchRequestCommunities.filterCriteriaMap[this.competencySubThemeKey].length ===
+        0
+    ) {
+      delete this.searchRequestCommunities.filterCriteriaMap[this.competencySubThemeKey];
     }
     if (
       this.searchRequestCommunities.filterCriteriaMap.orgName &&
@@ -727,6 +777,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestCommunities.pageSize = this.initialPaginationSize;
       await this.searchcommunities();
       this.combinedFacets = [this.communitiesFacets];
+      this.getCompetencyHierichy();
     }
     this.isLoadingSearch = false;
     this.scrollToTop();
@@ -744,7 +795,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.competencySubThemeKey,
     ]);
     this.searchRequestPeoples = new SearchPeoplesRequest();
-    this.searchRequestCommunities = new SearchCommunitiesRequest();
+    this.searchRequestCommunities = new SearchCommunitiesRequest([
+      this.competencyAreaNameKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
+    ]);
 
     this.courseSearchResults = [];
     this.eventsSearchResults = [];

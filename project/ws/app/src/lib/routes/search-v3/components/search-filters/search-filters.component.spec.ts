@@ -1,6 +1,9 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { SearchFiltersComponent } from './search-filters.component';
-import { CATEGORY_TYPE, TypeOfEvents } from '../../../../../../../author/src/lib/constants/constant';
+import {
+  CATEGORY_TYPE,
+  TypeOfEvents,
+} from '../../../../../../../author/src/lib/constants/constant';
 import { SearchCategory } from '../../models/search-v3.model';
 
 describe('SearchFiltersComponent', () => {
@@ -46,7 +49,7 @@ describe('SearchFiltersComponent', () => {
 
     // Mock localStorage manually
     global.localStorage = {
-      getItem: function(key) {
+      getItem: function (key) {
         if (key === 'websiteLanguage') {
           return 'en';
         }
@@ -56,7 +59,7 @@ describe('SearchFiltersComponent', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
       length: 1,
-      key: jest.fn()
+      key: jest.fn(),
     };
 
     // Setup mocks
@@ -79,7 +82,7 @@ describe('SearchFiltersComponent', () => {
         queryParams: {},
         queryParamMap: createMockParamMap(),
         paramMap: createMockParamMap(),
-      }
+      },
     };
 
     configSvcMock = {
@@ -109,30 +112,33 @@ describe('SearchFiltersComponent', () => {
     );
 
     // Mock component methods that use lodash
-    component.refactorFilterData = function(data: any) {
+    component.refactorFilterData = function (data: any) {
       if (typeof data !== 'object' || data === null) {
         return [];
       }
-      
+
       // Using reduce instead of flatMap for better compatibility
-      return Object.entries(data).reduce((acc: any[], [key, values]: [string, any]) => {
-        if (values && Array.isArray(values)) {
-          values.forEach((value: string) => {
-            acc.push({
-              type: key,
-              value: this.capitalizeFirstLetter(value),
+      return Object.entries(data).reduce(
+        (acc: any[], [key, values]: [string, any]) => {
+          if (values && Array.isArray(values)) {
+            values.forEach((value: string) => {
+              acc.push({
+                type: key,
+                value: this.capitalizeFirstLetter(value),
+              });
             });
-          });
-        }
-        return acc;
-      }, []);
+          }
+          return acc;
+        },
+        []
+      );
     };
   });
 
   afterEach(() => {
     // Restore original localStorage
     global.localStorage = originalLocalStorage;
-    
+
     // Clean up environment
     delete (global as any).environment;
   });
@@ -146,20 +152,20 @@ describe('SearchFiltersComponent', () => {
       newfacets: new SimpleChange(null, mockFacets, true),
     };
 
-    component.formatFacets = function(data: any) {
+    component.formatFacets = function (data: any) {
       const formattedFacets: any = {};
-      
+
       if (!data || !data.length) return formattedFacets;
-      
+
       // Simplified implementation for test
       data[0].forEach((facet: any) => {
         formattedFacets[facet.name] = facet.values.map((value: any) => ({
           name: value.name,
           count: value.count,
-          isChecked: false
+          isChecked: false,
         }));
       });
-      
+
       return formattedFacets;
     };
 
@@ -182,34 +188,45 @@ describe('SearchFiltersComponent', () => {
   });
 
   it('should set category type correctly when category is in URL params', () => {
-    activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Events };
-    
+    activatedRouteMock.snapshot.queryParams = {
+      category: SearchCategory.Events,
+    };
+
     // Mock category type setup
     component.categoryTypeDup = [...CATEGORY_TYPE];
     component.categoryType = [];
-    
+
     // Mock the setCategoryType method
     const originalSetCategoryType = component.setCategoryType;
-    component.setCategoryType = function() {
+    component.setCategoryType = function () {
       this.categoryType = this.categoryTypeDup.filter(
         (type: any) => type.name === SearchCategory.Events
       );
       if (this.categoryType.length) {
         this.categoryType[0].isChecked = true;
         if (!this.selectedFilters) this.selectedFilters = {};
-        this.selectedFilters[this.categoryType[0].name] = [this.categoryType[0].name];
-        this.selectedFilterChips = [{ value: this.categoryType[0].displayName, type: this.categoryType[0].name }];
+        this.selectedFilters[this.categoryType[0].name] = [
+          this.categoryType[0].name,
+        ];
+        this.selectedFilterChips = [
+          {
+            value: this.categoryType[0].displayName,
+            type: this.categoryType[0].name,
+          },
+        ];
         this.formattedFacets = this.formattedFacets || {};
         this.formattedFacets.typeOfEvents = TypeOfEvents;
       }
     };
-    
+
     component.setCategoryType();
 
     expect(component.categoryType[0].isChecked).toBe(true);
-    expect(component.selectedFilters[component.categoryType[0].name]).toEqual([component.categoryType[0].name]);
+    expect(component.selectedFilters[component.categoryType[0].name]).toEqual([
+      component.categoryType[0].name,
+    ]);
     expect(component.formattedFacets.typeOfEvents).toEqual(TypeOfEvents);
-    
+
     // Restore original method
     component.setCategoryType = originalSetCategoryType;
   });
@@ -217,7 +234,7 @@ describe('SearchFiltersComponent', () => {
   it('should toggle showMore flags correctly', () => {
     component.competencyThemeKey = 'v1.theme';
     component.competencySubThemeKey = 'v1.subtheme';
-    
+
     // Initial state
     expect(component.showAllCompetencyTheme).toBe(false);
     expect(component.showAllCompetencySubTheme).toBe(false);
@@ -243,7 +260,11 @@ describe('SearchFiltersComponent', () => {
 
   it('should translate actual labels', () => {
     const result = component.translateActualLabels('Test Label', 'type');
-    expect(langTranslationsMock.translateActualLabel).toHaveBeenCalledWith('Test Label', 'type', '');
+    expect(langTranslationsMock.translateActualLabel).toHaveBeenCalledWith(
+      'Test Label',
+      'type',
+      ''
+    );
     expect(result).toBe('Translated Label');
   });
 
@@ -255,7 +276,7 @@ describe('SearchFiltersComponent', () => {
     component.selectedFilters = {};
     component.appliedFilter.emit = jest.fn();
     component.constructQueryParam.emit = jest.fn();
-    
+
     component.onSelectionFilter(mockEvent, mockOption, categoryType);
 
     expect(mockOption.isChecked).toBe(true);
@@ -270,15 +291,19 @@ describe('SearchFiltersComponent', () => {
 
     component.selectedFilters = { testCategory: ['option1', 'option2'] };
     component.appliedFilter.emit = jest.fn();
-    
+
     // Mock the functionality that would normally use lodash
     const originalOnSelectionFilter = component.onSelectionFilter;
-    component.onSelectionFilter = function(event: any, option: any, type: string) {
+    component.onSelectionFilter = function (
+      event: any,
+      option: any,
+      type: string
+    ) {
       option.isChecked = event.checked;
       if (!this.selectedFilters[type]) {
         this.selectedFilters[type] = [];
       }
-      
+
       if (event.checked) {
         if (!this.selectedFilters[type].includes(option.name)) {
           this.selectedFilters[type].push(option.name);
@@ -288,16 +313,16 @@ describe('SearchFiltersComponent', () => {
           (item: any) => item !== option.name
         );
       }
-      
+
       this.appliedFilter.emit(this.selectedFilters);
     };
-    
+
     component.onSelectionFilter(mockEvent, mockOption, categoryType);
-    
+
     expect(mockOption.isChecked).toBe(false);
     expect(component.selectedFilters[categoryType]).toEqual(['option2']);
     expect(component.appliedFilter.emit).toHaveBeenCalled();
-    
+
     // Restore original method
     component.onSelectionFilter = originalOnSelectionFilter;
   });
@@ -319,7 +344,7 @@ describe('SearchFiltersComponent', () => {
     };
 
     const result = component.refactorFilterData(mockData);
-    
+
     expect(result).toEqual([
       { type: 'category1', value: 'Option1' },
       { type: 'category1', value: 'Option2' },
@@ -338,32 +363,41 @@ describe('SearchFiltersComponent', () => {
       category1: ['option1', 'option2'],
       category2: ['option3'],
     };
-    
+
     component.categoryType = [
-      { 
-        name: 'category1', 
-        displayName: 'Category1', 
-        count: 1, 
-        isChecked: true, 
-        filters: [{ name: 'filter1', count: 1, isChecked: true, displayName: 'Filter1' }] 
-      }
+      {
+        name: 'category1',
+        displayName: 'Category1',
+        count: 1,
+        isChecked: true,
+        disabled: false,
+        filters: [
+          {
+            name: 'filter1',
+            count: 1,
+            isChecked: true,
+            displayName: 'Filter1',
+            filters: [],
+          }
+        ],
+      },
     ];
-    
+
     component.formattedFacets = {
       facet1: [{ name: 'facet1', count: 1, isChecked: true }],
     };
-    
+
     component.appliedFilter.emit = jest.fn();
     component.constructQueryParam.emit = jest.fn();
-    
+
     // Mock the clearAllFilters method to avoid lodash dependencies
     const originalClearAllFilters = component.clearAllFilters;
-    component.clearAllFilters = function() {
+    component.clearAllFilters = function () {
       // Clear selected filters
       Object.keys(this.selectedFilters).forEach((key: string) => {
         this.selectedFilters[key] = [];
       });
-      
+
       // Clear category type filters
       if (this.categoryType) {
         this.categoryType.forEach((category: any) => {
@@ -375,7 +409,7 @@ describe('SearchFiltersComponent', () => {
           }
         });
       }
-      
+
       // Clear formatted facets
       if (this.formattedFacets) {
         Object.values(this.formattedFacets).forEach((filters: any) => {
@@ -386,20 +420,20 @@ describe('SearchFiltersComponent', () => {
           }
         });
       }
-      
+
       this.selectedFilterChips = [];
       this.appliedFilter.emit(this.selectedFilters);
       this.constructQueryParam.emit('');
     };
-    
+
     component.clearAllFilters();
-    
+
     // Check if all filters are cleared
     expect(component.selectedFilters).toEqual({ category1: [], category2: [] });
     expect(component.selectedFilterChips).toEqual([]);
     expect(component.appliedFilter.emit).toHaveBeenCalled();
     expect(component.constructQueryParam.emit).toHaveBeenCalledWith('');
-    
+
     // Restore original method
     component.clearAllFilters = originalClearAllFilters;
   });
@@ -414,25 +448,30 @@ describe('SearchFiltersComponent', () => {
         { name: 'different org', count: 1, isChecked: false },
       ],
     };
-    
+
     component.filterQueryOrganisation = 'org';
     component.showAllOrganisation = false;
-    
+
     // Mock the getter
     Object.defineProperty(component, 'filteredOrganisations', {
-      get: function() {
+      get: function () {
         let filteredList = this.formattedFacets.organisation.filter(
-          (item: any) => item.name.toLowerCase().includes(this.filterQueryOrganisation.toLowerCase())
+          (item: any) =>
+            item.name
+              .toLowerCase()
+              .includes(this.filterQueryOrganisation.toLowerCase())
         );
-        return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
-      }
+        return this.showAllOrganisation
+          ? filteredList
+          : filteredList.slice(0, 4);
+      },
     });
-    
+
     expect(component.filteredOrganisations.length).toBe(4);
-    
+
     component.showAllOrganisation = true;
     expect(component.filteredOrganisations.length).toBe(5);
-    
+
     component.filterQueryOrganisation = 'another';
     expect(component.filteredOrganisations.length).toBe(1);
   });
@@ -446,60 +485,62 @@ describe('SearchFiltersComponent', () => {
   it('should clear filter chip for category type', () => {
     // Setup with minimal mocks that satisfy the types
     component.categoryTypeDup = [
-      { 
-        name: 'category1', 
-        displayName: 'Category1', 
-        count: 1, 
+      {
+        name: 'category1',
+        displayName: 'Category1',
+        count: 1,
         isChecked: false,
-        filters: []
-      }
+        filters: [],
+        disabled: false,
+      },
     ];
-    
+
     component.categoryType = [
-      { 
-        name: 'category1', 
-        displayName: 'Category1', 
-        count: 1, 
+      {
+        name: 'category1',
+        displayName: 'Category1',
+        count: 1,
         isChecked: true,
-        filters: []
-      }
+        filters: [],
+        disabled: false,
+      },
     ];
-    
+
     component.selectedFilters = { category1: ['category1'] };
     component.appliedFilter.emit = jest.fn();
     component.constructQueryParam.emit = jest.fn();
     component.refactorFilterData = jest.fn();
-    
+
     // Mock the clearFilterChip method to avoid lodash dependencies
     const originalClearFilterChip = component.clearFilterChip;
-    component.clearFilterChip = function(item: any) {
+    component.clearFilterChip = function (item: any) {
       const types = this.categoryTypeDup.map((category: any) => category.name);
-      
+
       if (types.includes(item.type)) {
         this.categoryType[0].isChecked = false;
-        
+
         if (this.selectedFilters[item.type]) {
-          this.selectedFilters[item.type] = this.selectedFilters[item.type].filter(
-            (name: any) => name !== this.categoryType[0].name
-          );
-          
+          this.selectedFilters[item.type] = this.selectedFilters[
+            item.type
+          ].filter((name: any) => name !== this.categoryType[0].name);
+
           if (this.selectedFilters[item.type].length === 0) {
             delete this.selectedFilters[item.type];
           }
         }
-        
+
         this.appliedFilter.emit(this.selectedFilters);
         this.constructQueryParam.emit('');
       }
     };
-    
+
     // Clear a category chip
     component.clearFilterChip({ type: 'category1', value: 'Category1' });
-    
+
     expect(component.categoryType[0].isChecked).toBe(false);
     expect(component.appliedFilter.emit).toHaveBeenCalled();
     expect(component.constructQueryParam.emit).toHaveBeenCalledWith('');
-    
+
     // Restore original method
     component.clearFilterChip = originalClearFilterChip;
   });
@@ -512,49 +553,49 @@ describe('SearchFiltersComponent', () => {
         { name: 'hindi', count: 5, isChecked: false },
       ],
     };
-    
+
     component.selectedFilters = { language: ['english'] };
     component.appliedFilter.emit = jest.fn();
     component.categoryTypeDup = [];
     component.refactorFilterData = jest.fn();
-    
+
     // Mock the clearFilterChip method for non-category
     const originalClearFilterChip = component.clearFilterChip;
-    component.clearFilterChip = function(item: any) {
+    component.clearFilterChip = function (item: any) {
       const types: any = [];
-      
+
       if (!types.includes(item.type)) {
         const facets = this.formattedFacets;
-        
+
         // Find and update the filter
-        const foundFilter = facets.language.find((filter: any) => 
-          filter.name === item.value.toLowerCase()
+        const foundFilter = facets.language.find(
+          (filter: any) => filter.name === item.value.toLowerCase()
         );
-        
+
         if (foundFilter) {
           foundFilter.isChecked = false;
-          
+
           if (this.selectedFilters[item.type]) {
-            this.selectedFilters[item.type] = this.selectedFilters[item.type].filter(
-              (name: any) => name !== foundFilter.name
-            );
-            
+            this.selectedFilters[item.type] = this.selectedFilters[
+              item.type
+            ].filter((name: any) => name !== foundFilter.name);
+
             if (this.selectedFilters[item.type].length === 0) {
               delete this.selectedFilters[item.type];
             }
           }
-          
+
           this.appliedFilter.emit(this.selectedFilters);
         }
       }
     };
-    
+
     // Clear a language chip
     component.clearFilterChip({ type: 'language', value: 'English' });
-    
+
     expect(component.formattedFacets.language[0].isChecked).toBe(false);
     expect(component.appliedFilter.emit).toHaveBeenCalled();
-    
+
     // Restore original method
     component.clearFilterChip = originalClearFilterChip;
   });
@@ -739,5 +780,82 @@ describe('SearchFiltersComponent', () => {
       // Assert
       expect(component.showAllDesignation).toBe(true);
     });
+  });
+
+  it('should return the correct object in recursivelySetIsCheckedFalse', () => {
+    const mockFilters = [
+      {
+        name: 'filter1',
+        isChecked: true,
+        filters: [
+          {
+            name: 'nestedFilter1',
+            isChecked: true,
+            filters: []
+          },
+        ],
+      },
+      {
+        name: 'filter2',
+        isChecked: true,
+        filters: [],
+      },
+    ];
+
+    const result = component['recursivelySetIsCheckedFalse'](
+      mockFilters,
+      'nestedFilter1'
+    );
+
+    expect(result).toBeDefined();
+    expect(result.name).toBe('nestedFilter1');
+    expect(result.isChecked).toBe(false);
+  });
+
+  it('should return null if no matching object is found in recursivelySetIsCheckedFalse', () => {
+    const mockFilters = [
+      {
+        name: 'filter1',
+        isChecked: true,
+        filters: [
+          {
+            name: 'nestedFilter1',
+            isChecked: true,
+            filters: [],
+          },
+        ],
+      },
+    ];
+
+    const result = component['recursivelySetIsCheckedFalse'](
+      mockFilters,
+      'nonExistentFilter'
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it('should handle empty filters in recursivelySetIsCheckedFalse', () => {
+    const result = component['recursivelySetIsCheckedFalse']([], 'filter1');
+    expect(result).toBeNull();
+  });
+
+  it('should handle case-insensitive matching in recursivelySetIsCheckedFalse', () => {
+    const mockFilters = [
+      {
+        name: 'Filter1',
+        isChecked: true,
+        filters: [],
+      },
+    ];
+
+    const result = component['recursivelySetIsCheckedFalse'](
+      mockFilters,
+      'filter1'
+    );
+
+    expect(result).toBeDefined();
+    expect(result.name).toBe('Filter1');
+    expect(result.isChecked).toBe(false);
   });
 });

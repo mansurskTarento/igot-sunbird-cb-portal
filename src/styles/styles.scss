@@ -1419,4 +1419,8 @@ ngx-guided-tour {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  @media screen and (max-width: 768px) {
+    max-width: 22em;
+    
+  }
 }
