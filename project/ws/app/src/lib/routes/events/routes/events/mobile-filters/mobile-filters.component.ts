@@ -125,6 +125,9 @@ export class MobileFiltersComponent {
       this.selectedFilters['dateRange'] = { toDate: this.endDate }
     }
     this.selectedValue = null
+    if (this.selectedFilters.eventDate) {
+      delete this.selectedFilters.eventDate
+    }
   }
 
   clearAll() {

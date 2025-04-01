@@ -56,7 +56,7 @@ export class EventsV2Component {
       let result: any = {}
       if (_.get(res, 'result.userEventEnrolmentInfo')) {
         result = _.get(res, 'result.userEventEnrolmentInfo')
-        if(result['hoursSpentOnEvents']) {
+        if (result['hoursSpentOnEvents']) {
           result['hoursSpentOnEvents'] = this.convertMinutesToHoursAndMinutes(result['hoursSpentOnEvents'])
         }
       }
@@ -79,8 +79,8 @@ export class EventsV2Component {
   convertMinutesToHoursAndMinutes(minutes: number): string {
     let convertedTime = '0h 0m'
     if (minutes) {
-      const hours = Math.floor(minutes / 60);
-      const remainingMinutes = minutes % 60;
+      const hours = Math.floor(minutes / 3600)
+      const remainingMinutes = Math.round(((minutes % 3600) / 60))
       convertedTime = `${hours}h ${remainingMinutes}m`
     }
     return convertedTime

@@ -17,7 +17,8 @@ const API_END_POINTS = {
   USER_ALL_ENROLL_EVENT_LIST: (userId: string) => `/apis/proxies/v8/user/events/v2/list/${userId}`,
   TRENDING: `/apis/proxies/v8/user/mdo/trending/events`,
   FEATURED: `/apis/proxies/v8/user/featured/events`,
-
+  MY_EVENTS: (userId: string) =>
+    `/apis/proxies/v8/user/events/list/${userId}`,
 }
 
 @Injectable({
@@ -48,6 +49,10 @@ export class EventService {
 
   getUserEnrollEvents(userId: string, req: any) {
     return this.http.post<any>(`${API_END_POINTS.USER_ALL_ENROLL_EVENT_LIST(userId)}`, req)
+  }
+
+  myEvents(userId: string, req: any) {
+    return this.http.post<any>(`${API_END_POINTS.MY_EVENTS(userId)}`, req)
   }
 
   getIsEnrolled(userId: string, eventId: string, batchId?: string): Observable<any> {
