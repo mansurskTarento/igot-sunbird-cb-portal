@@ -1901,16 +1901,19 @@ $title-line-count: 2;
 @keyframes blink-animation {
   0% {
     font-size: 10px;
+    height: 11px;
     font-weight: normal;
   }
 
   50% {
-    font-size: 11px;
+    font-size: 9px;
+    height: 10px;
     font-weight: bolder;
   }
 
   100% {
     font-size: 10px;
+    height: 10px;
     font-weight: normal;
   }
 }
