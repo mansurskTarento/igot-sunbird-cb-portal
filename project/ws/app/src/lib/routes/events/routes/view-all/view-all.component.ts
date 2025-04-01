@@ -205,7 +205,7 @@ export class ViewAllComponent {
       this.total = this.contentDataList.length
       this.showNextPage = this.total < _.get(resp, 'result.count', 0)
       if (response.length) {
-        if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Live Events') {
+        if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
           response = this.processResult(response)
         }
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(response, {})]
@@ -352,6 +352,7 @@ export class ViewAllComponent {
           eventStatus: removeditems
         }
       }
+      this.selectedValue = null
     } else if (key === 'eventDate') {
       const removeditems = this.selectedFilters.eventDate.filter((item: any) => item !== filter)
       if (removeditems.length === 0) {
