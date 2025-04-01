@@ -393,7 +393,7 @@
               [bindingClass]="'rounded blue-2-loader'"></ws-widget-skeleton-loader>
           </ng-container>
           <ng-container *ngIf="!skeletonLoader && content?.sYS_INTERNAL_LAST_UPDATED_ON">
-            <div class="text-xs leading-4 source-text">({{ 'apptoc.lastUpdatedOn' | translate }} {{ content?.sYS_INTERNAL_LAST_UPDATED_ON | date: 'MMM d, y' }})</div>
+            <div class="text-xs leading-4 source-text nodtranslate">({{ 'apptoc.lastUpdatedOn' | translate }} {{ content?.sYS_INTERNAL_LAST_UPDATED_ON | date: 'MMM d, y' }})</div>
           </ng-container>
         </div>
       </div>
