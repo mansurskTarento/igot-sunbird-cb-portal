@@ -85,7 +85,7 @@ export class EventsCalendarComponent implements OnInit {
         next: (res: any) => {
           this.userEventsList = _.get(res, 'result.events')
           this.generateCalendarDays();
-          this.getSelectedDateEvents()
+          //this.getSelectedDateEvents()
         },
         error: (error: HttpErrorResponse) => {
           this.generateCalendarDays();
@@ -181,8 +181,12 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   selectDate(date: Date) {
-    this.showAllEvents = false
-    this.selected = date;
+    if (this.bottomSheet) {
+      this.showAllEvents = true
+    } else {
+      this.showAllEvents = false
+    }
+    this.selected = date
     const formattedSelectedDate = this.datePipe.transform(this.selected, 'dd MMM yyyy')
     const formattedToday = this.datePipe.transform(new Date(), 'dd MMM yyyy');
     if (formattedSelectedDate === formattedToday) {
@@ -252,7 +256,7 @@ export class EventsCalendarComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
       }
     )
-    if(this.bottomSheetRef && this.bottomSheet) {
+    if (this.bottomSheetRef && this.bottomSheet) {
       this.bottomSheetRef.dismiss()
     }
 
