@@ -214,7 +214,7 @@
         <div class="stats-data cursor-pointer" (click)="redirectToContent(stats)">
           <img class="stats-icon" width="20" height="20" [src]="stats.icon">
           <div class="stats-title">{{translateLabels(stats.key, 'profileCardStats')}}</div>
-          <div class="stats-count ws-mat-default-text text-bolder" *ngIf="countdata;else other_content">{{ countdata[stats.key] || 0}}</div>
+          <div class="stats-count ws-mat-default-text" *ngIf="mergedCountData;else other_content">{{ mergedCountData[stats.key] || 0}}</div>
           <ng-template #other_content> <div class="skeleton-box" style="width:46px;height:12px"></div></ng-template>
         </div>
       </ng-container>
