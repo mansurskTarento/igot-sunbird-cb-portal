@@ -35,6 +35,7 @@ export class EventsCalendarComponent implements OnInit {
   calendarLoading = false
   showAllEvents = false
   bottomSheet = false
+  isPreviesDate = false
 
   constructor(
     private datePipe: DatePipe,
@@ -180,9 +181,10 @@ export class EventsCalendarComponent implements OnInit {
       date.getFullYear() === today.getFullYear();
   }
 
-  selectDate(date: Date) {
+  selectDate(dateDetails: any) {
     this.showAllEvents = false
-    this.selected = date;
+    this.selected = dateDetails.date;
+    this.isPreviesDate = dateDetails.isPrevisDate
     const formattedSelectedDate = this.datePipe.transform(this.selected, 'dd MMM yyyy')
     const formattedToday = this.datePipe.transform(new Date(), 'dd MMM yyyy');
     if (formattedSelectedDate === formattedToday) {
