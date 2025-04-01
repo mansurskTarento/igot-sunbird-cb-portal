@@ -267,7 +267,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 font-bold">{{ 'apptocsinglepage.summary' | translate }}</div>
+            <div class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
             <div [ngClass]="{'mob-desc-ellipsis': summary.ellipsis && isMobile, 'desc-ellipsis': summary.ellipsis && !isMobile}" #summaryElem>
                 <div class="mob-text nodtranslate" [innerHtml]="handleCapitalize(content?.description | replaceNbsp)"></div>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="summary.viewLess" (click)="summary.ellipsis = !summary.ellipsis; summary.viewLess = !summary.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
@@ -292,7 +292,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1">{{ 'apptocsinglepage.description' | translate }}</div>
+            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
             <div class="desc" [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}" #descElem>
               
                 <div [innerHTML]="this.content?.instructions | replaceNbsp" class="mob-text break-words nodtranslate"></div>
@@ -319,7 +319,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 font-bold pt-mweb-8">{{ 'apptocsinglepage.objectives' | translate }}</div>
+            <div class="mat-subheading-1 font-bold pt-mweb-8 nodtranslate">{{ 'apptocsinglepage.objectives' | translate }}</div>
             <div [ngClass]="{'mob-desc-ellipsis': objectives.ellipsis && isMobile, 'desc-ellipsis': objectives.ellipsis && !isMobile}" #objectivesElem>
                 <span class="mob-text nodtranslate" [innerHtml]="handleCapitalize(content?.objectives)"></span>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="objectives.viewLess" (click)="objectives.ellipsis = !objectives.ellipsis; objectives.viewLess = !objectives.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
@@ -398,7 +398,7 @@
 
     <ng-template #tagsList let-tagData="tagData">
         <div class="flex flex-col" *ngIf="tagData?.length">
-            <div class="mat-subheading-1">{{ 'userProfile.tags' | translate }}</div>
+            <div class="mat-subheading-1 nodtranslate">{{ 'userProfile.tags' | translate }}</div>
             <ng-container *ngIf="tagData?.length">
                 <div class="flex flex-wrap gap-2" [ngClass]="{'tags-ellipsis': tagsEllipsis && !viewMoreTags}" #tagsElem>
                     <ng-container *ngFor="let tag of tagData; let i = index">
@@ -538,7 +538,7 @@
         
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-row gap-4">
-                        <div class="flex-1 mat-subheading-1" id="reviewContainer">{{ 'apptocsinglepage.topReviews' | translate }}</div>
+                        <div class="flex-1 mat-subheading-1 nodtranslate" id="reviewContainer">{{ 'apptocsinglepage.topReviews' | translate }}</div>
                         <ng-container *ngIf="ratingSummaryProcessed?.avgRating">
                             <div class="ws-mat-default-text cursor-pointer" (click)="handleOpenReviewModal()">{{ 'msg.showAll' | translate }}</div>
                         </ng-container>
@@ -572,7 +572,7 @@
                     </ng-container>
                     <div *ngIf="!topRatingReviews || !topRatingReviews?.length">
                         <div class="flex flex-col text-center items-center justify-center bg-white p-4 rounded-md">
-                            <div class="font-base font-bold">{{ 'apptocsinglepage.noReviewsFound' | translate }}</div>
+                            <div class="font-base font-bold nodtranslate">{{ 'apptocsinglepage.noReviewsFound' | translate }}</div>
                         </div>
                     </div>
                 </div>

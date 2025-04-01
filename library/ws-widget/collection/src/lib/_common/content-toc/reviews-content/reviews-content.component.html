@@ -10,8 +10,8 @@
     <div class="flex flex-col p-6">
         <div class="flex flex-col gap-4">
             <div class="font-base font-bold">
-                <span *ngIf="showFilterIndicator === 'Top'">{{ 'apptocsinglepage.topReviews' | translate }}</span>
-                <span *ngIf="showFilterIndicator !== 'Top'">{{ 'apptocsinglepage.latestReviews' | translate }}</span>
+                <span *ngIf="showFilterIndicator === 'Top'" class="nodtranslate">{{ 'apptocsinglepage.topReviews' | translate }}</span>
+                <span *ngIf="showFilterIndicator !== 'Top'" class="nodtranslate">{{ 'apptocsinglepage.latestReviews' | translate }}</span>
             </div>
             <div class="flex flex-row gap-3">
                 <div class="flex-1">
@@ -28,11 +28,11 @@
                     <mat-menu #filter="matMenu" xPosition="before">
                         <button mat-menu-item class="px-3" [ngClass]="{'highlightFilter': showFilterIndicator === 'Latest'}"
                             (click)="handleReviewsFilter('Latest')">
-                            <span>{{ 'apptocsinglepage.latestReviews' | translate }}</span>
+                            <span class="nodtranslate">{{ 'apptocsinglepage.latestReviews' | translate }}</span>
                         </button>
                         <button mat-menu-item class="px-3" [ngClass]="{'highlightFilter': showFilterIndicator === 'Top'}"
                             (click)="handleReviewsFilter('Top')">
-                            <span>{{ 'apptocsinglepage.topReviews' | translate }}</span>
+                            <span class="nodtranslate">{{ 'apptocsinglepage.topReviews' | translate }}</span>
                         </button>
                     </mat-menu>
                 </div>
@@ -40,7 +40,7 @@
         </div>
         <ng-container *ngIf="!reviews || !reviews.length">
             <div class="flex justify-center items-center no-reviews-found text-lg">
-                <div class="p-4">
+                <div class="p-4 nodtranslate">
                     {{ 'apptocsinglepage.noReviewsFound' | translate }}
                 </div>
             </div>
@@ -53,22 +53,22 @@
                             <div class="flex flex-col gap-4">
                                 <div class="flex flex-row gap-2">
                                     <div class="flex-1">
-                                        <div class="flex text-sm">{{ handleCapitalize(eachReview?.review, 'comment') }}</div>
+                                        <div class="flex text-sm nodtranslate">{{ handleCapitalize(eachReview?.review, 'comment') }}</div>
                                     </div>
                                     <div class="flex flex-row gap-1 rating-start-value">
                                         <mat-icon>star</mat-icon>
-                                        <div class="text-sm">{{ eachReview?.rating }}</div>
+                                        <div class="text-sm nodtranslate">{{ eachReview?.rating }}</div>
                                     </div>
                                 </div>
                                 <div class="flex flex-row gap-2 items-center">
                                     <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'" [photoUrl]="eachReview?.photo || ''" [name]="eachReview?.firstName"></ws-widget-avatar-photo>
                                     <div class="flex flex-wrap">
-                                        <div class="text-sm">{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
+                                        <div class="text-sm nodtranslate">{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
                                         <div class="flex items-center mx-2">
                                             <span class="period"></span>
                                         </div>
-                                        <div class="text-sm" *ngIf="eachReview?.date">{{ eachReview?.date | pipeRelativeTime }}</div>
-                                        <div class="text-sm" *ngIf="eachReview?.updatedon">{{ eachReview?.updatedon | pipeRelativeTime }}</div>
+                                        <div class="text-sm nodtranslate" *ngIf="eachReview?.date">{{ eachReview?.date | pipeRelativeTime }}</div>
+                                        <div class="text-sm nodtranslate" *ngIf="eachReview?.updatedon">{{ eachReview?.updatedon | pipeRelativeTime }}</div>
                                     </div>
                                 </div>
                             </div>

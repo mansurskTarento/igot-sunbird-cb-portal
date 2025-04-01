@@ -185,6 +185,11 @@ export class EventsCalendarComponent implements OnInit {
     this.showAllEvents = false
     this.selected = dateDetails.date;
     this.isPreviesDate = dateDetails.isPrevisDate
+    if (this.bottomSheet) {
+      this.showAllEvents = true
+    } else {
+      this.showAllEvents = false
+    }
     const formattedSelectedDate = this.datePipe.transform(this.selected, 'dd MMM yyyy')
     const formattedToday = this.datePipe.transform(new Date(), 'dd MMM yyyy');
     if (formattedSelectedDate === formattedToday) {
@@ -254,7 +259,7 @@ export class EventsCalendarComponent implements OnInit {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
       }
     )
-    if(this.bottomSheetRef && this.bottomSheet) {
+    if (this.bottomSheetRef && this.bottomSheet) {
       this.bottomSheetRef.dismiss()
     }
 
