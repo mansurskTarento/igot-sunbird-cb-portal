@@ -59,9 +59,10 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTreeModule } from '@angular/material/tree'
 
-import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module'
+import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module';
+import { AiTutorComponent } from './components/ai-tutor/ai-tutor.component'
 @NgModule({
-  declarations: [ViewerComponent, ViewerTocComponent],
+  declarations: [ViewerComponent, ViewerTocComponent, AiTutorComponent],
   imports: [
     CommonModule,
     MatCardModule,

@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+  <div class="flex justify-center text-center">
+    <img src="assets/icons/chatbot-ai.svg"/>
+  </div>
+  <div class="text-center blue-text mt-3">
+    Remember to use Ai Tutor you need to enroll this course
+  </div>
+</div>
+<div mat-dialog-actions class="flex flex-row mt-4 mx-10">
+  <button mat-button class="cancel-btn" (click)="close()" >No</button>
+  <button mat-raised-button color='primary' class="action-btn mx-3" (click)="close(true)" cdkFocusInitial >Enroll Now</button>
+</div>

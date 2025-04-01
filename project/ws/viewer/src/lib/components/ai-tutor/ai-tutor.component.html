@@ -1,0 +1,93 @@
+<div [ngClass]="from === 'chatbot' ? 'ai-tutor-container-chatbot':'ai-tutor-container'">
+    <div class="message-container">
+        <div class="start-chat" *ngIf="userJourney?.length === 0">
+            <h2 class="hey">Hey</h2>
+            <p>Welcome to Ai Tutor, Lets start</p>
+        </div>
+        <ng-container *ngFor="let chat of userJourney">
+            <ng-container  *ngIf="chat.type === 'incoming'">
+              <ng-container *ngIf="chat?.message">
+                <div class="flex row-start incoming-msg margin-bottom-s">
+                  <div class="system-icon"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+                  <div class="system-msg padding-xs" [innerHTML]="chat.message">
+                  </div>
+                  
+                </div>
+                <div class="feefback-section flex flex-row">
+                  <div><img src="/assets/ai-tutor/up.svg"></div>
+                  <div class="ml-2"><img src="/assets/ai-tutor/down.svg"></div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="chat?.recommendedQues?.length > 0">
+                <ng-container>
+                  <div class="flex width-1-1">
+                    <div class="system-icon pr-2" *ngIf="!chat?.message"><img class="chat-bot-icon" alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+                    <ng-container *ngIf="chat?.relatedQes" >
+                      <div class="question-hint  padding-top-xs" [ngClass]="{'margin-left-17': chat?.message }" *ngIf="chat?.title">
+                        {{chat?.title}} <span class="highlight-title" >{{chat?.relatedQes}}</span>
+                      </div>
+                    </ng-container>
+
+                    <div class="recommended-question my-5px" [ngClass]="{'margin-left-17': chat?.message }">
+                      <div class="my-5px mr-2" *ngFor="let question of chat?.recommendedQues | slice:0:(more ? undefined : 5)" >
+                        <ng-container *ngIf="questionsAndAns[question.quesID]?.quesValue">
+                          <!-- //NOSONAR --> <div class="btn-default" [ngClass]="{'btn-active': question.quesID === chat.selectedValue }" (click)="selectedQuestion(question,chat)">{{questionsAndAns[question.quesID]?.quesValue}}
+                            <mat-icon class="vertical-middle">navigate_next</mat-icon>
+                          </div>
+                        </ng-container>
+                      </div>
+                      <div class="my-5px mr-2 rec-item" *ngIf="chat?.recommendedQues.length > 5">
+                        <!-- //NOSONAR --> <div class="btn-show-more flex" (click)="more = !more; $event.stopPropagation();" *ngIf="!more">
+                         <!-- //NOSONAR --> <mat-icon class="showmore-icon padding-right-s">add</mat-icon>{{showMore()}}
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container  *ngIf="chat.type === 'category'">
+              <div class="flex">
+                <div class="system-icon pr-2"><img class="chat-bot-icon" alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+                <ng-container>
+                  <div class="question-hint padding-top-xs">
+                    {{chat?.title}}
+                  </div>
+                </ng-container>
+                <div class="recommended-question my-5px" >
+                  <div class="my-5px" *ngFor="let cat of chat?.recommendedQues" >
+                    <!-- //NOSONAR --><div (click)="showCategory(cat)" class="word-break cat-item">{{cat.catName}}</div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="chat.type === 'sendMsg'">
+              <div class="flex width-1-1 row-end padding-top-l padding-bottom-m">
+                <div class="user-seleted-question padding-xs">
+                  {{chat?.question}}
+                </div>
+                <div class="user-icon">
+                  <img alt="ai-icon" src="{{userIcon}}">
+                </div>
+              </div>
+            </ng-container>
+        </ng-container>
+    </div>
+    <div class="control-container">
+        <div class="border-gradient-rounded">
+            <div class="flex flex-row mx-5 justify-between">
+            <div class="query-box">
+                <input type="text" placeholder="Ask anything..." />
+            </div>
+            <div>
+                <button type="submit" class="flex-auto-display send-btn">
+                    <mat-icon>send</mat-icon>
+                </button>
+            </div>
+        </div>
+        </div>
+
+
+
+    </div>
+</div>

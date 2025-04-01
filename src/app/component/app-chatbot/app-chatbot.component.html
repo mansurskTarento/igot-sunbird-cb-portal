@@ -1,8 +1,9 @@
 <div  class="fixed-width flex flex-wrap">
 <!-- //NOSONAR --> <div  class="chatbot-icon-container" [ngStyle]="(configSvc.updatePlatformRatingObservable$ | async)" *ngIf="showIcon && isHubEnable" (mouseover)="expanded = true" (mouseleave)="expanded = false" (click)="iconClick('start')">
-      <div  class="chatbot-icon flex" [ngClass]="{'chatbot-icon-expanded': expanded}">
-        <img alt="chatbot-icon" src="/assets/icons/launch-icon.svg"/>
-        <div class="expand-text">FAQ Chatbot</div>
+  <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->    
+  <div  class="chatbot-icon flex">
+        <img alt="chatbot-icon" src="/assets/icons/chatbot-ai.svg"/>
+        <!-- <div class="expand-text">FAQ Chatbot</div> -->
       </div>
   </div>
 
@@ -11,7 +12,7 @@
         <div class="flex flex-wrap cb-header padding-m">
             <div class="flex flex-wrap user-info-div">
               <div class="user-name">{{greetings()}} {{this.userInfo && this.userInfo.firstName || ''}}!</div>
-              <div class="">
+              <div class="" *ngIf="currentFilter !== 'sarthi'">
                   <select class="lang-select" [(ngModel)]="selectedLaguage" name="language" id="language" (change)="selectLaguage($event)">
                       <option [value]="lang.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
                   </select>
@@ -24,7 +25,7 @@
       </div>
       <div class="cb-content-wrapper" #scrollMe >
         <div class="flex flex-wrap cb-content padding-m" #scrollMe id="chatbot-content">
-          <ng-container *ngIf="!displayLoader" #scroll>
+          <ng-container *ngIf="!displayLoader && currentFilter !== 'sarthi'" #scroll>
             <ng-container *ngFor="let chat of userJourney">
               <ng-container  *ngIf="chat.type === 'incoming'">
                 <ng-container *ngIf="chat?.message">
@@ -87,6 +88,9 @@
               </ng-container>
             </ng-container>
           </ng-container>
+          <ng-container *ngIf="!displayLoader && currentFilter === 'sarthi'" #scroll>
+            <viewer-ai-tutor [from]="'chatbot'" [userJourney]="userJourney"></viewer-ai-tutor>
+          </ng-container>
           <ng-container *ngIf="displayLoader">
             <div  class="loader">
               <mat-spinner [diameter]="30"></mat-spinner>
@@ -95,7 +99,7 @@
         </div>
       </div>
       <div class="cb-footer-wrapper">
-        <div class="flex flex-wrap cb-topics">
+        <div class="flex flex-wrap cb-topics" *ngIf="currentFilter !== 'sarthi'">
             <div class="cat-list">
                 <ng-container *ngFor="let item of sortCategory()">
                     <!-- //NOSONAR --> <div (click)="showCategory(item)" class="cat-item">{{item.catName}}</div>
@@ -103,6 +107,14 @@
             </div>
         </div>
         <div class="flex flex-wrap cb-footer">
+            <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" [ngClass]="{active: currentFilter === 'sarthi'}" (click)="toggleFilter('sarthi')">
+              <div class="info-icon">
+                <img src="assets/ai-tutor/ai-icon.svg">
+            </div>
+            <div class="info-text">
+                iGOT Sarthi
+            </div>
+        </div>
             <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" [ngClass]="{active: currentFilter === 'information'}" (click)="toggleFilter('information')">
                 <div class="info-icon">
                     <mat-icon>info</mat-icon>

@@ -112,3 +112,13 @@ app-content-icon {
 .margin-left-xxs {
   margin-left: 4px;
 }
+
+.player-content  {
+  ::ng-deep .mat-tab-labels {
+    height: 72px;
+  }
+
+  ::ng-deep .mat-tab-label-content {
+    margin-top: 24px;
+  }
+}

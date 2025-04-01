@@ -47,3 +47,45 @@
         top: 0px !important;
     }
 }
+
+.ai-tutor-btn {
+    /* Border */
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background:
+        linear-gradient(to right, white, white),
+        linear-gradient(to right, #EFA34F, #4881E4);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    width: 114px;
+}
+
+.ai-tutor-get-started {
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background:
+        linear-gradient(to right, white, white),
+        linear-gradient(to right, #EFA34F, #4881E4);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    width: 100%;
+    min-height: 80px;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.w-565 {
+    width: 565px;
+}
+
+.font-weight-600 {
+    font-weight: 600;
+    line-height: 1;
+}
+
+.ai-tutor-label {
+    color: rgba(27, 76, 161, 1);   
+    font-weight: bold;
+}

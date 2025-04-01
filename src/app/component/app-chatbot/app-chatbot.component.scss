@@ -13,7 +13,7 @@
 
 .chatbot-icon {
   position: absolute;
-  right: -107px;
+  right: 30px;
   -moz-animation-delay: 1s;
   -webkit-animation-delay: 1s;
   -o-animation-delay: 1s;
@@ -39,7 +39,7 @@
 }
 
 .chatbot {
-  width: 400px;
+  width: 610px;
   position: fixed;
   bottom: 20px;
   right: 50px;
@@ -100,7 +100,7 @@
   border-bottom-right-radius: 15px;
   background-color: white;
   .info {
-    width: 50%;
+    width: 33%;
     padding: 5px 0;
     align-items: center;
     display: flex;

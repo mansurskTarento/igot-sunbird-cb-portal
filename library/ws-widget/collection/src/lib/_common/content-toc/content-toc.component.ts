@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs'
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
 import { MatLegacyTabGroup as MatTabGroup, MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
+import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -48,6 +50,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private utilityService: UtilityService,
     private loadCheckService: LoadCheckService,
     private configService: ConfigurationsService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -140,5 +143,18 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     this.tabChangeValue = event.tab
     this.selectedTabIndex = event.index
     this.loadCheckService.componentLoaded(true)
+  }
+
+  showAiTutorConfirmPopup() {
+    const dialogConfig = new MatDialogConfig()
+
+    dialogConfig.width = '421px'
+    dialogConfig.data = {
+    }
+    const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
+
+    dialogRef.afterClosed().subscribe((response:any) => {
+      console.log('response', response)
+    });
   }
 }

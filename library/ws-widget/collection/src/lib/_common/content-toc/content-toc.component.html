@@ -1,4 +1,23 @@
+<div class="ai-tutor-get-started">
+    <div class="flex flex-row align-items-center">
+        <div class="px-2 py-2">
+            <img src="assets/icons/chatbot-ai.svg"/>
+        </div>
+        <div class="flex flex-row align-items-center">
+            <div class="py-2 w-565">
+                <p class="font-weight-600">Get Started with Ai Tutor</p>
+                <span>Loremipsum</span>
+            </div>
+            <div class="ai-tutor-btn px-2 py-1">
+                <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">Ai Tutor</span></a>
+            </div>
+        </div>
+    </div>
+</div>
 <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky" [selectedIndex]="selectedTabIndex" [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
+    <mat-tab label="Transcription">
+       Loremipsum
+    </mat-tab>
     <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
         <ws-widget-app-toc-about [fromViewer]="fromViewer" [pathSet]="pathSet" [content]="content" [tocStructure]="tocStructure" [config]="config"  [forPreview]="false" [sticky]="sticky" [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
         [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader" [condition]="condition" [kparray]="kparray" [showReviews]="'true'"></ws-widget-app-toc-about>
