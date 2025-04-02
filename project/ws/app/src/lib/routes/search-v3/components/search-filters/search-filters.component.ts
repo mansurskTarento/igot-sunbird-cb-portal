@@ -67,6 +67,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryLanguage = '';
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
+  filterQueryThemes = '';
+  filterQuerySubThemes = '';
   searchCategory = '';
   constructor(
     // private searchSrvc: GbSearchService,
@@ -549,6 +551,32 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  }
+
+  getFilteredThemes(competency: any): any[] {
+    let filteredThemes: any[] = []
+    if(competency && competency[this.competencyThemeKey]) {
+      filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
+        theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
+    }
+    return filteredThemes
+  }
+
+  getFilteredSubThemes(competency: any): any[] {
+    if(competency) {}
+    // let filteredSubThemes: any[] = []
+    // let selectedThemSubthmes: any[] = []
+    // if(competency && competency[this.competencyThemeKey]) {
+    //   competency[this.competencyThemeKey].forEach((theme: any) => {
+    //     if(theme.isChecked) {
+    //       selectedThemSubthmes = selectedThemSubthmes.concat(competency[this.competencySubThemeKey])
+    //     }
+    //   })
+      // filteredSubThemes = competency[this.competencyThemeKey].filter((theme: any) => 
+      //   theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
+    // }
+    // return filteredSubThemes
+    return []
   }
 
   get filteredDesignations() {

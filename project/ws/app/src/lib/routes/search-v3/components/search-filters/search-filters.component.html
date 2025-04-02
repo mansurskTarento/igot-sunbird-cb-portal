@@ -409,43 +409,75 @@
         </p>
         <mat-accordion class="filter-section margin-bottom-m">
             <ng-container *ngFor="let competency of competencyFactet">
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header class="padding-remove">
-                        <mat-panel-title>
-                            <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
+                <ng-container *ngIf="!competency[competencyAreaNameKey].isChecked; else expandArea">
+                    <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
                                 (change)="onSelectionFilter($event, competency[competencyAreaNameKey], competencyAreaNameKey);"
                                 (click)="$event.stopPropagation();">
                                 <span class="min-width-adjust">
                                     {{ competency[competencyAreaNameKey].name }}
                                 </span>
                             </mat-checkbox>
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
+                </ng-container>
+                <ng-template #expandArea>
+                    <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel-header class="padding-remove">
+                            <mat-panel-title>
+                                <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
+                                    (change)="onSelectionFilter($event, competency[competencyAreaNameKey], competencyAreaNameKey);"
+                                    (click)="$event.stopPropagation();">
+                                    <span class="min-width-adjust">
+                                        {{ competency[competencyAreaNameKey].name }}
+                                    </span>
+                                </mat-checkbox>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
 
-                    <mat-selection-list class="padding-top-0">
-                        <section class="mat-body-2 text-capitalize"
-                            *ngFor="let theme of competency[competencyThemeKey]">
-                            <mat-checkbox [checked]="theme?.isChecked"
-                                (change)="onSelectionFilter($event, theme, competencyThemeKey)">
-                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">
-                                    {{ theme?.name }}
-                                </span>
-                            </mat-checkbox>
-                        </section>
-                    </mat-selection-list>
+                        <span class="sub-header">
+                            Themes
+                        </span>
 
-                    <mat-selection-list class="padding-top-0">
-                        <section class="mat-body-2 text-capitalize"
-                            *ngFor="let subTheme of competency[competencySubThemeKey]">
-                            <mat-checkbox [checked]="subTheme?.isChecked"
-                                (change)="onSelectionFilter($event, subTheme, competencySubThemeKey)">
-                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(subTheme?.name)" [matTooltipPosition]="'right'">
-                                    {{ subTheme?.name }}
-                                </span>
-                            </mat-checkbox>
-                        </section>
-                    </mat-selection-list>
-                </mat-expansion-panel>
+                        <div class="mat-full-radius mb-2 search-input-themes" *ngIf="competency[competencyThemeKey].length > 0">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
+                                    [(ngModel)]="filterQueryThemes">
+                                <mat-icon matPrefix class="search-icon">search</mat-icon>
+                            </mat-form-field>
+                        </div>
+                        <mat-selection-list class="padding-top-0">
+                            <section class="mat-body-2 text-capitalize"
+                                *ngFor="let theme of getFilteredThemes(competency)">
+                                <mat-checkbox [checked]="theme?.isChecked"
+                                    (change)="onSelectionFilter($event, theme, competencyThemeKey)">
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">
+                                        {{ theme?.name }}
+                                    </span>
+                                </mat-checkbox>
+                            </section>
+                        </mat-selection-list>
+
+                        <mat-selection-list class="padding-top-0">
+                            <span class="sub-header mt-2">
+                                Sub themes
+                            </span>
+                            <!-- <div class="mat-full-radius mb-2 search-input-themes" >
+                                <mat-form-field appearance="outline" class="w-full">
+                                    <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
+                                        [(ngModel)]="filterQuerySubThemes">
+                                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                                </mat-form-field>
+                            </div> -->
+                            <section class="mat-body-2 text-capitalize"
+                                *ngFor="let subTheme of competency[competencySubThemeKey]">
+                                <mat-checkbox [checked]="subTheme?.isChecked"
+                                    (change)="onSelectionFilter($event, subTheme, competencySubThemeKey)">
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(subTheme?.name)" [matTooltipPosition]="'right'">
+                                        {{ subTheme?.name }}
+                                    </span>
+                                </mat-checkbox>
+                            </section>
+                        </mat-selection-list>
+                    </mat-expansion-panel>
+                </ng-template>
             </ng-container>
         </mat-accordion>
     </div>
