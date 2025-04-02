@@ -384,7 +384,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async getCompetencyHierichy() {
-    const competency = ['Functional', 'Domain', 'Behavioural'];
+    const competency = ['Behavioural', 'Functional', 'Domain'];
     let competencyFactet: any = [];
     let competencyThemeFacet: any = [];
     let competencySubThemeFacet: any = [];
@@ -860,7 +860,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.combinedFacets = [this.communitiesFacets];
       this.getCompetencyHierichy();
     }
-    this.scrollToTop();
+    // this.scrollToTop();
     this.searchPeopleLoader = false
     this.searchContentLoader = false;
   }
