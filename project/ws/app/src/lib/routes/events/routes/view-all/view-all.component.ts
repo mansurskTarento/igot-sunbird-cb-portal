@@ -41,6 +41,7 @@ export class ViewAllComponent {
   pageConfigData: any = {}
   private scrollSubject = new Subject<Event>()
   selectedValue: any
+  totalCount = 0
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -67,7 +68,7 @@ export class ViewAllComponent {
 
   onScroll(event: Event): void {
     if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 700 && !this.isLoading && this.showNextPage
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !this.isLoading && this.showNextPage
     ) {
       this.scrollSubject.next(event)
     }
@@ -203,7 +204,8 @@ export class ViewAllComponent {
       let response: any = _.get(resp, 'result.Event', [])
       this.contentDataList = this.contentDataList.slice(0, -6)
       this.total = this.contentDataList.length
-      this.showNextPage = this.total < _.get(resp, 'result.count', 0)
+      this.totalCount = this.totalCount + response.length
+      this.showNextPage = this.totalCount < _.get(resp, 'result.count', 0)
       if (response.length) {
         if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
           response = this.processResult(response)
@@ -376,6 +378,8 @@ export class ViewAllComponent {
     this.contentDataList = []
     this.currentPage = 0
     this.pageLimit = 9
+    this.totalCount = 0
+    this.total = 0
   }
 
   canCheck(key: any, keyData: any) {
