@@ -412,7 +412,7 @@
                 <ng-container *ngIf="!competency[competencyAreaNameKey].isChecked; else expandArea">
                     <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
                                 (change)="onSelectionFilter($event, competency[competencyAreaNameKey], competencyAreaNameKey);"
-                                (click)="$event.stopPropagation();">
+                                (click)="$event.stopPropagation();" class="w-full">
                                 <span class="min-width-adjust">
                                     {{ competency[competencyAreaNameKey].name }}
                                 </span>

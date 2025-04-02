@@ -106,7 +106,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (!coursesCategory) return;
 
         const caseStudyCategory = _.find(coursesCategory.filters, {
-          name: 'caseStudy',
+          name: 'case-studies',
         });
 
         const sectorFilters = this.formattedFacets.sectorId.map(
