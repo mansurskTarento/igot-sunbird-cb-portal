@@ -326,6 +326,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy {
 
       }
     }
+    console.log('this.myFilterArray', this.myFilterArray)
   }
   // getText(val: string) {
   //   return this.translateTo(_.startCase(val || ''))

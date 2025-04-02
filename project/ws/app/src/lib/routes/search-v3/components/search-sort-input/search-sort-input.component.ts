@@ -1,4 +1,5 @@
 import {
+  OnInit,
   AfterViewInit,
   Component,
   ElementRef,
@@ -19,7 +20,7 @@ import { SearchCategory, SortType } from '../../models/search-v3.model';
   templateUrl: './search-sort-input.component.html',
   styleUrls: ['./search-sort-input.component.scss'],
 })
-export class SearchSortInputComponent implements AfterViewInit, OnChanges {
+export class SearchSortInputComponent implements OnInit, AfterViewInit, OnChanges {
   @Output() searchSorter = new EventEmitter();
   @Input() category!: string;
   selectedOption: string = SortType.MostRelevent;
@@ -28,6 +29,21 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @ViewChild('sortSelect') sortSelect!: ElementRef;
 
   constructor() {}
+
+  ngOnInit() {
+    // if (this.category === SearchCategory.People) {
+    //   this.options = SEARCH_SORT_PEOPLES;
+    //   this.selectedOption = SortType.Ascending;
+    // } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
+    //   this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
+    //   this.selectedOption = SortType.MostRelevent;
+    // } else {
+    //   this.options = SEARCH_SORT_DROPDOWN;
+    //   this.selectedOption = SortType.MostRelevent;
+    // }
+    // console.log('this.selectedOption',this.selectedOption)
+    // this.searchSorter.emit(this.selectedOption);
+  }
 
   ngOnChanges(): void {
     if (this.category === SearchCategory.People) {
@@ -40,6 +56,8 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
       this.options = SEARCH_SORT_DROPDOWN;
       this.selectedOption = SortType.MostRelevent;
     }
+    console.log('this.selectedOption',this.selectedOption)
+    this.searchSorter.emit(this.selectedOption);
   }
   ngAfterViewInit() {
     // this.adjustSelectWidth();

@@ -205,9 +205,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllLanguage = !this.showAllLanguage;
     } else if (togglesection === FacetType.Organization) {
       this.showAllOrganisation = !this.showAllOrganisation;
+    } else if (togglesection === FacetType.SourceName) {
+      this.showAllOrganisation = !this.showAllOrganisation;
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
     }
+    console.log('togglesection', togglesection)
+    console.log('this.showAllOrganisation', this.showAllOrganisation)
+    console.log('formattedFacets', this.formattedFacets)
+    console.log('filteredOrganisations', this.filteredOrganisations)
   }
 
   translateActualLabels(label: string, type: any) {

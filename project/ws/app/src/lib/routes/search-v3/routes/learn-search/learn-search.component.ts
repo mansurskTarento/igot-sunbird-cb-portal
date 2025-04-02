@@ -111,6 +111,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   queryParams: any;
   typesOfEventsFilters: string[] = [];
   competencyFactet: any = [];
+  searchSortFilter: string = '';
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -308,6 +309,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
     );
+    console.log('result', result)
+    console.log('this.typesOfEventsFilters', this.typesOfEventsFilters)
     if (result.result && result.result?.Event) {
       if (this.typesOfEventsFilters.length) {
         this.eventsSearchResults = this.processEventsResult(
@@ -326,6 +329,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.eventsSearchResults = [];
       this.eventSearchTotalCount = 0;
     }
+    console.log('this.eventsSearchResults', this.eventsSearchResults)
   }
 
   async searchPeople() {
@@ -478,6 +482,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   applySearchFilter(selectedFilters: { [key: string]: any }) {
+
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
       this.competencyThemeKey,
@@ -486,6 +491,42 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
+
+    if (this.searchSortFilter === SortType.MostRelevent) {
+      if (this.seeAllResult === '') {
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by = {};
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by = {};
+      }
+    } else if (this.searchSortFilter === SortType.RecentlyAdded) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
+        this.searchRequestEvents.request.sort_by.startDate = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.lastUpdatedOn = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.startDate = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Communities) {
+        this.searchRequestCommunities.orderDirection = 'desc';
+      } else if (this.seeAllResult === SearchCategory.People) {
+        delete this.searchRequestPeoples?.sort_by?.firstName;
+        this.searchRequestPeoples.sort_by.lastUpdatedOn = 'desc';
+      }
+    } else if (this.searchSortFilter === SortType.HighestRated) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.avgRating = 'desc';
+        this.searchRequestEvents.request.sort_by.avgRating = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.avgRating = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.avgRating = 'desc';
+      }
+    } else if (this.searchSortFilter === SortType.Ascending) {
+      this.searchRequestPeoples.sort_by.firstName = SortType.Ascending;
+    } else if (this.searchSortFilter === SortType.Descending) {
+      this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
+    }
 
     Object.keys(selectedFilters).forEach((key) => {
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
@@ -842,6 +883,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onChangeSortSearch(event: string) {
+    this.searchSortFilter = event
     this.resetPagination();
     this.searchRequestCourse.request.sort_by = {};
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
@@ -987,6 +1029,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   processEventsResult(events: any) {
     let processedEvents: any = [];
     events.forEach((event: any) => {
+      console.log('event', event)
       if (
         event.startDate &&
         event.endDate &&
@@ -1001,25 +1044,29 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         // Combining date and time for end event
         let eventEndDate =
           new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000;
+        console.log(currentTime, evenStarttDate, eventEndDate)
         if (currentTime > eventEndDate) {
           if (this.typesOfEventsFilters.includes('past events')) {
             processedEvents.push(event);
           }
         } else if (
-          currentTime <= eventEndDate &&
-          currentTime >= evenStarttDate
+          (currentTime <= eventEndDate &&
+          currentTime >= evenStarttDate) || (event.status && event.status.toLowerCase() === 'live')
         ) {
+          console.log('in live')
           if (this.typesOfEventsFilters.includes('live')) {
             event.showLive = true;
             processedEvents.push(event);
           }
         } else {
-          if (this.typesOfEventsFilters.includes('upcoming')) {
+          console.log('in upcoming')
+          if (this.typesOfEventsFilters.includes('upcoming') || (event.status && event.status.toLowerCase() === 'upcoming')) {
             processedEvents.push(event);
           }
         }
       }
     });
+    console.log('processedEvents', processedEvents)
     return processedEvents;
   }
 }
