@@ -4,8 +4,9 @@
         <p class="content-description margin-top-xl margin-bottom-xl">{{widgetData?.content?.sessionData?.description}}</p>
         <ng-container *ngFor="let link of widgetData?.content?.sessionData?.attachLinks">
             <div class="attach-block margin-bottom-l">
+                <img *ngIf="link?.logo" [src]="link?.logo" height="100" width="100"/>
                 <p class="attach-title">{{link.title}}</p>
-                <a class="attach-link" href="{{link.url}}" target=”_blank” >{{link.url}}</a>
+                <a class="attach-link" href="{{link.url}}" target=”_blank” ><mat-icon>attachment</mat-icon>&nbsp;&nbsp;Open</a>
             </div>
         </ng-container>
     </ng-container>
