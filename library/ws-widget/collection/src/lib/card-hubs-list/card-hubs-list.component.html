@@ -16,8 +16,8 @@
               </a>
             </ng-container> -->
             <!-- <ng-container *ngIf="hub.hubname != 'Discuss' && hub.active"> -->
-              <div class="new-tag" *ngIf="hub.newTag">
-                New
+              <div class="new-tag" *ngIf="hub.newTag" >
+                <span>New</span>
               </div>
               <a class="simple-hubs-link" [id]="hub.hubname" i18n-aria-label role="menuitem" (click)="navigateToRoute(hub.path);trackTelemetry(hub.hubname)"
                 [attr.accesskey]="hub.accessKey" [ngClass]="{'gyaan-icon': hub.hubname === 'Amrit Gyaan Kosh' || hub.hubname === 'Jan Karmayogi'}">
