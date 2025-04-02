@@ -12,7 +12,7 @@ import {
   SEARCH_SORT_DROPDOWN,
   SEARCH_SORT_PEOPLES,
 } from '../../../../../../../author/src/lib/constants/constant';
-import { SearchCategory, SortType } from '../../models/search-v3.model';
+import { SearchCategory, SearchConstantLocalStorage, SortType } from '../../models/search-v3.model';
 
 @Component({
   selector: 'ws-app-search-sort-input',
@@ -41,7 +41,14 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
       this.selectedOption = SortType.MostRelevent;
     }
     this.searchSorter.emit(this.selectedOption);
+
+    const sortType = localStorage.getItem(SearchConstantLocalStorage.SortType);
+    if (sortType && this.options.some((option) => option.value === sortType)) {
+      this.selectedOption = sortType;
+      this.searchSorter.emit(this.selectedOption);
+    }
   }
+  
   ngAfterViewInit() {
     // this.adjustSelectWidth();
   }

@@ -68,7 +68,8 @@
                         </div>
                         <!-- Bookmark button -->
                         <div class="flex items-center gap-3">
-                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
+                            <ng-container
+                                *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                 <div matRipple (click)="downloadCertificate(courseEnrollment)"
                                     class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
                                     <mat-icon [svgIcon]="'download'" class="mb-1"
@@ -112,12 +113,12 @@
                         <img class="source-icon" alt="ong" [src]="content?.appIcon | pipePublicURL" width="16"
                             [wsUtilsDefaultThumbnail]="defaultSLogo">
                     </div>
-                    <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
-                        {{content?.creator}}</span>
-                    <span class="organization-name"
-                        *ngIf="!content?.creator && content?.organisation?.length">{{'learnsearch.by' | translate}}
+                    <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
+                        {{content?.creator}}</span> -->
+                    <span class="organization-name text-ellipse" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
+                        translate}}
                         {{content?.organisation[0]}}</span>
-                    <span class="organization-name"
+                    <span class="organization-name text-ellipse"
                         *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
