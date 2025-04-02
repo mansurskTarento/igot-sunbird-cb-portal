@@ -118,7 +118,7 @@ export class PeopleConnectionCardComponent {
         .length
         ? this.unmappedUser.profileDetails?.professionalDetails[0]
             ?.designation
-        : '',
+        : this.unmappedUser.rootOrgName,
     };
     this.networkV2Service.createConnection(req).subscribe(
       () => {

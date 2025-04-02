@@ -205,6 +205,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllLanguage = !this.showAllLanguage;
     } else if (togglesection === FacetType.Organization) {
       this.showAllOrganisation = !this.showAllOrganisation;
+    } else if (togglesection === FacetType.SourceName) {
+      this.showAllOrganisation = !this.showAllOrganisation;
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
     }

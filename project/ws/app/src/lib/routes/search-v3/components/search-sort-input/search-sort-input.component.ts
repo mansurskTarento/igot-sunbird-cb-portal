@@ -40,6 +40,7 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
       this.options = SEARCH_SORT_DROPDOWN;
       this.selectedOption = SortType.MostRelevent;
     }
+    this.searchSorter.emit(this.selectedOption);
   }
   ngAfterViewInit() {
     // this.adjustSelectWidth();
