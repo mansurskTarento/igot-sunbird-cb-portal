@@ -132,7 +132,7 @@ export class SearchCommunitiesRequest {
     orgName?: string[];
     competencyArea?: string[];
     topicName?: string[];
-      [key: string]: any;
+    [key: string]: any;
   };
   requestedFields: any[];
   pageNumber: number;
@@ -194,4 +194,8 @@ export enum SortType {
   MostEnrolled = 'most_enrolled',
   Ascending = 'asc',
   Descending = 'desc',
+}
+
+export enum SearchConstantLocalStorage {
+  SortType = 'searchSortType',
 }
