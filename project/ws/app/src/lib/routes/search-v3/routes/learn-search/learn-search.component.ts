@@ -309,8 +309,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
     );
-    console.log('result', result)
-    console.log('this.typesOfEventsFilters', this.typesOfEventsFilters)
     if (result.result && result.result?.Event) {
       if (this.typesOfEventsFilters.length) {
         this.eventsSearchResults = this.processEventsResult(
@@ -329,7 +327,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.eventsSearchResults = [];
       this.eventSearchTotalCount = 0;
     }
-    console.log('this.eventsSearchResults', this.eventsSearchResults)
   }
 
   async searchPeople() {
@@ -1029,7 +1026,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   processEventsResult(events: any) {
     let processedEvents: any = [];
     events.forEach((event: any) => {
-      console.log('event', event)
       if (
         event.startDate &&
         event.endDate &&
@@ -1066,7 +1062,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     });
-    console.log('processedEvents', processedEvents)
     return processedEvents;
   }
 }

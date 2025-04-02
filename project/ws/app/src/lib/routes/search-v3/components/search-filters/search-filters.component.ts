@@ -210,10 +210,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
     }
-    console.log('togglesection', togglesection)
-    console.log('this.showAllOrganisation', this.showAllOrganisation)
-    console.log('formattedFacets', this.formattedFacets)
-    console.log('filteredOrganisations', this.filteredOrganisations)
   }
 
   translateActualLabels(label: string, type: any) {
