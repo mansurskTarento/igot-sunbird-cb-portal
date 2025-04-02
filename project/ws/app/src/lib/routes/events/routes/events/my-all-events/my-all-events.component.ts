@@ -89,26 +89,28 @@ export class MyAllEventsComponent {
   processResult(resp: any) {
     let processedEvents: any = []
     resp.forEach((resp: any) => {
-      if (resp.event && resp.event.startDate && resp.event.endDate && resp.event.startTime && resp.event.endTime) {
-        // Conver current time into milliseconds
-        let currentTime = new Date().getTime() / 1000
-        // Combining date and time for start event
-        let evenStarttDate = new Date(`${resp.event.startDate} ${resp.event.startTime}`).getTime() / 1000
-        // Combining date and time for end event
-        let eventEndDate = new Date(`${resp.event.endDate} ${resp.event.endTime}`).getTime() / 1000
-        if (currentTime > eventEndDate) {
-          if (this.tabIndex === 2) {
-            processedEvents.push(resp)
-          }
-        } else if (currentTime <= eventEndDate && currentTime >= evenStarttDate) {
-          if (this.tabIndex === 0) {
-            resp.event.showLive = true
-            processedEvents.push(resp)
-          }
-        } else {
-          if (this.tabIndex === 1) {
-            processedEvents.push(resp)
-          }
+      if (resp.event && resp.event.startDate) {
+        const eventDetails = resp.event
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const eventDate = new Date(_.get(eventDetails, 'startDate'))
+        eventDate.setHours(0, 0, 0, 0)
+        switch (this.tabIndex) {
+          case 0:
+            if (today.getTime() === eventDate.getTime()) {
+              processedEvents.push(resp)
+            }
+            break
+          case 1:
+            if (today.getTime() < eventDate.getTime()) {
+              processedEvents.push(resp)
+            }
+            break
+          case 2:
+            if (today.getTime() > eventDate.getTime()) {
+              processedEvents.push(resp)
+            }
+            break
         }
       }
     })
@@ -116,7 +118,7 @@ export class MyAllEventsComponent {
   }
 
   isLiveEvent(event: any) {
-    if (event.startDate && event.endDate && event.startTime && event.endTime) {
+    if (event && event.startDate && event.endDate && event.startTime && event.endTime) {
       // Conver current time into milliseconds
       let currentTime = new Date().getTime() / 1000
       // Combining date and time for start event
