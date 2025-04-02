@@ -60,7 +60,7 @@ export class MobileFiltersComponent {
         this.endDate = this.datePipe.transform(this.selectedFilters.dateRange.toDate, 'yyyy-MM-dd')
       }
       if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
-        this.selectedValue = this.selectedFilters.eventStatus[0]
+        this.selectedValue = { name: this.selectedFilters.eventStatus[0] }
       }
     }
     console.log("data ", this.datePipe)
@@ -92,7 +92,7 @@ export class MobileFiltersComponent {
           delete this.selectedFilters.dateRange
           this.startDate = ''
           this.endDate = ''
-          this.selectedValue = null
+          this.selectedValue = {}
         }
         if (key === 'eventStatus') {
           delete this.selectedFilters.dateRange
@@ -124,7 +124,7 @@ export class MobileFiltersComponent {
       this.endDate = this.datePipe.transform(event.value, 'yyyy-MM-dd')
       this.selectedFilters['dateRange'] = { toDate: this.endDate }
     }
-    this.selectedValue = null
+    this.selectedValue = {}
     if (this.selectedFilters.eventDate) {
       delete this.selectedFilters.eventDate
     }
@@ -134,11 +134,11 @@ export class MobileFiltersComponent {
     this.selectedFilters = {}
     this.startDate = ''
     this.endDate = ''
-    this.selectedValue = null
+    this.selectedValue = {}
   }
 
   changeStatus(value: any, key: any) {
-    this.selectedValue = value
+    this.selectedValue = { name: value }
     this.selectedFilters[key] = [value.name]
     delete this.selectedFilters.dateRange
     delete this.selectedFilters.eventDate
