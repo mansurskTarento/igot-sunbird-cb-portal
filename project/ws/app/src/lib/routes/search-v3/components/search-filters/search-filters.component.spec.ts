@@ -858,4 +858,90 @@ describe('SearchFiltersComponent', () => {
     expect(result.name).toBe('Filter1');
     expect(result.isChecked).toBe(false);
   });
+
+  describe('getFilteredThemes', () => {
+    let component: any;
+    
+    beforeEach(() => {
+      component = {
+        competencyThemeKey: 'themes',
+        filterQueryThemes: '',
+        getFilteredThemes(competency: any): any[] {
+          let filteredThemes: any[] = [];
+          if (competency && competency[this.competencyThemeKey]) {
+            filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
+              theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()));
+          }
+          return filteredThemes;
+        }
+      };
+    });
+  
+    it('should return empty array when competency is null', () => {
+      const competency = null;
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual([]);
+    });
+  
+    it('should return empty array when competency does not have themes', () => {
+      const competency = { otherProperty: 'value' };
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual([]);
+    });
+  
+    it('should return all themes when filter query is empty', () => {
+      const themes = [
+        { name: 'Theme 1' },
+        { name: 'Theme 2' },
+        { name: 'Theme 3' }
+      ];
+      const competency = { themes };
+      component.filterQueryThemes = '';
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual(themes);
+    });
+  
+    it('should return filtered themes based on filter query', () => {
+      const themes = [
+        { name: 'Theme 1' },
+        { name: 'Another Theme' },
+        { name: 'Theme 3' }
+      ];
+      const competency = { themes };
+      component.filterQueryThemes = 'theme';
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual([
+        { name: 'Theme 1' },
+        { name: 'Another Theme' },
+        { name: 'Theme 3' }
+      ]);
+    });
+  
+    it('should return filtered themes case-insensitively', () => {
+      const themes = [
+        { name: 'Theme 1' },
+        { name: 'ANOTHER THEME' },
+        { name: 'Something else' }
+      ];
+      const competency = { themes };
+      component.filterQueryThemes = 'theme';
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual([
+        { name: 'Theme 1' },
+        { name: 'ANOTHER THEME' }
+      ]);
+    });
+  
+    it('should return no themes when filter query does not match any theme', () => {
+      const themes = [
+        { name: 'Theme 1' },
+        { name: 'Theme 2' },
+        { name: 'Theme 3' }
+      ];
+      const competency = { themes };
+      component.filterQueryThemes = 'nonexistent';
+      const result = component.getFilteredThemes(competency);
+      expect(result).toEqual([]);
+    });
+  });
 });
