@@ -91,9 +91,16 @@ export class SeeAllComponent {
       },
     }
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
-      let response: any = _.get(resp, 'result.Event', [])
-      if (response.length) {
-        this.contentDataList = this.transformContentsToWidgets(response, {})
+      let events: any = _.get(resp, 'result.Event', [])
+      if (events.length) {
+        let proccessedEvents: any = []
+        response.forEach((id: any) => {
+          const event = events.find((e: any) => e.identifier === id)
+          if (event) {
+            proccessedEvents.push({ event: event })
+          }
+        })
+        this.contentDataList = this.transformContentsToWidgets(proccessedEvents, {})
       } else {
         this.contentDataList = this.transformContentsToWidgets([], {})
       }
@@ -104,7 +111,7 @@ export class SeeAllComponent {
   }
 
   isLiveEvent(event: any) {
-    if (event.startDate && event.endDate && event.startTime && event.endTime) {
+    if (event && event.startDate && event.endDate && event.startTime && event.endTime) {
       // Conver current time into milliseconds
       let currentTime = new Date().getTime() / 1000
       // Combining date and time for start event
@@ -170,8 +177,8 @@ export class SeeAllComponent {
       widgetHostClass: 'mb-2',
       widgetData: {
         content: {
-          ...content,
-          showLive: this.isLiveEvent(content),
+          ...content.event,
+          showLive: this.isLiveEvent(content.event),
         },
         ...(content.batch && {
           batch: content.batch,

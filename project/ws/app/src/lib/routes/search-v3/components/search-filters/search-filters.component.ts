@@ -69,6 +69,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
   // filterQuerySubThemes = '';
+  filterCompetency = '';
   searchCategory = '';
   constructor(
     // private searchSrvc: GbSearchService,
@@ -90,6 +91,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.competencyAreaNameKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencyArea}`;
     this.competencyThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencyTheme}`;
     this.competencySubThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`;
+    
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -149,6 +151,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     }
+    console.log(changes['competencyFactet'], 'competencyFactet');
+
 
     this.setCategoryType();
   }
@@ -206,6 +210,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } else if (togglesection === FacetType.Language) {
       this.showAllLanguage = !this.showAllLanguage;
     } else if (togglesection === FacetType.Organization) {
+      this.showAllOrganisation = !this.showAllOrganisation;
+    } else if (togglesection === FacetType.SourceName) {
       this.showAllOrganisation = !this.showAllOrganisation;
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
