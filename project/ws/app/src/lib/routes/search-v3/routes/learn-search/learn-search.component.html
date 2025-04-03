@@ -7,7 +7,8 @@
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
                     [competencyFactet]="competencyFactet" (appliedFilter)="applySearchFilter($event)"
                     [karmayogiBadge]="veifiedKarmayogi"
-                    (constructQueryParam)="constructQueryParam($event)"></ws-app-search-filters>
+                    (constructQueryParam)="constructQueryParam($event)"
+                    (applyFilterFromLearn)="applyFilterFromLearn($event)"></ws-app-search-filters>
             </ng-container>
         </mat-sidenav>
 

@@ -40,6 +40,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Input() urlparamFilters!: any;
   @Output() appliedFilter = new EventEmitter<{ [key: string]: any }>();
   @Output() constructQueryParam = new EventEmitter<string>();
+  @Output() applyFilterFromLearn = new EventEmitter<{ [key: string]: any }>();
   @Input() karmayogiBadge: any;
   @Input() competencyFactet: any;
 
@@ -148,11 +149,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           );
         }
       }
-    }
-    console.log(changes['competencyFactet'], 'competencyFactet');
-
-
-    this.setCategoryType();
+      this.setCategoryType();
+    }    
   }
 
   formatSectorName(name: string): string {
@@ -167,18 +165,23 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
-    let contentType = ''
-    if(params && params.f) {
-      let formattedParams = JSON.parse(params.f)
-      if(Object.keys(formattedParams) && Object.keys(formattedParams).length && formattedParams['primaryCategory']) {
-        contentType = formattedParams['primaryCategory']
-        console.log('contentType', contentType)
-      }
-    }
-    if(contentType.length) {
-      this.setCourseCategoryType(contentType)
-     // this.searchCategory = contentType;
-    } else {
+    //let contentType = ''
+   // this.selectedFilters = {}
+   // console.log('categoryType', this.categoryType)
+  //  if(params && params.f) {
+  //   let formattedParams = JSON.parse(params.f)
+  //   if(Object.keys(formattedParams) && Object.keys(formattedParams).length && formattedParams['primaryCategory']) {
+  //     contentType = formattedParams['primaryCategory']
+      
+  //   }
+  // }
+    // if(contentType.length) {
+    //   this.setCourseCategoryType(contentType)
+    //   this.applyFilterFromLearn.emit(this.selectedFilters);
+    //   this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+    //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
+    //  // this.searchCategory = contentType;
+    // } else {
       this.searchCategory = params['category'];
       if (this.searchCategory) {
         this.categoryType = this.categoryTypeDup.filter(
@@ -206,7 +209,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           isChecked: cat.name === SearchCategory.All ? true : false,
         }));
       }
-    }
+    // }
     
     
   }
@@ -223,7 +226,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkForFilter(parentData:any, filtersData:any, contentType:string, parentIndex:any, childIndex:any) {
-    this.selectedFilters['Course'] = []
+    // this.selectedFilters['Course'] = []
     if(filtersData && filtersData.length) {
       filtersData.map((item:any, index:any)=>{
         if(item.filters && item.filters.length) {
@@ -234,19 +237,20 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             parentData.filters[childIndex].isChecked = true
             this.categoryTypeDup[parentIndex].isChecked = true
             this.categoryType[0].isChecked = false
-            console.log('this.selectedFilters',this.selectedFilters)
             if(Object.keys(this.selectedFilters).length === 0) {
+              this.selectedFilters['Course'] = []
               this.selectedFilters['Course'] = contentType
             } else {
               this.selectedFilters['Course'].concat(contentType);
-            }
-            this.appliedFilter.emit(this.selectedFilters);
-            this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-            console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
-            
+            }            
+          } else {
+            item.isChecked = false
           }
         }
       })
+      // this.appliedFilter.emit(this.selectedFilters);
+      // this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+      // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
     }
   }
 
