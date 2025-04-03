@@ -16,7 +16,7 @@
             </div>
         </ng-container>
     </div>
-    <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}}</p>
+    <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
 
     <div class="filter-form">
         <mat-accordion class="filter-section margin-bottom-m">
@@ -106,6 +106,8 @@
         </div>
     </ng-container>
 
+    
+
     <ng-container *ngIf="formattedFacets && formattedFacets['avgRating'] && formattedFacets['avgRating'].length">
         <div class="rating-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.ratingTitle' | translate}}
@@ -123,7 +125,7 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="formattedFacets && formattedFacets['language'] && formattedFacets['language'].length && searchCategory !== categoryTypeEnum.Events ">
+    <ng-container *ngIf="formattedFacets && formattedFacets['language'] && formattedFacets['language'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
         <div class="languages-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.languages' | translate}}</p>
             <div class="mat-full-radius mb-2" *ngIf="formattedFacets['language'].length > 4">
@@ -150,7 +152,7 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="formattedFacets && formattedFacets['organisation'] && formattedFacets['organisation'].length">
+    <ng-container *ngIf="formattedFacets && formattedFacets['organisation'] && formattedFacets['organisation'].length && searchCategory !== categoryTypeEnum.CaseStudy">
         <div class="content-provider-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'profileInfo.organization' |
                 translate}}</p>

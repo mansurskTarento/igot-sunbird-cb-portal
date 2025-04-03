@@ -170,4 +170,22 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
     const durationInSeconds = (endDateTime.getTime() - startDateTime.getTime()) / 1000;
     this.eventDuration = isNaN(durationInSeconds) ? '' : durationInSeconds.toString();
   }
+
+  getSubTheme(content:any) {
+    let arr:any = []
+    content.map((item:any)=>{
+      if(item?.competencySubThemeName) {
+        arr.push(item?.competencySubThemeName)
+      }      
+    })
+    let str = arr.toString()
+    if(str.length > 150) {
+      let str = arr.toString().substring(0,150)+'...'
+      return str
+    } else {
+      return str
+    }
+    
+    
+  }
 }

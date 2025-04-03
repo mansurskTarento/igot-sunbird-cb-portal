@@ -34,12 +34,12 @@ export const CATEGORY_TYPE = [
             isChecked: false,
             displayName: 'Moderated Course',
           },
-          {
-            name: 'Invite-Only Course',
-            count: 0,
-            isChecked: false,
-            displayName: 'Invite Only Course',
-          },
+          // {
+          //   name: 'Invite-Only Course',
+          //   count: 0,
+          //   isChecked: false,
+          //   displayName: 'Invite Only Course',
+          // },
         ],
       },
       {
