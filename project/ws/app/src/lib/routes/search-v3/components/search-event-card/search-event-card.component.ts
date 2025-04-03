@@ -58,7 +58,6 @@ export class SearchEventCardComponent implements OnInit, OnChanges {
         this.isIgot = false;
       }
     }
-    console.log('content', this.content)
   }
 
   translateLabels(label: string, type: any) {

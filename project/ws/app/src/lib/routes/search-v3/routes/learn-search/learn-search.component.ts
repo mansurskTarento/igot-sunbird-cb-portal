@@ -315,7 +315,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     delete this.searchRequestEvents.request.sort_by?.lastUpdatedOn;
 
     this.searchRequestEvents.request.query = this.statedata?.param || '';
-    console.log('searchRequestEvents', this.searchRequestEvents)
     this.searchRequestEvents['request']['offset'] = 0
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
