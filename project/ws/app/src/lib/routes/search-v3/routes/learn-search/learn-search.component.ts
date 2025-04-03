@@ -39,6 +39,7 @@ import {
 } from '@sunbird-cb/collection/src/public-api';
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
+import moment from 'moment';
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -1269,6 +1270,18 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   processEventsResult(events: any) {
     let processedEvents: any = [];
+
+    let serverTime = moment();
+        serverTime = serverTime.add(5, 'hours').add(30, 'minutes');
+        serverTime.format('YYYY-MM-DD HH:mm:ss'),
+        // Display the server time
+        /* tslint:disable */
+        // console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
+        // console.log('eventName', eventName)
+        // console.log('userIdentifier', userIdentifier)
+        
+        
+        
     events.forEach((event: any) => {
       if (
         event.startDate &&
@@ -1277,21 +1290,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         event.endTime
       ) {
         // Conver current time into milliseconds
-        let currentTime = new Date().getTime() / 1000;
+        let currentTime = new Date(serverTime.toString()).getTime()/1000;
         // Combining date and time for start event
         let evenStarttDate =
           new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000;
         // Combining date and time for end event
         let eventEndDate =
           new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000;
-        console.log(currentTime, evenStarttDate, eventEndDate)
         if (currentTime > eventEndDate) {
           if (this.typesOfEventsFilters.includes('past events')) {
             processedEvents.push(event);
           }
         } else if (
           (currentTime <= eventEndDate &&
-          currentTime >= evenStarttDate) || (event.status && event.status.toLowerCase() === 'live')
+          currentTime >= evenStarttDate)
         ) {
           console.log('in live')
           if (this.typesOfEventsFilters.includes('live')) {
@@ -1300,7 +1312,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           }
         } else {
           console.log('in upcoming')
-          if (this.typesOfEventsFilters.includes('upcoming') || (event.status && event.status.toLowerCase() === 'upcoming')) {
+          if (this.typesOfEventsFilters.includes('upcoming')) {
             processedEvents.push(event);
           }
         }

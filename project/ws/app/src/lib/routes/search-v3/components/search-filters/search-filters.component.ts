@@ -151,6 +151,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
       this.setCategoryType();
     }    
+    console.log('this.formattedFacets', this.formattedFacets)
   }
 
   formatSectorName(name: string): string {

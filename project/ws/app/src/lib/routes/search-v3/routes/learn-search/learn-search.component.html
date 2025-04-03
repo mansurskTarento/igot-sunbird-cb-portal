@@ -190,13 +190,16 @@
                                 'learnsearch.seeAllResults' | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && communitiesSearchTotalCount > initialPaginationSize">
+                                <div class="mt-80">
                                 <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
                                     [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                     [totalItemsCount]="this.communitiesSearchTotalCount"
                                     [currentPage]="initialPaginationPage"
                                     (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                </div>
                             </ng-container>
-                        </div>
+                        </div >
+                        
                     </ng-container>
                 </ng-container>
 
