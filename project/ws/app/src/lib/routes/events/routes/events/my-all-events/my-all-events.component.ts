@@ -114,7 +114,16 @@ export class MyAllEventsComponent {
         }
       }
     })
-    return processedEvents
+    return this.sortData(processedEvents)
+  }
+
+
+  sortData(data: any) {
+    return data.sort((a: any, b: any) => {
+      const dateA = new Date(`${a.event.startDate}T${a.event.startTime}`);
+      const dateB = new Date(`${b.event.startDate}T${b.event.startTime}`);
+      return this.tabIndex === 2 ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime()
+    })
   }
 
   isLiveEvent(event: any) {

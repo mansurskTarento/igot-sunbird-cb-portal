@@ -23,10 +23,16 @@ export const CATEGORY_TYPE = [
         isChecked: false,
         filters: [
           {
+            name: 'Course',
+            count: 0,
+            isChecked: false,
+            displayName: 'Course',
+          },
+          {
             name: 'Moderated Course',
             count: 0,
             isChecked: false,
-            displayName: 'Moderated Courses',
+            displayName: 'Moderated Course',
           },
           {
             name: 'Invite-Only Course',

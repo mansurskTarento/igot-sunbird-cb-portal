@@ -409,10 +409,10 @@
         </p>
         <mat-accordion class="filter-section margin-bottom-m">
             <ng-container *ngFor="let competency of competencyFactet">
-                <mat-expansion-panel>
+                <mat-expansion-panel [expanded]="competency[competencyAreaNameKey]?.isChecked" class="competency-area-filter">
                     <mat-expansion-panel-header class="padding-remove">
                         <mat-panel-title>
-                            <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
+                            <mat-checkbox [checked]="competency[competencyAreaNameKey]?.isChecked"
                                 (change)="onSelectionFilter($event, competency[competencyAreaNameKey], competencyAreaNameKey);"
                                 (click)="$event.stopPropagation();">
                                 <span class="min-width-adjust">

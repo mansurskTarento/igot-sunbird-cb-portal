@@ -138,7 +138,7 @@ export class MobileFiltersComponent {
   }
 
   changeStatus(value: any, key: any) {
-    this.selectedValue = { name: value }
+    this.selectedValue = value
     this.selectedFilters[key] = [value.name]
     delete this.selectedFilters.dateRange
     delete this.selectedFilters.eventDate
