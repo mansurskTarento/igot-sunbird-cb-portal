@@ -64,7 +64,8 @@
   .content-provider-filter .mat-full-radius,
   .languages-filter .mat-full-radius,
   .designation-filter .mat-full-radius,
-  .root-org-name-filter .mat-full-radius {
+  .root-org-name-filter .mat-full-radius, 
+  .competency-filter .mat-full-radius {
     position: relative;
     .mat-form-field-appearance-outline {
       .mat-form-field-flex {
@@ -152,7 +153,7 @@
   line-height: 16.8px;
   color: $overleyDarkBackground;
   display: inline-block;
-  max-width: 12em;
+  max-width: 11em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

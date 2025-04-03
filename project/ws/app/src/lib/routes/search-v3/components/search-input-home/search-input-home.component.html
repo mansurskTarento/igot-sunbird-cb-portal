@@ -87,7 +87,7 @@
         <!-- <div class="no-results" *ngIf="!queryControl.value">
           No results found
         </div> -->
-        <ng-container *ngIf="allSearchResults.length > 0">
+        <ng-container *ngIf="allSearchResults.length > 0 && queryControl.value">
           <div class="see-all-results">
             <a mat-button (click)="updateQuery(queryControl.value)">See all the results...</a>
           </div>

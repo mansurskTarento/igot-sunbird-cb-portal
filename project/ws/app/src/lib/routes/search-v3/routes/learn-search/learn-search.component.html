@@ -68,11 +68,13 @@
                                 | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && courseSearchTotalCount > initialPaginationSize">
-                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
-                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
-                                    [totalItemsCount]="this.courseSearchTotalCount"
-                                    [currentPage]="initialPaginationPage"
-                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                <div [ngClass]="{'md:mt-72': courseSearchResults.length < 3}">
+                                    <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                        [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                        [totalItemsCount]="this.courseSearchTotalCount"
+                                        [currentPage]="initialPaginationPage"
+                                        (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                </div>
                             </ng-container>
 
                         </div>
@@ -95,10 +97,12 @@
                                 | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && eventSearchTotalCount > initialPaginationSize">
-                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
-                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
-                                    [totalItemsCount]="this.eventSearchTotalCount" [currentPage]="initialPaginationPage"
-                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                <div [ngClass]="{'md:mt-72': eventsSearchResults.length < 3}">
+                                    <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                        [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                        [totalItemsCount]="this.eventSearchTotalCount" [currentPage]="initialPaginationPage"
+                                        (pageChange)="onPageChange($event)"></ws-app-pagination>
+                                </div>
                             </ng-container>
                         </div>
                     </ng-container>
