@@ -68,7 +68,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
-  filterQuerySubThemes = '';
+  // filterQuerySubThemes = '';
   searchCategory = '';
   constructor(
     // private searchSrvc: GbSearchService,
@@ -562,22 +562,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return filteredThemes
   }
 
-  getFilteredSubThemes(competency: any): any[] {
-    if(competency) {}
-    // let filteredSubThemes: any[] = []
-    // let selectedThemSubthmes: any[] = []
-    // if(competency && competency[this.competencyThemeKey]) {
-    //   competency[this.competencyThemeKey].forEach((theme: any) => {
-    //     if(theme.isChecked) {
-    //       selectedThemSubthmes = selectedThemSubthmes.concat(competency[this.competencySubThemeKey])
-    //     }
-    //   })
-      // filteredSubThemes = competency[this.competencyThemeKey].filter((theme: any) => 
-      //   theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
-    // }
-    // return filteredSubThemes
-    return []
-  }
+  // getFilteredSubThemes(competency: any): any[] {
+  //   let filteredSubThemes: any[] = []
+  //   if(competency && competency[this.competencySubThemeKey]) {
+  //     filteredSubThemes = competency[this.competencySubThemeKey].filter((subTheme: any) => 
+  //     subTheme.name.toLowerCase().includes(this.filterQuerySubThemes.toLowerCase()))
+  //   }
+  //   return filteredSubThemes
+  // }
 
   get filteredDesignations() {
     let filteredList = this.formattedFacets[

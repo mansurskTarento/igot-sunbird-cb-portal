@@ -455,19 +455,19 @@
                             </section>
                         </mat-selection-list>
 
-                        <mat-selection-list class="padding-top-0">
+                        <!-- <mat-selection-list class="padding-top-0">
                             <span class="sub-header mt-2">
                                 Sub themes
                             </span>
-                            <!-- <div class="mat-full-radius mb-2 search-input-themes" >
+                            <div class="mat-full-radius mb-2 search-input-themes" >
                                 <mat-form-field appearance="outline" class="w-full">
                                     <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
                                         [(ngModel)]="filterQuerySubThemes">
                                     <mat-icon matPrefix class="search-icon">search</mat-icon>
                                 </mat-form-field>
-                            </div> -->
+                            </div>
                             <section class="mat-body-2 text-capitalize"
-                                *ngFor="let subTheme of competency[competencySubThemeKey]">
+                                *ngFor="let subTheme of getFilteredSubThemes(competency)">
                                 <mat-checkbox [checked]="subTheme?.isChecked"
                                     (change)="onSelectionFilter($event, subTheme, competencySubThemeKey)">
                                     <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(subTheme?.name)" [matTooltipPosition]="'right'">
@@ -475,7 +475,7 @@
                                     </span>
                                 </mat-checkbox>
                             </section>
-                        </mat-selection-list>
+                        </mat-selection-list> -->
                     </mat-expansion-panel>
                 </ng-template>
             </ng-container>
