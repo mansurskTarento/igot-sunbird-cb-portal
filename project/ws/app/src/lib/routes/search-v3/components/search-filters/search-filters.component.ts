@@ -67,6 +67,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryLanguage = '';
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
+  filterQueryThemes = '';
+  // filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
   constructor(
@@ -106,7 +108,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (!coursesCategory) return;
 
         const caseStudyCategory = _.find(coursesCategory.filters, {
-          name: 'caseStudy',
+          name: 'case-studies',
         });
 
         const sectorFilters = this.formattedFacets.sectorId.map(
@@ -556,6 +558,24 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
+
+  getFilteredThemes(competency: any): any[] {
+    let filteredThemes: any[] = []
+    if(competency && competency[this.competencyThemeKey]) {
+      filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
+        theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
+    }
+    return filteredThemes
+  }
+
+  // getFilteredSubThemes(competency: any): any[] {
+  //   let filteredSubThemes: any[] = []
+  //   if(competency && competency[this.competencySubThemeKey]) {
+  //     filteredSubThemes = competency[this.competencySubThemeKey].filter((subTheme: any) => 
+  //     subTheme.name.toLowerCase().includes(this.filterQuerySubThemes.toLowerCase()))
+  //   }
+  //   return filteredSubThemes
+  // }
 
   get filteredDesignations() {
     let filteredList = this.formattedFacets[
