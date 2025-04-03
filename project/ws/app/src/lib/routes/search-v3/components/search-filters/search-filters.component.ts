@@ -163,32 +163,86 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
-    this.searchCategory = params['category'];
-    if (this.searchCategory) {
-      this.categoryType = this.categoryTypeDup.filter(
-        (type) => type.name === this.searchCategory
-      );
-      if (this.categoryType.length) {
-        this.categoryType[0].isChecked = true;
-        this.selectedFilters[this.categoryType[0].name] = [
-          this.categoryType[0].name,
-        ];
-        this.selectedFilterChips = [
-          {
-            value: this.categoryType[0].displayName,
-            type: this.categoryType[0].name,
-          },
-        ];
+    let contentType = ''
+    if(params && params.f) {
+      let formattedParams = JSON.parse(params.f)
+      if(Object.keys(formattedParams) && Object.keys(formattedParams).length && formattedParams['primaryCategory']) {
+        contentType = formattedParams['primaryCategory']
+        console.log('contentType', contentType)
       }
-
-      if (this.searchCategory === SearchCategory.Events) {
-        this.formattedFacets['typeOfEvents'] = TypeOfEvents;
-      }
+    }
+    if(contentType.length) {
+      this.setCourseCategoryType(contentType)
+     // this.searchCategory = contentType;
     } else {
-      this.categoryType = this.categoryTypeDup.map((cat) => ({
-        ...cat,
-        isChecked: cat.name === SearchCategory.All ? true : false,
-      }));
+      this.searchCategory = params['category'];
+      if (this.searchCategory) {
+        this.categoryType = this.categoryTypeDup.filter(
+          (type) => type.name === this.searchCategory
+        );
+        if (this.categoryType.length) {
+          this.categoryType[0].isChecked = true;
+          this.selectedFilters[this.categoryType[0].name] = [
+            this.categoryType[0].name,
+          ];
+          this.selectedFilterChips = [
+            {
+              value: this.categoryType[0].displayName,
+              type: this.categoryType[0].name,
+            },
+          ];
+        }
+
+        if (this.searchCategory === SearchCategory.Events) {
+          this.formattedFacets['typeOfEvents'] = TypeOfEvents;
+        }
+      } else {
+        this.categoryType = this.categoryTypeDup.map((cat) => ({
+          ...cat,
+          isChecked: cat.name === SearchCategory.All ? true : false,
+        }));
+      }
+    }
+    
+    
+  }
+
+  setCourseCategoryType(contentType:string) {   
+
+      this.categoryTypeDup.map((item, parentIndex)=>{
+        if(item.name === contentType) {
+          item.isChecked = true
+        } else if(item.filters) {
+            this.checkForFilter(item, item.filters, contentType, parentIndex, parentIndex)
+        }
+      })
+  }
+
+  checkForFilter(parentData:any, filtersData:any, contentType:string, parentIndex:any, childIndex:any) {
+    this.selectedFilters['Course'] = []
+    if(filtersData && filtersData.length) {
+      filtersData.map((item:any, index:any)=>{
+        if(item.filters && item.filters.length) {
+          this.checkForFilter(parentData, item.filters, contentType, parentIndex, index)
+        } else {
+          if(contentType.indexOf(item.name) > -1) {
+            item.isChecked = true
+            parentData.filters[childIndex].isChecked = true
+            this.categoryTypeDup[parentIndex].isChecked = true
+            this.categoryType[0].isChecked = false
+            console.log('this.selectedFilters',this.selectedFilters)
+            if(Object.keys(this.selectedFilters).length === 0) {
+              this.selectedFilters['Course'] = contentType
+            } else {
+              this.selectedFilters['Course'].concat(contentType);
+            }
+            this.appliedFilter.emit(this.selectedFilters);
+            this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+            console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
+            
+          }
+        }
+      })
     }
   }
 
@@ -302,8 +356,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.selectedFilters[categoryType] = this.selectedFilters[
         categoryType
       ].filter((item: any) => item !== type);
-    }
-
+    } 
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
 

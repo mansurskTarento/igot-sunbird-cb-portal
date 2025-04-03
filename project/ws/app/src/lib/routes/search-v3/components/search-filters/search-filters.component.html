@@ -16,12 +16,12 @@
             </div>
         </ng-container>
     </div>
-    <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}}</p>
+    <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
 
     <div class="filter-form">
         <mat-accordion class="filter-section margin-bottom-m">
             <ng-container *ngFor="let category of categoryType">
-              <mat-expansion-panel *ngIf="category.filters.length > 0" class="">
+              <mat-expansion-panel *ngIf="category.filters.length > 0" class="" [expanded]="category?.isChecked">
                 <mat-expansion-panel-header class="padding-remove">
                   <mat-panel-title>
                     <mat-checkbox
@@ -37,7 +37,7 @@
                 </mat-expansion-panel-header>
                 <mat-selection-list class="padding-top-0">
                   <ng-container *ngFor="let options of category.filters">
-                    <mat-expansion-panel>
+                    <mat-expansion-panel [expanded]="category?.isChecked">
                       <mat-expansion-panel-header class="padding-remove">
                         <mat-panel-title>
                           <!-- <mat-checkbox
