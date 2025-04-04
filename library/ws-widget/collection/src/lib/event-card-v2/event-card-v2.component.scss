@@ -1961,3 +1961,12 @@ $title-line-count: 2;
   opacity: 0.5;
   cursor: default;
 }
+
+::ng-deep .card-tooltip {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-radius: 4px;
+  font-size: 14px;
+  vertical-align: middle;
+  margin: 5px 14px !important;
+}
