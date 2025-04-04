@@ -134,9 +134,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           caseStudyCategory.filters = sectorFilters;
         }
         this.sectorFilters = sectorFilters
-        console.log('caseStudyCategory--', sectorFilters)
-        console.log('formattedFacets', this.formattedFacets)
-        console.log('this.categoryTypeDup', this.categoryTypeDup)
       }
       
       // Handle nested filters for other categories

@@ -573,7 +573,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.resetPagination();
     Object.keys(selectedFilters).forEach((key) => {
-      console.log('key--', key)
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
         if (key === FacetType.AvgRating) {
           const ratings = selectedFilters[key]
