@@ -65,6 +65,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
+  // filterQueryContents = '';
   filterQueryLanguage = '';
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
@@ -376,6 +377,44 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  onCompetencyAreaSelectionFilter(event: MatCheckboxChange,
+    competency: any, ) {
+      const competencyDetails = competency[this.competencyAreaNameKey]
+      if (competencyDetails) {
+      const competencyName = competencyDetails.name
+      competencyDetails['isChecked'] = event.checked
+      if (!this.selectedFilters[this.competencyAreaNameKey]) {
+        this.selectedFilters[this.competencyAreaNameKey] = [];
+      }
+      if (event.checked) {
+        if (!this.selectedFilters[this.competencyAreaNameKey].includes(competencyName)) {
+          this.selectedFilters[this.competencyAreaNameKey].push(competencyName);
+        }
+      } else {
+        this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[
+          this.competencyAreaNameKey
+        ].filter((item: any) => item !== competencyName);
+        const competencyThemes = competency[this.competencyThemeKey]
+        if(competencyThemes) {
+          competencyThemes.forEach((theme: any) => {
+            if(theme.isChecked) {
+             theme.isChecked = false
+              this.selectedFilters[this.competencyThemeKey] = this.selectedFilters[
+                this.competencyThemeKey
+              ].filter((item: any) => item !== theme.name);
+            }
+          })
+        }
+      }
+      this.appliedFilter.emit(this.selectedFilters);
+      this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+      const types = this.categoryTypeDup.map((category) => category.name);
+      if (types.includes(competencyName) && !competencyDetails.isChecked) {
+        this.constructQueryParam.emit('');
+      }
+    }
+  }
+
   get filtersAppliedCount(): number {
     return Object.entries(this.selectedFilters).filter(
       ([_, arr]) => Array.isArray(arr) && arr.length > 0
@@ -607,6 +646,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
+  // get filteredContents() {
+  //   let filteredList = this.formattedFacets[FacetType.courseCategory].filter(
+  //     (item: any) =>
+  //       item.name.toLowerCase().includes(this.filterQueryContents.toLowerCase())
+  //   );
+
+  //   return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  // }
+
   get filteredLanguages() {
     let filteredList = this.formattedFacets[FacetType.Language].filter(
       (item: any) =>
@@ -622,7 +670,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
         theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
     }
-    return filteredThemes
+    competency['filteredLength'] = filteredThemes.length
+    return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
+  }
+
+  togoleThemes(competency: any) {
+    if(competency.showAll) {
+      competency['showAll'] = false
+    } else {
+      competency['showAll'] = true
+    }
   }
 
   // getFilteredSubThemes(competency: any): any[] {
