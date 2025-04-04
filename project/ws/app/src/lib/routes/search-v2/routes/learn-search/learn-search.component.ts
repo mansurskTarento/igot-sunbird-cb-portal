@@ -244,7 +244,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   applyFilter(filter: any) {
-    // debugger
     // let isFilterCheccked = false
     let isModeratedFilterChecked = false
     if (filter && filter.length > 0) {

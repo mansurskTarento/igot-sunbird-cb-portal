@@ -833,6 +833,14 @@ export class AppTocService {
         primaryCategory: hierarchyData.primaryCategory,
         expectedDuration: hierarchyData.expectedDuration || 0,
       }
+      if (hierarchyData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM &&
+        hierarchyData.compatibilityLevel >= 5 && hierarchyData.contextLockingType && 
+        hierarchyData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY) {
+        this.hashmap[hierarchyData.identifier] = { ...this.hashmap[hierarchyData.identifier] , 
+          contextLockingType: hierarchyData.contextLockingType,
+          compatibilityLevel: hierarchyData.compatibilityLevel,
+        }
+      }
       this.createHirarchyProgressHashmap(hierarchyData)
       this.hashmap =  { ...this.hashmap }
     }

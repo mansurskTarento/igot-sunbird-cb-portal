@@ -472,4 +472,38 @@ export class AppTocContentCardV2Component implements OnInit {
     }
   }
 
+  get checkForCuratedProgram() {
+    if(this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+      let parentData = this.hierarchyMapData[this.content.parent]
+      return parentData && parentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM && 
+      parentData.compatibilityLevel >= 5 && 
+      parentData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY
+    }
+    return false
+  }
+
+  get isContentUnlocked () {
+    if (this.checkForCuratedProgram)  {
+      if (this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+        let parentData = this.hierarchyMapData[this.content.parent]
+        let completedLeafNodes = []
+        parentData.leafNodes.forEach((_ele:any) => {
+          if(this.hierarchyMapData && this.hierarchyMapData[_ele]) {
+            let childData = this.hierarchyMapData[_ele]
+            if(childData && childData.completionStatus === 2) {
+              completedLeafNodes.push(childData)
+            }
+          }
+        });
+        if (completedLeafNodes.length >= parentData.leafNodesCount-1) {
+          return true
+        } else {
+          return false
+        }
+      }
+    } else {
+      return true
+    }
+  }
+
 }

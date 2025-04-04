@@ -598,3 +598,23 @@ span.optional-span {
 .certificate-loader ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #ffffff;
 }
+
+.lock-message {
+  background: #FFF4EC;
+  color: #D13924;
+  padding: 10px;
+}
+
+.lock-icon {
+  color: #F3962F;
+}
+
+.unlock-message {
+  background: #efffec;
+  color: #0c9600;
+  padding: 10px;
+}
+
+.unlock-icon {
+  color: #0c9600;
+}
