@@ -72,6 +72,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   // filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
+  sectorFilters:any
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
@@ -132,8 +133,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           caseStudyCategory.filters = sectorFilters;
         }
+        this.sectorFilters = sectorFilters
       }
-
+      
       // Handle nested filters for other categories
       if (this.formattedFacets?.nestedCategory?.length) {
         const nestedCategory = _.find(this.categoryTypeDup, {
