@@ -458,6 +458,24 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
                 ],
             }
           : { values: [] };
+      } else if (this.seeAllResult === SearchCategory.CaseStudy) {
+        const searchRequestCourse = new SearchV4Request([
+          this.competencyAreaNameKey,
+          this.competencyThemeKey,
+          this.competencySubThemeKey,
+        ]);
+        searchRequestCourse.request.query = this.statedata?.param;
+        searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+          element;
+        result = await this.searchV3Service.searchCoursesv4(
+          searchRequestCourse
+        );
+        competencyThemeFacet = result.result?.facets.find(
+          (facet: any) => facet.name === this.competencyThemeKey
+        );
+        competencySubThemeFacet = result.result?.facets.find(
+          (facet: any) => facet.name === this.competencySubThemeKey
+        );
       }
 
       const competencyThemeName = competencyThemeFacet
@@ -498,6 +516,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async applySearchFilter(selectedFilters: { [key: string]: any }) {
+    
     this.searchContentLoader = true;
     this.searchPeopleLoader = true;
     
@@ -554,6 +573,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.resetPagination();
     Object.keys(selectedFilters).forEach((key) => {
+      console.log('key--', key)
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
         if (key === FacetType.AvgRating) {
           const ratings = selectedFilters[key]
@@ -1007,9 +1027,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peopleSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
       this.searchRequestCourse.request.limit = this.initialPaginationSize;
-      this.searchRequestCourse.request.filters.courseCategory = ['Case Study'];
+      this.searchRequestCourse.request.filters.courseCategory = ['Case Study'];      
       await this.searchCourses();
       this.combinedFacets = [this.coursesFacets];
+      this.getCompetencyHierichy();
     } else if (category === SearchCategory.Events) {
       this.courseSearchTotalCount = 0;
       this.peopleSearchTotalCount = 0;
