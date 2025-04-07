@@ -69,6 +69,7 @@ export const SearchOthersFacet = [
   'language',
   'organisation',
   'sectorId',
+  'courseCategory'
 ];
 
 // Events
@@ -185,6 +186,7 @@ export enum FacetType {
   Duration = 'duration',
   Designation = 'designation',
   SourceName = 'sourceName',
+  courseCategory = 'courseCategory',
 }
 
 export enum SortType {

@@ -16,6 +16,8 @@
             </div>
         </ng-container>
     </div>
+
+    <ng-container *ngIf="!searchCategory">
     <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
 
     <div class="filter-form">
@@ -103,10 +105,11 @@
             </ng-container>
           </mat-accordion>
     </div>
+</ng-container>
 
-    <!-- <ng-container *ngIf="formattedFacets && formattedFacets['courseCategory'] && formattedFacets['courseCategory'].length">
+    <ng-container *ngIf="formattedFacets && formattedFacets['courseCategory'] && formattedFacets['courseCategory'].length">
         <div class="languages-filter">
-            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}} 87</p>
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}}</p>
             <div class="mat-full-radius mb-2" *ngIf="formattedFacets['courseCategory'].length > 4">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
@@ -118,18 +121,18 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredContents">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'contentType')">
-                        <span class="min-width-adjust">
-                            {{ options?.name + ' (' + options.count + ')'}}
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
-            <div *ngIf="(filteredLanguages?.length > 4) || (!filterQueryLanguage && formattedFacets?.['language']?.length > 4)"
-                class="brand-color underline cursor-pointer" (click)="toggleShowMore('language')">
-                {{ showAllLanguage ? 'See Less' : 'See More' }}
+            <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('courseCategory')">
+                {{ showAllContents ? 'See Less' : 'See More' }}
             </div>
         </div>
-    </ng-container> -->
+    </ng-container>
 
     <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length">
         <div class="rating-filter">
@@ -474,9 +477,10 @@
                     <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
                                 (change)="onCompetencyAreaSelectionFilter($event, competency)"
                                 (click)="$event.stopPropagation();" class="w-full">
-                                <span class="min-width-adjust">
-                                    {{ competency[competencyAreaNameKey].name }} ({{competency[competencyAreaNameKey]?.count}})
-                                </span>
+                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(competency[competencyAreaNameKey]?.name)" [matTooltipPosition]="'right'"> {{competency[competencyAreaNameKey]?.name}}</span>
+                                <span class="min-width-adjust">{{' (' + competency[competencyAreaNameKey]?.count + ')'}}</span>
+
+
                             </mat-checkbox>
                 </ng-container>
                 <ng-template #expandArea>
@@ -486,9 +490,8 @@
                                 <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
                                     (change)="onCompetencyAreaSelectionFilter($event, competency);"
                                     (click)="$event.stopPropagation();">
-                                    <span class="min-width-adjust">
-                                        {{ competency[competencyAreaNameKey].name }} ({{competency[competencyAreaNameKey]?.count}})
-                                    </span>
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(competency[competencyAreaNameKey]?.name)" [matTooltipPosition]="'right'"> {{competency[competencyAreaNameKey]?.name}}</span>
+                                    <span class="min-width-adjust">{{' (' + competency[competencyAreaNameKey]?.count + ')'}}</span>
                                 </mat-checkbox>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
@@ -509,9 +512,8 @@
                                 *ngFor="let theme of getFilteredThemes(competency)">
                                 <mat-checkbox [checked]="theme?.isChecked"
                                     (change)="onSelectionFilter($event, theme, competencyThemeKey)">
-                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">
-                                        {{ theme?.name }} ({{theme?.count}})
-                                    </span>
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">{{theme?.name}}</span>
+                                    <span class="min-width-adjust ml-1">({{theme?.count}})</span>
                                 </mat-checkbox>
                             </section>
                         </mat-selection-list>

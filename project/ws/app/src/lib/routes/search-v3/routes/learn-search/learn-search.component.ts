@@ -497,7 +497,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         competencyFactet.push({
           [this.competencyAreaNameKey]: {
             name: element,
-            count: result.result?.count || 0,
+            count: this.seeAllResult === SearchCategory.Communities ? _.get(result, 'result.search_results.totalCount', 0) : _.get(result, 'result.count', 0),
             isChecked: false,
           },
           [this.competencyThemeKey]: competencyThemeName,

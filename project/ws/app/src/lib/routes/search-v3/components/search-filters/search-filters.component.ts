@@ -51,6 +51,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   categoryTypeDup = CATEGORY_TYPE;
   categoryTypeEnum = SearchCategory;
   showAllLanguage = false;
+  showAllContents = false;
 
   formattedFacets: any = {};
   selectedFilters: any = {};
@@ -65,7 +66,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
-  // filterQueryContents = '';
+  filterQueryContents = '';
   filterQueryLanguage = '';
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
@@ -276,6 +277,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllOrganisation = !this.showAllOrganisation;
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
+    } else if (togglesection === FacetType.courseCategory) {
+      this.showAllContents = !this.showAllContents;
     }
   }
 
@@ -648,14 +651,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
-  // get filteredContents() {
-  //   let filteredList = this.formattedFacets[FacetType.courseCategory].filter(
-  //     (item: any) =>
-  //       item.name.toLowerCase().includes(this.filterQueryContents.toLowerCase())
-  //   );
+  get filteredContents() {
+    let filteredList = this.formattedFacets[FacetType.courseCategory].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryContents.toLowerCase())
+    );
 
-  //   return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
-  // }
+    return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  }
 
   get filteredLanguages() {
     let filteredList = this.formattedFacets[FacetType.Language].filter(
