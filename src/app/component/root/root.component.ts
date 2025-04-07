@@ -332,7 +332,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           || !!this.currentUrl.startsWith('/viewer/')
           || !!this.currentUrl.startsWith('/public/request')
           || !!this.currentUrl.startsWith('/public/toc')
-          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
+          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)          
         ) {
           this.showFooter = false
           this.showNavbar = false
@@ -347,6 +347,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           this.isNavBarRequired = true
           this.showBottomNav = true
           this.showHubs = true
+
+        }
+        if (window.location.pathname.includes('/globalsearch')) {
+          this.showFooter = false
 
         }
 
