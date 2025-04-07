@@ -1,6 +1,6 @@
 <div class="learnsearch margin-top-l margin-bottom-l">
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
-        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav"
+        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav filter-container-search"
             *ngIf="((combinedFacets.length > 0 || 
         ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show') && !isMobileView">
             <ng-container>
