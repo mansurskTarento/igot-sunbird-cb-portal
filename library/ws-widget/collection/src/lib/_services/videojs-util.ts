@@ -206,7 +206,7 @@ export function videoJsInitializer(
   let readyToRaise = false
   let currTime = 0
   let timespentTimer = passThroughData && passThroughData['resumeFrom'] ? passThroughData['resumeFrom'] : 1
-  if (passThroughData['lastAccessTime'] === undefined) {
+  if (passThroughData && passThroughData['lastAccessTime'] === undefined) {
     passThroughData['lastAccessTime'] = 0
   }
 
@@ -234,9 +234,10 @@ export function videoJsInitializer(
       if (!loaded) {
         eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         heartBeatSubscription = interval(2 * 60000).subscribe(_ => {
+          if(passThroughData) {
           passThroughData['lastAccessTime'] = currTime
           passThroughData['timeSpent'] = timespentTimer
-          console.log("passThroughData['timeSpent'] = timespentTimer ", timespentTimer)
+          }
           eventDispatcher(WsEvents.EnumTelemetrySubType.HeartBeat, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         })
         loaded = true
@@ -255,7 +256,9 @@ export function videoJsInitializer(
       interval(1000).subscribe(() => {
         // if (player.getCurrentTime() > passThroughData['lastAccessTime']) {
         timespentTimer = timespentTimer + 1
+        if (passThroughData) {
         passThroughData['timeSpent'] = timespentTimer
+        }
         // }
       })
     })
