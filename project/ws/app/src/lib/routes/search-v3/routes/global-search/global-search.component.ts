@@ -66,25 +66,10 @@ export class GlobalSearchComponent implements OnInit {
         const sfilters = JSON.parse(queryParams.get('f') || '{}');
         const paramfilter = [
           {
-            mainType: 'primaryCategory',
-            name: sfilters.contentType[0].toLowerCase(),
-            count: '',
-            ischecked: true,
-          },
-          {
-            mainType: 'competencies_v3.name',
-            name: 'competencies_v3.name',
-            count: '',
-            values: sfilters['competencies_v3.name'],
-            ischecked: true,
-          },
-          {
-            mainType: 'topics',
-            name: 'topics',
-            count: '',
-            values: sfilters['topics'],
-            ischecked: true,
-          },
+            mainType: 'course',
+            subType: sfilters?.primaryCategory
+            ,
+          }
         ];
         this.searchparamFilters = paramfilter;
       }
