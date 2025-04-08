@@ -235,8 +235,8 @@ export function videoJsInitializer(
         eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         heartBeatSubscription = interval(2 * 60000).subscribe(_ => {
           if(passThroughData) {
-          passThroughData['lastAccessTime'] = currTime
-          passThroughData['timeSpent'] = timespentTimer
+            passThroughData['lastAccessTime'] = currTime
+            passThroughData['timeSpent'] = timespentTimer
           }
           eventDispatcher(WsEvents.EnumTelemetrySubType.HeartBeat, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         })
@@ -257,7 +257,7 @@ export function videoJsInitializer(
         // if (player.getCurrentTime() > passThroughData['lastAccessTime']) {
         timespentTimer = timespentTimer + 1
         if (passThroughData) {
-        passThroughData['timeSpent'] = timespentTimer
+          passThroughData['timeSpent'] = timespentTimer
         }
         // }
       })
