@@ -36,6 +36,7 @@ const API_ENDPOINTS = {
   ehrmsDataRequest: '/apis/proxies/v8/ehrms/details',
   withDrawRequest: '/apis/protected/v8/workflowhandler/transition',
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains',
+  GET_DESIGNATION_V2: '/apis/proxies/v8/designation/search',
 }
 
 @Injectable()
@@ -134,6 +135,10 @@ export class UserProfileService {
 
   getDesignations(_req: any): Observable<IProfileMetaApiData> {
     return this.http.get<IProfileMetaApiData>(API_ENDPOINTS.getDesignation)
+  }
+
+  getDesignationV2(_req: any): Observable<IProfileMetaApiData> {
+    return this.http.post<IProfileMetaApiData>(API_ENDPOINTS.GET_DESIGNATION_V2, _req)
   }
 
   uploadProfilePhoto(req: any): Observable<any> {

@@ -67,7 +67,7 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-
+ 
 export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentUsername: any
@@ -206,6 +206,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isIgotOrg = false
   userDate: any
   isMatcompleteOpened = false
+  designationListLoadCount = 50
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -330,6 +331,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupData()
     // this.getProfilePageMetaData()
     this.loadDesignations()
+    // this.loadDesignationsData()
     //this.getMasterDesignation()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
@@ -357,14 +359,19 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         distinctUntilChanged(),
         startWith(''),
       )
-      .subscribe(res => {
-        if (res) {
+      .subscribe(searchText => {
+        if (searchText) {
           this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-            val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+            val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
           )
         } else {
-          this.filterDesignationsMeta = this.designationsMeta
+          this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationListLoadCount)
         }
+        // if (searchText) {
+        //   this.loadDesignationsData(searchText); // Call loadDesignationsData with the search text
+        // } else {
+        //   this.filterDesignationsMeta = this.designationsMeta; // Reset to the full list if the search text is empty
+        // }
       })
 
     if (this.otherDetailsForm.get('domicileMedium')) {
@@ -1093,11 +1100,41 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
-        this.filterDesignationsMeta = this.designationsMeta
+        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
       },
       (_err: any) => {
       })
   }
+
+  loadDesignationsData(searchText?: string) {
+    let request: any = {
+      "filterCriteriaMap": {
+          "status": "Active"
+      },
+      "requestedFields": [],
+      "pageNumber":0,
+      "pageSize":20
+    }
+    if(searchText){
+      request['searchString'] = searchText
+    }
+    this.userProfileService.getDesignationV2(request).subscribe(
+      (data: any) => {
+        console.log(data, "data")
+        if(data && data.result && data.result.result && data.result.result.data && data.result.result.data.length ){
+          if(!searchText) {
+            this.designationsMeta = data.result.result.data
+            this.filterDesignationsMeta = this.designationsMeta
+          } else {
+            this.filterDesignationsMeta = data.result.result.data
+          }
+          
+        }
+        // this.designationsMeta = data.responseData
+      },
+      (_err: any) => {
+      })
+  } 
 
   async getMasterDesignation() {
     this.signupService.getOrgReadData(this.orgId).subscribe((result: any) => {
