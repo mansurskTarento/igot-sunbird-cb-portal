@@ -176,7 +176,7 @@ export class PublicCrpComponent {
     }
 
     const fullPath = this.activatedRoute.snapshot.url.map(segment => segment.path).join('/');
-    if(fullPath) {
+    if (fullPath) {
       const crpIndex = fullPath.indexOf('crp/');
       if (crpIndex !== -1) {
         this.crpPath = fullPath.slice(crpIndex);
@@ -214,7 +214,7 @@ export class PublicCrpComponent {
           this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
             width: '400px',
             height: '200px',
-            data: {message: this.invalidLinkMessage, type: 'invalidLink'},
+            data: { message: this.invalidLinkMessage, type: 'invalidLink' },
             disableClose: true,
           });
         }, 200);
@@ -231,7 +231,7 @@ export class PublicCrpComponent {
           this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
             width: '400px',
             height: '200px',
-            data: { type: 'expiredLink', message : message},
+            data: { type: 'expiredLink', message: message },
             disableClose: true,
           });
         }, 200)
@@ -465,7 +465,7 @@ export class PublicCrpComponent {
 
   verifyOtpEmail(otp: any) {
     const email = this.registrationForm.get('email');
-    if (otp ) {
+    if (otp) {
       if (otp && otp.length < 4) {
         this.snackBar.open(
           this.translateLabels('pleaseEnterValidOtp', 'publicsignup')
@@ -537,58 +537,58 @@ export class PublicCrpComponent {
     //   .execute('importantAction')
     //   .subscribe(
     //     (_token) => {
-          // tslint:disable-next-line: no-console
-          let req: any;
-          if (this.heirarchyObject) {
-            req = {
-              firstName: this.registrationForm.value.firstname || '',
-              // lastName: this.registrationForm.value.lastname || '',
-              email: this.registrationForm.value.email || '',
-              phone: `${this.registrationForm.value.mobile}` || '',
-              // position: this.registrationForm.value.position.name || '',
-              group: this.registrationForm.value.group || '',
-              source: `${environment.name}.${this.portalID}` || '',
-              orgName: this.heirarchyObject.orgName || '',
-              channel: this.heirarchyObject.channel || '',
-              organisationType: this.heirarchyObject.sbOrgType || '',
-              organisationSubType: this.heirarchyObject.sbOrgSubType || '',
-              mapId: this.heirarchyObject.mapId || '',
-              sbRootOrgId: this.heirarchyObject.sbRootOrgId,
-              sbOrgId: this.heirarchyObject.sbOrgId,
-              registrationLink: window.location.href,
-              position: this.registrationForm.value.designation || '',
-              isWhatsappConsent: this.registrationForm.value.isWhatsappConsent,
-            };
-          }
+    // tslint:disable-next-line: no-console
+    let req: any;
+    if (this.heirarchyObject) {
+      req = {
+        firstName: this.registrationForm.value.firstname || '',
+        // lastName: this.registrationForm.value.lastname || '',
+        email: this.registrationForm.value.email || '',
+        phone: `${this.registrationForm.value.mobile}` || '',
+        // position: this.registrationForm.value.position.name || '',
+        group: this.registrationForm.value.group || '',
+        source: `${environment.name}.${this.portalID}` || '',
+        orgName: this.heirarchyObject.orgName || '',
+        channel: this.heirarchyObject.channel || '',
+        organisationType: this.heirarchyObject.sbOrgType || '',
+        organisationSubType: this.heirarchyObject.sbOrgSubType || '',
+        mapId: this.heirarchyObject.mapId || '',
+        sbRootOrgId: this.heirarchyObject.sbRootOrgId,
+        sbOrgId: this.heirarchyObject.sbOrgId,
+        registrationLink: window.location.href,
+        position: this.registrationForm.value.designation || '',
+        isWhatsappConsent: this.registrationForm.value.isWhatsappConsent,
+      };
+    }
 
-          this.signupSvc.register(req).subscribe(
-            (_res: any) => {
-              this.openDialog();
-              this.disableBtn = false;
-              this.isMobileVerified = true;
-              this.raiseSignupInteractTelementry()
-              
-            },
-            (err: any) => {
-              this.disableBtn = false;
-              this.loggerSvc.error('Error in registering new user >', err);
-              if (err.error && err.error.params && err.error.params.errmsg) {
-                this.openSnackbar(err.error.params.errmsg);
-              } else {
-                this.openSnackbar(
-                  this.translateLabels('somethingWentWrong', 'common')
-                );
-              }
-            }
+    this.signupSvc.customRegister(req).subscribe(
+      (_res: any) => {
+        this.openDialog();
+        this.disableBtn = false;
+        this.isMobileVerified = true;
+        this.raiseSignupInteractTelementry()
+
+      },
+      (err: any) => {
+        this.disableBtn = false;
+        this.loggerSvc.error('Error in registering new user >', err);
+        if (err.error && err.error.params && err.error.params.errmsg) {
+          this.openSnackbar(err.error.params.errmsg);
+        } else {
+          this.openSnackbar(
+            this.translateLabels('somethingWentWrong', 'common')
           );
-      //   },
-      //   (error) => {
-      //     this.disableBtn = false;
-      //     // tslint:disable-next-line: no-console
-      //     console.error('captcha validation error', error);
-      //     this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
-      //   }
-      // );
+        }
+      }
+    );
+    //   },
+    //   (error) => {
+    //     this.disableBtn = false;
+    //     // tslint:disable-next-line: no-console
+    //     console.error('captcha validation error', error);
+    //     this.openSnackbar(`reCAPTCHA validation failed: ${error}`);
+    //   }
+    // );
   }
 
   checkIfDesignationValid(): boolean {
@@ -614,7 +614,7 @@ export class PublicCrpComponent {
       width: '500px',
       // data: { content, userId: this.userId, userRating: this.userRating },
     });
-    dialogRef.afterClosed().subscribe((_result: any) => {});
+    dialogRef.afterClosed().subscribe((_result: any) => { });
   }
 
   termsAndConditionClick() {
@@ -689,7 +689,7 @@ export class PublicCrpComponent {
         value: this.zohoHtml,
       },
     });
-    dialogRef.afterClosed().subscribe(() => {});
+    dialogRef.afterClosed().subscribe(() => { });
     setTimeout(() => {
       this.callXMLRequest();
     }, 0);
@@ -702,7 +702,7 @@ export class PublicCrpComponent {
     webFormxhr.open(
       'GET',
       'https://desk.zoho.in/support/GenerateCaptcha?action=getNewCaptcha&_=' +
-        new Date().getTime(),
+      new Date().getTime(),
       true
     );
     webFormxhr.onreadystatechange = () => {
@@ -730,7 +730,7 @@ export class PublicCrpComponent {
               this.callXMLRequest();
             });
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     };
     webFormxhr.send();
@@ -763,7 +763,7 @@ export class PublicCrpComponent {
     this.mobileAppsService.mobileTopHeaderVisibilityStatus.next(this.mobileTopHeaderVisibilityStatus)
   }
 
-  
+
   downloadApp(): void {
     const userAgent = navigator.userAgent
     // Windows Phone must come first because its UA also contains "Android"
@@ -772,12 +772,12 @@ export class PublicCrpComponent {
     }
 
     if (/android/i.test(userAgent)) {
-        window.open('https://play.google.com/store/apps/details?id=com.igot.karmayogibharat&hl=en&gl=US', '_blank')
+      window.open('https://play.google.com/store/apps/details?id=com.igot.karmayogibharat&hl=en&gl=US', '_blank')
     }
 
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
     if (/iPad|iPhone|iPod/.test(userAgent)) {
-        window.open('https://apps.apple.com/in/app/igot-karmayogi/id6443949491', '_blank')
+      window.open('https://apps.apple.com/in/app/igot-karmayogi/id6443949491', '_blank')
     }
   }
 
@@ -821,16 +821,16 @@ export class PublicCrpComponent {
   }
 
   raiseImpressionTelemetry() {
-   setTimeout(() => {
-    this.telemetrySvc.end(
-      { 
-      type: "view",
-      pageid: "/crp",
-      uri: this.crpPath,
-      }, {}, {
+    setTimeout(() => {
+      this.telemetrySvc.end(
+        {
+          type: "view",
+          pageid: "/crp",
+          uri: this.crpPath,
+        }, {}, {
         module: "Self Registration",
       })
-   }, 2000);
+    }, 2000);
   }
 
   onFilterDesignation(value: string): void {
