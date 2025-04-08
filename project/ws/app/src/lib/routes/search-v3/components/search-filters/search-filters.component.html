@@ -159,7 +159,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of sectorFilters">
                     <mat-checkbox [checked]="options?.isChecked"
                         (change)="onSelectionFilter($event, options, 'Case Study')">
-                        <span class="min-width-adjust">
+                        <span class="min-width-adjust"  [matTooltip]="capitalizeFirstLetter(options?.displayName)" [matTooltipPosition]="'right'">
                             {{ options?.displayName ? capitalizeFirstLetter(options?.displayName): '' }} ({{options?.count}})
                         </span>
                     </mat-checkbox>
