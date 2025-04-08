@@ -22,6 +22,7 @@ const API_END_POINTS = {
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
   CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
+  CUSTOM_REGISTRATION: '/api/user/v5/custom/register',
 }
 
 @Injectable({
@@ -41,6 +42,12 @@ export class SignupService {
   register(req: any) {
     return this.http.post<any>(
       API_END_POINTS.REGISTER, req
+    )
+  }
+
+  customRegister(req: any) {
+    return this.http.post<any>(
+      API_END_POINTS.CUSTOM_REGISTRATION, req
     )
   }
 

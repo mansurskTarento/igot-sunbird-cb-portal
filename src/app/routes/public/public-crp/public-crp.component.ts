@@ -561,7 +561,7 @@ export class PublicCrpComponent {
       };
     }
 
-    this.signupSvc.register(req).subscribe(
+    this.signupSvc.customRegister(req).subscribe(
       (_res: any) => {
         this.openDialog();
         this.disableBtn = false;
