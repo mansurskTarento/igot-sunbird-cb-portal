@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 const API_END_POINTS = {
   // GET_DEPARTMENTS: `/api/user/registration/v1/getDeptDetails`,
-  REGISTER: `/api/user/registration/v1/register`,
+  REGISTER: `/api/user/v5/self/register`,
   GET_ALL_STATES: '/apis/public/v8/org/v1/list',
   GET_DEPARTMENTS_OF_STATE: '/apis/public/v8/org/v1/list',
   GET_ORGS_OF_DEPT: '/apis/public/v8/org/v1/list',
@@ -21,7 +21,8 @@ const API_END_POINTS = {
   ORG_READ: '/api/org/v1/read',
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
-  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive'
+  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
+  CUSTOM_REGISTRATION: '/api/user/v5/custom/register',
 }
 
 @Injectable({
@@ -41,6 +42,12 @@ export class SignupService {
   register(req: any) {
     return this.http.post<any>(
       API_END_POINTS.REGISTER, req
+    )
+  }
+
+  customRegister(req: any) {
+    return this.http.post<any>(
+      API_END_POINTS.CUSTOM_REGISTRATION, req
     )
   }
 
@@ -176,7 +183,7 @@ export class SignupService {
       }
       const importedBy =
         _.get(c, 'additionalProperties.importedById', null) ===
-        _.get({}, 'userId', '')
+          _.get({}, 'userId', '')
           ? 'You'
           : _.get(c, 'additionalProperties.importedByName', null);
       (c['importedByName'] = importedBy),
