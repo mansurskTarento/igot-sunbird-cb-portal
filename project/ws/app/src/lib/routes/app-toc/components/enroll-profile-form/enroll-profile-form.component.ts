@@ -125,6 +125,7 @@ export class EnrollProfileFormComponent implements OnInit {
   openDesignationDropdown = false
   openLanguageDropdown = false
   canShowOtherDesignation = false
+  designationListLoadCount = 50
   addLoader = 0
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
@@ -254,7 +255,7 @@ export class EnrollProfileFormComponent implements OnInit {
     }
   }
   onDesignationsFocus() {
-    this.openDesignationDropdown = true
+    // this.openDesignationDropdown = true
     setTimeout(() => {
       this.scrollToActive('designation')
     }, 100)
@@ -292,8 +293,10 @@ export class EnrollProfileFormComponent implements OnInit {
           usernameControl.setErrors({ required: true });
         }
       }
+    } else {
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
     }
-    this.openDesignationDropdown = true
+    // this.openDesignationDropdown = true
   }
 
   async getMasterDesignation() {
@@ -305,7 +308,7 @@ export class EnrollProfileFormComponent implements OnInit {
           const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
           const disOrderedList = _.get(organisationsList, '[0].children', [])
           this.designationsMeta = _.sortBy(disOrderedList, 'name')
-          this.filterDesignationsMeta = this.designationsMeta
+          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
           if (this.canShowDesignation) {
             let field = this.userDetailsForm.get('designation')
             if (field && field.value) {
@@ -1133,7 +1136,7 @@ export class EnrollProfileFormComponent implements OnInit {
         if (this.showDoptChanges) {
           this.designationsMeta.push({ name: 'Others', id: 0, description: 'Others' })
         }
-        this.filterDesignationsMeta = this.designationsMeta
+        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
       },
       (_err: any) => {
       })
