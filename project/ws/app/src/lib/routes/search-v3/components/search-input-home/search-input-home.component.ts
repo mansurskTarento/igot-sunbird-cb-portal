@@ -205,31 +205,22 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-
     document.getElementById('global-search-input')?.blur();
-
-    await this.searchInNLP(query.trim());
-
     const queryParams = {
       q: query.trim(),
       search: this.responseNlpQuery || null,
       category: this.selectedSearchCategory || null,
     };
-
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    };
     if (this.ref === 'home') {
       this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], {
-        queryParams,
-        queryParamsHandling: 'merge',
-      });
+      this.router.navigate(['/app/globalsearch'], navigationExtras);
     } else {
-      this.router.navigate([], {
-        relativeTo: this.activated.parent,
-        queryParams,
-        queryParamsHandling: 'merge',
-      });
+      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
     }
-
     localStorage.removeItem('activeRoute');
     this.openSearchTemplate = false;
   }

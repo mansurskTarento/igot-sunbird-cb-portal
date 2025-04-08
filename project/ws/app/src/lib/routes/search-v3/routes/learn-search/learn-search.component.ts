@@ -116,6 +116,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   competencyFactet: any = [];
   searchSortFilter: string = '';
   searchPeopleLoader = false;
+  filtersChipFromLearn: string[] = [];
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -184,13 +185,32 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ? true
           : false;
     }
+    if(changes['paramFilters'] && changes['paramFilters'].currentValue && changes['paramFilters'].currentValue.length) {
+      this.searchContentLoader = true;
+
+      this.searchRequestCourse.request.filters.courseCategory = changes['paramFilters'].currentValue[0].subType
+      
+      this.seeAllResult = SearchCategory.Courses;
+      this.eventSearchTotalCount = 0;
+      this.peopleSearchTotalCount = 0;
+      this.communitiesSearchTotalCount = 0;
+      this.searchRequestCourse.request.limit = this.initialPaginationSize;
+      await this.searchCourses();
+      this.sideNavBarOpened = false
+      this.searchContentLoader = false;
+      this.filtersChipFromLearn = changes['paramFilters'].currentValue[0].subType
+      return
+    }
+
     if (
       (changes.searchQuery &&
         changes.searchQuery.currentValue?.query !==
           changes.searchQuery.previousValue?.query) ||
       changes.searchQuery.currentValue?.searchCategory !==
         changes.searchQuery.previousValue?.searchCategory
-    ) {
+      ) {
+      this.searchContentLoader = true;
+      this.searchPeopleLoader = true;
       this.resetAllSearchParams();
       this.statedata = {
         param: this.searchQuery?.nlp
@@ -198,8 +218,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           : this.searchQuery.query,
         path: 'Search',
       };
-      this.searchContentLoader = true;
-      this.searchPeopleLoader = true
       if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || '';
         this.seeAllResults(category);
@@ -216,6 +234,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       this.updateNoResultMessage(this.statedata.param);
     }
+
+    
   }
 
   getName(userDetails: any) {
@@ -1339,5 +1359,22 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
     return processedEvents;
+  }
+
+  async removeFilterChip(filter: any) {
+    this.searchContentLoader = true;
+    this.filtersChipFromLearn = this.filtersChipFromLearn.filter(ele => ele !== filter)
+    this.searchRequestCourse.request.filters.courseCategory = this.filtersChipFromLearn
+    
+    if(!this.filtersChipFromLearn.length) {
+      this.sideNavBarOpened = true
+      this.seeAllResults(SearchCategory.Courses)
+      return 
+    }
+
+    await this.searchCourses()
+    this.searchContentLoader = false;
+
+    
   }
 }

@@ -50,6 +50,18 @@
                     </ng-container>
                 </ng-container>
 
+                <ng-container *ngIf="filtersChipFromLearn.length">
+                    <div class="filter-list flex items-center flex-wrap gap-2 mb-4">
+                        <ng-container *ngFor="let item of filtersChipFromLearn">
+                            <div class="filter-pill flex items-center">
+                                <span class="font-normal text-xs" [matTooltip]="item">{{item}}</span>
+                                <button mat-icon-button color="primary" (click)="removeFilterChip(item)">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
                 <ng-container>
                     <!-- Content Card -->
                     <ng-container
