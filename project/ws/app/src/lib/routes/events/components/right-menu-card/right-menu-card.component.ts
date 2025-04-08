@@ -223,14 +223,12 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   navigateToPLayer() {
-    
     if (this.isenrollFlow) {
       if (this.eventData.registrationLink.includes('youtube.com')) {
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
       } else {
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
       }
-      this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
     } else {
       window.open(this.getLink(), "_blank")
     }
@@ -314,7 +312,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get completedAfterExpiry() {
-    if(this.eventData && this.enrolledEvent) {
+    if (this.eventData && this.enrolledEvent) {
       // console.log('completedAfterExpiry :: ')
       const eventEndTimestamp = new Date(this.eventData.endDate).getTime()
       const completedTimestamp = new Date(this.enrolledEvent.completedOn).getTime()
