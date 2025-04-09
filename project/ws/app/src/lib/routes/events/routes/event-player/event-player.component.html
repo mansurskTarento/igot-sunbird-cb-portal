@@ -11,8 +11,8 @@
       <router-outlet></router-outlet>
     </div>
   </div>
-  <div class="meta-section">
-    <div class="flex flex-row margin-top-xl margin-bottom-xl ">
+  <div class="meta-section mt-3">
+    <!-- <div class="flex flex-row margin-top-xl margin-bottom-xl ">
       <div class="flex flex-row top_banner_box">
         <div class="flex flex-auto">
           <div class="flex flex-col flex-auto title_box">
@@ -37,10 +37,6 @@
                 *ngIf="eventData?.instructions">
                 {{eventData?.instructions}}
               </p>
-              <!-- <p class="flex mat-error" role="link" tabindex="0" i18n-aria-label *ngIf="currentEvent">
-                  {{eventData?.status}}
-                  
-                </p> -->
               <div *ngIf="pageData?.enrollFlowItems?.includes(eventData?.resourceType) && currentEvent">
                 <button mat-raised-button type="button"
                   class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }}
@@ -50,17 +46,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <!-- <div class="flex flex-1 flex-column mt-5">
-        <div class="flex flex-1 filter">
-            <a href="javascript:void(0)" role="button" class="filter-option" mat-button>
-              OVERVIEW
-            </a>
-            <a href="javascript:void(0)" role="button" class="filter-option" mat-button>
-              PARTICIPANTS
-            </a>
-        </div>
     </div> -->
+
     <mat-tab-group>
       <mat-tab label="{{'events.eventInfo' | translate}}">
         <div class="flex flex-1 flex-column mb-2">
