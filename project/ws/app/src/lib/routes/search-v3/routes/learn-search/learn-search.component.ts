@@ -486,7 +486,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         ]);
         searchRequestCourse.request.query = this.statedata?.param;
         searchRequestCourse.request.filters[this.competencyAreaNameKey] =
-          element;
+          [element];
+        searchRequestCourse.request.filters.courseCategory = ['Case Study']
         result = await this.searchV3Service.searchCoursesv4(
           searchRequestCourse
         );

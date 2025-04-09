@@ -112,7 +112,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (!coursesCategory) return;
 
         const caseStudyCategory = _.find(coursesCategory.filters, {
-          name: 'case-studies',
+          name: 'case-study',
         });
 
         const sectorFilters = this.formattedFacets.sectorId.map(
@@ -193,10 +193,22 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.categoryType = this.categoryTypeDup.filter(
           (type) => type.name === this.searchCategory
         );
+        if(this.searchCategory === 'case-study' && !this.categoryType.length) {
+          this.categoryType = [
+            {
+              name: 'case-study',
+              count: 0,
+              isChecked: false,
+              displayName: 'Case study',
+              filters: [],
+              disabled: false,
+            }
+          ]
+        }
         if (this.categoryType.length) {
           this.categoryType[0].isChecked = true;
           this.selectedFilters[this.categoryType[0].name] = [
-            this.categoryType[0].name,
+            this.categoryType[0].displayName,
           ];
           this.selectedFilterChips = [
             {
@@ -444,6 +456,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   clearFilterChip(item: { type: string; value: string }) {
     let facets;
     const types = this.categoryTypeDup.map((category) => category.name);
+    if(this.searchCategory === 'case-study') {
+      types.push('case-study')
+    }
     if (types.includes(item.type)) {
       facets = this.categoryType;
 
@@ -657,7 +672,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         item.name.toLowerCase().includes(this.filterQueryContents.toLowerCase())
     );
 
-    return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+    return this.showAllContents ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredLanguages() {

@@ -107,7 +107,7 @@
     </div>
 </ng-container>
 
-    <ng-container *ngIf="formattedFacets && formattedFacets['courseCategory'] && formattedFacets['courseCategory'].length">
+    <ng-container *ngIf="formattedFacets && formattedFacets['courseCategory'] && formattedFacets['courseCategory'].length && searchCategory !== 'case-study'">
         <div class="languages-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}}</p>
             <div class="mat-full-radius mb-2" *ngIf="formattedFacets['courseCategory'].length > 4">

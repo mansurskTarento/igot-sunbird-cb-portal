@@ -59,7 +59,7 @@ export enum SearchCategory {
   Programs = 'programs',
   Events = 'events',
   People = 'peoples',
-  CaseStudy = 'case-studies',
+  CaseStudy = 'case-study',
   Communities = 'communities',
 }
 
