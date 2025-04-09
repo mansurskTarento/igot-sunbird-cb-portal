@@ -369,8 +369,9 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
             val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
           )
         } else {
-          this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationListLoadCount)
+          this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationDefaultLoadCount)
           this.desigantionFilterEnable = false
+          this.designationListLoadCount = this.designationDefaultLoadCount;
         }
         // if (searchText) {
         //   this.loadDesignationsData(searchText); // Call loadDesignationsData with the search text
@@ -1107,7 +1108,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.designationsMeta = data.responseData
       
       // Initialize filtered list
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
       this.checkCurrentDesignationPresent();
       
       },
@@ -2043,7 +2044,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (opened) {
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {

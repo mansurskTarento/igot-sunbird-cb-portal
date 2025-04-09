@@ -298,8 +298,10 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       }
     } else {
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
       this.desigantionFilterEnable =false
+
+      this.designationListLoadCount = this.designationDefaultLoadCount;
     }
     // this.openDesignationDropdown = true
   }
@@ -313,7 +315,7 @@ export class EnrollProfileFormComponent implements OnInit {
           const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
           const disOrderedList = _.get(organisationsList, '[0].children', [])
           this.designationsMeta = _.sortBy(disOrderedList, 'name')
-          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
+          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
           if (this.canShowDesignation) {
             let field = this.userDetailsForm.get('designation')
             if (field && field.value) {
@@ -1141,7 +1143,7 @@ export class EnrollProfileFormComponent implements OnInit {
         if (this.showDoptChanges) {
           this.designationsMeta.push({ name: 'Others', id: 0, description: 'Others' })
         }
-        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount)
+        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
         this.checkCurrentDesignationPresent()
       },
       (_err: any) => {
@@ -1570,7 +1572,7 @@ export class EnrollProfileFormComponent implements OnInit {
     if (opened) {
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
