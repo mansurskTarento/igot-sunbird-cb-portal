@@ -21,8 +21,24 @@
         line-height: 24px;
     }
     .attach-block {
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
         .attach-title {
-            margin-bottom: 8px;
+            margin:8px 0;
         }
     }
 }
+
+.attach-link {
+    background: orange;
+    padding: 8px 35px;
+    border-radius: 20px;
+    color: #000 !important;
+
+    .mat-icon {
+        vertical-align: middle;
+    }
+}
+

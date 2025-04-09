@@ -1452,9 +1452,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       const postData: any = {
         'request': {
           'userId': this.configService.unMappedUser.id,
-          'employmentDetails': {
-            'departmentName': this.primaryDetailsForm.value['designation'],
-          },
           'profileDetails': {
             'professionalDetails': [],
           },
