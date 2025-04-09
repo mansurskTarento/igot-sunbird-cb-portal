@@ -194,7 +194,7 @@
                     
                     <div class="custom-select-container">
                       <mat-form-field appearance="outline" class="fixed-height-select">
-                        <mat-select placeholder="Select Option" formControlName="designation"   panelClass="search-panel">
+                        <mat-select placeholder="Select Option" formControlName="designation"   panelClass="search-panel" (openedChange)="setupScrollListener($event)">
                           <!-- Sticky search input container -->
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper">
@@ -218,6 +218,10 @@
                           <mat-option *ngFor="let option of filterDesignationsMeta " [value]="option?.name">
                                   {{ option?.name }}
                           </mat-option>
+                          <!-- Loading indicator -->
+                          <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                            Loading more...
+                          </div>
                           <!-- No results message -->
                           <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
                                   No matches found
