@@ -924,3 +924,32 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     padding-bottom: 0 !important;
   }
 }
+
+.loading-indicator {
+  text-align: center;
+  padding: 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.fixed-height-select {
+  height: 45px !important;
+  
+  .mat-form-field-wrapper {
+    height: 45px !important;
+  }
+  
+  .mat-form-field-flex {
+    height: 45px !important;
+  }
+  
+  .mat-form-field-infix {
+    padding: 0.5em 0;
+  }
+}
+
+::ng-deep .search-panel {
+  .mat-select-panel {
+    min-width: 100% !important;
+  }
+}
