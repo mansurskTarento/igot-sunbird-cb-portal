@@ -35,6 +35,7 @@ export class Filters {
   language?: string[];
   organisation?: string[];
   sectorId?: string[];
+  resourceType?: string[];
   [key: string]: any;
   constructor() {
     this.contentType = ['Course'];
@@ -73,7 +74,7 @@ export const SearchOthersFacet = [
 ];
 
 // Events
-export const SearchEventfacet = ['duration', 'language', 'sourceName'];
+export const SearchEventfacet = ['duration', 'language', 'sourceName', 'startDateTimeInEpoch', 'endDateTimeInEpoch', 'resourceType'];
 
 export const SearchEventFields = [
   'name',
@@ -99,6 +100,10 @@ export const SearchEventFields = [
   'creatorDetails',
   'appIcon',
   'recordedLinks',
+  "startDateTime",
+  "startDateTimeInEpoch",
+  "endDateTime",
+  "endDateTimeInEpoch"
 ];
 
 export class SearchPeoplesRequest {

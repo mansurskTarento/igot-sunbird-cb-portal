@@ -5,7 +5,7 @@
         ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show') && !isMobileView">
             <ng-container>
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
-                    [competencyFactet]="competencyFactet" (appliedFilter)="applySearchFilter($event)"
+                    [competencyFactet]="competencyFactet" (appliedFilter)="applySearchFilter($event)" [typesOfEvents]="typesOfEventsFilters"
                     [karmayogiBadge]="veifiedKarmayogi"
                     (constructQueryParam)="constructQueryParam($event)"
                     (applyFilterFromLearn)="applyFilterFromLearn($event)"></ws-app-search-filters>
