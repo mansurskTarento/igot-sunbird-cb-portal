@@ -891,6 +891,7 @@ export class PublicCrpComponent {
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.filteredDesignationsList = this.designationsList.slice(0, this.designationListLoadCount);
 
+      this.checkCurrentDesignationPresent()
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element

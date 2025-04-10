@@ -2046,6 +2046,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
+      this.checkCurrentDesignationPresent()
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
