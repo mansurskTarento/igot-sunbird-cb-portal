@@ -18,7 +18,6 @@ import {
 } from '@sunbird-cb/utils-v2';
 import {
   CATEGORY_TYPE,
-  TypeOfEvents,
 } from '../../../../../../../author/src/lib/constants/constant';
 import {
   Facet,
@@ -30,6 +29,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
+import { MatRadioChange } from '@angular/material/radio';
 @Component({
   selector: 'ws-app-search-filters',
   templateUrl: './search-filters.component.html',
@@ -43,6 +43,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() applyFilterFromLearn = new EventEmitter<{ [key: string]: any }>();
   @Input() karmayogiBadge: any;
   @Input() competencyFactet: any;
+  @Input() typesOfEvents: any;
 
   private subscription: Subscription = new Subscription();
   queryParams: any;
@@ -156,7 +157,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       this.setCategoryType();
-    }    
+    }   
+    
+    if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
+      this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
+    } 
+
   }
 
   formatSectorName(name: string): string {
@@ -219,7 +225,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         if (this.searchCategory === SearchCategory.Events) {
-          this.formattedFacets['typeOfEvents'] = TypeOfEvents;
+          this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
+
         }
       } else {
         this.categoryType = this.categoryTypeDup.map((cat) => ({
@@ -392,6 +399,22 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (types.includes(type) && !option.isChecked) {
       this.constructQueryParam.emit('');
     }
+  }
+
+  onTypesOfEventsChange(_event: MatRadioChange, option: any, radioType:string) {
+    const type = option?.name;
+    this.selectedFilters[radioType] = [type];
+  
+    const eventOptions = this.formattedFacets[radioType];
+    if (eventOptions) {
+      eventOptions.forEach((opt: any) => {
+        opt.isChecked = opt.name === type;
+      });
+    }
+  
+    this.appliedFilter.emit(this.selectedFilters);
+    this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+  
   }
 
   onCompetencyAreaSelectionFilter(event: MatCheckboxChange,
@@ -752,4 +775,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
     return null;
   }
+
+  areAllEventCountsGreaterThanZero(events: { count: number }[]): boolean {
+    return events.every(event => event.count > 0);
+  }
+  
 }

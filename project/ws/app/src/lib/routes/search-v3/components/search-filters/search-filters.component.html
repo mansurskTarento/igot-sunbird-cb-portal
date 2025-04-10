@@ -127,29 +127,31 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
-            <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
+            <!-- <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
                 class="brand-color underline cursor-pointer" (click)="toggleShowMore('courseCategory')">
                 {{ showAllContents ? 'See Less' : 'See More' }}
-            </div>
+            </div> -->
         </div>
     </ng-container>
 
-    <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length">
-        <div class="rating-filter">
-            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.typeOfEvents' | translate}}
-            </p>
-            <mat-selection-list>
-                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['typeOfEvents']">
-                    <mat-checkbox [checked]="options?.isChecked"
-                        (change)="onSelectionFilter($event, options, 'typeOfEvents')">
-                        <span class="min-width-adjust">
-                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
-                        </span>
-                    </mat-checkbox>
-                </section>
-            </mat-selection-list>
+    <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length && categoryTypeEnum.Events === searchCategory">
+        <div *ngIf="areAllEventCountsGreaterThanZero(formattedFacets['typeOfEvents'])" class="rating-filter">
+          <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">
+            {{ 'searchfilters.typeOfEvents' | translate }}
+          </p>
+          <mat-radio-group (change)="onTypesOfEventsChange(true, $event.value, 'typeOfEvents')">
+            <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['typeOfEvents']">
+                <ng-container *ngIf="options?.count">
+              <mat-radio-button [value]="options" [checked]="options?.isChecked">
+                <span class="min-width-adjust">
+                  {{ options?.name ? capitalizeFirstLetter(options?.name) + ' (' + options?.count + ')' : '' }}
+                </span>
+              </mat-radio-button>
+            </ng-container>
+            </section>
+          </mat-radio-group>
         </div>
-    </ng-container>
+      </ng-container>
 
     <ng-container *ngIf="formattedFacets && formattedFacets['sectorId'] && formattedFacets['sectorId'].length && searchCategory === categoryTypeEnum.CaseStudy">
         <div class="rating-filter">
@@ -161,6 +163,22 @@
                         (change)="onSelectionFilter($event, options, 'Case Study')">
                         <span class="min-width-adjust"  [matTooltip]="capitalizeFirstLetter(options?.displayName)" [matTooltipPosition]="'right'">
                             {{ options?.displayName ? capitalizeFirstLetter(options?.displayName): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="formattedFacets && formattedFacets['resourceType'] && formattedFacets['resourceType'].length">
+        <div class="rating-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['resourceType']">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'resourceType')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name + ' (' + options.count + ')'}}
                         </span>
                     </mat-checkbox>
                 </section>
