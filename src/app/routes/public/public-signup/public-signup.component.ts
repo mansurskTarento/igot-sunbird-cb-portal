@@ -656,10 +656,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       .subscribe(
         _token => {
           // tslint:disable-next-line: no-console
-          
-        },
-       
-      )
           let req: any
           if (this.heirarchyObject) {
             req = {
@@ -699,12 +695,15 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               }
             }
           )
-          error => {
-            this.disableBtn = false
-            // tslint:disable-next-line: no-console
-            console.error('captcha validation error', error)
-            this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
-          }
+        },
+        error => {
+          this.disableBtn = false
+          // tslint:disable-next-line: no-console
+          console.error('captcha validation error', error)
+          this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
+        }
+      )
+         
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
