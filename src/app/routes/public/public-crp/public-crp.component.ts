@@ -171,6 +171,7 @@ export class PublicCrpComponent {
       confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       designation: new UntypedFormControl('', [Validators.required]),
       isWhatsappConsent: new UntypedFormControl(false),
+      searchDesignation: new UntypedFormControl('')
     });
     if (
       this.configSvc.instanceConfig &&
@@ -890,7 +891,15 @@ export class PublicCrpComponent {
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.filteredDesignationsList = this.designationsList.slice(0, this.designationListLoadCount);
-
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('');
+      }
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
       this.checkCurrentDesignationPresent()
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
@@ -957,5 +966,21 @@ export class PublicCrpComponent {
         this.filteredDesignationsList.unshift(newDesignation);
       }
     }
+  }
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.registrationForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.registrationForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
   }
 }

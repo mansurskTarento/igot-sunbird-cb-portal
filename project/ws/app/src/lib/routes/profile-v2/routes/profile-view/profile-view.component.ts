@@ -159,6 +159,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   primaryDetailsForm = new UntypedFormGroup({
     group: new UntypedFormControl('', [Validators.required]),
     designation: new UntypedFormControl('', [Validators.required]),
+    searchDesignation:  new UntypedFormControl(''),
   })
   approvalPendingFields = []
   rejectedByMDOData = []
@@ -356,7 +357,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isIgotOrg = this.configService.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
 
-    this.primaryDetailsForm.get('designation')!.valueChanges
+    this.primaryDetailsForm.get('searchDesignation')!.valueChanges
       .pipe(
         debounceTime(250),
         distinctUntilChanged(),
@@ -372,6 +373,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationDefaultLoadCount)
           this.desigantionFilterEnable = false
           this.designationListLoadCount = this.designationDefaultLoadCount;
+          this.checkCurrentDesignationPresent()
         }
         // if (searchText) {
         //   this.loadDesignationsData(searchText); // Call loadDesignationsData with the search text
@@ -2041,11 +2043,20 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupScrollListener(opened: boolean): void {
+    
     if (opened) {
+      if (this.primaryDetailsForm.get('searchDesignation')) {
+        this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+      }
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
       this.checkCurrentDesignationPresent()
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
@@ -2081,6 +2092,45 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           }, 500); // Small timeout to simulate loading and prevent multiple triggers
         }
       }
+    }
+  }
+  // Add these methods to your component class
+
+  clearSearchDesignation(event: Event): void {
+    event.stopPropagation();
+    if (this.primaryDetailsForm.get('searchDesignation')) {
+      this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+    }
+  }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.primaryDetailsForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.primaryDetailsForm.get('searchDesignation')) {
+        this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.primaryDetailsForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+
+  cancelRequest() {
+    if ((this.portalProfile.professionalDetails && this.portalProfile.professionalDetails.length)) {
+      this.primaryDetailsForm.patchValue({
+        group: this.portalProfile.professionalDetails[0].group,
+        designation: this.portalProfile.professionalDetails[0].designation,
+      })
+    } else {
+      this.primaryDetailsForm.patchValue({
+        group: '',
+        designation: '',
+      })
     }
   }
 }
