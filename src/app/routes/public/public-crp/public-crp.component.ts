@@ -423,7 +423,7 @@ export class PublicCrpComponent {
   sendOtpEmail() {
     const email = this.registrationForm.get('email');
     if (email && email.value && email.valid) {
-      this.signupSvc.sendOtp(email.value, 'email').subscribe(
+      this.signupSvc.sendOtpV2(email.value, 'email').subscribe(
         () => {
           this.otpEmailSend = true;
           alert(

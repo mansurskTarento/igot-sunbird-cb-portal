@@ -70,6 +70,17 @@ export class SignupService {
     }
     return this.http.post(API_END_POINTS.sendOtpExt, reqObj)
   }
+
+  sendOtpV2(value: any, type: string): Observable<any> {
+    const reqObj = {
+      request: {
+        type: `${type}`,
+        key: `${value}`,
+      },
+    }
+    return this.http.post(API_END_POINTS.sendOtp, reqObj)
+  }
+  
   resendOtp(value: any, type: string) {
     const reqObj = {
       request: {
