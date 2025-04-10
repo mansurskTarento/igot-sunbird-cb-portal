@@ -656,7 +656,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.constructQueryParam('communities');
           this.seeAllResult = SearchCategory.Communities;
         } else if (key === 'typeOfEvents') {
-          debugger
             const currentEpochTime = moment().valueOf();
             const endOfDayEpochTime = moment().endOf('day').valueOf();
             const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
