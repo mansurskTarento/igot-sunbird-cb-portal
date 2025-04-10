@@ -5,7 +5,7 @@ import { SignupService } from './signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService, WsEvents, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
 import { startWith, map, pairwise } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
-import { ReCaptchaV3Service } from 'ng-recaptcha'
+// import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
 import { DOCUMENT, isPlatformBrowser } from '@angular/common'
 // tslint:disable-next-line: import-name
@@ -154,7 +154,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
-    private recaptchaV3Service: ReCaptchaV3Service,
+    // private recaptchaV3Service: ReCaptchaV3Service,
     private router: Router,
     @Inject(DOCUMENT) private _document: any,
     @Inject(PLATFORM_ID) private _platformId: any,
@@ -652,11 +652,19 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   signup() {
     this.disableBtn = true
-    this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
-      .subscribe(
-        _token => {
-          // tslint:disable-next-line: no-console
-          console.log('captcha validation success')
+    // this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
+    //   .subscribe(
+    //     _token => {
+    //       // tslint:disable-next-line: no-console
+          
+    //     },
+    //     error => {
+    //       this.disableBtn = false
+    //       // tslint:disable-next-line: no-console
+    //       console.error('captcha validation error', error)
+    //       this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
+    //     }
+    //   )
           let req: any
           if (this.heirarchyObject) {
             req = {
@@ -696,14 +704,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               }
             }
           )
-        },
-        error => {
-          this.disableBtn = false
-          // tslint:disable-next-line: no-console
-          console.error('captcha validation error', error)
-          this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
-        }
-      )
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
