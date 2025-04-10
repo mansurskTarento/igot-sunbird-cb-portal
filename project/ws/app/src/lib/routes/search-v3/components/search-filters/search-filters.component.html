@@ -135,17 +135,19 @@
     </ng-container>
 
     <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length && categoryTypeEnum.Events === searchCategory">
-        <div class="rating-filter">
+        <div *ngIf="areAllEventCountsGreaterThanZero(formattedFacets['typeOfEvents'])" class="rating-filter">
           <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">
             {{ 'searchfilters.typeOfEvents' | translate }}
           </p>
           <mat-radio-group (change)="onTypesOfEventsChange(true, $event.value, 'typeOfEvents')">
             <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['typeOfEvents']">
+                <ng-container *ngIf="options?.count">
               <mat-radio-button [value]="options" [checked]="options?.isChecked">
                 <span class="min-width-adjust">
                   {{ options?.name ? capitalizeFirstLetter(options?.name) + ' (' + options?.count + ')' : '' }}
                 </span>
               </mat-radio-button>
+            </ng-container>
             </section>
           </mat-radio-group>
         </div>
