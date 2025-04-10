@@ -230,11 +230,20 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   setupScrollListener(opened: boolean): void {
     if (opened) {
+      if (this.transferRequestForm.get('searchDesignation')) {
+        this.transferRequestForm.get('searchDesignation')!.setValue('');
+      }
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.designationData = this.data.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
       this.checkCurrentDesignationPresent()
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
@@ -270,5 +279,21 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.transferRequestForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.transferRequestForm.get('searchDesignation')) {
+        this.transferRequestForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.transferRequestForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
   }
 }

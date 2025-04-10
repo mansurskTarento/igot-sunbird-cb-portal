@@ -154,23 +154,23 @@
                                       </mat-form-field> -->
                                       <div class="custom-select-container">
                                         <mat-form-field appearance="outline" class="margin-top-s fixed-height-select">
-                                          <mat-select placeholder="Select Designation" formControlName="designation"   panelClass="search-panel" (openedChange)="setupScrollListener($event)">
+                                          <mat-select placeholder="Select Designation" formControlName="designation"   panelClass="search-panel" (closed)="onDesignationDropdownClosed()" (openedChange)="setupScrollListener($event)">
                                             <!-- Sticky search input container -->
                                             <div class="sticky-search-container" (click)="$event.stopPropagation()">
                                               <div class="search-input-wrapper">
                                                 <input 
                                                             type="text" 
                                                             placeholder="Search designation" 
-                                                            formControlName="designation" 
+                                                            formControlName="searchDesignation" 
                                                             class="search-input"
                                                             (input)="onFilterDesignation($event.target.value)"
                                                             (keydown)="$event.stopPropagation()"
                                                             autocomplete="off">
                                                 <button 
-                                                            *ngIf="designation?.value" 
+                                                            *ngIf="searchDesignation?.value" 
                                                             type="button" 
                                                             class="clear-button" 
-                                                            (click)="designation?.setValue('')">
+                                                            (click)="searchDesignation?.setValue('')">
                                                             ✕
                                                 </button>
                                               </div>

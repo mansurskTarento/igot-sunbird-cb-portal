@@ -58,7 +58,7 @@
                 </mat-form-field> -->
 
                 <mat-form-field appearance="none" class="profile-form-field">
-                    <mat-select placeholder="Select Designation" formControlName="designation"   panelClass="search-panel" (openedChange)="setupScrollListener($event)">
+                    <mat-select placeholder="Select Designation" formControlName="designation"  (closed)="onDesignationDropdownClosed()"  panelClass="search-panel" (openedChange)="setupScrollListener($event)">
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
                         <div class="search-input-wrapper">
