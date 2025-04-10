@@ -135,7 +135,7 @@
     </ng-container>
 
     <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length && categoryTypeEnum.Events === searchCategory">
-        <div *ngIf="areAllEventCountsGreaterThanZero(formattedFacets['typeOfEvents'])" class="rating-filter">
+        <div class="rating-filter">
           <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">
             {{ 'searchfilters.typeOfEvents' | translate }}
           </p>

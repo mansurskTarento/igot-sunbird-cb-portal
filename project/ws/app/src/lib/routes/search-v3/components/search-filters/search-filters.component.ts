@@ -774,10 +774,5 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
     return null;
-  }
-
-  areAllEventCountsGreaterThanZero(events: { count: number }[]): boolean {
-    return events.every(event => event.count > 0);
-  }
-  
+  }  
 }
