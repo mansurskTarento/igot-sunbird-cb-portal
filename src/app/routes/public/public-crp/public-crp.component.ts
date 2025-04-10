@@ -341,7 +341,7 @@ export class PublicCrpComponent {
   resendOTP() {
     const mob = this.registrationForm.get('mobile');
     if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
-      this.signupSvc.resendOtp(mob.value, 'phone').subscribe(
+      this.signupSvc.resendOtpv2(mob.value, 'phone').subscribe(
         (res: any) => {
           if (_.get(res, 'result.response').toUpperCase() === 'SUCCESS') {
             this.otpSend = true;

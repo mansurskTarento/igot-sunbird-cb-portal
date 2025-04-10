@@ -91,6 +91,17 @@ export class SignupService {
     return this.http.post(API_END_POINTS.ReSendOtpExt, reqObj)
 
   }
+
+  resendOtpv2(value: any, type: string) {
+    const reqObj = {
+      request: {
+        type: `${type}`,
+        key: `${value}`,
+      },
+    }
+    return this.http.post(API_END_POINTS.ReSendOtp, reqObj)
+
+  }
   verifyOTP(otp: number, value: any, type: string) {
     const reqObj = {
       request: {
