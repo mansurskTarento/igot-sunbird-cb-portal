@@ -1,20 +1,18 @@
-import { AfterViewChecked, Component,ElementRef,Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
-import { RootService } from 'src/app/component/root/root.service';
-import { environment } from 'src/environments/environment';
-import { WebSocketService } from './socket.service';
-import { Subscription } from 'rxjs';
+import { RootService } from '../../component/root/root.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'viewer-ai-tutor',
-  templateUrl: './ai-tutor.component.html',
-  styleUrls: ['./ai-tutor.component.scss']
+  selector: 'ws-app-igot-sarthi',
+  templateUrl: './igot-sarthi.component.html',
+  styleUrls: ['./igot-sarthi.component.scss']
 })
-export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
-  @Input() content:any
   @Input() userJourney = []
+  @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
   language: any[] = []
@@ -55,13 +53,63 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  aiTutorResult:any
+  aiSearchResult = {
+    "answer": "Great question! Let's break this down.  Learning about energy systems and resource quality can feel overwhelming, but it's actually quite fascinating once you get the hang of it.\n\n**Core Explanation:**\n\nImagine our global energy system as a giant network.  It's all about how we get energy from different *resources*, transform it, and use it.  The *quality* of the energy resource refers to how easily it can be converted into usable energy and how much energy it provides.\n\n*Key Term 1: **Energy Resources***\n\nSimple definition:  The sources from which we obtain energy.  Imagine a toolbox filled with different tools – each tool represents a different energy resource.\n\n*Key Term 2: **Resource Quality***\n\nFunction with real-world analogy: It's like comparing different types of wood.  Hardwood burns longer and hotter (higher quality) than softwood (lower quality).  Similarly, some energy resources are easier and more efficient to convert into usable energy than others.\n\nPractical application example:  Burning coal to generate electricity is less efficient and produces more pollution than using solar power.  This is because coal is a lower-quality energy resource compared to solar energy.\n\nResource Reference:  The provided videos offer a good overview, particularly the sections on energy resources (0:28-1:53 in the first video) and the energy system diagram (2280-2400 in the third video).  They also discuss energy units (2880-2890 in the second video).\n\nCurious to master this? The *Energy System Architects* course on iGOT Saarthi has hands-on simulations and real-world case studies!\n",
+    "RetrievedChunks": [
+        {
+            "Identifier": "do_1134149303858216961328",
+            "Name": "Fundamentals of Energy Modelling",
+            "Description": "The module explained the types of energy resources, characteristics of the   resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system. Units and measurement of energy is specific in nature. The module discussed about the precious, imprecious and commercial units of measurement and   conversion of units.\n",
+            "ContentType": "Course",
+            "ArtifactURL": "unknown",
+            "mimeType": "application/vnd.ekstep.content-collection",
+            "contentStart": " ",
+            "ContentEnd": " "
+        },
+        {
+            "Identifier": "do_1134122095281766401103",
+            "Name": "Basics of Power System",
+            "Description": "This course aims to provide the fundamental idea of the the basic quantities or parameters and the measuring units of the power system. This knowledge is essential to understand power ratings and capacities. The course also briefly describes the philosophy of the power system supply chain.",
+            "ContentType": "Course",
+            "ArtifactURL": "unknown",
+            "mimeType": "application/vnd.ekstep.content-collection",
+            "contentStart": " ",
+            "ContentEnd": " "
+        },
+        {
+            "Identifier": "do_113408690632687616156",
+            "Name": "Session 02 - Energy use and GHG emissions",
+            "Description": "To provide a good basis for low carbon development planning it is vital to begin by collecting accurate information on a country’s energy resources, production and consumption, and associated GHG emissions.",
+            "ContentType": "Resource",
+            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_113408690632687616156/artifact/do_113408690632687616156_1636803082667_do_1133605506297364481376_1630926722194_module02session021630926656118.mp4",
+            "mimeType": "video/mp4",
+            "contentStart": "0",
+            "ContentEnd": "120"
+        },
+        {
+            "Identifier": "do_1134149335468032001336",
+            "Name": "Module - I Understanding significance of resource quality, concept of energy system &  units of measurement",
+            "Description": "The module explained the types of energy resources, characteristics of the resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system.  Units and measurement of energy is specific in nature. The module discussed about the precious,imprecious and commercial units of measurement and  conversion of units.",
+            "ContentType": "Resource",
+            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_1134149335468032001336/artifact/do_1134149335468032001336_1637565169428_do_11330176291867852812567_1623751799482_acourseonfundamentalsofenergymodelingmodulei1623751684532.mp4",
+            "mimeType": "video/mp4",
+            "contentStart": "2880",
+            "ContentEnd": "2934"
+        },
+        {
+            "Identifier": "do_1134149335468032001336",
+            "Name": "Module - I Understanding significance of resource quality, concept of energy system &  units of measurement",
+            "Description": "The module explained the types of energy resources, characteristics of the resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system.  Units and measurement of energy is specific in nature. The module discussed about the precious,imprecious and commercial units of measurement and  conversion of units.",
+            "ContentType": "Resource",
+            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_1134149335468032001336/artifact/do_1134149335468032001336_1637565169428_do_11330176291867852812567_1623751799482_acourseonfundamentalsofenergymodelingmodulei1623751684532.mp4",
+            "mimeType": "video/mp4",
+            "contentStart": "2280",
+            "ContentEnd": "2400"
+        }
+    ]
+  }
 
-  private messageSubscription: Subscription | undefined;
-  public messages: string[] = [];
-  public inputMessage: string = '';
-
-  aiTutorResultArr:any = []
+  aiSearchResultArr:any = []
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
@@ -71,12 +119,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
-    private websocketService: WebSocketService,
     private router: Router) { }
 
   ngOnInit() {
-    console.log('content', this.content)
-    this.websocketService.connect('ws://socket.appfuel.ai/ws');
+    console.log('in')
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -84,6 +130,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
+    console.log('this.userInfo', this.userInfo)
     // this.aiGlobalSearch()
     this.checkForApiCalls()
     this.enableScroll()
@@ -457,7 +504,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom()
+    //this.scrollToBottom()
   }
   scrollToBottom(): void {
     try {
@@ -479,51 +526,24 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   submitSearchQuery() {
    console.log(this.searchQuery)
-   this.searchQuery = 'Soil Erosion and Conservation'
+   this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
      tab: 'sarthi',
      question: this.searchQuery
    }
-   this.aiTutorResultArr.push(sendMsgObj)
-  //  this.searchQuery = ''
-  //  this.aiGlobalSearch()
+   this.aiSearchResultArr.push(sendMsgObj)
+   this.searchQuery = ''
+   this.aiGlobalSearch()
+   this.scrollToBottomEvent.emit()
   //  this.getAiTutorMessage()
-   this.sendAITutorMessage()
+  // this.sendAITutorMessage()
   }
 
 
-  sendAITutorMessage() {
-    console.log('content', this.content)
-    if (this.searchQuery) {
-      let message = {
-        message: this.searchQuery, 
-        query: this.searchQuery,
-        folder_name: this.content
-      }
-      this.websocketService.sendMessage(message);
-      
-      this.searchQuery = '';
-      setTimeout(()=>{
-        this.getAiTutorMessage()
-      }, 1000)
-      
-    }
-  }
   
 
-  getAiTutorMessage() {
-    this.messageSubscription = this.websocketService
-      .getMessages()
-      .subscribe((message: string) => {
-        console.log(message);
-       // this.messages.push(message);
-       this.aiTutorResult = message
-       this.aiTutorResultMessage()
-      });
-  }
-
-  aiTutorResultMessage() {
+  aiGlobalSearch() {
     let requestBody:any = {
       "query":"Basics of National Income Accounting"
    }
@@ -532,10 +552,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     // })
     console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
-    console.log('aiSearchResult', this.aiTutorResult)
-    console.log('this.aiSearchResultArr', this.aiTutorResultArr)
+    console.log('aiSearchResult', this.aiSearchResult)
+    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     let arr:any = []
-    this.aiTutorResult.retrievedChunks.map((item:any)=>{
+    this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -543,21 +563,21 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         title: item.Name,
         content: item,
         mimeType: item.mimeType,
-        contentType: item.contentType,
-        artifactUrl: item.artifactUrl,
-        description: item.description,
-        identifier: item.identifier,       
+        contentType: item.ContentType,
+        artifactUrl: item.ArtifactURL,
+        description: item.Description,
+        identifier: item.Identifier,       
         resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 
       arr.push(resultObj)
       
     })
-    let answer = this.aiTutorResult.answer.trim().replace(/\n/g, '<br>')
+    let answer = this.aiSearchResult.answer.trim().replace(/\n/g, '<br>')
     let shortAnswer =  this.splitParagraphByWords(answer)
     console.log('shortAnswer', shortAnswer)
-    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
-    console.log('this.aiTutorResultArr', this.aiTutorResultArr)
+    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
+    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
   }
 
   copyPath(item:any) {
@@ -595,18 +615,14 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   toggleShow(index:any, showType:any) {
     if(showType === 'less') {
-      this.aiTutorResultArr[index]['showLess'] = true
+      this.aiSearchResultArr[index]['showLess'] = true
     } else {
-      this.aiTutorResultArr[index]['showLess'] = false
+      this.aiSearchResultArr[index]['showLess'] = false
     }
     
   }
 
   ngOnDestroy(): void {
-    // Clean up the subscription and WebSocket connection
-    if (this.messageSubscription) {
-      this.messageSubscription.unsubscribe();
-    }
-    // this.websocketService.closeConnection();
+   
   }
 }

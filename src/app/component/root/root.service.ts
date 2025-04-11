@@ -62,4 +62,8 @@ export class RootService {
   getLangugages(): Observable<any> {
     return this.http.get<any>(`${API_END_POINTS.LANGUAGES}`)
   }
+
+  aiGlobalSearch(requestBody:any): Observable<any> {
+    return this.http.post<any>(`https://api.appfuel.ai/api/kb-pipeline/v3/search`, requestBody)
+  }
 }

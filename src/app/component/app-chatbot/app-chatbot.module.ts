@@ -8,14 +8,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { CommonModule } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
+import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
 
 
 @NgModule({
   declarations: [
     ClickOutsideDirective,
     AppChatbotComponent,
-    AiTutorComponent
+    IGotSarthiComponent
   ],
   imports: [
     FormsModule,

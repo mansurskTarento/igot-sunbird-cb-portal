@@ -8,5 +8,7 @@
 </div>
 <div mat-dialog-actions class="flex flex-row mt-4 mx-10">
   <button mat-button class="cancel-btn" (click)="close()" >No</button>
-  <button mat-raised-button color='primary' class="action-btn mx-3" (click)="close(true)" cdkFocusInitial >Enroll Now</button>
+  <button mat-raised-button color='primary' class="action-btn mx-3" (click)="enrollNow(true)" cdkFocusInitial >
+    {{data.enroll ? 'Resume' : 'Enroll Now'}}
+  </button>
 </div>

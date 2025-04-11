@@ -21,7 +21,7 @@ export class GyaanPlayerComponent implements OnInit {
   relatedContentStrip: any
   displayContents = true
   collectionId: any = ''
-
+  from:any = ''
   constructor(private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
               private route: ActivatedRoute,
@@ -56,6 +56,7 @@ export class GyaanPlayerComponent implements OnInit {
 
   ngOnInit() {
     this.resourceData = this.viewerDataSvc.resource
+    console.log(' this.resourceData',  this.resourceData)
     this.getRelatedContent()
     if (!this.displayContents) {
       this.titles = [
@@ -69,7 +70,9 @@ export class GyaanPlayerComponent implements OnInit {
       if (!_queryParams['content']) {
         _queryParams['content'] = 'agkCaseStudies'
       }
-      _queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
+      if(this.resourceData.resourceCategory) {
+        _queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
+      }      
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         { title: this.titleCasePipe.transform(this.resourceData.resourceCategory), disableTranslate: true,
@@ -77,6 +80,12 @@ export class GyaanPlayerComponent implements OnInit {
         { title: this.resourceData.name, url: `none`, icon: '' },
       ]
     }
+
+    this.route.queryParams.subscribe((params:any) => {
+      console.log(params); // Print all query parameters
+      this.from = params['from']; // Access a specific query param
+      console.log('this.from', this.from);
+    });
   }
   // this method is used to close the share popup
   resetEnableShare() {

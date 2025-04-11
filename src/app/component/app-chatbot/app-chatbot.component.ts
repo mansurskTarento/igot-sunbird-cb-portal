@@ -16,7 +16,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   showIcon = true
   categories: any[] = []
   language: any[] = []
-  currentFilter = 'information'
+  currentFilter = 'sarthi'
   selectedLaguage = 'en'
 
   responseData: any
@@ -100,7 +100,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       lang: this.selectedLaguage,
       config_type: lang[this.currentFilter]
     }
-    this.displayLoader = true
+    this.displayLoader = false
     this.chatbotService.getChatData(tabType).subscribe((res: any) => {
       if (res && res.payload && res.payload.config) {
         this.setDataToLocalStorage(res.payload.config)
@@ -166,7 +166,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
 
   iconClick(type: string) {
     this.showIcon = !this.showIcon
-    this.currentFilter = 'information'
+    this.currentFilter = 'sarthi'
     this.expanded = false
     if (type === 'start') {
       this.disableScroll()
@@ -178,7 +178,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       this.chatInformation = []
       this.chatIssues = []
       this.selectedLaguage = 'en'
-      this.currentFilter = 'information'
+      this.currentFilter = 'sarthi'
       this.checkForApiCalls()
       this.more = false
       this.enableScroll()
@@ -425,7 +425,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   }
 
   getLanguages() {
-    this.displayLoader = true
+    this.displayLoader = false
     this.chatbotService.getLangugages().subscribe((resp: any) => {
       if (resp && resp.status && resp.status.code === 200) {
         this.language = resp.payload.languages
@@ -438,7 +438,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom()
+    if(this.currentFilter !== 'sarthi') {
+      this.scrollToBottom()
+    }    
   }
   scrollToBottom(): void {
     try {
@@ -447,8 +449,15 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       }
     } catch(err) { }
   }
+
+  scrollToBottomEvent() {
+    console.log('scrollToBottomEvent')
+    this.scrollToBottom()
+  }
   clickOutside() {
-    this.iconClick('end')
+    if(this.currentFilter !== 'sarthi') {
+      this.iconClick('end')
+    }
   }
   private disableScroll() {
     this.renderer.addClass(document.body, 'disable-scroll')

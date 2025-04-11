@@ -37,7 +37,7 @@
 
 .start-chat {
     text-align: center;
-    padding-top: 75%;
+    padding-top: 37.5%;
 }
 
 
@@ -101,9 +101,8 @@
 }
 
 .message-container {
-    z-index: 1;
+    z-index: 2;
     position: relative;
-    padding-top: 50px
 }
 
 
@@ -513,29 +512,19 @@
 }
 
 .resource-icon img {
-  height: 100px;
-  width: 100px;
+  height: 105px;
+  width: 188.25px;
 }
 
 .font-12 {
   font-size: 12px;
 }
-  
-
-.vertical-middle {
-  vertical-align: middle;
-}
-
-.resource-icon {
-margin-left: 20%;
-}
-
 
 .send-btn-icon {
-height: 22px !important;
+  height: 22px !important;
 }
 
 
 .width-500 {
-width: 300px;
+  width: 450px;
 }

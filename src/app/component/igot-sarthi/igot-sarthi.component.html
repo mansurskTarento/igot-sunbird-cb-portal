@@ -1,10 +1,10 @@
 <div [ngClass]="from === 'chatbot' ? 'ai-tutor-container-chatbot':'ai-tutor-container'">
   <div class="message-container">
-    <div class="start-chat" *ngIf="aiTutorResultArr?.length === 0">
+    <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
       <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
       <p>Welcome to Ai Tutor, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
     </div>
-    <ng-container *ngFor="let chat of aiTutorResultArr; let i =index">
+    <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
       <ng-container *ngIf="chat.type === 'incoming'">
         <ng-container *ngIf="chat?.answer">
           <div class="flex row-start incoming-msg margin-bottom-s">

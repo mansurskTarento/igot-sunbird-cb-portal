@@ -122,3 +122,48 @@ app-content-icon {
     margin-top: 24px;
   }
 }
+
+.learning-type-container {
+  z-index: 2;
+  position: fixed;
+  width: 100%;
+}
+
+.section-dd {
+  border: 1px solid #ccc;
+  padding: 12px 16px;
+  width: 25%;
+  height: 50px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+::ng-deep .section-dd-container .mat-form-field-wrapper {
+  padding-bottom: 0.5em !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-infix {
+  width: auto !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
+  color: #1b4ca1 !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
+  top:35% !important;
+  right: 15% !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-input-element {
+  padding-right: 65px;
+}
+
+::ng-deep .section-dd .mat-form-field-underline {
+  display: none !important;
+}
+
+.tab-content-tutor {
+  width: 100%;
+  height: 78vh;
+}
