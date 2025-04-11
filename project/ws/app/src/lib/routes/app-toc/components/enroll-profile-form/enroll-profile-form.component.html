@@ -97,23 +97,23 @@
           </mat-form-field> -->
           <div class="custom-select-container">
             <mat-form-field appearance="outline" class="fixed-height-select">
-              <mat-select placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" formControlName="designation" (openedChange)="setupScrollListener($event)"  panelClass="search-panel">
+              <mat-select placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" formControlName="designation"  (closed)="onDesignationDropdownClosed()" (openedChange)="setupScrollListener($event)"  panelClass="search-panel">
                 <!-- Sticky search input container -->
                 <div class="sticky-search-container" (click)="$event.stopPropagation()">
                   <div class="search-input-wrapper">
                     <input 
                                 type="text" 
-                                placeholder="Search..." 
-                                formControlName="designation" 
+                                placeholder="Search designation" 
+                                formControlName="searchDesignation" 
                                 class="search-input"
                                 (input)="filterdesignation($event.target.value)"
                                 (keydown)="$event.stopPropagation()"
                                 autocomplete="off">
                     <button 
-                                *ngIf="designation?.value" 
+                                *ngIf="searchDesignation?.value" 
                                 type="button" 
                                 class="clear-button" 
-                                (click)="designation?.setValue('')">
+                                (click)="searchDesignation?.setValue('')">
                                 ✕
                     </button>
                   </div>

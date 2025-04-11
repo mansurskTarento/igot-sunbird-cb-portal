@@ -194,28 +194,29 @@
                     
                     <div class="custom-select-container">
                       <mat-form-field appearance="outline" class="fixed-height-select">
-                        <mat-select placeholder="Select Designation" formControlName="designation"   panelClass="search-panel" (openedChange)="setupScrollListener($event)">
+                        <mat-select placeholder="Select Designation" formControlName="designation" panelClass="search-panel" (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
                           <!-- Sticky search input container -->
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper">
                               <input 
                                           type="text" 
-                                          placeholder="Search..." 
-                                          formControlName="designation" 
+                                          placeholder="Search designation" 
+                                          formControlName="searchDesignation" 
                                           class="search-input"
                                           (keydown)="$event.stopPropagation()"
+                                          (click)="$event.stopPropagation()"
                                           autocomplete="off">
                               <button 
-                                          *ngIf="designation?.value" 
+                                          *ngIf="searchDesignation?.value" 
                                           type="button" 
                                           class="clear-button" 
-                                          (click)="designation?.setValue('')">
+                                          (click)="clearSearchDesignation($event)">
                                           ✕
                               </button>
                             </div>
                           </div>
                           <!-- Options list -->
-                          <mat-option *ngFor="let option of filterDesignationsMeta " [value]="option?.name">
+                          <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
                                   {{ option?.name }}
                           </mat-option>
                           <!-- Loading indicator -->
@@ -241,7 +242,6 @@
               </ng-container>
             </div>
           </div>
-
           <ng-container *ngIf="showApprovalStatus && isCurrentUser">
             <div class="profile-approval-status">
               <mat-accordion>
@@ -332,7 +332,7 @@
           </ng-container> -->
   
           <div class="flex flex-row gap-4" *ngIf="editProfile">
-            <button class="outline-button" (click)="editProfile = !editProfile">{{ 'profileInfo.cancel' | translate
+            <button class="outline-button" (click)="editProfile = !editProfile;cancelRequest()">{{ 'profileInfo.cancel' | translate
               }}</button>
               <button [disabled]="!enableEditBtn" [ngClass]="{'disable-button': !enableEditBtn}" class="save-button" (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
               }}</button>

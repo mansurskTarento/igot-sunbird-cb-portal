@@ -656,7 +656,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       .subscribe(
         _token => {
           // tslint:disable-next-line: no-console
-          console.log('captcha validation success')
           let req: any
           if (this.heirarchyObject) {
             req = {
@@ -704,6 +703,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
         }
       )
+         
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

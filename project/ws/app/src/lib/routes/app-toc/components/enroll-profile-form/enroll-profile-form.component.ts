@@ -176,7 +176,8 @@ export class EnrollProfileFormComponent implements OnInit {
       cadreName: new FormControl(''),
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
-      otherDesignation: new FormControl('')
+      otherDesignation: new FormControl(''),
+      searchDesignation: new FormControl('')
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
@@ -1570,10 +1571,19 @@ export class EnrollProfileFormComponent implements OnInit {
   }
   setupScrollListener(opened: boolean): void {
     if (opened) {
+      if (this.userDetailsForm.get('searchDesignation')) {
+        this.userDetailsForm.get('searchDesignation')!.setValue('');
+      }
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
       this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-
+      this.checkCurrentDesignationPresent()
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
@@ -1636,6 +1646,23 @@ export class EnrollProfileFormComponent implements OnInit {
         this.filterDesignationsMeta.unshift(newDesignation);
       }
     }
+  }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.userDetailsForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.userDetailsForm.get('searchDesignation')) {
+        this.userDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.userDetailsForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
   }
 
 }
