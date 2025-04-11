@@ -98,7 +98,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     console.log('content', this.content)
-    this.websocketService.connect('ws://socket.appfuel.ai/ws');
+    this.websocketService.connect('wss://socket.appfuel.ai/ws');
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
