@@ -104,6 +104,11 @@ export class PublicCrpComponent {
   filteredGroupsList: any[] = [];
   stopExecution = 0;
 
+  designationListLoadCount = 50
+  designationDefaultLoadCount =  50
+  isLoadingMoreDesignations = false;
+  desigantionFilterEnable = false
+
   mobileTopHeaderVisibilityStatus = true;
   @ViewChild('invalidLinkTemplate') invalidLinkTemplateRef!: TemplateRef<any>;
   @ViewChild('emailOTPComponent') emailOTPComponent!: AppOtpReaderComponent;
@@ -166,6 +171,7 @@ export class PublicCrpComponent {
       confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       designation: new UntypedFormControl('', [Validators.required]),
       isWhatsappConsent: new UntypedFormControl(false),
+      searchDesignation: new UntypedFormControl('')
     });
     if (
       this.configSvc.instanceConfig &&
@@ -204,7 +210,7 @@ export class PublicCrpComponent {
       this.designationsList = org.designationsList;
       this.organizationDetails = org.organizationDetails;
       this.invalidLinkMessage = org.invalidLinkMessage;
-      this.filteredDesignationsList = [...this.designationsList]
+      this.filteredDesignationsList = this.designationsList.slice(0, this.designationDefaultLoadCount);
 
       if (
         this.invalidLinkMessage &&
@@ -418,7 +424,7 @@ export class PublicCrpComponent {
   sendOtpEmail() {
     const email = this.registrationForm.get('email');
     if (email && email.value && email.valid) {
-      this.signupSvc.sendOtp(email.value, 'email').subscribe(
+      this.signupSvc.sendOtpV2(email.value, 'email').subscribe(
         () => {
           this.otpEmailSend = true;
           alert(
@@ -441,7 +447,7 @@ export class PublicCrpComponent {
   resendOTPEmail() {
     const email = this.registrationForm.get('email');
     if (email && email.value && email.valid) {
-      this.signupSvc.resendOtp(email.value, 'email').subscribe(
+      this.signupSvc.resendOtpv2(email.value, 'email').subscribe(
         (res: any) => {
           if (_.get(res, 'result.response').toUpperCase() === 'SUCCESS') {
             this.otpEmailSend = true;
@@ -835,9 +841,16 @@ export class PublicCrpComponent {
 
   onFilterDesignation(value: string): void {
     const filterValue = value.toLowerCase()
-    this.filteredDesignationsList = this.designationsList.filter((option: any) =>
-      option.name.toLowerCase().includes(filterValue)
-    )
+    if(value.length > 0){
+      this.desigantionFilterEnable =  true
+      this.filteredDesignationsList = this.designationsList.filter((option: any) =>
+        option.name.toLowerCase().includes(filterValue)
+      )
+    } else {
+      this.desigantionFilterEnable =  false
+      this.designationListLoadCount = this.designationDefaultLoadCount;
+      this.filteredDesignationsList = this.designationsList.slice(0, this.designationDefaultLoadCount);
+    }
   }
 
   displayFn(option: any): string {
@@ -870,5 +883,104 @@ export class PublicCrpComponent {
 
   onAutoCompleteClosed() {
     this.isMatcompleteOpened = false
+  }
+
+
+  setupScrollListener(opened: boolean): void {
+    if (opened) {
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
+      this.filteredDesignationsList = this.designationsList.slice(0, this.designationListLoadCount);
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('');
+      }
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentDesignationPresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+          const panel = document.querySelector('.mat-select-panel');
+          if (panel) {
+            // Add scroll event listener to the panel
+            panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+          }
+        
+      }, 100);
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+    
+    if(!this.desigantionFilterEnable){
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsList.length > this.filteredDesignationsList.length) {
+          this.isLoadingMoreDesignations = true;
+          
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+          
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filteredDesignationsList = this.designationsList.slice(0, this.designationListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoreDesignations = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+
+  checkCurrentDesignationPresent() {
+       
+    // Get the current designation value
+    const currentDesignation = this.registrationForm.get('designation')!.value;
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filteredDesignationsList.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+      
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = { 
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filteredDesignationsList.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filteredDesignationsList.pop();
+        }
+        this.filteredDesignationsList.unshift(newDesignation);
+      }
+    }
+  }
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.registrationForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.registrationForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
   }
 }

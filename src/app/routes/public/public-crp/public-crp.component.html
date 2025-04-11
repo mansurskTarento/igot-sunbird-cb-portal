@@ -130,7 +130,7 @@
                                             {{ 'publicsignup.designationMandatory' | translate }}
                                         </mat-error>
                                     </mat-form-field> -->
-                                    <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="designation">
+                                    <!-- <mat-form-field appearance="outline" class="margin-top-s w-full arrow-down" id="designation">
                                         <input id="designation" #designation i18n-placeholder="designation" type="text" placeholder="Type to search" aria-label="Type to search" matInput
                                           (input)="onFilterDesignation($event.target.value)" formControlName="designation" [matAutocomplete]="auto" 
                                           (keydown)="onkeyDown($event)">
@@ -151,8 +151,46 @@
                                         i18n-aria-label aria-label="Designation is mandatory">
                                         {{ 'publicsignup.designationMandatory' | translate }}
                                     </mat-error>
-                                      </mat-form-field>
-                                </div>
+                                      </mat-form-field> -->
+                                      <div class="custom-select-container">
+                                        <mat-form-field appearance="outline" class="margin-top-s fixed-height-select">
+                                          <mat-select placeholder="Select Designation" formControlName="designation"   panelClass="search-panel" (closed)="onDesignationDropdownClosed()" (openedChange)="setupScrollListener($event)">
+                                            <!-- Sticky search input container -->
+                                            <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                                              <div class="search-input-wrapper">
+                                                <input 
+                                                            type="text" 
+                                                            placeholder="Search designation" 
+                                                            formControlName="searchDesignation" 
+                                                            class="search-input"
+                                                            (input)="onFilterDesignation($event.target.value)"
+                                                            (keydown)="$event.stopPropagation()"
+                                                            autocomplete="off">
+                                                <button 
+                                                            *ngIf="searchDesignation?.value" 
+                                                            type="button" 
+                                                            class="clear-button" 
+                                                            (click)="searchDesignation?.setValue('')">
+                                                            ✕
+                                                </button>
+                                              </div>
+                                            </div>
+                                            <!-- Options list -->
+                                            <mat-option *ngFor="let option of filteredDesignationsList " [value]="option?.name">
+                                                    {{ option?.name }}
+                                            </mat-option>
+                                            <!-- Loading indicator -->
+                                            <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                                              Loading more...
+                                            </div>
+                                            <!-- No results message -->
+                                            <mat-option *ngIf="(filteredDesignationsList )?.length === 0" disabled>
+                                                    No matches found
+                                            </mat-option>
+                                          </mat-select>
+                                        </mat-form-field>
+                                      </div>
+                                    </div>
 
                             </div>
 
