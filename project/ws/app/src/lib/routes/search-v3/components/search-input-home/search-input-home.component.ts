@@ -99,7 +99,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged(), skip(1))
       .subscribe(async (value) => {
-        if (value) {
+        if (value.length > 2) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
         } else {
@@ -205,11 +205,17 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
+    await this.searchInNLP(query);
+
     document.getElementById('global-search-input')?.blur();
     const queryParams = {
       q: query.trim(),
       search: this.responseNlpQuery || null,
       category: this.selectedSearchCategory || null,
+      p: null,
+      f: null,
+      tab: null,
+      filtersPanel: 'show',
     };
     const navigationExtras = {
       queryParams,
@@ -234,6 +240,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
+    this.searchFromQuery(this.queryControl.value);
     this.updateQuery(this.queryControl.value);
   }
 
@@ -277,9 +284,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       searchRequest.query = query;
       const result = await this.searchV3Service.searchConnections(
         searchRequest
-      );
+      ).catch(() => (this.allSearchResults = []));
 
-      if (result.result && result.result?.response?.content) {
+      if (result.result && result.result?.response?.content.length) {
         this.allSearchResults = result.result?.response?.content || [];
       } else {
         this.allSearchResults = [];
