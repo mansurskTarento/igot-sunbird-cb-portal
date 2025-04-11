@@ -13,7 +13,7 @@
                     <mat-option value="" disabled>{{ 'profileInfo.chooseOrganization' | translate }}</mat-option>
                     <mat-option *ngFor="let dept of departmentData" value="{{ dept }}">{{ dept }}</mat-option>
                 </mat-select> -->
-                <div class="flex flex-row auto-complete-row" (click)="assignValue()">
+                <!-- <div class="flex flex-row auto-complete-row" (click)="assignValue()">
                     <input type="text" class="input-text" matInput formControlName="organization"
                         [matAutocomplete]="departmentAuto">
                     <mat-icon>arrow_drop_down</mat-icon>
@@ -24,7 +24,47 @@
                 <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
                 class="mat-error">
                     Please enter a valid organization.  
-                  </mat-error>
+                  </mat-error> -->
+
+                  <mat-select placeholder="Select organization" formControlName="organization"  (closed)="onOrgDropdownClosed()"  panelClass="search-panel"
+                   (openedChange)="setupOrgScrollListener($event)">
+                    <!-- Sticky search input container -->
+                    <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                      <div class="search-input-wrapper">
+                        <input 
+                                    type="text" 
+                                    placeholder="Search organization" 
+                                    formControlName="searchOrganization" 
+                                    class="search-org-input"
+                                    (keydown)="$event.stopPropagation()"
+                                    autocomplete="off">
+                        <!-- <button 
+                                    *ngIf="searchOrganization?.value" 
+                                    type="button" 
+                                    class="clear-button" 
+                                    (click)="searchOrganization?.setValue('')">
+                                    ✕
+                        </button> -->
+                      </div>
+                    </div>
+                    <!-- Options list -->
+                    <mat-option *ngFor="let dept of deptFilterData" [value]="dept">
+                            {{ dept }}
+                    </mat-option>
+                    <!-- Loading indicator -->
+                    <div *ngIf="isLoadingMoreOrganization" class="loading-indicator">
+                      Loading more...
+                    </div>
+                    <!-- No results message -->
+                    <mat-option *ngIf="(deptFilterData )?.length === 0" disabled>
+                            No matches found
+                    </mat-option>
+                      <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
+                      class="mat-error">
+                      Please enter a valid organization.
+                      </mat-error>
+                  </mat-select>
+
             </mat-form-field>   
         </div>
 
