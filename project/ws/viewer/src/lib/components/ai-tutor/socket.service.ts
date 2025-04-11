@@ -25,7 +25,7 @@ export class WebSocketService {
         console.log('event', event)
         try {
           const data = JSON.parse(event.data);
-          // console.log('data', data)
+          console.log('data', data)
           if (data.type === 'connection' && data.clientId) {
               this.clientId = data.clientId;
              // clientIdDisplay.textContent = `Assigned Client ID: ${this.clientId}`;

@@ -32,7 +32,30 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   callText = ''
   emailText = ''
   searchQuery: any
-  
+  initials:any
+  copiedIndex = -1
+  public circleColor!: string
+  random = Math.random().toString(36).slice(2)
+
+  // public initials!: string
+
+  private colors = [
+    '#EB7181', // red
+    '#306933', // green
+    '#000000', // black
+    '#3670B2', // blue
+    '#4E9E87',
+    '#7E4C8D',
+  ]
+
+  private randomcolors = [
+    '#EB7181', // red
+    '#006400', // green
+    '#000000', // black
+    '#3670B2', // blue
+    '#4E9E87',
+    '#7E4C8D',
+  ]
 
   // tslint:disable
   localization: any = {
@@ -135,7 +158,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
-    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : '/assets/icons/chatbot-default-user.svg'
+    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : ''
+    console.log('this.userInfo', this.userInfo)
+    if(!this.userInfo.profileImage && this.userInfo && this.userInfo.firstName) {
+      this.createInititals(this.userInfo.firstName)
+    } 
+    
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
@@ -526,16 +554,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   submitSearchQuery() {
    console.log(this.searchQuery)
-   this.searchQuery = 'Basics of National Income Accounting'
+  // this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
      tab: 'sarthi',
      question: this.searchQuery
    }
    this.aiSearchResultArr.push(sendMsgObj)
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
    this.searchQuery = ''
-   this.aiGlobalSearch()
-   this.scrollToBottomEvent.emit()
+   this.scrollToBottomEvent.emit()   
+   setTimeout(()=>{
+    this.aiGlobalSearch()
+   
+   },5000)
+   
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
   }
@@ -545,11 +578,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   aiGlobalSearch() {
     let requestBody:any = {
-      "query":"Basics of National Income Accounting"
+      "query":this.searchQuery
    }
+   console.log('requestBody', requestBody)
     // this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
     //   console.log('data--', data)
     // })
+    
     console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
     console.log('aiSearchResult', this.aiSearchResult)
@@ -567,7 +602,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         artifactUrl: item.ArtifactURL,
         description: item.Description,
         identifier: item.Identifier,       
-        resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`
+        resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 
       arr.push(resultObj)
@@ -577,10 +612,16 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     let shortAnswer =  this.splitParagraphByWords(answer)
     console.log('shortAnswer', shortAnswer)
     this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
+    this.aiSearchResultArr.map((item:any, index:any)=>{
+      if(item && item.answer === '') {
+        // delete this.aiSearchResultArr[index]
+        this.aiSearchResultArr.splice(index,1)
+      }
+     })
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
   }
 
-  copyPath(item:any) {
+  copyPath(item:any, cindex:any) {
     
     console.log('chat',item)
     const selBox = document.createElement('textarea')
@@ -594,6 +635,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     selBox.select()
     document.execCommand('copy')
     document.body.removeChild(selBox)
+    this.copiedIndex = cindex
+    setTimeout(()=>{
+      this.copiedIndex = -1
+    },1000)
     
   }
 
@@ -620,6 +665,40 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       this.aiSearchResultArr[index]['showLess'] = false
     }
     
+  }
+
+  get userInitials() {
+    return this.initials
+  }
+  private createInititals(name:any): void {
+    const randomIndex = Math.floor(Math.random() * Math.floor(this.colors.length))
+    this.circleColor = this.colors[randomIndex]
+    if (this.randomcolors) {
+      const randomIndex1 = Math.floor(Math.random() * Math.floor(this.randomcolors.length))
+      this.circleColor = this.randomcolors[randomIndex1]
+    }
+    let initials = ''
+    const array = `${name} `.toString().split(' ')
+    if (array[0] !== 'undefined' && typeof array[1] !== 'undefined') {
+      initials += array[0].charAt(0)
+      initials += array[1].charAt(0)
+    } else {
+      for (let i = 0; i < name.length; i += 1) {
+        if (name.charAt(i) === ' ') {
+          continue
+        }
+
+        if (name.charAt(i) === name.charAt(i)) {
+          initials += name.charAt(i)
+
+          if (initials.length === 2) {
+            break
+          }
+        }
+      }
+    }
+    this.initials = initials.toUpperCase()
+    console.log('this.initials', this.initials)
   }
 
   ngOnDestroy(): void {

@@ -66,8 +66,15 @@
 }
 
 .ai-tutor-container {
-    background-image: url('/assets/ai-tutor/background.svg');
-    height: 90vh;
+    // background-image: url('/assets/ai-tutor/background.svg');
+    // height: 75vh;
+    // width: 100%;
+    // overflow-y: auto;
+    height: 75vh;
+    width: 25%;
+    overflow-y: auto;
+    position: fixed;
+    margin-top: 55px;
 }
 
 .ai-tutor-container-chatbot {
@@ -101,9 +108,9 @@
 }
 
 .message-container {
-    z-index: 1;
+    z-index: 2;
     position: relative;
-    padding-top: 50px
+    width: 100%;
 }
 
 
@@ -388,9 +395,9 @@
   .row-end {
     justify-content: flex-end;
     height: 100%;
-    .user-icon {
-      padding-left: 8px;
-    }
+    // .user-icon {
+    //   padding-left: 8px;
+    // }
     .user-seleted-question {
       background-color: #000000;
       border-top-right-radius: 0;
@@ -538,4 +545,99 @@ height: 22px !important;
 
 .width-500 {
 width: 300px;
+}
+
+
+.learning-type-container {
+  z-index: 2;
+  position: fixed;
+  width: 100%;
+}
+
+.section-dd {
+  border: 1px solid #ccc;
+  padding: 12px 16px;
+  width: 25%;
+  height: 50px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+::ng-deep .section-dd-container .mat-form-field-wrapper {
+  padding-bottom: 0.5em !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-infix {
+  width: auto !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
+  color: #1b4ca1 !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
+  top:35% !important;
+  right: 15% !important;
+}
+
+::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-input-element {
+  padding-right: 65px;
+}
+
+::ng-deep .section-dd .mat-form-field-underline {
+  display: none !important;
+}
+
+
+.system-icon img {
+  height: 36px;
+  width: 36px;
+}
+
+.circle-s {
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left:4px;
+
+  img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .initials {
+    color: #ffffff;
+    font-size: 10px;
+    line-height: 12px;
+    font-size: 14px;
+    letter-spacing: 0.2625px;
+  }
+}
+
+.copied-tooltip {
+  position: absolute;
+  left: 20%;
+  transform: translateX(-50%);
+  background-color: #000;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.loading-bar-icon img{
+  height: 50px;
+  width: 50px;
+}
+
+.link {
+  color: rgb(27, 76, 161);
+  text-decoration: underline;
 }

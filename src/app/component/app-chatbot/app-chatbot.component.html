@@ -2,7 +2,7 @@
 <!-- //NOSONAR --> <div  class="chatbot-icon-container" [ngStyle]="(configSvc.updatePlatformRatingObservable$ | async)" *ngIf="showIcon && isHubEnable" (mouseover)="expanded = true" (mouseleave)="expanded = false" (click)="iconClick('start')">
   <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->    
   <div  class="chatbot-icon flex">
-        <img alt="chatbot-icon" src="/assets/icons/chatbot-ai.svg"/>
+        <img alt="chatbot-icon" src="/assets/icons/chatbot-ai-new.svg"/>
         <!-- <div class="expand-text">FAQ Chatbot</div> -->
       </div>
   </div>
@@ -19,7 +19,7 @@
               </div>
             </div>
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter === 'sarthi'">
-              <div class="user-name"><img src="assets/ai-tutor/ai-icon.svg"><span class="ml-2">iGOT Sarthi</span></div>             
+              <div class="user-name"><img src="assets/ai-tutor/ai-icon.svg"><span class="ml-2">iGOT AI</span></div>             
             </div>
             <div class="">
                 <!-- //NOSONAR --> <mat-icon class="cb-close" (click)="iconClick('end')">close</mat-icon>
@@ -116,7 +116,7 @@
                 <img src="assets/ai-tutor/ai-icon.svg">
             </div>
             <div class="info-text">
-                iGOT Sarthi
+                iGOT AI
             </div>
         </div>
             <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" [ngClass]="{active: currentFilter === 'information'}" (click)="toggleFilter('information')">

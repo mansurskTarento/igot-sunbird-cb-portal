@@ -33,7 +33,11 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   expanded = false
   callText = ''
   emailText = ''
-  searchQuery: any
+  searchQueryAItutor: any = ''
+  initials:any
+  copiedIndex = -1
+  public circleColor!: string
+  random = Math.random().toString(36).slice(2)
   
 
   // tslint:disable
@@ -54,6 +58,24 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     }
   }
+
+  private colors = [
+    '#EB7181', // red
+    '#306933', // green
+    '#000000', // black
+    '#3670B2', // blue
+    '#4E9E87',
+    '#7E4C8D',
+  ]
+
+  private randomcolors = [
+    '#EB7181', // red
+    '#006400', // green
+    '#000000', // black
+    '#3670B2', // blue
+    '#4E9E87',
+    '#7E4C8D',
+  ]
 
   aiTutorResult:any
 
@@ -88,7 +110,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
-    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : '/assets/icons/chatbot-default-user.svg'
+    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : ''
+    if(!this.userInfo.profileImage && this.userInfo && this.userInfo.firstName) {
+      this.createInititals(this.userInfo.firstName)
+    }
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
@@ -457,14 +482,17 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom()
+  //  this.scrollToBottom()
   }
   scrollToBottom(): void {
-    try {
-      if (this.myScrollContainer) {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
-      }
-    } catch(err) { }
+    if(this.aiTutorResultArr.length > 2) {
+      try {
+        if (this.myScrollContainer) {
+          this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight + 150
+        }
+      } catch(err) { }
+    } 
+   
   }
   clickOutside() {
     this.iconClick('end')
@@ -478,32 +506,35 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   submitSearchQuery() {
-   console.log(this.searchQuery)
-   this.searchQuery = 'Soil Erosion and Conservation'
+   console.log(this.searchQueryAItutor)
+  // this.searchQuery = 'Soil Erosion and Conservation'
    let sendMsgObj = {
      type: 'sendMsg',
      tab: 'sarthi',
-     question: this.searchQuery
+     question: this.searchQueryAItutor
    }
    this.aiTutorResultArr.push(sendMsgObj)
+   this.aiTutorResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
   //  this.searchQuery = ''
   //  this.aiGlobalSearch()
   //  this.getAiTutorMessage()
+    this.scrollToBottom()
    this.sendAITutorMessage()
+   
   }
 
 
   sendAITutorMessage() {
     console.log('content', this.content)
-    if (this.searchQuery) {
+    if (this.searchQueryAItutor) {
       let message = {
-        message: this.searchQuery, 
-        query: this.searchQuery,
+        message: this.searchQueryAItutor, 
+        query: this.searchQueryAItutor,
         folder_name: this.content
       }
       this.websocketService.sendMessage(message);
       
-      this.searchQuery = '';
+      
       setTimeout(()=>{
         this.getAiTutorMessage()
       }, 1000)
@@ -520,6 +551,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
        // this.messages.push(message);
        this.aiTutorResult = message
        this.aiTutorResultMessage()
+       this.searchQueryAItutor = '';
       });
   }
 
@@ -557,10 +589,16 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     let shortAnswer =  this.splitParagraphByWords(answer)
     console.log('shortAnswer', shortAnswer)
     this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
+    this.aiTutorResultArr.map((item:any, index:any)=>{
+      if(item && item.answer === '') {
+        // delete this.aiSearchResultArr[index]
+        this.aiTutorResultArr.splice(index,1)
+      }
+     })
     console.log('this.aiTutorResultArr', this.aiTutorResultArr)
   }
 
-  copyPath(item:any) {
+  copyPath(item:any, cindex:any) {
     
     console.log('chat',item)
     const selBox = document.createElement('textarea')
@@ -574,6 +612,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     selBox.select()
     document.execCommand('copy')
     document.body.removeChild(selBox)
+    this.copiedIndex = cindex
+    setTimeout(()=>{
+      this.copiedIndex = -1
+    },1000)
     
   }
 
@@ -600,6 +642,40 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.aiTutorResultArr[index]['showLess'] = false
     }
     
+  }
+
+  get userInitials() {
+    return this.initials
+  }
+  private createInititals(name:any): void {
+    const randomIndex = Math.floor(Math.random() * Math.floor(this.colors.length))
+    this.circleColor = this.colors[randomIndex]
+    if (this.randomcolors) {
+      const randomIndex1 = Math.floor(Math.random() * Math.floor(this.randomcolors.length))
+      this.circleColor = this.randomcolors[randomIndex1]
+    }
+    let initials = ''
+    const array = `${name} `.toString().split(' ')
+    if (array[0] !== 'undefined' && typeof array[1] !== 'undefined') {
+      initials += array[0].charAt(0)
+      initials += array[1].charAt(0)
+    } else {
+      for (let i = 0; i < name.length; i += 1) {
+        if (name.charAt(i) === ' ') {
+          continue
+        }
+
+        if (name.charAt(i) === name.charAt(i)) {
+          initials += name.charAt(i)
+
+          if (initials.length === 2) {
+            break
+          }
+        }
+      }
+    }
+    this.initials = initials.toUpperCase()
+    console.log('this.initials', this.initials)
   }
 
   ngOnDestroy(): void {
