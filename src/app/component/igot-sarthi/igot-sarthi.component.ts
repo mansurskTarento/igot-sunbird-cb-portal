@@ -581,9 +581,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "query":this.searchQuery
    }
    console.log('requestBody', requestBody)
-    // this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
-    //   console.log('data--', data)
-    // })
+    this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
+      console.log('data--', data)
+    })
     
     console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
