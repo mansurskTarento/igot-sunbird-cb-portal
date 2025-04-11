@@ -234,6 +234,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       this.updateNoResultMessage(this.statedata.param);
+
+      if (changes.filtersPanel && changes.filtersPanel.currentValue === 'show') {
+        this.sideNavBarOpened = true
+        this.filtersChipFromLearn = []
+
+      }
     }
 
     
@@ -373,11 +379,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (result && result.result && result.result?.response?.content) {
       this.peoplesSearchResults = result.result?.response?.content || [];
       this.peopleSearchTotalCount = result.result?.response?.count;
-      this.peoplesFacets = result.result?.response.facets;
+      this.peoplesFacets = result.result?.response.facets || []
       this.getAllConnectionRequests();
     } else {
       this.peoplesSearchResults = [];
       this.peopleSearchTotalCount = 0;
+      this.peoplesFacets = []
     }
   }
 
@@ -1094,7 +1101,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.communitiesSearchTotalCount = 0;
       this.searchRequestPeoples.limit = this.initialPaginationSize;
       await this.searchPeople();
-      this.combinedFacets = [this.peoplesFacets];
+      this.combinedFacets = this.peoplesFacets.length ? [this.peoplesFacets] : [];
     } else if (category === SearchCategory.Communities) {
       this.courseSearchTotalCount = 0;
       this.eventSearchTotalCount = 0;
