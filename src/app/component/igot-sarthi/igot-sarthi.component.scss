@@ -418,6 +418,7 @@
       float: right;
       text-align: left;
       max-width: 62%;
+      word-break: break-word;
     }
   }
   .highlight-title {
@@ -616,4 +617,41 @@
 
 .position-relative {
   position: relative;
+}
+
+@media (max-width: 1200px) {
+  .message-container {
+    // background-image: url('/assets/ai-tutor/background.svg');
+    height: 100%;
+    // min-height: 520px;
+    min-width: 300px;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+  }
+
+  .control-container {
+    position: fixed;
+    bottom: 100px;
+    width: 92%;
+    z-index: 2;
+  
+  }
+
+  .width-500 {
+    width: 100%;
+  }
+
+  .border-gradient-rounded {
+    /* Border */
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background:
+        linear-gradient(to right, white, white),
+        linear-gradient(to right, #EFA34F, #4881E4);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    width: 98%;
+    height: 32px;
+}
 }
