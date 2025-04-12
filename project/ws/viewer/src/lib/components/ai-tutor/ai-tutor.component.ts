@@ -578,7 +578,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         contentType: item.contentType,
         artifactUrl: item.artifactUrl,
         description: item.description,
-        identifier: item.identifier,       
+        identifier: item.identifier,   
+        contentStart: item?.contentStart/60,
+        contentEnd: item?.contentEnd/60,     
         resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 

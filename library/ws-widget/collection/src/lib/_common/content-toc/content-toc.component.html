@@ -1,7 +1,7 @@
-<div class="ai-tutor-get-started" *ngIf="!viewerPage">
+<div class="ai-tutor-get-started" *ngIf="!viewerPage && enableAITutorFlag">
     <div class="flex flex-row align-items-center">
         <div class="px-2 py-2">
-            <img src="assets/icons/chatbot-ai.svg"/>
+            <img src="assets/icons/chatbot-ai-new.svg" height="64px" width="64px"/>
         </div>
         <div class="flex flex-row align-items-center">
             <div class="py-2 w-565">
@@ -15,7 +15,7 @@
     </div>
 </div>
 <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky" [selectedIndex]="selectedTabIndex" [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
-    <mat-tab label="Transcription" *ngIf="viewerPage">
+    <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag ">
        <div class="flex flex-row align-items-center my-2">
         <div>
             <p>0.00</p>

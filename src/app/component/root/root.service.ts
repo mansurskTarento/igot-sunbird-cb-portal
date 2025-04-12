@@ -8,6 +8,7 @@ const API_END_POINTS = {
   CREATE_USER_API: `${PROXY_CREATE_V8}/discussion/user/v1/create`,
   LANGUAGES: '/api/faq/v1/assistant/available/language',
   CONFIG: '/api/faq/v1/assistant/configs/language',
+  AI_GLOBAL_SEARCH: `${PROXY_CREATE_V8}/chatbot/v3/search`
 }
 
 @Injectable({
@@ -64,6 +65,6 @@ export class RootService {
   }
 
   aiGlobalSearch(requestBody:any): Observable<any> {
-    return this.http.post<any>(`https://api.appfuel.ai/api/kb-pipeline/v3/search`, requestBody)
+    return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}`, requestBody)
   }
 }

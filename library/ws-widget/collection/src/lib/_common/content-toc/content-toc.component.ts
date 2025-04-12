@@ -50,6 +50,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   referenceNotesFlag = false
   viewerPage = window.location.href.includes('/viewer/') ? true : false
   resumeDataLink:any
+  enableAITutorFlag = false
+  enableTranscriptionFlag = false
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -62,6 +64,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
+      this.enableAITutorFlag = true
+    } else {
+      this.enableAITutorFlag = false
+    }
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      this.enableTranscriptionFlag = true
+    } else {
+      this.enableTranscriptionFlag = false
+    }
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
       this.config = this.route.snapshot.data.pageData.data
     }

@@ -1,11 +1,17 @@
 <div  class="fixed-width flex flex-wrap">
 <!-- //NOSONAR --> <div  class="chatbot-icon-container" [ngStyle]="(configSvc.updatePlatformRatingObservable$ | async)" *ngIf="showIcon && isHubEnable" (mouseover)="expanded = true" (mouseleave)="expanded = false" (click)="iconClick('start')">
   <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->    
-  <div  class="chatbot-icon flex">
+  <div  class="chatbot-icon-ai flex" *ngIf="enableIGOTAIFlag">
         <img alt="chatbot-icon" src="/assets/icons/chatbot-ai-new.svg"/>
         <!-- <div class="expand-text">FAQ Chatbot</div> -->
       </div>
+      <div  class="chatbot-icon flex" *ngIf="!enableIGOTAIFlag" [ngClass]="{'chatbot-icon-expanded': expanded}">
+        <img alt="chatbot-icon" src="/assets/icons/launch-icon.svg"/>
+        <div class="expand-text">FAQ Chatbot</div>
+      </div>
   </div>
+
+  
 
   <div class="chatbot" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
       <div class="chatbot-wrapper">
@@ -111,7 +117,7 @@
             </div>
         </div>
         <div class="flex flex-wrap cb-footer">
-            <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" [ngClass]="{active: currentFilter === 'sarthi'}" (click)="toggleFilter('sarthi')">
+            <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" *ngIf="enableIGOTAIFlag" [ngClass]="{active: currentFilter === 'sarthi'}" (click)="toggleFilter('sarthi')">
               <div class="info-icon">
                 <img src="assets/ai-tutor/ai-icon.svg">
             </div>

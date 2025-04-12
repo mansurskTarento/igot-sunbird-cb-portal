@@ -11,9 +11,19 @@
   z-index: 999999999;
 }
 
-.chatbot-icon {
+.chatbot-icon-ai {
   position: absolute;
   right: 30px;
+  -moz-animation-delay: 1s;
+  -webkit-animation-delay: 1s;
+  -o-animation-delay: 1s;
+  animation-delay: 1s;
+  transition: 1s ease;
+}
+
+.chatbot-icon {
+  position: absolute;
+  right: -107px;
   -moz-animation-delay: 1s;
   -webkit-animation-delay: 1s;
   -o-animation-delay: 1s;

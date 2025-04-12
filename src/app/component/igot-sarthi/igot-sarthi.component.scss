@@ -586,3 +586,18 @@
   height: 50px;
   width: 50px;
 }
+
+.content-duration {
+  position: absolute;
+    background: black;
+    color: white;
+    width: 60px;
+    border-radius: 8px;
+    text-align: center;
+    bottom: 10px;
+    left: 100px;
+}
+
+.position-relative {
+  position: relative;
+}

@@ -108,7 +108,7 @@
         </div>
 
         <div>
-          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()">
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()" [disabled]="!searchQueryAItutor">
             <mat-icon class="send-btn-icon">send</mat-icon>
           </button>
         </div>

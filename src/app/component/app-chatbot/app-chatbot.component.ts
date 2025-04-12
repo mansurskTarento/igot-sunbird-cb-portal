@@ -16,7 +16,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   showIcon = true
   categories: any[] = []
   language: any[] = []
-  currentFilter = 'sarthi'
+  currentFilter = 'information'
   selectedLaguage = 'en'
 
   responseData: any
@@ -32,7 +32,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   expanded = false
   callText = ''
   emailText = ''
-
+  enableIGOTAIFlag = false
+  
   // tslint:disable
   localization: any = {
     'en' : {
@@ -70,6 +71,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
+    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
+      this.enableIGOTAIFlag = true
+      this.currentFilter = 'sarthi'
+    } else {
+      this.enableIGOTAIFlag = false
+      this.currentFilter = 'information'
+    }
+    
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
@@ -166,7 +175,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
 
   iconClick(type: string) {
     this.showIcon = !this.showIcon
-    this.currentFilter = 'sarthi'
+    this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
     this.expanded = false
     if (type === 'start') {
       this.disableScroll()
@@ -178,7 +187,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       this.chatInformation = []
       this.chatIssues = []
       this.selectedLaguage = 'en'
-      this.currentFilter = 'sarthi'
+      this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
       this.checkForApiCalls()
       this.more = false
       this.enableScroll()

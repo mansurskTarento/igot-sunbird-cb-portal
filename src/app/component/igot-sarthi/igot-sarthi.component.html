@@ -39,7 +39,22 @@
               </div>
             </ng-container>
             <ng-container *ngIf="item?.mimeType === 'video/mp4'">
-              <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank"><img src="/assets/icons/ai-video-icon.jpg"></a></div>
+              <div class="resource-icon">
+                <a [href]="item?.resourceLink" target="_blank">
+                  <div class="position-relative">
+                    <div class="position-relative">
+                      <img src="/assets/icons/ai-video-icon.jpg">
+  
+                    </div>
+                    <div class="content-duration" *ngIf="item?.contentStart || item?.contentEnd">
+                      <span *ngIf="item?.contentStart">{{item?.contentStart}}</span>
+                      <span *ngIf="item?.contentEnd">:{{item?.contentEnd}}</span>
+                    </div>
+                  </div>
+                  
+                  
+                </a>
+              </div>
               <div class="resource-link">
                 <a [href]="item?.resourceLink" target="_blank">Open Resource Link</a>
               </div>

@@ -76,61 +76,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
   }
 
-  aiSearchResult = {
-    "answer": "Great question! Let's break this down.  Learning about energy systems and resource quality can feel overwhelming, but it's actually quite fascinating once you get the hang of it.\n\n**Core Explanation:**\n\nImagine our global energy system as a giant network.  It's all about how we get energy from different *resources*, transform it, and use it.  The *quality* of the energy resource refers to how easily it can be converted into usable energy and how much energy it provides.\n\n*Key Term 1: **Energy Resources***\n\nSimple definition:  The sources from which we obtain energy.  Imagine a toolbox filled with different tools – each tool represents a different energy resource.\n\n*Key Term 2: **Resource Quality***\n\nFunction with real-world analogy: It's like comparing different types of wood.  Hardwood burns longer and hotter (higher quality) than softwood (lower quality).  Similarly, some energy resources are easier and more efficient to convert into usable energy than others.\n\nPractical application example:  Burning coal to generate electricity is less efficient and produces more pollution than using solar power.  This is because coal is a lower-quality energy resource compared to solar energy.\n\nResource Reference:  The provided videos offer a good overview, particularly the sections on energy resources (0:28-1:53 in the first video) and the energy system diagram (2280-2400 in the third video).  They also discuss energy units (2880-2890 in the second video).\n\nCurious to master this? The *Energy System Architects* course on iGOT Saarthi has hands-on simulations and real-world case studies!\n",
-    "RetrievedChunks": [
-        {
-            "Identifier": "do_1134149303858216961328",
-            "Name": "Fundamentals of Energy Modelling",
-            "Description": "The module explained the types of energy resources, characteristics of the   resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system. Units and measurement of energy is specific in nature. The module discussed about the precious, imprecious and commercial units of measurement and   conversion of units.\n",
-            "ContentType": "Course",
-            "ArtifactURL": "unknown",
-            "mimeType": "application/vnd.ekstep.content-collection",
-            "contentStart": " ",
-            "ContentEnd": " "
-        },
-        {
-            "Identifier": "do_1134122095281766401103",
-            "Name": "Basics of Power System",
-            "Description": "This course aims to provide the fundamental idea of the the basic quantities or parameters and the measuring units of the power system. This knowledge is essential to understand power ratings and capacities. The course also briefly describes the philosophy of the power system supply chain.",
-            "ContentType": "Course",
-            "ArtifactURL": "unknown",
-            "mimeType": "application/vnd.ekstep.content-collection",
-            "contentStart": " ",
-            "ContentEnd": " "
-        },
-        {
-            "Identifier": "do_113408690632687616156",
-            "Name": "Session 02 - Energy use and GHG emissions",
-            "Description": "To provide a good basis for low carbon development planning it is vital to begin by collecting accurate information on a country’s energy resources, production and consumption, and associated GHG emissions.",
-            "ContentType": "Resource",
-            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_113408690632687616156/artifact/do_113408690632687616156_1636803082667_do_1133605506297364481376_1630926722194_module02session021630926656118.mp4",
-            "mimeType": "video/mp4",
-            "contentStart": "0",
-            "ContentEnd": "120"
-        },
-        {
-            "Identifier": "do_1134149335468032001336",
-            "Name": "Module - I Understanding significance of resource quality, concept of energy system &  units of measurement",
-            "Description": "The module explained the types of energy resources, characteristics of the resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system.  Units and measurement of energy is specific in nature. The module discussed about the precious,imprecious and commercial units of measurement and  conversion of units.",
-            "ContentType": "Resource",
-            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_1134149335468032001336/artifact/do_1134149335468032001336_1637565169428_do_11330176291867852812567_1623751799482_acourseonfundamentalsofenergymodelingmodulei1623751684532.mp4",
-            "mimeType": "video/mp4",
-            "contentStart": "2880",
-            "ContentEnd": "2934"
-        },
-        {
-            "Identifier": "do_1134149335468032001336",
-            "Name": "Module - I Understanding significance of resource quality, concept of energy system &  units of measurement",
-            "Description": "The module explained the types of energy resources, characteristics of the resources, classifications of energy  and certain definition defines the quality. The module brings clarity on concept of energy system.  Units and measurement of energy is specific in nature. The module discussed about the precious,imprecious and commercial units of measurement and  conversion of units.",
-            "ContentType": "Resource",
-            "ArtifactURL": "https://igotkarmayogi.gov.in/content-store/content/do_1134149335468032001336/artifact/do_1134149335468032001336_1637565169428_do_11330176291867852812567_1623751799482_acourseonfundamentalsofenergymodelingmodulei1623751684532.mp4",
-            "mimeType": "video/mp4",
-            "contentStart": "2280",
-            "ContentEnd": "2400"
-        }
-    ]
-  }
+  aiSearchResult:any = {}
 
   aiSearchResultArr:any = []
   // tslint: enable
@@ -554,7 +500,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   submitSearchQuery() {
    console.log(this.searchQuery)
-  // this.searchQuery = 'Basics of National Income Accounting'
+    // this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
      tab: 'sarthi',
@@ -562,12 +508,14 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    }
    this.aiSearchResultArr.push(sendMsgObj)
    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
-   this.searchQuery = ''
-   this.scrollToBottomEvent.emit()   
-   setTimeout(()=>{
-    this.aiGlobalSearch()
    
-   },5000)
+   if(this.aiSearchResultArr.length > 2) {
+    this.scrollToBottomEvent.emit()  
+   }   
+    this.aiGlobalSearch()
+    setTimeout(()=>{
+      this.searchQuery = ''
+    },1000)
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
@@ -583,9 +531,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    console.log('requestBody', requestBody)
     this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
       console.log('data--', data)
-    })
-    
-    console.log('this.userJourney', this.userJourney)
+      this.aiSearchResult = data 
+      
+      console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
     console.log('aiSearchResult', this.aiSearchResult)
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
@@ -601,7 +549,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
         description: item.Description,
-        identifier: item.Identifier,       
+        identifier: item.Identifier,    
+        contentStart: item?.contentStart/60,
+        contentEnd: item?.contentEnd/60,   
         resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 
@@ -619,6 +569,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
      })
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
+    this.scrollToBottomEvent.emit() 
+    })
+    
+    
   }
 
   copyPath(item:any, cindex:any) {

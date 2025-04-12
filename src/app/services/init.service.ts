@@ -34,6 +34,7 @@ import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
+import { iGOTAIService } from './igot-ai.service'
 declare const smartech:any
 // import { of } from 'rxjs'
 /* tslint:enable */
@@ -89,6 +90,7 @@ export class InitService {
     private translate: TranslateService,
     private enrollSvc: WidgetEnrollService,
     private netCoreService: NetCoreService,
+    private iGOTAIService: iGOTAIService,
     // private widgetContentSvc: WidgetContentService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -176,6 +178,7 @@ export class InitService {
     await this.profileNudgeConfig()
     await this.themeOverrideConfig()
     await this.netCoreConfig()
+    await this.iGOTAIConfig()
     
     // const authenticated = await this.authSvc.initAuth()
     // if (!authenticated) {
@@ -394,6 +397,29 @@ export class InitService {
     }
     const publicConfig:any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
+    return publicConfig
+  }
+
+  private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
+    let payload  = {
+      "request": {
+        "type":"page",
+        "subType":"iGOTAI",
+        "action":"page-configuration",
+        "component":"portal",
+        "rootOrgId":this.configSvc.rootOrg
+      }
+    }
+    const publicConfig:any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
+    console.log('publicConfig', publicConfig)
+    this.configSvc.iGOTAIConfig = publicConfig
+    // this.configSvc.iGOTAIConfig = {
+    //   "aiTutor": true,
+    //   "iGOTAI": true,
+    //   "subTitles": true,
+    //   "transcription": true
+    // }
+    console.log('this.configSvc.iGOTAIConfig', this.configSvc.iGOTAIConfig)
     return publicConfig
   }
 
