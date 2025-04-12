@@ -35,9 +35,26 @@
     }
 }
 
+.control-container {
+  position: fixed;
+  bottom: 100px;
+  width: 560px;
+  z-index: 2;
+
+}
+
 .start-chat {
     text-align: center;
-    padding-top: 37.5%;
+    padding-top: 25%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5); /* white overlay with 70% opacity */
 }
 
 
@@ -55,14 +72,24 @@
         linear-gradient(to right, #EFA34F, #4881E4);
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
-    width: 92%;
+    width: 100%;
     height: 32px;
 }
 
 .send-btn {
-    background-color:  white !important;
+    background-color:  transparent !important;
     color: rgba(27, 76, 161, 1) !important;
     border: none !important;
+}
+
+.message-container {
+  // background-image: url('/assets/ai-tutor/background.svg');
+  height: 100%;
+  // min-height: 520px;
+  min-width: 560px;
+  width: 100%;
+  z-index: 2;
+  position: relative;
 }
 
 .ai-tutor-container {
@@ -76,17 +103,6 @@
     width:560px
 }
 
-.ai-tutor-container-chatbot::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.9); /* Adjust opacity here */
-    z-index: 1; /* Make sure the opacity is above the background image */
-    height: 100vh;
-}
 
 .ai-tutor-container::before {
     content: '';
@@ -100,10 +116,10 @@
     height: 100vh;
 }
 
-.message-container {
-    z-index: 2;
-    position: relative;
-}
+// .message-container {
+//     z-index: 2;
+//     position: relative;
+// }
 
 
 /*chat style */

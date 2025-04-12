@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="cb-content-wrapper" #scrollMe >
-        <div class="flex flex-wrap cb-content padding-m" #scrollMe id="chatbot-content">
+        <div class="flex flex-wrap"  #scrollMe id="chatbot-content" [ngClass]="currentFilter === 'sarthi'?'cb-content-sarthi padding-m':'padding-m cb-content'">
           <ng-container *ngIf="!displayLoader && currentFilter !== 'sarthi'" #scroll>
             <ng-container *ngFor="let chat of userJourney">
               <ng-container  *ngIf="chat.type === 'incoming'">

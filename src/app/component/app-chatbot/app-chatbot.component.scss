@@ -371,6 +371,33 @@
   box-sizing: border-box;
   background-color: #F0F3F4;
 }
+
+.cb-content-sarthi {
+  background: url('/assets/ai-tutor/background.svg');
+  background-color: #F0F3F4;
+  overflow-y : auto;
+  overflow-x: hidden;
+  position: relative;
+  height: 100%;
+
+  // background: url('your-image.jpg');
+  // background-size: contain;
+  // background-position: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-blend-mode: overlay;
+}
+
+// .cb-content-sarthi::before {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background-color: rgba(255, 255, 255, 0.9); /* Adjust opacity here */
+//   z-index: 1; /* Make sure the opacity is above the background image */
+// }
+
 .cb-footer-wrapper {
   position: absolute;
   width: 100%;
