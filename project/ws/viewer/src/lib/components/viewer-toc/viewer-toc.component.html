@@ -208,18 +208,7 @@
     <ng-template mat-tab-label>
       <img src="assets/ai-tutor/ai-icon.svg">&nbsp;&nbsp;<span>AI Tutor</span>
     </ng-template>
-    <div class="tab-content-tutor" *ngIf="!isFetching">
-      <div class="learning-type-container">
-        <mat-form-field appearance="none">
-          <select  matNativeControl required class="section-dd" >
-            <option value="">Select learning type here </option>
-            <option value="">None</option>
-            <option value="">Socratic</option>
-            <option value="">Story Telling</option>
-            <option value="">Summarisation</option>
-          </select>
-        </mat-form-field>
-      </div>
+    <div class="tab-content-tutor" *ngIf="!isFetching">     
       <viewer-ai-tutor [content]="resourceId"></viewer-ai-tutor>
     </div>
      
