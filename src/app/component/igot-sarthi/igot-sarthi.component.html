@@ -46,7 +46,7 @@
                       <img src="/assets/icons/ai-video-icon.jpg">
   
                     </div>
-                    <div class="content-duration" *ngIf="item?.contentStart || item?.contentEnd">
+                    <div class="content-duration" *ngIf="item?.contentStart && item?.contentEnd">
                       <span *ngIf="item?.contentStart">{{item?.contentStart}}</span>
                       <span *ngIf="item?.contentEnd">:{{item?.contentEnd}}</span>
                     </div>
