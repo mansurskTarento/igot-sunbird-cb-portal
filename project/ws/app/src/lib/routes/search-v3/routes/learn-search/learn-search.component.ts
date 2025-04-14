@@ -1435,8 +1435,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       if (type === 'live') {
         searchRequestEvents.request.filters.startDateTimeInEpoch = {
-          '>=': currentEpochTime,
+          // '>=': currentEpochTime,
           '<=': endOfDayEpochTime,
+        };
+        searchRequestEvents.request.filters.endDateTimeInEpoch = {
+          '>=': currentEpochTime,
+          // '<=': endOfDayEpochTime,
         };
       } else if (type === 'upcoming') {
         searchRequestEvents.request.filters.startDateTimeInEpoch = {
