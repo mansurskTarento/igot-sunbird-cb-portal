@@ -80,10 +80,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe(res => {
           if (res) {
-            console.log(res, "resssssss========")
             this.deptFilterData = this.departmentData &&
              this.departmentData.filter(item => item.toLowerCase().includes(res && res.toLowerCase()))
-             console.log(this.deptFilterData, "this.deptFilterData==========")
              const orgSearchVal = this.transferRequestForm.controls['organization']
              if (this.deptFilterData && this.deptFilterData.length && this.deptFilterData.length > 0) {
               orgSearchVal.setErrors(null)
@@ -92,7 +90,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
              }
           } else {
             this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
-            console.log(this.deptFilterData, "this.deptFilterData========")
             this.checkCurrentOrganizationPresent()
           }
         })
@@ -239,31 +236,21 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkCurrentOrganizationPresent() { 
-    // Get the current designation value
-    const currentOrganization = this.transferRequestForm.get('organization')!.value;
-    // Check if current designation exists in the list
-    if (currentOrganization) {
-      const orgExists = this.deptFilterData.some(
-        (org: any) => org.toLowerCase() === currentOrganization.toLowerCase()
 
-      );
-      
-      // If designation doesn't exist in the list, add it
-      if (!orgExists) {
-        // Create a new designation object to match the structure of other items
-        const newOrganization = { 
-          name: currentOrganization,
-          // Add any other required properties matching your data structure
+  checkCurrentOrganizationPresent() {
+    const currentOrg = this.transferRequestForm.get('organization')!.value;
+    if (currentOrg) {
+      const exists = this.deptFilterData.some(org => org.toLowerCase() === currentOrg.toLowerCase());
+      if (!exists) {
+        const newOrg = {
+          name: currentOrg,
           id: 'custom-' + Date.now(),
-          status: 'Active'
+          status: 'Active',
         };
-        // Make sure the custom designation appears in the filtered list
         if (this.deptFilterData.length >= this.organizationListLoadCount) {
-          // Replace the last item with the new one to maintain the same number of items
           this.deptFilterData.pop();
         }
-        this.deptFilterData.unshift(newOrganization);
+        this.deptFilterData.unshift(newOrg.name);
       }
     }
   }
@@ -305,7 +292,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.organizationFilterEnable = false
       this.organizationListLoadCount = this.organizationDefaultLoadCount; // Reset the load count
       this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
-      console.log( this.deptFilterData, " this.deptFilterData========")
 
       this.checkCurrentOrganizationPresent()
       setTimeout(() => {
@@ -351,9 +337,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  onOrgSelectScroll(event: any): void {
+  onOrgSelectScroll(event: any): void { 
     const element = event.target;
-    debugger
     if(!this.organizationFilterEnable){
       // Check if user has scrolled to the bottom (with a small threshold)
       if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
@@ -363,10 +348,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           
           // Increase the load count by designationDefaultLoadCount
           this.organizationListLoadCount += this.organizationDefaultLoadCount;
-          
           // Update the filtered list with more items
           setTimeout(() => {
-            this.deptFilterData = this.departmentData.slice(0, this.designationListLoadCount);
+            this.deptFilterData = this.departmentData.slice(0, this.organizationListLoadCount)
             this.checkCurrentOrganizationPresent()
             this.isLoadingMoreOrganization = false;
           }, 500); // Small timeout to simulate loading and prevent multiple triggers

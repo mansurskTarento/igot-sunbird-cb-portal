@@ -4,7 +4,7 @@
     <form class="flex flex-col gap-4" [formGroup]="transferRequestForm">
         <div class="flex flex-col">
             <div class="text-sm font-bold required">{{ 'profileInfo.organization' | translate }}</div>
-            <mat-form-field class="profile-form-field mat-drop-down-select">
+            <mat-form-field class="profile-form-field mat-drop-down-select" appearance="none">
                 <!-- <mat-select formControlName="organization">
                     <span class="search-box-span">
                         <input (keyup)="searchOrg($event.target.value)" class="dept-seach-input" placeholder="Search organization">
@@ -38,13 +38,13 @@
                                     class="search-org-input"
                                     (keydown)="$event.stopPropagation()"
                                     autocomplete="off">
-                        <!-- <button 
+                        <button 
                                     *ngIf="searchOrganization?.value" 
                                     type="button" 
                                     class="clear-button" 
                                     (click)="searchOrganization?.setValue('')">
                                     ✕
-                        </button> -->
+                        </button>
                       </div>
                     </div>
                     <!-- Options list -->
