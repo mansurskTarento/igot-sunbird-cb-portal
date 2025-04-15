@@ -87,18 +87,25 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
-
+  learningStyle = [
+    { title: 'None', subtitle: 'You can also choose a learning style that suits you best from here.' },
+    { title: 'Socratic Style', subtitle: 'Explore ideas through thoughtful questions.' },
+    { title: 'Storytelling', subtitle: 'Learn through relatable narratives and real-life examples.' },
+  ]
+  selectedLearningStyle :any
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
     private websocketService: WebSocketService,
-    private router: Router) { }
+    private router: Router) { 
+      this.selectedLearningStyle = this.learningStyle[0]
+    }
 
   ngOnInit() {
     console.log('content', this.content)
-    this.websocketService.connect('wss://socket.appfuel.ai/ws');
+    this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3001/ws');
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -530,7 +537,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       let message = {
         message: this.searchQueryAItutor, 
         query: this.searchQueryAItutor,
-        folder_name: this.content
+        folder_name: 'do_1141489083557396481526' //this.content
       }
       this.websocketService.sendMessage(message);
       
@@ -567,7 +574,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     console.log('aiSearchResult', this.aiTutorResult)
     console.log('this.aiSearchResultArr', this.aiTutorResultArr)
     let arr:any = []
-    this.aiTutorResult.retrievedChunks.map((item:any)=>{
+    this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -575,19 +582,20 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         title: item.Name,
         content: item,
         mimeType: item.mimeType,
-        contentType: item.contentType,
-        artifactUrl: item.artifactUrl,
-        description: item.description,
-        identifier: item.identifier,   
+        contentType: item.ContentType,
+        artifactUrl: item.ArtifactURL,
+        description: item.Description,
+        identifier: item.Identifier,   
         contentStart: item?.contentStart/60,
         contentEnd: item?.contentEnd/60,     
-        resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`
+        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 
       arr.push(resultObj)
       
     })
-    let answer = this.aiTutorResult.answer.trim().replace(/\n/g, '<br>')
+    let answer = this.aiTutorResult.answer ? this.aiTutorResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
+ 
     let shortAnswer =  this.splitParagraphByWords(answer)
     console.log('shortAnswer', shortAnswer)
     this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
@@ -608,7 +616,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/toc/${item?.identifier}/overview`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://portal.igotkarmayogi.gov.in/app/toc/${item?.identifier}/overview`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
@@ -622,7 +630,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   redirectToToc(chat:any) {
-    let path = `https://${environment.sitePath}/app/toc/${chat?.identifier}/overview`
+    let path = `https://portal.igotkarmayogi.gov.in/app/toc/${chat?.identifier}/overview`
     window.open(path, '_blank')
   }
 
@@ -678,6 +686,20 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.initials = initials.toUpperCase()
     console.log('this.initials', this.initials)
+  }
+
+  getLearningStyle() {
+    if(this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
+      this.websocketService.closeConnection()
+      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3000/ws');
+    } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
+      this.websocketService.closeConnection()
+      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3001/ws');
+    }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
+      this.websocketService.closeConnection()
+      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3000/ws');
+    }
+    console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
 
   ngOnDestroy(): void {

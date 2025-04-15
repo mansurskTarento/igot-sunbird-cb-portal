@@ -9,7 +9,7 @@
       <ng-container *ngIf="chat.type === 'incoming'">
         <ng-container *ngIf="chat?.answer">
           <div class="flex row-start incoming-msg margin-bottom-s">
-            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/chatbot-ai-new.svg"></div>
+            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
           
             <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
             </div>
@@ -55,9 +55,15 @@
                   
                 </a>
               </div>
+              <div class="flex flex-row cursor-pointer">
               <div class="resource-link">
-                <a [href]="item?.resourceLink" target="_blank">Open Resource Link</a>
+                <a [href]="item?.resourceLink" target="_blank">Click to view</a>
               </div>
+              <div class="cursor-pointer ml-3" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource'">
+                <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
+                <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
+              </div>
+            </div>
             </ng-container>
           </div>
           <!-- <div class="feefback-section flex flex-row">
@@ -77,7 +83,7 @@
             </div>
             <div class="flex flex-row font-12 my-2">
 
-              <div class="cursor-pointer" (click)="copyPath(item, ci)">
+              <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource'">
                 <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
               </div>
@@ -91,7 +97,7 @@
         </ng-container>
         <ng-container *ngIf="!chat?.answer">
           <div class="flex row-start incoming-msg margin-bottom-s">
-            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/chatbot-ai-new.svg"></div>
+            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             <div class="loading-bar-icon"><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
           </div>
 

@@ -166,20 +166,25 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   showAiTutorConfirmPopup() {
-    const dialogConfig = new MatDialogConfig()
+    if(this.isEnrolled) {
+      this.generateResumeDataLinkNew()
+    } else {
+      const dialogConfig = new MatDialogConfig()
 
-    dialogConfig.width = '421px'
-    dialogConfig.data = {
-      enroll: this.isEnrolled
-    }
-    const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
-
-    dialogRef.afterClosed().subscribe((response:any) => {
-      console.log('response', response)
-      if(response === 'enroll') {
-        this.generateResumeDataLinkNew()
+      dialogConfig.width = '421px'
+      dialogConfig.data = {
+        enroll: this.isEnrolled
       }
-    });
+      const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
+
+      dialogRef.afterClosed().subscribe((response:any) => {
+        console.log('response', response)
+        if(response === 'enroll') {
+          this.generateResumeDataLinkNew()
+        }
+      });
+    }
+    
   }
 
   generateResumeDataLinkNew() {

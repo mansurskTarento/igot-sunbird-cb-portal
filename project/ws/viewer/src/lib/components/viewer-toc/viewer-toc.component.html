@@ -206,7 +206,15 @@
   </mat-tab>
   <mat-tab class="ai-tutor-tab" >
     <ng-template mat-tab-label>
-      <img src="assets/ai-tutor/ai-icon.svg">&nbsp;&nbsp;<span>AI Tutor</span>
+      <div class="flex flex-row">
+        <div class="flex">
+          <img height="29" width="29" src="assets/icons/bot-chat-mini.svg">&nbsp;&nbsp;<span>AI Tutor</span>
+        </div>        
+        <div class="red-circle ml-5">
+          New
+        </div>
+      </div>
+      
     </ng-template>
     <div class="tab-content-tutor" *ngIf="!isFetching">     
       <viewer-ai-tutor [content]="resourceId"></viewer-ai-tutor>

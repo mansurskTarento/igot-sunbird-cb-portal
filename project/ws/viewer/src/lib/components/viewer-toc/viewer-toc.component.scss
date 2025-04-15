@@ -115,8 +115,14 @@ app-content-icon {
 
 .player-content  {
   ::ng-deep .mat-tab-labels {
-    height: 72px;
+    height: 50px;
   }
+
+  ::ng-deep .mat-tab-label {
+    height: 42px !important;
+  }
+
+
 
   ::ng-deep .mat-tab-label-content {
     margin-top: 24px;
@@ -167,4 +173,19 @@ app-content-icon {
 .tab-content-tutor {
   width: 100%;
   //height: fit-content
+}
+
+.red-circle {
+  background: red;
+  opacity: 1;
+  color: white;
+  padding: 2px 10px;
+  height: 16px;
+  width: 28px;
+  border-radius: 2px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 8px;
 }

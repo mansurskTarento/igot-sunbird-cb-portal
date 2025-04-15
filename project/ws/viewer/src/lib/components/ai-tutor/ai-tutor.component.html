@@ -128,15 +128,32 @@
 </div> -->
 
 <div class="header">
-  <mat-form-field appearance="none" style="width:100%">
+  <!-- <mat-form-field appearance="none" style="width:100%">
     <select  matNativeControl required class="section-dd" >
-      <option value="">Select learning type here </option>
+      <option value="">You can also choose a learning style that suits you best from here.</option>
       <option value="">None</option>
       <option value="">Socratic</option>
       <option value="">Story Telling</option>
       <option value="">Summarisation</option>
     </select>
+  </mat-form-field> -->
+  <mat-form-field class="multiline-select" appearance="fill" style="width: 100%; height: 80px;" floatLabel="never">
+    <mat-select required [(value)]="selectedLearningStyle" (selectionChange)="getLearningStyle()">
+      <mat-select-trigger>
+        <div class="option-content">
+          <div class="title">{{ selectedLearningStyle?.title }}</div>
+          <div class="subtitle">{{ selectedLearningStyle?.subtitle }}</div>
+        </div>
+      </mat-select-trigger>
+      <mat-option value="" *ngFor="let item of learningStyle" [value]="item">
+        <div class="option-content">
+          <div class="title">{{item?.title}}</div>
+          <div class="subtitle">{{item?.subtitle}}</div>
+        </div>
+      </mat-option>
+    </mat-select>
   </mat-form-field>
+  
 </div>
 
 <div class="container-none">
@@ -150,7 +167,7 @@
         <ng-container *ngIf="chat.type === 'incoming'">
           <ng-container *ngIf="chat?.answer">
             <div class="flex row-start incoming-msg margin-bottom-s">
-              <div class="system-icon"><img alt="ai-icon" src="/assets/icons/chatbot-ai-new.svg"></div>
+              <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             
               <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
               </div>
@@ -167,7 +184,7 @@
               <ng-container *ngIf="item?.mimeType === 'application/pdf'">
                 <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank"><img src="/assets/icons/ai-pdf-icon.jpg"></a></div>
                 <div class="resource-link">
-                  <a [href]="item?.resourceLink" target="_blank">Open Resource Link</a>
+                  <a [href]="item?.resourceLink" target="_blank">Click to view</a>
                 </div>
               </ng-container>
               <ng-container *ngIf="item?.mimeType === 'video/mp4'">
@@ -182,8 +199,14 @@
                     <span *ngIf="item?.contentEnd">:{{item?.contentEnd}}</span>
                   </div>
                 </div>
-                <div class="resource-link">
-                  <a [href]="item?.resourceLink" target="_blank">Open Resource Link</a>
+                <div class="flex flex-row cursor-pointer">
+                  <div class="resource-link">
+                    <a [href]="item?.resourceLink" target="_blank">Click to view</a>
+                  </div>
+                  <div class="cursor-pointer ml-3" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource'">
+                    <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
+                    <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
+                  </div>
                 </div>
               </ng-container>
             </div>
@@ -194,12 +217,12 @@
                     <mat-icon class="vertical-middle">navigate_next</mat-icon>
                   </div>
                   <div>
-                    {{item?.description | slice : 0:50}}
+                    {{item?.description}}
                   </div>
                 </ng-container>
               </div>
               <div class="flex flex-row font-12">
-                <div class="cursor-pointer" (click)="copyPath(item, ci)">
+                <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource'">
                   <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
@@ -213,7 +236,7 @@
           </ng-container>
           <ng-container *ngIf="!chat?.answer">
             <div class="flex row-start incoming-msg margin-bottom-s">
-              <div class="system-icon"><img alt="ai-icon" src="/assets/icons/chatbot-ai-new.svg"></div>
+              <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
               <div class="loading-bar-icon"><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
             </div>
     

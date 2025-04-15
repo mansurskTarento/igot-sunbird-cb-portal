@@ -538,7 +538,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     console.log('aiSearchResult', this.aiSearchResult)
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     let arr:any = []
-    this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+    this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -552,13 +552,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         identifier: item.Identifier,    
         contentStart: item?.contentStart/60,
         contentEnd: item?.contentEnd/60,   
-        resourceLink : item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`
+        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch`
       }
 
       arr.push(resultObj)
       
     })
-    let answer = this.aiSearchResult.answer.trim().replace(/\n/g, '<br>')
+    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
     let shortAnswer =  this.splitParagraphByWords(answer)
     console.log('shortAnswer', shortAnswer)
     this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
@@ -583,7 +583,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://${environment.sitePath}/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://${environment.sitePath}/app/toc/${item?.identifier}/overview`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch`: `https://portal.igotkarmayogi.gov.in/app/toc/${item?.identifier}/overview`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
@@ -597,7 +597,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   redirectToToc(chat:any) {
-    let path = `https://${environment.sitePath}/app/toc/${chat?.identifier}/overview`
+    let path = `https://portal.igotkarmayogi.gov.in/app/toc/${chat?.identifier}/overview`
     window.open(path, '_blank')
   }
 

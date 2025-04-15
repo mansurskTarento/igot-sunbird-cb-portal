@@ -413,12 +413,12 @@ export class InitService {
     const publicConfig:any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
     console.log('publicConfig', publicConfig)
     this.configSvc.iGOTAIConfig = publicConfig
-    // this.configSvc.iGOTAIConfig = {
-    //   "aiTutor": true,
-    //   "iGOTAI": true,
-    //   "subTitles": true,
-    //   "transcription": true
-    // }
+    this.configSvc.iGOTAIConfig = {
+      "aiTutor": true,
+      "iGOTAI": true,
+      "subTitles": true,
+      "transcription": true
+    }
     console.log('this.configSvc.iGOTAIConfig', this.configSvc.iGOTAIConfig)
     return publicConfig
   }
