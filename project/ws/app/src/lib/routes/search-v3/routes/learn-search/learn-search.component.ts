@@ -664,13 +664,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.seeAllResult = SearchCategory.Communities;
         } else if (key === 'typeOfEvents') {
             const currentEpochTime = moment().valueOf();
-            const endOfDayEpochTime = moment().endOf('day').valueOf();
+            // const endOfDayEpochTime = moment().endOf('day').valueOf();
             const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
             this.resetEventsTypesRequest()
             if (selectedFilters[key][0] === 'live') {
               this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
+                '<=': currentEpochTime,
+              };
+              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
                 '>=': currentEpochTime,
-                '<=': endOfDayEpochTime,
               };
             } else if (selectedFilters[key][0] === 'upcoming') {
               this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
@@ -1430,17 +1432,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       delete searchRequestEvents.request.sort_by?.lastUpdatedOn;
 
       const currentEpochTime = moment().valueOf();
-      const endOfDayEpochTime = moment().endOf('day').valueOf();
+      // const endOfDayEpochTime = moment().endOf('day').valueOf();
       const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
 
       if (type === 'live') {
         searchRequestEvents.request.filters.startDateTimeInEpoch = {
-          // '>=': currentEpochTime,
-          '<=': endOfDayEpochTime,
+          '<=': currentEpochTime,
         };
         searchRequestEvents.request.filters.endDateTimeInEpoch = {
           '>=': currentEpochTime,
-          // '<=': endOfDayEpochTime,
         };
       } else if (type === 'upcoming') {
         searchRequestEvents.request.filters.startDateTimeInEpoch = {
