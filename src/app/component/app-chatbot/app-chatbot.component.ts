@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core'
+import { AfterViewChecked, OnChanges, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 // import { ChatbotService } from './chatbot.service'
 import { RootService } from './../root/root.service'
@@ -11,8 +11,8 @@ import { NavigationEnd, Router } from '@angular/router'
   styleUrls: ['./app-chatbot.component.scss'],
   // providers: [ChatbotService]
 })
-export class AppChatbotComponent implements OnInit, AfterViewChecked {
-
+export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges {
+  @Input() rootOrgId:any
   showIcon = true
   categories: any[] = []
   language: any[] = []
@@ -71,13 +71,19 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
-      this.enableIGOTAIFlag = true
-      this.currentFilter = 'sarthi'
-    } else {
-      this.enableIGOTAIFlag = false
-      this.currentFilter = 'information'
+    console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+    console.log()
+    if(this.rootOrgId) {
+      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
+        this.enableIGOTAIFlag = true
+        this.currentFilter = 'sarthi'
+      } else {
+        this.enableIGOTAIFlag = false
+        this.currentFilter = 'information'
+      }
     }
+   
     
     this.checkForApiCalls()
     this.enableScroll()
@@ -86,6 +92,19 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+  }
+
+  ngOnChanges() {
+    if(this.rootOrgId) {
+      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
+        this.enableIGOTAIFlag = true
+        this.currentFilter = 'sarthi'
+      } else {
+        this.enableIGOTAIFlag = false
+        this.currentFilter = 'information'
+      }
+    }
   }
 
   greetings() {
