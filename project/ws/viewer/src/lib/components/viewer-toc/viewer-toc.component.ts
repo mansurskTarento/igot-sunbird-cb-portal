@@ -117,6 +117,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   private viewerDataServiceSubscription: Subscription | null = null
   hierarchyData: any
   enrollmentList: any
+  enableAITutorFlag = false
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -125,6 +126,11 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.aiTutor) {
+      this.enableAITutorFlag = true
+    } else {
+      this.enableAITutorFlag = false
+    }
     this.hierarchyData = this.activatedRoute.snapshot.data.hierarchyData
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData

@@ -11,6 +11,16 @@
   z-index: 999999999;
 }
 
+.chatbot-icon-ai {
+  position: absolute;
+  right: 30px;
+  -moz-animation-delay: 1s;
+  -webkit-animation-delay: 1s;
+  -o-animation-delay: 1s;
+  animation-delay: 1s;
+  transition: 1s ease;
+}
+
 .chatbot-icon {
   position: absolute;
   right: -107px;
@@ -39,7 +49,7 @@
 }
 
 .chatbot {
-  width: 400px;
+  width: 610px;
   position: fixed;
   bottom: 20px;
   right: 50px;
@@ -84,6 +94,34 @@
     width: 74%;
   }
 }
+
+.cb-header-sarthi {
+  color: rgb(27, 76, 161) !important;
+  background-color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  .user-info-div {
+    width: 88%;
+    justify-content: space-between;
+  }
+  .lang-select {
+    height: 32px;
+    background-color: white;
+    border-color: rgba(0, 0, 0, 0.16)!important;
+  }
+  .user-name {
+    padding-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 74%;
+  }
+}
 .cb-content {
   background-color: #F0F3F4;
   overflow: auto;
@@ -100,7 +138,7 @@
   border-bottom-right-radius: 15px;
   background-color: white;
   .info {
-    width: 50%;
+    width: 33%;
     padding: 5px 0;
     align-items: center;
     display: flex;
@@ -333,6 +371,33 @@
   box-sizing: border-box;
   background-color: #F0F3F4;
 }
+
+.cb-content-sarthi {
+  background: url('/assets/ai-tutor/background.svg');
+  background-color: #F0F3F4;
+  overflow-y : auto;
+  overflow-x: hidden;
+  position: relative;
+  height: 100%;
+
+  // background: url('your-image.jpg');
+  // background-size: contain;
+  // background-position: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-blend-mode: overlay;
+}
+
+// .cb-content-sarthi::before {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background-color: rgba(255, 255, 255, 0.9); /* Adjust opacity here */
+//   z-index: 1; /* Make sure the opacity is above the background image */
+// }
+
 .cb-footer-wrapper {
   position: absolute;
   width: 100%;
@@ -384,4 +449,8 @@
   .br-bl {
     border-bottom-left-radius: unset;
   }
+}
+
+.vertical-middle {
+  vertical-align: middle;
 }
