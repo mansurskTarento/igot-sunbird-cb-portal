@@ -40,7 +40,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-teachers-notes.component'
-import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component'
+import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component';
+import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
 @NgModule({
   declarations: [
     ContentTocComponent,
@@ -55,6 +56,7 @@ import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc
     AppTocContentCardV2SkeletonComponent,
     TruncatePipe,
     ReplaceNbspPipe,
+    AiTutorConfirmPopupComponent,
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,147 @@
+<div class="igot-ai-container">
+  <div class="message-container">
+    <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
+      <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
+      <p>Welcome to Ai Tutor, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
+    </div>
+    <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
+
+      <ng-container *ngIf="chat.type === 'incoming'">
+        <ng-container *ngIf="chat?.answer">
+          <div class="flex row-start incoming-msg margin-bottom-s">
+            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+          
+            <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
+            </div> -->
+            <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
+              <markdown [data]="chat?.answer"></markdown>
+            </div>
+              <div class="system-msg padding-xs" *ngIf="chat?.wordsCount > 30">
+                <!-- <div   *ngIf="chat?.wordsCount > 30" [innerHTML]="chat?.showLess ? chat.shortAnswer :  chat.answer"></div> -->
+                <markdown [data]="chat?.showLess ? chat.shortAnswer :  chat.answer"></markdown>
+                <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">show less</a>
+                <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">show more</a>
+              </div>
+             
+              <!-- <div *ngIf="!chat?.showLess && chat?.wordsCount > 30" (click)="toggleShow(i, 'less')">Show Less</div>
+              <div *ngIf="chat?.showLess && chat?.wordsCount > 30" (click)="toggleShow(i, 'more')">Show More</div> -->
+            
+
+          </div>
+          <!-- <div class="flex row-start incoming-msg margin-bottom-s">
+            <div class="system-icon"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+            <div *ngIf="chat?.contentType === 'Resource'" class="system-msg padding-xs" [innerHTML]="chat.message">
+            </div>
+
+          </div> -->
+          <ng-container *ngFor="let item of chat?.result; let ci=index">
+          <div class="system-msg-mimetype flex flex-col" *ngIf="item?.contentType === 'Resource'">
+            <ng-container *ngIf="item?.mimeType === 'application/pdf'">
+              <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank"><img src="/assets/icons/ai-pdf-icon.jpg"></a></div>
+              <div class="resource-link">
+                <a [href]="item?.resourceLink" target="_blank">Click to view</a>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="item?.mimeType === 'video/mp4'">
+              <div class="resource-icon">
+                <a [href]="item?.resourceLink" target="_blank">
+                  <div class="position-relative">
+                    <div class="position-relative">
+                      <img src="/assets/icons/ai-video-icon.jpg">
+  
+                    </div>
+                    <div class="content-duration" *ngIf="item?.contentStart && item?.contentEnd">
+                      <span *ngIf="item?.contentStart">{{item?.contentStart}}</span>
+                      <span *ngIf="item?.contentEnd">:{{item?.contentEnd}}</span>
+                    </div>
+                  </div>
+                  
+                  
+                </a>
+              </div>
+              <div class="flex flex-row cursor-pointer">
+              <div class="resource-link">
+                <a [href]="item?.resourceLink" target="_blank">Click to view</a>
+              </div>
+              <div class="cursor-pointer ml-3" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource'">
+                <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
+                <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
+              </div>
+            </div>
+            </ng-container>
+          </div>
+          <!-- <div class="feefback-section flex flex-row">
+            <div><img src="/assets/ai-tutor/up.svg"></div>
+            <div class="ml-2"><img src="/assets/ai-tutor/down.svg"></div>
+          </div> -->
+          <div class="recommended-question my-5px" [ngClass]="{'margin-left-5': item?.message }">
+            <div class="my-5px mr-2" *ngIf="item?.contentType !== 'Resource'">
+              <ng-container>
+                <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
+                  <mat-icon class="vertical-middle">navigate_next</mat-icon>
+                </div>
+                <div>
+                  {{item?.description}}
+                </div>
+              </ng-container>
+            </div>
+            <div class="flex flex-row font-12 my-2">
+
+              <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource'">
+                <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
+                <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
+              </div>
+              <div class="ml-2 mr-2"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+              <div class="ai-generated-content ml-2">These are AI generated results</div>
+            </div>
+          </div>
+        </ng-container>
+          
+          
+        </ng-container>
+        <ng-container *ngIf="!chat?.answer">
+          <div class="flex row-start incoming-msg margin-bottom-s">
+            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+            <div class="loading-bar-icon"><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
+          </div>
+
+        </ng-container>
+        
+      </ng-container>
+      <ng-container *ngIf="chat.type === 'sendMsg'">
+        <div class="flex width-1-1 row-end padding-top-l padding-bottom-m">
+          <div class="user-seleted-question padding-xs">
+            {{chat?.question}}
+          </div>
+          <div class="user-icon" *ngIf="userIcon">
+            <img alt="ai-icon" src="{{userIcon}}">
+          </div>
+          <div class="circle-s user-icon" *ngIf="!userIcon" [ngStyle]="{'background-color':  circleColor }">
+            <div  class="initials" i18n-aria-label>
+              {{ userInitials }} 
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="control-container">
+    <div class="border-gradient-rounded">
+      <div class="flex flex-row mx-5 justify-between">
+
+        <div class="query-box">
+          <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery()"/>
+        </div>
+
+        <div>
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()"  [disabled]="!searchQuery">
+            <mat-icon class="send-btn-icon">send</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
