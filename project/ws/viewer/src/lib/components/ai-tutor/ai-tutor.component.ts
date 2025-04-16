@@ -117,8 +117,8 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
-    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : ''
-    if(!this.userInfo.profileImage && this.userInfo && this.userInfo.firstName) {
+    this.userIcon = this.userInfo && this.userInfo.profileImageUrl ? this.userInfo.profileImageUrl : ''
+    if(!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
       this.createInititals(this.userInfo.firstName)
     }
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'

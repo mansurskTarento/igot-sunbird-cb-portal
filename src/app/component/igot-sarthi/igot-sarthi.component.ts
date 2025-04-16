@@ -104,9 +104,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
-    this.userIcon = this.userInfo && this.userInfo.profileImage ? this.userInfo.profileImage : ''
+    this.userIcon = this.userInfo && this.userInfo.profileImageUrl ? this.userInfo.profileImageUrl : ''
     console.log('this.userInfo', this.userInfo)
-    if(!this.userInfo.profileImage && this.userInfo && this.userInfo.firstName) {
+    if(!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
       this.createInititals(this.userInfo.firstName)
     } 
     

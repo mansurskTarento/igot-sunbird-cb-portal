@@ -619,6 +619,18 @@
   position: relative;
 }
 
+.user-icon {
+  margin-left: 5px;
+
+}
+
+.user-icon img{
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  
+}
+
 @media (max-width: 1200px) {
   .message-container {
     // background-image: url('/assets/ai-tutor/background.svg');
