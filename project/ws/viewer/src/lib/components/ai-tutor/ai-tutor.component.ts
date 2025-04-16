@@ -105,7 +105,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     console.log('content', this.content)
-    this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3001/ws');
+    this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3001/ws');
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -691,13 +691,13 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   getLearningStyle() {
     if(this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
       this.websocketService.closeConnection()
-      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3000/ws');
+      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3000/ws');
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.websocketService.closeConnection()
-      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3001/ws');
+      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3001/ws');
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.websocketService.closeConnection()
-      this.websocketService.connect('ws://learning-ai.karmayogibharat.net:3000/ws');
+      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3000/ws');
     }
     console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
