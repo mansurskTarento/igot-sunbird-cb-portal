@@ -2276,12 +2276,14 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       if (this.content && this.content.avgRating
       ) {
         payload['content_rating'] = this.content.avgRating
+        payload['content rating'] = this.content.avgRating
       }
       if (this.content && this.content.totalNoOfRating) {
         payload['no_users_rated'] = this.content.totalNoOfRating
       }
       // if(this.content && this.content.name) {
       payload['learning_path_content'] = this.userEnrollmentList && this.userEnrollmentList.length ? true : false
+      payload['learning path content'] = this.userEnrollmentList && this.userEnrollmentList.length ? true : false
       // }
       if (this.content && this.content.source) {
         payload['content_provider_name'] = this.content.source

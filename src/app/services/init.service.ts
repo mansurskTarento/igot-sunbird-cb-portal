@@ -455,7 +455,7 @@ export class InitService {
       "subTitles": true,
       "transcription": true
     }
-    console.log('this.configSvc.iGOTAIConfig', this.configSvc.iGOTAIConfig)
+    // console.log('this.configSvc.iGOTAIConfig', this.configSvc.iGOTAIConfig)
     return publicConfig
   }
 

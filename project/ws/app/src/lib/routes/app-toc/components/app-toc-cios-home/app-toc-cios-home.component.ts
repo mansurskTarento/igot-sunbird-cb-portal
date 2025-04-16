@@ -351,12 +351,14 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       if(this.extContentReadData && this.extContentReadData.avgRating
       ) {
         payload['content_rating'] = this.extContentReadData.avgRating
+        payload['content rating'] = this.extContentReadData.avgRating
       }
       if(this.extContentReadData && this.extContentReadData.totalNoOfRating) {
         payload['no_users_rated'] = this.extContentReadData.totalNoOfRating
       }
       // if(Object.keys(this.userExtCourseEnroll).length) {
        payload['learning_path_content'] = Object.keys(this.userExtCourseEnroll).length ? true : false
+       payload['learning path content'] = Object.keys(this.userExtCourseEnroll).length ? true : false
       // }
       if(this.extContentReadData && this.extContentReadData.source) {
         payload['content_provider_name'] = this.extContentReadData.source
