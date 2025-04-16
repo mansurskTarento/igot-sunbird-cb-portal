@@ -690,7 +690,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     let content: any = [];
     if (courses && courses.length) {
       content = courses.map((c: any) => {
-        const contentTemp: NsContent.IContent = c.content || c.event || {};
+        const contentTemp: any = c.content || c.event || {};
         contentTemp.completionPercentage = c.completionPercentage || c.progress || 0;
         contentTemp.completionStatus = c.completionStatus || c.status || 0;
         contentTemp.enrolledDate = c.enrolledDate || '';
@@ -702,6 +702,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         contentTemp.batchId = c.batchId || '';
         contentTemp.content = c.content || c.event || {};
         contentTemp.content.primaryCategory = c.content && c.content.primaryCategory || c.event && c.event.resourceType || '';
+        contentTemp.cType = c.event ? 'event' : '';
         return contentTemp;
       });
     }
