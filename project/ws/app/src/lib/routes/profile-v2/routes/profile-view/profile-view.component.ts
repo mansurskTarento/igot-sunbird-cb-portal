@@ -271,7 +271,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.otherDetailsForm.get('mobile')) {
       this.otherDetailsForm.get('mobile')!.valueChanges
         .subscribe(res => {
-          if (res && res !== this.portalProfile.personalDetails.mobile || !this.portalProfile.personalDetails.phoneVerified) {
+          if (res && res !== _.get(this.portalProfile, 'personalDetails.mobile') || !_.get(this.portalProfile, 'personalDetails.phoneVerified')) {
             if (MOBILE_PATTERN.test(res)) {
               this.verifyMobile = true
             } else {
@@ -301,7 +301,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (data.profile.data.profileDetails) {
         this.portalProfile = data.profile.data.profileDetails
-        this.userDate = this.portalProfile.personalDetails.dob
+        this.userDate = _.get(this.portalProfile, 'personalDetails.dob', '') 
       }
 
       const user = this.portalProfile.userId || this.portalProfile.id || _.get(data, 'profile.data.id') || ''
@@ -774,15 +774,15 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     // }
     this.otherDetailsForm.patchValue({
       employeeCode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.employeeCode : '',
-      primaryEmail: this.portalProfile.personalDetails.primaryEmail,
-      gender: this.portalProfile.personalDetails.gender ? this.portalProfile.personalDetails.gender.toUpperCase() : '',
-      dob: this.getDateFromText(this.portalProfile.personalDetails.dob),
-      domicileMedium: this.portalProfile.personalDetails.domicileMedium,
-      mobile: this.portalProfile.personalDetails.mobile,
-      countryCode: this.portalProfile.personalDetails.countryCode || '+91',
+      primaryEmail: _.get(this.portalProfile, 'personalDetails.primaryEmail', ''),
+      gender: _.get(this.portalProfile, 'personalDetails.gender', '').toUpperCase(),
+      dob: this.getDateFromText(_.get(this.portalProfile, 'personalDetails.dob', '')),
+      domicileMedium: _.get(this.portalProfile, 'personalDetails.domicileMedium', ''),
+      mobile: _.get(this.portalProfile, 'personalDetails.mobile', ''),
+      countryCode: _.get(this.portalProfile, 'personalDetails.countryCode', '+91'),
       pincode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.pinCode : '',
-      category: this.portalProfile.personalDetails.category ? this.portalProfile.personalDetails.category.toUpperCase() : '',
-      isCadre: this.portalProfile.personalDetails.isCadre
+      category: _.get(this.portalProfile, 'personalDetails.category', '').toUpperCase(),
+      isCadre: _.get(this.portalProfile, 'personalDetails.isCadre', '')
     });
 
     
@@ -796,7 +796,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   cadreControllingAuthority: this.portalProfile.cadreDetails.cadreControllingAuthority,
     // } : {})
 
-    if (this.portalProfile.personalDetails.isCadre) {
+    if (_.get(this.portalProfile, 'personalDetails.isCadre')) {
       this.populateValues()
     }
 

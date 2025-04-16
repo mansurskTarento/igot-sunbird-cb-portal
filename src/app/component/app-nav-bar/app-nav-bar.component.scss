@@ -17,7 +17,7 @@
   max-width: $max-screen;
   display: flex;
   flex: 1;
-  height: 56px;
+  height: 48px;
 }
 .mobile-height {
   height: 56px !important;
@@ -42,7 +42,7 @@
   margin-top: auto;
   margin-bottom: auto;
   width: 324px;
-  margin-right: 3rem;
+  // margin-right: 3rem;
   img {
     height: 36px;
   }
@@ -155,8 +155,7 @@
   margin-left: 0;
   text-align: center;
   flex: 4;
-  max-width: 286px;
-  margin-right: 1rem;
+  max-width: 650px;
 }
 
 .mobile-download-app-desc {
@@ -196,6 +195,7 @@
     height: 52px;
     position: relative;
     top: -1px;
+    justify-content: flex-end;
   }
 
   .kb-symbol {

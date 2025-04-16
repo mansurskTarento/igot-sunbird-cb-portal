@@ -138,6 +138,42 @@ export class InitService {
       'info-outline',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/icon-wrapper.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'video-library',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/video-library.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'school-search',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/school-grey.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'calender-event',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/event-grey.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'people-search',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/group-grey.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'menu_book',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/knowledge-resources-grey.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'diversity_3',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/Jan-karmayogi-grey.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'handshake',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/handshake.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'certificate',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/certificate.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'download',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/download.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',

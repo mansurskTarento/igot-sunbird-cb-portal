@@ -139,7 +139,7 @@ export class EventsComponent implements OnInit {
     if (key) {
       const requestPayload = {
         'request': {
-          'fields' : [
+          'fields': [
             'name',
             'appIcon',
             'instructions',
@@ -181,11 +181,11 @@ export class EventsComponent implements OnInit {
             'contentType': ['Event'],
             'status': ['Live'],
           },
-            'sort_by': { 'lastUpdatedOn': 'desc' },
-            'facets': ['mimeType'],
-            'limit': 1000,
-            'offset': 0,
-          },
+          'sort_by': { 'lastUpdatedOn': 'desc' },
+          'facets': ['mimeType'],
+          'limit': 1000,
+          'offset': 0,
+        },
       }
       this.searchSrvc.fetchSearchDataByCategory(requestPayload).subscribe((response: any) => {
         if (response && response.result && response.result.Event && response.result.Event.length) {
@@ -331,7 +331,7 @@ export class EventsComponent implements OnInit {
   }
 
   translateHub(hubName: string): string {
-    const translationKey =  hubName
+    const translationKey = hubName
     return this.translate.instant(translationKey)
   }
 
@@ -430,7 +430,7 @@ export class EventsComponent implements OnInit {
     const min = stime.substr(2, 3)
     return `${date} ${hour}${min}`
   }
-  addCustomDateAndTime (eventData: any) {
+  addCustomDateAndTime(eventData: any) {
     const eventDate = this.eventService.customDateFormat(eventData.event.startDate, eventData.event.startTime)
     const eventendDate = this.eventService.customDateFormat(eventData.event.endDate, eventData.event.endTime)
     eventData['eventCustomStartDate'] = eventDate
@@ -484,14 +484,14 @@ export class EventsComponent implements OnInit {
         this.addCustomDateAndTime(event)
         featuredEvents.push(event)
       })
-      featuredEvents =  this.sortEvents(featuredEvents)
+      featuredEvents = this.sortEvents(featuredEvents)
     }
     if (this.allEvents['curatedEvents'] && this.allEvents['curatedEvents'].length > 0) {
       this.allEvents['curatedEvents'].forEach((event: any) => {
         this.addCustomDateAndTime(event)
         curatedEvents.push(event)
       })
-      curatedEvents =  this.sortEvents(curatedEvents)
+      curatedEvents = this.sortEvents(curatedEvents)
     }
 
     if (this.allEvents['karmayogiSaptahEvents'] && this.allEvents['karmayogiSaptahEvents'].length > 0) {
@@ -506,11 +506,11 @@ export class EventsComponent implements OnInit {
           event['isEventLive'] = true
           if (today >= event.eventCustomStartDate) {
             if (event.recordedLinks && event.recordedLinks.length > 0) {
-              event['isEventLive']  = false
+              event['isEventLive'] = false
             }
           }
         } else if (today >= event.eventCustomEndDate) {
-          event['isEventLive']  = false
+          event['isEventLive'] = false
           if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
             event['isEventPast'] = true
           }
@@ -532,7 +532,7 @@ export class EventsComponent implements OnInit {
       liveEvents = this.sortEventsAsc(liveEvents)
       futureEvents = this.sortEventsAsc(futureEvents)
       pastEvents = this.sortEvents(pastEvents)
-      karmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      karmayogiSaptahEvents = [...liveEvents, ...futureEvents, ...pastEvents]
 
     }
     if (this.allEvents['rajyaKarmayogiSaptahEvents'] && this.allEvents['rajyaKarmayogiSaptahEvents'].length > 0) {
@@ -588,11 +588,11 @@ export class EventsComponent implements OnInit {
           event['isEventLive'] = true
           if (today >= event.eventCustomStartDate) {
             if (event.recordedLinks && event.recordedLinks.length > 0) {
-              event['isEventLive']  = false
+              event['isEventLive'] = false
             }
           }
         } else if (today >= event.eventCustomEndDate) {
-          event['isEventLive']  = false
+          event['isEventLive'] = false
           if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
             event['isEventPast'] = true
           }
@@ -614,7 +614,7 @@ export class EventsComponent implements OnInit {
       liveEvents = this.sortEventsAsc(liveEvents)
       futureEvents = this.sortEventsAsc(futureEvents)
       pastEvents = this.sortEvents(pastEvents)
-      karmayogiTalksEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      karmayogiTalksEvents = [...liveEvents, ...futureEvents, ...pastEvents]
 
     }
 
@@ -651,14 +651,14 @@ export class EventsComponent implements OnInit {
     return eventData.sort((a: any, b: any) => {
       const firstDate: any = new Date(a.eventCustomStartDate)
       const secondDate: any = new Date(b.eventCustomStartDate)
-      return  secondDate > firstDate  ? 1 : -1
+      return secondDate > firstDate ? 1 : -1
     })
   }
   sortEventsAsc(eventData: any) {
     return eventData.sort((a: any, b: any) => {
       const firstDate: any = new Date(a.eventCustomStartDate)
       const secondDate: any = new Date(b.eventCustomStartDate)
-      return  secondDate < firstDate  ? 1 : -1
+      return secondDate < firstDate ? 1 : -1
     })
   }
 
@@ -725,7 +725,7 @@ export class EventsComponent implements OnInit {
     if (environment && environment.spvorgID) {
       orgId = environment.spvorgID
     }
-    const widgetData: any =  await this.eventSvc.getKeySpeakerJson().catch(_error => {})
+    const widgetData: any = await this.eventSvc.getKeySpeakerJson().catch(_error => { })
     this.keySpeakerEvents = widgetData && widgetData['keySpeakersEvents'] || []
     if (this.keySpeakerEvents && this.keySpeakerEvents.strips && this.keySpeakerEvents.strips.length) {
       if (this.keySpeakerEvents.strips[0] &&
@@ -763,5 +763,13 @@ export class EventsComponent implements OnInit {
   }
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateActualLabel(label, type, '')
+  }
+
+  viewAll() {
+    this.router.navigate(['/app/event-hub/view-all'], { queryParams: { resourceType: 'Karmayogi Talks' } })
+  }
+
+  seeAll(type: string) {
+    this.router.navigate(['/app/event-hub/see-all'], { queryParams: { category: type } })
   }
 }

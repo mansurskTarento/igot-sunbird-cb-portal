@@ -10,7 +10,7 @@
     [ngClass]="mobileTopHeaderVisibilityStatus ? 'home-container':'home-container-without-mobile-header'">
     
     <ng-container *ngIf="!homeConfig?.insightOnRight?.active">
-        <div class="bg-info" [ngClass]="
+        <div class="bg-info mt-2" [ngClass]="
         homeConfig?.leftSection?.active &&  homeConfig?.rightSection?.active ? 'left' :
         (homeConfig?.leftSection?.active &&  !homeConfig?.rightSection?.active) ? 'full' : ''"
             *ngIf="homeConfig?.leftSection?.active">

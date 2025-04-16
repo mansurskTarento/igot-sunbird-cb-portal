@@ -188,12 +188,80 @@ mat-grid-list {
 
 .active-icon{
   vertical-align: middle;
-  color:rgb(27, 76, 161)
+  color:rgb(27, 76, 161);
+  margin-left: 8px;
 }
 
 .new-box-hubs {
   height: 550px !important;
 }
+
+.new-tag{
+  font-size: 10px;
+    position: absolute;
+    // right: -14px;
+    left: calc(100% - 10px);
+    top: -2px;
+    border: 1px solid rgb(209, 57, 36);
+    background: rgb(209, 57, 36);
+    padding: 0 3px;
+    display: flex;
+    height: 10px;
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 11px;
+    color: #fff;
+    transition: all ease-in;
+    text-align: center;
+    vertical-align: middle;
+    animation: sclaeAnimation 1.2s alternate ease-in-out infinite;
+    & span {
+      font-size: 10px;
+      // animation: fontAnimation 1.5s alternate infinite;
+    }
+}
+
+@keyframes grow {
+  0% {
+    height: 11px;
+    width: 20px;
+  }
+  // 50% {
+  //   height: 12px;
+  //   width: 21px;
+  // }
+  100% {
+    height: 13px;
+    width: 23px;
+  }
+}
+
+@keyframes sclaeAnimation {
+  0% {
+    transform:scale3d(1,1,1);
+  }
+  // 50% {
+  //   transform:scale3d(1.18,1.18,1.18);
+  // }
+  100% {
+    transform:scale3d(1.18,1.18,1.18);
+  }
+}
+
+@keyframes fontAnimation {
+  0% {
+    font-size: 11;
+  }
+  // 50% {
+  //   transform:scale3d(1.1,1.1,1.1);
+  // }
+  100% {
+    font-size: 11;
+  }
+}
+
 
 @media (max-width: 576px) {
   .secondary-nav {

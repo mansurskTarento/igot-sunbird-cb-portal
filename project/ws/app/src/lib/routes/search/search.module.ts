@@ -55,6 +55,8 @@ import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/mat
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { TranslateModule } from '@ngx-translate/core'
+import { SearchV3Module } from '../search-v3/search-v3.module'
 
 @NgModule({
   declarations: [
@@ -116,6 +118,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     BtnChannelAnalyticsModule,
     MatDividerModule,
     UserAutocompleteModule,
+    TranslateModule,
+    SearchV3Module
   ],
   exports: [ItemTileComponent, SearchInputComponent, SearchInputHomeComponent],
   providers: [],

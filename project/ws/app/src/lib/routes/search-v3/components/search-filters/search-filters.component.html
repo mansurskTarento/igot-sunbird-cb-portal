@@ -1,0 +1,570 @@
+<div class="filter-sidebar padding-m">
+    <div class="flex items-center justify-between">
+        <p class="mat-subheading-1 margin-bottom-s font-bold-imp text-dark">{{'searchfilters.filterBy' | translate}}</p>
+        <button *ngIf="filtersAppliedCount > 0" mat-flat-button (click)="clearAllFilters()"
+            class="margin-bottom-s clear-all-btn text-sm font-normal">
+            {{'gyaanKarmayogi.clearAll' | translate}}</button>
+    </div>
+
+    <div class="filter-list flex items-center flex-wrap gap-2" *ngIf="filtersAppliedCount > 0">
+        <ng-container *ngFor="let item of selectedFilterChips">
+            <div class="filter-pill flex items-center">
+                <span class="font-normal text-xs" [matTooltip]="item?.value">{{item?.value}}</span>
+                <button mat-icon-button color="primary" (click)="clearFilterChip(item)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </ng-container>
+    </div>
+
+    <ng-container *ngIf="!searchCategory">
+    <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
+
+    <div class="filter-form">
+        <mat-accordion class="filter-section margin-bottom-m">
+            <ng-container *ngFor="let category of categoryType">
+              <mat-expansion-panel *ngIf="category.filters.length > 0 && searchCategory" class="">
+                <mat-expansion-panel-header class="padding-remove">
+                  <mat-panel-title>
+                    <mat-checkbox
+                      [checked]="category?.isChecked"
+                      (change)="onSelectionFilter($event, category, category?.name);"
+                      (click)="$event.stopPropagation();"
+                    >
+                      <span class="min-width-adjust" >
+                        {{ category?.displayName }}
+                      </span>
+                    </mat-checkbox>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-selection-list class="padding-top-0" >
+                  <ng-container *ngFor="let options of category.filters">
+                    <mat-expansion-panel>
+                      <mat-expansion-panel-header class="padding-remove">
+                        <mat-panel-title>
+                          <!-- <mat-checkbox
+                            [checked]="options?.isChecked"
+                            (change)="onSelectionFilter($event, options, category?.displayName)"
+                            (click)="$event.stopPropagation();"
+                          >
+                        </mat-checkbox> -->
+                        <span class="min-width-adjust hierichal-filter-label">
+                          {{ options?.displayName }} 
+                        </span> 
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
+                      <!-- Nested filters -->
+                      <mat-selection-list class="padding-top-0 nested-filters" *ngIf="options.filters?.length > 0">
+                        <ng-container *ngFor="let subOption of options.filters">
+                          <section class="mat-body-2 text-capitalize">
+                            <mat-checkbox
+                              [checked]="subOption?.isChecked"
+                              (change)="onSelectionFilter($event, subOption, options?.displayName)"
+                            >
+                              <span class="min-width-adjust" [matTooltip]="subOption?.displayName" [matTooltipPosition]="'right'">
+                                {{ subOption?.displayName }}
+                              </span>
+                            </mat-checkbox>
+                          </section>
+                        </ng-container>
+                      </mat-selection-list>
+                    </mat-expansion-panel>
+                  </ng-container>
+                </mat-selection-list>
+              </mat-expansion-panel>
+              <ng-container *ngIf="category.filters.length > 0 && !searchCategory">
+                <mat-selection-list class="padding-top-0">
+                    <section class="mat-body-2 text-capitalize">
+                        <mat-checkbox
+                      [checked]="category?.isChecked"
+                      (change)="onSelectionFilter($event, category, category?.name);"
+                      (click)="$event.stopPropagation();"
+                    >
+                      <span class="min-width-adjust" >
+                        {{ category?.displayName }}
+                      </span>
+                    </mat-checkbox>
+                    </section>
+                </mat-selection-list>
+              </ng-container>
+              <ng-container *ngIf="category.filters.length === 0">
+                <mat-selection-list class="padding-top-0">
+                  <section class="mat-body-2 text-capitalize">
+                    <mat-checkbox
+                      [checked]="category?.isChecked"
+                      [disabled]="category?.disabled"
+                      (change)="onSelectionFilter($event, category, category?.name)"
+                    >
+                      <span class="min-width-adjust">
+                        {{ category?.displayName }}
+                      </span>
+                    </mat-checkbox>
+                  </section>
+                </mat-selection-list>
+              </ng-container>
+            </ng-container>
+          </mat-accordion>
+    </div>
+</ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['courseCategory'] && formattedFacets['courseCategory'].length && searchCategory !== 'case-study'">
+        <div class="languages-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['courseCategory'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryContents">
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredContents">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'contentType')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <!-- <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('courseCategory')">
+                {{ showAllContents ? 'See Less' : 'See More' }}
+            </div> -->
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['typeOfEvents'] && formattedFacets['typeOfEvents'].length && categoryTypeEnum.Events === searchCategory">
+        <div class="rating-filter">
+          <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">
+            {{ 'searchfilters.typeOfEvents' | translate }}
+          </p>
+          <mat-radio-group (change)="onTypesOfEventsChange(true, $event.value, 'typeOfEvents')">
+            <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['typeOfEvents']">
+                <ng-container *ngIf="options?.count">
+              <mat-radio-button [value]="options" [checked]="options?.isChecked">
+                <span class="min-width-adjust">
+                  {{ options?.name ? capitalizeFirstLetter(options?.name) + ' (' + options?.count + ')' : '' }}
+                </span>
+              </mat-radio-button>
+            </ng-container>
+            </section>
+          </mat-radio-group>
+        </div>
+      </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['sectorId'] && formattedFacets['sectorId'].length && searchCategory === categoryTypeEnum.CaseStudy">
+        <div class="rating-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of sectorFilters">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'Case Study')">
+                        <span class="min-width-adjust"  [matTooltip]="capitalizeFirstLetter(options?.displayName)" [matTooltipPosition]="'right'">
+                            {{ options?.displayName ? capitalizeFirstLetter(options?.displayName): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="formattedFacets && formattedFacets['resourceType'] && formattedFacets['resourceType'].length">
+        <div class="rating-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.categoryType' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['resourceType']">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'resourceType')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name + ' (' + options.count + ')'}}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+
+    
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['avgRating'] && formattedFacets['avgRating'].length">
+        <div class="rating-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.ratingTitle' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['avgRating']">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'avgRating')">
+                        <span class="min-width-adjust">
+                            {{ options?.name + ' & above' + ' (' + options?.count + ')' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['language'] && formattedFacets['language'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
+        <div class="languages-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.languages' | translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['language'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
+                        [(ngModel)]="filterQueryLanguage">
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredLanguages">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'language')">
+                        <span class="min-width-adjust">
+                            {{ options?.name + ' (' + options.count + ')'}}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredLanguages?.length > 4) || (!filterQueryLanguage && formattedFacets?.['language']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('language')">
+                {{ showAllLanguage ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['organisation'] && formattedFacets['organisation'].length">
+        <div class="content-provider-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'profileInfo.organization' |
+                translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['organisation'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryOrganisation" #inputSearchContentProvider>
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredOrganisations">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'organisation')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredOrganisations?.length > 4) || (!filterQueryOrganisation && formattedFacets?.['organisation']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('organisation')">
+                {{ showAllOrganisation ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['sourceName'] && formattedFacets['sourceName'].length">
+        <div class="content-provider-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' |
+                translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sourceName'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryOrganisation" #inputSearchContentProvider>
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredOrganisations">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'sourceName')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">{{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options.count + ')'}}</span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredOrganisations?.length > 4) || (!filterQueryOrganisation && formattedFacets?.['sourceName']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('sourceName')">
+                {{ showAllOrganisation ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- <ng-container *ngIf="formattedFacets['duration'] && formattedFacets['duration'].length">
+        <div class="duration-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.duration' | translate}}</p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of formattedFacets['duration']">
+                    <mat-checkbox [checked]="options?.isChecked">
+                        {{ options?.name + ' (' + options.count + ')' }}
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container> -->
+
+    <!-- <ng-container *ngIf="formattedFacets[competencyAreaNameKey] && formattedFacets[competencyAreaNameKey].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.competencyArea' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of formattedFacets[competencyAreaNameKey]">
+                    <mat-checkbox [checked]="options.isChecked"
+                        (change)="onSelectionFilter($event, options, competencyAreaNameKey)">
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container> -->
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['competencyArea'] && formattedFacets['competencyArea'].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.competencyArea' | translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['competencyArea']">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'competencyArea')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} 
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+
+    <!-- <ng-container *ngIf="formattedFacets[competencyThemeKey] && formattedFacets[competencyThemeKey].length">
+        <div class="competency-area-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'widgetCbpFilters.competencyTheme' |
+                translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of (showAllCompetencyTheme ? formattedFacets[competencyThemeKey] : formattedFacets[competencyThemeKey].slice(0, 4))">
+                    <mat-checkbox [checked]="options.isChecked"
+                        (change)="onSelectionFilter($event, options, competencyThemeKey)">
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="formattedFacets[competencyThemeKey].length > 4" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore(competencyThemeKey)">
+                {{ showAllCompetencyTheme ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container> -->
+
+    <!-- <ng-container *ngIf="formattedFacets[competencySubThemeKey] && formattedFacets[competencySubThemeKey].length">
+        <div class="competency-area-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'widgetCbpFilters.competencySubTheme' |
+                translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of (showAllCompetencySubTheme ? formattedFacets[competencySubThemeKey] : formattedFacets[competencySubThemeKey].slice(0, 4))">
+                    <mat-checkbox [checked]="options.isChecked"
+                        (change)="onSelectionFilter($event, options, competencySubThemeKey)">
+                        <span class="min-width-adjust">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="formattedFacets[competencySubThemeKey].length > 4" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore(competencySubThemeKey)">
+                {{ showAllCompetencySubTheme ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container> -->
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['topicName'] && formattedFacets['topicName'].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.topicName' |
+                translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['topicName']">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'topicName')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+        </div>
+    </ng-container>
+
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['orgName'] && formattedFacets['orgName'].length">
+        <div class="competency-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' |
+                translate}}
+            </p>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of (showAllOrganisation ? formattedFacets['orgName'] : formattedFacets['orgName'].slice(0, 4))">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'orgName')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="formattedFacets['orgName'].length > 4" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore('organisation')">
+                {{ showAllOrganisation ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['profileDetails.professionalDetails.designation'] && formattedFacets['profileDetails.professionalDetails.designation'].length">
+        <div class="competency-filter designation-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'userProfile.designation' | translate}}
+            </p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['profileDetails.professionalDetails.designation'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryDesignation" #inputSearchDesignation>
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of filteredDesignations">
+                    <mat-checkbox [checked]="options?.isChecked" *ngIf="options?.name"
+                        (change)="onSelectionFilter($event, options, 'profileDetails.professionalDetails.designation')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredDesignations?.length > 4) || (!filterQueryDesignation && formattedFacets?.['profileDetails.professionalDetails.designation']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('designation')">
+                {{ showAllDesignation ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['rootOrgName'] && formattedFacets['rootOrgName'].length">
+        <div class="competency-filter root-org-name-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'profileInfo.organization' |
+                translate}}
+            </p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['rootOrgName'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryRootOrgName" #inputSearchRootOrgName>
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize"
+                    *ngFor="let options of filteredRootOrgNames">
+                    <mat-checkbox [checked]="options?.isChecked"
+                        (change)="onSelectionFilter($event, options, 'rootOrgName')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredRootOrgNames?.length > 4) || (!filterQueryRootOrgName && formattedFacets?.['rootOrgName']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('organisation')">
+                {{ showAllOrganisation ? 'See Less' : 'See More' }}
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Competency array section  -->
+    <div class="competency-filter"
+        *ngIf="formattedFacets && formattedFacets[competencyThemeKey] && formattedFacets[competencyThemeKey].length">
+        <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.competencyArea' | translate}} 
+        </p>
+        <mat-accordion class="filter-section margin-bottom-m">
+            <ng-container *ngFor="let competency of competencyFactet">
+                <ng-container *ngIf="!competency[competencyAreaNameKey].isChecked; else expandArea">
+                    <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
+                                (change)="onCompetencyAreaSelectionFilter($event, competency)"
+                                (click)="$event.stopPropagation();" class="w-full">
+                                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(competency[competencyAreaNameKey]?.name)" [matTooltipPosition]="'right'"> {{competency[competencyAreaNameKey]?.name}}</span>
+                                <span class="min-width-adjust">{{' (' + competency[competencyAreaNameKey]?.count + ')'}}</span>
+
+
+                            </mat-checkbox>
+                </ng-container>
+                <ng-template #expandArea>
+                    <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel-header class="padding-remove">
+                            <mat-panel-title>
+                                <mat-checkbox [checked]="competency[competencyAreaNameKey].isChecked"
+                                    (change)="onCompetencyAreaSelectionFilter($event, competency);"
+                                    (click)="$event.stopPropagation();">
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(competency[competencyAreaNameKey]?.name)" [matTooltipPosition]="'right'"> {{competency[competencyAreaNameKey]?.name}}</span>
+                                    <span class="min-width-adjust">{{' (' + competency[competencyAreaNameKey]?.count + ')'}}</span>
+                                </mat-checkbox>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <span class="sub-header">
+                            Themes
+                        </span>
+
+                        <div class="mat-full-radius mb-2 search-input-themes" *ngIf="competency[competencyThemeKey].length > 0">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
+                                    [(ngModel)]="filterQueryThemes">
+                                <mat-icon matPrefix class="search-icon">search</mat-icon>
+                            </mat-form-field>
+                        </div>
+                        <mat-selection-list class="padding-top-0">
+                            <section class="mat-body-2 text-capitalize"
+                                *ngFor="let theme of getFilteredThemes(competency)">
+                                <mat-checkbox [checked]="theme?.isChecked"
+                                    (change)="onSelectionFilter($event, theme, competencyThemeKey)">
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(theme?.name)" [matTooltipPosition]="'right'">{{theme?.name}}</span>
+                                    <span class="min-width-adjust ml-1">({{theme?.count}})</span>
+                                </mat-checkbox>
+                            </section>
+                        </mat-selection-list>
+                        <div *ngIf="competency.filteredLength && competency.filteredLength > 4"
+                            class="brand-color underline cursor-pointer" (click)="togoleThemes(competency)">
+                            {{ competency.showAll ?  'See Less' : 'See More' }}
+                        </div>
+
+                        <!-- <mat-selection-list class="padding-top-0">
+                            <span class="sub-header mt-2">
+                                Sub themes
+                            </span>
+                            <div class="mat-full-radius mb-2 search-input-themes" >
+                                <mat-form-field appearance="outline" class="w-full">
+                                    <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
+                                        [(ngModel)]="filterQuerySubThemes">
+                                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                                </mat-form-field>
+                            </div>
+                            <section class="mat-body-2 text-capitalize"
+                                *ngFor="let subTheme of getFilteredSubThemes(competency)">
+                                <mat-checkbox [checked]="subTheme?.isChecked"
+                                    (change)="onSelectionFilter($event, subTheme, competencySubThemeKey)">
+                                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(subTheme?.name)" [matTooltipPosition]="'right'">
+                                        {{ subTheme?.name }}
+                                    </span>
+                                </mat-checkbox>
+                            </section>
+                        </mat-selection-list> -->
+                    </mat-expansion-panel>
+                </ng-template>
+            </ng-container>
+        </mat-accordion>
+    </div>
+
+</div>

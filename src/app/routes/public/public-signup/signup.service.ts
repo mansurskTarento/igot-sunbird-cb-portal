@@ -21,7 +21,7 @@ const API_END_POINTS = {
   ORG_READ: '/api/org/v1/read',
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
-  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive'
+  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
 }
 
 @Injectable({
@@ -198,7 +198,7 @@ export class SignupService {
       }
       const importedBy =
         _.get(c, 'additionalProperties.importedById', null) ===
-        _.get({}, 'userId', '')
+          _.get({}, 'userId', '')
           ? 'You'
           : _.get(c, 'additionalProperties.importedByName', null);
       (c['importedByName'] = importedBy),

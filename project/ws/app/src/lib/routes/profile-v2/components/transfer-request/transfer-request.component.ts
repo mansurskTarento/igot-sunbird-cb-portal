@@ -22,6 +22,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   @Output() enableWithdraw = new EventEmitter<boolean>()
   transferRequestForm = new UntypedFormGroup({
     organization: new UntypedFormControl('', [Validators.required]),
+    searchOrganization: new UntypedFormControl(''),
     group: new UntypedFormControl('', [Validators.required]),
     designation: new UntypedFormControl('', [Validators.required]),
     searchDesignation: new UntypedFormControl(''),
@@ -38,6 +39,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   designationDefaultLoadCount =  50
   isLoadingMoreDesignations = false;
   desigantionFilterEnable = false
+
+  // deptFilterData: any[] = []
+  organizationListLoadCount = 50
+  organizationDefaultLoadCount =  50
+  isLoadingMoreOrganization = false
+  organizationFilterEnable = false
 
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
@@ -64,8 +71,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         }
       })
 
-    if (this.transferRequestForm.get('organization')) {
-      this.transferRequestForm.get('organization')!.valueChanges
+    if (this.transferRequestForm.get('searchOrganization')) {
+      this.transferRequestForm.get('searchOrganization')!.valueChanges
         .pipe(
           debounceTime(250),
           distinctUntilChanged(),
@@ -82,7 +89,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
             orgSearchVal.setErrors({ invalidSelection: true })
              }
           } else {
-            this.deptFilterData = this.departmentData
+            this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
+            this.checkCurrentOrganizationPresent()
           }
         })
     }
@@ -228,6 +236,25 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  checkCurrentOrganizationPresent() {
+    const currentOrg = this.transferRequestForm.get('organization')!.value;
+    if (currentOrg) {
+      const exists = this.deptFilterData.some(org => org.toLowerCase() === currentOrg.toLowerCase());
+      if (!exists) {
+        const newOrg = {
+          name: currentOrg,
+          id: 'custom-' + Date.now(),
+          status: 'Active',
+        };
+        if (this.deptFilterData.length >= this.organizationListLoadCount) {
+          this.deptFilterData.pop();
+        }
+        this.deptFilterData.unshift(newOrg.name);
+      }
+    }
+  }
+
   setupScrollListener(opened: boolean): void {
     if (opened) {
       if (this.transferRequestForm.get('searchDesignation')) {
@@ -257,6 +284,35 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+  setupOrgScrollListener(opened: boolean): void {
+    if (opened) {
+      if (this.transferRequestForm.get('searchOrganization')) {
+        this.transferRequestForm.get('searchOrganization')!.setValue('');
+      }
+      this.organizationFilterEnable = false
+      this.organizationListLoadCount = this.organizationDefaultLoadCount; // Reset the load count
+      this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
+
+      this.checkCurrentOrganizationPresent()
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-org-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+          const panel = document.querySelector('.mat-select-panel');
+          if (panel) {
+            // Add scroll event listener to the panel
+            panel.addEventListener('scroll', this.onOrgSelectScroll.bind(this));
+          }
+        
+      }, 100);
+    }
+  }
+
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
     
@@ -280,6 +336,29 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  onOrgSelectScroll(event: any): void { 
+    const element = event.target;
+    if(!this.organizationFilterEnable){
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreOrganization && this.departmentData.length > this.deptFilterData.length) {
+          this.isLoadingMoreOrganization = true;
+          
+          // Increase the load count by designationDefaultLoadCount
+          this.organizationListLoadCount += this.organizationDefaultLoadCount;
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.deptFilterData = this.departmentData.slice(0, this.organizationListLoadCount)
+            this.checkCurrentOrganizationPresent()
+            this.isLoadingMoreOrganization = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
   onDesignationDropdownClosed(): void {
     // Keep the designation value but clear the search input
     const currentDesignation = this.transferRequestForm.get('designation')!.value;
@@ -292,6 +371,23 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         const designationControl = this.transferRequestForm.get('designation');
         if (designationControl) {
           designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+
+  onOrgDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentOrg = this.transferRequestForm.get('organization')!.value;
+    setTimeout(() => {
+      if (this.transferRequestForm.get('searchOrganization')) {
+        this.transferRequestForm.get('searchOrganization')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentOrg) {
+        const organizationControl = this.transferRequestForm.get('organization');
+        if (organizationControl) {
+          organizationControl.setValue(currentOrg);
         }
       }
     }, 100);

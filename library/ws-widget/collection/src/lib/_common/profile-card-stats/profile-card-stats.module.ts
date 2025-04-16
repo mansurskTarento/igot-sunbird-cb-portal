@@ -9,6 +9,8 @@ import { WeeklyClapsModule } from '../weekly-claps/weekly-claps.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatIconModule } from '@angular/material/icon'
+import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 
 @NgModule({
     declarations: [ProfileCardStatsComponent],
@@ -24,6 +26,8 @@ import { MatIconModule } from '@angular/material/icon'
         WeeklyClapsModule,
         TranslateModule,
         PipeOrdinalModule,
+        MatButtonModule,
+        MatTooltipModule
     ],
     exports: [
         ProfileCardStatsComponent,

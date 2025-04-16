@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { CommonModule, DatePipe } from '@angular/common'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
@@ -13,12 +13,13 @@ import { InitResolver } from '@ws/author/src/lib/services/init-resolve.service'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { BtnPageBackModule, BtnPageBackNavModule, ContentProgressModule, ContentStripWithTabsModule, HttpLoaderFactory } from '@sunbird-cb/collection/src/public-api'
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module'
-import { PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
+import {
+  PipeHtmlTagRemovalModule, PipeFilterV2Module, PipePublicURLModule, HorizontalScrollerV2Module,
   PipeFilterModule,
   PipeRelativeTimeModule,
   PipeFilterSearchModule,
   PipeOrderByModule,
- } from '@sunbird-cb/utils-v2'
+} from '@sunbird-cb/utils-v2'
 import { EventsCardComponent } from './components/events-card/events-card.component'
 import { TodayEventCardComponent } from './components/today-event-card/today-event-card.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
@@ -30,6 +31,7 @@ import { EventService } from './services/events.service'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+// import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
@@ -47,9 +49,29 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http';
+import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component';
+import { EventsCalendarComponent } from './routes/events-calendar/events-calendar.component';
+import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
+import { MatLegacySnackBarModule } from '@angular/material/legacy-snack-bar'
+import { ContentStripWithTabsPillsModule, ContentStripWithTabsLibModule } from '@sunbird-cb/consumption'
 import { MatDialogModule } from '@angular/material/dialog'
 
+import { ViewAllComponent } from './routes/view-all/view-all.component'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { SeeAllComponent } from './routes/events/see-all/see-all.component';
+import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component';
+import { EventsV2Component } from './routes/events-v2/events-v2.component';
+import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
+import { ShareDiscussionModule } from '@sunbird-cb/discussion-v2'
+import { MatRadioModule } from '@angular/material/radio'
 @NgModule({
   declarations: [
     EventsComponent,
@@ -63,6 +85,15 @@ import { MatDialogModule } from '@angular/material/dialog'
     EventPlayerComponent,
     EventPdfPlayerComponent,
     EventYouTubeComponent,
+    EventsHomeV2Component,
+    EventsCalendarComponent,
+    EventsEngagementComponent,
+    ViewAllComponent,
+    MobileFiltersComponent,
+    SeeAllComponent,
+    EventVideoPlayerComponent,
+    EventsV2Component,
+    MyAllEventsComponent,
   ],
   imports: [
     CommonModule,
@@ -82,6 +113,8 @@ import { MatDialogModule } from '@angular/material/dialog'
     MatDialogModule,
     MatButtonModule,
     MatSidenavModule,
+    MatRadioModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
     PipeFilterModule,
     PipeHtmlTagRemovalModule,
@@ -102,6 +135,16 @@ import { MatDialogModule } from '@angular/material/dialog'
     ContentProgressModule,
     WidgetCommentModule,
     InfiniteScrollModule,
+    MatLegacySnackBarModule,
+    ContentStripWithTabsPillsModule,
+    ContentStripWithTabsLibModule,
+    MatDatepickerModule,
+    EventCardV2Module,
+    MatSnackBarModule,
+    MatMenuModule,
+    MatBottomSheetModule,
+    MatTooltipModule,
+    ShareDiscussionModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -111,11 +154,15 @@ import { MatDialogModule } from '@angular/material/dialog'
     }),
   ],
   providers: [
+    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
+    { provide: MatBottomSheetRef, useValue: {} },
     LoaderService,
     InitResolver,
     EventService,
     ViewerResolve,
     EventResolve,
+    DatePipe,
+    EventsEngagementComponent
   ],
 })
 export class EventsModule { }

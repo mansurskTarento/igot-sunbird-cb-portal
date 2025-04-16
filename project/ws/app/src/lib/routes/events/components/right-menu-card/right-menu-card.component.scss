@@ -6,7 +6,28 @@
   background-color: #ccc;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-  
+  position: relative;
+
+  .share-tag {
+    font-weight: bold;
+    background-color: #000;
+    border: 1px solid #FFF;
+    border-radius: 20px;
+    padding: 6px 16px;
+    width: 70px;
+    color: #FFF;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    mat-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+  }
+
 }
 
 .event-image img {
@@ -20,8 +41,8 @@
   // padding-left: 20px;
   // padding-right: 20px;
   position: absolute;
-  top:15%;
-  width: 20%;
+  top: 15%;
+  width: 350px;
   border-radius: 12px;
   padding: 0;
 
@@ -32,8 +53,10 @@
     padding: 16px;
   }
 }
+
 .timediv {
-  background:rgba(0, 0, 0, 0.04); padding:15px;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 15px;
 }
 
 .comment-card {
@@ -118,6 +141,7 @@
 ::ng-deep.theme-igot.day-mode .ws-mat-accent-text {
   color: rgb(27, 76, 161) !important;
 }
+
 // }
 
 button.ws-mat-primary-background {
@@ -158,13 +182,14 @@ button.ws-mat-primary-background {
   width: 92%;
   align-items: flex-start;
 }
+
 .event-completed {
   // border: 1px solid rgb(27, 76, 161);
   // padding:8px;
 }
 
 @media screen and (min-width: 820px) and (max-width: 1232px) {
- 
+
   .right-menu-card {
     position: absolute;
     top: 18%;
@@ -172,7 +197,7 @@ button.ws-mat-primary-background {
     border-radius: 12px;
     padding: 0;
     margin-left: 10%;
-}
+  }
 }
 
 .certificate-info {
@@ -194,5 +219,15 @@ button.ws-mat-primary-background {
     font-size: 12px;
     margin: 0;
     padding: 8px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  ::ng-deep .share-container {
+    top: 38px !important
+  }
+
+  ::ng-deep .copy-input-wrapper button {
+    left: 77% !important;
   }
 }

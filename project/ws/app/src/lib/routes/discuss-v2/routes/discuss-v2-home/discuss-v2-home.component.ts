@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2';
 
 @Component({
   selector: 'ws-app-discuss-v2-home',
@@ -25,10 +26,22 @@ export class DiscussV2HomeComponent {
     }
   ]
 
+  feedsWidgetData!: NsDiscussionV2.IDiscussV2WidgetData | null
+  communityWidgetData: any = {}
 
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    this.getConfigurationData()
+   }
 
+   getConfigurationData() {
+    if(this.activatedRoute.snapshot.data.pageData &&
+      this.activatedRoute.snapshot.data.pageData.data
+    ) {
+      this.feedsWidgetData = this.activatedRoute.snapshot.data.pageData.data.feedsWidgetData
+      this.communityWidgetData = this.activatedRoute.snapshot.data.pageData.data.communityWidgetData
+    }
+  }
 
-  constructor(private router: Router) { }
   searchTextMethod(searchTxt: any) {
     
     console.log(event, 'searchTextMethod')
