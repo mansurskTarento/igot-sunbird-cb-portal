@@ -64,6 +64,7 @@ import { AiTutorComponent } from './components/ai-tutor/ai-tutor.component'
 import { FormsModule } from '@angular/forms'
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { MarkdownModule } from 'ngx-markdown';
 @NgModule({
   declarations: [ViewerComponent, ViewerTocComponent, AiTutorComponent],
   imports: [
@@ -115,7 +116,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     ContentTocModule,
     FormsModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MarkdownModule.forRoot(),
   ],
   providers: [PdfScormDataService],
 })

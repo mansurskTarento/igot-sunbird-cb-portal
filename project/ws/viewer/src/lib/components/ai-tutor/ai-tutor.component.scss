@@ -768,3 +768,9 @@ width: 262px;
 ::ng-deep .mat-pseudo-checkbox-checked {
   display: none !important;
 }
+
+::ng-deep .player-content {
+  .mat-tab-label-active {
+    opacity: 1 !important;
+  }
+}

@@ -169,10 +169,15 @@
             <div class="flex row-start incoming-msg margin-bottom-s">
               <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             
-              <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
+              <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
+              </div> -->
+              <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
+                <markdown [data]="chat?.answer"></markdown>
               </div>
-                <div class="system-msg padding-xs">
-                  <div   *ngIf="chat?.wordsCount > 30" [innerHTML]="chat?.showLess ? chat.shortAnswer :  chat.answer"></div>
+              
+                <div class="system-msg padding-xs" *ngIf="chat?.wordsCount > 30" >
+                  <!-- <div   [innerHTML]="chat?.showLess ? chat.shortAnswer :  chat.answer"></div> -->
+                  <markdown [data]="chat?.showLess ? chat.shortAnswer :  chat.answer"></markdown>
                   <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">Show Less</a>
                   <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">Show More</a>
                 </div>
