@@ -150,6 +150,29 @@
   border-bottom-right-radius: 15px;
   background-color: white;
   .info {
+    width: 50%;
+    padding: 5px 0;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    cursor: pointer;
+    .info-text {
+      font-size: 10px;
+      width: 100%;
+      text-align: center;
+    }
+    .info-icon {
+      height: 24px;
+    }
+  }
+}
+
+.cb-footer-with-ai {
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-color: white;
+  .info {
     width: 33%;
     padding: 5px 0;
     align-items: center;
@@ -452,6 +475,10 @@
     border-top-right-radius: unset;
   }
   .cb-footer {
+    border-bottom-left-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+  .cb-footer-with-ai {
     border-bottom-left-radius: unset;
     border-bottom-right-radius: unset;
   }

@@ -22,7 +22,7 @@ export class WebSocketService {
   // Establish a connection to the WebSocket
   connect(url: string): void {
     this.socket = new WebSocket(url);
-    console.log('this.socket', this.socket)
+    // console.log('this.socket', this.socket)
     this.socket.onopen = () => {
       try {
         console.log('WebSocket connection established');
@@ -71,7 +71,7 @@ export class WebSocketService {
     };
 
     this.socket.onerror = (error) => {
-      console.log('error', error)
+      // console.log('error', error)
       console.error('WebSocket error:', error);
     };
 
@@ -82,8 +82,8 @@ export class WebSocketService {
 
   // Send message to the WebSocket server
   sendMessage(message: any): void {
-    console.log(message)
-    console.log(this.socket)
+    // console.log(message)
+    // console.log(this.socket)
     
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
@@ -102,9 +102,9 @@ export class WebSocketService {
     clearInterval(this.pingIntervalId);
     this.pingIntervalId = setInterval(() => {
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-          console.log('in')
+          // console.log('in')
           this.socket.send(JSON.stringify({ type: 'ping' })); // Send a ping message
-            console.log('Client sent ping');
+            // console.log('Client sent ping');
         }
     }, 25000); // Send ping every 25 seconds (slightly less than server's 30s)
 }
