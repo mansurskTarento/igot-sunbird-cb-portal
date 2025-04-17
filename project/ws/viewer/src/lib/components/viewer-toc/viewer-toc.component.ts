@@ -118,6 +118,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   hierarchyData: any
   enrollmentList: any
   enableAITutorFlag = false
+  aiTutorResourceId:any = ''
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -139,11 +140,14 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     && this.activatedRoute.snapshot.data.contentRead.data || ''
     if (contentRead.result && contentRead.result.content) {
       this.contentSvc.currentContentReadMetaData = contentRead.result.content
+      this.aiTutorResourceId = contentRead.result.content.identifier
     }
      // tslint:disable-next-line
      console.log(this.hierarchyData,'hierarchyData')
      // tslint:disable-next-line
      console.log(contentRead,'contentRead')
+
+     
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.logos) {
       const logo = this.configSvc.instanceConfig.logos.defaultContent || ''
       this.defaultThumbnail = this.domSanitizer.bypassSecurityTrustResourceUrl(logo)
@@ -155,6 +159,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
 
     this.paramSubscription = this.activatedRoute.queryParamMap.subscribe(async params => {
+      
       this.collectionId = params.get('collectionId')
       this.collectionType = params.get('collectionType') || 'course'
       const primaryCategory = params.get('primaryCategory')
@@ -286,7 +291,15 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
   private processCurrentResourceChange() {
     if (this.collection && this.resourceId) {
+      console.log('this.queue', this.queue)
+      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
+      console.log('currentIndex', currentIndex)
+      if(this.queue && currentIndex > -1) {
+        if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
+          this.aiTutorResourceId = this.queue[currentIndex].identifier
+        }        
+      }
       const next =
         currentIndex + 1 < this.queue.length ? this.queue[currentIndex + 1] : null
       const prev = currentIndex - 1 >= 0 ? this.queue[currentIndex - 1] : null
@@ -319,6 +332,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         this.collectionCard = this.createCollectionCard(contentData)
         const viewerTocCardContent = this.convertContentToIViewerTocCard(contentData)
         this.isFetching = false
+        console.log('this.collection--', this.collection)
         return viewerTocCardContent
       }
       return null
@@ -379,6 +393,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.collectionCard = this.createCollectionCard(content)
       const viewerTocCardContent = this.convertContentToIViewerTocCard(content)
       this.isFetching = false
+      console.log('content', content)
       return viewerTocCardContent
     } catch (err:any) {
       switch (err && err.status) {

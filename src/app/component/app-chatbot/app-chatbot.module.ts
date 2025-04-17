@@ -11,6 +11,7 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
 import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
 import { MarkdownModule } from 'ngx-markdown';
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
     CommonModule,
     PipeDurationTransformModule,
     MarkdownModule.forRoot(),
+    DragDropModule
   ],
   exports: [AppChatbotComponent, MarkdownModule],
   providers: [ChatbotService],

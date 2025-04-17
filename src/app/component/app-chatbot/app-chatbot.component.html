@@ -3,8 +3,18 @@
   <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->    
   <div  class="chatbot-icon-ai flex" *ngIf="enableIGOTAIFlag">
         <!-- <img alt="chatbot-icon" src="/assets/icons/chatbot-ai-new.svg"/> -->
-        <div class="icon-container glow-top-border">
+        <!-- <div class="icon-container glow-top-border">
           <img src="/assets/icons/agent.png" class="bounce-icon" />
+        </div> -->
+        <div cdkDrag class="draggable-icon" [cdkDragBoundary]="'.custom-scroll'" 
+        (cdkDragEnded)="onDragEnded($event)"
+        [cdkDragFreeDragPosition]="iconPosition">
+          <div class="icon-container">
+            <div class="animated-border-box-glow"></div>
+            <div class="animated-border-box">
+                <div class="agent-box"><img src="/assets/icons/agent.png" class="bounce-icon" /></div>
+            </div>
+          </div>
         </div>
         <!-- <div class="expand-text">FAQ Chatbot</div> -->
       </div>

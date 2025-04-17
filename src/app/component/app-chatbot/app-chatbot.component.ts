@@ -4,6 +4,7 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
+import { CdkDragEnd } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'ws-app-chatbot',
@@ -13,6 +14,7 @@ import { NavigationEnd, Router } from '@angular/router'
 })
 export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges {
   @Input() rootOrgId:any
+  @Input() iGOTAIConfigLoaded:any
   showIcon = true
   categories: any[] = []
   language: any[] = []
@@ -52,6 +54,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
     }
   }
+  iconPosition = {x:0, y:0}
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
@@ -95,7 +98,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   ngOnChanges() {
-    if(this.rootOrgId) {
+    if(this.rootOrgId && this.iGOTAIConfigLoaded) {
       console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
@@ -471,18 +474,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }    
   }
   scrollToBottom(): void {
-    console.log('this.myScrollContainer--', this.myScrollContainer)
     try {
       if (this.myScrollContainer) {
-
-        console.log('this.myScrollContainer--', this.myScrollContainer.nativeElement)
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
       }
     } catch(err) { }
   }
 
   scrollToBottomEvent() {
-   console.log('scrollToBottomEvent')
    let chatbotContent = document.getElementById('chatbot-content')
    if(chatbotContent) {
     chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
@@ -500,5 +499,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
   private enableScroll() {
     this.renderer.removeClass(document.body, 'disable-scroll')
+  }
+
+  onDragEnded(event: CdkDragEnd) {
+    const point  = event.source.getFreeDragPosition()
+    this.iconPosition = point
+    console.log('point', point)
   }
 }

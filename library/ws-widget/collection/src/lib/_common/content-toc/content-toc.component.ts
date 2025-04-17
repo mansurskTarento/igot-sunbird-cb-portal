@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService, NsContent, UtilityService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -40,6 +40,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Output() playResumeForAI = new EventEmitter()
   sticky = false
   menuPosition: any
   isMobile = false
@@ -222,6 +223,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       //     queryParamsHandling: 'merge',
       //   })
       /* tslint:disable-next-line */
+    } else {
+      this.playResumeForAI.emit()
     }
   }
 

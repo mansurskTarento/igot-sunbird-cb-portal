@@ -543,13 +543,16 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let startTime = 0
       let endTime = 0
-      if(item && item?.ContentStart) {
-        startTime = item?.ContentStart/60
+      let pageNumber = 1
+      if(item && item?.contentStart) {
+        startTime = item?.contentStart/60
+        pageNumber= item?.contentStart
       }
       if(item && item?.ContentEnd) {
         endTime = item?.ContentEnd/60
+        pageNumber= item?.ContentEnd
       }
-      let pageNumber = 10
+      
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',

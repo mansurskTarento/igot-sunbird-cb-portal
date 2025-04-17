@@ -31,7 +31,7 @@
 </div>
 
 <!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
-<ws-app-chatbot *ngIf="!hideHeaderAndFooter && iGOTAIConfigLoaded" [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
+<ws-app-chatbot *ngIf="!hideHeaderAndFooter" [iGOTAIConfigLoaded]="iGOTAIConfigLoaded" [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
 <ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [headerFooterConfigData]="headerFooterConfigData">
 </ws-app-footer>
 
