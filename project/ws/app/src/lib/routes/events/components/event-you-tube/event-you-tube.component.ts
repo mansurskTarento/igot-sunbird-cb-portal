@@ -37,7 +37,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
     /* tslint:enabel */
     this.eventData = this.route.snapshot.data['content'].data
     this.pageConfigData = this.route.snapshot.data['pageData'] && this.route.snapshot.data['pageData'].data || {}
-    if(this.pageConfigData && this.pageConfigData.fireUpdate) {
+    if (this.pageConfigData && this.pageConfigData.fireUpdate) {
       this.rateToFire = this.pageConfigData.fireUpdate
     }
     this.route.params.subscribe(params => {
@@ -269,7 +269,8 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
                 'current': [ // current state
                   progress,
                 ],
-                'duration': normalUpdate ? this.eventData.duration * 60 : timeSpent, // watch time
+                'duration': normalUpdate ? this.eventData.duration * 60 :
+                  (timeSpent >= this.eventData.duration * 60 ? this.eventData.duration * 60 : timeSpent), // watch time
                 'mimeType': 'application/html',
                 'stateMetaData': timeSpent, // last state
               },
@@ -290,10 +291,10 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.resumeEventStatus = 2
           }
         })
-    } else {
-      /* tslint:disable */
-      // console.log('Already completed ', req)
-    }
+      } else {
+        /* tslint:disable */
+        // console.log('Already completed ', req)
+      }
     }
   }
 
