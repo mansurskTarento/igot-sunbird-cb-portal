@@ -719,7 +719,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/socratic/v1/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
