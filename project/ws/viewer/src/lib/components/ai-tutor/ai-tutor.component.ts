@@ -552,8 +552,6 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         folder_name: this.content //this.content
       }
       this.websocketService.sendMessage(message);
-      
-      console.log('send button')
       setTimeout(()=>{
         this.getAiTutorMessage()
       }, 1000)
@@ -566,7 +564,6 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messageSubscription = this.websocketService
       .getMessages()
       .subscribe((message: string) => {
-        console.log('messages---',message);
        // this.messages.push(message);
        this.aiTutorResult = message
       this.aiTutorResultMessage()

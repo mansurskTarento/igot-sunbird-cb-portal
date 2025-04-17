@@ -504,6 +504,5 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   onDragEnded(event: CdkDragEnd) {
     const point  = event.source.getFreeDragPosition()
     this.iconPosition = point
-    console.log('point', point)
   }
 }
