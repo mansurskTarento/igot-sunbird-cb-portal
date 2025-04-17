@@ -434,7 +434,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         "subType":"iGOTAI",
         "action":"page-configuration",
         "component":"portal",
-        "rootOrgId":this.configSvc.unMappedUser.rootOrgId
+        "rootOrgId": this.configSvc.unMappedUser.rootOrgId
       }
     }
     const publicConfig:any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()

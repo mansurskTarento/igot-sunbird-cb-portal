@@ -109,7 +109,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       if(data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
         //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
-        this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
+        this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
       }
       
     })
@@ -719,17 +719,17 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3001/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
     }
     console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
