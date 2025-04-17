@@ -355,6 +355,21 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         })
       }
       if (this.widgetData.url) {
+        console.log('this.activatedRoute.snapshot.queryParams--', this.activatedRoute.snapshot.queryParams)
+        if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+          if(this.activatedRoute.snapshot.queryParams.st) {
+            let startTime = this.activatedRoute.snapshot.queryParams.st
+            let endTime = this.activatedRoute.snapshot.queryParams.et
+            initObj.player.currentTime(startTime); // jump to start
+            initObj.player.play();    
+            initObj.player.on('timeupdate',  ()=> {
+              if (endTime && initObj.player.currentTime() >= endTime) {
+                initObj.player.pause();
+              }
+            });
+          }
+        }
+       
         initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
 
       }

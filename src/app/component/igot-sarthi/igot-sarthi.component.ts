@@ -510,7 +510,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
    
    if(this.aiSearchResultArr.length > 2) {
-    this.scrollToBottomEvent.emit()  
+    setTimeout(()=>{
+      this.scrollToBottomEvent.emit() 
+    },0)
    }   
     this.aiGlobalSearch()
     setTimeout(()=>{
@@ -533,12 +535,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       console.log('data--', data)
       this.aiSearchResult = data 
       
-      console.log('this.userJourney', this.userJourney)
+    console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
     console.log('aiSearchResult', this.aiSearchResult)
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+      let startTime = 0
+      let endTime = 0
+      if(item && item?.ContentStart) {
+        startTime = item?.ContentStart/60
+      }
+      if(item && item?.ContentEnd) {
+        endTime = item?.ContentEnd/60
+      }
+      let pageNumber = 10
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -550,9 +561,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         artifactUrl: item.ArtifactURL,
         description: item.Description,
         identifier: item.Identifier,    
-        contentStart: item?.contentStart/60,
-        contentEnd: item?.contentEnd/60,   
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+        contentStart: startTime,
+        contentEnd: endTime, 
+        pageNumber:   pageNumber,
+        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       arr.push(resultObj)
@@ -569,7 +581,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
      })
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
-    this.scrollToBottomEvent.emit() 
+    setTimeout(()=>{
+      this.scrollToBottomEvent.emit() 
+    },0)
+    
     })
     
     
@@ -583,7 +598,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()

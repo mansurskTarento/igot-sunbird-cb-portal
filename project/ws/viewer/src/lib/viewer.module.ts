@@ -65,6 +65,7 @@ import { FormsModule } from '@angular/forms'
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MarkdownModule } from 'ngx-markdown';
+
 @NgModule({
   declarations: [ViewerComponent, ViewerTocComponent, AiTutorComponent],
   imports: [
@@ -117,7 +118,7 @@ import { MarkdownModule } from 'ngx-markdown';
     FormsModule,
     MatSelectModule,
     MatFormFieldModule,
-    MarkdownModule.forRoot(),
+    MarkdownModule.forRoot()
   ],
   providers: [PdfScormDataService],
 })

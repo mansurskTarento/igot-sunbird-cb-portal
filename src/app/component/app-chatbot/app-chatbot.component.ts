@@ -471,16 +471,23 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }    
   }
   scrollToBottom(): void {
+    console.log('this.myScrollContainer--', this.myScrollContainer)
     try {
       if (this.myScrollContainer) {
+
+        console.log('this.myScrollContainer--', this.myScrollContainer.nativeElement)
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
       }
     } catch(err) { }
   }
 
   scrollToBottomEvent() {
-    console.log('scrollToBottomEvent')
-    this.scrollToBottom()
+   console.log('scrollToBottomEvent')
+   let chatbotContent = document.getElementById('chatbot-content')
+   if(chatbotContent) {
+    chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+   }
+  //  this.scrollToBottom()
   }
   clickOutside() {
     if(this.currentFilter !== 'sarthi') {

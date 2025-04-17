@@ -113,7 +113,7 @@ export class NetCoreService {
         }
         console.log('payload', payload)
         console.log('userpayload', userpayload)
-        if(typeof userpayload === 'object'  || userpayload.length) {
+        if(userpayload && (typeof userpayload === 'object'  || userpayload.length)) {
             payload['profile_attribute_updated'] = userpayload.toString()
         }
         console.log('payload', payload)

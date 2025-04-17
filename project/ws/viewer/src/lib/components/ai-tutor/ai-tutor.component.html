@@ -145,7 +145,7 @@
           <div class="subtitle">{{ selectedLearningStyle?.subtitle }}</div>
         </div>
       </mat-select-trigger>
-      <mat-option value="" *ngFor="let item of learningStyle" [value]="item">
+      <mat-option class="multiline-select-option" value="" *ngFor="let item of learningStyle" [value]="item">
         <div class="option-content">
           <div class="title">{{item?.title}}</div>
           <div class="subtitle">{{item?.subtitle}}</div>
@@ -157,7 +157,7 @@
 </div>
 
 <div class="container-none">
-  <div [ngClass]="from === 'chatbot' ? 'ai-tutor-container-chatbot':'ai-tutor-container'" #scrollMe>
+  <div [ngClass]="from === 'chatbot' ? 'ai-tutor-container-chatbot':'ai-tutor-container'">
     <div class="message-container" #scrollMe>
       <div class="start-chat" *ngIf="aiTutorResultArr?.length === 0">
         <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
@@ -194,16 +194,23 @@
               </ng-container>
               <ng-container *ngIf="item?.mimeType === 'video/mp4'">
                 
-                <div class="position-relative">
+                <div class="resource-icon">
+                <a [href]="item?.resourceLink" target="_blank">
                   <div class="position-relative">
-                    <img src="/assets/icons/ai-video-icon.jpg">
+                    <div class="position-relative">
+                      <img src="/assets/icons/ai-video-icon.jpg">
   
+                    </div>
+                    <div class="content-duration flex" *ngIf="item?.contentStart && item?.contentEnd">
+                      <span><mat-icon>access_time</mat-icon>&nbsp;</span>
+                      <span *ngIf="item?.contentStart">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
+                      <span *ngIf="item?.contentEnd">&nbsp;-&nbsp;{{item?.contentEnd | pipeDurationTransform: 'hms'}}</span>
+                    </div>
                   </div>
-                  <div class="content-duration" *ngIf="item?.contentStart || item?.contentEnd">
-                    <span *ngIf="item?.contentStart">{{item?.contentStart}}</span>
-                    <span *ngIf="item?.contentEnd">:{{item?.contentEnd}}</span>
-                  </div>
-                </div>
+                  
+                  
+                </a>
+              </div>
                 <div class="flex flex-row cursor-pointer">
                   <div class="resource-link">
                     <a [href]="item?.resourceLink" target="_blank">Click to view</a>

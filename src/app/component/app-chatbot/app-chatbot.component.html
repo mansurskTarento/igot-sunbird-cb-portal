@@ -2,7 +2,10 @@
 <!-- //NOSONAR --> <div  class="chatbot-icon-container" [ngStyle]="(configSvc.updatePlatformRatingObservable$ | async)" *ngIf="showIcon && isHubEnable" (mouseover)="expanded = true" (mouseleave)="expanded = false" (click)="iconClick('start')">
   <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->    
   <div  class="chatbot-icon-ai flex" *ngIf="enableIGOTAIFlag">
-        <img alt="chatbot-icon" src="/assets/icons/chatbot-ai-new.svg"/>
+        <!-- <img alt="chatbot-icon" src="/assets/icons/chatbot-ai-new.svg"/> -->
+        <div class="icon-container glow-top-border">
+          <img src="/assets/icons/agent.png" class="bounce-icon" />
+        </div>
         <!-- <div class="expand-text">FAQ Chatbot</div> -->
       </div>
       <div  class="chatbot-icon flex" *ngIf="!enableIGOTAIFlag" [ngClass]="{'chatbot-icon-expanded': expanded}">
@@ -98,6 +101,7 @@
             </ng-container>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'sarthi'" #scroll>
+            
             <!-- <viewer-ai-tutor [from]="'chatbot'" [userJourney]="userJourney"></viewer-ai-tutor> -->
              <ws-app-igot-sarthi [from]="'chatbot'" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
