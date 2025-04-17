@@ -589,11 +589,11 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       let endTime = 0
       let pageNumber:any = 1
       if(item && item?.ContentStart) {
-        startTime = item?.ContentStart/60
+        startTime = item?.ContentStart
         pageNumber = item?.ContentStart
       }
       if(item && item?.ContentEnd) {
-        endTime = item?.ContentEnd/60
+        endTime = item?.ContentEnd
         pageNumber = item?.ContentEnd
       }
       pageNumber = pageNumber !== " " ? pageNumber : 1
