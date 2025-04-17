@@ -307,7 +307,8 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
                 'current': [ // current state
                   progress,
                 ],
-                'duration': normalUpdate ? this.eventData.duration * 60 : timeSpent, // watch time
+                'duration': normalUpdate ? this.eventData.duration * 60 :
+                  (timeSpent >= this.eventData.duration * 60 ? this.eventData.duration * 60 : timeSpent), // watch time
                 'mimeType': 'application/html',
                 'stateMetaData': timeSpent, // last state
               },
