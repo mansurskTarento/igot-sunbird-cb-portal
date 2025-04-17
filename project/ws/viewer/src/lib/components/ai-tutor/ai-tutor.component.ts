@@ -106,14 +106,12 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     this.websocketService.getJWTToken().subscribe((data:any)=>{
-      console.log('data', data)
       if(data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
         this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
       }
       
     })
-    console.log('content', this.content)
 
     //let jwtToken = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMTk5WXh3UkxNQWpBb3JVRmJUSkl4YjZDWE1JdUk4WVp4Y0pLaGxMdHQwIn0.eyJqdGkiOiI4ZWQ2MzE1Yi02OGQ1LTRhZDktYWU3MC1hYzRiNjZmNjIzOWIiLCJleHAiOjE3NDQ4NTM3NDMsIm5iZiI6MCwiaWF0IjoxNzQ0ODEwNTQzLCJpc3MiOiJodHRwczovL3BvcnRhbC51YXQua2FybWF5b2dpYmhhcmF0Lm5ldC9hdXRoL3JlYWxtcy9zdW5iaXJkIiwic3ViIjoiZjo5MWVjOTVkMi1hM2Q1LTQxM2UtYjRlNC01M2IwZGNjOTY0ODU6Y2VlYzAyYzYtYzE5MS00OWZlLTg0NTYtNjYyNDVhOWE3ODM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4tY2xpIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiYjUyNTliYmMtZDVjYy00YWJkLThjY2UtZThlZTZiYjA4NGYyIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjQyMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInNjb3BlIjoiIiwib3JnIjoiMDEzMzc4MzA5NTgyMzgxMDU2MCIsIm5hbWUiOiJTcHYgQWRtaW4iLCJ1c2VyX3JvbGVzIjpbIk1FTlRPUiIsIlBVQkxJQyIsIlNQVl9BRE1JTiJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzcHZhZG1pbl9qZzJ5IiwiZ2l2ZW5fbmFtZSI6IlNwdiBBZG1pbiIsImZhbWlseV9uYW1lIjoiIiwiZW1haWwiOiJzcCoqKioqKioqKioqQHlvcG1haWwuY29tIn0.naO_FUNci_ImWHQIylfmMGI2B-85koIyb9Sfy0mOguPpLIKeiGZiLZvccP_I_1QUScBewOrrP3fYxeq8oU98dj7sQGmBFOoU1dSZClZce3U4QEjSiugcbxdiNHcQXlpZTyub5aAJE-ub9Hb1bhS_RQjTMUeDfh5wrlZz6Lqg7kdDh5esXFLibfnUcFqmFFqZBtN5iP2sbRCnCFyS1Vw5TEFKxTiGdRPYT-XUzNE_iZuQPm2z-zyK0FEc1E9odaiwwpW5hkn3TznDwwXe7VdJS2E-HtjujmI-naAqZ__R68SuLyRHuq_PGhj2TZ_rjoaVIhjlgiFqHfOVLUsRat8HpA'
     

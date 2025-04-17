@@ -355,7 +355,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         })
       }
       if (this.widgetData.url) {
-        console.log('this.activatedRoute.snapshot.queryParams--', this.activatedRoute.snapshot.queryParams)
         if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
           if(this.activatedRoute.snapshot.queryParams.st) {
             let startTime = this.activatedRoute.snapshot.queryParams.st

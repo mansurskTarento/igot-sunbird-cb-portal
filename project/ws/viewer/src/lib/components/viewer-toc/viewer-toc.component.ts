@@ -290,11 +290,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
   }
   private processCurrentResourceChange() {
-    if (this.collection && this.resourceId) {
-      console.log('this.queue', this.queue)
-      
+    if (this.collection && this.resourceId) {      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
-      console.log('currentIndex', currentIndex)
       if(this.queue && currentIndex > -1) {
         if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
           this.aiTutorResourceId = this.queue[currentIndex].identifier

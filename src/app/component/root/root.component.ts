@@ -451,8 +451,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.iGOTAIConfigLoaded = true  
     }
-    
-    console.log('this.configSvc.iGOTAIConfig', this.configSvc.iGOTAIConfig)
     return publicConfig
   }
   

@@ -532,13 +532,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    }
    console.log('requestBody', requestBody)
     this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
-      console.log('data--', data)
-      this.aiSearchResult = data 
-      
-    console.log('this.userJourney', this.userJourney)
-    console.log('requestBody', requestBody)
-    console.log('aiSearchResult', this.aiSearchResult)
-    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
+    this.aiSearchResult = data 
     let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let startTime = 0
