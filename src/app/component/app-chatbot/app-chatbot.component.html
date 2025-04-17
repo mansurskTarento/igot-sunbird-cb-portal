@@ -26,7 +26,7 @@
 
   
 
-  <div class="chatbot" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
+  <div [ngClass]="enableIGOTAIFlag ? 'chatbot-with-ai' : 'chatbot'" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
       <div class="chatbot-wrapper">
         <div class="flex flex-wrap padding-m" [ngClass]="currentFilter === 'sarthi' ? 'cb-header-sarthi':'cb-header'">
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter !== 'sarthi'">

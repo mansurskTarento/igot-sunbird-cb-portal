@@ -49,6 +49,18 @@
 }
 
 .chatbot {
+  width: 400px;
+  position: fixed;
+  bottom: 20px;
+  right: 50px;
+  z-index: 9999999999;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0 6px 16px #0000003d;
+  height: calc(100vh - 20%);
+}
+
+.chatbot-with-ai{
   width: 610px;
   position: fixed;
   bottom: 20px;
