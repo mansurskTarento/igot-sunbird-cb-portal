@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
 import { MarkdownModule } from 'ngx-markdown';
+import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { MarkdownModule } from 'ngx-markdown';
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     CommonModule,
+    PipeDurationTransformModule,
     MarkdownModule.forRoot(),
+    DragDropModule
   ],
   exports: [AppChatbotComponent, MarkdownModule],
   providers: [ChatbotService],

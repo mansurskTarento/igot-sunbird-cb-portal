@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { share } from 'rxjs/operators';
+import {  take } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http'
+const PROXY_CREATE_V8 = '/apis/proxies/v8'
+const API_END_POINTS = {
+  GET_JWT_TOCKEN: `${PROXY_CREATE_V8}/fetchUserToken`
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,14 +15,21 @@ export class WebSocketService {
   private messageSubject: Subject<any> = new Subject<any>();
   pingIntervalId:any
   clientId:any
-  constructor() {}
+  constructor(
+    public http: HttpClient
+  ) {}
 
   // Establish a connection to the WebSocket
   connect(url: string): void {
     this.socket = new WebSocket(url);
     console.log('this.socket', this.socket)
     this.socket.onopen = () => {
-      console.log('WebSocket connection established');
+      try {
+        console.log('WebSocket connection established');
+      } catch(error) {
+        console.log('error', error)
+      }
+      
       this.startClientPing();
     };
 
@@ -59,6 +71,7 @@ export class WebSocketService {
     };
 
     this.socket.onerror = (error) => {
+      console.log('error', error)
       console.error('WebSocket error:', error);
     };
 
@@ -81,7 +94,7 @@ export class WebSocketService {
 
   // Observable for receiving messages from WebSocket
   getMessages(): Observable<any> {
-    return this.messageSubject.asObservable().pipe(share());
+    return this.messageSubject.asObservable().pipe(take(1));
   }
 
   startClientPing() {
@@ -103,4 +116,11 @@ export class WebSocketService {
       clearInterval(this.pingIntervalId);
     }
   }
+
+  getJWTToken() {
+    console.log('get token')
+    return this.http.get<any>(`${API_END_POINTS.GET_JWT_TOCKEN}`)
+  }
+
+
 }

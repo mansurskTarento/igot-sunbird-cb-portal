@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component,ElementRef,Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component,Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from 'src/app/component/root/root.service';
@@ -84,13 +84,14 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   public inputMessage: string = '';
 
   aiTutorResultArr:any = []
-  // tslint: enable
-  @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  jwtToken = ''
+  // tslint: disable
+ // @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
   learningStyle = [
-    { title: 'None', subtitle: 'You can also choose a learning style that suits you best from here.' },
+    { title: 'None', subtitle: 'Learn with Natural query process' },
     { title: 'Socratic Style', subtitle: 'Explore ideas through thoughtful questions.' },
-    { title: 'Storytelling', subtitle: 'Learn through relatable narratives and real-life examples.' },
+    // { title: 'Storytelling', subtitle: 'Learn through relatable narratives and real-life examples.' },
   ]
   selectedLearningStyle :any
   constructor(
@@ -104,8 +105,17 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
   ngOnInit() {
-    console.log('content', this.content)
-    this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3001/ws');
+    this.websocketService.getJWTToken().subscribe((data:any)=>{
+      if(data && data['x-authenticated-user-token']) {
+        this.jwtToken = data['x-authenticated-user-token']
+        //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
+        this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
+      }
+      
+    })
+
+    //let jwtToken = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMTk5WXh3UkxNQWpBb3JVRmJUSkl4YjZDWE1JdUk4WVp4Y0pLaGxMdHQwIn0.eyJqdGkiOiI4ZWQ2MzE1Yi02OGQ1LTRhZDktYWU3MC1hYzRiNjZmNjIzOWIiLCJleHAiOjE3NDQ4NTM3NDMsIm5iZiI6MCwiaWF0IjoxNzQ0ODEwNTQzLCJpc3MiOiJodHRwczovL3BvcnRhbC51YXQua2FybWF5b2dpYmhhcmF0Lm5ldC9hdXRoL3JlYWxtcy9zdW5iaXJkIiwic3ViIjoiZjo5MWVjOTVkMi1hM2Q1LTQxM2UtYjRlNC01M2IwZGNjOTY0ODU6Y2VlYzAyYzYtYzE5MS00OWZlLTg0NTYtNjYyNDVhOWE3ODM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4tY2xpIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiYjUyNTliYmMtZDVjYy00YWJkLThjY2UtZThlZTZiYjA4NGYyIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjQyMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInNjb3BlIjoiIiwib3JnIjoiMDEzMzc4MzA5NTgyMzgxMDU2MCIsIm5hbWUiOiJTcHYgQWRtaW4iLCJ1c2VyX3JvbGVzIjpbIk1FTlRPUiIsIlBVQkxJQyIsIlNQVl9BRE1JTiJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzcHZhZG1pbl9qZzJ5IiwiZ2l2ZW5fbmFtZSI6IlNwdiBBZG1pbiIsImZhbWlseV9uYW1lIjoiIiwiZW1haWwiOiJzcCoqKioqKioqKioqQHlvcG1haWwuY29tIn0.naO_FUNci_ImWHQIylfmMGI2B-85koIyb9Sfy0mOguPpLIKeiGZiLZvccP_I_1QUScBewOrrP3fYxeq8oU98dj7sQGmBFOoU1dSZClZce3U4QEjSiugcbxdiNHcQXlpZTyub5aAJE-ub9Hb1bhS_RQjTMUeDfh5wrlZz6Lqg7kdDh5esXFLibfnUcFqmFFqZBtN5iP2sbRCnCFyS1Vw5TEFKxTiGdRPYT-XUzNE_iZuQPm2z-zyK0FEc1E9odaiwwpW5hkn3TznDwwXe7VdJS2E-HtjujmI-naAqZ__R68SuLyRHuq_PGhj2TZ_rjoaVIhjlgiFqHfOVLUsRat8HpA'
+    
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -492,13 +502,12 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   //  this.scrollToBottom()
   }
   scrollToBottom(): void {
-    if(this.aiTutorResultArr.length > 2) {
-      try {
-        if (this.myScrollContainer) {
-          this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight + 150
-        }
-      } catch(err) { }
-    } 
+    let messageContainer = document.getElementById('container-none')
+    if(messageContainer) {
+      messageContainer.scrollTo({top: messageContainer.scrollHeight, behavior: 'smooth'})
+    }
+    
+    
    
   }
   clickOutside() {
@@ -525,7 +534,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   //  this.searchQuery = ''
   //  this.aiGlobalSearch()
   //  this.getAiTutorMessage()
+  setTimeout(()=>{
     this.scrollToBottom()
+  },0)
+    
    this.sendAITutorMessage()
    
   }
@@ -537,11 +549,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       let message = {
         message: this.searchQueryAItutor, 
         query: this.searchQueryAItutor,
-        folder_name: 'do_1141489083557396481526' //this.content
+        folder_name: this.content //this.content
       }
       this.websocketService.sendMessage(message);
-      
-      
       setTimeout(()=>{
         this.getAiTutorMessage()
       }, 1000)
@@ -554,11 +564,11 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messageSubscription = this.websocketService
       .getMessages()
       .subscribe((message: string) => {
-        console.log(message);
        // this.messages.push(message);
        this.aiTutorResult = message
-       this.aiTutorResultMessage()
+      this.aiTutorResultMessage()
        this.searchQueryAItutor = '';
+       
       });
   }
 
@@ -575,20 +585,33 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     console.log('this.aiSearchResultArr', this.aiTutorResultArr)
     let arr:any = []
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
+      let startTime = 0
+      let endTime = 0
+      let pageNumber:any = 1
+      if(item && item?.ContentStart) {
+        startTime = item?.ContentStart/60
+        pageNumber = item?.ContentStart
+      }
+      if(item && item?.ContentEnd) {
+        endTime = item?.ContentEnd/60
+        pageNumber = item?.ContentEnd
+      }
+      pageNumber = pageNumber !== " " ? pageNumber : 1
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
         selectedValue: '',       
         title: item.Name,
         content: item,
-        mimeType: item.mimeType,
+        mimeType: item.MimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
         description: item.Description,
         identifier: item.Identifier,   
-        contentStart: item?.contentStart/60,
-        contentEnd: item?.contentEnd/60,     
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+        contentStart: startTime,
+        contentEnd: endTime,
+        pageNumber:  pageNumber ? pageNumber : 1,    
+        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       arr.push(resultObj)
@@ -605,6 +628,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.aiTutorResultArr.splice(index,1)
       }
      })
+     setTimeout(()=>{
+      this.scrollToBottom()
+    },0)
     console.log('this.aiTutorResultArr', this.aiTutorResultArr)
   }
 
@@ -616,7 +642,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
@@ -690,14 +716,20 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getLearningStyle() {
     if(this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
+      this.aiTutorResultArr = []
       this.websocketService.closeConnection()
-      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3000/ws');
+      
+      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3001/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
+      this.aiTutorResultArr = []
       this.websocketService.closeConnection()
-      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3001/ws');
+      
+      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
+      this.aiTutorResultArr = []
       this.websocketService.closeConnection()
-      this.websocketService.connect('wss://learning-ai.karmayogibharat.net:3000/ws');
+      
+      this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
     }
     console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }

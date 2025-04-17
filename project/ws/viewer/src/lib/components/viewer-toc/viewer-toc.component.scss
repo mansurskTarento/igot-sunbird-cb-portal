@@ -127,6 +127,19 @@ app-content-icon {
   ::ng-deep .mat-tab-label-content {
     margin-top: 24px;
   }
+
+  ::ng-deep .mat-tab-header {
+    display: flex;
+    overflow: hidden;
+    position: sticky;
+    flex-shrink: 0;
+    top: 0;
+    z-index: 10;
+    background: white;
+
+  }
+
+
 }
 
 

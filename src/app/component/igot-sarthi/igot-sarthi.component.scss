@@ -608,11 +608,25 @@
   position: absolute;
     background: black;
     color: white;
-    width: 60px;
+    width: 110px;
     border-radius: 8px;
     text-align: center;
-    bottom: 10px;
-    left: 100px;
+    bottom: 11px;
+    left: 70px;
+    padding: 0 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+
+    .mat-icon {
+      vertical-align: middle;
+      color: #fff !important;
+      height: 14px !important;
+      width: 14px !important;
+      font-size: 14px;
+      margin-top: -4px;
+    }
 }
 
 .position-relative {
@@ -666,4 +680,8 @@
     width: 98%;
     height: 32px;
 }
+}
+
+.w-92 {
+  width: 92%;
 }

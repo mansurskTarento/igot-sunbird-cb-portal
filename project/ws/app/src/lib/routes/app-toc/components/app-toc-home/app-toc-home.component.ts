@@ -2337,4 +2337,19 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       );
     }
   }
+
+  playResumeForAI() {
+    if(this.content) {
+      if(this.firstResourceLink) {
+        this.router.navigate([this.firstResourceLink.url],{queryParams: this.firstResourceLink.queryParams} )
+      }
+      
+     // this.getContinueLearningData(this.content.identifier)
+    }
+    
+  }
+
+  enrollUserToAI() {
+    this.handleAutoBatchAssign()
+  }
 }

@@ -454,3 +454,106 @@
 .vertical-middle {
   vertical-align: middle;
 }
+
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.bounce-icon {
+  display: inline-block;
+  height: 36px;
+  margin-top: 16px;
+  animation: bounce 3s ease-in-out infinite;
+
+}
+
+  /*// Glow Border Animation //*/
+  .animated-border-box, .animated-border-box-glow{
+    max-height: 70px;
+    max-width: 70px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    overflow: hidden; 
+    z-index: 0;
+    /* Border Radius */
+    border-radius: 50px 50px 0 50px;
+  }
+  
+  .animated-border-box-glow{
+    overflow: hidden;
+    /* Glow Blur */
+    filter: blur(50px);
+  }
+  
+  .animated-border-box:before, .animated-border-box-glow:before {
+    content: '';
+    z-index: -2;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    position: absolute;
+    width: 99999px;
+    height: 99999px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    /*border color, change middle color*/
+    background-image: conic-gradient(rgba(0,0,0,0), #81a3eb, #E6EDFB 25%);
+    /* change speed here */
+    animation: rotate 3s linear infinite;
+  }
+  
+  .animated-border-box:after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    /* border width */
+    left: 3px;
+      top: 3px;
+      width: calc(100% - 6px);
+      height: calc(100% - 6px);
+    /*bg color*/
+    background: #1E5AC2;
+    /*box border radius*/
+    border-radius: 50px 50px 0 50px;
+  }
+  
+  @keyframes rotate {
+    100% {
+      transform: translate(-50%, -50%) rotate(1turn);
+    }
+  }
+  
+  .bounce-icon {
+  display: inline-block;
+  height: 36px;
+  margin-top: 16px;
+  animation: bounce 3s ease-in-out infinite;
+  position: relative;
+  }
+  .agent-box {
+      text-align: center;
+  }
+
+.icon-container {
+  height: 70px;
+  width: 70px;
+  /* background-color: #1E5AC2;
+
+  border-radius: 48px 48px 0 48px;
+  border: 3px solid #81A3EB; */
+  /* box-shadow: 0px 3px 2px rgb(113 101 101); */
+  // background-image: url("/assets/icons/circle.svg");
+  background-position: center;
+  text-align: center;
+}

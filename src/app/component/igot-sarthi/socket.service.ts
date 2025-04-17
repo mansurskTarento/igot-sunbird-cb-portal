@@ -6,6 +6,7 @@ import { share } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class WebSocketService {
+  
   private socket: WebSocket | undefined;
   private messageSubject: Subject<any> = new Subject<any>();
 

@@ -510,7 +510,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
    
    if(this.aiSearchResultArr.length > 2) {
-    this.scrollToBottomEvent.emit()  
+    setTimeout(()=>{
+      this.scrollToBottomEvent.emit() 
+    },0)
    }   
     this.aiGlobalSearch()
     setTimeout(()=>{
@@ -530,15 +532,22 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    }
    console.log('requestBody', requestBody)
     this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
-      console.log('data--', data)
-      this.aiSearchResult = data 
-      
-      console.log('this.userJourney', this.userJourney)
-    console.log('requestBody', requestBody)
-    console.log('aiSearchResult', this.aiSearchResult)
-    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
+    this.aiSearchResult = data 
     let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+      let startTime = 0
+      let endTime = 0
+      let pageNumber:any = 1
+      if(item && item?.contentStart) {
+        startTime = item?.contentStart/60
+        pageNumber= item?.contentStart
+      }
+      if(item && item?.ContentEnd) {
+        endTime = item?.ContentEnd/60
+        pageNumber= item?.ContentEnd
+      }
+      pageNumber = pageNumber !== " " ? pageNumber : 1
+      
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -550,9 +559,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         artifactUrl: item.ArtifactURL,
         description: item.Description,
         identifier: item.Identifier,    
-        contentStart: item?.contentStart/60,
-        contentEnd: item?.contentEnd/60,   
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+        contentStart: startTime,
+        contentEnd: endTime, 
+        pageNumber:   pageNumber,
+        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       arr.push(resultObj)
@@ -569,7 +579,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
      })
     console.log('this.aiSearchResultArr', this.aiSearchResultArr)
-    this.scrollToBottomEvent.emit() 
+    setTimeout(()=>{
+      this.scrollToBottomEvent.emit() 
+    },0)
+    
     })
     
     
@@ -583,7 +596,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
