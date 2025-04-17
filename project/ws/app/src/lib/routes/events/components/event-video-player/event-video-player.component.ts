@@ -254,8 +254,8 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         sources: [
           {
             type: NsContent.EMimeTypes.MP4,
-            //src: this.eventData.registrationLink
-            src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            src: this.eventData.registrationLink,
+            //src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           },
         ],
       },
