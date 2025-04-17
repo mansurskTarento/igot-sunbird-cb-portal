@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { share } from 'rxjs/operators';
+import {  take } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http'
 const PROXY_CREATE_V8 = '/apis/proxies/v8'
 const API_END_POINTS = {
@@ -94,7 +94,7 @@ export class WebSocketService {
 
   // Observable for receiving messages from WebSocket
   getMessages(): Observable<any> {
-    return this.messageSubject.asObservable().pipe(share());
+    return this.messageSubject.asObservable().pipe(take(1));
   }
 
   startClientPing() {

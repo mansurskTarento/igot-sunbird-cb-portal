@@ -2,7 +2,7 @@
   <div class="message-container" id="message-container">
     <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
       <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
-      <p>Welcome to Ai Tutor, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
+      <p>Welcome to AI Tutor, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
     </div>
     <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
 
@@ -38,9 +38,9 @@
           <div class="system-msg-mimetype flex flex-col" *ngIf="item?.contentType === 'Resource'">
             <ng-container *ngIf="item?.mimeType === 'application/pdf'">
               <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank"><img src="/assets/icons/ai-pdf-icon.jpg"></a></div>
-              <div class="resource-link">
+              <!-- <div class="resource-link">
                 <a [href]="item?.resourceLink" target="_blank">Click to view</a>
-              </div>
+              </div> -->
             </ng-container>
             <ng-container *ngIf="item?.mimeType === 'video/mp4'">
               <div class="resource-icon">
@@ -50,16 +50,20 @@
                       <img src="/assets/icons/ai-video-icon.jpg">
   
                     </div>
-                    <div class="content-duration flex" *ngIf="item?.contentStart && item?.contentEnd">
+                    <div class="content-duration flex" *ngIf="item?.contentStart > -1 && item?.contentEnd > -1">
                       <span><mat-icon>access_time</mat-icon>&nbsp;</span>
-                      <span *ngIf="item?.contentStart">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
-                      <span *ngIf="item?.contentEnd">&nbsp;-&nbsp;{{item?.contentEnd | pipeDurationTransform: 'hms'}}</span>
+                      <span *ngIf="item?.contentStart > -1">
+                        <span *ngIf="item?.contentStart">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
+                        <span *ngIf="item.contentStart === 0">0</span>
+                      </span>
+                      <span *ngIf="item?.contentEnd > -1">&nbsp;-&nbsp;{{item?.contentEnd | pipeDurationTransform: 'hms'}}</span>
                     </div>
                   </div>
                   
                   
                 </a>
               </div>
+            </ng-container>
               <div class="flex flex-row cursor-pointer">
               <div class="resource-link">
                 <a [href]="item?.resourceLink" target="_blank">Click to view</a>
@@ -69,14 +73,14 @@
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
               </div>
             </div>
-            </ng-container>
+            
           </div>
           <!-- <div class="feefback-section flex flex-row">
             <div><img src="/assets/ai-tutor/up.svg"></div>
             <div class="ml-2"><img src="/assets/ai-tutor/down.svg"></div>
           </div> -->
           <div class="recommended-question my-5px" [ngClass]="{'margin-left-5': item?.message }">
-            <div class="my-5px mr-2" *ngIf="item?.contentType !== 'Resource'">
+            <div class="my-5px mr-2 w-92" *ngIf="item?.contentType !== 'Resource'">
               <ng-container>
                 <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
                   <mat-icon class="vertical-middle">navigate_next</mat-icon>

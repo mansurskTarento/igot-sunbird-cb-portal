@@ -537,7 +537,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let startTime = 0
       let endTime = 0
-      let pageNumber = 1
+      let pageNumber:any = 1
       if(item && item?.contentStart) {
         startTime = item?.contentStart/60
         pageNumber= item?.contentStart
@@ -546,6 +546,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         endTime = item?.ContentEnd/60
         pageNumber= item?.ContentEnd
       }
+      pageNumber = pageNumber !== " " ? pageNumber : 1
       
       let resultObj = {        
         message: item.Name,

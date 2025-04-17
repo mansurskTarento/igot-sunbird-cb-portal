@@ -2348,4 +2348,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
     
   }
+
+  enrollUserToAI() {
+    this.handleAutoBatchAssign()
+  }
 }

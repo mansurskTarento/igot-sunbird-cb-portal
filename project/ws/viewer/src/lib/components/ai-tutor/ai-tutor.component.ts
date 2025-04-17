@@ -108,6 +108,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.websocketService.getJWTToken().subscribe((data:any)=>{
       if(data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
+        //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
         this.websocketService.connect(`wss://learning-ai.karmayogibharat.net:3000/ws?token=${this.jwtToken}`);
       }
       
@@ -552,7 +553,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
       this.websocketService.sendMessage(message);
       
-      
+      console.log('send button')
       setTimeout(()=>{
         this.getAiTutorMessage()
       }, 1000)
@@ -565,11 +566,12 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messageSubscription = this.websocketService
       .getMessages()
       .subscribe((message: string) => {
-        console.log(message);
+        console.log('messages---',message);
        // this.messages.push(message);
        this.aiTutorResult = message
-       this.aiTutorResultMessage()
+      this.aiTutorResultMessage()
        this.searchQueryAItutor = '';
+       
       });
   }
 
@@ -588,7 +590,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
       let startTime = 0
       let endTime = 0
-      let pageNumber = 1
+      let pageNumber:any = 1
       if(item && item?.ContentStart) {
         startTime = item?.ContentStart/60
         pageNumber = item?.ContentStart
@@ -597,7 +599,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         endTime = item?.ContentEnd/60
         pageNumber = item?.ContentEnd
       }
-      
+      pageNumber = pageNumber !== " " ? pageNumber : 1
       let resultObj = {        
         message: item.Name,
         recommendedQues: '',
@@ -611,8 +613,8 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         identifier: item.Identifier,   
         contentStart: startTime,
         contentEnd: endTime,
-        pageNumber:  pageNumber,    
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        pageNumber:  pageNumber ? pageNumber : 1,    
+        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       arr.push(resultObj)

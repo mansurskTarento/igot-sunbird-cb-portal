@@ -41,6 +41,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
   @Output() playResumeForAI = new EventEmitter()
+  @Output() enrollUserToAI = new EventEmitter()
   sticky = false
   menuPosition: any
   isMobile = false
@@ -182,7 +183,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         console.log('response', response)
         if(response === 'enroll') {
           this.generateResumeDataLinkNew()
-        }
+        } else if(response === 'needToEnroll'){
+          this.enrollUserForAITutor()
+        } 
       });
     }
     
@@ -255,5 +258,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
     }
     return batchId
+  }
+
+  enrollUserForAITutor() {
+    this.enrollUserToAI.emit()
   }
 }
