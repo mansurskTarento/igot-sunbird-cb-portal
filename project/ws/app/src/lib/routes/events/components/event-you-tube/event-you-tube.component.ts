@@ -269,8 +269,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
                 'current': [ // current state
                   progress,
                 ],
-                'duration': normalUpdate ? this.eventData.duration * 60 :
-                  (timeSpent >= this.eventData.duration * 60 ? this.eventData.duration * 60 : timeSpent), // watch time
+                'duration': normalUpdate ? this.eventData.duration * 60 : timeSpent, // watch time
                 'mimeType': 'application/html',
                 'stateMetaData': timeSpent, // last state
               },
@@ -279,9 +278,9 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
           ],
         },
       }
-      if (completionPercentage > 50) {
-        this.rateToFire = 300
-      }
+      // if (completionPercentage > 50) {
+      //   this.rateToFire = 300
+      // }
       if (this.resumeEventStatus !== 2) {
         /* tslint:disable */
         console.log('req', req)
