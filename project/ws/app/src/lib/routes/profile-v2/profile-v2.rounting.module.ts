@@ -7,6 +7,7 @@ import { ProfileViewComponent } from './routes/profile-view/profile-view.compone
 import { Profilev2BadgesResolve } from './resolvers/badges-resolve'
 import { ProfileKarmapointsComponent } from './routes/profile-karmapoints/profile-karmapoints.component'
 import { Profilev2CerficatesResolve } from './resolvers/profile-v2-certificates-resolver'
+import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
 // import { ConfigurationsService } from './resolvers/config-resolver.service'
 // import { ProfileResolverService } from './resolvers/profile-resolver.service'
 
@@ -21,7 +22,7 @@ const routes: Routes = [
     children: [
       {
         path: 'me',
-        component: ProfileViewComponent,
+        component: ProfileViewV2Component,
         data: {
           pageId: 'me',
           module: 'Profile',

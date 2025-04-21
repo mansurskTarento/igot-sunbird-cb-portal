@@ -56,6 +56,7 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
 
 @NgModule({
     declarations: [
@@ -69,6 +70,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         WithdrawRequestComponent,
         DesignationRequestComponent,
         RejectionReasonPopupComponent,
+        ProfileViewV2Component
     ],
     imports: [
         CommonModule,
