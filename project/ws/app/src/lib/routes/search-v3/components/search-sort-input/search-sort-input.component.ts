@@ -32,7 +32,7 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   ngOnChanges(): void {
     if (this.category === SearchCategory.People) {
       this.options = SEARCH_SORT_PEOPLES;
-      this.selectedOption = SortType.Ascending;
+      this.selectedOption = SortType.MostRelevent;
     } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
       this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
       this.selectedOption = SortType.MostRelevent;
