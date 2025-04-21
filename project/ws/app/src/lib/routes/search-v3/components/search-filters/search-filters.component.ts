@@ -214,7 +214,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (this.categoryType.length) {
           this.categoryType[0].isChecked = true;
           this.selectedFilters[this.categoryType[0].name] = [
-            this.categoryType[0].displayName,
+            this.categoryType[0].name,
           ];
           this.selectedFilterChips = [
             {
@@ -240,7 +240,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setCourseCategoryType(contentType:string) {   
-
       this.categoryTypeDup.map((item, parentIndex)=>{
         if(item.name === contentType) {
           item.isChecked = true
@@ -485,25 +484,26 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (types.includes(item.type)) {
       facets = this.categoryType;
 
-      const category = _.find(facets, { displayName: item.type });
+      const category = _.find(facets, { name: item.type });
 
-      if (!category) {
-        this.categoryType[0].isChecked = false;
-        if (_.has(this.selectedFilters, item.type)) {
-          _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
-          if (_.isEmpty(this.selectedFilters[item.type])) {
-            delete this.selectedFilters[item.type];
-          }
-        }
-        this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
-        this.constructQueryParam.emit('');
+      if (category) {
+        // this.categoryType[0].isChecked = false;
+        // if (_.has(this.selectedFilters, item.type)) {
+        //   _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
+        //   if (_.isEmpty(this.selectedFilters[item.type])) {
+        //     delete this.selectedFilters[item.type];
+        //   }
+        // }
+        // this.appliedFilter.emit(this.selectedFilters);
+        // this.selectedFilterChips = this.refactorFilterData(
+        //   this.selectedFilters
+        // );
+        // this.constructQueryParam.emit('');
+        this.clearAllFilters();
         return;
       }
 
-      const foundFilter = _.find(category.filters, { name: item.value });
+      const foundFilter = _.find(category!.filters, { name: item.value });
       if (foundFilter) {
         foundFilter.isChecked = false;
 

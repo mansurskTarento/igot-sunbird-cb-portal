@@ -117,7 +117,7 @@ export class SearchPeoplesRequest {
   constructor() {
     this.limit = 5;
     this.offset = 0;
-    this.sort_by = { firstName: 'asc' };
+    this.sort_by = { };
     (this.query = ''), (this.fields = []);
     this.filters = new PeoplesFilters();
     this.facets = [
