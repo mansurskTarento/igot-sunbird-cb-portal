@@ -57,6 +57,7 @@
         /* stylelint-disable */
         font: 400 12px Lato;
         /* stylelint-enable */
+        gap: 2px;
       }
 
       .view-mentor-profile {
@@ -68,6 +69,7 @@
         font: 400 10px Lato;
         /* stylelint-enable */
         color: #FFFFFF;
+        margin-top: 5px !important;
       }
 
       .transfor-request {
@@ -81,11 +83,60 @@
         color: #1B4CA1;
         padding: 0px;
       }
+
+      .info-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+        color: #1B4CA1;
+      }
     }
       
   }
 }
 
+.left-routing-card {
+  background-color: #FFFFFF;
+  width: 160px;
+  padding: 16px 8px;
+
+  .route-card {
+    width: 148px;
+    height: 32px;
+    pointer-events: all;
+    cursor: pointer;
+    border-radius: 8px;
+    padding-left: 8px;
+    color: #000000E0;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+
+    .route-card-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      color: #1B4CA1
+    }
+  }
+
+  .active-route-card {
+    background-color: #1B4CA1;
+    color: #FFFFFF !important;
+
+    .route-card-icon { 
+      color: #FFFFFF !important;
+    }
+  }
+}
+
 .profileRightSection {
   width: 270px;
+}
+
+.user-details {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #00000014;
+  padding: 16px;
 }

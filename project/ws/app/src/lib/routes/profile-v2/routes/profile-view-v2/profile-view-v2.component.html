@@ -2,12 +2,16 @@
   <!-- #region (left profile )-->
   <div class="flex flex-col gap-4 items-center justify-center profileLeftSection">
     <div class="profile">
+      <!-- #region (cover photo ) -->
       <div>
         <img class="cover-picture" src="./assets/images/image.svg" alt="cover-photo">
         <div class="edit-cover-picture flex justify-center items-center">
           <img src="./assets/icons/pen_white.svg" class="edit-icon" alt="edit-cover-photo">
         </div>
       </div>
+      <!-- #endregion (cover photo ) -->
+
+      <!-- #region (profile details ) -->
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
           <div class="profile-picture">
@@ -25,7 +29,7 @@
             <div class="profile-details">
               user location
             </div>
-            <button mat-raised-button class="view-mentor-profile flex items-center justify-center pt-2">View Mentor Profile</button>
+            <button mat-raised-button class="view-mentor-profile flex items-center justify-center">View Mentor Profile</button>
           </div>
         </div>
         <div class="flex flex-col justify-between items-end">
@@ -34,9 +38,52 @@
           </div>
           <div class="flex gap-4 items-center justify-center">
             <button mat-raised-button class="transfor-request flex items-center justify-center">Make Transfor Request</button>
+            <mat-icon class="info-icon">info_outline</mat-icon>
           </div>
         </div>
       </div>
+      <!-- #endregion (profile details ) -->
+    </div>
+    
+    <div>
+      <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
+    </div>
+
+    <div class="flex gap-5 w-full">
+      <!-- #region (left routing) -->
+      <div class="fle flex-col gap-3 left-routing-card">
+        <ng-container *ngFor="let profileRoute of profileRoutes">
+          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute)" [ngClass]="{'active-route-card': profileRoute?.isActive}">
+            <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
+            {{profileRoute?.name}}
+          </div>
+        </ng-container>
+      </div>
+      <!-- #endregion (left routing) -->
+
+      <!-- #region (user details ) -->
+      <div class="flex flex-col gap-4 w-full">
+        <div class="user-details">
+
+        </div>
+
+        <div class="user-details">
+          <ws-app-service-history [serviceHistoryList]="serviceHistoryList"></ws-app-service-history>
+        </div>
+
+        <div class="user-details">
+          <ws-app-competencies></ws-app-competencies>
+        </div>
+
+        <div class="user-details">
+          <ws-app-educational-qualifications [educationalQualificationsList]="educationalQualificationsList"></ws-app-educational-qualifications>
+        </div>
+
+        <div class="user-details">
+          <ws-app-achievements></ws-app-achievements>
+        </div>
+      </div>
+      <!-- #endregion (user details ) -->
     </div>
   </div>
   <!-- #endregion (left profile )-->

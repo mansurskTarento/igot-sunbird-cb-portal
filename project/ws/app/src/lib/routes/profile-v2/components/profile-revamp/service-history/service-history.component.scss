@@ -1,0 +1,47 @@
+.section-header {
+  color: #000000;
+  /* stylelint-disable */
+  font: 600 14px Montserrat;
+  /* stylelint-enable */
+}
+
+.add-icon {
+  color: #1B4CA1;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.service-card {
+  border: 1px solid #0000000A;
+  background-color: #1B4CA10A;
+  border-radius: 8px;
+  padding: 8px;
+  gap: 12px;
+
+  .org-logo {
+    width: 96px;
+    height: 54px;
+  }
+
+  .designation {
+    color: #000000;
+    /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .org-details {
+    color: #000000;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+  }
+
+  .org-period {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+  }
+}

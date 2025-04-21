@@ -57,6 +57,11 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
+import { UserStatsComponent } from './components/profile-revamp/user-stats/user-stats.component'
+import { AchievementsComponent } from './components/profile-revamp/achievements/achievements.component'
+import { CompetenciesComponent } from './components/profile-revamp/competencies/competencies.component'
+import { EducationalQualificationsComponent } from './components/profile-revamp/educational-qualifications/educational-qualifications.component'
+import { ServiceHistoryComponent } from './components/profile-revamp/service-history/service-history.component'
 
 @NgModule({
     declarations: [
@@ -70,7 +75,12 @@ import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2
         WithdrawRequestComponent,
         DesignationRequestComponent,
         RejectionReasonPopupComponent,
-        ProfileViewV2Component
+        ProfileViewV2Component,
+        UserStatsComponent,
+        ServiceHistoryComponent,
+        EducationalQualificationsComponent,
+        CompetenciesComponent,
+        AchievementsComponent
     ],
     imports: [
         CommonModule,
