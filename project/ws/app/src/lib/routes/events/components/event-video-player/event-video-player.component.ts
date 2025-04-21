@@ -254,8 +254,8 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         sources: [
           {
             type: NsContent.EMimeTypes.MP4,
-            //src: this.eventData.registrationLink
-            src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            src: this.eventData.registrationLink,
+            //src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           },
         ],
       },
@@ -316,9 +316,9 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
           ],
         },
       }
-      if (completionPercentage > 50) {
-        this.rateToFire = 300
-      }
+      // if (completionPercentage > 50) {
+      //   this.rateToFire = 300
+      // }
       if (this.resumeEventStatus !== 2) {
         /* tslint:disable */
         console.log('req', req)

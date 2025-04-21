@@ -345,7 +345,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     delete this.searchRequestEvents.request.sort_by?.lastUpdatedOn;
 
     this.searchRequestEvents.request.query = this.statedata?.param || '';
-    this.searchRequestEvents['request']['offset'] = 0
+    // this.searchRequestEvents['request']['offset'] = 0
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
     );
@@ -1153,7 +1153,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.competencyFactet = [];
   }
 
-  onPageChange(event: PageChangeEmitter) {
+  async onPageChange(event: PageChangeEmitter) {
     this.searchPeopleLoader = true
     this.searchContentLoader = true;
 
@@ -1161,12 +1161,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestCourse.request.limit = event.limit;
       this.searchRequestCourse.request.offset =
         (event.currentPage - 1) * event.limit;
-      this.searchCourses();
+      await this.searchCourses();
     } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
       this.searchRequestEvents.request.offset =
         (event.currentPage - 1) * event.limit;
-      this.searchEvents();
+      await this.searchEvents();
     } else if (this.seeAllResult === SearchCategory.People) {
       this.searchRequestPeoples.limit = event.limit;
       this.searchRequestPeoples.offset = (event.currentPage - 1) * event.limit;

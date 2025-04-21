@@ -1,7 +1,7 @@
 <ws-widget-btn-page-back
 [widgetData]="{ url: 'home', titles: titles  }">
 </ws-widget-btn-page-back>
-<div class="gyaan-player-wrapper">
+<div class="gyaan-player-wrapper" *ngIf="from !== 'globalSearch'">
     <div class="flex player-header item-center justify-center" *ngIf="displayContents">
         <div class="container-balanced w-full">
             <div class="flex grid grid-cols-2">
