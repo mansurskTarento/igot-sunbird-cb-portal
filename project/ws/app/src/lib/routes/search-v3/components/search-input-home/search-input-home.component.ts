@@ -205,8 +205,16 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-    await this.searchInNLP(query);
+    await this.searchInNLP(query).then(() => {
+      this.processSearchText(query);
+    }).catch(() => {
+      this.processSearchText(query);
+    });
 
+    
+  }
+
+  processSearchText(query: any) {
     document.getElementById('global-search-input')?.blur();
     const queryParams = {
       q: query.trim(),
