@@ -21,7 +21,7 @@ const API_END_POINTS = {
   ORG_READ: '/api/org/v1/read',
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
-  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive'
+  CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
 }
 
 @Injectable({
@@ -70,6 +70,17 @@ export class SignupService {
     }
     return this.http.post(API_END_POINTS.sendOtpExt, reqObj)
   }
+
+  sendOtpV2(value: any, type: string): Observable<any> {
+    const reqObj = {
+      request: {
+        type: `${type}`,
+        key: `${value}`,
+      },
+    }
+    return this.http.post(API_END_POINTS.sendOtp, reqObj)
+  }
+  
   resendOtp(value: any, type: string) {
     const reqObj = {
       request: {
@@ -78,6 +89,17 @@ export class SignupService {
       },
     }
     return this.http.post(API_END_POINTS.ReSendOtpExt, reqObj)
+
+  }
+
+  resendOtpv2(value: any, type: string) {
+    const reqObj = {
+      request: {
+        type: `${type}`,
+        key: `${value}`,
+      },
+    }
+    return this.http.post(API_END_POINTS.ReSendOtp, reqObj)
 
   }
   verifyOTP(otp: number, value: any, type: string) {
@@ -176,7 +198,7 @@ export class SignupService {
       }
       const importedBy =
         _.get(c, 'additionalProperties.importedById', null) ===
-        _.get({}, 'userId', '')
+          _.get({}, 'userId', '')
           ? 'You'
           : _.get(c, 'additionalProperties.importedByName', null);
       (c['importedByName'] = importedBy),

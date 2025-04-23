@@ -22,7 +22,7 @@ export class EventsEngagementComponent implements OnInit {
     private langtranslations: MultilingualTranslationsService,
     private router: Router,
   ) {
-    if (this.data) {
+    if (this.data && this.data.engagements) {
       this.myEngagements = this.data.engagements
       this.engagementDetails = this.data.engagementDetails
       this.bottomSheet = true

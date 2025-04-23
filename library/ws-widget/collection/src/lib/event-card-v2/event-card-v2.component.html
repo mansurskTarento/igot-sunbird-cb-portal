@@ -43,9 +43,10 @@
                 <div *ngIf="event?.showLive" class="flex gap-1 live blink">
                   <img class='img' src="/assets/icons/live.svg" alt="">
                   <span>{{event?.status}}</span>
+                </div>
               </div>
-              </div>
-              <div class="event-title capitalize">{{event?.name}}</div>
+              <div class="event-title capitalize" matTooltipClass="card-tooltip" matTooltip="{{event?.name}}">
+                {{event?.name}}</div>
               <div class="event-description">{{event?.description}}</div>
               <div class="flex w-full flex-wrap flex-middle pb-1 pt-1">
                 <div class="course_logo_box">

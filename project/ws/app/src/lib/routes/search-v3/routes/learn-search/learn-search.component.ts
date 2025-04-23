@@ -112,10 +112,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   currentUserDept = '';
   connectionRequestsSent!: any;
   queryParams: any;
-  typesOfEventsFilters: string[] = [];
+  typesOfEventsFilters: any;
   competencyFactet: any = [];
   searchSortFilter: string = '';
   searchPeopleLoader = false;
+  filtersChipFromLearn: string[] = [];
+
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -184,13 +186,32 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ? true
           : false;
     }
+    if(changes['paramFilters'] && changes['paramFilters'].currentValue && changes['paramFilters'].currentValue.length) {
+      this.searchContentLoader = true;
+
+      this.searchRequestCourse.request.filters.courseCategory = changes['paramFilters'].currentValue[0].subType
+      
+      this.seeAllResult = SearchCategory.Courses;
+      this.eventSearchTotalCount = 0;
+      this.peopleSearchTotalCount = 0;
+      this.communitiesSearchTotalCount = 0;
+      this.searchRequestCourse.request.limit = this.initialPaginationSize;
+      await this.searchCourses();
+      this.sideNavBarOpened = false
+      this.searchContentLoader = false;
+      this.filtersChipFromLearn = changes['paramFilters'].currentValue[0].subType
+      return
+    }
+
     if (
       (changes.searchQuery &&
         changes.searchQuery.currentValue?.query !==
           changes.searchQuery.previousValue?.query) ||
       changes.searchQuery.currentValue?.searchCategory !==
         changes.searchQuery.previousValue?.searchCategory
-    ) {
+      ) {
+      this.searchContentLoader = true;
+      this.searchPeopleLoader = true;
       this.resetAllSearchParams();
       this.statedata = {
         param: this.searchQuery?.nlp
@@ -198,8 +219,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           : this.searchQuery.query,
         path: 'Search',
       };
-      this.searchContentLoader = true;
-      this.searchPeopleLoader = true
       if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || '';
         this.seeAllResults(category);
@@ -215,7 +234,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       this.updateNoResultMessage(this.statedata.param);
+
+      if (changes.filtersPanel && changes.filtersPanel.currentValue === 'show') {
+        this.sideNavBarOpened = true
+        this.filtersChipFromLearn = []
+
+      }
     }
+
+    
   }
 
   getName(userDetails: any) {
@@ -250,7 +277,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     if (this.defaultSideNavBarOpenedSubscription) {
-      this.defaultSideNavBarOpenedSubscription.unsubscribe();
+      if (this.defaultSideNavBarOpenedSubscription) {
+        this.defaultSideNavBarOpenedSubscription.unsubscribe();
+      }
     }
 
     localStorage.removeItem(SearchConstantLocalStorage.SortType);
@@ -316,20 +345,21 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     delete this.searchRequestEvents.request.sort_by?.lastUpdatedOn;
 
     this.searchRequestEvents.request.query = this.statedata?.param || '';
-    this.searchRequestEvents['request']['offset'] = 0
+    // this.searchRequestEvents['request']['offset'] = 0
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestEvents
     );
     if (result.result && result.result?.Event) {
-      if (this.typesOfEventsFilters.length) {
-        this.eventsSearchResults = this.processEventsResult(
-          result.result?.Event
-        );
-        this.eventSearchTotalCount = this.eventsSearchResults.length;
-      } else {
+      // if (this.typesOfEventsFilters.length) {
+      //   // this.eventsSearchResults = this.processEventsResult(
+      //   //   result.result?.Event
+      //   // );
+      //   this.eventsSearchResults = result.result?.Event
+      //   this.eventSearchTotalCount = this.eventsSearchResults.length;
+      // } else {
         this.eventsSearchResults = result.result?.Event || [];
         this.eventSearchTotalCount = result.result?.count;
-      }
+      // }
       this.eventsFacets = result.result?.facets;
       // this.eventsSearchResults.forEach((event: any) => {
       //   this.allResultsDepartmentName.add(event?.sourceName);
@@ -349,11 +379,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (result && result.result && result.result?.response?.content) {
       this.peoplesSearchResults = result.result?.response?.content || [];
       this.peopleSearchTotalCount = result.result?.response?.count;
-      this.peoplesFacets = result.result?.response.facets;
+      this.peoplesFacets = result.result?.response.facets || []
       this.getAllConnectionRequests();
     } else {
       this.peoplesSearchResults = [];
       this.peopleSearchTotalCount = 0;
+      this.peoplesFacets = []
     }
   }
 
@@ -458,6 +489,25 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
                 ],
             }
           : { values: [] };
+      } else if (this.seeAllResult === SearchCategory.CaseStudy) {
+        const searchRequestCourse = new SearchV4Request([
+          this.competencyAreaNameKey,
+          this.competencyThemeKey,
+          this.competencySubThemeKey,
+        ]);
+        searchRequestCourse.request.query = this.statedata?.param;
+        searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+          [element];
+        searchRequestCourse.request.filters.courseCategory = ['Case Study']
+        result = await this.searchV3Service.searchCoursesv4(
+          searchRequestCourse
+        );
+        competencyThemeFacet = result.result?.facets.find(
+          (facet: any) => facet.name === this.competencyThemeKey
+        );
+        competencySubThemeFacet = result.result?.facets.find(
+          (facet: any) => facet.name === this.competencySubThemeKey
+        );
       }
 
       const competencyThemeName = competencyThemeFacet
@@ -479,7 +529,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         competencyFactet.push({
           [this.competencyAreaNameKey]: {
             name: element,
-            count: result.result?.count || 0,
+            count: this.seeAllResult === SearchCategory.Communities ? _.get(result, 'result.search_results.totalCount', 0) : _.get(result, 'result.count', 0),
             isChecked: false,
           },
           [this.competencyThemeKey]: competencyThemeName,
@@ -498,6 +548,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async applySearchFilter(selectedFilters: { [key: string]: any }) {
+    
     this.searchContentLoader = true;
     this.searchPeopleLoader = true;
     
@@ -612,7 +663,26 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.constructQueryParam('communities');
           this.seeAllResult = SearchCategory.Communities;
         } else if (key === 'typeOfEvents') {
-          this.typesOfEventsFilters = [...selectedFilters[key]];
+            const currentEpochTime = moment().valueOf();
+            // const endOfDayEpochTime = moment().endOf('day').valueOf();
+            const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
+            this.resetEventsTypesRequest()
+            if (selectedFilters[key][0] === 'live') {
+              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
+                '<=': currentEpochTime,
+              };
+              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
+                '>=': currentEpochTime,
+              };
+            } else if (selectedFilters[key][0] === 'upcoming') {
+              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
+                '>=': tomorrowEpochTime,
+              };
+            } else if (selectedFilters[key][0] === 'past events') {
+              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
+                '<=': currentEpochTime,
+              };
+            }
         } else if (key === 'competencyArea') {
           this.searchRequestCommunities.filterCriteriaMap.competencyArea = [
             ...selectedFilters[key],
@@ -629,11 +699,18 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestPeoples.filters[key] = [...selectedFilters[key]];
         } else if (key === 'rootOrgName') {
           this.searchRequestPeoples.filters[key] = [...selectedFilters[key]];
-        } else if (key === 'sourceName') {
+        } 
+        else if (key === 'sourceName') {
           this.searchRequestEvents.request.filters.sourceName = [
             ...selectedFilters[key],
           ];
-        } else {
+        }
+        else if (key === 'resourceType') {
+          this.searchRequestEvents.request.filters.resourceType = [
+            ...selectedFilters[key],
+          ];
+        }
+         else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
           );
@@ -642,7 +719,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     if (!Object.keys(selectedFilters).includes('typeOfEvents')) {
-      this.typesOfEventsFilters = [];
+      this.resetEventsTypesRequest()
     }
 
     this.deleteFilterKeys();
@@ -1007,9 +1084,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peopleSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
       this.searchRequestCourse.request.limit = this.initialPaginationSize;
-      this.searchRequestCourse.request.filters.courseCategory = ['Case Study'];
+      this.searchRequestCourse.request.filters.courseCategory = ['Case Study'];      
       await this.searchCourses();
       this.combinedFacets = [this.coursesFacets];
+      this.getCompetencyHierichy();
     } else if (category === SearchCategory.Events) {
       this.courseSearchTotalCount = 0;
       this.peopleSearchTotalCount = 0;
@@ -1018,13 +1096,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       await this.searchEvents();
       this.combinedFacets = [this.eventsFacets];
       this.getCompetencyHierichy();
+      this.processTypeOfEventsFilter()
     } else if (category === SearchCategory.People) {
       this.courseSearchTotalCount = 0;
       this.eventSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
       this.searchRequestPeoples.limit = this.initialPaginationSize;
       await this.searchPeople();
-      this.combinedFacets = [this.peoplesFacets];
+      this.combinedFacets = this.peoplesFacets.length ? [this.peoplesFacets] : [];
     } else if (category === SearchCategory.Communities) {
       this.courseSearchTotalCount = 0;
       this.eventSearchTotalCount = 0;
@@ -1074,7 +1153,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.competencyFactet = [];
   }
 
-  onPageChange(event: PageChangeEmitter) {
+  async onPageChange(event: PageChangeEmitter) {
     this.searchPeopleLoader = true
     this.searchContentLoader = true;
 
@@ -1082,12 +1161,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestCourse.request.limit = event.limit;
       this.searchRequestCourse.request.offset =
         (event.currentPage - 1) * event.limit;
-      this.searchCourses();
+      await this.searchCourses();
     } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
       this.searchRequestEvents.request.offset =
         (event.currentPage - 1) * event.limit;
-      this.searchEvents();
+      await this.searchEvents();
     } else if (this.seeAllResult === SearchCategory.People) {
       this.searchRequestPeoples.limit = event.limit;
       this.searchRequestPeoples.offset = (event.currentPage - 1) * event.limit;
@@ -1319,5 +1398,79 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
     return processedEvents;
+  }
+
+  async removeFilterChip(filter: any) {
+    this.searchContentLoader = true;
+    this.filtersChipFromLearn = this.filtersChipFromLearn.filter(ele => ele !== filter)
+    this.searchRequestCourse.request.filters.courseCategory = this.filtersChipFromLearn
+    
+    if(!this.filtersChipFromLearn.length) {
+      this.sideNavBarOpened = true
+      this.seeAllResults(SearchCategory.Courses)
+      return 
+    }
+
+    await this.searchCourses()
+    this.searchContentLoader = false;
+
+    
+  }
+
+  async processTypeOfEventsFilter() {
+    const typeOfEvents = ['live', 'upcoming', 'past events'];
+    const eventCounts: any[] = [];
+
+    for (const type of typeOfEvents) {
+      const searchRequestEvents = new SearchV4Request([]);
+      searchRequestEvents.request.query = this.statedata?.param;
+      searchRequestEvents.request.filters.contentType = 'Event';
+      searchRequestEvents.request.fields = SearchEventFields;
+      searchRequestEvents.request.facets = ["startDateTimeInEpoch"];
+  
+      delete searchRequestEvents.request.filters?.courseCategory;
+      delete searchRequestEvents.request.sort_by?.lastUpdatedOn;
+
+      const currentEpochTime = moment().valueOf();
+      // const endOfDayEpochTime = moment().endOf('day').valueOf();
+      const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
+
+      if (type === 'live') {
+        searchRequestEvents.request.filters.startDateTimeInEpoch = {
+          '<=': currentEpochTime,
+        };
+        searchRequestEvents.request.filters.endDateTimeInEpoch = {
+          '>=': currentEpochTime,
+        };
+      } else if (type === 'upcoming') {
+        searchRequestEvents.request.filters.startDateTimeInEpoch = {
+          '>=': tomorrowEpochTime,
+        };
+      } else if (type === 'past events') {
+        searchRequestEvents.request.filters.endDateTimeInEpoch = {
+          '<=': currentEpochTime,
+        };
+      }
+
+      const result = await this.searchV3Service.searchCoursesv4(searchRequestEvents);
+      eventCounts.push({
+        name: type,
+        count: result?.result?.count || 0,
+        isChecked: false,
+        displayName: type,
+      });
+    }
+
+    console.log('Event counts by type:', eventCounts);
+    this.typesOfEventsFilters = eventCounts;
+  }
+
+  resetEventsTypesRequest() {
+    if(this.searchRequestEvents.request.filters.startDateTimeInEpoch) {
+      delete this.searchRequestEvents.request.filters.startDateTimeInEpoch
+    }
+    if(this.searchRequestEvents.request.filters.endDateTimeInEpoch) {
+      delete this.searchRequestEvents.request.filters.endDateTimeInEpoch
+    }
   }
 }

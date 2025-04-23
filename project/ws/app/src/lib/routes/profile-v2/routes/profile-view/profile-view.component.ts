@@ -67,7 +67,7 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-
+ 
 export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentUsername: any
@@ -159,6 +159,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   primaryDetailsForm = new UntypedFormGroup({
     group: new UntypedFormControl('', [Validators.required]),
     designation: new UntypedFormControl('', [Validators.required]),
+    searchDesignation:  new UntypedFormControl(''),
   })
   approvalPendingFields = []
   rejectedByMDOData = []
@@ -206,6 +207,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isIgotOrg = false
   userDate: any
   isMatcompleteOpened = false
+  designationListLoadCount = 50
+  designationDefaultLoadCount =  50
+  isLoadingMoreDesignations = false;
+  desigantionFilterEnable = false
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -266,7 +271,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.otherDetailsForm.get('mobile')) {
       this.otherDetailsForm.get('mobile')!.valueChanges
         .subscribe(res => {
-          if (res && res !== this.portalProfile.personalDetails.mobile || !this.portalProfile.personalDetails.phoneVerified) {
+          if (res && res !== _.get(this.portalProfile, 'personalDetails.mobile') || !_.get(this.portalProfile, 'personalDetails.phoneVerified')) {
             if (MOBILE_PATTERN.test(res)) {
               this.verifyMobile = true
             } else {
@@ -296,7 +301,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (data.profile.data.profileDetails) {
         this.portalProfile = data.profile.data.profileDetails
-        this.userDate = this.portalProfile.personalDetails.dob
+        this.userDate = _.get(this.portalProfile, 'personalDetails.dob', '') 
       }
 
       const user = this.portalProfile.userId || this.portalProfile.id || _.get(data, 'profile.data.id') || ''
@@ -330,6 +335,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupData()
     // this.getProfilePageMetaData()
     this.loadDesignations()
+    // this.loadDesignationsData()
     //this.getMasterDesignation()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
@@ -351,20 +357,29 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isIgotOrg = this.configService.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
 
-    this.primaryDetailsForm.get('designation')!.valueChanges
+    this.primaryDetailsForm.get('searchDesignation')!.valueChanges
       .pipe(
         debounceTime(250),
         distinctUntilChanged(),
         startWith(''),
       )
-      .subscribe(res => {
-        if (res) {
+      .subscribe(searchText => {
+        if (searchText) {
+          this.desigantionFilterEnable = true
           this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-            val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+            val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
           )
         } else {
-          this.filterDesignationsMeta = this.designationsMeta
+          this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationDefaultLoadCount)
+          this.desigantionFilterEnable = false
+          this.designationListLoadCount = this.designationDefaultLoadCount;
+          this.checkCurrentDesignationPresent()
         }
+        // if (searchText) {
+        //   this.loadDesignationsData(searchText); // Call loadDesignationsData with the search text
+        // } else {
+        //   this.filterDesignationsMeta = this.designationsMeta; // Reset to the full list if the search text is empty
+        // }
       })
 
     if (this.otherDetailsForm.get('domicileMedium')) {
@@ -759,15 +774,15 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     // }
     this.otherDetailsForm.patchValue({
       employeeCode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.employeeCode : '',
-      primaryEmail: this.portalProfile.personalDetails.primaryEmail,
-      gender: this.portalProfile.personalDetails.gender ? this.portalProfile.personalDetails.gender.toUpperCase() : '',
-      dob: this.getDateFromText(this.portalProfile.personalDetails.dob),
-      domicileMedium: this.portalProfile.personalDetails.domicileMedium,
-      mobile: this.portalProfile.personalDetails.mobile,
-      countryCode: this.portalProfile.personalDetails.countryCode || '+91',
+      primaryEmail: _.get(this.portalProfile, 'personalDetails.primaryEmail', ''),
+      gender: _.get(this.portalProfile, 'personalDetails.gender', '').toUpperCase(),
+      dob: this.getDateFromText(_.get(this.portalProfile, 'personalDetails.dob', '')),
+      domicileMedium: _.get(this.portalProfile, 'personalDetails.domicileMedium', ''),
+      mobile: _.get(this.portalProfile, 'personalDetails.mobile', ''),
+      countryCode: _.get(this.portalProfile, 'personalDetails.countryCode', '+91'),
       pincode: this.portalProfile.employmentDetails ? this.portalProfile.employmentDetails.pinCode : '',
-      category: this.portalProfile.personalDetails.category ? this.portalProfile.personalDetails.category.toUpperCase() : '',
-      isCadre: this.portalProfile.personalDetails.isCadre
+      category: _.get(this.portalProfile, 'personalDetails.category', '').toUpperCase(),
+      isCadre: _.get(this.portalProfile, 'personalDetails.isCadre', '')
     });
 
     
@@ -781,7 +796,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   cadreControllingAuthority: this.portalProfile.cadreDetails.cadreControllingAuthority,
     // } : {})
 
-    if (this.portalProfile.personalDetails.isCadre) {
+    if (_.get(this.portalProfile, 'personalDetails.isCadre')) {
       this.populateValues()
     }
 
@@ -1093,11 +1108,74 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
-        this.filterDesignationsMeta = this.designationsMeta
+      
+      // Initialize filtered list
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      this.checkCurrentDesignationPresent();
+      
       },
       (_err: any) => {
       })
   }
+
+  checkCurrentDesignationPresent() {
+       
+    // Get the current designation value
+    const currentDesignation = this.primaryDetailsForm.get('designation')!.value;
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filterDesignationsMeta.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+      
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = { 
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDesignationsMeta.pop();
+        }
+        this.filterDesignationsMeta.unshift(newDesignation);
+      }
+    }
+  }
+
+  loadDesignationsData(searchText?: string) {
+    let request: any = {
+      "filterCriteriaMap": {
+          "status": "Active"
+      },
+      "requestedFields": [],
+      "pageNumber":0,
+      "pageSize":20
+    }
+    if(searchText){
+      request['searchString'] = searchText
+    }
+    this.userProfileService.getDesignationV2(request).subscribe(
+      (data: any) => {
+        console.log(data, "data")
+        if(data && data.result && data.result.result && data.result.result.data && data.result.result.data.length ){
+          if(!searchText) {
+            this.designationsMeta = data.result.result.data
+            this.filterDesignationsMeta = this.designationsMeta
+          } else {
+            this.filterDesignationsMeta = data.result.result.data
+          }
+          
+        }
+        // this.designationsMeta = data.responseData
+      },
+      (_err: any) => {
+      })
+  } 
 
   async getMasterDesignation() {
     this.signupService.getOrgReadData(this.orgId).subscribe((result: any) => {
@@ -1589,6 +1667,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
+    
+    // Clean up any panel event listeners
+    const panel = document.querySelector('.mat-select-panel');
+    if (panel) {
+      panel.removeEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+    }
   }
 
   viewReason(comments: string) {
@@ -1956,5 +2040,97 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   validateName(event: any) {
     console.log('event', event)
+  }
+
+  setupScrollListener(opened: boolean): void {
+    
+    if (opened) {
+      if (this.primaryDetailsForm.get('searchDesignation')) {
+        this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentDesignationPresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+          const panel = document.querySelector('.mat-select-panel');
+          if (panel) {
+            // Add scroll event listener to the panel
+            panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+          }
+        
+      }, 100);
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+    
+    if(!this.desigantionFilterEnable){
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+          this.isLoadingMoreDesignations = true;
+          
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+          
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoreDesignations = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+  // Add these methods to your component class
+
+  clearSearchDesignation(event: Event): void {
+    event.stopPropagation();
+    if (this.primaryDetailsForm.get('searchDesignation')) {
+      this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+    }
+  }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.primaryDetailsForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.primaryDetailsForm.get('searchDesignation')) {
+        this.primaryDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.primaryDetailsForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+
+  cancelRequest() {
+    if ((this.portalProfile.professionalDetails && this.portalProfile.professionalDetails.length)) {
+      this.primaryDetailsForm.patchValue({
+        group: this.portalProfile.professionalDetails[0].group,
+        designation: this.portalProfile.professionalDetails[0].designation,
+      })
+    } else {
+      this.primaryDetailsForm.patchValue({
+        group: '',
+        designation: '',
+      })
+    }
   }
 }
