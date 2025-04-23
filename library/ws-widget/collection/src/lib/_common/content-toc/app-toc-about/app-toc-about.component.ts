@@ -185,7 +185,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   timer: any = {}
   isMobile = false
   compentencyKey!: NsContent.ICompentencyKeys
-
+  sectorsList: any[] = []
+  subSectorsList: any[] = []
   ngOnInit() {
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     if (window.innerWidth <= 1200) {
@@ -208,6 +209,37 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
     if (this.content && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) {
       this.disableCertificate = true
+    }
+
+    if (this.content?.sectorDetails_v1 && typeof this.content?.sectorDetails_v1 === 'string') {
+      this.content.sectorDetails_v1 = JSON.parse(this.content.sectorDetails_v1);
+      if (this.content.sectorDetails_v1.length) {
+        this.sectorsList = Array.from(
+          new Map(
+            this.content.sectorDetails_v1
+              .filter((item: any) => item.sectorName) 
+              .map((item: any) => [
+                item.sectorName,
+                { sectorId: item.sectorId, sectorName: item.sectorName },
+              ])
+          ).values()
+        );
+
+        this.subSectorsList = Array.from(
+          new Map(
+            this.content.sectorDetails_v1
+              .filter((item: any) => item.subSectorName) 
+              .map((item: any) => [
+                item.subSectorName,
+                {
+                  subSectorId: item.subSectorId,
+                  subSectorName: item.subSectorName,
+                },
+              ])
+          ).values()
+        );
+      }
+
     }
   }
 
