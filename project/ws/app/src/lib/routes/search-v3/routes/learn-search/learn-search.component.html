@@ -1,11 +1,11 @@
 <div class="learnsearch margin-top-l margin-bottom-l">
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
-        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav"
+        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav filter-container-search"
             *ngIf="((combinedFacets.length > 0 || 
         ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show') && !isMobileView">
             <ng-container>
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
-                    [competencyFactet]="competencyFactet" (appliedFilter)="applySearchFilter($event)"
+                    [competencyFactet]="competencyFactet" (appliedFilter)="applySearchFilter($event)" [typesOfEvents]="typesOfEventsFilters"
                     [karmayogiBadge]="veifiedKarmayogi"
                     (constructQueryParam)="constructQueryParam($event)"
                     (applyFilterFromLearn)="applyFilterFromLearn($event)"></ws-app-search-filters>
@@ -50,10 +50,22 @@
                     </ng-container>
                 </ng-container>
 
+                <ng-container *ngIf="filtersChipFromLearn.length">
+                    <div class="filter-list flex items-center flex-wrap gap-2 mb-4">
+                        <ng-container *ngFor="let item of filtersChipFromLearn">
+                            <div class="filter-pill flex items-center">
+                                <span class="font-normal text-xs" [matTooltip]="item">{{item}}</span>
+                                <button mat-icon-button color="primary" (click)="removeFilterChip(item)">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
                 <ng-container>
                     <!-- Content Card -->
                     <ng-container
-                        *ngIf="!searchContentLoader && courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-studies')">
+                        *ngIf="!searchContentLoader && courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
                             <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> {{ 'learnsearch.content' |
                                 translate:{ count: courseSearchTotalCount } }}</p>

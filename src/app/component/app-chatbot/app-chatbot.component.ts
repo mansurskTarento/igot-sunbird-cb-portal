@@ -1,9 +1,10 @@
-import { AfterViewChecked, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core'
+import { AfterViewChecked, OnChanges, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 // import { ChatbotService } from './chatbot.service'
 import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
+import { CdkDragEnd } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'ws-app-chatbot',
@@ -11,8 +12,9 @@ import { NavigationEnd, Router } from '@angular/router'
   styleUrls: ['./app-chatbot.component.scss'],
   // providers: [ChatbotService]
 })
-export class AppChatbotComponent implements OnInit, AfterViewChecked {
-
+export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges {
+  @Input() rootOrgId:any
+  @Input() iGOTAIConfigLoaded:any
   showIcon = true
   categories: any[] = []
   language: any[] = []
@@ -32,7 +34,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   expanded = false
   callText = ''
   emailText = ''
-
+  enableIGOTAIFlag = false
+  
   // tslint:disable
   localization: any = {
     'en' : {
@@ -51,6 +54,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
 
     }
   }
+  iconPosition = {x:0, y:0}
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
@@ -70,6 +74,20 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
+    console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+    console.log()
+    if(this.rootOrgId) {
+      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
+        this.enableIGOTAIFlag = true
+        this.currentFilter = 'sarthi'
+      } else {
+        this.enableIGOTAIFlag = false
+        this.currentFilter = 'information'
+      }
+    }
+   
+    
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
@@ -77,6 +95,19 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+  }
+
+  ngOnChanges() {
+    if(this.rootOrgId && this.iGOTAIConfigLoaded) {
+      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
+        this.enableIGOTAIFlag = true
+        this.currentFilter = 'sarthi'
+      } else {
+        this.enableIGOTAIFlag = false
+        this.currentFilter = 'information'
+      }
+    }
   }
 
   greetings() {
@@ -100,7 +131,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       lang: this.selectedLaguage,
       config_type: lang[this.currentFilter]
     }
-    this.displayLoader = true
+    this.displayLoader = false
     this.chatbotService.getChatData(tabType).subscribe((res: any) => {
       if (res && res.payload && res.payload.config) {
         this.setDataToLocalStorage(res.payload.config)
@@ -166,7 +197,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
 
   iconClick(type: string) {
     this.showIcon = !this.showIcon
-    this.currentFilter = 'information'
+    this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
     this.expanded = false
     if (type === 'start') {
       this.disableScroll()
@@ -178,7 +209,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       this.chatInformation = []
       this.chatIssues = []
       this.selectedLaguage = 'en'
-      this.currentFilter = 'information'
+      this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
       this.checkForApiCalls()
       this.more = false
       this.enableScroll()
@@ -425,7 +456,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   }
 
   getLanguages() {
-    this.displayLoader = true
+    this.displayLoader = false
     this.chatbotService.getLangugages().subscribe((resp: any) => {
       if (resp && resp.status && resp.status.code === 200) {
         this.language = resp.payload.languages
@@ -438,7 +469,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom()
+    if(this.currentFilter !== 'sarthi') {
+      this.scrollToBottom()
+    }    
   }
   scrollToBottom(): void {
     try {
@@ -447,8 +480,18 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
       }
     } catch(err) { }
   }
+
+  scrollToBottomEvent() {
+   let chatbotContent = document.getElementById('chatbot-content')
+   if(chatbotContent) {
+    chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+   }
+  //  this.scrollToBottom()
+  }
   clickOutside() {
-    this.iconClick('end')
+    if(this.currentFilter !== 'sarthi') {
+      this.iconClick('end')
+    }
   }
   private disableScroll() {
     this.renderer.addClass(document.body, 'disable-scroll')
@@ -456,5 +499,10 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked {
 
   private enableScroll() {
     this.renderer.removeClass(document.body, 'disable-scroll')
+  }
+
+  onDragEnded(event: CdkDragEnd) {
+    const point  = event.source.getFreeDragPosition()
+    this.iconPosition = point
   }
 }

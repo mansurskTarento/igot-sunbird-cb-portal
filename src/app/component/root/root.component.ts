@@ -32,6 +32,7 @@ import {
   UtilityService,
   EventService,
   WsEvents,
+  NsInstanceConfig,
 } from '@sunbird-cb/utils-v2'
 import { delay, first, catchError, map, filter } from 'rxjs/operators'
 import { MobileAppsService } from '../../services/mobile-apps.service'
@@ -44,7 +45,7 @@ import { environment } from '../../../environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
-
+import { iGOTAIService } from './../../services/igot-ai.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -55,6 +56,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   hideHeaderAndFooter = false
   disableHeightOnTop = false
+  iGOTAIConfigLoaded = false
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -73,7 +75,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private btnBackSvc: BtnPageBackService,
     private changeDetector: ChangeDetectorRef,
     private utilitySvc: UtilityService,
-    private urlService: UrlService
+    private urlService: UrlService,
+    private iGOTAIService: iGOTAIService
     // private dialogRef: MatDialogRef<any>,
   ) {
 
@@ -237,7 +240,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
       this.mobileTopHeaderVisibilityStatus = status
     })
-    this.configSvc.updateTourGuideMethod(this.showTour)
+    this.configSvc.updateTourGuideMethod(this.showTour)  
     this.route.queryParams
       .subscribe(params => {
         // tslint:disable-next-line
@@ -332,7 +335,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           || !!this.currentUrl.startsWith('/viewer/')
           || !!this.currentUrl.startsWith('/public/request')
           || !!this.currentUrl.startsWith('/public/toc')
-          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
+          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)          
         ) {
           this.showFooter = false
           this.showNavbar = false
@@ -347,6 +350,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           this.isNavBarRequired = true
           this.showBottomNav = true
           this.showHubs = true
+
+        }
+        if (window.location.pathname.includes('/globalsearch')) {
+          this.showFooter = false
 
         }
 
@@ -394,6 +401,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     let isNotMyUser = false
     let isIgotOrg = false
+    console.log('this.configSvc.unMappedUser--', this.configSvc.unMappedUser)
+    if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
+      this.iGOTAIConfig()
+    }
     if (this.configSvc && this.configSvc.unMappedUser
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.profileStatus) {
@@ -412,8 +423,37 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.disableHeightOnTop = false
     }
+
+    
   }
 
+  private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
+    let payload  = {
+      "request": {
+        "type":"page",
+        "subType":"iGOTAI",
+        "action":"page-configuration",
+        "component":"portal",
+        "rootOrgId": this.configSvc.unMappedUser.rootOrgId
+      }
+    }
+    const publicConfig:any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
+    console.log('publicConfig', publicConfig)
+    this.configSvc.iGOTAIConfig = publicConfig
+    // this.configSvc.iGOTAIConfig = {
+    //   "aiTutor": true,
+    //   "iGOTAI": true,
+    //   "subTitles": true,
+    //   "transcription": true
+    // }
+    if(publicConfig && publicConfig.error &&  publicConfig.error.status === 404) {
+      this.iGOTAIConfigLoaded = false
+    } else {
+      this.iGOTAIConfigLoaded = true  
+    }
+    return publicConfig
+  }
+  
   changeBg26Jan() {
     this.backGroundTheme = this.configSvc.overrideThemeChanges
     const docData: any = document.getElementById('app-bg')

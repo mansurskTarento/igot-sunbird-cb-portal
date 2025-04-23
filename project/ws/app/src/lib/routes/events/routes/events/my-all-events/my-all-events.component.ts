@@ -20,6 +20,9 @@ export class MyAllEventsComponent {
   tabIndex = 0
   isLoading = false
   response: any = []
+  past: any = []
+  upcoming: any = []
+  today: any = []
   constructor(
     private activateRoute: ActivatedRoute,
     private translate: TranslateService,
@@ -88,6 +91,9 @@ export class MyAllEventsComponent {
 
   processResult(resp: any) {
     let processedEvents: any = []
+    this.upcoming = []
+    this.past = []
+    this.today = []
     resp.forEach((resp: any) => {
       if (resp.event && resp.event.startDate) {
         const eventDetails = resp.event
@@ -95,25 +101,26 @@ export class MyAllEventsComponent {
         today.setHours(0, 0, 0, 0)
         const eventDate = new Date(_.get(eventDetails, 'startDate'))
         eventDate.setHours(0, 0, 0, 0)
-        switch (this.tabIndex) {
-          case 0:
-            if (today.getTime() === eventDate.getTime()) {
-              processedEvents.push(resp)
-            }
-            break
-          case 1:
-            if (today.getTime() < eventDate.getTime()) {
-              processedEvents.push(resp)
-            }
-            break
-          case 2:
-            if (today.getTime() > eventDate.getTime()) {
-              processedEvents.push(resp)
-            }
-            break
+        if (today.getTime() === eventDate.getTime()) {
+          this.today.push(resp)
+        } else if (today.getTime() < eventDate.getTime()) {
+          this.upcoming.push(resp)
+        } else if (today.getTime() > eventDate.getTime()) {
+          this.past.push(resp)
         }
       }
     })
+    switch (this.tabIndex) {
+      case 0:
+        processedEvents = this.today
+        break
+      case 1:
+        processedEvents = this.upcoming
+        break
+      case 2:
+        processedEvents = this.past
+        break
+    }
     return this.sortData(processedEvents)
   }
 

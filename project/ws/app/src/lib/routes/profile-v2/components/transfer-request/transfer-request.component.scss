@@ -70,6 +70,11 @@ required::after {
     flex-direction: column;
   }
 
+  ::ng-deep .mat-select-panel .mat-option {
+    min-height: 3rem;
+    height: auto;
+  }
+
   .mat-option.search-box-span {
     pointer-events: none;
     height: auto;
@@ -94,4 +99,14 @@ required::after {
     padding: 6px 12px;
     border-radius: 3px;
     box-sizing: border-box;
+}
+
+.search-org-input {
+  width: 100%;
+  height: 35px;
+  padding: 0 30px 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
