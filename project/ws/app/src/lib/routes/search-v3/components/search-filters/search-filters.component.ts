@@ -391,6 +391,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         categoryType
       ].filter((item: any) => item !== type);
     } 
+
+    Object.keys(this.selectedFilters).forEach((key) => {
+      if (Array.isArray(this.selectedFilters[key]) && this.selectedFilters[key].length === 0) {
+        delete this.selectedFilters[key];
+      }
+    });
+
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
 
