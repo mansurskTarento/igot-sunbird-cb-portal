@@ -210,8 +210,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }).catch(() => {
       this.processSearchText(query);
     });
-
-    
   }
 
   processSearchText(query: any) {
