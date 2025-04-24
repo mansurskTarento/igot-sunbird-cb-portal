@@ -41,10 +41,11 @@ export class PaginationComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.paginationInListing();
+    debugger
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.totalItemsCount &&
+      changes.totalItemsCount && changes.totalItemsCount.previousValue && 
       changes.totalItemsCount.currentValue !==
         changes.totalItemsCount.previousValue
     ) {

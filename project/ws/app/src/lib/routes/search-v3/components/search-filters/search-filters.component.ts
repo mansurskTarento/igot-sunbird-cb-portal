@@ -194,6 +194,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
     //  // this.searchCategory = contentType;
     // } else {
+      if(this.searchCategory && params['category'] && this.searchCategory !== params['category']) {
+       this.selectedFilters = {}
+      }
+
       this.searchCategory = params['category'];
       if (this.searchCategory) {
         this.categoryType = this.categoryTypeDup.filter(
