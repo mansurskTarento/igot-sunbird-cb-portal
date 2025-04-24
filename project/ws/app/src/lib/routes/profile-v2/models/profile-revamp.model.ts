@@ -26,3 +26,21 @@ export interface educationalQualifications {
   instituteAndLocation: string,
   period: string,
 }
+
+export interface Theme {
+  name: string;
+  id: number;
+}
+
+export interface Competency {
+  name: string;
+  themes: Theme[];
+  active?: boolean;
+}
+
+export interface achievement {
+  certificateName: string,
+  provider: string,
+  period: string,
+  certificateUrl?: string
+}

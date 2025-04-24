@@ -10,4 +10,41 @@
   width: 24px;
   height: 24px;
   font-size: 24px;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.achievement-card {
+  border: 1px solid #0000000A;
+  background-color: #1B4CA10A;
+  border-radius: 8px;
+  padding: 8px;
+  gap: 3px;
+
+  .certificate-name {
+    color: #000000;
+    /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
+
+    .edit-icon {
+      color: #1B4CA1;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      pointer-events: all;
+      cursor: pointer;
+    }
+  }
+
+  .achievement-details {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+  }
+
+  .certificate {
+    width: 96px;
+  }
 }

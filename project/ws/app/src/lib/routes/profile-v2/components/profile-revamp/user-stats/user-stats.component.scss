@@ -32,24 +32,35 @@
     /* style lint enable */
   }
 
-  .view-all-btn {
-    width: 90px;
-    height: 33px;
-    padding: 8px 0px;
-    border-radius: 46px;
-    background-color: #E6E6E6;
-    color: #000000DE;
-    /* style lint disable */
-    font: 700 14px Lato;
-    /* style lint enable */
-
-    .right-arrow {
-      width: 16px;
-      height: 16px;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  .viewAll {
+    a {
+      color: #1B4CA1;
+      cursor: pointer;
+      /* stylelint-disable */
+      font: 700 14px Lato;
+      /* stylelint-enable */
+      text-decoration: none;
     }
   }
+
+  // .view-all-btn {
+  //   width: 90px;
+  //   height: 33px;
+  //   padding: 8px 0px;
+  //   border-radius: 46px;
+  //   background-color: #E6E6E6;
+  //   color: #000000DE;
+  //   /* style lint disable */
+  //   font: 700 14px Lato;
+  //   /* style lint enable */
+
+  //   .right-arrow {
+  //     width: 16px;
+  //     height: 16px;
+  //     font-size: 16px;
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //   }
+  // }
 }

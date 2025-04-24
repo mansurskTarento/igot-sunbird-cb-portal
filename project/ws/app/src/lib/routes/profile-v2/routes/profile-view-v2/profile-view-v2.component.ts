@@ -1,6 +1,6 @@
 //#region (imports)
-import { Component, OnInit } from '@angular/core';
-import { UserStats, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Competency, UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
 //#endregion
 
 @Component({
@@ -96,18 +96,66 @@ export class ProfileViewV2Component implements OnInit {
       instituteAndLocation: 'institute and location',
       period: 'Jul 2020 - Present - 4 years'
     },
-    
   ]
+
+  competencies: Competency[] = [
+    {
+      name: 'Behavioural',
+      active: false,
+      themes: [
+        { name: 'Food Waste Management', id: 1 },
+        { name: 'Commitment to the Organisation', id: 2 },
+        { name: 'Sustainability Management', id: 3 },
+        { name: 'Climate Finance', id: 4 },
+        { name: 'Data Management', id: 5 },
+        { name: 'General Management', id: 6 },
+        { name: 'Monitoring and Evaluation', id: 7 }
+      ]
+    },
+    {
+      name: 'Functional',
+      themes: [
+        { name: 'Data Management', id: 5 },
+        { name: 'General Management', id: 6 },
+        { name: 'Monitoring and Evaluation', id: 7 }
+      ]
+    },
+    {
+      name: 'Domain',
+      themes: [
+        { name: 'Climate Finance', id: 8 },
+        { name: 'Finance', id: 9 }
+      ]
+    }
+  ];
+  achievementsList: achievement[] = [
+    {
+      certificateName: 'Program Manager Award',
+      provider: 'Microsoft',
+      period: '12 Jan, 2023',
+      certificateUrl: './assets/images/image.svg'
+    }
+  ]
+  aboutme = 'Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu '
+  showMoreAbout = false
   //#endregion
+
+  @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
+  
+  imageUrl: string = './assets/images/image.svg';
 
   constructor() { }
 
   ngOnInit() {
+    const progress = (247 - ((247 * 60) / 100))
+    document.documentElement.style.setProperty('--i', String(progress))
   }
 
   selectRoute(profileRoute: profileRoutes) {
     profileRoute.isActive = !profileRoute.isActive
   }
 
+  openCoverPhotoDialog() {
+  }
   
 }

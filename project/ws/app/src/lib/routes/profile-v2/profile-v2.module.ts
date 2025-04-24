@@ -62,6 +62,7 @@ import { AchievementsComponent } from './components/profile-revamp/achievements/
 import { CompetenciesComponent } from './components/profile-revamp/competencies/competencies.component'
 import { EducationalQualificationsComponent } from './components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { ServiceHistoryComponent } from './components/profile-revamp/service-history/service-history.component'
+import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
 
 @NgModule({
     declarations: [
@@ -128,6 +129,7 @@ import { ServiceHistoryComponent } from './components/profile-revamp/service-his
         MatDatepickerModule,
         MatAutocompleteModule,
         TranslateModule,
+        MatLegacyMenuModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

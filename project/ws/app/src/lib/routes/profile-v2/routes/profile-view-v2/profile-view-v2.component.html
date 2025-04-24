@@ -5,18 +5,36 @@
       <!-- #region (cover photo ) -->
       <div>
         <img class="cover-picture" src="./assets/images/image.svg" alt="cover-photo">
-        <div class="edit-cover-picture flex justify-center items-center">
-          <img src="./assets/icons/pen_white.svg" class="edit-icon" alt="edit-cover-photo">
+        <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
+          <mat-icon class="cover-photo-menu-icon" >more_vert</mat-icon>
         </div>
+        <mat-menu #coverPhotoMenu="matMenu">
+          <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
+            <span>Edit Cover Photo</span>
+          </button>
+        </mat-menu>
       </div>
       <!-- #endregion (cover photo ) -->
 
       <!-- #region (profile details ) -->
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
-          <div class="profile-picture">
-            <img class="profile-picture" src="./assets/images/image.svg" alt="profile">
+          <div class="progress-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100" height="100">
+              <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+              <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+            </svg>
+            <div class="user-img">
+              <div class="image-container">
+                <img [src]="imageUrl" alt="Profile" class="profile-image">
+              </div>
+              <span class="percentage-block">60%</span>
+            </div>
           </div>
+
+
+
+
           <div class="flex flex-col profile-details">
             <div class="flex gap-2"> 
               <span class="profile-name">user name</span>
@@ -29,17 +47,17 @@
             <div class="profile-details">
               user location
             </div>
-            <button mat-raised-button class="view-mentor-profile flex items-center justify-center">View Mentor Profile</button>
+            <!-- <button mat-raised-button class="view-mentor-profile flex items-center justify-center">View Mentor Profile</button> -->
           </div>
         </div>
         <div class="flex flex-col justify-between items-end">
           <div class="flex">
             <mat-icon class="menu">more_vert</mat-icon>
           </div>
-          <div class="flex gap-4 items-center justify-center">
+          <!-- <div class="flex gap-4 items-center justify-center">
             <button mat-raised-button class="transfor-request flex items-center justify-center">Make Transfor Request</button>
             <mat-icon class="info-icon">info_outline</mat-icon>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- #endregion (profile details ) -->
@@ -64,6 +82,19 @@
       <!-- #region (user details ) -->
       <div class="flex flex-col gap-4 w-full">
         <div class="user-details">
+          <div class="flex justify-between items-center mb-2">
+            <div class="section-header">About me</div>
+            <mat-icon class="edit-icon">edit</mat-icon>
+          </div>
+          <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
+            {{aboutme}}
+          </div>
+          <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+            {{showMoreAbout ? 'view less' : 'view more'}}
+          </div>
+        </div>
+
+        <div class="user-details">
 
         </div>
 
@@ -72,7 +103,7 @@
         </div>
 
         <div class="user-details">
-          <ws-app-competencies></ws-app-competencies>
+          <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
         </div>
 
         <div class="user-details">
@@ -80,7 +111,7 @@
         </div>
 
         <div class="user-details">
-          <ws-app-achievements></ws-app-achievements>
+          <ws-app-achievements [achievementsList]="achievementsList"></ws-app-achievements>
         </div>
       </div>
       <!-- #endregion (user details ) -->
