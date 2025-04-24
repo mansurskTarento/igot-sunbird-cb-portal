@@ -41,7 +41,6 @@ export class PaginationComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.paginationInListing();
-    debugger
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (

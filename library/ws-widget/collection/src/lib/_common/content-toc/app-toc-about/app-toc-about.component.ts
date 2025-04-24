@@ -758,7 +758,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           userId: this.userProfile.userId,
          }
         }
-        this.contentSvc.downloadCertV2(payload).subscribe(response => {debugger
+        this.contentSvc.downloadCertV2(payload).subscribe(response => {
           if (this.content) {
             this.downloadCertificateBool = false
             this.content['certificateObj']['certData'] = response.result.printUri
