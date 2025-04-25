@@ -13,7 +13,7 @@ import {
 import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
 import {
@@ -97,9 +97,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     );
 
     this.queryControl.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged(), skip(1))
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
-        if (value.length > 2) {
+        if (value.length > 3) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
         } else {
@@ -396,7 +396,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   openSearchTemplateF() {
     this.openSearchTemplate = true;
     if (!this.selectedSearchCategory) {
-      this.searchFromQuery(this.responseNlpQuery);
+      // this.searchFromQuery(this.responseNlpQuery);
     }
   }
 }
