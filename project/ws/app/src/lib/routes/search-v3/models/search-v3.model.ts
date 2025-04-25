@@ -17,7 +17,25 @@ export class RequestParams {
 
   constructor(competenciesKey: any) {
     this.filters = new Filters();
-    this.fields = [];
+    this.fields = [
+      'downloadUrl',
+      'organisation',
+      'language',
+      'source',
+      'appIcon',
+      'identifier',
+      'name',
+      'primaryCategory',
+      'contentType',
+      'posterImage', 
+      'createdOn',
+      'duration',
+      'avgRating',
+      'additionalTags',
+      'courseCategory',
+      'mimeType',
+      'contentId',
+    ];
     this.facets = [...SearchOthersFacet, ...competenciesKey];
     this.query = '';
     this.limit = 3;
@@ -70,7 +88,7 @@ export const SearchOthersFacet = [
   'language',
   'organisation',
   'sectorId',
-  'courseCategory'
+  'courseCategory',
 ];
 
 // Events
@@ -78,32 +96,22 @@ export const SearchEventfacet = ['duration', 'language', 'sourceName', 'startDat
 
 export const SearchEventFields = [
   'name',
-  'instructions',
   'description',
-  'mimeType',
   'identifier',
   'resourceType',
   'contentType',
-  'channel',
   'sourceName',
   'duration',
-  'competencies_v6',
-  'version',
   'startDate',
   'endDate',
   'startTime',
   'endTime',
-  'status',
   'createdOn',
   'eventType',
   'expiryDate',
-  'creatorDetails',
   'appIcon',
-  'recordedLinks',
-  "startDateTime",
-  "startDateTimeInEpoch",
-  "endDateTime",
-  "endDateTimeInEpoch"
+  'startDateTime',
+  'endDateTime',
 ];
 
 export class SearchPeoplesRequest {
