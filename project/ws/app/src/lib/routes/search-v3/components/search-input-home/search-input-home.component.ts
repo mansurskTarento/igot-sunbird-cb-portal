@@ -99,7 +99,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
-        if (value.length > 3) {
+        if (value.length > 15) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
         } else {
