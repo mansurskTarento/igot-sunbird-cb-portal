@@ -398,6 +398,15 @@ const routes: Routes = [
     redirectTo: 'certs',
     // pathMatch: 'full',
   },
+  {
+    path: 'certs/v2',
+    data: {
+      pageId: 'certs',
+      module: 'Profile',
+    },
+    loadChildren: () => import('./routes/route-cert-v2.module').then(u => u.RouteCertificateV2Module),
+  },
+ 
   // {
   //   path: 'app/gamification',
   //   loadChildren: () =>

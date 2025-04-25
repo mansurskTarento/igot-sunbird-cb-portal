@@ -188,7 +188,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
     if(changes['paramFilters'] && changes['paramFilters'].currentValue && changes['paramFilters'].currentValue.length) {
       this.searchContentLoader = true;
-
       this.searchRequestCourse.request.filters.courseCategory = changes['paramFilters'].currentValue[0].subType
       
       this.seeAllResult = SearchCategory.Courses;
@@ -309,10 +308,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   async searchCourses() {
     this.searchRequestCourse.request.query = this.statedata?.param;
+    
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestCourse
     );
-
     if (result.result && result.result.content) {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
@@ -602,7 +601,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.searchRequestPeoples.limit = this.initialPaginationSize;
     this.searchRequestPeoples.offset = 0;
-
     this.resetPagination();
     Object.keys(selectedFilters).forEach((key) => {
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
@@ -1156,16 +1154,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   async onPageChange(event: PageChangeEmitter) {
     this.searchPeopleLoader = true
     this.searchContentLoader = true;
+    this.scrollToTop();
 
     if (this.seeAllResult === SearchCategory.Courses) {
       this.searchRequestCourse.request.limit = event.limit;
-      this.searchRequestCourse.request.offset =
-        (event.currentPage - 1) * event.limit;
+      this.searchRequestCourse.request.offset = (event.currentPage - 1) * event.limit;
+      
       await this.searchCourses();
     } else if (this.seeAllResult === SearchCategory.Events) {
       this.searchRequestEvents.request.limit = event.limit;
-      this.searchRequestEvents.request.offset =
-        (event.currentPage - 1) * event.limit;
+      this.searchRequestEvents.request.offset = (event.currentPage - 1) * event.limit;
       await this.searchEvents();
     } else if (this.seeAllResult === SearchCategory.People) {
       this.searchRequestPeoples.limit = event.limit;
@@ -1180,7 +1178,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchPeopleLoader = false
     this.searchContentLoader = false;
 
-    this.scrollToTop();
   }
 
   async onChangeSortSearch(event: string) {
