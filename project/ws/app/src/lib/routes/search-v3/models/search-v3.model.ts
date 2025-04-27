@@ -35,6 +35,7 @@ export class Filters {
   language?: string[];
   organisation?: string[];
   sectorId?: string[];
+  subSectorId?: string[];
   resourceType?: string[];
   [key: string]: any;
   constructor() {
