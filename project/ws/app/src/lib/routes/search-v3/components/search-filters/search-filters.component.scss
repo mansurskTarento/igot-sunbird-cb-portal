@@ -72,6 +72,7 @@
   .languages-filter .mat-full-radius,
   .designation-filter .mat-full-radius,
   .root-org-name-filter .mat-full-radius,
+  .sector-filter .mat-full-radius,
   .competency-filter .mat-full-radius {
     position: relative;
     .mat-form-field-appearance-outline {
@@ -165,6 +166,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-top: 6px;
+}
+
+.min-width-adjust-expansion {
+  @extend .min-width-adjust;
+  max-width: 10em;
 }
 
 .sub-header {

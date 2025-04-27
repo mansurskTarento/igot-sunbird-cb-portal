@@ -708,6 +708,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
+        else if (key === 'sectorId') {
+          this.searchRequestCourse.request.filters.sectorId = [
+            ...selectedFilters[key],
+          ];
+        }
+        else if (key === 'subSectorId') {
+          this.searchRequestCourse.request.filters.subSectorId = [
+            ...selectedFilters[key],
+          ];
+        }
          else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -1064,6 +1074,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         .length === 0
     ) {
       delete this.searchRequestEvents.request.filters[this.competencyThemeKey];
+    }
+    if (
+      this.searchRequestCourse.request.filters.sectorId &&
+      this.searchRequestCourse.request.filters.sectorId
+        .length === 0
+    ) {
+      delete this.searchRequestCourse.request.filters.sectorId;
+    }
+    if (
+      this.searchRequestCourse.request.filters.subSectorId &&
+      this.searchRequestCourse.request.filters.subSectorId
+        .length === 0
+    ) {
+      delete this.searchRequestCourse.request.filters.subSectorId;
     }
   }
 

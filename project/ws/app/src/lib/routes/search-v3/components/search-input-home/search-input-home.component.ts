@@ -205,11 +205,15 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-    await this.searchInNLP(query).then(() => {
+    if (query.length) {
+      await this.searchInNLP(query).then(() => {
+        this.processSearchText(query);
+      }).catch(() => {
+        this.processSearchText(query);
+      });
+    } else {
       this.processSearchText(query);
-    }).catch(() => {
-      this.processSearchText(query);
-    });
+    }
   }
 
   processSearchText(query: any) {
@@ -246,7 +250,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    this.searchFromQuery(this.queryControl.value);
+    // this.searchFromQuery(this.queryControl.value);
     this.updateQuery(this.queryControl.value);
   }
 
