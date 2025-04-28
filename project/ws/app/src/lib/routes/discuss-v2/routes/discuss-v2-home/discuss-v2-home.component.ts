@@ -26,7 +26,7 @@ export class DiscussV2HomeComponent {
     }
   ]
 
-  feedsWidgetData!: NsDiscussionV2.IDiscussV2WidgetData | null
+  feedsWidgetData!: NsDiscussionV2.IDiscussV2WidgetDataV2 | null
   communityWidgetData: any = {}
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {

@@ -10,7 +10,7 @@ import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2';
 export class CommunityDetailsHomeComponent {
   communityId: string = ''
   discussionId:string = ''
-  feedsWidgetData!: NsDiscussionV2.IDiscussV2WidgetData | null
+  feedsWidgetData!: NsDiscussionV2.IDiscussV2WidgetDataV2 | null
   communityWidgetData: any = {}
   constructor(private router: Router,private activatedRoute: ActivatedRoute) {
     
