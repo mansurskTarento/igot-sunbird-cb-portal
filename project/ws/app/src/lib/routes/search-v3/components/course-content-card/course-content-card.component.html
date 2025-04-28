@@ -21,11 +21,11 @@
                 <div class="course-badges flex items-center gap-2">
                     <span class="badge language-badge font-normal"
                         *ngIf="content?.language">{{content?.language}}</span>
-                    <span class="badge duration-badge font-normal" *ngIf="content?.duration && content?.duration !== '0'">
+                    <span class="badge duration-badge font-normal" *ngIf="content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{checkForCiosDuration(content) | pipeDurationTransform: 'hms'}}
                     </span>
-                    <span class="badge duration-badge font-normal" *ngIf="content?.programDuration > 0">
+                    <span class="badge duration-badge font-normal" *ngIf="content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{content?.programDuration}} {{content?.programDuration === 1 ? 'day' : 'days'}}
                     </span>

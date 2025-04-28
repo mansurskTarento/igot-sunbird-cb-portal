@@ -187,8 +187,10 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   compentencyKey!: NsContent.ICompentencyKeys
   sectorsList: any[] = []
   subSectorsList: any[] = []
+  userProfile: any = null
   ngOnInit() {
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
+    this.userProfile = this.configService.userProfile
     if (window.innerWidth <= 1200) {
       this.isMobile = true
     } else {
@@ -748,20 +750,44 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.downloadCertificateBool = true
     const certId = this.content && this.content.certificateObj.certId
     if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
-      this.contentSvc.downloadCert(certId).subscribe(response => {
-        if (this.content) {
-          this.downloadCertificateBool = false
-          this.content['certificateObj']['certData'] = response.result.printUri
-          this.dialog.open(CertificateDialogComponent, {
-            width: '1200px',
-            data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
-          })
+      if(this.content && this.content.primaryCategory && this.content.primaryCategory === 'Curated Program') {
+        const payload = {
+         request : {
+          courseId: this.content.identifier,
+          batchId: this.batchData?.content[0]?.batchId || '',
+          userId: this.userProfile.userId,
+         }
         }
-      },                                             (error: any) => {
-        this.downloadCertificateBool = false
-        this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
-        this.matSnackBar.open('Unable to View Certificate, due to some error!')
-      })
+        this.contentSvc.downloadCertV2(payload).subscribe(response => {
+          if (this.content) {
+            this.downloadCertificateBool = false
+            this.content['certificateObj']['certData'] = response.result.printUri
+            this.dialog.open(CertificateDialogComponent, {
+              width: '1200px',
+              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
+            })
+          }
+        },                                             (error: any) => {
+          this.downloadCertificateBool = false
+          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
+          this.matSnackBar.open('Unable to View Certificate, due to some error!')
+        })
+      } else {
+        this.contentSvc.downloadCert(certId).subscribe(response => {
+          if (this.content) {
+            this.downloadCertificateBool = false
+            this.content['certificateObj']['certData'] = response.result.printUri
+            this.dialog.open(CertificateDialogComponent, {
+              width: '1200px',
+              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
+            })
+          }
+        },                                             (error: any) => {
+          this.downloadCertificateBool = false
+          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
+          this.matSnackBar.open('Unable to View Certificate, due to some error!')
+        })
+      }
     } else {
       this.downloadCertificateBool = false
       this.dialog.open(CertificateDialogComponent, {

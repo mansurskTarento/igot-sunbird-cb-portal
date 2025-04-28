@@ -59,7 +59,7 @@
     "@sunbird-cb/micro-surveys": "2.0.20-ang-9-12",
     "@sunbird-cb/rain-dashboards": "0.0.36-ang-13-16",
     "@sunbird-cb/resolver-v2": "0.0.7-ang-13-16",
-    "@sunbird-cb/utils-v2": "0.0.36-ang-13-16",
+    "@sunbird-cb/utils-v2": "0.0.37-ang-13-16",
     "@types/file-saver": "^2.0.1",
     "@types/jest": "29.5.13",
     "@types/uuid": "^8.3.1",

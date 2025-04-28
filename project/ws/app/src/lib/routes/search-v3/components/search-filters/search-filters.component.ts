@@ -24,12 +24,14 @@ import {
   FacetType,
   FormattedFacets,
   SearchCategory,
+  SearchV4Request,
 } from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { MatRadioChange } from '@angular/material/radio';
+import { GbSearchService } from '../../services/gb-search.service';
 @Component({
   selector: 'ws-app-search-filters',
   templateUrl: './search-filters.component.html',
@@ -76,12 +78,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterCompetency = '';
   searchCategory = '';
   sectorFilters:any
+  filterQuerySubSectors: string = '';
+  searchQuery = '';
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
-    private configSvc: ConfigurationsService
+    private configSvc: ConfigurationsService,
+    private searchV3Service: GbSearchService,
+    
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -104,7 +110,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
-
       if (this.formattedFacets?.sectorId?.length) {
         const coursesCategory = _.find(this.categoryTypeDup, {
           name: 'courses',
@@ -122,6 +127,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             count: sector.count,
             isChecked: sector.isChecked,
             displayName: this.formatSectorName(sector.name),
+            subSectors: []
           })
         );
 
@@ -194,7 +200,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
     //  // this.searchCategory = contentType;
     // } else {
+
+      if(params['q']) {
+        this.searchQuery = params['q'];
+      }
       this.searchCategory = params['category'];
+      if((this.searchCategory && params['category'] && this.searchCategory !== params['category']) ||
+        !params['category']) {
+       this.selectedFilters = {}
+      } 
+
       if (this.searchCategory) {
         this.categoryType = this.categoryTypeDup.filter(
           (type) => type.name === this.searchCategory
@@ -477,13 +492,32 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
-        value: this.capitalizeFirstLetter(value),
+        value: this.formatValue(value),
       }))
     );
   }
 
+  private formatValue(value: string): string {
+    if (value.startsWith('sector-fw_sector_')) {
+      return this.formatSectorName(value);
+    }
+    return this.capitalizeFirstLetter(value);
+  }
+
+  private reverseFormatSectorName(formattedName: string): string {
+    const originalName = formattedName
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    return `sector-fw_sector_${originalName}`;
+  }
+  
+
   clearFilterChip(item: { type: string; value: string }) {
     let facets;
+    if(item.type === 'sectorId' || item.type === 'subSectorId') {
+      item.value = this.reverseFormatSectorName(item.value)
+    }
     const types = this.categoryTypeDup.map((category) => category.name);
     if(this.searchCategory === 'case-study') {
       types.push('case-study')
@@ -588,19 +622,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
     } else {
       facets = this.formattedFacets;
+
       const allFilters = _.flatMap(facets);
       let foundFilter: any;
       foundFilter = _.find(allFilters, {
         name: item.value.toLowerCase(),
       });
+      if (!foundFilter && item.type === 'subSectorId') {
+        for (const sector of this.sectorFilters) {
+          foundFilter = sector.subSectors.find((subSector: any) => subSector.name === item.value);
+          if (foundFilter) {
+            break;
+          }
+        }
+      }
 
       if (!foundFilter) {
         foundFilter = _.find(allFilters, {
           name: item.value,
         });
       }
-
-      if (foundFilter && !foundFilter?.name.startsWith('sector-fw_sector_')) {
+      if (item.type === 'subSectorId' && foundFilter && foundFilter?.name.startsWith('sector-fw_sector_')) {
         foundFilter.isChecked = false;
 
         if (_.has(this.selectedFilters, item.type)) {
@@ -782,4 +824,50 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
     return null;
   }  
+
+  getFilteredSubSectors(sector: any): any[] {
+      if (!this.filterQuerySubSectors) {
+          return sector.subSectors;
+      }
+      return sector.subSectors.filter((subSector: any) =>
+          subSector.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
+      );
+  }
+
+  async onSectorSelectionFilter(_event: any, _sector: any): Promise<void> {
+      const subsectors = await this.fetchSubSectorsForSector(_sector.name);
+      if (subsectors && subsectors.length) {
+        const checkSector = this.sectorFilters.find((sector: any) => sector.name === _sector.name);
+        if (checkSector && !checkSector.subSectors.length) {
+          checkSector.subSectors = subsectors;
+          checkSector.showAll = false;
+        }
+      }
+  }
+
+  toggleSubSectors(sector: any): void {
+      sector.showAll = !sector.showAll;
+  }
+
+  async fetchSubSectorsForSector(sectorId: string): Promise<any[]> {
+    let searchRequestCourse = new SearchV4Request([]);
+    searchRequestCourse.request.query = this.searchQuery;
+    searchRequestCourse.request.filters.sectorId = [sectorId];
+    searchRequestCourse.request.facets = ['subSectorId'];
+
+    const result = await this.searchV3Service.searchCoursesv4(searchRequestCourse);
+
+    if (result.result && result.result.facets) {
+        const searchFacets = result.result.facets || [];
+        const subSectors = searchFacets[0]?.values.map((item: any) => ({
+            name: item.name,
+            displayName: this.formatSectorName(item.name),
+            isChecked: false,
+            count: item.count || 0,
+        })) || [];
+        return subSectors;
+    }
+
+    return [];
+}
 }
