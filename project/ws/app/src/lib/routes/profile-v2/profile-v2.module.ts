@@ -63,6 +63,10 @@ import { CompetenciesComponent } from './components/profile-revamp/competencies/
 import { EducationalQualificationsComponent } from './components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { ServiceHistoryComponent } from './components/profile-revamp/service-history/service-history.component'
 import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
+import { CoverPhotoEditPopupComponent } from './components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
+import { PeopleSuggestionsComponent } from './components/profile-revamp/people-suggestions/people-suggestions.component'
+import { ImageCropperModule } from 'ngx-image-cropper'
+
 
 @NgModule({
     declarations: [
@@ -81,7 +85,9 @@ import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
         ServiceHistoryComponent,
         EducationalQualificationsComponent,
         CompetenciesComponent,
-        AchievementsComponent
+        AchievementsComponent,
+        CoverPhotoEditPopupComponent,
+        PeopleSuggestionsComponent
     ],
     imports: [
         CommonModule,
@@ -130,6 +136,7 @@ import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
         MatAutocompleteModule,
         TranslateModule,
         MatLegacyMenuModule,
+        ImageCropperModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

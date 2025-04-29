@@ -4,7 +4,7 @@
     <div class="profile">
       <!-- #region (cover photo ) -->
       <div>
-        <img class="cover-picture" src="./assets/images/image.svg" alt="cover-photo">
+        <img class="cover-picture" [src]="coverPhotoUrl" alt="cover-photo">
         <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
           <mat-icon class="cover-photo-menu-icon" >more_vert</mat-icon>
         </div>
@@ -94,9 +94,9 @@
           </div>
         </div>
 
-        <div class="user-details">
+        <!-- <div class="user-details">
 
-        </div>
+        </div> -->
 
         <div class="user-details">
           <ws-app-service-history [serviceHistoryList]="serviceHistoryList"></ws-app-service-history>
@@ -120,7 +120,24 @@
   <!-- #endregion (left profile )-->
 
   <!-- #region (right profile connections )-->
-  <div class="flex flex-col gap-4 items-center justify-center profileRightSection">
+  <div class="flex flex-col gap-4 profileRightSection">
+    <div class="flex flex-col gap-3">
+      <div class="people-you-may-know">
+        People You May Know
+      </div>
+      <div>
+        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"></ws-app-people-suggestions>
+      </div>
     </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="people-you-may-know">
+        Recommended Communities
+      </div>
+      <div>
+        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"></ws-app-people-suggestions>
+      </div>
+    </div>
+  </div>
   <!-- #endregion (right profile connections )-->
 </div>

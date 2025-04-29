@@ -44,3 +44,21 @@ export interface achievement {
   period: string,
   certificateUrl?: string
 }
+
+export interface person {
+  id: string;
+  name: string;
+  designation: string;
+  profileImage?: string;
+  connectionStatus: 'none' | 'pending' | 'connected';
+}
+
+export interface Community {
+  id: string;
+  name: string;
+  thumbnail?: string;
+  memberCount: number;
+  postCount: number;
+  ownerName: string;
+  ownerThumbnail?: string;
+}

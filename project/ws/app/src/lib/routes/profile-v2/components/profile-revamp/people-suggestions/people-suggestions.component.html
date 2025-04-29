@@ -1,0 +1,20 @@
+<div class="people-suggestions-container">
+  <mat-card *ngFor="let person of peopleSuggestionsList" class="person-card mb-4">
+    <div class="flex items-center p-4">
+      <div class="mr-4">
+        <img [src]="person.profileImage || 'assets/images/profile-placeholder.png'" 
+             alt="profile image" 
+             class="rounded-full w-16 h-16 object-cover">
+      </div>
+      <div class="flex-grow">
+        <div class="personName">{{person.name}}</div>
+        <div class="person-details">{{person.designation}}</div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="connect flex justify-center items-center pt-4" (click)="connect(person)">
+      <a >{{person.connectionStatus === 'pending' ? 'Pending' : 'Connect'}}</a>
+    </div>
+  </mat-card>
+</div>
+

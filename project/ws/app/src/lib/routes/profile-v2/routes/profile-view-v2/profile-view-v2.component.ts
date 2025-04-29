@@ -1,6 +1,9 @@
 //#region (imports)
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Competency, UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { Competency, UserStats, achievement, educationalQualifications, person, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
+
 //#endregion
 
 @Component({
@@ -11,6 +14,7 @@ import { Competency, UserStats, achievement, educationalQualifications, profileR
 export class ProfileViewV2Component implements OnInit {
 
   //#region (global variables)
+  coverPhotoUrl = './assets/images/image.svg';
   userStats: UserStats[] = [
     {
       state: 'My Karma Points',
@@ -32,7 +36,6 @@ export class ProfileViewV2Component implements OnInit {
       vewAllUrl: ''
     }
   ];
-
   profileRoutes: profileRoutes[] = [
     {
       name: 'About Me',
@@ -136,6 +139,29 @@ export class ProfileViewV2Component implements OnInit {
       certificateUrl: './assets/images/image.svg'
     }
   ]
+  peopleSuggestionsList: person[] = [
+    {
+      id: '1',
+      name: 'John Doe',
+      designation: 'Program Manager',
+      profileImage: './assets/images/image.svg',
+      connectionStatus: 'none'
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      designation: 'Project Manager',
+      profileImage: './assets/images/image.svg',
+      connectionStatus: 'none'
+    },
+    {
+      id: '3',
+      name: 'Alice Johnson',
+      designation: 'Software Engineer',
+      profileImage: './assets/images/image.svg',
+      connectionStatus: 'none'
+    }
+  ]
   aboutme = 'Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu '
   showMoreAbout = false
   //#endregion
@@ -144,7 +170,9 @@ export class ProfileViewV2Component implements OnInit {
   
   imageUrl: string = './assets/images/image.svg';
 
-  constructor() { }
+  constructor(
+    private dialog: MatLegacyDialog,
+  ) { }
 
   ngOnInit() {
     const progress = (247 - ((247 * 60) / 100))
@@ -156,6 +184,19 @@ export class ProfileViewV2Component implements OnInit {
   }
 
   openCoverPhotoDialog() {
+    const dialogRef = this.dialog.open(CoverPhotoEditPopupComponent, {
+      width: '500px',
+      panelClass: 'cover-photo-edit-popup',
+      data: {
+        coverPhotoUrl: this.coverPhotoUrl
+      },
+      disableClose: true,
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result && result.isUpdated) {
+        this.coverPhotoUrl = result.coverPhotoUrl
+      }
+    })
   }
   
 }
