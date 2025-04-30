@@ -123,7 +123,7 @@ mat-grid-list {
 
 .secondary-nav {
   justify-content: center;
-  margin: 4px 0px !important;
+  margin: 8px 0px !important;
 }
 
 .margin-0 {
@@ -180,6 +180,7 @@ mat-grid-list {
   color: rgb(0,0,0,0.6);
   font-weight: 700;
   line-height: 28px;
+  font-size: 14px;
 }
 
 .active-text{
@@ -380,4 +381,22 @@ mat-grid-list {
   pointer-events: none;
   cursor: default;
   opacity: 0.6;
+}
+
+::ng-deep.explore-content-action {
+  div {
+    font-weight: 700 !important;
+  }
+  height: 32px !important;
+  &:hover {
+    background-color: #1B4CA1 !important;
+    span, mat-icon {
+      color: #fff !important;
+    }
+  }
+}
+
+.explore-more {
+  border-right: 1px solid rgba(27, 33, 51, 0.16);
+  padding-right: 1rem;
 }

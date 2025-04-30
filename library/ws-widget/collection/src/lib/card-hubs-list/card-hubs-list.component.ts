@@ -331,4 +331,21 @@ export class CardHubsListComponent extends WidgetBaseComponent
     window.open(`${environment.contentHost}/mentorship`, '_blank')
   }
 
+  exploreContent() {
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    };
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    };
+    this.router.navigate(['/app/globalsearch'], navigationExtras);
+  }
+
 }
