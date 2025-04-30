@@ -332,6 +332,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
   }
 
   exploreContent() {
+    this.raiseTelemetryExploreContent()
     const queryParams = {
       q: '',
       search: null,
@@ -346,6 +347,19 @@ export class CardHubsListComponent extends WidgetBaseComponent
       queryParamsHandling: 'merge' as 'merge',
     };
     this.router.navigate(['/app/globalsearch'], navigationExtras);
+  }
+
+  raiseTelemetryExploreContent() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'explore-content',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
   }
 
 }
