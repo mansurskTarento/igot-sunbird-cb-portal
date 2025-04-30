@@ -8,11 +8,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { CommonModule } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
+import { MarkdownModule } from 'ngx-markdown';
+import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 @NgModule({
   declarations: [
     ClickOutsideDirective,
     AppChatbotComponent,
+    IGotSarthiComponent
   ],
   imports: [
     FormsModule,
@@ -21,8 +26,11 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     CommonModule,
+    PipeDurationTransformModule,
+    MarkdownModule.forRoot(),
+    DragDropModule
   ],
-  exports: [AppChatbotComponent],
+  exports: [AppChatbotComponent, MarkdownModule],
   providers: [ChatbotService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

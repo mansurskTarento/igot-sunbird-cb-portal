@@ -1,11 +1,16 @@
-import { AfterViewInit, Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService, NsContent, UtilityService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
 import { MatLegacyTabGroup as MatTabGroup, MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
+import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog'
+import { viewerRouteGenerator } from '@sunbird-cb/collection'
+import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -15,13 +20,13 @@ import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   tabChangeValue: any = ''
-  @Input() content!: NsContent.IContent
+  @Input() content!: any
   @Input() initialRouteData: any
   @Input() changeTab = false
   routeSubscription: Subscription | null = null
   @Input() forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
   @Input() contentTabFlag = true
-  @Input() resumeData: NsContent.IContinueLearningData | null = null
+  @Input() resumeData: any | null = null
   @Input() batchData: /**NsContent.IBatchListResponse */ any | null = null
   @Input() skeletonLoader = false
   @Input() tocStructure: any = {}
@@ -35,6 +40,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Output() playResumeForAI = new EventEmitter()
+  @Output() enrollUserToAI = new EventEmitter()
   sticky = false
   menuPosition: any
   isMobile = false
@@ -43,14 +50,32 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   displayTeachersContent = false
   teacherNotesFlag = false
   referenceNotesFlag = false
+  viewerPage = window.location.href.includes('/viewer/') ? true : false
+  resumeDataLink:any
+  enableAITutorFlag = false
+  enableTranscriptionFlag = false
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
     private loadCheckService: LoadCheckService,
     private configService: ConfigurationsService,
+    public dialog: MatDialog,
+    public tocSvc: AppTocService,
+    private actionSVC: ActionService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
+      this.enableAITutorFlag = true
+    } else {
+      this.enableAITutorFlag = false
+    }
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      this.enableTranscriptionFlag = true
+    } else {
+      this.enableTranscriptionFlag = false
+    }
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
       this.config = this.route.snapshot.data.pageData.data
     }
@@ -140,5 +165,102 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     this.tabChangeValue = event.tab
     this.selectedTabIndex = event.index
     this.loadCheckService.componentLoaded(true)
+  }
+
+  showAiTutorConfirmPopup() {
+    if(this.isEnrolled) {
+      this.generateResumeDataLinkNew()
+    } else {
+      const dialogConfig = new MatDialogConfig()
+
+      dialogConfig.width = '421px'
+      dialogConfig.data = {
+        enroll: this.isEnrolled
+      }
+      const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
+
+      dialogRef.afterClosed().subscribe((response:any) => {
+        console.log('response', response)
+        if(response === 'enroll') {
+          this.generateResumeDataLinkNew()
+        } else if(response === 'needToEnroll'){
+          this.enrollUserForAITutor()
+        } 
+      });
+    }
+    
+  }
+
+  generateResumeDataLinkNew() {
+    if (this.resumeData && this.content) {
+      let resumeDataV2: any
+      if (this.content.completionPercentage === 100) {
+        resumeDataV2 = this.getResumeDataFromList('start')
+      } else {
+        resumeDataV2 = this.getResumeDataFromList()
+      }
+      if (!resumeDataV2.mimeType) {
+        resumeDataV2.mimeType = this.tocSvc.getMimeType(this.content, resumeDataV2.identifier)
+      }
+      this.resumeDataLink = viewerRouteGenerator(
+        resumeDataV2.identifier,
+        resumeDataV2.mimeType,
+        this.content.identifier,
+        this.content.contentType,
+        this.forPreview,
+        'Learning Resource',
+        this.getBatchId(),
+        this.content.name,
+      )
+      this.actionSVC.setUpdateCompGroupO = this.resumeDataLink
+      console.log('this.resumeDataLink',this.resumeDataLink)
+      console.log('this.actionSVC', this.actionSVC)
+      this.router.navigate([this.resumeDataLink.url], {
+        queryParams: this.resumeDataLink.queryParams
+      });
+      // this.router.navigateByUrl(
+      //   [this.resumeDataLink.url],
+      //   {
+      //     relativeTo: this.resumeDataLink.url,
+      //     queryParams: this.resumeDataLink.queryParams,
+      //     queryParamsHandling: 'merge',
+      //   })
+      /* tslint:disable-next-line */
+    } else {
+      this.playResumeForAI.emit()
+    }
+  }
+
+  private getResumeDataFromList(type?: string): any | void {
+    const resumeCopy = [...this.resumeData]
+    if (!type) {
+      // tslint:disable-next-line:max-line-length
+
+      const lastItem = resumeCopy && resumeCopy.sort((a: any, b: any) =>
+        new Date(b.lastAccessTime).getTime() - new Date(a.lastAccessTime).getTime()).shift()
+      return {
+        identifier: lastItem.contentId,
+        mimeType: lastItem.progressdetails && lastItem.progressdetails.mimeType,
+      }
+    }
+    const firstItem = resumeCopy && resumeCopy.length && resumeCopy[0]
+    return {
+      identifier: firstItem.contentId,
+      mimeType: firstItem.progressdetails && firstItem.progressdetails.mimeType,
+    }
+  }
+
+  public getBatchId(): string {
+    let batchId = ''
+    if (this.batchData && this.batchData.content) {
+      for (const batch of this.batchData.content) {
+        batchId = batch.batchId
+      }
+    }
+    return batchId
+  }
+
+  enrollUserForAITutor() {
+    this.enrollUserToAI.emit()
   }
 }

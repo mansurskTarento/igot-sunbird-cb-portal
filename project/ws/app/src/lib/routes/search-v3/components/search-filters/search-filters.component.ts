@@ -18,18 +18,20 @@ import {
 } from '@sunbird-cb/utils-v2';
 import {
   CATEGORY_TYPE,
-  TypeOfEvents,
 } from '../../../../../../../author/src/lib/constants/constant';
 import {
   Facet,
   FacetType,
   FormattedFacets,
   SearchCategory,
+  SearchV4Request,
 } from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
+import { MatRadioChange } from '@angular/material/radio';
+import { GbSearchService } from '../../services/gb-search.service';
 @Component({
   selector: 'ws-app-search-filters',
   templateUrl: './search-filters.component.html',
@@ -43,6 +45,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() applyFilterFromLearn = new EventEmitter<{ [key: string]: any }>();
   @Input() karmayogiBadge: any;
   @Input() competencyFactet: any;
+  @Input() typesOfEvents: any;
 
   private subscription: Subscription = new Subscription();
   queryParams: any;
@@ -51,6 +54,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   categoryTypeDup = CATEGORY_TYPE;
   categoryTypeEnum = SearchCategory;
   showAllLanguage = false;
+  showAllContents = false;
 
   formattedFacets: any = {};
   selectedFilters: any = {};
@@ -65,6 +69,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
+  filterQueryContents = '';
   filterQueryLanguage = '';
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
@@ -72,12 +77,17 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   // filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
+  sectorFilters:any
+  filterQuerySubSectors: string = '';
+  searchQuery = '';
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
-    private configSvc: ConfigurationsService
+    private configSvc: ConfigurationsService,
+    private searchV3Service: GbSearchService,
+    
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -100,7 +110,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
-
       if (this.formattedFacets?.sectorId?.length) {
         const coursesCategory = _.find(this.categoryTypeDup, {
           name: 'courses',
@@ -109,7 +118,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (!coursesCategory) return;
 
         const caseStudyCategory = _.find(coursesCategory.filters, {
-          name: 'case-studies',
+          name: 'case-study',
         });
 
         const sectorFilters = this.formattedFacets.sectorId.map(
@@ -118,6 +127,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             count: sector.count,
             isChecked: sector.isChecked,
             displayName: this.formatSectorName(sector.name),
+            subSectors: []
           })
         );
 
@@ -132,8 +142,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           caseStudyCategory.filters = sectorFilters;
         }
+        this.sectorFilters = sectorFilters
       }
-
+      
       // Handle nested filters for other categories
       if (this.formattedFacets?.nestedCategory?.length) {
         const nestedCategory = _.find(this.categoryTypeDup, {
@@ -152,7 +163,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       this.setCategoryType();
-    }    
+    }   
+    
+    if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
+      this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
+    } 
+
   }
 
   formatSectorName(name: string): string {
@@ -184,11 +200,32 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
     //  // this.searchCategory = contentType;
     // } else {
+
+      if(params['q']) {
+        this.searchQuery = params['q'];
+      }
       this.searchCategory = params['category'];
+      if((this.searchCategory && params['category'] && this.searchCategory !== params['category']) ||
+        !params['category']) {
+       this.selectedFilters = {}
+      } 
+
       if (this.searchCategory) {
         this.categoryType = this.categoryTypeDup.filter(
           (type) => type.name === this.searchCategory
         );
+        if(this.searchCategory === 'case-study' && !this.categoryType.length) {
+          this.categoryType = [
+            {
+              name: 'case-study',
+              count: 0,
+              isChecked: false,
+              displayName: 'Case study',
+              filters: [],
+              disabled: false,
+            }
+          ]
+        }
         if (this.categoryType.length) {
           this.categoryType[0].isChecked = true;
           this.selectedFilters[this.categoryType[0].name] = [
@@ -203,7 +240,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         if (this.searchCategory === SearchCategory.Events) {
-          this.formattedFacets['typeOfEvents'] = TypeOfEvents;
+          this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
+
         }
       } else {
         this.categoryType = this.categoryTypeDup.map((cat) => ({
@@ -217,7 +255,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setCourseCategoryType(contentType:string) {   
-
       this.categoryTypeDup.map((item, parentIndex)=>{
         if(item.name === contentType) {
           item.isChecked = true
@@ -273,6 +310,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllOrganisation = !this.showAllOrganisation;
     } else if (togglesection === FacetType.Designation) {
       this.showAllDesignation = !this.showAllDesignation;
+    } else if (togglesection === FacetType.courseCategory) {
+      this.showAllContents = !this.showAllContents;
     }
   }
 
@@ -367,12 +406,73 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         categoryType
       ].filter((item: any) => item !== type);
     } 
+
+    Object.keys(this.selectedFilters).forEach((key) => {
+      if (Array.isArray(this.selectedFilters[key]) && this.selectedFilters[key].length === 0) {
+        delete this.selectedFilters[key];
+      }
+    });
+
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
 
     const types = this.categoryTypeDup.map((category) => category.name);
     if (types.includes(type) && !option.isChecked) {
       this.constructQueryParam.emit('');
+    }
+  }
+
+  onTypesOfEventsChange(_event: MatRadioChange, option: any, radioType:string) {
+    const type = option?.name;
+    this.selectedFilters[radioType] = [type];
+  
+    const eventOptions = this.formattedFacets[radioType];
+    if (eventOptions) {
+      eventOptions.forEach((opt: any) => {
+        opt.isChecked = opt.name === type;
+      });
+    }
+  
+    this.appliedFilter.emit(this.selectedFilters);
+    this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+  
+  }
+
+  onCompetencyAreaSelectionFilter(event: MatCheckboxChange,
+    competency: any, ) {
+      const competencyDetails = competency[this.competencyAreaNameKey]
+      if (competencyDetails) {
+      const competencyName = competencyDetails.name
+      competencyDetails['isChecked'] = event.checked
+      if (!this.selectedFilters[this.competencyAreaNameKey]) {
+        this.selectedFilters[this.competencyAreaNameKey] = [];
+      }
+      if (event.checked) {
+        if (!this.selectedFilters[this.competencyAreaNameKey].includes(competencyName)) {
+          this.selectedFilters[this.competencyAreaNameKey].push(competencyName);
+        }
+      } else {
+        this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[
+          this.competencyAreaNameKey
+        ].filter((item: any) => item !== competencyName);
+        const competencyThemes = competency[this.competencyThemeKey]
+        if(competencyThemes) {
+          competencyThemes.forEach((theme: any) => {
+            if(theme.isChecked) {
+             theme.isChecked = false
+              this.selectedFilters[this.competencyThemeKey] = this.selectedFilters[
+                this.competencyThemeKey
+              ].filter((item: any) => item !== theme.name);
+            }
+          })
+        }
+      }
+      this.appliedFilter.emit(this.selectedFilters);
+      this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+      const types = this.categoryTypeDup.map((category) => category.name);
+      if (types.includes(competencyName) && !competencyDetails.isChecked) {
+        this.constructQueryParam.emit('');
+      }
     }
   }
 
@@ -392,36 +492,59 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
-        value: this.capitalizeFirstLetter(value),
+        value: this.formatValue(value),
       }))
     );
   }
 
+  private formatValue(value: string): string {
+    if (value.startsWith('sector-fw_sector_')) {
+      return this.formatSectorName(value);
+    }
+    return this.capitalizeFirstLetter(value);
+  }
+
+  private reverseFormatSectorName(formattedName: string): string {
+    const originalName = formattedName
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    return `sector-fw_sector_${originalName}`;
+  }
+  
+
   clearFilterChip(item: { type: string; value: string }) {
     let facets;
+    if(item.type === 'sectorId' || item.type === 'subSectorId') {
+      item.value = this.reverseFormatSectorName(item.value)
+    }
     const types = this.categoryTypeDup.map((category) => category.name);
+    if(this.searchCategory === 'case-study') {
+      types.push('case-study')
+    }
     if (types.includes(item.type)) {
       facets = this.categoryType;
 
-      const category = _.find(facets, { displayName: item.type });
+      const category = _.find(facets, { name: item.type });
 
-      if (!category) {
-        this.categoryType[0].isChecked = false;
-        if (_.has(this.selectedFilters, item.type)) {
-          _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
-          if (_.isEmpty(this.selectedFilters[item.type])) {
-            delete this.selectedFilters[item.type];
-          }
-        }
-        this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
-        this.constructQueryParam.emit('');
+      if (category) {
+        // this.categoryType[0].isChecked = false;
+        // if (_.has(this.selectedFilters, item.type)) {
+        //   _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
+        //   if (_.isEmpty(this.selectedFilters[item.type])) {
+        //     delete this.selectedFilters[item.type];
+        //   }
+        // }
+        // this.appliedFilter.emit(this.selectedFilters);
+        // this.selectedFilterChips = this.refactorFilterData(
+        //   this.selectedFilters
+        // );
+        // this.constructQueryParam.emit('');
+        this.clearAllFilters();
         return;
       }
 
-      const foundFilter = _.find(category.filters, { name: item.value });
+      const foundFilter = _.find(category!.filters, { name: item.value });
       if (foundFilter) {
         foundFilter.isChecked = false;
 
@@ -499,19 +622,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
     } else {
       facets = this.formattedFacets;
+
       const allFilters = _.flatMap(facets);
       let foundFilter: any;
       foundFilter = _.find(allFilters, {
         name: item.value.toLowerCase(),
       });
+      if (!foundFilter && item.type === 'subSectorId') {
+        for (const sector of this.sectorFilters) {
+          foundFilter = sector.subSectors.find((subSector: any) => subSector.name === item.value);
+          if (foundFilter) {
+            break;
+          }
+        }
+      }
 
       if (!foundFilter) {
         foundFilter = _.find(allFilters, {
           name: item.value,
         });
       }
-
-      if (foundFilter && !foundFilter?.name.startsWith('sector-fw_sector_')) {
+      if (item.type === 'subSectorId' && foundFilter && foundFilter?.name.startsWith('sector-fw_sector_')) {
         foundFilter.isChecked = false;
 
         if (_.has(this.selectedFilters, item.type)) {
@@ -607,6 +738,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
+  get filteredContents() {
+    let filteredList = this.formattedFacets[FacetType.courseCategory].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryContents.toLowerCase())
+    );
+
+    return this.showAllContents ? filteredList : filteredList.slice(0, 4);
+  }
+
   get filteredLanguages() {
     let filteredList = this.formattedFacets[FacetType.Language].filter(
       (item: any) =>
@@ -622,7 +762,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
         theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
     }
-    return filteredThemes
+    competency['filteredLength'] = filteredThemes.length
+    return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
+  }
+
+  togoleThemes(competency: any) {
+    if(competency.showAll) {
+      competency['showAll'] = false
+    } else {
+      competency['showAll'] = true
+    }
   }
 
   // getFilteredSubThemes(competency: any): any[] {
@@ -674,5 +823,51 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
     return null;
+  }  
+
+  getFilteredSubSectors(sector: any): any[] {
+      if (!this.filterQuerySubSectors) {
+          return sector.subSectors;
+      }
+      return sector.subSectors.filter((subSector: any) =>
+          subSector.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
+      );
   }
+
+  async onSectorSelectionFilter(_event: any, _sector: any): Promise<void> {
+      const subsectors = await this.fetchSubSectorsForSector(_sector.name);
+      if (subsectors && subsectors.length) {
+        const checkSector = this.sectorFilters.find((sector: any) => sector.name === _sector.name);
+        if (checkSector && !checkSector.subSectors.length) {
+          checkSector.subSectors = subsectors;
+          checkSector.showAll = false;
+        }
+      }
+  }
+
+  toggleSubSectors(sector: any): void {
+      sector.showAll = !sector.showAll;
+  }
+
+  async fetchSubSectorsForSector(sectorId: string): Promise<any[]> {
+    let searchRequestCourse = new SearchV4Request([]);
+    searchRequestCourse.request.query = this.searchQuery;
+    searchRequestCourse.request.filters.sectorId = [sectorId];
+    searchRequestCourse.request.facets = ['subSectorId'];
+
+    const result = await this.searchV3Service.searchCoursesv4(searchRequestCourse);
+
+    if (result.result && result.result.facets) {
+        const searchFacets = result.result.facets || [];
+        const subSectors = searchFacets[0]?.values.map((item: any) => ({
+            name: item.name,
+            displayName: this.formatSectorName(item.name),
+            isChecked: false,
+            count: item.count || 0,
+        })) || [];
+        return subSectors;
+    }
+
+    return [];
+}
 }

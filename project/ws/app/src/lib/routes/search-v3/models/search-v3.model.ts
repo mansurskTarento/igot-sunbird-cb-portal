@@ -35,6 +35,8 @@ export class Filters {
   language?: string[];
   organisation?: string[];
   sectorId?: string[];
+  subSectorId?: string[];
+  resourceType?: string[];
   [key: string]: any;
   constructor() {
     this.contentType = ['Course'];
@@ -59,7 +61,7 @@ export enum SearchCategory {
   Programs = 'programs',
   Events = 'events',
   People = 'peoples',
-  CaseStudy = 'case-studies',
+  CaseStudy = 'case-study',
   Communities = 'communities',
 }
 
@@ -69,10 +71,11 @@ export const SearchOthersFacet = [
   'language',
   'organisation',
   'sectorId',
+  'courseCategory'
 ];
 
 // Events
-export const SearchEventfacet = ['duration', 'language', 'sourceName'];
+export const SearchEventfacet = ['duration', 'language', 'sourceName', 'startDateTimeInEpoch', 'endDateTimeInEpoch', 'resourceType'];
 
 export const SearchEventFields = [
   'name',
@@ -98,6 +101,10 @@ export const SearchEventFields = [
   'creatorDetails',
   'appIcon',
   'recordedLinks',
+  "startDateTime",
+  "startDateTimeInEpoch",
+  "endDateTime",
+  "endDateTimeInEpoch"
 ];
 
 export class SearchPeoplesRequest {
@@ -111,7 +118,7 @@ export class SearchPeoplesRequest {
   constructor() {
     this.limit = 5;
     this.offset = 0;
-    this.sort_by = { firstName: 'asc' };
+    this.sort_by = { };
     (this.query = ''), (this.fields = []);
     this.filters = new PeoplesFilters();
     this.facets = [
@@ -185,6 +192,7 @@ export enum FacetType {
   Duration = 'duration',
   Designation = 'designation',
   SourceName = 'sourceName',
+  courseCategory = 'courseCategory',
 }
 
 export enum SortType {

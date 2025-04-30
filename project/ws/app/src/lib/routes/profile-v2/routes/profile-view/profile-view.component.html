@@ -173,19 +173,13 @@
                 </ng-container>
                 <ng-container *ngIf="editProfile">
                   <div class="flex flex-col designation">
-                    <mat-form-field class="profile-form-field" appearance="none">
-                      <!-- <mat-select formControlName="designation">
-                        <mat-option value="" disabled>{{ 'profileInfo.chooseADesignation' | translate }}</mat-option>
-                        <mat-option *ngFor="let designation of designationsMeta"
-                          value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                      </mat-select> -->
+                    <!-- <mat-form-field class="profile-form-field" appearance="none">
                     <div class="flex flex-row auto-complete-row">
                         <input type="text" class="input-text" matInput formControlName="designation" 
                         (keydown)="onkeyDown($event)" placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
                         <mat-icon>arrow_drop_down</mat-icon>
                     </div>
                     <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
-                        <!-- <mat-option *ngFor="let designation of filterDesignationsMeta" value="{{ designation?.name }}">{{ designation?.name }}</mat-option> -->
                         <ng-container *ngIf="filterDesignationsMeta.length > 0; else noDesignation">
                           <ng-container *ngFor="let designation of filterDesignationsMeta">
                             <mat-option  [value]="designation?.name">{{ designation?.name }}</mat-option>
@@ -196,8 +190,46 @@
                         </ng-template>
                     </mat-autocomplete>
 
-                    </mat-form-field>
-                    <!-- Later I will delete it -->
+                    </mat-form-field> -->
+                    
+                    <div class="custom-select-container">
+                      <mat-form-field appearance="outline" class="fixed-height-select">
+                        <mat-select placeholder="Select Designation" formControlName="designation" panelClass="search-panel" (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
+                          <!-- Sticky search input container -->
+                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                              <input 
+                                          type="text" 
+                                          placeholder="Search designation" 
+                                          formControlName="searchDesignation" 
+                                          class="search-input"
+                                          (keydown)="$event.stopPropagation()"
+                                          (click)="$event.stopPropagation()"
+                                          autocomplete="off">
+                              <button 
+                                          *ngIf="searchDesignation?.value" 
+                                          type="button" 
+                                          class="clear-button" 
+                                          (click)="clearSearchDesignation($event)">
+                                          ✕
+                              </button>
+                            </div>
+                          </div>
+                          <!-- Options list -->
+                          <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
+                                  {{ option?.name }}
+                          </mat-option>
+                          <!-- Loading indicator -->
+                          <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                            Loading more...
+                          </div>
+                          <!-- No results message -->
+                          <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
+                                  No matches found
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
                     <!-- <div class="flex justify-end primary-text" (click)="handleDesignationRequest()">{{ 'profileInfo.requestDesignation' | translate }}</div> -->
                   </div>
                   <div class="note-container p-2">
@@ -210,7 +242,6 @@
               </ng-container>
             </div>
           </div>
-
           <ng-container *ngIf="showApprovalStatus && isCurrentUser">
             <div class="profile-approval-status">
               <mat-accordion>
@@ -301,7 +332,7 @@
           </ng-container> -->
   
           <div class="flex flex-row gap-4" *ngIf="editProfile">
-            <button class="outline-button" (click)="editProfile = !editProfile">{{ 'profileInfo.cancel' | translate
+            <button class="outline-button" (click)="editProfile = !editProfile;cancelRequest()">{{ 'profileInfo.cancel' | translate
               }}</button>
               <button [disabled]="!enableEditBtn" [ngClass]="{'disable-button': !enableEditBtn}" class="save-button" (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
               }}</button>
@@ -660,7 +691,7 @@
     <div class="flex flex-row gap-4 horizontal-strip mt-4">
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
       <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">{{ 'profileInfo.myKarmaPoints' | translate }}</div>
-      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/discussion-forum']" [queryParams]="{page: 'home'}">{{ 'profileInfo.myDiscussions' | translate }}</div>
+      <!-- <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/discussion-forum']" [queryParams]="{page: 'home'}">{{ 'profileInfo.myDiscussions' | translate }}</div> -->
     </div>
 
     <div class="tab-heading">{{ 'profileInfo.yourStats' | translate }}</div>

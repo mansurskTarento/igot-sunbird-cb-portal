@@ -13,7 +13,7 @@ import {
 import { UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
 import {
@@ -97,9 +97,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     );
 
     this.queryControl.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged(), skip(1))
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
-        if (value) {
+        if (value.length > 3) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
         } else {
@@ -205,31 +205,38 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
+    if (query.length) {
+      await this.searchInNLP(query).then(() => {
+        this.processSearchText(query);
+      }).catch(() => {
+        this.processSearchText(query);
+      });
+    } else {
+      this.processSearchText(query);
+    }
+  }
 
+  processSearchText(query: any) {
     document.getElementById('global-search-input')?.blur();
-
-    await this.searchInNLP(query.trim());
-
     const queryParams = {
       q: query.trim(),
       search: this.responseNlpQuery || null,
       category: this.selectedSearchCategory || null,
+      p: null,
+      f: null,
+      tab: null,
+      filtersPanel: 'show',
     };
-
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    };
     if (this.ref === 'home') {
       this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], {
-        queryParams,
-        queryParamsHandling: 'merge',
-      });
+      this.router.navigate(['/app/globalsearch'], navigationExtras);
     } else {
-      this.router.navigate([], {
-        relativeTo: this.activated.parent,
-        queryParams,
-        queryParamsHandling: 'merge',
-      });
+      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
     }
-
     localStorage.removeItem('activeRoute');
     this.openSearchTemplate = false;
   }
@@ -243,11 +250,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   async selectSearchCategory(category: string) {
     this.selectedSearchCategory = category;
-    if (this.queryControl.value) {
-      this.updateQuery(this.queryControl.value);
-    } else {
-      this.searchFromQuery(this.responseNlpQuery);
-    }
+    // this.searchFromQuery(this.queryControl.value);
+    this.updateQuery(this.queryControl.value);
   }
 
   async searchFromQuery(query: string) {
@@ -290,9 +294,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       searchRequest.query = query;
       const result = await this.searchV3Service.searchConnections(
         searchRequest
-      );
+      ).catch(() => (this.allSearchResults = []));
 
-      if (result.result && result.result?.response?.content) {
+      if (result.result && result.result?.response?.content.length) {
         this.allSearchResults = result.result?.response?.content || [];
       } else {
         this.allSearchResults = [];
@@ -394,7 +398,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   openSearchTemplateF() {
     this.openSearchTemplate = true;
     if (!this.selectedSearchCategory) {
-      this.searchFromQuery(this.responseNlpQuery);
+      // this.searchFromQuery(this.responseNlpQuery);
     }
   }
 }

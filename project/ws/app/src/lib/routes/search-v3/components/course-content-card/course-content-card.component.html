@@ -21,9 +21,13 @@
                 <div class="course-badges flex items-center gap-2">
                     <span class="badge language-badge font-normal"
                         *ngIf="content?.language">{{content?.language}}</span>
-                    <span class="badge duration-badge font-normal" *ngIf="content?.duration">
+                    <span class="badge duration-badge font-normal" *ngIf="content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{checkForCiosDuration(content) | pipeDurationTransform: 'hms'}}
+                    </span>
+                    <span class="badge duration-badge font-normal" *ngIf="content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
+                        <mat-icon>schedule</mat-icon>
+                        {{content?.programDuration}} {{content?.programDuration === 1 ? 'day' : 'days'}}
                     </span>
                 </div>
                 <div class="course-badges-new" *ngIf="checkIfContentIsNew(content?.createdOn)">
@@ -101,12 +105,12 @@
                 <h2 class="course-title font-normal text-ellipse">
                     {{content?.name}}
                 </h2>
-                <div class="course-tags mb-3 font-normal text-ellipse"
+                <!-- <div class="course-tags mb-3 font-normal text-ellipse"
                     *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]"
                     [matTooltip]="'Sub Theme - ' + generateCompetencySubThemeString()">
                     <span>Sub Theme - </span>
                     <span>{{generateCompetencySubThemeString()}}</span>
-                </div>
+                </div> -->
 
                 <div class="course-author mb-3 flex items-center gap-2">
                     <div class="author-avatar flex items-center justify-center">

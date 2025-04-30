@@ -125,7 +125,11 @@ export class EnrollProfileFormComponent implements OnInit {
   openDesignationDropdown = false
   openLanguageDropdown = false
   canShowOtherDesignation = false
+  designationListLoadCount = 50
   addLoader = 0
+  isLoadingMoreDesignations = false;
+  designationDefaultLoadCount =  50
+  desigantionFilterEnable = false
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -172,7 +176,8 @@ export class EnrollProfileFormComponent implements OnInit {
       cadreName: new FormControl(''),
       cadreBatch: new FormControl(''),
       cadreControllingAuthority: new FormControl(''),
-      otherDesignation: new FormControl('')
+      otherDesignation: new FormControl(''),
+      searchDesignation: new FormControl('')
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
@@ -254,7 +259,7 @@ export class EnrollProfileFormComponent implements OnInit {
     }
   }
   onDesignationsFocus() {
-    this.openDesignationDropdown = true
+    // this.openDesignationDropdown = true
     setTimeout(() => {
       this.scrollToActive('designation')
     }, 100)
@@ -283,6 +288,7 @@ export class EnrollProfileFormComponent implements OnInit {
 
   filterdesignation(value: any) {
     if (value.length) {
+      this.desigantionFilterEnable =true
       this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
         val && val.name.trim().toLowerCase().includes(value.toLowerCase())
       )
@@ -292,8 +298,13 @@ export class EnrollProfileFormComponent implements OnInit {
           usernameControl.setErrors({ required: true });
         }
       }
+    } else {
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+      this.desigantionFilterEnable =false
+
+      this.designationListLoadCount = this.designationDefaultLoadCount;
     }
-    this.openDesignationDropdown = true
+    // this.openDesignationDropdown = true
   }
 
   async getMasterDesignation() {
@@ -305,7 +316,7 @@ export class EnrollProfileFormComponent implements OnInit {
           const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
           const disOrderedList = _.get(organisationsList, '[0].children', [])
           this.designationsMeta = _.sortBy(disOrderedList, 'name')
-          this.filterDesignationsMeta = this.designationsMeta
+          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
           if (this.canShowDesignation) {
             let field = this.userDetailsForm.get('designation')
             if (field && field.value) {
@@ -1133,7 +1144,8 @@ export class EnrollProfileFormComponent implements OnInit {
         if (this.showDoptChanges) {
           this.designationsMeta.push({ name: 'Others', id: 0, description: 'Others' })
         }
-        this.filterDesignationsMeta = this.designationsMeta
+        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+        this.checkCurrentDesignationPresent()
       },
       (_err: any) => {
       })
@@ -1556,6 +1568,101 @@ export class EnrollProfileFormComponent implements OnInit {
           this.snackBar.open(this.handleTranslateTo('updateEmailFailed'))
         }
       })
+  }
+  setupScrollListener(opened: boolean): void {
+    if (opened) {
+      if (this.userDetailsForm.get('searchDesignation')) {
+        this.userDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      this.checkCurrentDesignationPresent()
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        }
+      
+      }, 100);
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+    
+    if(!this.desigantionFilterEnable) {
+    // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+          this.isLoadingMoreDesignations = true;
+          
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+          
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+            this.isLoadingMoreDesignations = false;
+          }, 200); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+  checkCurrentDesignationPresent() {
+       
+    // Get the current designation value
+    const currentDesignation = this.userDetailsForm.get('designation')!.value;
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filterDesignationsMeta.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+      
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = { 
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDesignationsMeta.pop();
+        }
+        this.filterDesignationsMeta.unshift(newDesignation);
+      }
+    }
+  }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.userDetailsForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.userDetailsForm.get('searchDesignation')) {
+        this.userDetailsForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.userDetailsForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
   }
 
 }
