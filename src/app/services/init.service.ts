@@ -172,6 +172,10 @@ export class InitService {
       'download',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/download.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'course-cataloguee',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/course-cataloguee.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',
