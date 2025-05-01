@@ -76,6 +76,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterCompetency = '';
   searchCategory = '';
   sectorFilters:any
+  isExploreContentTab = false
+  isAllContentSelected = true
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
@@ -162,7 +164,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
-
   }
 
   formatSectorName(name: string): string {
@@ -177,6 +178,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
+
+    this.isExploreContentTab = !!params['tab'];
     //let contentType = ''
    // this.selectedFilters = {}
    // console.log('categoryType', this.categoryType)
@@ -211,7 +214,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             }
           ]
         }
-        if (this.categoryType.length) {
+        if (this.categoryType.length && !this.isExploreContentTab) {
           this.categoryType[0].isChecked = true;
           this.selectedFilters[this.categoryType[0].name] = [
             this.categoryType[0].name,
@@ -404,6 +407,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const types = this.categoryTypeDup.map((category) => category.name);
     if (types.includes(type) && !option.isChecked) {
       this.constructQueryParam.emit('');
+    }
+
+    if (categoryType === 'contentType' && this.isAllContentSelected) {
+      this.isAllContentSelected = false
     }
   }
 
@@ -652,12 +659,17 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     Object.keys(this.selectedFilters).forEach((key) => {
       this.selectedFilters[key] = [];
     });
-    _.forEach(this.categoryType, (category) => {
-      category.isChecked = false;
-      _.forEach(category.filters, (filter) => {
-        filter.isChecked = false;
+
+    if (!this.isExploreContentTab) {
+      _.forEach(this.categoryType, (category) => {
+        category.isChecked = false;
+        _.forEach(category.filters, (filter) => {
+          filter.isChecked = false;
+        });
       });
-    });
+    } else {
+      this.isAllContentSelected = true
+    }
 
     _.forEach(this.formattedFacets, (filters) => {
       _.forEach(filters, (filter) => {
@@ -677,7 +689,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = [];
-    this.constructQueryParam.emit('');
+
+    if (!this.isExploreContentTab) {
+      this.constructQueryParam.emit('');
+    }
   }
 
   get filteredOrganisations() {
@@ -782,4 +797,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
     return null;
   }  
+
+  allContentSelection() {
+    this.isAllContentSelected = true;
+    this.selectedFilters['contentType'] = []
+    
+    this.filteredContents.map((item: any) => {
+      item.isChecked = false;
+    })
+
+    this.appliedFilter.emit(this.selectedFilters);
+    this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+  }
 }

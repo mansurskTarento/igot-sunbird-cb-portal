@@ -22,6 +22,7 @@ import { SearchCategory, SearchConstantLocalStorage, SortType } from '../../mode
 export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @Output() searchSorter = new EventEmitter();
   @Input() category!: string;
+  @Input() isExploreContentTab: boolean = false;
   selectedOption: string = SortType.MostRelevent;
   options = SEARCH_SORT_DROPDOWN;
 
@@ -37,8 +38,13 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
       this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
       this.selectedOption = SortType.MostRelevent;
     } else {
-      this.options = SEARCH_SORT_DROPDOWN;
-      this.selectedOption = SortType.MostRelevent;
+      if (this.isExploreContentTab) {
+        this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+        this.selectedOption = SortType.RecentlyAdded;
+      } else {
+        this.options = SEARCH_SORT_DROPDOWN;
+        this.selectedOption = SortType.MostRelevent;
+      }
     }
     this.searchSorter.emit(this.selectedOption);
 

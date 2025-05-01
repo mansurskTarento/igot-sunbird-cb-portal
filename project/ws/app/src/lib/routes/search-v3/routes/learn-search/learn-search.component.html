@@ -32,7 +32,7 @@
                         </div>
                     </ng-container>
                     <div class="sort-search" *ngIf="!screenSizeIsLtMedium">
-                        <ws-app-search-sort-input [category]="seeAllResult"
+                        <ws-app-search-sort-input [category]="seeAllResult" [isExploreContentTab]="isExploreContentTab"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                 <ng-container>
                     <!-- Content Card -->
                     <ng-container
-                        *ngIf="!searchContentLoader && courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
+                        *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
                             <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> {{ 'learnsearch.content' |
                                 translate:{ count: courseSearchTotalCount } }}</p>
@@ -102,7 +102,7 @@
 
                     <!-- event Card -->
                     <ng-container
-                        *ngIf="!searchContentLoader && eventSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'events')">
+                        *ngIf="eventSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'events')">
                         <div class="search-event-card">
                             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.event' |
                                 translate:{ count: eventSearchTotalCount } }}</p>

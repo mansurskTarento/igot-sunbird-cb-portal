@@ -13,9 +13,12 @@
             (click)="exploreContent()">
               <div class="flex items-center">
                 <mat-icon class="mr-1" svgIcon="course-cataloguee"></mat-icon>
-                <span>
-                  {{'cardshublist.exploreContent' | translate}}
-                </span>
+                <div class="flex items-center explore-content-text">
+                  <span class="">
+                    {{'cardshublist.exploreContent' | translate}}
+                  </span>
+                  <mat-icon class="ml-1 arrow-chevron">chevron_right</mat-icon>
+                </div>
               </div>
             </button>
           </div>
