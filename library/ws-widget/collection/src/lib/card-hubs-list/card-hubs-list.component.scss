@@ -383,6 +383,21 @@ mat-grid-list {
   opacity: 0.6;
 }
 
+.explore-content-text {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.5s ease, opacity 0.5s ease;
+  vertical-align: middle;
+}
+
+::ng-deep.explore-content-action:hover .explore-content-text {
+  max-width: 200px; // Adjust as needed
+  opacity: 1;
+}
+
 ::ng-deep.explore-content-action {
   div {
     font-weight: 700 !important;
@@ -399,4 +414,5 @@ mat-grid-list {
 .explore-more {
   border-right: 1px solid rgba(27, 33, 51, 0.16);
   padding-right: 1rem;
+  min-width: 165px;
 }
