@@ -8,6 +8,20 @@
           <span class="margin-auto ws-mat-default-text mat-subheading-2">EXPLORE</span>
         </a> -->
         <ng-container [@enterAnimation]="visible">
+          <div class="explore-more flex items-center">
+            <button mat-raised-button class="mat-btn-outline cursor-pointer explore-content-action"
+            (click)="exploreContent()">
+              <div class="flex items-center">
+                <mat-icon class="mr-1" svgIcon="course-cataloguee"></mat-icon>
+                <div class="flex items-center explore-content-text">
+                  <span class="">
+                    {{'cardshublist.exploreContent' | translate}}
+                  </span>
+                  <mat-icon class="ml-1 arrow-chevron">chevron_right</mat-icon>
+                </div>
+              </div>
+            </button>
+          </div>
           <div *ngFor="let hub of hubsList" class="flex items-center nav-menu relative">
             <!-- <ng-container *ngIf="(hub.hubname == 'Discuss' && hub.active)">
               <a [id]="hub.hubname" class="simple-hubs-link" i18n-aria-label role="menuitem" (click)="navigate(hub.hubname); trackTelemetry(hub.hubname)">
