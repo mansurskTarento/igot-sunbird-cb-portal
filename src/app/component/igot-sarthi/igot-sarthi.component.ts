@@ -572,7 +572,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     })
     let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
     let shortAnswer =  this.splitParagraphByWords(answer)
-    console.log('shortAnswer', shortAnswer)
     this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && item.answer === '') {
@@ -580,7 +579,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         this.aiSearchResultArr.splice(index,1)
       }
      })
-    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     setTimeout(()=>{
       this.scrollToBottomEvent.emit() 
     },0)
