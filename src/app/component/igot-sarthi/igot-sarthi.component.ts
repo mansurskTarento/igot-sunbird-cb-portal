@@ -12,6 +12,8 @@ import { environment } from '../../../environments/environment';
 export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
+  @Input() chatId = ''
+  @Input() userId = ''
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -531,7 +533,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "query":this.searchQuery
    }
    console.log('requestBody', requestBody)
-    this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
+    this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
     this.aiSearchResult = data 
     let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{

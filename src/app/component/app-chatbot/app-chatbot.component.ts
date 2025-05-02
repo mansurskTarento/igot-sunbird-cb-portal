@@ -4,7 +4,7 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
-import { CdkDragEnd } from '@angular/cdk/drag-drop'
+import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'ws-app-chatbot',
@@ -35,7 +35,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   callText = ''
   emailText = ''
   enableIGOTAIFlag = false
-  
+  dragEnabled = false
   // tslint:disable
   localization: any = {
     'en' : {
@@ -57,8 +57,10 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   iconPosition = {x:0, y:0}
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  @ViewChild('dragItem') dragElement!: ElementRef;
   isHubEnable!: boolean
-
+  chatIconOutside = false
+  chatId = ''
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -196,24 +198,30 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   iconClick(type: string) {
-    this.showIcon = !this.showIcon
-    this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
-    this.expanded = false
-    if (type === 'start') {
-      this.disableScroll()
-      this.raiseChatStartTelemetry()
-      // this.toggleFilter(this.currentFilter)
-    } else {
-      this.raiseChatEndTelemetry()
-      this.userJourney = []
-      this.chatInformation = []
-      this.chatIssues = []
-      this.selectedLaguage = 'en'
+    if(!this.dragEnabled) {
+      this.showIcon = !this.showIcon
       this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
-      this.checkForApiCalls()
-      this.more = false
-      this.enableScroll()
+      this.expanded = false
+      if (type === 'start') {
+        const timestamp = Date.now();
+        this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
+        this.disableScroll()
+        this.raiseChatStartTelemetry()
+        // this.toggleFilter(this.currentFilter)
+      } else {
+        this.chatId = ''
+        this.raiseChatEndTelemetry()
+        this.userJourney = []
+        this.chatInformation = []
+        this.chatIssues = []
+        this.selectedLaguage = 'en'
+        this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
+        this.checkForApiCalls()
+        this.more = false
+        this.enableScroll()
+      }
     }
+   
   }
 
   toggleFilter(tab: string) {
@@ -503,6 +511,42 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
   onDragEnded(event: CdkDragEnd) {
     const point  = event.source.getFreeDragPosition()
-    this.iconPosition = point
+    
+    console.log('point', point)
+    // const element = this.dragItem.nativeElement;
+    // element.style.transform = 'none';
+
+    // Optional: reset internal transform tracking
+    const dragRef = event.source._dragRef;
+    if (dragRef && this.chatIconOutside) {
+       dragRef.reset(); // resets internal position tracking
+    } else {
+      this.iconPosition = point
+    }
+    setTimeout(()=>{
+      this.dragEnabled = false
+    },0)
+    
   }
+
+  onDragMoved(event: CdkDragMove<any>) {
+    console.log('event',event)
+    this.dragEnabled = true
+    const rect = this.dragElement.nativeElement.getBoundingClientRect();
+    
+    const isOutside =
+      rect.top < 0 ||
+      rect.left < 0 ||
+      rect.bottom > (window.innerHeight || document.documentElement.clientHeight) ||
+      rect.right > (window.innerWidth || document.documentElement.clientWidth)
+      console.log('rect', rect, window.innerHeight, window.innerWidth, isOutside)
+    if (isOutside) {
+      console.log('Element is going outside the viewport!');
+     this.chatIconOutside = true
+    } else {
+      this.chatIconOutside = false
+    }
+  }
+
+  
 }

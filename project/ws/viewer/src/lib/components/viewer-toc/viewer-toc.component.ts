@@ -294,7 +294,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
       if(this.queue && currentIndex > -1) {
         if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
-          this.aiTutorResourceId = this.queue[currentIndex].identifier
+         // this.aiTutorResourceId = this.queue[currentIndex].identifier
         }        
       }
       const next =

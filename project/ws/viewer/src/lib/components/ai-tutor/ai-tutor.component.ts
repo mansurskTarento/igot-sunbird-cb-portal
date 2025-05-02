@@ -1,5 +1,5 @@
 import { AfterViewChecked, Component,Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from 'src/app/component/root/root.service';
 import { environment } from 'src/environments/environment';
@@ -95,6 +95,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   ]
   selectedLearningStyle :any
   constructor(
+    private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
     private renderer: Renderer2,
@@ -583,6 +584,15 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     console.log('requestBody', requestBody)
     console.log('aiSearchResult', this.aiTutorResult)
     console.log('this.aiSearchResultArr', this.aiTutorResultArr)
+
+    console.log('this.currentRoute = this.router.url;', this.route.snapshot.queryParams)
+
+      const queryString = Object.entries(this.route.snapshot.queryParams)
+        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+        .join('&');
+
+    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
+    console.log(queryString);
     let arr:any = []
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
       let startTime = 0
@@ -611,7 +621,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         contentStart: startTime,
         contentEnd: endTime,
         pageNumber:  pageNumber ? pageNumber : 1,    
-        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       arr.push(resultObj)
@@ -635,14 +645,19 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   copyPath(item:any, cindex:any) {
+    const queryString = Object.entries(this.route.snapshot.queryParams)
+        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+        .join('&');
+
+    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
+    console.log(queryString);
     
-    console.log('chat',item)
     const selBox = document.createElement('textarea')
     selBox.style.position = 'fixed'
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
