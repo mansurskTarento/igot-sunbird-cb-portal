@@ -8,7 +8,7 @@
           <span class="margin-auto ws-mat-default-text mat-subheading-2">EXPLORE</span>
         </a> -->
         <ng-container [@enterAnimation]="visible">
-          <div class="explore-more flex items-center">
+          <!-- <div class="explore-more flex items-center">
             <button mat-raised-button class="mat-btn-outline cursor-pointer explore-content-action"
             (click)="exploreContent()">
               <div class="flex items-center">
@@ -21,7 +21,7 @@
                 </div>
               </div>
             </button>
-          </div>
+          </div> -->
           <div *ngFor="let hub of hubsList" class="flex items-center nav-menu relative">
             <!-- <ng-container *ngIf="(hub.hubname == 'Discuss' && hub.active)">
               <a [id]="hub.hubname" class="simple-hubs-link" i18n-aria-label role="menuitem" (click)="navigate(hub.hubname); trackTelemetry(hub.hubname)">
