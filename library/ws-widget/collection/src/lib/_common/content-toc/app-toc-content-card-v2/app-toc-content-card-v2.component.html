@@ -12,8 +12,26 @@
 
     <div *ngIf="isResource" class="resource-container"
         [ngClass]="pathSet?.has(content?.identifier) && isEnrolled ? 'content-active-resource': 'content-not-active-resource'">
-        <div class="resource flex  sm:flex-row flex-start width-expand w-100 sm:pr-4 sm:w-auto"
+        <div class="resource flex flex-wrap sm:flex-row flex-start width-expand w-100 sm:pr-4 sm:w-auto"
             [ngClass]="{'activeResource': pathSet?.has(content?.identifier) && isEnrolled}">
+            <ng-container *ngIf="content?.primaryCategory === primaryCategory.FINAL_ASSESSMENT && checkForCuratedProgram && 
+            !isContentUnlocked">
+                <div class="content-locking flex w-full flex-middle mb-2 gap-3">
+                    <mat-icon class="lock-icon">lock</mat-icon>
+                    <span class="lock-message mat-body-2">
+                        This content is locked. Complete course to view this module
+                    </span>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="content?.primaryCategory === primaryCategory.FINAL_ASSESSMENT && checkForCuratedProgram && 
+            isContentUnlocked">
+                <div class="content-locking flex w-full flex-middle mb-2 gap-3">
+                    <mat-icon class="unlock-icon">lock_open_right</mat-icon>
+                    <span class="unlock-message mat-body-2">
+                        This content is unlocked.
+                    </span>
+                </div>
+            </ng-container>
             <div class="flex flex-wrap items-start justify-start sm:justify-end">
                 <!-- <button *ngIf="!forPreview && content?.artifactUrl && !isXSmall && isAllowed && isEnabled" type="button"
                     mat-icon-button class="" [matMenuTriggerFor]="buttonMenu">
@@ -61,7 +79,7 @@
                 </ng-container>
             </div>
             <!-- deactivated as per NIC CEO requirement to access course wthout login -->
-            <a class="" [class.disabled]="(forPreview || !isEnabled || !isEnrolled || !isBatchInProgess) ? true : null"
+            <a class="" [class.disabled]="(forPreview || !isEnabled || !isEnrolled || !isBatchInProgess || !isContentUnlocked) ? true : null"
                 [ngClass]="{'ml-3': isEnrolled}"
                 [routerLink]="(isAllowed && !forPreview && isEnabled) ? resourceLink.url : null"
                 [queryParams]="(isAllowed && !forPreview && isEnabled)  ? resourceLink.queryParams : null">

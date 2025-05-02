@@ -81,6 +81,7 @@ export namespace NsContent {
     mode?: ETagType
     name: string
     nextCertificationAttemptDate?: string
+    parent?: string
     playgroundInstructions?: string
     playgroundResources?: IResourcePlayground[]
     postContents?: IPrePostContent[]
@@ -575,5 +576,8 @@ export namespace NsContent {
     vCompetencyAreaDescription: string
     vCompetencyTheme: string
     vCompetencySubTheme: string
+  }
+  export enum EContextLockingType {
+    COURSE_ASSESSMENT_ONLY = 'Course Assessment Only'
   }
 }

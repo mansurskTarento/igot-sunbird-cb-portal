@@ -118,6 +118,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   paperSections: NSPractice.IPaperSection[] | null = null
   selectedSection: NSPractice.IPaperSection | null = null
   ePrimaryCategory = NsContent.EPrimaryCategory
+  eCourseCategory = NsContent.ECourseCategory
   currentQuestion!: NSPractice.IQuestionV2 | any
   process = false
   isXsmall = false
@@ -333,6 +334,31 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       if (this.selectedAssessmentCompatibilityLevel) {
         if (this.selectedAssessmentCompatibilityLevel < 7) {
+          if (this.checkCuratedProgramAssessment()) {
+            this.quizSvc.canAttendV7(this.identifier).subscribe(response => {
+              if (response) {
+                 this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            })
+          } else {
+            this.quizSvc.canAttend(this.identifier).subscribe(response => {
+              if (response) {
+                 this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            })
+          }
           this.quizSvc.canAttend(this.identifier).subscribe(response => {
             if (response) {
                this.canAttempt = response
@@ -345,17 +371,31 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             this.updateVisivility()
           })
         } else {
-          this.quizSvc.canAttendV5(this.identifier).subscribe(response => {
-            if (response) {
-               this.canAttempt = response
-              //  this.canAttempt = {
-              //   attemptsAllowed: 1,
-              //   attemptsMade: 0,
-              // }
-            }
-            this.init()
-            this.updateVisivility()
-          })
+          if (this.checkCuratedProgramAssessment()) {
+            this.quizSvc.canAttendV7(this.identifier).subscribe(response => {
+              if (response) {
+                 this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            })
+          } else {
+            this.quizSvc.canAttendV5(this.identifier).subscribe(response => {
+              if (response) {
+                this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            })
+          }
         }
       }
     }
@@ -1584,7 +1624,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   async submitAfterAllPromiseResolved() {
     if(!this.forPreview || this.forCreatorMode){
       if (this.selectedAssessmentCompatibilityLevel < 7) {
-        const quizV4Res: any = await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
+        let quizV4Res: any = {}
+        if (this.checkCuratedProgramAssessment()) {
+          quizV4Res = await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+        } else {
+          quizV4Res = await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
+        }
         if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
           if (quizV4Res.result.primaryCategory === 'Course Assessment') {
             setTimeout(() => {
@@ -1596,7 +1641,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
       } else {
         if(this.selectedAssessmentCompatibilityLevel >=8) {
-          const quizV4Res: any = await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {})
+          let quizV4Res: any = {}
+          if (this.checkCuratedProgramAssessment()) {
+            quizV4Res = await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+          } else {
+            quizV4Res = await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {})
+          }
           if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
             if (quizV4Res.result.primaryCategory === 'Course Assessment') {
               setTimeout(() => {
@@ -1607,7 +1657,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             }
           }
         } else {
-          const quizV4Res: any = await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {})
+          let quizV4Res: any = {}
+          if (this.checkCuratedProgramAssessment()) {
+            quizV4Res = await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+          } else {
+            quizV4Res = await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {})
+          }
           if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
             if (quizV4Res.result.primaryCategory === 'Course Assessment') {
               setTimeout(() => {
@@ -1694,15 +1749,25 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   async submitAfterAllPromiseResolvedForOptionWeightage() {
     if(!this.forPreview  || this.forCreatorMode){
       if (this.selectedAssessmentCompatibilityLevel < 7) {
-        await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
-      
+        if (this.checkCuratedProgramAssessment()) {
+          await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+        } else {
+          await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
+        }
       } else {
         if (this.selectedAssessmentCompatibilityLevel >= 8) {
-          await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {}) 
+          if (this.checkCuratedProgramAssessment()) {
+            await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+          } else {
+            await this.quizSvc.submitQuizV6(this.generateRequest).toPromise().catch(_error => {}) 
+          }
         } else {
-          await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {}) 
-        }
-            
+          if (this.checkCuratedProgramAssessment()) {
+            await this.quizSvc.submitQuizV7(this.generateRequest).toPromise().catch(_error => {})
+          } else {
+            await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {}) 
+          }
+        }    
       }
     } else {
       let requestData : any = this.generateRequest
@@ -2042,7 +2107,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       req.request['contextId'] =  this.generateRequest.courseId
     }
     if(this.selectedAssessmentCompatibilityLevel < 7) {
-      const resultRes: any = await this.quizSvc.quizResult(req,this.forPreview).toPromise().catch(_error => {})
+      let resultRes: any = {}
+      if (this.checkCuratedProgramAssessment()) {
+        resultRes = await this.quizSvc.quizResultV7(req,this.forPreview).toPromise().catch(_error => {})
+      } else {
+        resultRes = await this.quizSvc.quizResult(req,this.forPreview).toPromise().catch(_error => {})
+      }
       if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'success') {
         if (resultRes.result) {
           this.fetchingResultsStatus = (resultRes.result.isInProgress) ?  'fetching' : 'done'
@@ -2060,7 +2130,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         req.request['assessmentIdentifier'] =  this.generateRequest.identifier
         req.request['contextId'] =  this.generateRequest.courseId
       }
-      const resultRes: any = await this.quizSvc.quizResultV5(req,this.forPreview).toPromise().catch(_error => {})
+      let resultRes: any = {}
+      if (this.checkCuratedProgramAssessment()) {
+        resultRes = await this.quizSvc.quizResultV7(req,this.forPreview).toPromise().catch(_error => {})
+      } else {
+        resultRes = await this.quizSvc.quizResultV5(req,this.forPreview).toPromise().catch(_error => {})
+      }
       if (resultRes && resultRes.params && resultRes.params.status.toLowerCase() === 'success') {
         if (resultRes.result) {
           this.fetchingResultsStatus = (resultRes.result.isInProgress) ?  'fetching' : 'done'
@@ -2554,5 +2629,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     })
+  }
+
+  checkCuratedProgramAssessment() {
+    return (this.widgetContentService.currentMetaData && 
+    this.widgetContentService.currentMetaData.courseCategory === this.eCourseCategory.CURATED_PROGRAM && 
+    this.widgetContentService.currentMetaData.compatibilityLevel > 4)
   }
 }
