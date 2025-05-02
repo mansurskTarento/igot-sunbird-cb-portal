@@ -6,10 +6,11 @@
         <!-- <div class="icon-container glow-top-border">
           <img src="/assets/icons/agent.png" class="bounce-icon" />
         </div> -->
-        <div cdkDrag class="draggable-icon" [cdkDragBoundary]="'.custom-scroll'" 
+        <div cdkDrag #dragItem class="draggable-icon" 
         (cdkDragEnded)="onDragEnded($event)"
-        [cdkDragFreeDragPosition]="iconPosition">
-          <div class="icon-container">
+        [cdkDragFreeDragPosition]="iconPosition"
+        (cdkDragMoved)="onDragMoved()">
+          <div class="icon-container chat-ai-icon">
             <div class="animated-border-box-glow"></div>
             <div class="animated-border-box">
                 <div class="agent-box"><img src="/assets/icons/agent.png" class="bounce-icon" /></div>
@@ -113,7 +114,7 @@
           <ng-container *ngIf="!displayLoader && currentFilter === 'sarthi'" #scroll>
             
             <!-- <viewer-ai-tutor [from]="'chatbot'" [userJourney]="userJourney"></viewer-ai-tutor> -->
-             <ws-app-igot-sarthi [from]="'chatbot'" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
+             <ws-app-igot-sarthi [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
           <ng-container *ngIf="displayLoader">
             <div  class="loader">

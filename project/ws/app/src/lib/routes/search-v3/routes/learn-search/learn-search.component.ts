@@ -32,7 +32,7 @@ import {
   SearchV4Request,
   SortType,
 } from '../../models/search-v3.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import {
   NsContent,
   WidgetUserService,
@@ -40,6 +40,7 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
 import moment from 'moment';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -57,7 +58,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   defaultThumbnail = '';
   sideNavBarOpened = true;
   private defaultSideNavBarOpenedSubscription: any;
-
+  private destroy$ = new Subject<void>();
+  
   public screenSizeIsLtMedium = false;
   isLtMedium$ = this.valueSvc.isLtMedium$;
   statedata:
@@ -118,6 +120,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   searchPeopleLoader = false;
   filtersChipFromLearn: string[] = [];
   shouldReturnFromHere = false
+  isExploreContentTab = false;
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -173,6 +176,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.checkCourseEnrollmentAndCbpPlan();
     // this.fetchCbpPlan()
+    this.checkIfExploreContentTab()
   }
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -279,6 +283,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.defaultSideNavBarOpenedSubscription.unsubscribe();
       }
     }
+
+    this.destroy$.next();
+    this.destroy$.complete();
 
     localStorage.removeItem(SearchConstantLocalStorage.SortType);
   }
@@ -471,7 +478,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestPeoples.sort_by.firstName = SortType.Ascending;
     } else if (this.searchSortFilter === SortType.Descending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
+    } else if (this.searchSortFilter === SortType.AtoZ) {
+      this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+      this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+    } else if (this.searchSortFilter === SortType.ZtoA) {
+      this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+      this.searchRequestEvents.request.sort_by.name = SortType.Descending;
     }
+
 
     this.searchRequestCommunities.pageNumber = 0;
     this.searchRequestCommunities.pageSize = this.initialPaginationSize;
@@ -612,6 +626,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       delete this.searchRequestEvents.request.filters[this.competencyAreaNameKey];
     }
 
+    
     this.deleteFilterKeys();
 
     // debugger
@@ -640,6 +655,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.searchContentLoader = false;
     this.searchPeopleLoader = false;
+  }
+
+  private checkIfExploreContentTab(): void {
+    this.activated.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.isExploreContentTab = !!params['tab'];
+      });
   }
 
   async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {
@@ -1179,7 +1202,37 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     } else if (event === SortType.Descending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
       await this.searchPeople();
+    }  else if (event === SortType.AtoZ) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+        await this.searchCourses();
+        await this.searchEvents();
+        await this.searchcommunities();
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+        await this.searchCourses();
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+        await this.searchEvents();
+      }
+
+    } else if (event === SortType.ZtoA) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+        await this.searchCourses();
+        await this.searchEvents();
+        await this.searchcommunities();
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+        await this.searchCourses();
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+        await this.searchEvents();
+      }
     }
+
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
     this.searchPeopleLoader = false
@@ -1249,10 +1302,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   constructQueryParam(category: any) {
     const params = this.activated.snapshot.queryParams;
+
     this.queryParams = {
       q: params['q'].trim(),
       search: params['search'] || null,
       category: category || null,
+      tab: null
     };
     this.queryParamChange.emit(this.queryParams);
   }
