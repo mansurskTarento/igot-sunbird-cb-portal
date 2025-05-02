@@ -580,19 +580,16 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     // this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
     //   console.log('data--', data)
     // })
-    console.log('this.userJourney', this.userJourney)
     console.log('requestBody', requestBody)
     console.log('aiSearchResult', this.aiTutorResult)
     console.log('this.aiSearchResultArr', this.aiTutorResultArr)
 
-    console.log('this.currentRoute = this.router.url;', this.route.snapshot.queryParams)
 
       const queryString = Object.entries(this.route.snapshot.queryParams)
         .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
         .join('&');
 
     //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
-    console.log(queryString);
     let arr:any = []
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
       let startTime = 0
@@ -630,7 +627,6 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     let answer = this.aiTutorResult.answer ? this.aiTutorResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
  
     let shortAnswer =  this.splitParagraphByWords(answer)
-    console.log('shortAnswer', shortAnswer)
     this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
     this.aiTutorResultArr.map((item:any, index:any)=>{
       if(item && item.answer === '') {
@@ -641,7 +637,6 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
      setTimeout(()=>{
       this.scrollToBottom()
     },0)
-    console.log('this.aiTutorResultArr', this.aiTutorResultArr)
   }
 
   copyPath(item:any, cindex:any) {
@@ -649,9 +644,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
         .join('&');
 
-    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
-    console.log(queryString);
-    
+    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();    
     const selBox = document.createElement('textarea')
     selBox.style.position = 'fixed'
     selBox.style.left = '0'

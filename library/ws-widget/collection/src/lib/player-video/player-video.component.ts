@@ -348,8 +348,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     )
     this.player = initObj.player
     this.dispose = initObj.dispose
-    console.log(startTime , endTime)
-    console.log(this.widgetData)
     
     
 
@@ -369,7 +367,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           )
         })
       }
-      console.log('this.widgetData',this.widgetData)
       if (this.widgetData.url) {
 
         // if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
@@ -389,8 +386,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
 
         if(startTime && endTime) {
-          initObj.player.currentTime(startTime); // jump to start          
-          console.log(initObj.player)
+          initObj.player.currentTime(startTime); // jump to start  
           setTimeout(()=>{
             // initObj.player.autoplay()
             if(this.videoTag && this.videoTag.nativeElement) {

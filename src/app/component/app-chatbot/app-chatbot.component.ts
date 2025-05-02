@@ -511,8 +511,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
   onDragEnded(event: CdkDragEnd) {
     const point  = event.source.getFreeDragPosition()
-    
-    console.log('point', point)
     // const element = this.dragItem.nativeElement;
     // element.style.transform = 'none';
 
@@ -529,8 +527,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     
   }
 
-  onDragMoved(event: CdkDragMove<any>) {
-    console.log('event',event)
+  onDragMoved() {
     this.dragEnabled = true
     const rect = this.dragElement.nativeElement.getBoundingClientRect();
     
@@ -539,9 +536,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       rect.left < 0 ||
       rect.bottom > (window.innerHeight || document.documentElement.clientHeight) ||
       rect.right > (window.innerWidth || document.documentElement.clientWidth)
-      console.log('rect', rect, window.innerHeight, window.innerWidth, isOutside)
     if (isOutside) {
-      console.log('Element is going outside the viewport!');
      this.chatIconOutside = true
     } else {
       this.chatIconOutside = false

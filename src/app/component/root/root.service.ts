@@ -65,8 +65,6 @@ export class RootService {
   }
 
   aiGlobalSearch(requestBody:any, chatId:any, userID:any): Observable<any> {
-    console.log('chatId', chatId)
-    console.log('userID', userID)
     return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}?chatID=${chatId}&userID=${userID}`, requestBody)
   }
 }
