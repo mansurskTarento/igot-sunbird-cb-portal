@@ -49,6 +49,7 @@ export class SortBy {
   startDate?: string;
   avgRating?: string;
   firstName?: string;
+  name?: string;
   constructor() {
     // this.lastUpdatedOn = 'desc';
   }
@@ -201,6 +202,9 @@ export enum SortType {
   MostEnrolled = 'most_enrolled',
   Ascending = 'asc',
   Descending = 'desc',
+  AtoZ = 'a-z',
+  ZtoA = 'z-a',
+
 }
 
 export enum SearchConstantLocalStorage {

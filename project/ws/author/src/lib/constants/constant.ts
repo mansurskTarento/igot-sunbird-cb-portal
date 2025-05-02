@@ -127,6 +127,8 @@ export const SEARCH_SORT_DROPDOWN = [
   { name: 'Most Relevant', value: 'most_relevant' },
   { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
   { name: 'Highest Rated', value: 'highest_rated' },
+  { name: 'A-Z', value: 'a-z' },
+  { name: 'Z-A', value: 'z-a' },
   // { name: 'Most Enrolled', value: 'most_enrolled' },
 ];
 

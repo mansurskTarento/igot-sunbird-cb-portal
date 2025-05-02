@@ -16,7 +16,7 @@
             </div>
         </ng-container>
     </div>
-
+    
     <ng-container *ngIf="!searchCategory">
     <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
 
@@ -151,10 +151,10 @@
                 </mat-selection-list>
                 </mat-expansion-panel>
             </mat-accordion>
-            <!-- <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
+            <div *ngIf="(filteredContents?.length > 4) || (!filterQueryContents && formattedFacets?.['courseCategory']?.length > 4)"
                 class="brand-color underline cursor-pointer" (click)="toggleShowMore('courseCategory')">
                 {{ showAllContents ? 'See Less' : 'See More' }}
-            </div> -->
+            </div>
         </div>
     </ng-container>
 
