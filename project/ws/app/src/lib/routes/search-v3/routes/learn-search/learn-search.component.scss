@@ -180,19 +180,6 @@
   margin-top: 1rem !important;
 }
 
-// .search-nav-container {
-//   height: 100vh; 
-//   // height: calc(100vh - 200px); 
-// }
-
-// .custom-sidecontent {
-//   overflow: hidden; 
-// }
-
-// .content-wrapper {
-//   height: 100%;
-//   overflow-y: auto; 
-// }
 
 .filter-container-search {
   width: 16.5% !important;
@@ -234,4 +221,13 @@
       line-height: 0;
     }
   }
+}
+
+.explore-all-content span {
+  /* stylelint-disable */
+  font-family: Montserrat;
+  /* stylelint-enable */
+  font-weight: 600;
+  font-size: 20px;
+  color: rgba(27, 33, 51, 1);
 }

@@ -18,14 +18,21 @@
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     [ngClass]="{'my-3': screenSizeIsLtMedium}"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount) > 0">
-                    <div class="">
-                        <span class="brand-color">“{{(courseSearchTotalCount + eventSearchTotalCount +
-                            peopleSearchTotalCount + communitiesSearchTotalCount)}}”</span>
-                        <span class="mx-1">{{'learnsearch.searchResultsFor' | translate}}</span>
-                        <span class="brand-color" *ngIf="searchQuery.query">“{{searchQuery.query}}”</span>
-                    </div>
+                    <ng-container *ngIf="!isExploreContentTab">
+                        <div class="">
+                            <span class="brand-color">“{{(courseSearchTotalCount + eventSearchTotalCount +
+                                peopleSearchTotalCount + communitiesSearchTotalCount)}}”</span>
+                            <span class="mx-1">{{'learnsearch.searchResultsFor' | translate}}</span>
+                            <span class="brand-color" *ngIf="searchQuery.query">“{{searchQuery.query}}”</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="isExploreContentTab">
+                        <div class="explore-all-content">
+                            <span>{{'cardshublist.exploreAllContent' | translate}}</span>
+                        </div>
+                    </ng-container>
                     <div class="sort-search" *ngIf="!screenSizeIsLtMedium">
-                        <ws-app-search-sort-input [category]="seeAllResult"
+                        <ws-app-search-sort-input [category]="seeAllResult" [isExploreContentTab]="isExploreContentTab"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
                 </div>

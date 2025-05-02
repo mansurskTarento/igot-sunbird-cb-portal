@@ -64,7 +64,7 @@ export class RootService {
     return this.http.get<any>(`${API_END_POINTS.LANGUAGES}`)
   }
 
-  aiGlobalSearch(requestBody:any): Observable<any> {
-    return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}`, requestBody)
+  aiGlobalSearch(requestBody:any, chatId:any, userID:any): Observable<any> {
+    return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}?chatID=${chatId}&userID=${userID}`, requestBody)
   }
 }

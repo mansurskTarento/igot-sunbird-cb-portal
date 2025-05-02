@@ -2,7 +2,7 @@ import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, O
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment';  
 
 @Component({
   selector: 'ws-app-igot-sarthi',
@@ -12,6 +12,8 @@ import { environment } from '../../../environments/environment';
 export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
+  @Input() chatId = ''
+  @Input() userId = ''
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -79,6 +81,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   aiSearchResult:any = {}
 
   aiSearchResultArr:any = []
+  displayedText = '';
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
@@ -91,7 +94,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     private router: Router) { }
 
   ngOnInit() {
-    console.log('in')
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -99,7 +101,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    console.log('this.userInfo', this.userInfo)
     // this.aiGlobalSearch()
     this.checkForApiCalls()
     this.enableScroll()
@@ -531,7 +532,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "query":this.searchQuery
    }
    console.log('requestBody', requestBody)
-    this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
+    this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
     this.aiSearchResult = data 
     let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
@@ -570,7 +571,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     })
     let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
     let shortAnswer =  this.splitParagraphByWords(answer)
-    console.log('shortAnswer', shortAnswer)
     this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && item.answer === '') {
@@ -578,7 +578,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         this.aiSearchResultArr.splice(index,1)
       }
      })
-    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     setTimeout(()=>{
       this.scrollToBottomEvent.emit() 
     },0)

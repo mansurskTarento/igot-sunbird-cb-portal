@@ -110,10 +110,11 @@ export class PdfComponent implements OnInit, OnDestroy {
             this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
             if(this.activatedRoute.snapshot.queryParams.pn) {
               let pageNumber  = this.activatedRoute.snapshot.queryParams.pn
-              this.widgetResolverPdfData.widgetData.resumePage = pageNumber
+              this.widgetResolverPdfData.widgetData.resumePage = Number(pageNumber)
             }
-          }
-          this.widgetResolverPdfData.widgetData.resumePage = 1
+          } else {
+            this.widgetResolverPdfData.widgetData.resumePage = 1
+          }          
           if (this.pdfData && this.pdfData.identifier) {
             if (this.activatedRoute.snapshot.queryParams.collectionId) {
               await this.fetchContinueLearning(

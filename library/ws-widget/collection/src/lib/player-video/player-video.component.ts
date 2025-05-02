@@ -258,6 +258,15 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   private initializePlayer() {
+    
+    let startTime = 0
+    let endTime = 0
+    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+      if(this.activatedRoute.snapshot.queryParams.st) {
+      startTime = this.activatedRoute.snapshot.queryParams.st
+      endTime = this.activatedRoute.snapshot.queryParams.et      
+      }
+    }
 
     const dispatcher: telemetryEventDispatcherFunction = event => {
       if (this.widgetData.identifier) {
@@ -338,8 +347,11 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     )
     this.player = initObj.player
     this.dispose = initObj.dispose
+    
+    
 
     initObj.player.ready(() => {
+      
       if (Array.isArray(this.widgetData.subtitles)) {
         this.widgetData.subtitles.forEach((u, index) => {
           initObj.player.addRemoteTextTrack(
@@ -355,21 +367,44 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         })
       }
       if (this.widgetData.url) {
-        if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
-          if(this.activatedRoute.snapshot.queryParams.st) {
-            let startTime = this.activatedRoute.snapshot.queryParams.st
-            let endTime = this.activatedRoute.snapshot.queryParams.et
-            initObj.player.currentTime(startTime); // jump to start
-            initObj.player.play();    
-            initObj.player.on('timeupdate',  ()=> {
-              if (endTime && initObj.player.currentTime() >= endTime) {
-                initObj.player.pause();
-              }
-            });
-          }
-        }
+
+        // if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+        //   if(this.activatedRoute.snapshot.queryParams.st) {
+        //     let startTime = this.activatedRoute.snapshot.queryParams.st
+        //     let endTime = this.activatedRoute.snapshot.queryParams.et
+        //     initObj.player.currentTime(startTime); // jump to start          
+        //     initObj.player.play();    
+        //     initObj.player.on('timeupdate',  ()=> {
+        //       if (endTime && initObj.player.currentTime() >= endTime) {
+        //         initObj.player.pause();
+        //       }
+        //     });
+        //   }
+        // }
        
         initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
+
+        if(startTime && endTime) {
+          initObj.player.currentTime(startTime); // jump to start  
+          setTimeout(()=>{
+            // initObj.player.autoplay()
+            if(this.videoTag && this.videoTag.nativeElement) {
+              this.videoTag.nativeElement.muted = true
+              this.videoTag.nativeElement.play();
+            } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
+              this.realvideoTag.nativeElement.muted = true
+              this.realvideoTag.nativeElement.play();
+            }
+            
+          },0)
+          
+         // initObj.player.play();    
+          initObj.player.on('timeupdate',  ()=> {
+            if (endTime && initObj.player.currentTime() >= endTime) {
+              initObj.player.pause();
+            }
+          });
+        }
 
       }
     })
