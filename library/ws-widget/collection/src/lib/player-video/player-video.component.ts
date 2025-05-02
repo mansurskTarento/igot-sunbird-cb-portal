@@ -237,7 +237,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
     }
-    console.log('this.widgetData', this.widgetData)
     if (this.widgetData.resumePoint && this.widgetData.resumePoint !== 0) {
       this.realvideoTag.nativeElement.currentTime = this.widgetData.resumePoint
     }
