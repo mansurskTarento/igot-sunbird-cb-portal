@@ -24,6 +24,7 @@ import {
   FacetType,
   FormattedFacets,
   SearchCategory,
+  SearchCommunitiesRequest,
   SearchV4Request,
 } from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
@@ -44,7 +45,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() constructQueryParam = new EventEmitter<string>();
   @Output() applyFilterFromLearn = new EventEmitter<{ [key: string]: any }>();
   @Input() karmayogiBadge: any;
-  @Input() competencyFactet: any;
+  competencyFactet: any;
   @Input() typesOfEvents: any;
 
   private subscription: Subscription = new Subscription();
@@ -110,6 +111,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
+      
       if (this.formattedFacets?.sectorId?.length) {
         const coursesCategory = _.find(this.categoryTypeDup, {
           name: 'courses',
@@ -162,6 +164,19 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           );
         }
       }
+      if (this.formattedFacets[this.competencyAreaNameKey]) {
+        this.competencyFactet = this.formattedFacets[this.competencyAreaNameKey].map(
+          (competency: any) => ({
+            name: competency.name,
+            displayName: this.capitalizeFirstLetter(competency.name),
+            isChecked: false,
+            count: competency.count,
+            competencyTheme: []
+          })
+        );
+      }
+
+
       this.setCategoryType();
     }   
     
@@ -183,33 +198,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
-    //let contentType = ''
-   // this.selectedFilters = {}
-   // console.log('categoryType', this.categoryType)
-  //  if(params && params.f) {
-  //   let formattedParams = JSON.parse(params.f)
-  //   if(Object.keys(formattedParams) && Object.keys(formattedParams).length && formattedParams['primaryCategory']) {
-  //     contentType = formattedParams['primaryCategory']
-      
-  //   }
-  // }
-    // if(contentType.length) {
-    //   this.setCourseCategoryType(contentType)
-    //   this.applyFilterFromLearn.emit(this.selectedFilters);
-    //   this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-    //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
-    //  // this.searchCategory = contentType;
-    // } else {
-
       if(params['q']) {
         this.searchQuery = params['q'];
       }
-      this.searchCategory = params['category'];
       if((this.searchCategory && params['category'] && this.searchCategory !== params['category']) ||
-        !params['category']) {
-       this.selectedFilters = {}
+      !params['category']) {
+        this.selectedFilters = {}
       } 
-
+      this.searchCategory = params['category'];
+      
       if (this.searchCategory) {
         this.categoryType = this.categoryTypeDup.filter(
           (type) => type.name === this.searchCategory
@@ -229,7 +226,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (this.categoryType.length) {
           this.categoryType[0].isChecked = true;
           this.selectedFilters[this.categoryType[0].name] = [
-            this.categoryType[0].name,
+            this.formatCategoryName(this.categoryType[0].name),
           ];
           this.selectedFilterChips = [
             {
@@ -438,42 +435,101 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   
   }
 
-  onCompetencyAreaSelectionFilter(event: MatCheckboxChange,
-    competency: any, ) {
-      const competencyDetails = competency[this.competencyAreaNameKey]
-      if (competencyDetails) {
-      const competencyName = competencyDetails.name
-      competencyDetails['isChecked'] = event.checked
-      if (!this.selectedFilters[this.competencyAreaNameKey]) {
-        this.selectedFilters[this.competencyAreaNameKey] = [];
-      }
-      if (event.checked) {
-        if (!this.selectedFilters[this.competencyAreaNameKey].includes(competencyName)) {
-          this.selectedFilters[this.competencyAreaNameKey].push(competencyName);
-        }
-      } else {
-        this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[
-          this.competencyAreaNameKey
-        ].filter((item: any) => item !== competencyName);
-        const competencyThemes = competency[this.competencyThemeKey]
-        if(competencyThemes) {
-          competencyThemes.forEach((theme: any) => {
-            if(theme.isChecked) {
-             theme.isChecked = false
-              this.selectedFilters[this.competencyThemeKey] = this.selectedFilters[
-                this.competencyThemeKey
-              ].filter((item: any) => item !== theme.name);
-            }
-          })
+  async onCompetencyAreaSelectionFilter(_event: MatCheckboxChange, competency: any, ) {
+    const competencyTheme = await this.fetchCompetencyTheme(competency.name);
+      if (competencyTheme && competencyTheme.length) {
+        const checkTheme = this.competencyFactet.find((areaName: any) => areaName.name === competency.name);
+        if (checkTheme && !checkTheme.competencyTheme.length) {
+          checkTheme.competencyTheme = competencyTheme;
+          checkTheme.showAll = false;
+          checkTheme.filteredLength = competencyTheme.length;
         }
       }
-      this.appliedFilter.emit(this.selectedFilters);
-      this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-      const types = this.categoryTypeDup.map((category) => category.name);
-      if (types.includes(competencyName) && !competencyDetails.isChecked) {
-        this.constructQueryParam.emit('');
+   
+  }
+
+  async fetchCompetencyTheme(competency: any): Promise<any> {
+    let searchRequest = new SearchV4Request([]);
+    let searchRequestCommunity = new SearchCommunitiesRequest([
+      this.competencyThemeKey
+    ]);
+
+    if (this.searchCategory === SearchCategory.Events) {
+      searchRequest.request.query = this.searchQuery;
+      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
+      searchRequest.request.facets = [this.competencyThemeKey];
+      searchRequest.request.filters.contentType = ['Events'];
+    }
+     else if (this.searchCategory === SearchCategory.Communities) {
+      searchRequestCommunity.searchString = this.searchQuery;
+      searchRequestCommunity.filterCriteriaMap[this.competencyAreaNameKey] =
+        competency;
+    } 
+     else if (this.searchCategory === SearchCategory.CaseStudy) {
+      searchRequest.request.query = this.searchQuery;
+      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
+      searchRequest.request.facets = [this.competencyThemeKey];
+      searchRequest.request.filters.courseCategory = ['Case Study']
+    } 
+    else {
+      searchRequest.request.query = this.searchQuery;
+      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
+      searchRequest.request.facets = [this.competencyThemeKey];
+    }
+
+    if (this.searchCategory === SearchCategory.Communities) {
+      const result = await this.searchV3Service.searchCommunity(
+        searchRequestCommunity
+      );
+      let competencyThemeFacet = result.result?.search_results?.facets[
+        this.competencyThemeKey
+      ].length
+        ? {
+            values:
+              result.result?.search_results?.facets[this.competencyThemeKey],
+          }
+        : { values: [] };
+      if (competencyThemeFacet.values.length) {
+        // const searchFacets = result.result.facets || [];
+        const themes = competencyThemeFacet.values.map((item: any) => ({
+            name: item.value,
+            displayName: item.value,
+            isChecked: false,
+            count: item.count || 0,
+            competencyTheme: []
+        })) || [];
+        return themes;
+      }
+    } else {
+      const result = await this.searchV3Service.searchCoursesv4(searchRequest);
+      if (result.result && result.result.facets) {
+        const searchFacets = result.result.facets || [];
+        const themes =
+          searchFacets[0]?.values.map((item: any) => ({
+            name: item.name,
+            displayName: this.capitalizeFirstLetter(item.name),
+            isChecked: false,
+            count: item.count || 0,
+            competencyTheme: [],
+          })) || [];
+        return themes;
       }
     }
+
+    return [];
+  }
+
+  
+  getFilteredThemes(competency: any): any[] {
+    const filteredThemes = competency.competencyTheme.filter((theme: any) =>
+      theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase())
+    );
+    
+    return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4);
+  }
+
+  togoleThemes(competency: any) {
+    competency['showAll'] = !competency['showAll'];
   }
 
   get filtersAppliedCount(): number {
@@ -528,18 +584,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       const category = _.find(facets, { name: item.type });
 
       if (category) {
-        // this.categoryType[0].isChecked = false;
-        // if (_.has(this.selectedFilters, item.type)) {
-        //   _.pull(this.selectedFilters[item.type], this.categoryType[0]?.name);
-        //   if (_.isEmpty(this.selectedFilters[item.type])) {
-        //     delete this.selectedFilters[item.type];
-        //   }
-        // }
-        // this.appliedFilter.emit(this.selectedFilters);
-        // this.selectedFilterChips = this.refactorFilterData(
-        //   this.selectedFilters
-        // );
-        // this.constructQueryParam.emit('');
         this.clearAllFilters();
         return;
       }
@@ -551,7 +595,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (_.has(this.selectedFilters, item.type)) {
           _.pull(this.selectedFilters[item.type], foundFilter.name);
           if (_.isEmpty(this.selectedFilters[item.type])) {
-            delete this.selectedFilters[item.type];
+            // delete this.selectedFilters[item.type];
           }
         }
 
@@ -560,7 +604,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           this.selectedFilters
         );
       }
-    } else if (
+    }
+     else if (
       item.type === this.competencyAreaNameKey ||
       item.type === this.competencyThemeKey ||
       item.type === this.competencySubThemeKey
@@ -572,36 +617,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         if (facets?.length) {
           competency = facets.find(
             (facet: any) =>
-              (facet[item.type]?.name).toLowerCase() ===
+              (facet?.name).toLowerCase() ===
               item?.value.toLowerCase()
           );
         }
       } else {
         if (facets?.length) {
-          competency = facets.find((facet: any) => {
-            if (facet[item.type]) {
-              return facet[item.type].find(
-                (subFacet: any) =>
-                  subFacet?.name.toLowerCase() === item?.value.toLowerCase()
-              );
+          for (const facet of facets) {
+            const matchedSubFacet = facet.competencyTheme?.find(
+              (subFacet: any) => subFacet.name.toLowerCase() === item?.value.toLowerCase()
+            );
+        
+            if (matchedSubFacet) {
+              competency = matchedSubFacet;
+              break; 
             }
-            return false;
-          });
+          }
         }
       }
 
       if (competency) {
-        if (item.type && item.type === this.competencyAreaNameKey) {
-          competency[item.type].isChecked = false;
-        } else {
-          const subFacet = competency[item.type].find(
-            (subFacet: any) =>
-              subFacet?.name.toLowerCase() === item?.value.toLowerCase()
-          );
-          if (subFacet) {
-            subFacet.isChecked = false;
-          }
-        }
+        competency.isChecked = false;
 
         if (this.selectedFilters[item.type]) {
           this.selectedFilters[item.type] = this.selectedFilters[
@@ -610,9 +646,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             (filter: string) =>
               filter.toLowerCase() !== item?.value.toLowerCase()
           );
-          if (this.selectedFilters[item.type].length === 0) {
-            delete this.selectedFilters[item.type];
-          }
+          // if (this.selectedFilters[item.type].length === 0) {
+          //   delete this.selectedFilters[item.type];
+          // }
         }
 
         this.appliedFilter.emit(this.selectedFilters);
@@ -656,7 +692,22 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.selectedFilterChips = this.refactorFilterData(
           this.selectedFilters
         );
-      } else {
+      }
+      else if (foundFilter && item.type !== 'sectorId') {
+        foundFilter.isChecked = false;
+        if (_.has(this.selectedFilters, item.type)) {
+          _.pull(this.selectedFilters[item.type], foundFilter.name);
+          if (_.isEmpty(this.selectedFilters[item.type])) {
+            // delete this.selectedFilters[item.type];
+          }
+        }
+
+        this.appliedFilter.emit(this.selectedFilters);
+        this.selectedFilterChips = this.refactorFilterData(
+          this.selectedFilters
+        );
+      }
+      else {
         const foundCategory = _.find(this.categoryTypeDup, {
           name: SearchCategory.Courses,
         });
@@ -707,16 +758,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       });
     });
 
-    _.forEach(this.competencyFactet, (competency) => {
-      competency[this.competencyAreaNameKey].isChecked = false;
-      _.forEach(competency[this.competencyThemeKey], (theme) => {
-        theme.isChecked = false;
-      });
-      _.forEach(competency[this.competencySubThemeKey], (subTheme) => {
-        subTheme.isChecked = false;
-      });
-    });
-
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = [];
     this.constructQueryParam.emit('');
@@ -756,23 +797,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
 
-  getFilteredThemes(competency: any): any[] {
-    let filteredThemes: any[] = []
-    if(competency && competency[this.competencyThemeKey]) {
-      filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
-        theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
-    }
-    competency['filteredLength'] = filteredThemes.length
-    return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
-  }
+  // getFilteredThemes(competency: any): any[] {
+  //   let filteredThemes: any[] = []
+  //   if(competency && competency[this.competencyThemeKey]) {
+  //     filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
+  //       theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
+  //   }
+  //   competency['filteredLength'] = filteredThemes.length
+  //   return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
+  // }
 
-  togoleThemes(competency: any) {
-    if(competency.showAll) {
-      competency['showAll'] = false
-    } else {
-      competency['showAll'] = true
-    }
-  }
 
   // getFilteredSubThemes(competency: any): any[] {
   //   let filteredSubThemes: any[] = []
@@ -834,6 +868,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       );
   }
 
+
   async onSectorSelectionFilter(_event: any, _sector: any): Promise<void> {
       const subsectors = await this.fetchSubSectorsForSector(_sector.name);
       if (subsectors && subsectors.length) {
@@ -869,5 +904,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     return [];
-}
+  }
+
+  private formatCategoryName(name: string): string {
+    return name
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 }
