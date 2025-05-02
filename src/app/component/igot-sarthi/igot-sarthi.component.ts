@@ -2,9 +2,7 @@ import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, O
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
-import { environment } from '../../../environments/environment';
-import { take } from 'lodash';
-import { interval } from 'rxjs';
+import { environment } from '../../../environments/environment';  
 
 @Component({
   selector: 'ws-app-igot-sarthi',

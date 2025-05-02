@@ -7,9 +7,9 @@
           <img src="/assets/icons/agent.png" class="bounce-icon" />
         </div> -->
         <div cdkDrag #dragItem class="draggable-icon" 
-        (cdkDragEnded)="onDragEnded()"
+        (cdkDragEnded)="onDragEnded($event)"
         [cdkDragFreeDragPosition]="iconPosition"
-        (cdkDragMoved)="onDragMoved($event)">
+        (cdkDragMoved)="onDragMoved()">
           <div class="icon-container chat-ai-icon">
             <div class="animated-border-box-glow"></div>
             <div class="animated-border-box">
