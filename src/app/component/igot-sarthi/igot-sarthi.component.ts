@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
 import { environment } from '../../../environments/environment';
+import { take } from 'lodash';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'ws-app-igot-sarthi',
@@ -81,6 +83,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   aiSearchResult:any = {}
 
   aiSearchResultArr:any = []
+  displayedText = '';
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
@@ -93,7 +96,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     private router: Router) { }
 
   ngOnInit() {
-    console.log('in')
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -101,7 +103,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    console.log('this.userInfo', this.userInfo)
     // this.aiGlobalSearch()
     this.checkForApiCalls()
     this.enableScroll()
