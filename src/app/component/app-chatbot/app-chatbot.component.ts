@@ -4,7 +4,7 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop'
+import { CdkDragEnd } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'ws-app-chatbot',
