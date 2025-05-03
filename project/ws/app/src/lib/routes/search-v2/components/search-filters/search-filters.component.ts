@@ -216,6 +216,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy {
       this.userFilters.push(reqfilter)
       this.myFilterArray.push(reqfilter)
     }
+    console.log('this.filteroptions--', this.filteroptions )
   }
 
   ngOnDestroy() {
