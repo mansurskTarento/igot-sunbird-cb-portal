@@ -314,6 +314,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchCourses() {
+  
     this.searchRequestCourse.request.query = this.statedata?.param;
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestCourse
@@ -323,7 +324,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
       this.coursesFacets = result.result?.facets || [];
-
+     // this.combinedFacets  = JSON.parse(JSON.stringify((result.result?.facets || [])))
+     this.combinedFacets = []
+      this.combinedFacets = 
+      [...this.combinedFacets, (result.result?.facets || [])]
       // this.courseSearchResults.forEach((course: any) => {
       //   course?.organisation?.forEach((element: any) => {
       //     this.allResultsDepartmentName.add(element);
@@ -422,7 +426,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  async getCompetencyHierichy() {
+  async getCompetencyHierichy(filterFlag?:any) {
     const competency = ['Behavioural', 'Functional', 'Domain'];
     let competencyFactet: any = [];
     let competencyThemeFacet: any = [];
@@ -430,17 +434,31 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     let result: any;
     for (const element of competency) {
       if (this.seeAllResult === SearchCategory.Courses) {
-        const searchRequestCourse = new SearchV4Request([
-          this.competencyAreaNameKey,
-          this.competencyThemeKey,
-          this.competencySubThemeKey,
-        ]);
-        searchRequestCourse.request.query = this.statedata?.param;
-        searchRequestCourse.request.filters[this.competencyAreaNameKey] =
-          element;
-        result = await this.searchV3Service.searchCoursesv4(
-          searchRequestCourse
-        );
+        if(filterFlag) {
+          // const searchRequestCourse = new SearchV4Request([
+          //   this.competencyAreaNameKey,
+          //   this.competencyThemeKey,
+          //   this.competencySubThemeKey,
+          // ]);
+          this.searchRequestCourse.request.query = this.statedata?.param;
+          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+            element;
+          result = await this.searchV3Service.searchCoursesv4(
+            this.searchRequestCourse
+          );
+        } else {
+          const searchRequestCourse = new SearchV4Request([
+            this.competencyAreaNameKey,
+            this.competencyThemeKey,
+            this.competencySubThemeKey,
+          ]);
+          searchRequestCourse.request.query = this.statedata?.param;
+          searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+            element;
+          result = await this.searchV3Service.searchCoursesv4(
+            searchRequestCourse
+          );
+        }
         competencyThemeFacet = result.result?.facets.find(
           (facet: any) => facet.name === this.competencyThemeKey
         );
@@ -554,7 +572,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async applySearchFilter(selectedFilters: { [key: string]: any }) {
-    
     this.searchContentLoader = true;
     this.searchPeopleLoader = true;
     
@@ -566,6 +583,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
+    
+    // this.searchRequestCourse.request.filters.courseCategory = selectedFilters
 
     if (this.searchSortFilter === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
@@ -752,6 +771,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       await this.searchEvents();
       this.searchPeople();
       this.searchcommunities();
+    }
+    if(selectedFilters && selectedFilters.length) {
+      this.searchRequestCourse.request.filters.courseCategory = selectedFilters
+      this.getCompetencyHierichy(true)
+    } else if(Object.keys(selectedFilters).length) {
+      this.getCompetencyHierichy(true)
+    } else {
+      this.getCompetencyHierichy(false)
     }
 
     this.searchContentLoader = false;
