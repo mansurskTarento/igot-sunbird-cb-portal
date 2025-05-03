@@ -472,7 +472,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.constructQueryParam.emit('');
       }
     } else {
+      console.log('this.selectedFilters',this.selectedFilters)
+      console.log('competency', competency)
       if(Object.keys(competency).length && competency.name) {
+        console.log(this.selectedFilters[this.competencyAreaNameKey].filter((value:any) =>  value !== competency.name))
         this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[this.competencyAreaNameKey].filter((value:any) =>  value !== competency.name)
         this.selectedFilters[this.competencyThemeKey] = []
         
