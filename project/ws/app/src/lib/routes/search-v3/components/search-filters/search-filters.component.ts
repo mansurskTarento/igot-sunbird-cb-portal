@@ -166,9 +166,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
-
-    console.log('this.selectedFilters', this.selectedFilters)
-    console.log('selectedFilterChips', this.selectedFilterChips)
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
 
   }
@@ -411,8 +408,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-    console.log('this.selectedFilters', this.selectedFilters)
-    console.log('selectedFilterChips', this.selectedFilterChips)
 
     const types = this.categoryTypeDup.map((category) => category.name);
     if (types.includes(type) && !option.isChecked) {
@@ -477,7 +472,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.constructQueryParam.emit('');
       }
     } else {
-      console.log('this.competencyThemeKey, ',this.competencyThemeKey)
       if(Object.keys(competency).length && competency.name) {
         this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[this.competencyAreaNameKey].filter((value:any) =>  value !== competency.name)
         this.selectedFilters[this.competencyThemeKey] = []
@@ -497,7 +491,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       }
       this.appliedFilter.emit(this.selectedFilters);
       this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-      console.log('this.selectedFilters', this.selectedFilters)
     }
   }
 
