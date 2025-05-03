@@ -428,7 +428,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async getCompetencyHierichy(filterFlag?:any) {
-    console.log('filterFlag--', filterFlag)
     const competency = ['Behavioural', 'Functional', 'Domain'];
     let competencyFactet: any = [];
     let competencyThemeFacet: any = [];
@@ -442,7 +441,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           //   this.competencyThemeKey,
           //   this.competencySubThemeKey,
           // ]);
-          console.log('element', element)
           this.searchRequestCourse.request.query = this.statedata?.param;
           this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
             element;
@@ -640,7 +638,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestPeoples.offset = 0;
 
     this.resetPagination();
-    console.log('selectedFilters', selectedFilters)
     Object.keys(selectedFilters).forEach((key) => {
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
         if (key === FacetType.AvgRating) {
@@ -785,7 +782,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.getCompetencyHierichy(false)
     }
-    console.log('selectedFilters--', selectedFilters)
     this.searchContentLoader = false;
     this.searchPeopleLoader = false;
   }
@@ -1461,7 +1457,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    console.log('this.searchRequestCourse', this.searchRequestCourse)
 
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
