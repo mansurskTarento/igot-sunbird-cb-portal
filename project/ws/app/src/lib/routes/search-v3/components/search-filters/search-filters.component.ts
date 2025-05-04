@@ -242,8 +242,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }));
       }
     // }
-    console.log('this.this.formattedFacets', this.formattedFacets)
-    console.log('this.categoryType', this.categoryType)
     
     
   }
