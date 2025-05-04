@@ -121,6 +121,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   filtersChipFromLearn: string[] = [];
   isExploreContentTab = false;
   applySelectedFilters:any = []
+  compentencyKeyExist = false
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -141,8 +142,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey];
-
+    console.log(' this.compentencyKey ',  this.compentencyKey )
     this.competencyAreaNameKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencyArea}`;
+    console.log(' this.competencyAreaNameKey ',  this.competencyAreaNameKey )
     this.competencyThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencyTheme}`;
     this.competencySubThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`;
   }
@@ -325,6 +327,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
       this.coursesFacets = result.result?.facets || [];
+      console.log('resuult', result)
+      console.log('this.courseFacets', this.coursesFacets)
+      console.log('this.combinedFacets', this.combinedFacets)
      // this.combinedFacets  = JSON.parse(JSON.stringify((result.result?.facets || [])))
      this.combinedFacets = []
       this.combinedFacets = 
@@ -442,7 +447,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           //   this.competencySubThemeKey,
           // ]);
           this.searchRequestCourse.request.query = this.statedata?.param;
-          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] = 
             element;
           result = await this.searchV3Service.searchCoursesv4(
             this.searchRequestCourse
@@ -573,10 +578,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async applySearchFilter(selectedFilters: { [key: string]: any }) {
+    console.log('this.searchRequestCourse', this.searchRequestCourse)
     this.applySelectedFilters = selectedFilters
     this.searchContentLoader = true;
     this.searchPeopleLoader = true;
-    
+    this.compentencyKeyExist = false
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
       this.competencyThemeKey,
@@ -585,7 +591,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
-    
+    console.log('this.searchRequestCourse', this.searchRequestCourse)
     // this.searchRequestCourse.request.filters.courseCategory = selectedFilters
 
     if (this.searchSortFilter === SortType.MostRelevent) {
@@ -664,6 +670,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestCommunities.filterCriteriaMap[
             this.competencyAreaNameKey
           ] = selectedFilters[key];
+          this.compentencyKeyExist = true
         } else if (key === this.competencyThemeKey) {
           this.searchRequestCourse.request.filters[this.competencyThemeKey] =
             selectedFilters[key];
@@ -672,6 +679,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestCommunities.filterCriteriaMap[
             this.competencyThemeKey
           ] = selectedFilters[key];
+          this.compentencyKeyExist = true
         } else if (key === this.competencySubThemeKey) {
           this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
             selectedFilters[key];
@@ -680,6 +688,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestCommunities.filterCriteriaMap[
             this.competencySubThemeKey
           ] = selectedFilters[key];
+          this.compentencyKeyExist = true
         } else if (key === SearchCategory.Events) {
           this.constructQueryParam('events');
           this.seeAllResult = SearchCategory.Events;
@@ -776,14 +785,18 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
     if(selectedFilters && selectedFilters.length) {
       this.searchRequestCourse.request.filters.courseCategory = selectedFilters
-      this.getCompetencyHierichy(true)
-    } else if(Object.keys(selectedFilters).length) {
+      if(this.compentencyKeyExist) {
+        this.getCompetencyHierichy(true)
+      }
+    } else if(this.compentencyKeyExist) {
       this.getCompetencyHierichy(true)
     } else {
       this.getCompetencyHierichy(false)
     }
     this.searchContentLoader = false;
     this.searchPeopleLoader = false;
+    console.log('this.searchRequestCourse.request---', this.searchRequestCourse.request)
+
   }
 
   private checkIfExploreContentTab(): void {
@@ -1258,7 +1271,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestEvents.request.limit = this.commonPageResultSize;
       this.searchRequestCourse.request.limit = this.commonPageResultSize;
     }
-
+    console.log('this.applySelectedFilters--', this.applySelectedFilters)
+    console.log('this.searchRequestCourse.request.filters', this.searchRequestCourse.request.filters)
     Object.keys(this.applySelectedFilters).forEach((key) => {
       if (this.applySelectedFilters[key] && Array.isArray(this.applySelectedFilters[key])) {
         if (key === FacetType.AvgRating) {
@@ -1277,7 +1291,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         } else if (key === FacetType.Organization) {
           this.searchRequestCourse.request.filters.organisation =
             this.applySelectedFilters[key];
-        } else if (key === this.competencyAreaNameKey) {
+        } else if (key === this.competencyAreaNameKey) {          
           this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
             this.applySelectedFilters[key];
           this.searchRequestEvents.request.filters[this.competencyAreaNameKey] =
@@ -1435,6 +1449,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchcommunities();
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+        console.log('this.searchRequestCourse.request.filters', this.searchRequestCourse.request.filters)
         await this.searchCourses();
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
