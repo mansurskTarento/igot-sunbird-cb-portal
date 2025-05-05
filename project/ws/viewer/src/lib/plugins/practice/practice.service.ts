@@ -252,18 +252,18 @@ export class PracticeService {
     return requestData
   }
 
-  getSection(sectionId: string, forPreview?: any, postReqData?: any): Observable<any> {
+  getSection(sectionId: string, forPreview?: any, postReqData?: any, collectionId?: any): Observable<any> {
     if (forPreview && !forcreator) {
       return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_READ, postReqData).pipe(retry(2))
     }
-      if (forcreator) {
-        // tslint:disable-next-line: max-line-length
-        return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`).pipe(retry(2))
-      }
-        // tslint:disable-next-line: max-line-length
-        return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}`).pipe(retry(2))
-
+    if (forcreator) {
+      // tslint:disable-next-line: max-line-length
+      return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`).pipe(retry(2))
+    }
+    // tslint:disable-next-line: max-line-length
+    return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`).pipe(retry(2))
   }
+  
   getQuestions(identifiers: string[], assessmentId: string,
                forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
     const data = {
@@ -301,13 +301,12 @@ export class PracticeService {
     if (forPreview && !forcreator) {
       return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_READ, postReqData).pipe(retry(2))
     }
-      if (forcreator) {
-        // tslint:disable-next-line: max-line-length
-        return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?editMode=true`).pipe(retry(2))
-      }
-        // tslint:disable-next-line: max-line-length
-        return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}`).pipe(retry(2))
-
+    if (forcreator) {
+      // tslint:disable-next-line: max-line-length
+      return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?editMode=true`).pipe(retry(2))
+    }
+    // tslint:disable-next-line: max-line-length
+    return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}`).pipe(retry(2))
   }
   getQuestionsV4(identifiers: string[], assessmentId: string,
                  forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
