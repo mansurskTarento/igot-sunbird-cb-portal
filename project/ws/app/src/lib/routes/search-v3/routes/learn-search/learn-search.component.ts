@@ -322,8 +322,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (result.result && result.result.content) {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
-      console.log('this.courseSearchTotalCount--', this.courseSearchTotalCount)
-      console.log('courseSearchResults--', this.courseSearchResults)
       this.coursesFacets = result.result?.facets || [];
       // console.log('resuult', result)
       // console.log('this.courseFacets', this.coursesFacets)

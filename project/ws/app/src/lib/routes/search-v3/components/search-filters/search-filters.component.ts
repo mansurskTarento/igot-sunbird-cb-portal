@@ -985,8 +985,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getSelectedFilter(item:any) {
-    console.log('item', item)
-    console.log('this.selectedFilters', this.selectedFilters)
     if(Object.keys(this.selectedFilters).length) {
       return this.filterValueExists(this.selectedFilters, item?.name)
     }    
