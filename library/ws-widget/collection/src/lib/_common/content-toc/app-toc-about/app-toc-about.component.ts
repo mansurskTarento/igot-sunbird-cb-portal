@@ -213,36 +213,46 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       this.disableCertificate = true
     }
 
-    if (this.content?.sectorDetails_v1 && typeof this.content?.sectorDetails_v1 === 'string') {
-      this.content.sectorDetails_v1 = JSON.parse(this.content.sectorDetails_v1);
-      if (this.content.sectorDetails_v1.length) {
-        this.sectorsList = Array.from(
-          new Map(
-            this.content.sectorDetails_v1
-              .filter((item: any) => item.sectorName) 
-              .map((item: any) => [
-                item.sectorName,
-                { sectorId: item.sectorId, sectorName: item.sectorName },
-              ])
-          ).values()
-        );
-
-        this.subSectorsList = Array.from(
-          new Map(
-            this.content.sectorDetails_v1
-              .filter((item: any) => item.subSectorName) 
-              .map((item: any) => [
-                item.subSectorName,
-                {
-                  subSectorId: item.subSectorId,
-                  subSectorName: item.subSectorName,
-                },
-              ])
-          ).values()
-        );
+    if (this.content?.sectorDetails_v1) {
+      // Parse string to array if needed
+      let sectorDetailsArray = this.content.sectorDetails_v1
+ 
+      // If it's a string, try to parse it into an array
+      if (typeof sectorDetailsArray === 'string') {
+        try {
+          sectorDetailsArray = JSON.parse(sectorDetailsArray)
+          this.content.sectorDetails_v1 = sectorDetailsArray
+        } catch (e) {
+          console.error('Error parsing sectorDetails_v1:', e)
+          sectorDetailsArray = []
+        }
       }
-
+ 
+      // Process only if we have a valid array with items
+      if (Array.isArray(sectorDetailsArray) && sectorDetailsArray.length > 0) {
+        this.sectorsList = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.sectorName && item?.sectorId)
+            .map((item: any) => ({
+              sectorId: item.sectorId,
+              sectorName: item.sectorName
+            })),
+          'sectorName'
+        )
+ 
+        this.subSectorsList = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.subSectorName && item?.subSectorId)
+            .map((item: any) => ({
+              subSectorId: item.subSectorId,
+              subSectorName: item.subSectorName
+            })),
+          'subSectorName'
+        )
+      }
     }
+ 
+
   }
 
   ngAfterViewInit(): void {
