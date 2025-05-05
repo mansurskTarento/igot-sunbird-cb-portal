@@ -74,8 +74,12 @@
                     <ng-container
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> {{ 'learnsearch.content' |
-                                translate:{ count: courseSearchTotalCount } }}</p>
+                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> 
+                                <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' |
+                                translate:{ count: courseSearchTotalCount } }}</span>
+                                <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' |
+                                    translate:{ count: courseSearchTotalCount } }}</span>
+                            </p>
                             <ng-container *ngFor="let course of courseSearchResults; let index = index">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
                                     (telemetry)="applyTelemetry($event, index)"

@@ -109,7 +109,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    
     if (changes['newfacets'] && changes['newfacets'].currentValue) {
+      
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -185,6 +187,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
+    this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+
   }
 
   formatSectorName(name: string): string {
@@ -353,6 +357,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         });
         return acc;
       }, {} as { [key: string]: { [key: string]: number } });
+    
 
     Object.entries(mergedData).forEach(([key, values]) => {
       if (key === FacetType.Duration) {
@@ -468,6 +473,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           checkTheme.showAll = false;
           checkTheme.filteredLength = competencyTheme.length;
         }
+        
       }
    
   }
@@ -538,7 +544,28 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           })) || [];
         return themes;
       }
-    }
+    } 
+    // else {
+    //   if(Object.keys(competency).length && competency.name) {
+    //     this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[this.competencyAreaNameKey].filter((value:any) =>  value !== competency.name)
+    //     this.selectedFilters[this.competencyThemeKey] = []
+        
+    //     // const competencyThemes = competency[this.competencyThemeKey]
+    //     // if(competencyThemes) {
+    //     //   competencyThemes.forEach((theme: any) => {
+    //     //     if(theme.isChecked) {
+    //     //      theme.isChecked = false
+    //     //       this.selectedFilters[this.competencyThemeKey] = this.selectedFilters[
+    //     //         this.competencyThemeKey
+    //     //       ].filter((item: any) => item !== theme.name);
+    //     //     } 
+    //     //   })
+    //     // }
+        
+    //   }
+    //   this.appliedFilter.emit(this.selectedFilters);
+    //   this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+    // }
 
     return [];
   }
@@ -956,4 +983,23 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.appliedFilter.emit(this.selectedFilters);
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
   }
+
+  getSelectedFilter(item:any) {
+    console.log('item', item)
+    console.log('this.selectedFilters', this.selectedFilters)
+    if(Object.keys(this.selectedFilters).length) {
+      return this.filterValueExists(this.selectedFilters, item?.name)
+    }    
+  }
+
+  filterValueExists(obj:any, target:any):any {
+    if (Array.isArray(obj)) {
+      return obj.some(item => this.filterValueExists(item, target));
+    } else if (obj !== null && typeof obj === 'object') {
+      return Object.values(obj).some(value => this.filterValueExists(value, target));
+    } else {
+      return obj === target;
+    }
+  }
+  
 }
