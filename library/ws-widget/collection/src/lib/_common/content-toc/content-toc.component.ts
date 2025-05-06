@@ -21,6 +21,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   tabChangeValue: any = ''
   @Input() content!: any
+  @Input() contentReadData!: any
   @Input() initialRouteData: any
   @Input() changeTab = false
   routeSubscription: Subscription | null = null
