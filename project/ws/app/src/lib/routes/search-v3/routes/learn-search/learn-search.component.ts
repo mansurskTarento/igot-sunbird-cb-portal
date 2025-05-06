@@ -783,8 +783,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     
     this.deleteFilterKeys();
-
-    // debugger
     if (this.shouldReturnFromHere) {
       this.shouldReturnFromHere = false
       return;
