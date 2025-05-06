@@ -1266,119 +1266,119 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestEvents.request.limit = this.commonPageResultSize;
       this.searchRequestCourse.request.limit = this.commonPageResultSize;
     }
-    Object.keys(this.applySelectedFilters).forEach((key) => {
-      if (this.applySelectedFilters[key] && Array.isArray(this.applySelectedFilters[key])) {
-        if (key === FacetType.AvgRating) {
-          const ratings = this.applySelectedFilters[key]
-            .map((val: string) => parseFloat(val.split(' ')[0]))
-            .filter((num: any) => !isNaN(num));
+    // Object.keys(this.applySelectedFilters).forEach((key) => {
+    //   if (this.applySelectedFilters[key] && Array.isArray(this.applySelectedFilters[key])) {
+    //     if (key === FacetType.AvgRating) {
+    //       const ratings = this.applySelectedFilters[key]
+    //         .map((val: string) => parseFloat(val.split(' ')[0]))
+    //         .filter((num: any) => !isNaN(num));
 
-          if (ratings.length > 0) {
-            this.searchRequestCourse.request.filters.avgRating = {
-              '>=': String(Math.min(...ratings)),
-            };
-          }
-        } else if (key === FacetType.Language) {
-          this.searchRequestCourse.request.filters.language =
-            this.applySelectedFilters[key];
-        } else if (key === FacetType.Organization) {
-          this.searchRequestCourse.request.filters.organisation =
-            this.applySelectedFilters[key];
-        } else if (key === this.competencyAreaNameKey) {          
-          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencyAreaNameKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencyAreaNameKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === this.competencyThemeKey) {
-          this.searchRequestCourse.request.filters[this.competencyThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencyThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencyThemeKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === this.competencySubThemeKey) {
-          this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencySubThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencySubThemeKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === SearchCategory.Events) {
-          this.constructQueryParam('events');
-          this.seeAllResult = SearchCategory.Events;
-        } else if (key === SearchCategory.Courses) {
-          this.constructQueryParam('courses');
-          this.seeAllResult = SearchCategory.Courses;
-        } else if (key === 'Case Study') {
-          this.searchRequestCourse.request.filters.sectorId = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === SearchCategory.People) {
-          this.constructQueryParam('peoples');
-          this.seeAllResult = SearchCategory.People;
-        } else if (key === SearchCategory.Communities) {
-          this.constructQueryParam('communities');
-          this.seeAllResult = SearchCategory.Communities;
-        } else if (key === 'typeOfEvents') {
-            const currentEpochTime = moment().valueOf();
-            // const endOfDayEpochTime = moment().endOf('day').valueOf();
-            const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
-            this.resetEventsTypesRequest()
-            if (this.applySelectedFilters[key][0] === 'live') {
-              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
-                '<=': currentEpochTime,
-              };
-              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
-                '>=': currentEpochTime,
-              };
-            } else if (this.applySelectedFilters[key][0] === 'upcoming') {
-              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
-                '>=': tomorrowEpochTime,
-              };
-            } else if (this.applySelectedFilters[key][0] === 'past events') {
-              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
-                '<=': currentEpochTime,
-              };
-            }
-        } else if (key === 'competencyArea') {
-          this.searchRequestCommunities.filterCriteriaMap.competencyArea = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'orgName') {
-          this.searchRequestCommunities.filterCriteriaMap.orgName = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'topicName') {
-          this.searchRequestCommunities.filterCriteriaMap.topicName = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'profileDetails.professionalDetails.designation') {
-          this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
-        } else if (key === 'rootOrgName') {
-          this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
-        } 
-        else if (key === 'sourceName') {
-          this.searchRequestEvents.request.filters.sourceName = [
-            ...this.applySelectedFilters[key],
-          ];
-        }
-        else if (key === 'resourceType') {
-          this.searchRequestEvents.request.filters.resourceType = [
-            ...this.applySelectedFilters[key],
-          ];
-        }
-         else {
-          this.searchRequestCourse.request.filters.courseCategory!.push(
-            ...this.applySelectedFilters[key]
-          );
-        }
-      }
-    });
+    //       if (ratings.length > 0) {
+    //         this.searchRequestCourse.request.filters.avgRating = {
+    //           '>=': String(Math.min(...ratings)),
+    //         };
+    //       }
+    //     } else if (key === FacetType.Language) {
+    //       this.searchRequestCourse.request.filters.language =
+    //         this.applySelectedFilters[key];
+    //     } else if (key === FacetType.Organization) {
+    //       this.searchRequestCourse.request.filters.organisation =
+    //         this.applySelectedFilters[key];
+    //     } else if (key === this.competencyAreaNameKey) {          
+    //       this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestEvents.request.filters[this.competencyAreaNameKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestCommunities.filterCriteriaMap[
+    //         this.competencyAreaNameKey
+    //       ] = this.applySelectedFilters[key];
+    //     } else if (key === this.competencyThemeKey) {
+    //       this.searchRequestCourse.request.filters[this.competencyThemeKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestEvents.request.filters[this.competencyThemeKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestCommunities.filterCriteriaMap[
+    //         this.competencyThemeKey
+    //       ] = this.applySelectedFilters[key];
+    //     } else if (key === this.competencySubThemeKey) {
+    //       this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestEvents.request.filters[this.competencySubThemeKey] =
+    //         this.applySelectedFilters[key];
+    //       this.searchRequestCommunities.filterCriteriaMap[
+    //         this.competencySubThemeKey
+    //       ] = this.applySelectedFilters[key];
+    //     } else if (key === SearchCategory.Events) {
+    //       // this.constructQueryParam('events');
+    //       this.seeAllResult = SearchCategory.Events;
+    //     } else if (key === SearchCategory.Courses) {
+    //       // this.constructQueryParam('courses');
+    //       this.seeAllResult = SearchCategory.Courses;
+    //     } else if (key === 'Case Study') {
+    //       this.searchRequestCourse.request.filters.sectorId = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     } else if (key === SearchCategory.People) {
+    //       // this.constructQueryParam('peoples');
+    //       this.seeAllResult = SearchCategory.People;
+    //     } else if (key === SearchCategory.Communities) {
+    //       // this.constructQueryParam('communities');
+    //       this.seeAllResult = SearchCategory.Communities;
+    //     } else if (key === 'typeOfEvents') {
+    //         const currentEpochTime = moment().valueOf();
+    //         // const endOfDayEpochTime = moment().endOf('day').valueOf();
+    //         const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
+    //         this.resetEventsTypesRequest()
+    //         if (this.applySelectedFilters[key][0] === 'live') {
+    //           this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
+    //             '<=': currentEpochTime,
+    //           };
+    //           this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
+    //             '>=': currentEpochTime,
+    //           };
+    //         } else if (this.applySelectedFilters[key][0] === 'upcoming') {
+    //           this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
+    //             '>=': tomorrowEpochTime,
+    //           };
+    //         } else if (this.applySelectedFilters[key][0] === 'past events') {
+    //           this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
+    //             '<=': currentEpochTime,
+    //           };
+    //         }
+    //     } else if (key === 'competencyArea') {
+    //       this.searchRequestCommunities.filterCriteriaMap.competencyArea = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     } else if (key === 'orgName') {
+    //       this.searchRequestCommunities.filterCriteriaMap.orgName = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     } else if (key === 'topicName') {
+    //       this.searchRequestCommunities.filterCriteriaMap.topicName = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     } else if (key === 'profileDetails.professionalDetails.designation') {
+    //       this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
+    //     } else if (key === 'rootOrgName') {
+    //       this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
+    //     } 
+    //     else if (key === 'sourceName') {
+    //       this.searchRequestEvents.request.filters.sourceName = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     }
+    //     else if (key === 'resourceType') {
+    //       this.searchRequestEvents.request.filters.resourceType = [
+    //         ...this.applySelectedFilters[key],
+    //       ];
+    //     }
+    //      else {
+    //       this.searchRequestCourse.request.filters.courseCategory!.push(
+    //         ...this.applySelectedFilters[key]
+    //       );
+    //     }
+    //   }
+    // });
 
     if (event === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
@@ -1463,8 +1463,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchEvents();
       }
     }
-
-
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
     this.searchPeopleLoader = false
