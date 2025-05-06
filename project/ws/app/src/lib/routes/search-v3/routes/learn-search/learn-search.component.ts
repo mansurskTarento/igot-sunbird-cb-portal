@@ -759,6 +759,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
+        else if (key === 'sectorDetails_v1.sectorName') {
+          this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'] = [
+            ...selectedFilters[key],
+          ];
+        }
          else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -1153,6 +1158,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         .length === 0
     ) {
       delete this.searchRequestCourse.request.filters.sectorId;
+    }
+    if (
+      this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'] &&
+      this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName']
+        .length === 0
+    ) {
+      delete this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'];
     }
     if (
       this.searchRequestCourse.request.filters.subSectorId &&

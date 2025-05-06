@@ -177,7 +177,7 @@
       </ng-container>
 
     <div class="sector-filter"
-    *ngIf="searchCategory && formattedFacets && formattedFacets['sectorId'] && formattedFacets['sectorId'].length">
+    *ngIf="searchCategory && formattedFacets && formattedFacets['sectorId'] && formattedFacets['sectorId'].length && searchCategory === 'case-study'">
     <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}</p>
     <mat-accordion class="filter-section margin-bottom-m">
         <ng-container *ngFor="let sector of sectorFilters">
@@ -253,6 +253,34 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formattedFacets && formattedFacets['sectorDetails_v1.sectorName'] && 
+        formattedFacets['sectorDetails_v1.sectorName'].length && (searchCategory && searchCategory !== 'case-study')">
+        <div class="sectorNames-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorDetails_v1.sectorName'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQuerySectorNames">
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredSectorNames">
+                    <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
+                        (change)="onSelectionFilter($event, options, 'sectorDetails_v1.sectorName')">
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name + ' (' + options.count + ')'}}
+                        </span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredSectorNames?.length > 3)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('sectorDetails_v1.sectorName')">
+                {{ showAllSectorNames ? 'See Less' : 'See More' }}
+            </div>
         </div>
     </ng-container>
 

@@ -35,6 +35,7 @@ export class RequestParams {
       'courseCategory',
       'mimeType',
       'contentId',
+      'sectorDetails_v1'
     ];
     this.facets = [...SearchOthersFacet, ...competenciesKey];
     this.query = '';
@@ -91,6 +92,7 @@ export const SearchOthersFacet = [
   'organisation',
   'sectorId',
   'courseCategory',
+  'sectorDetails_v1.sectorName',
 ];
 
 // Events
@@ -202,6 +204,7 @@ export enum FacetType {
   Designation = 'designation',
   SourceName = 'sourceName',
   courseCategory = 'courseCategory',
+  sectorNames_v1 = 'sectorDetails_v1.sectorName',
 }
 
 export enum SortType {
