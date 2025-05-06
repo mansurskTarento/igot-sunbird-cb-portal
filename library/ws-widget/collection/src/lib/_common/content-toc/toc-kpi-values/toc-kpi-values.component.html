@@ -95,22 +95,22 @@
 
         <div class="flex flex-col kpi-values items-center gap-2">
             <img src="/assets/icons/toc/free.svg" width="20px" alt="free course image" />
-            <div class="text-xs" *ngIf="!content?.exclusiveContent" >{{ 'apptochome.free' | translate }} </div>
-            <div class="text-xs" *ngIf="content?.exclusiveContent" >{{ 'apptochome.paidContent' | translate }} </div>
+            <div class="text-xs" *ngIf="!contentReadData?.exclusiveContent" >{{ 'apptochome.free' | translate }} </div>
+            <div class="text-xs" *ngIf="contentReadData?.exclusiveContent" >{{ 'apptochome.paidContent' | translate }} </div>
         </div>
 
-        <div class="flex flex-col kpi-values items-center gap-2" *ngIf="content?.learningMode">
-            <img *ngIf="content?.learningMode?.toLowerCase() != 'instructor led'" src="/assets/icons/toc/self-learning.svg" width="20px" alt="free course image" />
-            <img *ngIf="content?.learningMode?.toLowerCase() === 'instructor led'" src="/assets/icons/toc/instructor-led.svg" width="20px" alt="instructor led image" />
+        <div class="flex flex-col kpi-values items-center gap-2" *ngIf="contentReadData?.learningMode">
+            <img *ngIf="contentReadData?.learningMode?.toLowerCase() != 'instructor led'" src="/assets/icons/toc/self-learning.svg" width="20px" alt="free course image" />
+            <img *ngIf="contentReadData?.learningMode?.toLowerCase() === 'instructor led'" src="/assets/icons/toc/instructor-led.svg" width="20px" alt="instructor led image" />
             <div class="text-xs" >
-                <span *ngIf="content?.learningMode?.toLowerCase() === 'instructor led'">{{ 'apptocsinglepage.instructorLed' | translate }}</span>
-                <span *ngIf="content?.learningMode?.toLowerCase() != 'instructor led'">{{ 'apptocsinglepage.selfLearning' | translate }}</span>
+                <span *ngIf="contentReadData?.learningMode?.toLowerCase() === 'instructor led'">{{ 'apptocsinglepage.instructorLed' | translate }}</span>
+                <span *ngIf="contentReadData?.learningMode?.toLowerCase() != 'instructor led'">{{ 'apptocsinglepage.selfLearning' | translate }}</span>
             </div>
         </div>
 
-        <div class="flex flex-col kpi-values items-center gap-2" *ngIf="content?.license">
+        <div class="flex flex-col kpi-values items-center gap-2" *ngIf="contentReadData?.license">
             <img src="/assets/icons/toc/key.svg" width="20px" alt="free course image" />
-            <div class="text-xs" >{{ content?.license }} </div>
+            <div class="text-xs" >{{ contentReadData?.license }} </div>
         </div>
     </ng-container>
 </div>

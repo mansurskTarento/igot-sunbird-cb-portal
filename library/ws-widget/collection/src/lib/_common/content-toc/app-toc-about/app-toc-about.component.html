@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-3 chips-card">
-                <ng-container *ngFor="let subTheme of content?.subTheme; let j = index">
+                <ng-container *ngFor="let subTheme of contentReadData?.subTheme; let j = index">
                     <div class="chip rounded-full p-2 text-xs"
                         [ngClass]="{'hidden': (j > 1 && !content?.viewMore), 'chip-ellipsis': !content?.viewMore && content?.subTheme?.length > 1 }"
                         [title]="subTheme">{{ subTheme }}</div>
@@ -250,7 +250,7 @@
         </ng-container>
         <ng-container *ngIf="!skeletonLoader && !fromMarketPlace">
             <ws-widget-toc-kpi-values [content]="content" [tocStructure]="tocStructure"
-                [isMobile]="isMobile"></ws-widget-toc-kpi-values>
+                [isMobile]="isMobile" [contentReadData]="contentReadData"></ws-widget-toc-kpi-values>
         </ng-container>
     </div>
 
@@ -268,8 +268,9 @@
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
             <div class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
+            <!-- {{contentReadData | json}} -->
             <div [ngClass]="{'mob-desc-ellipsis': summary.ellipsis && isMobile, 'desc-ellipsis': summary.ellipsis && !isMobile}" #summaryElem>
-                <div class="mob-text nodtranslate" [innerHtml]="handleCapitalize(content?.description | replaceNbsp)"></div>
+                <div class="mob-text nodtranslate" [innerHtml]="handleCapitalize(contentReadData?.description | replaceNbsp)"></div>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="summary.viewLess" (click)="summary.ellipsis = !summary.ellipsis; summary.viewLess = !summary.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
             </div>
             <div class="ws-mat-default-text font-bold text-sm" *ngIf="summary.ellipsis">
@@ -278,7 +279,7 @@
         </ng-container>
     </div>
 
-    <div class="flex flex-col" *ngIf="content?.instructions">
+    <div class="flex flex-col" *ngIf="contentReadData?.instructions">
         <ng-container *ngIf="skeletonLoader">
             <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
                 [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
@@ -295,7 +296,7 @@
             <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
             <div class="desc" [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}" #descElem>
               
-                <div [innerHTML]="this.content?.instructions | replaceNbsp" class="mob-text break-words nodtranslate"></div>
+                <div [innerHTML]="contentReadData?.instructions | replaceNbsp" class="mob-text break-words nodtranslate"></div>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="description.viewLess"
                     (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
             </div>
@@ -386,9 +387,9 @@
     </ng-container>
     <ng-container *ngIf="!skeletonLoader">
         <!-- {{content|json}} -->
-        <ng-container *ngIf="content?.keywords?.length" >
+        <ng-container *ngIf="contentReadData?.keywords?.length" >
             <ng-container [ngTemplateOutlet]="tagsList"
-            [ngTemplateOutletContext]="{ tagData: content?.keywords }"></ng-container>
+            [ngTemplateOutletContext]="{ tagData: contentReadData?.keywords }"></ng-container>
         </ng-container>
         <ng-container *ngIf="content?.searchTags?.length > 1" >
             <ng-container *ngIf="content?.searchTags?.length" [ngTemplateOutlet]="tagsList"
@@ -516,7 +517,7 @@
         <div class="flex flex-column gap-3" [ngClass]="{'hideAbove1200': !router.url.includes('/viewer/')}" >
             <div class="text-base font-bold">{{ 'apptocsinglepage.authorsAndCurators' | translate }}</div>
             <div class="flex flex-col gap-4">
-                <div class="flex flex-row gap-4 items-center" *ngFor="let author of handleParseJsonData(content?.creatorDetails)">
+                <div class="flex flex-row gap-4 items-center" *ngFor="let author of handleParseJsonData(contentReadData?.creatorDetails)">
                     <div class="flex items-center justify-center">
                         <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
                             [photoUrl]="author.photo || ''" [name]="author.name">
@@ -528,7 +529,7 @@
                     </div>
                 </div>
     
-                <div class="flex flex-row gap-4" *ngFor="let creator of handleParseJsonData(content?.creatorContacts)">
+                <div class="flex flex-row gap-4" *ngFor="let creator of handleParseJsonData(contentReadData?.creatorContacts)">
                     <div class="flex items-center justify-center">
                         <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'" [photoUrl]="creator.photo || ''"
                             [name]="creator.name">

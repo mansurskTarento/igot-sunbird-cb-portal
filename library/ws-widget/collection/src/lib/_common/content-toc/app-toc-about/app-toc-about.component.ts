@@ -94,6 +94,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() condition: any
   @Input() kparray: any
   @Input() content: NsContent.IContent | null = null
+  @Input() contentReadData: NsContent.IContent | null = null
   @Input() skeletonLoader = false
   @Input() sticky = false
   @Input() tocStructure: any
@@ -207,6 +208,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     if (changes.selectedTabValue && changes.selectedTabValue.currentValue === 0) {
       setTimeout(() => {
         if (!this.isMobile) {
@@ -293,23 +295,23 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         }
       }
 
-      if (this.content) {
-        this.content['subTheme'] = this.getSubThemes()
+      if (this.contentReadData) {
+        this.contentReadData['subTheme'] = this.getSubThemes()
       }
 
       if (this.content && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) {
         this.disableCertificate = true
       }
 
-      if (this.content?.sectorDetails_v1) {
+      if (this.contentReadData?.sectorDetails_v1) {
         // Parse string to array if needed
-        let sectorDetailsArray = this.content.sectorDetails_v1
+        let sectorDetailsArray = this.contentReadData.sectorDetails_v1
    
         // If it's a string, try to parse it into an array
         if (typeof sectorDetailsArray === 'string') {
           try {
             sectorDetailsArray = JSON.parse(sectorDetailsArray)
-            this.content.sectorDetails_v1 = sectorDetailsArray
+            this.contentReadData.sectorDetails_v1 = sectorDetailsArray
           } catch (e) {
             console.error('Error parsing sectorDetails_v1:', e)
             sectorDetailsArray = []
@@ -347,11 +349,11 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
   getSubThemes(): any[] {
     const subThemeArr: any[] = []
-    if (this.content && this.content[this.compentencyKey.vKey] && this.content[this.compentencyKey.vKey].length) {
-      if (typeof this.content[this.compentencyKey.vKey] === 'string' && this.checkValidJSON(this.content[this.compentencyKey.vKey])) {
-        this.content[this.compentencyKey.vKey] = JSON.parse(this.content[this.compentencyKey.vKey])
+    if (this.contentReadData && this.compentencyKey && this.contentReadData[this.compentencyKey.vKey] && this.contentReadData[this.compentencyKey.vKey].length) {
+      if (typeof this.contentReadData[this.compentencyKey.vKey] === 'string' && this.checkValidJSON(this.contentReadData[this.compentencyKey.vKey])) {
+        this.contentReadData[this.compentencyKey.vKey] = JSON.parse(this.contentReadData[this.compentencyKey.vKey])
       }
-      this.content[this.compentencyKey.vKey].forEach((_competencyObj: any) => {
+      this.contentReadData[this.compentencyKey.vKey].forEach((_competencyObj: any) => {
         if (subThemeArr.indexOf(_competencyObj[this.compentencyKey.vCompetencySubTheme]) === -1) {
           subThemeArr.push(_competencyObj[this.compentencyKey.vCompetencySubTheme])
         }
@@ -361,13 +363,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   loadCompetencies(): void {
-    if (this.content && this.content[this.compentencyKey.vKey] && this.content[this.compentencyKey.vKey].length) {
+    if (this.contentReadData && this.contentReadData[this.compentencyKey.vKey] && this.contentReadData[this.compentencyKey.vKey].length) {
       const competenciesObject: any = {}
-      if (typeof this.content[this.compentencyKey.vKey] === 'string'
-        && this.checkValidJSON(this.content[this.compentencyKey.vKey])) {
-        this.content[this.compentencyKey.vKey] = JSON.parse(this.content[this.compentencyKey.vKey])
+      if (typeof this.contentReadData[this.compentencyKey.vKey] === 'string'
+        && this.checkValidJSON(this.contentReadData[this.compentencyKey.vKey])) {
+        this.contentReadData[this.compentencyKey.vKey] = JSON.parse(this.contentReadData[this.compentencyKey.vKey])
       }
-      this.content[this.compentencyKey.vKey].forEach((_obj: any) => {
+      this.contentReadData[this.compentencyKey.vKey].forEach((_obj: any) => {
         if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
           if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
             [_obj[this.compentencyKey.vCompetencyTheme]]) {

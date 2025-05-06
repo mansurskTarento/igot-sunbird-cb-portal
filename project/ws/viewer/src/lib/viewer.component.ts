@@ -32,6 +32,7 @@ export enum ErrorType {
 export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   fullScreenContainer: HTMLElement | null = null
   content: NsContent.IContent | null = null
+  contentReadData: NsContent.IContent | null = null
   errorType = ErrorType
   show = true
   private isLtMedium$ = this.valueSvc.isLtMedium$
@@ -153,13 +154,13 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     //     },         1000)
     //   }
     // })
-
-    const contentData = this.activatedRoute.snapshot.data.hierarchyData
+    const contentData = this.activatedRoute.snapshot.data.hierarchyData 
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
+
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
     && this.activatedRoute.snapshot.data.enrollmentData.data || ''
-    && this.activatedRoute.snapshot.data.contentRead.data || ''
-
+    this.contentReadData = this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data.contentRead
+    && this.activatedRoute.snapshot.data.contentRead.data.result.content || {}
     if (contentData && contentData.result && contentData.result.content) {
       this.coursePrimaryCategory = contentData.result.content.courseCategory
       if (contentData.result.content.children && contentData.result.content.children.length) {
