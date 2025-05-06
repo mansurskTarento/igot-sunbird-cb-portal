@@ -8,8 +8,9 @@ import {
 } from '@angular/common/http'
 import { Observable, throwError, timer } from 'rxjs'
 import { retryWhen, mergeMap } from 'rxjs/operators'
+import {EXCLUDED_APIS_FROM_RETRY} from '../constants/excluded-apis.constant'
 
-const EXCLUDE_RETRY = ['apis/proxies/v8/nlp/search']
+const EXCLUDE_RETRY = EXCLUDED_APIS_FROM_RETRY
 
 @Injectable({
   providedIn: 'root',
