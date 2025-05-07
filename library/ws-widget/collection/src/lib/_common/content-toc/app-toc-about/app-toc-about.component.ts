@@ -197,6 +197,63 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     } else {
       this.isMobile = false
     }
+    if (this.content && this.content.identifier) {
+      this.fetchRatingSummary()
+      this.loadCompetencies()
+    }
+
+    if (this.content && this.content.contentId && this.content.contentId.includes('ext_')) {
+      this.loadCompetencies()
+    }
+
+    if (this.content) {
+      this.content['subTheme'] = this.getSubThemes()
+    }
+
+    if (this.content && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) {
+      this.disableCertificate = true
+    }
+
+    if (this.content?.sectorDetails_v1) {
+      // Parse string to array if needed
+      let sectorDetailsArray = this.content.sectorDetails_v1
+ 
+      // If it's a string, try to parse it into an array
+      if (typeof sectorDetailsArray === 'string') {
+        try {
+          sectorDetailsArray = JSON.parse(sectorDetailsArray)
+          this.content.sectorDetails_v1 = sectorDetailsArray
+        } catch (e) {
+          console.error('Error parsing sectorDetails_v1:', e)
+          sectorDetailsArray = []
+        }
+      }
+ 
+      // Process only if we have a valid array with items
+      if (Array.isArray(sectorDetailsArray) && sectorDetailsArray.length > 0) {
+        this.sectorsList = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.sectorName && item?.sectorId)
+            .map((item: any) => ({
+              sectorId: item.sectorId,
+              sectorName: item.sectorName
+            })),
+          'sectorName'
+        )
+ 
+        this.subSectorsList = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.subSectorName && item?.subSectorId)
+            .map((item: any) => ({
+              subSectorId: item.subSectorId,
+              subSectorName: item.subSectorName
+            })),
+          'subSectorName'
+        )
+      }
+    }
+ 
+
   }
 
   ngAfterViewInit(): void {

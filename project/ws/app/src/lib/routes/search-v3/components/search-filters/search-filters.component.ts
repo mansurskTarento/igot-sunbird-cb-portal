@@ -75,6 +75,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
+  filterQuerySectorNames = '';
   // filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
@@ -83,6 +84,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
+  showAllSectorNames = false
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
@@ -333,6 +335,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllDesignation = !this.showAllDesignation;
     } else if (togglesection === FacetType.courseCategory) {
       this.showAllContents = !this.showAllContents;
+    } else if (togglesection === FacetType.sectorNames_v1) {
+      this.showAllSectorNames = !this.showAllSectorNames;
     }
   }
 
@@ -897,6 +901,17 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredSectorNames() {
+    let filteredList = this.formattedFacets['sectorDetails_v1.sectorName']?.filter(
+      (item: any) =>
+        item?.name
+          .toLowerCase()
+          .includes(this.filterQuerySectorNames.toLowerCase())
+    );
+
+    return this.showAllSectorNames ? filteredList : filteredList.slice(0, 4);
   }
 
   private recursivelySetIsCheckedFalse(filters: any[], name: string): any {
