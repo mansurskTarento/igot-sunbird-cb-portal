@@ -573,6 +573,17 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               this.startIfonlySection()
             }
           }
+        },
+        (error: any) => {
+          this.fetchingSectionsStatus = 'error'
+          // Only show specific message for 400 status code errors
+          if (error.status === 400) {
+            if (error.error && error.error.params && error.error.params.errmsg) {
+              this.openSnackbar(`${error.error.params.errmsg}`)
+            }
+          } else {
+            this.openSnackbar('Failed to load assessment section. Please try again later.')
+          }
         })
       }
 
@@ -1036,7 +1047,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
     //   this.activatedRoute.snapshot.queryParams.batchId : ''
     if (this.identifier && collectionId && batchId) {
-      this.viewerSvc.realTimeProgressUpdateQuiz(this.identifier, collectionId, batchId, status)
+      if (this.selectedSection && 
+        this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
+        this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+      ) {
+        this.viewerSvc.realTimeProgressUpdateQuiz(this.identifier, collectionId, batchId, status)
+      }
     }
   }
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { NSPractice } from './practice.model'
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs'
-import { map, retry } from 'rxjs/operators'
+import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs'
+import { concatMap, delay, map, retry, retryWhen } from 'rxjs/operators'
 // tslint:disable-next-line
 import _ from 'lodash'
 
@@ -253,16 +253,35 @@ export class PracticeService {
   }
 
   getSection(sectionId: string, forPreview?: any, postReqData?: any, collectionId?: any): Observable<any> {
+    const retryOnServerError = retryWhen(errors =>
+      errors.pipe(
+        concatMap((error, count) => {
+          // Only retry on 500 status code and maximum of 2 retries
+          if (count < 2 && error.status === 500) {
+            return of(error).pipe(delay(1000)); // 1 second delay between retries
+          }
+          return throwError(error);
+        })
+      )
+    );
+
     if (forPreview && !forcreator) {
-      return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_READ, postReqData).pipe(retry(2))
+      return this.http.post<NSPractice.ISectionResponse>(
+        API_END_POINTS.PUBLIC_QUESTION_READ, 
+        postReqData
+      ).pipe(retryOnServerError);
     }
+    
     if (forcreator) {
-      // tslint:disable-next-line: max-line-length
-      return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`).pipe(retry(2))
+      return this.http.get<NSPractice.ISectionResponse>(
+        `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`
+      ).pipe(retryOnServerError);
     }
-    // tslint:disable-next-line: max-line-length
-    return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`).pipe(retry(2))
-  }
+    
+    return this.http.get<NSPractice.ISectionResponse>(
+      `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`
+    ).pipe(retryOnServerError);
+}
   
   getQuestions(identifiers: string[], assessmentId: string,
                forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
