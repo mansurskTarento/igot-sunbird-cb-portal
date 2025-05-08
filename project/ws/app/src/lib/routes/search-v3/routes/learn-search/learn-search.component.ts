@@ -1733,4 +1733,5 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       delete this.searchRequestEvents.request.filters.endDateTimeInEpoch
     }
   }
+
 }

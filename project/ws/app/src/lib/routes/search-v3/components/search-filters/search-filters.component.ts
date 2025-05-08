@@ -140,6 +140,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             displayName: this.formatSectorName(sector.name),
             subSectors: existing?.subSectors?.length ? existing.subSectors : [],
             filteredLength: existing?.subSectors?.length ? existing.subSectors.length : 0,
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
           };
         });
 
@@ -185,6 +186,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             count: competency.count,
             competencyTheme: existing?.competencyTheme?.length ? existing.competencyTheme : [],
             filteredLength: existing?.competencyTheme?.length ? existing.competencyTheme.length : 0,
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
           };
         });
       }
@@ -199,7 +201,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
             count: sector.count,
             subSectors: existing?.subSectors?.length ? existing.subSectors : [],
             filteredLength: existing?.subSectors?.length ? existing.subSectors.length : 0,
-
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
           };
         });
       }
@@ -500,6 +502,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           checkTheme.filteredLength = competencyTheme.length;
         }
       }
+      competency.isExpanded = true;
   }
 
   async fetchCompetencyTheme(competency: any): Promise<any> {
@@ -964,6 +967,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           checkSector.showAll = false;
         }
       }
+      _sector.isExpanded = true;
   }
 
   async onSectorNameSelectionFilter(_event: any, _sector: any): Promise<void> {
@@ -979,6 +983,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           checkSector.showAll = false;
         }
       }
+      _sector.isExpanded = true;
   }
 
   toggleSubSectors(sector: any): void {
@@ -1047,4 +1052,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   
+  
+  closeExpansionPanel(data: any, type: string) {
+    if (type === this.competencyAreaNameKey) {
+      data.competencyTheme = [];
+    } else if (type === FacetType.sectorNames_v1 || type === FacetType.sectorId) {
+      data.subSectors = [];
+    } 
+  }
 }

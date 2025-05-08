@@ -196,7 +196,7 @@
                     <mat-expansion-panel-header class="padding-remove">
                         <mat-panel-title>
                             <mat-checkbox [checked]="sector?.isChecked || getSelectedFilter(sector)"
-                                (change)="onSelectionFilter($event, sector, 'sectorId')"
+                                (change)="onSelectionFilter($event, sector, 'sectorId'); closeExpansionPanel(sector, 'sectorId')"
                                 (click)="$event.stopPropagation();">
                                 <span class="min-width-adjust-expansion" [matTooltip]="capitalizeFirstLetter(sector?.displayName)" [matTooltipPosition]="'right'">
                                     {{sector?.displayName}}
@@ -281,7 +281,7 @@
                             <mat-expansion-panel-header class="padding-remove">
                                 <mat-panel-title>
                                     <mat-checkbox [checked]="sector?.isChecked || getSelectedFilter(sector)"
-                                        (change)="onSelectionFilter($event, sector, 'sectorDetails_v1.sectorName')"
+                                        (change)="onSelectionFilter($event, sector, 'sectorDetails_v1.sectorName'); closeExpansionPanel(sector, 'sectorDetails_v1.sectorName')"
                                         (click)="$event.stopPropagation();">
                                         <span class="min-width-adjust-expansion" [matTooltip]="capitalizeFirstLetter(sector?.displayName)" [matTooltipPosition]="'right'">
                                             {{sector?.displayName}}
@@ -581,7 +581,7 @@
                         <mat-expansion-panel-header class="padding-remove">
                             <mat-panel-title>
                                 <mat-checkbox [checked]="competency[competencyAreaNameKey]?.isChecked || getSelectedFilter(competency)"
-                                    (change)="onSelectionFilter($event, competency, competencyAreaNameKey)"
+                                    (change)="onSelectionFilter($event, competency, competencyAreaNameKey); closeExpansionPanel(competency, competencyAreaNameKey)"
                                     (click)="$event.stopPropagation();">
                                     <span class="min-width-adjust" [matTooltip]="competency?.displayName" [matTooltipPosition]="'right'"> {{competency?.displayName}}</span>
                                     <span class="min-width-adjust">{{' (' + competency?.count + ')'}}</span>
