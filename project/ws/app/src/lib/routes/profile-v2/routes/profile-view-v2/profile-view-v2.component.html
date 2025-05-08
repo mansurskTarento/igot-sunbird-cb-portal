@@ -84,7 +84,7 @@
         <div class="user-details">
           <div class="flex justify-between items-center mb-2">
             <div class="section-header">About me</div>
-            <mat-icon class="edit-icon">edit</mat-icon>
+            <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
           </div>
           <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
             {{aboutme}}
@@ -94,9 +94,10 @@
           </div>
         </div>
 
-        <!-- <div class="user-details">
-
-        </div> -->
+        <div class="user-details">
+          <ws-app-profile-primary-details [primaryDetails]="primaryDetails"
+          (openProfileEditDialog)="openProfileEditDialog($event)"></ws-app-profile-primary-details>
+        </div>
 
         <div class="user-details">
           <ws-app-service-history [serviceHistoryList]="serviceHistoryList"></ws-app-service-history>

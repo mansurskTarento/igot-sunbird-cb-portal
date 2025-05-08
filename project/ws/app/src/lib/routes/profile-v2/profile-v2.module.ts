@@ -66,6 +66,9 @@ import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
 import { CoverPhotoEditPopupComponent } from './components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PeopleSuggestionsComponent } from './components/profile-revamp/people-suggestions/people-suggestions.component'
 import { ImageCropperModule } from 'ngx-image-cropper'
+import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
+import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
+import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
 
 
 @NgModule({
@@ -87,7 +90,10 @@ import { ImageCropperModule } from 'ngx-image-cropper'
         CompetenciesComponent,
         AchievementsComponent,
         CoverPhotoEditPopupComponent,
-        PeopleSuggestionsComponent
+        PeopleSuggestionsComponent,
+        PrfileEditV2Component,
+        ProfilePrimaryDetailsComponent,
+        ProfileEntryEditComponent,
     ],
     imports: [
         CommonModule,
@@ -150,6 +156,8 @@ import { ImageCropperModule } from 'ngx-image-cropper'
         InitResolver,
         OtpService,
         PipeCertificateImageURL,
+        PrfileEditV2Component,
+        ProfileEntryEditComponent
     ]
 })
 export class ProfileV2Module {

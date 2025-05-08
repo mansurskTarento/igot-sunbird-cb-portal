@@ -1,0 +1,89 @@
+<div>
+  <div class="section-header mb-4 flex justify-between items-center">
+    <span>Primary Details <mat-icon class="info-icon">info_outline</mat-icon></span>
+    <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
+  </div>
+  <div class="details-grid">
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Group</span>
+      <span class="value">{{ primaryDetails.group }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Designation</span>
+      <span class="value">{{ primaryDetails.designation }}</span>
+    </div>
+  </div>
+
+  <hr class="divider my-3" />
+
+  <div class="section-header mb-4 flex justify-between items-center">
+    <span>Other Details</span>
+    <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
+  </div>
+  <div class="details-grid">
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Employee ID</span>
+      <span class="value">{{ primaryDetails.employeeId }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Email</span>
+      <span class="value">{{ primaryDetails.email }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Mobile Number</span>
+      <span class="value">{{ primaryDetails.mobileNumber }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Gender</span>
+      <span class="value">{{ primaryDetails.gender }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Date of Birth</span>
+      <span class="value">{{ primaryDetails.dateOfBirth }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Mother Tongue</span>
+      <span class="value">{{ primaryDetails.motherTongue }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Category</span>
+      <span class="value">{{ primaryDetails.category }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Office Pin Code</span>
+      <span class="value">{{ primaryDetails.officePinCode }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">eHRMS ID/External System ID</span>
+      <span class="value">{{ primaryDetails.ehrmsId }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Date of Retirement</span>
+      <span class="value">{{ primaryDetails.dateOfRetirement }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Are you from any organized service of the government?</span>
+      <span class="value">{{ primaryDetails.organizedService }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Type of Civil Services</span>
+      <span class="value">{{ primaryDetails.civilServiceType }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Services</span>
+      <span class="value">{{ primaryDetails.services }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Cadre</span>
+      <span class="value">{{ primaryDetails.cadre }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Batch</span>
+      <span class="value">{{ primaryDetails.batch }}</span>
+    </div>
+    <div class="flex flex-col gap-2 pr-3">
+      <span class="label">Cadre Controlling Authority</span>
+      <span class="value">{{ primaryDetails.cadreControllingAuthority }}</span>
+    </div>
+  </div>
+</div>

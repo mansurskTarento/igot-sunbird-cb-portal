@@ -1,0 +1,59 @@
+.section-header {
+  color: #000000;
+  /* stylelint-disable */
+  font: 600 14px Montserrat;
+  /* stylelint-enable */
+
+  .info-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    color: #00000099;
+    margin-left: 10px;
+  }
+}
+
+.edit-icon {
+  color: #1B4CA1;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.divider {
+  border: 1px solid #00000014;
+  width: 100%;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 34px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: #00000099;
+  /* stylelint-disable */
+  font: 400 12px Lato;
+  /* stylelint-enable */
+}
+
+.value {
+  color: #212529;
+  /* stylelint-disable */
+  font: 400 16px Lato;
+  /* stylelint-enable */
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -101,6 +101,9 @@
   background-color: #FFFFFF;
   width: 160px;
   padding: 16px 8px;
+  height: fit-content;
+  border-radius: 12px;
+  border: 1px solid #00000014;
 
   .route-card {
     width: 148px;
@@ -141,6 +144,7 @@
   border-radius: 12px;
   border: 1px solid #00000014;
   padding: 16px;
+  max-width: 100vw;
 }
 
 .section-header {
@@ -180,9 +184,6 @@
   height: 56px;
   overflow: hidden;
 }
-
-
-
 
 .image-container {
   position: absolute;
@@ -244,4 +245,10 @@
   /* stylelint-disable */
   font: 600 14px Montserrat;
   /* stylelint-enable */
+}
+
+@media (max-width: 768px) {
+  .user-details {
+    border-radius: 0px;
+  }
 }

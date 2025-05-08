@@ -1,0 +1,119 @@
+<div class="profile-editor-container flex flex-col gap-4">
+  <!-- #region(Header) -->
+  <div class="profile-editor-header flex justify-between items-center">
+    <div class="header-title">{{ header }}</div>
+    <button mat-icon-button class="close-button" (click)="handleCancel()">
+      <mat-icon class="close-icon">close</mat-icon>
+    </button>
+  </div>
+  <hr class="solid">
+  <!-- #endregion (Header) -->
+
+  <ng-container [ngSwitch]="header">
+    <ng-container *ngSwitchCase="'Service History'" [ngTemplateOutlet]="serviceHistory"></ng-container>
+    <ng-container *ngSwitchCase="'Educational qualifications'" [ngTemplateOutlet]="educationalQualifications"></ng-container>
+    <ng-container *ngSwitchCase="'Achievements'" [ngTemplateOutlet]="achievements"></ng-container>
+  </ng-container>
+
+  <!-- #region (Footer Form Actions) -->
+  <hr class="solid">
+  <div class="form-actions flex justify-end items-center gap-4">
+    <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save Changes</button>
+  </div>
+  <!-- #endregion (Footer Form Actions) -->
+
+  <!-- #region (Service History) -->
+  <ng-template #serviceHistory>
+    <form [formGroup]="entryForm" class="profile-editor-form">
+      <div class="form-fields-container">
+        <!-- Organisation/Ministry -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">Organisation/Ministry</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="organisation" placeholder="Enter Organisation/Ministry">
+            <mat-error *ngIf="hasError('organisation', 'required')">Organisation/Ministry is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Designation -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">Designation</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="designation">
+              <mat-option value="designation1">Designation 1</mat-option>
+              <mat-option value="designation2">Designation 2</mat-option>
+              <mat-option value="designation3">Designation 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- State -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">State</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="state">
+              <mat-option value="state1">State 1</mat-option>
+              <mat-option value="state2">State 2</mat-option>
+              <mat-option value="state3">State 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('state', 'required')">State is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- District -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">District</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="district">
+              <mat-option value="district1">District 1</mat-option>
+              <mat-option value="district2">District 2</mat-option>
+              <mat-option value="district3">District 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('district', 'required')">District is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Start Date -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">Start Date</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="Select Start Date">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            <mat-error *ngIf="hasError('startDate', 'required')">Start Date is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- End Date -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">End Date</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="Select End Date">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            <mat-error *ngIf="hasError('endDate', 'required')">End Date is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Currently Working -->
+        <div class="flex flex-col profile-control">
+          <mat-checkbox formControlName="currentlyWorking">Currently Working</mat-checkbox>
+        </div>
+
+        <!-- Description -->
+        <div class="flex flex-col profile-control">
+          <div class="lable">Description</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <textarea matInput formControlName="description" rows="4" placeholder="Enter Description"></textarea>
+            <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
+              {{ entryForm.get('description')?.value.length }}/1000
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  <!-- #endregion (Service History) -->
+</div>
