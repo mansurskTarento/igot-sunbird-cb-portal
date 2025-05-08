@@ -205,6 +205,7 @@ export enum FacetType {
   SourceName = 'sourceName',
   courseCategory = 'courseCategory',
   sectorNames_v1 = 'sectorDetails_v1.sectorName',
+  sectorId = 'sectorId',
 }
 
 export enum SortType {

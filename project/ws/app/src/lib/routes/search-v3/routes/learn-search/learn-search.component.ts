@@ -362,20 +362,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestEvents
     );
     if (result.result && result.result?.Event) {
-      // if (this.typesOfEventsFilters.length) {
-      //   // this.eventsSearchResults = this.processEventsResult(
-      //   //   result.result?.Event
-      //   // );
-      //   this.eventsSearchResults = result.result?.Event
-      //   this.eventSearchTotalCount = this.eventsSearchResults.length;
-      // } else {
-        this.eventsSearchResults = result.result?.Event || [];
-        this.eventSearchTotalCount = result.result?.count;
-      // }
+      this.eventsSearchResults = result.result?.Event || [];
+      this.eventSearchTotalCount = result.result?.count;
       this.eventsFacets = result.result?.facets;
-      // this.eventsSearchResults.forEach((event: any) => {
-      //   this.allResultsDepartmentName.add(event?.sourceName);
-      // });
+      this.combinedFacets = []
+      this.combinedFacets = 
+      [...this.combinedFacets, (result.result?.facets || [])]
+    
     } else {
       this.eventsSearchResults = [];
       this.eventSearchTotalCount = 0;
@@ -764,6 +757,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
+        else if (key === 'sectorDetails_v1.subSectorName') {
+          this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'] = [
+            ...selectedFilters[key],
+          ];
+        }
          else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -808,12 +806,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if(selectedFilters && selectedFilters.length) {
       this.searchRequestCourse.request.filters.courseCategory = selectedFilters
       if(this.compentencyKeyExist) {
-        this.getCompetencyHierichy(true)
+        // this.getCompetencyHierichy(true)
       }
     } else if(this.compentencyKeyExist) {
-      this.getCompetencyHierichy(true)
+      // this.getCompetencyHierichy(true)
     } else {
-      this.getCompetencyHierichy(false)
+      // this.getCompetencyHierichy(false)
     }
     this.searchContentLoader = false;
     this.searchPeopleLoader = false;
@@ -1163,6 +1161,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         .length === 0
     ) {
       delete this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'];
+    }
+    if (
+      this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'] &&
+      this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName']
+        .length === 0
+    ) {
+      delete this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'];
     }
     if (
       this.searchRequestCourse.request.filters.subSectorId &&
@@ -1671,7 +1676,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     await this.searchCourses()
     this.searchContentLoader = false;
 
-    
   }
 
   async processTypeOfEventsFilter() {
