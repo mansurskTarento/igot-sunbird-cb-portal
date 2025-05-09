@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection/src/public-api'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ViewerDataService } from '@ws/viewer/src/public-api'
+import _ from 'lodash'
 
 @Component({
   selector: 'ws-app-gyaan-player',
@@ -38,8 +39,9 @@ export class GyaanPlayerComponent implements OnInit {
     this.router.events.subscribe(val => {
         // see also
         if (val instanceof NavigationEnd) {
-          this.resourceData = this.viewerDataSvc.resource
+          this.resourceData = _.cloneDeep(this.viewerDataSvc.resource)
           this.relatedContentStrip = {}
+          this.updateSectorData()
           this.getRelatedContent()
         }
     })
@@ -55,8 +57,8 @@ export class GyaanPlayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.resourceData = this.viewerDataSvc.resource
-    console.log(' this.resourceData',  this.resourceData)
+    this.resourceData = _.cloneDeep(this.viewerDataSvc.resource)
+    this.updateSectorData()
     this.getRelatedContent()
     if (!this.displayContents) {
       this.titles = [
@@ -120,6 +122,49 @@ export class GyaanPlayerComponent implements OnInit {
           ...negetContent,
       }
       this.relatedContentStrip = stripData
+    }
+  }
+
+  updateSectorData() {
+    if (this.resourceData?.sectorDetails_v1) {
+      // Parse string to array if needed
+      let sectorDetailsArray = this.resourceData.sectorDetails_v1
+  
+      // If it's a string, try to parse it into an array
+      if (typeof sectorDetailsArray === 'string') {
+        try {
+          sectorDetailsArray = JSON.parse(sectorDetailsArray)
+          this.resourceData.sectorDetails_v1 = sectorDetailsArray
+        } catch (e) {
+          console.error('Error parsing sectorDetails_v1:', e)
+          sectorDetailsArray = []
+        }
+      }
+  
+      // Process only if we have a valid array with items
+      if (Array.isArray(sectorDetailsArray) && sectorDetailsArray.length > 0) {
+        // Extract unique sectors using lodash
+        this.resourceData['sectorsList'] = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.sectorName && item?.sectorId)
+            .map((item: any) => ({
+              sectorId: item.sectorId,
+              sectorName: item.sectorName
+            })),
+          'sectorName'
+        )
+  
+        // Extract unique subsectors using lodash
+        this.resourceData['subSectorsList'] = _.uniqBy(
+          sectorDetailsArray
+            .filter((item: any) => item?.subSectorName && item?.subSectorId)
+            .map((item: any) => ({
+              subSectorId: item.subSectorId,
+              subSectorName: item.subSectorName
+            })),
+          'subSectorName'
+        )
+      }
     }
   }
 }

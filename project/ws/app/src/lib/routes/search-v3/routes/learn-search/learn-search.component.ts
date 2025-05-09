@@ -608,8 +608,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.compentencyKeyExist = false
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
-      // this.competencyThemeKey,
-      // this.competencySubThemeKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
     ]);
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
@@ -1118,19 +1118,19 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   resetAllSearchParams() {
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
-      // this.competencyThemeKey,
-      // this.competencySubThemeKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
     ]);
     this.searchRequestEvents = new SearchV4Request([
       this.competencyAreaNameKey,
-      // this.competencyThemeKey,
-      // this.competencySubThemeKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
     ]);
     this.searchRequestPeoples = new SearchPeoplesRequest();
     this.searchRequestCommunities = new SearchCommunitiesRequest([
       this.competencyAreaNameKey,
-      // this.competencyThemeKey,
-      // this.competencySubThemeKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
     ]);
 
     this.courseSearchResults = [];

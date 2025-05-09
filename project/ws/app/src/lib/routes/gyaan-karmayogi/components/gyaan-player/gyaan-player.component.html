@@ -16,14 +16,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex gap-4 sector-block mb-4">
+                    <!-- <div class="flex gap-4 sector-block mb-4">
                         <div class="sector flex item-center justify-center" *ngIf="resourceData?.sectorName">
                             {{resourceData?.sectorName || '-'}}
                         </div>
                         <div class="sector flex item-center justify-center" *ngIf="resourceData?.subSectorName">
                             {{resourceData?.subSectorName || '-'}}
                         </div>
-                    </div>
+                    </div> -->
                     <div class="mb-8">
                         <p class="title">{{resourceData?.name}}</p>
                         <p class="description mb-4" [innerHTML]="resourceData?.instructions | replaceNbspText"></p>
@@ -32,11 +32,35 @@
                     <div class="flex gap-6 flex-wrap">
                         <div class="content-details">
                             <p class="title-label">{{'gyaanKarmayogi.sector'| translate}}</p>
-                            <p class="title-value">{{resourceData?.sectorName || '-'}}</p>
+                            <ng-container *ngIf="resourceData?.sectorsList?.length > 0">
+                                <div class="flex gap-2 flex-wrap items-center">
+                                    <ng-container *ngFor="let sector of resourceData.sectorsList; let i = index; let isLast = last">
+                                        <p class="title-value margin-remove" >{{ sector?.sectorName}}</p>
+                                        <div class="flex items-center" *ngIf="!isLast">
+                                            <span class="period color-white"></span>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="resourceData?.sectorsList?.length === 0">
+                                <p class="title-value">{{'-'}}</p>
+                            </ng-container>
                         </div>
                         <div class="content-details">
                             <p class="title-label">{{'gyaanKarmayogi.subSectors'| translate}}</p>
-                            <p class="title-value">{{resourceData?.subSectorName || '-'}}</p>
+                            <ng-container *ngIf="resourceData?.subSectorsList?.length > 0">
+                                <div class="flex gap-2 flex-wrap items-center">
+                                    <ng-container *ngFor="let sector of resourceData.subSectorsList; let i = index; let isLast = last">
+                                        <p class="title-value margin-remove" >{{ sector?.sectorName}}</p>
+                                        <div class="flex items-center" *ngIf="!isLast">
+                                            <span class="period color-white"></span>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="resourceData?.subSectorsList?.length === 0">
+                                <p class="title-value">{{'-'}}</p>
+                            </ng-container>
                         </div>
                         <div class="content-details">
                             <p class="title-label">{{'gyaanKarmayogi.categories'| translate}}</p>
