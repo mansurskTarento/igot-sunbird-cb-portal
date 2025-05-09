@@ -68,6 +68,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllCompetencySubTheme: boolean = false;
   showAllDesignation: boolean = false;
   showAllSectors: boolean = false;
+  showResourceCategory: boolean = false;
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
@@ -77,6 +78,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
   filterQuerySectorNames = '';
+  filterQueryResourceCategory = ''
   // filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
@@ -114,7 +116,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes['newfacets'] && changes['newfacets'].currentValue) {
-      
+      debugger
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -215,6 +217,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } 
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
 
+    console.log(this.formattedFacets, 'formatted');
+    
   }
 
   formatSectorName(name: string): string {
@@ -345,24 +349,43 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleShowMore(togglesection: string) {
-    if (togglesection === this.competencyThemeKey) {
-      this.showAllCompetencyTheme = !this.showAllCompetencyTheme;
-    } else if (togglesection === this.competencySubThemeKey) {
-      this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
-    } else if (togglesection === FacetType.Language) {
-      this.showAllLanguage = !this.showAllLanguage;
-    } else if (togglesection === FacetType.Organization) {
-      this.showAllOrganisation = !this.showAllOrganisation;
-    } else if (togglesection === FacetType.SourceName) {
-      this.showAllOrganisation = !this.showAllOrganisation;
-    } else if (togglesection === FacetType.Designation) {
-      this.showAllDesignation = !this.showAllDesignation;
-    } else if (togglesection === FacetType.courseCategory) {
-      this.showAllContents = !this.showAllContents;
-    } else if (togglesection === FacetType.sectorNames_v1 || togglesection === FacetType.sectorId ) {
-      this.showAllSectors = !this.showAllSectors;
+    switch (togglesection) {
+      case this.competencyThemeKey:
+        this.showAllCompetencyTheme = !this.showAllCompetencyTheme;
+        break;
+  
+      case this.competencySubThemeKey:
+        this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
+        break;
+  
+      case FacetType.Language:
+        this.showAllLanguage = !this.showAllLanguage;
+        break;
+  
+      case FacetType.Organization:
+      case FacetType.SourceName:
+        this.showAllOrganisation = !this.showAllOrganisation;
+        break;
+  
+      case FacetType.Designation:
+        this.showAllDesignation = !this.showAllDesignation;
+        break;
+  
+      case FacetType.courseCategory:
+        this.showAllContents = !this.showAllContents;
+        break;
+  
+      case FacetType.sectorNames_v1:
+      case FacetType.sectorId:
+        this.showAllSectors = !this.showAllSectors;
+        break;
+  
+      case FacetType.resourceCategory:
+        this.showResourceCategory = !this.showResourceCategory;
+        break;
     }
   }
+  
 
   translateActualLabels(label: string, type: any) {
     return this.langtranslations.translateActualLabel(label, type, '');
@@ -899,6 +922,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredResourceCategory() {
+    let filteredList = this.formattedFacets[FacetType.resourceCategory].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryResourceCategory.toLowerCase())
+    );
+
+    return this.showResourceCategory ? filteredList : filteredList.slice(0, 4);
   }
 
   get filteredDesignations() {

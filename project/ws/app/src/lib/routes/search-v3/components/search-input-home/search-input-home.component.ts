@@ -70,6 +70,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Communities,
       icon: 'menu_book',
     },
+    {
+      label: 'Resources',
+      value: SearchCategory.Resources,
+      icon: 'menu_book',
+    },
   ];
 
   selectedSearchCategory: string = SearchCategory.All;
@@ -277,7 +282,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         searchRequest.request.facets = SearchEventfacet;
 
         delete searchRequest.request.filters?.courseCategory;
-        delete searchRequest.request.sort_by?.lastUpdatedOn;
+        delete searchRequest.request.sort_by?.createdOn;
         break;
 
       case SearchCategory.CaseStudy:

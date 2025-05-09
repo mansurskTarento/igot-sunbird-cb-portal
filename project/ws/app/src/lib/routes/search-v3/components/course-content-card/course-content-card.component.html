@@ -63,11 +63,14 @@
                                 *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
                             </mat-icon>
 
-                            <ng-container *ngIf="content?.courseCategory">
+                            <ng-container *ngIf="content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.courseCategory}}
                             </ng-container>
-                            <ng-container *ngIf="!content?.courseCategory">
+                            <ng-container *ngIf="!content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.primaryCategory}}
+                            </ng-container>
+                            <ng-container *ngIf="content?.primaryCategory == 'Learning Resource'">
+                                {{content?.resourceType || content?.primaryCategory}}
                             </ng-container>
                         </div>
                         <!-- Bookmark button -->
@@ -105,6 +108,10 @@
                 <h2 class="course-title font-normal text-ellipse">
                     {{content?.name}}
                 </h2>
+
+                <div class="course-tags mb-3 font-normal text-ellipse" *ngIf="content?.primaryCategory == 'Learning Resource'">
+                    {{content?.description}}
+                </div>
                 <!-- <div class="course-tags mb-3 font-normal text-ellipse"
                     *ngIf="content && content[compentencyKey.vKey] && content[compentencyKey.vKey]"
                     [matTooltip]="'Sub Theme - ' + generateCompetencySubThemeString()">

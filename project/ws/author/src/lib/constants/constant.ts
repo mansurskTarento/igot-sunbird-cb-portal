@@ -121,6 +121,14 @@ export const CATEGORY_TYPE = [
     filters: [],
     disabled: false,
   },
+  {
+    name: 'resources',
+    count: 0,
+    isChecked: false,
+    displayName: 'Resources',
+    filters: [],
+    disabled: false,
+  },
 ];
 
 export const SEARCH_SORT_DROPDOWN = [
