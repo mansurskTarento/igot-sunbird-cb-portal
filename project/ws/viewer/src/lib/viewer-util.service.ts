@@ -196,7 +196,7 @@ export class ViewerUtilService {
              }
            }
          } else if (tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-          if(tempData.courseId === courseId) {
+          // if(tempData.courseId === courseId) {
            const bPEnrollmentList = enrollmentList.filter((v: NsContent.ICourse) => v.contentId === tempContentData.identifier)
            if (tempContentData.childNodes && tempContentData.childNodes.indexOf(resourceId) !== -1) {
              if (bPEnrollmentList.length > 0) {
@@ -204,7 +204,7 @@ export class ViewerUtilService {
                tempData.courseId = tempContentData.identifier
              }
            }
-          }
+          // }
          }
        })
      }
