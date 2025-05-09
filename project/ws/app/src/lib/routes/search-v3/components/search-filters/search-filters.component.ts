@@ -67,6 +67,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllOrganisation: boolean = false;
   showAllCompetencySubTheme: boolean = false;
   showAllDesignation: boolean = false;
+  showAllSectors: boolean = false;
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
@@ -84,7 +85,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
-  showAllSectorNames = false
+  sectors_v1: any
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
@@ -129,15 +130,19 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           name: 'case-study',
         });
 
-        const sectorFilters = this.formattedFacets.sectorId.map(
-          (sector: any) => ({
+        const sectorFilters = this.formattedFacets.sectorId.map((sector: any) => {
+          const existing = this.sectorFilters?.find((s: any) => s.name === sector.name);
+        
+          return {
             name: sector.name,
             count: sector.count,
             isChecked: sector.isChecked,
             displayName: this.formatSectorName(sector.name),
-            subSectors: []
-          })
-        );
+            subSectors: existing?.subSectors?.length ? existing.subSectors : [],
+            filteredLength: existing?.subSectors?.length ? existing.subSectors.length : 0,
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
+          };
+        });
 
         if (!caseStudyCategory) {
           coursesCategory.filters.push({
@@ -171,15 +176,34 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       if (this.formattedFacets[this.competencyAreaNameKey]) {
-        this.competencyFactet = this.formattedFacets[this.competencyAreaNameKey].map(
-          (competency: any) => ({
+        this.competencyFactet = this.formattedFacets[this.competencyAreaNameKey].map((competency: any) => {
+          const existing = this.competencyFactet?.find((c: any) => c.name === competency.name);
+        
+          return {
             name: competency.name,
             displayName: this.capitalizeFirstLetter(competency.name),
             isChecked: false,
             count: competency.count,
-            competencyTheme: []
-          })
-        );
+            competencyTheme: existing?.competencyTheme?.length ? existing.competencyTheme : [],
+            filteredLength: existing?.competencyTheme?.length ? existing.competencyTheme.length : 0,
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
+          };
+        });
+      }
+      if (this.formattedFacets['sectorDetails_v1.sectorName']) {
+        this.sectors_v1 = this.formattedFacets['sectorDetails_v1.sectorName'].map((sector: any) => {
+          const existing = this.sectors_v1?.find((c: any) => c.name === sector.name);
+        
+          return {
+            name: sector.name,
+            displayName: this.capitalizeFirstLetter(sector.name),
+            isChecked: false,
+            count: sector.count,
+            subSectors: existing?.subSectors?.length ? existing.subSectors : [],
+            filteredLength: existing?.subSectors?.length ? existing.subSectors.length : 0,
+            isExpanded: existing?.isExpanded ? existing.isExpanded : false,
+          };
+        });
       }
 
 
@@ -335,8 +359,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.showAllDesignation = !this.showAllDesignation;
     } else if (togglesection === FacetType.courseCategory) {
       this.showAllContents = !this.showAllContents;
-    } else if (togglesection === FacetType.sectorNames_v1) {
-      this.showAllSectorNames = !this.showAllSectorNames;
+    } else if (togglesection === FacetType.sectorNames_v1 || togglesection === FacetType.sectorId ) {
+      this.showAllSectors = !this.showAllSectors;
     }
   }
 
@@ -472,14 +496,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const competencyTheme = await this.fetchCompetencyTheme(competency.name);
       if (competencyTheme && competencyTheme.length) {
         const checkTheme = this.competencyFactet.find((areaName: any) => areaName.name === competency.name);
-        if (checkTheme && !checkTheme.competencyTheme.length) {
+        if (checkTheme) {
           checkTheme.competencyTheme = competencyTheme;
           checkTheme.showAll = false;
           checkTheme.filteredLength = competencyTheme.length;
         }
-        
       }
-   
+      competency.isExpanded = true;
   }
 
   async fetchCompetencyTheme(competency: any): Promise<any> {
@@ -488,11 +511,18 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.competencyThemeKey
     ]);
 
+    Object.keys(this.selectedFilters).forEach((key) => {
+      if (key !== 'courses' && key !== 'communities' && key !== 'events') {
+        searchRequest.request.filters[key] = this.selectedFilters[key];
+        searchRequestCommunity.filterCriteriaMap[key] = this.selectedFilters[key];
+      }
+    })
     if (this.searchCategory === SearchCategory.Events) {
+      delete searchRequest.request.filters.courseCategory;
       searchRequest.request.query = this.searchQuery;
       searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
       searchRequest.request.facets = [this.competencyThemeKey];
-      searchRequest.request.filters.contentType = ['Events'];
+      searchRequest.request.filters.contentType = 'Event';
     }
      else if (this.searchCategory === SearchCategory.Communities) {
       searchRequestCommunity.searchString = this.searchQuery;
@@ -629,6 +659,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if(item.type === 'sectorId' || item.type === 'subSectorId') {
       item.value = this.reverseFormatSectorName(item.value)
     }
+
+    if(item.type === 'sectorDetails_v1.subSectorName') {
+      item.value = (item.value).toLowerCase()
+    }
     const types = this.categoryTypeDup.map((category) => category.name);
     if(this.searchCategory === 'case-study') {
       types.push('case-study')
@@ -727,20 +761,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
       }
+      if (!foundFilter && item.type === 'sectorDetails_v1.subSectorName') {
+        for (const sector of this.sectors_v1) {
+          foundFilter = sector.subSectors.find((subSector: any) => subSector.name === item.value);
+          if (foundFilter) {
+            break;
+          }
+        }
+      }
 
       if (!foundFilter) {
         foundFilter = _.find(allFilters, {
           name: item.value,
         });
       }
-      if (item.type === 'subSectorId' && foundFilter && foundFilter?.name.startsWith('sector-fw_sector_')) {
+      if (item.type === 'subSectorId' && foundFilter && foundFilter?.name.startsWith('sector-fw_sector_')
+        || item.type === 'sectorDetails_v1.subSectorName' && foundFilter
+      ) {
         foundFilter.isChecked = false;
 
         if (_.has(this.selectedFilters, item.type)) {
           _.pull(this.selectedFilters[item.type], foundFilter.name);
-          if (_.isEmpty(this.selectedFilters[item.type])) {
-            // delete this.selectedFilters[item.type];
-          }
         }
 
         this.appliedFilter.emit(this.selectedFilters);
@@ -860,26 +901,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
 
-  // getFilteredThemes(competency: any): any[] {
-  //   let filteredThemes: any[] = []
-  //   if(competency && competency[this.competencyThemeKey]) {
-  //     filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
-  //       theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
-  //   }
-  //   competency['filteredLength'] = filteredThemes.length
-  //   return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
-  // }
-
-
-  // getFilteredSubThemes(competency: any): any[] {
-  //   let filteredSubThemes: any[] = []
-  //   if(competency && competency[this.competencySubThemeKey]) {
-  //     filteredSubThemes = competency[this.competencySubThemeKey].filter((subTheme: any) => 
-  //     subTheme.name.toLowerCase().includes(this.filterQuerySubThemes.toLowerCase()))
-  //   }
-  //   return filteredSubThemes
-  // }
-
   get filteredDesignations() {
     let filteredList = this.formattedFacets[
       'profileDetails.professionalDetails.designation'
@@ -903,17 +924,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
-  get filteredSectorNames() {
-    let filteredList = this.formattedFacets['sectorDetails_v1.sectorName']?.filter(
-      (item: any) =>
-        item?.name
-          .toLowerCase()
-          .includes(this.filterQuerySectorNames.toLowerCase())
-    );
-
-    return this.showAllSectorNames ? filteredList : filteredList.slice(0, 4);
-  }
-
   private recursivelySetIsCheckedFalse(filters: any[], name: string): any {
     for (const filter of filters) {
       if ((filter?.name).toLowerCase() === name.toLowerCase()) {
@@ -934,17 +944,22 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }  
 
   getFilteredSubSectors(sector: any): any[] {
-      if (!this.filterQuerySubSectors) {
-          return sector.subSectors;
-      }
-      return sector.subSectors.filter((subSector: any) =>
-          subSector.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
+      // if (!this.filterQuerySubSectors) {
+      //     return sector.subSectors;
+      // }
+      // return sector.subSectors.filter((subSector: any) =>
+      //     subSector.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
+      // );
+       const filteredThemes = sector.subSectors.filter((theme: any) =>
+        theme.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
       );
+      
+      return sector.showAll ? filteredThemes : filteredThemes.slice(0, 4);
   }
 
 
   async onSectorSelectionFilter(_event: any, _sector: any): Promise<void> {
-      const subsectors = await this.fetchSubSectorsForSector(_sector.name);
+      const subsectors = await this.fetchSubSectorsForSector(_sector.name, 'sectorId', 'subSectorId');
       if (subsectors && subsectors.length) {
         const checkSector = this.sectorFilters.find((sector: any) => sector.name === _sector.name);
         if (checkSector && !checkSector.subSectors.length) {
@@ -952,17 +967,39 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           checkSector.showAll = false;
         }
       }
+      _sector.isExpanded = true;
+  }
+
+  async onSectorNameSelectionFilter(_event: any, _sector: any): Promise<void> {
+      const subsectors = await this.fetchSubSectorsForSector(
+        _sector.name,
+        'sectorDetails_v1.sectorName',
+        'sectorDetails_v1.subSectorName'
+      );
+      if (subsectors) {
+        const checkSector = this.sectors_v1.find((sector: any) => sector.name === _sector.name);
+        if (checkSector && !checkSector.subSectors.length) {
+          checkSector.subSectors = subsectors;
+          checkSector.showAll = false;
+        }
+      }
+      _sector.isExpanded = true;
   }
 
   toggleSubSectors(sector: any): void {
       sector.showAll = !sector.showAll;
   }
 
-  async fetchSubSectorsForSector(sectorId: string): Promise<any[]> {
+  async fetchSubSectorsForSector(sectorId: string, sectorKey: string, subSectorKey: string): Promise<any[]> {
     let searchRequestCourse = new SearchV4Request([]);
+    Object.keys(this.selectedFilters).forEach((key) => {
+      if (key !== sectorKey && key !== subSectorKey && key !== 'courses') {
+        searchRequestCourse.request.filters[key] = this.selectedFilters[key];
+      }
+    })
     searchRequestCourse.request.query = this.searchQuery;
-    searchRequestCourse.request.filters.sectorId = [sectorId];
-    searchRequestCourse.request.facets = ['subSectorId'];
+    searchRequestCourse.request.filters[sectorKey] = [sectorId];
+    searchRequestCourse.request.facets = [subSectorKey];
 
     const result = await this.searchV3Service.searchCoursesv4(searchRequestCourse);
 
@@ -1015,4 +1052,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   
+  
+  closeExpansionPanel(data: any, type: string) {
+    if (type === this.competencyAreaNameKey) {
+      data.competencyTheme = [];
+    } else if (type === FacetType.sectorNames_v1 || type === FacetType.sectorId) {
+      data.subSectors = [];
+    } 
+  }
 }
