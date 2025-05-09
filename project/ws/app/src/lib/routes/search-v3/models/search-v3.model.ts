@@ -35,6 +35,7 @@ export class RequestParams {
       'courseCategory',
       'mimeType',
       'contentId',
+      'creatorLogo',
       'sectorDetails_v1'
     ];
     this.facets = [...SearchOthersFacet, ...competenciesKey];
