@@ -121,7 +121,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes['newfacets'] && changes['newfacets'].currentValue) {
-      debugger
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -160,9 +159,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-
-    console.log(this.formattedFacets, 'formatted');
-    
   }
 
   formatSectorName(name: string): string {
@@ -464,12 +460,29 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (typeof data !== 'object' || data === null) {
       return [];
     }
-    return _.flatMap(data, (values, key) =>
+    const returnedData =  _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
         value: value === 'Courses' ? 'Contents' : this.formatValue(value),
       }))
     );
+    this.categoriseByFacet(returnedData)
+    return returnedData
+  }
+
+  categoriseByFacet(facetData: any) {
+    const groupedData = _.groupBy(facetData, 'type');
+    const visibilityMap: { key: string; enableKey: any }[] = [
+      { key: FacetType.sectorNames_v1, enableKey: 'showAllSectors' },
+      { key: FacetType.subSectorNames_v1, enableKey: 'showAllSubSectors' },
+      { key: FacetType.Language, enableKey: 'showAllLanguage' },
+      { key: FacetType.Organization, enableKey: 'showAllOrganisation' },
+      { key: this.competencyThemeKey, enableKey: 'showAllCompetencyTheme' },
+    ];
+  
+    visibilityMap.forEach(({ key, enableKey }) => {
+      (this as any)[enableKey] = groupedData[key]?.length > 1 || false;
+    });
   }
 
   private formatValue(value: string): string {
@@ -655,7 +668,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredSectorNames() {
-    let filteredList = this.formattedFacets[FacetType.sectorNames_v1].filter(
+    let data;
+    if(this.formattedFacets[FacetType.sectorNames_v1]) {
+      data = this.formattedFacets[FacetType.sectorNames_v1]
+    } else if (this.formattedFacets[FacetType.sectorNameResource]) {
+      data = this.formattedFacets[FacetType.sectorNameResource]
+    }
+
+    let filteredList = data.filter(
       (item: any) =>
         item.name.toLowerCase().includes(this.filterQuerySectorNames.toLowerCase())
     );
@@ -664,7 +684,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredSubSectorNames() {
-    let filteredList = this.formattedFacets[FacetType.subSectorNames_v1].filter(
+    let data;
+    if(this.formattedFacets[FacetType.subSectorNames_v1]) {
+      data = this.formattedFacets[FacetType.subSectorNames_v1]
+    } else if (this.formattedFacets[FacetType.subSectorNameResource]) {
+      data = this.formattedFacets[FacetType.subSectorNameResource]
+    }
+
+    let filteredList = data.filter(
       (item: any) =>
         item.name.toLowerCase().includes(this.filterQuerySubSectorNames.toLowerCase())
     );

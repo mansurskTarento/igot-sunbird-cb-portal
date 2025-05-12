@@ -73,7 +73,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     {
       label: 'Resources',
       value: SearchCategory.Resources,
-      icon: 'menu_book',
+      icon: 'diversity_3',
     },
   ];
 

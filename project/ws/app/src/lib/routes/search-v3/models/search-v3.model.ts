@@ -234,6 +234,8 @@ export enum FacetType {
   sectorId = 'sectorId',
   resourceCategory = 'resourceCategory',
   subSectorId = 'subSectorId',
+  subSectorNameResource = "subSectorName",
+  sectorNameResource = "sectorName",
 }
 
 export enum SortType {

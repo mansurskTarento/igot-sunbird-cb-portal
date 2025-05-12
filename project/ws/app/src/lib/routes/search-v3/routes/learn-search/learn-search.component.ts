@@ -184,6 +184,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.checkCourseEnrollmentAndCbpPlan();
     // this.fetchCbpPlan()
     this.checkIfExploreContentTab()
+    localStorage.removeItem(SearchConstantLocalStorage.SortType);
   }
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -247,11 +248,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (changes.filtersPanel && changes.filtersPanel.currentValue === 'show') {
         this.sideNavBarOpened = true
         this.filtersChipFromLearn = []
-
       }
     }
-
-    
   }
 
   getName(userDetails: any) {
@@ -403,7 +401,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestResources.request.filters.contentType = 'Resource';
     this.searchRequestResources.request.facets = SearchResourceFacets
     this.searchRequestResources.request.filters.mimeType = SearchResourceMimeType
-    this.searchRequestResources.request.exists = "sectorName",
+    this.searchRequestResources.request.exists = FacetType.sectorNameResource,
     this.searchRequestResources.request.fields = [],
 
     delete this.searchRequestEvents.request.filters?.courseCategory;
@@ -798,6 +796,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
+        else if (key === FacetType.sectorNameResource) {
+          this.searchRequestResources.request.filters[FacetType.sectorNameResource] = [
+            ...selectedFilters[key],
+          ];
+        }
+        else if (key === FacetType.subSectorNameResource) {
+          this.searchRequestResources.request.filters[FacetType.subSectorNameResource] = [
+            ...selectedFilters[key],
+          ];
+        }
         else if (key === FacetType.resourceCategory) {
           this.searchRequestResources.request.filters[FacetType.resourceCategory] = [
             ...selectedFilters[key],
@@ -868,191 +876,87 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   // Delete the empty request param from resuest body
   deleteFilterKeys() {
-    if (
-      this.searchRequestCourse.request.filters.avgRating &&
-      Object.keys(this.searchRequestCourse.request.filters.avgRating).length ===
-        0
-    ) {
-      delete this.searchRequestCourse.request.filters.avgRating;
-    }
+    const removeEmpty = (obj: any, keys: string[], isObjectCheck = false) => {
+      keys.forEach((key) => {
+        const value = obj[key];
+        if (
+          value &&
+          ((isObjectCheck && Object.keys(value).length === 0) ||
+            (!isObjectCheck && value.length === 0))
+        ) {
+          delete obj[key];
+        }
+      });
+    };
 
-    if (
-      this.searchRequestCourse.request.filters.language &&
-      this.searchRequestCourse.request.filters.language.length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters.language;
-    }
+    // For searchRequestCourse
+    const courseFilters = this.searchRequestCourse?.request?.filters || {};
+    removeEmpty(
+      courseFilters,
+      [FacetType.Language, FacetType.Organization, FacetType.sectorId, FacetType.subSectorId],
+      false
+    );
+    removeEmpty(courseFilters, [FacetType.AvgRating], true);
+    removeEmpty(
+      courseFilters,
+      [
+        this.competencyAreaNameKey,
+        this.competencySubThemeKey,
+        FacetType.sectorNames_v1,
+        FacetType.subSectorNames_v1,
+      ],
+      false
+    );
 
-    if (
-      this.searchRequestCourse.request.filters.organisation &&
-      this.searchRequestCourse.request.filters.organisation.length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters.organisation;
-    }
-    if (
-      this.searchRequestCourse.request.filters[this.competencyAreaNameKey] &&
-      this.searchRequestCourse.request.filters[this.competencyAreaNameKey]
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters[
-        this.competencyAreaNameKey
-      ];
-    }
-    if (
-      this.searchRequestCourse.request.filters[this.competencySubThemeKey] &&
-      this.searchRequestCourse.request.filters[this.competencySubThemeKey]
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters[
-        this.competencySubThemeKey
-      ];
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap.competencyArea &&
-      this.searchRequestCommunities.filterCriteriaMap.competencyArea.length ===
-        0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap.competencyArea;
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap[
-        this.competencyAreaNameKey
-      ] &&
-      this.searchRequestCommunities.filterCriteriaMap[
-        this.competencyAreaNameKey
-      ].length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap[
-        this.competencyAreaNameKey
-      ];
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap[
-        this.competencyThemeKey
-      ] &&
-      this.searchRequestCommunities.filterCriteriaMap[this.competencyThemeKey]
-        .length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap[
-        this.competencyThemeKey
-      ];
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap[
-        this.competencySubThemeKey
-      ] &&
-      this.searchRequestCommunities.filterCriteriaMap[
-        this.competencySubThemeKey
-      ].length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap[
-        this.competencySubThemeKey
-      ];
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap.orgName &&
-      this.searchRequestCommunities.filterCriteriaMap.orgName.length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap.orgName;
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap.topicName &&
-      this.searchRequestCommunities.filterCriteriaMap.topicName.length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap.topicName;
-    }
-    if (
-      this.searchRequestCommunities.filterCriteriaMap.topicName &&
-      this.searchRequestCommunities.filterCriteriaMap.topicName.length === 0
-    ) {
-      delete this.searchRequestCommunities.filterCriteriaMap.topicName;
-    }
-    if (
-      this.searchRequestPeoples.filters[
-        'profileDetails.professionalDetails.designation'
-      ] &&
-      this.searchRequestPeoples.filters[
-        'profileDetails.professionalDetails.designation'
-      ].length === 0
-    ) {
-      delete this.searchRequestPeoples.filters[
-        'profileDetails.professionalDetails.designation'
-      ];
-    }
-    if (
-      this.searchRequestPeoples.filters['rootOrgName'] &&
-      this.searchRequestPeoples.filters['rootOrgName'].length === 0
-    ) {
-      delete this.searchRequestPeoples.filters['rootOrgName'];
-    }
-    if (
-      this.searchRequestEvents.request.filters.sourceName &&
-      this.searchRequestEvents.request.filters.sourceName.length === 0
-    ) {
-      delete this.searchRequestEvents.request.filters.sourceName;
-    }
-    if (
-      this.searchRequestEvents.request.filters[this.competencyAreaNameKey] &&
-      this.searchRequestEvents.request.filters[this.competencyAreaNameKey]
-        .length === 0
-    ) {
-      delete this.searchRequestEvents.request.filters[
-        this.competencyAreaNameKey
-      ];
-    }
-    if (
-      this.searchRequestEvents.request.filters[this.competencySubThemeKey] &&
-      this.searchRequestEvents.request.filters[this.competencySubThemeKey]
-        .length === 0
-    ) {
-      delete this.searchRequestEvents.request.filters[
-        this.competencySubThemeKey
-      ];
-    }
-    if (
-      this.searchRequestEvents.request.filters[this.competencyThemeKey] &&
-      this.searchRequestEvents.request.filters[this.competencyThemeKey]
-        .length === 0
-    ) {
-      delete this.searchRequestEvents.request.filters[this.competencyThemeKey];
-    }
-    if (
-      this.searchRequestCourse.request.filters.sectorId &&
-      this.searchRequestCourse.request.filters.sectorId
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters.sectorId;
-    }
-    if (
-      this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'] &&
-      this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName']
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'];
-    }
-    if (
-      this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'] &&
-      this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName']
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'];
-    }
-    if (
-      this.searchRequestCourse.request.filters.subSectorId &&
-      this.searchRequestCourse.request.filters.subSectorId
-        .length === 0
-    ) {
-      delete this.searchRequestCourse.request.filters.subSectorId;
-    }
-    if (
-      this.searchRequestEvents.request.filters.resourceType &&
-      this.searchRequestEvents.request.filters.resourceType
-        .length === 0
-    ) {
-      delete this.searchRequestEvents.request.filters.resourceType
-    }
+    // For searchRequestCommunities
+    const communityFilters =
+      this.searchRequestCommunities?.filterCriteriaMap || {};
+    removeEmpty(
+      communityFilters,
+      ['competencyArea', 'orgName', 'topicName'],
+      false
+    );
+    removeEmpty(
+      communityFilters,
+      [
+        this.competencyAreaNameKey,
+        this.competencyThemeKey,
+        this.competencySubThemeKey,
+      ],
+      false
+    );
+
+    // For searchRequestPeoples
+    const peopleFilters = this.searchRequestPeoples?.filters || {};
+    removeEmpty(
+      peopleFilters,
+      ['rootOrgName', 'profileDetails.professionalDetails.designation'],
+      false
+    );
+
+    // For searchRequestEvents
+    const eventFilters = this.searchRequestEvents?.request?.filters || {};
+    removeEmpty(eventFilters, [FacetType.SourceName, 'resourceType'], false);
+    removeEmpty(
+      eventFilters,
+      [
+        this.competencyAreaNameKey,
+        this.competencyThemeKey,
+        this.competencySubThemeKey,
+      ],
+      false
+    );
+
+    // For searchRequestResources
+    const resourceFilters = this.searchRequestResources?.request?.filters || {};
+    removeEmpty(
+      resourceFilters,
+      [FacetType.sectorNameResource, FacetType.subSectorNameResource],
+      false
+    );
   }
 
+  
   async seeAllResults(category: string) {
     this.seeAllResult = category;
     if (category === SearchCategory.Courses) {
@@ -1209,119 +1113,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestCourse.request.limit = this.commonPageResultSize;
       this.searchRequestResources.request.limit = this.commonPageResultSize;
     }
-    Object.keys(this.applySelectedFilters).forEach((key) => {
-      if (this.applySelectedFilters[key] && Array.isArray(this.applySelectedFilters[key])) {
-        if (key === FacetType.AvgRating) {
-          const ratings = this.applySelectedFilters[key]
-            .map((val: string) => parseFloat(val.split(' ')[0]))
-            .filter((num: any) => !isNaN(num));
-
-          if (ratings.length > 0) {
-            this.searchRequestCourse.request.filters.avgRating = {
-              '>=': String(Math.min(...ratings)),
-            };
-          }
-        } else if (key === FacetType.Language) {
-          this.searchRequestCourse.request.filters.language =
-            this.applySelectedFilters[key];
-        } else if (key === FacetType.Organization) {
-          this.searchRequestCourse.request.filters.organisation =
-            this.applySelectedFilters[key];
-        } else if (key === this.competencyAreaNameKey) {          
-          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencyAreaNameKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencyAreaNameKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === this.competencyThemeKey) {
-          this.searchRequestCourse.request.filters[this.competencyThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencyThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencyThemeKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === this.competencySubThemeKey) {
-          this.searchRequestCourse.request.filters[this.competencySubThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestEvents.request.filters[this.competencySubThemeKey] =
-            this.applySelectedFilters[key];
-          this.searchRequestCommunities.filterCriteriaMap[
-            this.competencySubThemeKey
-          ] = this.applySelectedFilters[key];
-        } else if (key === SearchCategory.Events) {
-          this.constructQueryParam('events');
-          this.seeAllResult = SearchCategory.Events;
-        } else if (key === SearchCategory.Courses) {
-          this.constructQueryParam('courses');
-          this.seeAllResult = SearchCategory.Courses;
-        } else if (key === 'Case Study') {
-          this.searchRequestCourse.request.filters.sectorId = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === SearchCategory.People) {
-          this.constructQueryParam('peoples');
-          this.seeAllResult = SearchCategory.People;
-        } else if (key === SearchCategory.Communities) {
-          this.constructQueryParam('communities');
-          this.seeAllResult = SearchCategory.Communities;
-        } else if (key === 'typeOfEvents') {
-            const currentEpochTime = moment().valueOf();
-            // const endOfDayEpochTime = moment().endOf('day').valueOf();
-            const tomorrowEpochTime = moment().add(1, 'day').startOf('day').valueOf();
-            this.resetEventsTypesRequest()
-            if (this.applySelectedFilters[key][0] === 'live') {
-              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
-                '<=': currentEpochTime,
-              };
-              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
-                '>=': currentEpochTime,
-              };
-            } else if (this.applySelectedFilters[key][0] === 'upcoming') {
-              this.searchRequestEvents.request.filters.startDateTimeInEpoch = {
-                '>=': tomorrowEpochTime,
-              };
-            } else if (this.applySelectedFilters[key][0] === 'past events') {
-              this.searchRequestEvents.request.filters.endDateTimeInEpoch = {
-                '<=': currentEpochTime,
-              };
-            }
-        } else if (key === 'competencyArea') {
-          this.searchRequestCommunities.filterCriteriaMap.competencyArea = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'orgName') {
-          this.searchRequestCommunities.filterCriteriaMap.orgName = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'topicName') {
-          this.searchRequestCommunities.filterCriteriaMap.topicName = [
-            ...this.applySelectedFilters[key],
-          ];
-        } else if (key === 'profileDetails.professionalDetails.designation') {
-          this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
-        } else if (key === 'rootOrgName') {
-          this.searchRequestPeoples.filters[key] = [...this.applySelectedFilters[key]];
-        } 
-        else if (key === 'sourceName') {
-          this.searchRequestEvents.request.filters.sourceName = [
-            ...this.applySelectedFilters[key],
-          ];
-        }
-        else if (key === 'resourceType') {
-          this.searchRequestEvents.request.filters.resourceType = [
-            ...this.applySelectedFilters[key],
-          ];
-        }
-         else {
-          this.searchRequestCourse.request.filters.courseCategory!.push(
-            ...this.applySelectedFilters[key]
-          );
-        }
-      }
-    });
 
     if (event === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
@@ -1421,8 +1212,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchResources();
       } 
     }
-
-
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
     this.searchPeopleLoader = false
