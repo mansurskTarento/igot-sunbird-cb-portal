@@ -14,7 +14,7 @@ export class RequestParams {
   limit: number;
   offset: number;
   sort_by: SortBy;
-
+  exists?: string
   constructor(competenciesKey: any) {
     this.filters = new Filters();
     this.fields = [
@@ -27,7 +27,7 @@ export class RequestParams {
       'name',
       'primaryCategory',
       'contentType',
-      'posterImage', 
+      'posterImage',
       'createdOn',
       'duration',
       'avgRating',
@@ -66,7 +66,7 @@ export class Filters {
 }
 
 export class SortBy {
-  lastUpdatedOn?: string;
+  createdOn?: string;
   startDate?: string;
   avgRating?: string;
   firstName?: string;
@@ -84,6 +84,7 @@ export enum SearchCategory {
   People = 'peoples',
   CaseStudy = 'case-study',
   Communities = 'communities',
+  Resources = 'resources',
 }
 
 export const SearchOthersFacet = [
@@ -98,7 +99,14 @@ export const SearchOthersFacet = [
 ];
 
 // Events
-export const SearchEventfacet = ['duration', 'language', 'sourceName', 'startDateTimeInEpoch', 'endDateTimeInEpoch', 'resourceType'];
+export const SearchEventfacet = [
+  'duration',
+  'language',
+  'sourceName',
+  'startDateTimeInEpoch',
+  'endDateTimeInEpoch',
+  'resourceType',
+];
 
 export const SearchEventFields = [
   'name',
@@ -120,6 +128,21 @@ export const SearchEventFields = [
   'endDateTime',
 ];
 
+export const SearchResourceMimeType = [
+  'application/pdf',
+  'video/mp4',
+  'text/x-url',
+  'audio/mpeg',
+  'application/vnd.ekstep.content-collection',
+];
+
+export const SearchResourceFacets = [
+  "resourceCategory",
+  "subSectorName",
+  "sectorName",
+  "years"
+];
+
 export class SearchPeoplesRequest {
   filters: PeoplesFilters;
   facets?: string[];
@@ -131,7 +154,7 @@ export class SearchPeoplesRequest {
   constructor() {
     this.limit = 5;
     this.offset = 0;
-    this.sort_by = { };
+    this.sort_by = {};
     (this.query = ''), (this.fields = []);
     this.filters = new PeoplesFilters();
     this.facets = [
@@ -209,7 +232,10 @@ export enum FacetType {
   sectorNames_v1 = 'sectorDetails_v1.sectorName',
   subSectorNames_v1 = 'sectorDetails_v1.subSectorName',
   sectorId = 'sectorId',
+  resourceCategory = 'resourceCategory',
   subSectorId = 'subSectorId',
+  subSectorNameResource = "subSectorName",
+  sectorNameResource = "sectorName",
 }
 
 export enum SortType {
@@ -221,7 +247,6 @@ export enum SortType {
   Descending = 'desc',
   AtoZ = 'a-z',
   ZtoA = 'z-a',
-
 }
 
 export enum SearchConstantLocalStorage {

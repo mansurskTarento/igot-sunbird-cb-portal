@@ -65,6 +65,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllCompetencySubTheme: boolean = false;
   showAllDesignation: boolean = false;
   showAllSectors: boolean = false;
+  showResourceCategory: boolean = false;
   showAllSubSectors: boolean = false;
 
   selectedFilterChips: any;
@@ -75,6 +76,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
   filterQuerySectorNames = '';
+  filterQueryResourceCategory = ''
   filterQuerySubSectorNames = '';
   filterQuerySubSectors: string = '';
   filterQuerySubThemes = '';
@@ -119,7 +121,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes['newfacets'] && changes['newfacets'].currentValue) {
-      
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -158,7 +159,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-
   }
 
   formatSectorName(name: string): string {
@@ -303,10 +303,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       case FacetType.sectorId:
         this.showAllSectors = !this.showAllSectors;
         break;
-        
-        case FacetType.subSectorNames_v1:
-        case FacetType.subSectorId:
-        this.showAllSubSectors = !this.showAllSubSectors;
+  
+      case FacetType.subSectorNames_v1:
+      case FacetType.subSectorId:
+      this.showAllSubSectors = !this.showAllSubSectors;
+      break;
+
+      case FacetType.resourceCategory:
+        this.showResourceCategory = !this.showResourceCategory;
         break;
     }
   }
@@ -456,12 +460,29 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (typeof data !== 'object' || data === null) {
       return [];
     }
-    return _.flatMap(data, (values, key) =>
+    const returnedData =  _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
         value: value === 'Courses' ? 'Contents' : this.formatValue(value),
       }))
     );
+    this.categoriseByFacet(returnedData)
+    return returnedData
+  }
+
+  categoriseByFacet(facetData: any) {
+    const groupedData = _.groupBy(facetData, 'type');
+    const visibilityMap: { key: string; enableKey: any }[] = [
+      { key: FacetType.sectorNames_v1, enableKey: 'showAllSectors' },
+      { key: FacetType.subSectorNames_v1, enableKey: 'showAllSubSectors' },
+      { key: FacetType.Language, enableKey: 'showAllLanguage' },
+      { key: FacetType.Organization, enableKey: 'showAllOrganisation' },
+      { key: this.competencyThemeKey, enableKey: 'showAllCompetencyTheme' },
+    ];
+  
+    visibilityMap.forEach(({ key, enableKey }) => {
+      (this as any)[enableKey] = groupedData[key]?.length > 1 || false;
+    });
   }
 
   private formatValue(value: string): string {
@@ -647,7 +668,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredSectorNames() {
-    let filteredList = this.formattedFacets[FacetType.sectorNames_v1].filter(
+    let data;
+    if(this.formattedFacets[FacetType.sectorNames_v1]) {
+      data = this.formattedFacets[FacetType.sectorNames_v1]
+    } else if (this.formattedFacets[FacetType.sectorNameResource]) {
+      data = this.formattedFacets[FacetType.sectorNameResource]
+    }
+
+    let filteredList = data.filter(
       (item: any) =>
         item.name.toLowerCase().includes(this.filterQuerySectorNames.toLowerCase())
     );
@@ -656,7 +684,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredSubSectorNames() {
-    let filteredList = this.formattedFacets[FacetType.subSectorNames_v1].filter(
+    let data;
+    if(this.formattedFacets[FacetType.subSectorNames_v1]) {
+      data = this.formattedFacets[FacetType.subSectorNames_v1]
+    } else if (this.formattedFacets[FacetType.subSectorNameResource]) {
+      data = this.formattedFacets[FacetType.subSectorNameResource]
+    }
+
+    let filteredList = data.filter(
       (item: any) =>
         item.name.toLowerCase().includes(this.filterQuerySubSectorNames.toLowerCase())
     );
@@ -725,6 +760,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showAllCompetencySubTheme ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredResourceCategory() {
+    let filteredList = this.formattedFacets[FacetType.resourceCategory].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryResourceCategory.toLowerCase())
+    );
+
+    return this.showResourceCategory ? filteredList : filteredList.slice(0, 4);
   }
 
   private recursivelySetIsCheckedFalse(filters: any[], name: string): any {
