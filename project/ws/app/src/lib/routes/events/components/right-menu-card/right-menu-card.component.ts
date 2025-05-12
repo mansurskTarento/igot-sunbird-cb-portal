@@ -224,14 +224,23 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
 
   navigateToPLayer() {
     if (this.isenrollFlow) {
-      if (this.eventData.registrationLink.includes('youtube.com')) {
-        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${this.videoId}`])
+      const url = this.findUrl()
+      if (url.includes('youtube.com')) {
+        const videoId = url.split('/').pop()
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${videoId}`])
       } else {
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
       }
     } else {
       window.open(this.getLink(), "_blank")
     }
+  }
+
+  findUrl() {
+    if (this.eventData && this.eventData.recordedLinks && this.eventData.recordedLinks.length > 0) {
+      return this.eventData.recordedLinks[0]
+    }
+    return this.eventData.registrationLink
   }
 
   navigateToSamePagewithBatchId(batchId: string) {
