@@ -50,8 +50,8 @@
                             <p class="title-label">{{'gyaanKarmayogi.subSectors'| translate}}</p>
                             <ng-container *ngIf="resourceData?.subSectorsList?.length > 0">
                                 <div class="flex gap-2 flex-wrap items-center">
-                                    <ng-container *ngFor="let sector of resourceData.subSectorsList; let i = index; let isLast = last">
-                                        <p class="title-value margin-remove" >{{ sector?.sectorName}}</p>
+                                    <ng-container *ngFor="let subSector of resourceData.subSectorsList; let i = index; let isLast = last">
+                                        <p class="title-value margin-remove" >{{ subSector?.subSectorName}}</p>
                                         <div class="flex items-center" *ngIf="!isLast">
                                             <span class="period color-white"></span>
                                         </div>
