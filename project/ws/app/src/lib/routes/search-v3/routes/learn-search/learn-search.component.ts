@@ -613,6 +613,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
     // this.searchRequestCourse.request.filters.courseCategory = selectedFilters
+    this.searchRequestResources = new SearchV4Request([])
 
     if (this.searchSortFilter === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
