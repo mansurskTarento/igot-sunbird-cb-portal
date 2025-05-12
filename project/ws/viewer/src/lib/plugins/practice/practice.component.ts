@@ -484,7 +484,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       if (this.selectedAssessmentCompatibilityLevel < 7) {
 
         this.quizSvc.getSectionV4(this.identifier, this.forPreview,
-                                  this.getPublicContentRequestData()).subscribe((section: NSPractice.ISectionResponse) => {
+                                  this.getPublicContentRequestData(),this.collectionId).subscribe((section: NSPractice.ISectionResponse) => {
           // console.log(section)
           if (section && section.result && section.result.response) {
             if ((this.forPreview && !this.forCreatorMode)) {
