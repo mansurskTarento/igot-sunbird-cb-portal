@@ -339,4 +339,13 @@ export class ViewerUtilService {
     fetchContent(id: string, type: string) {
       return this.http.get<NsContent.IContent>(`/apis/proxies/v8/action/content/v3/hierarchy/${id}?mode=${type}`)
     }
+
+    updateContentHashMapForAssesstent(contentId: string, contentProgress: any) {
+      if (this.tocSvc.hashmap[contentId] &&
+        (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
+        this.tocSvc.hashmap[contentId]['completionPercentage'] = contentProgress.completionPercentage
+        this.tocSvc.hashmap[contentId]['completionStatus'] = contentProgress.status
+        this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+      }
+    }
 }
