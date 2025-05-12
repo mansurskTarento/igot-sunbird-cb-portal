@@ -341,7 +341,6 @@ export class ViewerUtilService {
     }
 
     updateContentHashMapForAssesstent(contentId: string, contentProgress: any) {
-      debugger
       if (this.tocSvc.hashmap[contentId] &&
         (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
         this.tocSvc.hashmap[contentId]['completionPercentage'] = contentProgress.completionPercentage
