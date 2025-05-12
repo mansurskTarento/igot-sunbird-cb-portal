@@ -17,7 +17,7 @@ import { QuestionComponent } from './components/question/question.component'
 import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submit-quiz-dialog.component'
 import { OnConnectionBindInfo } from 'jsplumb'
 import { PracticeService } from './practice.service'
-import { EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
 import { WidgetContentService } from '@sunbird-cb/collection'
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
 import { ViewerUtilService } from '../../viewer-util.service'
@@ -171,6 +171,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private valueSvc: ValueService,
     // private vws: ViewerDataService,
+        private configSvc: ConfigurationsService,
     private formBuilder: UntypedFormBuilder,
     public snackbar: MatSnackBar,
     private sanitized: DomSanitizer,
@@ -1722,6 +1723,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           await this.quizSvc.submitQuizV5(this.generateRequest).toPromise().catch(_error => {}) 
         }    
       }
+      this.fetchProgressOfAssessment()
     } else {
       let requestData : any = this.generateRequest
       requestData = {
@@ -2134,6 +2136,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       top.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
     this.clearStoragePartial()
+    if(!this.forPreview){
+      this.fetchProgressOfAssessment()
+    }
   }
   formate(text: string): SafeHtml {
     let newText = '<ul>'
@@ -2579,5 +2584,37 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     return (this.widgetContentService.currentMetaData && 
     this.widgetContentService.currentMetaData.courseCategory === this.eCourseCategory.CURATED_PROGRAM && 
     this.widgetContentService.currentMetaData.compatibilityLevel > 4)
+  }
+
+  fetchProgressOfAssessment() {
+    let userId = ''
+    if (this.configSvc.userProfile) {
+      userId = this.configSvc.userProfile.userId || ''
+    }
+    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
+              this.activatedRoute.snapshot.queryParams.collectionId,
+              this.activatedRoute.snapshot.queryParams.batchId,
+      this.identifier)
+    const req:any = {
+      request: {
+        userId,
+        batchId: requestCourse.batchId,
+        courseId: requestCourse.courseId || '',
+        contentIds: [],
+        fields: ['progressdetails'],
+      },
+    }
+    this.widgetContentService.fetchContentHistoryV2(req).subscribe(
+      data => {
+        if (data && data.result && data.result.contentList.length) {
+          this.widgetContentService.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
+          let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
+            return content.contentId === this.identifier})
+            if(contentProgressData && contentProgressData.length) {
+                this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
+            }
+        }
+      },
+    )
   }
 }
