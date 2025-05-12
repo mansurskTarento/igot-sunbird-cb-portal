@@ -481,7 +481,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     ];
   
     visibilityMap.forEach(({ key, enableKey }) => {
-      (this as any)[enableKey] = groupedData[key]?.length > 1 || false;
+      (this as any)[enableKey] = groupedData[key]?.length > 0 || false;
     });
   }
 
