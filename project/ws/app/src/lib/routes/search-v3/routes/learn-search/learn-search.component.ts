@@ -432,8 +432,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchcommunities() {
-    // this.searchRequestCommunities.pageSize = this.initialPaginationSize;
-    this.searchRequestCommunities.searchString = this.statedata?.param || '';
+    if(this.statedata?.param) {
+      this.searchRequestCommunities.searchString = this.statedata?.param || '';
+    }
+
     const result = await this.searchV3Service
       .searchCommunity(this.searchRequestCommunities)
       .catch(() => {
@@ -1181,6 +1183,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchRequestExternal.pageSize = event.limit;
       this.searchRequestExternal.pageNumber = event.currentPage - 1;
       await this.searchExternalContents();
+    }
+    else if (this.seeAllResult === SearchCategory.Communities) {
+      this.searchRequestCommunities.pageSize = event.limit;
+      this.searchRequestCommunities.pageNumber = event.currentPage - 1;
+      await this.searchcommunities();
     }
 
     this.searchPeopleLoader = false

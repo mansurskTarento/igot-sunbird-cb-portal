@@ -22,6 +22,7 @@ import {
   SearchCommunitiesRequest,
   SearchEventfacet,
   SearchEventFields,
+  SearchExternalRequest,
   SearchNLP,
   SearchPeoplesRequest,
   SearchResourceFacets,
@@ -232,8 +233,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   processSearchText(query: any) {
     document.getElementById('global-search-input')?.blur();
     const queryParams = {
-      q: (query || '').trim(),
-      search: this.responseNlpQuery || null,
+      q: query ? query?.trim() : '',
+      search: query && this.responseNlpQuery ? this.responseNlpQuery : null,
       category: this.selectedSearchCategory || null,
       p: null,
       f: null,
@@ -259,6 +260,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       this.openSearchTemplate = true;
     }, 0);
     this.queryControl.reset();
+    this.updateQuery('');
   }
 
   async selectSearchCategory(category: string) {
@@ -345,8 +347,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
       return;
     } else if (this.selectedSearchCategory === SearchCategory.ExternalContents) {
-      const searchRequestExternal = new SearchCommunitiesRequest([]);
-      searchRequestExternal.searchString = query;
+      const searchRequestExternal = new SearchExternalRequest([]);
+      searchRequestExternal.searchString = query || '';
       const result = await this.searchV3Service
         .searchExternalContent(searchRequestExternal)
         .catch(() => (this.allSearchResults = []));

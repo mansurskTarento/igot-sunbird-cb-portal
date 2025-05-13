@@ -72,6 +72,7 @@
                 <ng-container>
                     <!-- Content Card -->
                     <ng-container
+                    
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
                             <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> 
@@ -213,7 +214,7 @@
                                 'learnsearch.seeAllResults' | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && communitiesSearchTotalCount > initialPaginationSize">
-                                <div class="mt-80">
+                                <div [ngClass]="{'md:mt-72': communitiesSearchResults.length < 3}">
                                 <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
                                     [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                     [totalItemsCount]="this.communitiesSearchTotalCount"

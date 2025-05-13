@@ -324,6 +324,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         break;
 
       case FacetType.topic:
+      case FacetType.topicName:
         this.showAllTopic = !this.showAllTopic;
         break;
     }
@@ -494,6 +495,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       { key: this.competencyThemeKey, enableKey: 'showAllCompetencyTheme' },
       { key: FacetType.contentPartners, enableKey: 'showAllContentPartners' },
       { key: FacetType.topic, enableKey: 'showAllTopic' },
+      { key: FacetType.topicName, enableKey: 'showAllTopic' },
     ];
   
     visibilityMap.forEach(({ key, enableKey }) => {
@@ -798,7 +800,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get filteredTopic() {
-    let filteredList = this.formattedFacets[FacetType.topic].filter(
+    let filterData;
+    if(this.formattedFacets[FacetType.topic]) {
+      filterData = this.formattedFacets[FacetType.topic]
+    } else if (this.formattedFacets[FacetType.topicName]) {
+      filterData = this.formattedFacets[FacetType.topicName]
+    }
+    let filteredList = filterData.filter(
       (item: any) =>
         item.name.toLowerCase().includes(this.filterQueryTopic.toLowerCase())
     );
