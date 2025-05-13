@@ -17,12 +17,15 @@ import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
 import {
+  FacetType,
   SearchCategory,
   SearchCommunitiesRequest,
   SearchEventfacet,
   SearchEventFields,
   SearchNLP,
   SearchPeoplesRequest,
+  SearchResourceFacets,
+  SearchResourceMimeType,
   SearchV4Request,
 } from '../../models/search-v3.model';
 import { WidgetContentLibService } from '@sunbird-cb/consumption';
@@ -61,10 +64,15 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
     { label: 'People', value: SearchCategory.People, icon: 'people-search' },
     {
-      label: 'Case Studies',
-      value: SearchCategory.CaseStudy,
-      icon: 'diversity_3',
+      label: 'External Contents',
+      value: SearchCategory.ExternalContents,
+      icon: 'video-library',
     },
+    // {
+    //   label: 'Case Studies',
+    //   value: SearchCategory.CaseStudy,
+    //   icon: 'diversity_3',
+    // },
     {
       label: 'Communities',
       value: SearchCategory.Communities,
@@ -210,7 +218,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateQuery(query: string) {
-    if (query.length) {
+    if (query && query.length) {
       await this.searchInNLP(query).then(() => {
         this.processSearchText(query);
       }).catch(() => {
@@ -224,7 +232,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   processSearchText(query: any) {
     document.getElementById('global-search-input')?.blur();
     const queryParams = {
-      q: query.trim(),
+      q: (query || '').trim(),
       search: this.responseNlpQuery || null,
       category: this.selectedSearchCategory || null,
       p: null,
@@ -288,6 +296,16 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       case SearchCategory.CaseStudy:
         searchRequest.request.filters.courseCategory = 'case study';
         break;
+
+      case SearchCategory.Resources:
+        searchRequest.request.filters.contentType = 'Resource';
+        searchRequest.request.facets = SearchResourceFacets
+        searchRequest.request.filters.mimeType = SearchResourceMimeType
+        searchRequest.request.exists = FacetType.sectorNameResource,
+        searchRequest.request.fields = [],
+        delete searchRequest.request.filters?.courseCategory;
+        delete searchRequest.request.sort_by?.createdOn;
+        break;
     }
 
     courseSearchResult = await this.searchV3Service.searchCoursesv4(
@@ -321,6 +339,22 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         result.result?.search_results?.data.length
       ) {
         this.allSearchResults = result.result?.search_results?.data;
+      } else {
+        this.allSearchResults = [];
+      }
+
+      return;
+    } else if (this.selectedSearchCategory === SearchCategory.ExternalContents) {
+      const searchRequestExternal = new SearchCommunitiesRequest([]);
+      searchRequestExternal.searchString = query;
+      const result = await this.searchV3Service
+        .searchExternalContent(searchRequestExternal)
+        .catch(() => (this.allSearchResults = []));
+      if (
+        result?.data &&
+        result?.data.length
+      ) {
+        this.allSearchResults = result?.data;
       } else {
         this.allSearchResults = [];
       }
