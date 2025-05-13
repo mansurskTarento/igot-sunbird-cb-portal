@@ -434,8 +434,15 @@
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.topicName' |
                 translate}}
             </p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['topicName'].length > 4">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryTopic" #inputSearchDesignation>
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
             <mat-selection-list>
-                <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['topicName']">
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredTopic">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'topicName')">
                         <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
@@ -444,6 +451,10 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
+            <div *ngIf="(filteredTopic?.length > 4) || (formattedFacets['topicName'].length > 4)" class="brand-color underline cursor-pointer"
+                (click)="toggleShowMore('topicName')">
+                {{ showAllTopic ? 'See Less' : 'See More' }}
+            </div>
         </div>
     </ng-container>
 

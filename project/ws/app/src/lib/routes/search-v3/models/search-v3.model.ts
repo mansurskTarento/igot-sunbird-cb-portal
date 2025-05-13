@@ -182,7 +182,7 @@ export class SearchCommunitiesRequest {
   pageNumber: number;
   pageSize: number;
   facets: string[];
-  searchString: string | null;
+  searchString?: string;
   orderBy?: string;
   orderDirection?: string;
 
@@ -192,8 +192,7 @@ export class SearchCommunitiesRequest {
     };
     this.requestedFields = [];
     this.pageNumber = 0;
-    this.pageSize = 3;
-    this.searchString = null;
+    this.pageSize = 6;
     this.facets = ['topicName', 'orgName', ...competenciesKey];
   }
 }
@@ -239,6 +238,7 @@ export enum FacetType {
   sectorNameResource = "sectorName",
   contentPartners = 'contentPartner.contentPartnerName',
   topic = 'topic',
+  topicName = 'topicName',
 }
 
 export enum SortType {
