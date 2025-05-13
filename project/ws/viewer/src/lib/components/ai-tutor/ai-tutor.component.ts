@@ -176,9 +176,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.toggleFilter(this.currentFilter === 'information' ? 'information': this.currentFilter)
   }
 
-  initData(getData: any) {
+  initData(_getData: any) {
     // tslint:disable-next-line
-    console.log(getData)
+    // console.log(getData)
     this.userJourney = []
     let userDetails: any = {
       type: 'incoming',
