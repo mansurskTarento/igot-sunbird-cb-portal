@@ -117,8 +117,12 @@
   }
 
   .mat-chip-list-wrapper {
-    justify-content: center;
+    justify-content: flex-start;
   }
+
+  .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 4px 1px;
+}
 }
 
 .recent-search-title {

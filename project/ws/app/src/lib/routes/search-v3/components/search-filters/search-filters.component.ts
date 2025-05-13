@@ -24,15 +24,12 @@ import {
   FacetType,
   FormattedFacets,
   SearchCategory,
-  SearchCommunitiesRequest,
-  SearchV4Request,
 } from '../../models/search-v3.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { MatRadioChange } from '@angular/material/radio';
-import { GbSearchService } from '../../services/gb-search.service';
 @Component({
   selector: 'ws-app-search-filters',
   templateUrl: './search-filters.component.html',
@@ -67,6 +64,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllOrganisation: boolean = false;
   showAllCompetencySubTheme: boolean = false;
   showAllDesignation: boolean = false;
+  showAllSectors: boolean = false;
+  showResourceCategory: boolean = false;
+  showAllSubSectors: boolean = false;
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
@@ -75,11 +75,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryDesignation = '';
   filterQueryRootOrgName = '';
   filterQueryThemes = '';
-  // filterQuerySubThemes = '';
+  filterQuerySectorNames = '';
+  filterQueryResourceCategory = ''
+  filterQuerySubSectorNames = '';
+  filterQuerySubSectors: string = '';
+  filterQuerySubThemes = '';
   filterCompetency = '';
   searchCategory = '';
-  sectorFilters:any
-  filterQuerySubSectors: string = '';
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
@@ -89,7 +91,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService,
-    private searchV3Service: GbSearchService,
     
   ) {
     if (localStorage.getItem('websiteLanguage')) {
@@ -106,12 +107,20 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.competencyThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencyTheme}`;
     this.competencySubThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`;
     
+    this.subscription.add(
+      this.activated.queryParams.subscribe(params => {
+        this.isExploreContentTab = params['tab'] === 'explore-content';
+        if(this.isExploreContentTab) {
+          this.selectedFilters = {}
+          this.selectedFilterChips = []
+        }
+      })
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes['newfacets'] && changes['newfacets'].currentValue) {
-      
       this.formattedFacets = this.formatFacets(
         changes['newfacets'].currentValue
       );
@@ -123,32 +132,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
         if (!coursesCategory) return;
 
-        const caseStudyCategory = _.find(coursesCategory.filters, {
-          name: 'case-study',
-        });
-
-        const sectorFilters = this.formattedFacets.sectorId.map(
-          (sector: any) => ({
-            name: sector.name,
-            count: sector.count,
-            isChecked: sector.isChecked,
-            displayName: this.formatSectorName(sector.name),
-            subSectors: []
-          })
-        );
-
-        if (!caseStudyCategory) {
-          coursesCategory.filters.push({
-            displayName: 'Case Study',
-            name: SearchCategory.CaseStudy,
-            count: 0,
-            isChecked: false,
-            filters: sectorFilters,
-          });
-        } else {
-          caseStudyCategory.filters = sectorFilters;
-        }
-        this.sectorFilters = sectorFilters
       }
       
       // Handle nested filters for other categories
@@ -168,18 +151,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           );
         }
       }
-      if (this.formattedFacets[this.competencyAreaNameKey]) {
-        this.competencyFactet = this.formattedFacets[this.competencyAreaNameKey].map(
-          (competency: any) => ({
-            name: competency.name,
-            displayName: this.capitalizeFirstLetter(competency.name),
-            isChecked: false,
-            count: competency.count,
-            competencyTheme: []
-          })
-        );
-      }
-
 
       this.setCategoryType();
     }   
@@ -188,7 +159,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-
   }
 
   formatSectorName(name: string): string {
@@ -211,24 +181,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         this.selectedFilters = {}
       } 
 
-    this.isExploreContentTab = !!params['tab'];
-    //let contentType = ''
-   // this.selectedFilters = {}
-   // console.log('categoryType', this.categoryType)
-  //  if(params && params.f) {
-  //   let formattedParams = JSON.parse(params.f)
-  //   if(Object.keys(formattedParams) && Object.keys(formattedParams).length && formattedParams['primaryCategory']) {
-  //     contentType = formattedParams['primaryCategory']
-      
-  //   }
-  // }
-    // if(contentType.length) {
-    //   this.setCourseCategoryType(contentType)
-    //   this.applyFilterFromLearn.emit(this.selectedFilters);
-    //   this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-    //  // console.log('this.selectedFilters',this.selectedFilters, this.categoryTypeDup[parentIndex].name)
-    //  // this.searchCategory = contentType;
-    // } else {
+      this.isExploreContentTab = !!params['tab'];
+    
       this.searchCategory = params['category'];
       
       if (this.searchCategory) {
@@ -319,22 +273,48 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleShowMore(togglesection: string) {
-    if (togglesection === this.competencyThemeKey) {
-      this.showAllCompetencyTheme = !this.showAllCompetencyTheme;
-    } else if (togglesection === this.competencySubThemeKey) {
-      this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
-    } else if (togglesection === FacetType.Language) {
-      this.showAllLanguage = !this.showAllLanguage;
-    } else if (togglesection === FacetType.Organization) {
-      this.showAllOrganisation = !this.showAllOrganisation;
-    } else if (togglesection === FacetType.SourceName) {
-      this.showAllOrganisation = !this.showAllOrganisation;
-    } else if (togglesection === FacetType.Designation) {
-      this.showAllDesignation = !this.showAllDesignation;
-    } else if (togglesection === FacetType.courseCategory) {
-      this.showAllContents = !this.showAllContents;
+    switch (togglesection) {
+      case this.competencyThemeKey:
+        this.showAllCompetencyTheme = !this.showAllCompetencyTheme;
+        break;
+  
+      case this.competencySubThemeKey:
+        this.showAllCompetencySubTheme = !this.showAllCompetencySubTheme;
+        break;
+  
+      case FacetType.Language:
+        this.showAllLanguage = !this.showAllLanguage;
+        break;
+  
+      case FacetType.Organization:
+      case FacetType.SourceName:
+        this.showAllOrganisation = !this.showAllOrganisation;
+        break;
+  
+      case FacetType.Designation:
+        this.showAllDesignation = !this.showAllDesignation;
+        break;
+  
+      case FacetType.courseCategory:
+        this.showAllContents = !this.showAllContents;
+        break;
+  
+      case FacetType.sectorNames_v1:
+      case FacetType.sectorId:
+        this.showAllSectors = !this.showAllSectors;
+        break;
+  
+      case FacetType.subSectorNames_v1:
+      case FacetType.subSectorId:
+      this.showAllSubSectors = !this.showAllSubSectors;
+      break;
+
+      case FacetType.resourceCategory:
+        this.showResourceCategory = !this.showResourceCategory;
+        break;
     }
   }
+  
 
   translateActualLabels(label: string, type: any) {
     return this.langtranslations.translateActualLabel(label, type, '');
@@ -464,121 +444,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   
   }
 
-  async onCompetencyAreaSelectionFilter(_event: MatCheckboxChange, competency: any, ) {
-    const competencyTheme = await this.fetchCompetencyTheme(competency.name);
-      if (competencyTheme && competencyTheme.length) {
-        const checkTheme = this.competencyFactet.find((areaName: any) => areaName.name === competency.name);
-        if (checkTheme && !checkTheme.competencyTheme.length) {
-          checkTheme.competencyTheme = competencyTheme;
-          checkTheme.showAll = false;
-          checkTheme.filteredLength = competencyTheme.length;
-        }
-        
-      }
-   
-  }
-
-  async fetchCompetencyTheme(competency: any): Promise<any> {
-    let searchRequest = new SearchV4Request([]);
-    let searchRequestCommunity = new SearchCommunitiesRequest([
-      this.competencyThemeKey
-    ]);
-
-    if (this.searchCategory === SearchCategory.Events) {
-      searchRequest.request.query = this.searchQuery;
-      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
-      searchRequest.request.facets = [this.competencyThemeKey];
-      searchRequest.request.filters.contentType = ['Events'];
-    }
-     else if (this.searchCategory === SearchCategory.Communities) {
-      searchRequestCommunity.searchString = this.searchQuery;
-      searchRequestCommunity.filterCriteriaMap[this.competencyAreaNameKey] =
-        competency;
-    } 
-     else if (this.searchCategory === SearchCategory.CaseStudy) {
-      searchRequest.request.query = this.searchQuery;
-      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
-      searchRequest.request.facets = [this.competencyThemeKey];
-      searchRequest.request.filters.courseCategory = ['Case Study']
-    } 
-    else {
-      searchRequest.request.query = this.searchQuery;
-      searchRequest.request.filters[this.competencyAreaNameKey] = [competency];
-      searchRequest.request.facets = [this.competencyThemeKey];
-    }
-
-    if (this.searchCategory === SearchCategory.Communities) {
-      const result = await this.searchV3Service.searchCommunity(
-        searchRequestCommunity
-      );
-      let competencyThemeFacet = result.result?.search_results?.facets[
-        this.competencyThemeKey
-      ].length
-        ? {
-            values:
-              result.result?.search_results?.facets[this.competencyThemeKey],
-          }
-        : { values: [] };
-      if (competencyThemeFacet.values.length) {
-        // const searchFacets = result.result.facets || [];
-        const themes = competencyThemeFacet.values.map((item: any) => ({
-            name: item.value,
-            displayName: item.value,
-            isChecked: false,
-            count: item.count || 0,
-            competencyTheme: []
-        })) || [];
-        return themes;
-      }
-    } else {
-      const result = await this.searchV3Service.searchCoursesv4(searchRequest);
-      if (result.result && result.result.facets) {
-        const searchFacets = result.result.facets || [];
-        const themes =
-          searchFacets[0]?.values.map((item: any) => ({
-            name: item.name,
-            displayName: this.capitalizeFirstLetter(item.name),
-            isChecked: false,
-            count: item.count || 0,
-            competencyTheme: [],
-          })) || [];
-        return themes;
-      }
-    } 
-    // else {
-    //   if(Object.keys(competency).length && competency.name) {
-    //     this.selectedFilters[this.competencyAreaNameKey] = this.selectedFilters[this.competencyAreaNameKey].filter((value:any) =>  value !== competency.name)
-    //     this.selectedFilters[this.competencyThemeKey] = []
-        
-    //     // const competencyThemes = competency[this.competencyThemeKey]
-    //     // if(competencyThemes) {
-    //     //   competencyThemes.forEach((theme: any) => {
-    //     //     if(theme.isChecked) {
-    //     //      theme.isChecked = false
-    //     //       this.selectedFilters[this.competencyThemeKey] = this.selectedFilters[
-    //     //         this.competencyThemeKey
-    //     //       ].filter((item: any) => item !== theme.name);
-    //     //     } 
-    //     //   })
-    //     // }
-        
-    //   }
-    //   this.appliedFilter.emit(this.selectedFilters);
-    //   this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
-    // }
-
-    return [];
-  }
-
-  
-  getFilteredThemes(competency: any): any[] {
-    const filteredThemes = competency.competencyTheme.filter((theme: any) =>
-      theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase())
-    );
-    
-    return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4);
-  }
-
   togoleThemes(competency: any) {
     competency['showAll'] = !competency['showAll'];
   }
@@ -595,13 +460,29 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (typeof data !== 'object' || data === null) {
       return [];
     }
-
-    return _.flatMap(data, (values, key) =>
+    const returnedData =  _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
-        value: this.formatValue(value),
+        value: value === 'Courses' ? 'Contents' : this.formatValue(value),
       }))
     );
+    this.categoriseByFacet(returnedData)
+    return returnedData
+  }
+
+  categoriseByFacet(facetData: any) {
+    const groupedData = _.groupBy(facetData, 'type');
+    const visibilityMap: { key: string; enableKey: any }[] = [
+      { key: FacetType.sectorNames_v1, enableKey: 'showAllSectors' },
+      { key: FacetType.subSectorNames_v1, enableKey: 'showAllSubSectors' },
+      { key: FacetType.Language, enableKey: 'showAllLanguage' },
+      { key: FacetType.Organization, enableKey: 'showAllOrganisation' },
+      { key: this.competencyThemeKey, enableKey: 'showAllCompetencyTheme' },
+    ];
+  
+    visibilityMap.forEach(({ key, enableKey }) => {
+      (this as any)[enableKey] = groupedData[key]?.length > 0 || false;
+    });
   }
 
   private formatValue(value: string): string {
@@ -624,6 +505,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     let facets;
     if(item.type === 'sectorId' || item.type === 'subSectorId') {
       item.value = this.reverseFormatSectorName(item.value)
+    }
+
+    if(item.type === 'sectorDetails_v1.subSectorName') {
+      item.value = (item.value).toLowerCase()
     }
     const types = this.categoryTypeDup.map((category) => category.name);
     if(this.searchCategory === 'case-study') {
@@ -655,58 +540,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
           this.selectedFilters
         );
       }
-    }
-     else if (
-      item.type === this.competencyAreaNameKey ||
-      item.type === this.competencyThemeKey ||
-      item.type === this.competencySubThemeKey
-    ) {
-      facets = this.competencyFactet;
-
-      let competency;
-      if (item.type && item.type === this.competencyAreaNameKey) {
-        if (facets?.length) {
-          competency = facets.find(
-            (facet: any) =>
-              (facet?.name).toLowerCase() ===
-              item?.value.toLowerCase()
-          );
-        }
-      } else {
-        if (facets?.length) {
-          for (const facet of facets) {
-            const matchedSubFacet = facet.competencyTheme?.find(
-              (subFacet: any) => subFacet.name.toLowerCase() === item?.value.toLowerCase()
-            );
-        
-            if (matchedSubFacet) {
-              competency = matchedSubFacet;
-              break; 
-            }
-          }
-        }
-      }
-
-      if (competency) {
-        competency.isChecked = false;
-
-        if (this.selectedFilters[item.type]) {
-          this.selectedFilters[item.type] = this.selectedFilters[
-            item.type
-          ].filter(
-            (filter: string) =>
-              filter.toLowerCase() !== item?.value.toLowerCase()
-          );
-          // if (this.selectedFilters[item.type].length === 0) {
-          //   delete this.selectedFilters[item.type];
-          // }
-        }
-
-        this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
-      }
     } else {
       facets = this.formattedFacets;
 
@@ -715,36 +548,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       foundFilter = _.find(allFilters, {
         name: item.value.toLowerCase(),
       });
-      if (!foundFilter && item.type === 'subSectorId') {
-        for (const sector of this.sectorFilters) {
-          foundFilter = sector.subSectors.find((subSector: any) => subSector.name === item.value);
-          if (foundFilter) {
-            break;
-          }
-        }
-      }
-
+     
       if (!foundFilter) {
         foundFilter = _.find(allFilters, {
           name: item.value,
         });
       }
-      if (item.type === 'subSectorId' && foundFilter && foundFilter?.name.startsWith('sector-fw_sector_')) {
-        foundFilter.isChecked = false;
-
-        if (_.has(this.selectedFilters, item.type)) {
-          _.pull(this.selectedFilters[item.type], foundFilter.name);
-          if (_.isEmpty(this.selectedFilters[item.type])) {
-            // delete this.selectedFilters[item.type];
-          }
-        }
-
-        this.appliedFilter.emit(this.selectedFilters);
-        this.selectedFilterChips = this.refactorFilterData(
-          this.selectedFilters
-        );
-      }
-      else if (foundFilter && item.type !== 'sectorId') {
+      
+      else if (foundFilter) {
         foundFilter.isChecked = false;
         if (_.has(this.selectedFilters, item.type)) {
           _.pull(this.selectedFilters[item.type], foundFilter.name);
@@ -856,25 +667,55 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllLanguage ? filteredList : filteredList.slice(0, 4);
   }
 
-  // getFilteredThemes(competency: any): any[] {
-  //   let filteredThemes: any[] = []
-  //   if(competency && competency[this.competencyThemeKey]) {
-  //     filteredThemes = competency[this.competencyThemeKey].filter((theme: any) => 
-  //       theme.name.toLowerCase().includes(this.filterQueryThemes.toLowerCase()))
-  //   }
-  //   competency['filteredLength'] = filteredThemes.length
-  //   return competency.showAll ? filteredThemes : filteredThemes.slice(0, 4)
-  // }
+  get filteredSectorNames() {
+    let data;
+    if(this.formattedFacets[FacetType.sectorNames_v1]) {
+      data = this.formattedFacets[FacetType.sectorNames_v1]
+    } else if (this.formattedFacets[FacetType.sectorNameResource]) {
+      data = this.formattedFacets[FacetType.sectorNameResource]
+    }
 
+    let filteredList = data.filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQuerySectorNames.toLowerCase())
+    );
 
-  // getFilteredSubThemes(competency: any): any[] {
-  //   let filteredSubThemes: any[] = []
-  //   if(competency && competency[this.competencySubThemeKey]) {
-  //     filteredSubThemes = competency[this.competencySubThemeKey].filter((subTheme: any) => 
-  //     subTheme.name.toLowerCase().includes(this.filterQuerySubThemes.toLowerCase()))
-  //   }
-  //   return filteredSubThemes
-  // }
+    return this.showAllSectors ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredSubSectorNames() {
+    let data;
+    if(this.formattedFacets[FacetType.subSectorNames_v1]) {
+      data = this.formattedFacets[FacetType.subSectorNames_v1]
+    } else if (this.formattedFacets[FacetType.subSectorNameResource]) {
+      data = this.formattedFacets[FacetType.subSectorNameResource]
+    }
+
+    let filteredList = data.filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQuerySubSectorNames.toLowerCase())
+    );
+
+    return this.showAllSubSectors ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredSectorId() {
+    let filteredList = this.formattedFacets[FacetType.sectorId].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQuerySectorNames.toLowerCase())
+    );
+
+    return this.showAllSectors ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredSubSectorId() {
+    let filteredList = this.formattedFacets[FacetType.subSectorId].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQuerySubSectorNames.toLowerCase())
+    );
+
+    return this.showAllSubSectors ? filteredList : filteredList.slice(0, 4);
+  }
 
   get filteredDesignations() {
     let filteredList = this.formattedFacets[
@@ -899,6 +740,37 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
   }
 
+  get filteredCompetencyTheme() {
+    let filteredList = this.formattedFacets[this.competencyThemeKey]?.filter(
+      (item: any) =>
+        item?.name
+          .toLowerCase()
+          .includes(this.filterQueryThemes.toLowerCase())
+    );
+
+    return this.showAllCompetencyTheme ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredSubCompetencyTheme() {
+    let filteredList = this.formattedFacets[this.competencySubThemeKey]?.filter(
+      (item: any) =>
+        item?.name
+          .toLowerCase()
+          .includes(this.filterQuerySubThemes.toLowerCase())
+    );
+
+    return this.showAllCompetencySubTheme ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredResourceCategory() {
+    let filteredList = this.formattedFacets[FacetType.resourceCategory].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryResourceCategory.toLowerCase())
+    );
+
+    return this.showResourceCategory ? filteredList : filteredList.slice(0, 4);
+  }
+
   private recursivelySetIsCheckedFalse(filters: any[], name: string): any {
     for (const filter of filters) {
       if ((filter?.name).toLowerCase() === name.toLowerCase()) {
@@ -917,53 +789,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
     return null;
   }  
-
-  getFilteredSubSectors(sector: any): any[] {
-      if (!this.filterQuerySubSectors) {
-          return sector.subSectors;
-      }
-      return sector.subSectors.filter((subSector: any) =>
-          subSector.name.toLowerCase().includes(this.filterQuerySubSectors.toLowerCase())
-      );
-  }
-
-
-  async onSectorSelectionFilter(_event: any, _sector: any): Promise<void> {
-      const subsectors = await this.fetchSubSectorsForSector(_sector.name);
-      if (subsectors && subsectors.length) {
-        const checkSector = this.sectorFilters.find((sector: any) => sector.name === _sector.name);
-        if (checkSector && !checkSector.subSectors.length) {
-          checkSector.subSectors = subsectors;
-          checkSector.showAll = false;
-        }
-      }
-  }
-
-  toggleSubSectors(sector: any): void {
-      sector.showAll = !sector.showAll;
-  }
-
-  async fetchSubSectorsForSector(sectorId: string): Promise<any[]> {
-    let searchRequestCourse = new SearchV4Request([]);
-    searchRequestCourse.request.query = this.searchQuery;
-    searchRequestCourse.request.filters.sectorId = [sectorId];
-    searchRequestCourse.request.facets = ['subSectorId'];
-
-    const result = await this.searchV3Service.searchCoursesv4(searchRequestCourse);
-
-    if (result.result && result.result.facets) {
-        const searchFacets = result.result.facets || [];
-        const subSectors = searchFacets[0]?.values.map((item: any) => ({
-            name: item.name,
-            displayName: this.formatSectorName(item.name),
-            isChecked: false,
-            count: item.count || 0,
-        })) || [];
-        return subSectors;
-    }
-
-    return [];
-  }
 
   private formatCategoryName(name: string): string {
     return name
@@ -999,5 +824,5 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       return obj === target;
     }
   }
-  
+
 }

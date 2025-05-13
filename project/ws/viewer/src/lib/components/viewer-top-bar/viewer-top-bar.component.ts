@@ -448,4 +448,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   resetEnableShare() {
     this.enableShare = false
   }
+
+  checkRatingAndApply() {
+    if (!this.userRating && this.overallProgress >= 100) {
+      this.openFeedbackDialog(this.userRating)
+    }
+  }
 }

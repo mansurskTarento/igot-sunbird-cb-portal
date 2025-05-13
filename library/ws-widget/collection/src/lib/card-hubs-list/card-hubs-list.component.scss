@@ -385,18 +385,20 @@ mat-grid-list {
 
 .explore-content-text {
   display: inline-block;
-  max-width: 0;
-  opacity: 0;
+  // max-width: 0;
+  // opacity: 0;
+  max-width: 200px;
+  opacity: 1;
   overflow: hidden;
   white-space: nowrap;
   transition: max-width 0.5s ease, opacity 0.5s ease;
   vertical-align: middle;
 }
 
-::ng-deep.explore-content-action:hover .explore-content-text {
-  max-width: 200px; // Adjust as needed
-  opacity: 1;
-}
+// ::ng-deep.explore-content-action:hover .explore-content-text {
+//   max-width: 200px; // Adjust as needed
+//   opacity: 1;
+// }
 
 ::ng-deep.explore-content-action {
   div {

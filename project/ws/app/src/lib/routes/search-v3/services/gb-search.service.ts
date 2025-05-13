@@ -90,6 +90,10 @@ export class GbSearchService {
     return this.http.post(API_END_POINTS.SEARCH_COMMUNITY, params).toPromise();
   }
 
+  searchResource(params: SearchV4Request): Promise<any> {
+    return this.http.post(API_END_POINTS.SEARCH_V6, params).toPromise();
+  }
+
   nlpSearch(params: SearchNLP): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise();
   }

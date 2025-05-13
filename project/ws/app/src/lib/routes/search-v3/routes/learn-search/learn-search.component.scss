@@ -190,6 +190,9 @@
   margin-top: 126px;
   /* height: calc(100vh - 10px); */
   margin-bottom: 10px;
+  @media (max-width: 768px) {
+    width: 61.5% !important;
+  }
 }
 
 .filter-container-search .mat-drawer-inner-container {
