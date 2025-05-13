@@ -35,7 +35,9 @@
 .profile-editor-description {
   color: rgba(0, 0, 0, 0.6);
   margin-bottom: 24px;
-  font-size: 14px;
+  /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
 }
 
 .profile-editor-form {

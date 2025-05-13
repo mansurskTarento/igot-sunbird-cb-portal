@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { achievement } from '../../../models/profile-revamp.model';
 
 @Component({
@@ -9,9 +9,16 @@ import { achievement } from '../../../models/profile-revamp.model';
 export class AchievementsComponent implements OnInit {
   //#region (global variables)
   @Input() achievementsList: achievement[] = [];
+    @Output() openProfileEntryEditDialog = new EventEmitter();
   //#endregion
   constructor() { }
 
   ngOnInit() { }
+
+  //#region (functions)
+  openEditDialog(entry: any = {}): void {
+    this.openProfileEntryEditDialog.emit(entry);
+  }
+  //#endregion (functions)
 
 }

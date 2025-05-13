@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { serviceHistory } from '../../../models/profile-revamp.model';
 
 @Component({
@@ -9,10 +9,17 @@ import { serviceHistory } from '../../../models/profile-revamp.model';
 export class ServiceHistoryComponent implements OnInit {
   //#region (global variables)
   @Input() serviceHistoryList: serviceHistory[] = []
+  @Output() openProfileEntryEditDialog = new EventEmitter();
   //#endregion (global variables)
 
   constructor() { }
 
   ngOnInit() { }
+  
+  //#region (functions)
+  openEditDialog(entry: any = {}): void {
+    this.openProfileEntryEditDialog.emit(entry);
+  }
+  //#endregion (functions)
   
 }

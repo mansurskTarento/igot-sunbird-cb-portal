@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-2">
   <div class="flex justify-between items-center">
     <div class="section-header">Achievements</div>
-    <mat-icon class="add-icon">add</mat-icon>
+    <mat-icon class="add-icon" (click)="openEditDialog()">add</mat-icon>
   </div>
 
   <div class="flex flex-col gap-2">
@@ -9,7 +9,7 @@
       <div class="achievement-card flex flex-col gap-1">
         <div class="flex justify-between items-center certificate-name">
           {{achievement?.certificateName}}
-          <mat-icon class="edit-icon">edit</mat-icon>
+          <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
         </div>
         <div class="achievement-details"> {{achievement?.provider}}</div>
         <div class="achievement-details"> {{achievement?.period}}</div>

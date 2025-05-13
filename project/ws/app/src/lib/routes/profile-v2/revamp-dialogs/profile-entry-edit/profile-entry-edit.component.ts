@@ -8,15 +8,18 @@ import * as _ from 'lodash';
   templateUrl: './profile-entry-edit.component.html',
   styleUrls: ['./profile-entry-edit.component.scss']
 })
-export class ProfileEntryEditComponent  implements OnInit {
+export class ProfileEntryEditComponent implements OnInit {
   header: string = '';
   entryDetails: any;
   entryForm!: FormGroup;
   constructor(
     private fb: FormBuilder,
-        private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
-        @Inject(MAT_LEGACY_DIALOG_DATA) private data: any
-  ) { }
+    private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
+    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any
+  ) {
+    this.header = _.get(this.data, 'header', '');
+    this.entryDetails = _.get(this.data, 'profileDetails', {});
+  }
   ngOnInit(): void {
     this.initForm();
   }
@@ -27,10 +30,10 @@ export class ProfileEntryEditComponent  implements OnInit {
       case 'Service History':
         this.createServiceHistoryForm();
         break;
-        case 'Educational qualifications':
+      case 'Educational qualifications':
         this.createEducationalQualificationsForm();
         break;
-        case 'Achievements':
+      case 'Achievements':
         this.createAchievementsForm();
         break;
     }
@@ -52,8 +55,8 @@ export class ProfileEntryEditComponent  implements OnInit {
   private createEducationalQualificationsForm(): void {
     this.entryForm = this.fb.group({
       degree: [_.get(this.data, 'degree', ''), [Validators.required]],
-      field: [_.get(this.data, 'field', ''), [Validators.required]],
-      institute: [_.get(this.data, 'institute', ''), [Validators.required]],
+      fieldOfStudy: [_.get(this.data, 'fieldOfStudy', ''), [Validators.required]],
+      instituteName: [_.get(this.data, 'instituteName', ''), [Validators.required]],
       startYear: [_.get(this.data, 'startYear', ''), [Validators.required]],
       endYear: [_.get(this.data, 'endYear', ''), [Validators.required]],
     });
@@ -63,7 +66,7 @@ export class ProfileEntryEditComponent  implements OnInit {
     this.entryForm = this.fb.group({
       title: [_.get(this.data, 'title', ''), [Validators.required]],
       issuingOrganisation: [_.get(this.data, 'issuingOrganisation', '')],
-      date: [_.get(this.data, 'date', '')],
+      issueDate: [_.get(this.data, 'issueDate', '')],
       uploadUrl: [_.get(this.data, 'uploadUrl', '')],
       url: [_.get(this.data, 'url', '')],
       description: [_.get(this.data, 'description', ''), [Validators.maxLength(1000)]],
@@ -89,7 +92,7 @@ export class ProfileEntryEditComponent  implements OnInit {
       }
     });
   }
-  
+
   hasError(controlName: string, errorName: string): boolean {
     const control = this.entryForm.get(controlName);
     return control?.touched && control?.hasError(errorName) || false;

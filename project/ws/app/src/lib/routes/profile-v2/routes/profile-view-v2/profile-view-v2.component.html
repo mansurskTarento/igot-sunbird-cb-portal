@@ -100,7 +100,8 @@
         </div>
 
         <div class="user-details">
-          <ws-app-service-history [serviceHistoryList]="serviceHistoryList"></ws-app-service-history>
+          <ws-app-service-history [serviceHistoryList]="serviceHistoryList" 
+          (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
         </div>
 
         <div class="user-details">
@@ -108,11 +109,13 @@
         </div>
 
         <div class="user-details">
-          <ws-app-educational-qualifications [educationalQualificationsList]="educationalQualificationsList"></ws-app-educational-qualifications>
+          <ws-app-educational-qualifications [educationalQualificationsList]="educationalQualificationsList" 
+          (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
         </div>
 
         <div class="user-details">
-          <ws-app-achievements [achievementsList]="achievementsList"></ws-app-achievements>
+          <ws-app-achievements [achievementsList]="achievementsList" 
+          (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
         </div>
       </div>
       <!-- #endregion (user details ) -->

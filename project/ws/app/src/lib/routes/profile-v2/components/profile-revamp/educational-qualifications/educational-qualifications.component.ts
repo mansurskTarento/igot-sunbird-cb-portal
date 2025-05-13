@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { educationalQualifications } from '../../../models/profile-revamp.model';
 
 @Component({
@@ -9,9 +9,16 @@ import { educationalQualifications } from '../../../models/profile-revamp.model'
 export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
+  @Output() openProfileEntryEditDialog = new EventEmitter();
   //#endregion (global variables)
 
   constructor() { }
 
   ngOnInit() { }
+
+  //#region (functions)
+  openEditDialog(entry: any = {}): void {
+    this.openProfileEntryEditDialog.emit(entry);
+  }
+  //#endregion (functions)
 }
