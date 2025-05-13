@@ -38,7 +38,7 @@
             <!-- Right side - Content -->
             <div class="course-content pl-0 md:pl-4">
                 <ng-container
-                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event'">
+                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event' || content?.topic">
                     <div class="flex justify-between items-center">
                         <div class="course-type font-normal">
                             <mat-icon class="document-icon"
@@ -72,6 +72,10 @@
                             <ng-container *ngIf="content?.primaryCategory == 'Learning Resource'">
                                 {{content?.resourceType || content?.primaryCategory}}
                             </ng-container>
+                            <ng-container *ngIf="content?.topic && content?.externalId">
+                                {{content?.topic}}
+                            </ng-container>
+
                         </div>
                         <!-- Bookmark button -->
                         <div class="flex items-center gap-3">
