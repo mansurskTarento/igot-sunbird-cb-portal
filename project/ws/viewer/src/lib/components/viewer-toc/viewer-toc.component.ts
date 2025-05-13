@@ -143,9 +143,9 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.aiTutorResourceId = contentRead.result.content.identifier
     }
      // tslint:disable-next-line
-     console.log(this.hierarchyData,'hierarchyData')
+    //  console.log(this.hierarchyData,'hierarchyData')
      // tslint:disable-next-line
-     console.log(contentRead,'contentRead')
+    //  console.log(contentRead,'contentRead')
 
      
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.logos) {
