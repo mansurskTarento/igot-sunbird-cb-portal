@@ -329,7 +329,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         this.collectionCard = this.createCollectionCard(contentData)
         const viewerTocCardContent = this.convertContentToIViewerTocCard(contentData)
         this.isFetching = false
-        console.log('this.collection--', this.collection)
+        // console.log('this.collection--', this.collection)
         return viewerTocCardContent
       }
       return null
