@@ -23,6 +23,7 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { NotificationDropdownModule } from '@sunbird-cb/notification'
 @NgModule({
   declarations: [HeaderComponent, AppNavBarComponent, FontSettingComponent, TopRightNavBarComponent],
   imports: [
@@ -47,6 +48,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    NotificationDropdownModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

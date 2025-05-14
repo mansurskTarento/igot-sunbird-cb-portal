@@ -45,27 +45,28 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
+  showNotification: boolean = false
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
-              private configSvc: ConfigurationsService,
-              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-              private http: HttpClient, private sanitizer: DomSanitizer) {
+    private configSvc: ConfigurationsService,
+    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+    private http: HttpClient, private sanitizer: DomSanitizer) {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
+      lang = lang.replace(/\"/g, '')
+      this.selectedLanguage = lang
+      this.translate.use(lang)
+    }
+
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
-        let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
-        lang = lang.replace(/\"/g, '')
-        this.selectedLanguage = lang
+        const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
+        this.selectedLanguage = lang
       }
-
-      this.langtranslations.languageSelectedObservable.subscribe(() => {
-        if (localStorage.getItem('websiteLanguage')) {
-          this.translate.setDefaultLang('en')
-          const lang = localStorage.getItem('websiteLanguage')!
-          this.translate.use(lang)
-          this.selectedLanguage = lang
-        }
-      })
+    })
   }
 
   ngOnInit() {
@@ -121,7 +122,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    },         0)
+    }, 0)
   }
 
   openDialog(): void {
@@ -164,5 +165,9 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       }
     }
     webFormxhr.send()
+  }
+
+  openNotifications() {
+    this.showNotification = !this.showNotification
   }
 }
