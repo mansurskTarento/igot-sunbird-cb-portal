@@ -170,4 +170,8 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   openNotifications() {
     this.showNotification = !this.showNotification
   }
+
+  viewAllClick(event: any) {
+    console.log(event)
+  }
 }

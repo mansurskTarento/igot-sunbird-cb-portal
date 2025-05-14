@@ -7,7 +7,7 @@
                     <mat-icon class="bell-icon" (click)="openNotifications()">notifications</mat-icon>
                 </div>
                 <div class="notification-container" *ngIf="showNotification">
-                    <sb-uin-notification-dropdown></sb-uin-notification-dropdown>
+                    <sb-uin-notification-dropdown (viewAllClick)="viewAllClick($event)"></sb-uin-notification-dropdown>
                 </div>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
