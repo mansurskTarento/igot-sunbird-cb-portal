@@ -226,11 +226,15 @@
   }
 }
 
-.explore-all-content span {
+.explore-all-content span, .contents-title-top, .contents-title-top span {
   /* stylelint-disable */
   font-family: Montserrat;
   /* stylelint-enable */
   font-weight: 600;
   font-size: 20px;
   color: rgba(27, 33, 51, 1);
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
 }

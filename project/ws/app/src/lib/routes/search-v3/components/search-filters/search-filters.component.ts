@@ -307,13 +307,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   
       case FacetType.sectorNames_v1:
       case FacetType.sectorId:
+      case FacetType.sectorNameResource:  
         this.showAllSectors = !this.showAllSectors;
         break;
   
       case FacetType.subSectorNames_v1:
       case FacetType.subSectorId:
-      this.showAllSubSectors = !this.showAllSubSectors;
-      break;
+      case FacetType.subSectorNameResource:  
+        this.showAllSubSectors = !this.showAllSubSectors;
+        break;
 
       case FacetType.resourceCategory:
         this.showResourceCategory = !this.showResourceCategory;

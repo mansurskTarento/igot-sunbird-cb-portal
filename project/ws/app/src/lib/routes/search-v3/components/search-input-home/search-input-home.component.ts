@@ -264,9 +264,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async selectSearchCategory(category: string) {
-    this.selectedSearchCategory = category;
-    // this.searchFromQuery(this.queryControl.value);
-    this.updateQuery(this.queryControl.value);
+    if(this.queryControl.value) {
+      this.selectedSearchCategory = category;
+      // this.searchFromQuery(this.queryControl.value);
+      this.updateQuery(this.queryControl.value);
+    }
   }
 
   async searchFromQuery(query: string) {
