@@ -85,6 +85,7 @@ export enum SearchCategory {
   CaseStudy = 'case-study',
   Communities = 'communities',
   Resources = 'resources',
+  ExternalContents = 'external-contents',
 }
 
 export const SearchOthersFacet = [
@@ -181,7 +182,7 @@ export class SearchCommunitiesRequest {
   pageNumber: number;
   pageSize: number;
   facets: string[];
-  searchString: string | null;
+  searchString?: string;
   orderBy?: string;
   orderDirection?: string;
 
@@ -191,8 +192,7 @@ export class SearchCommunitiesRequest {
     };
     this.requestedFields = [];
     this.pageNumber = 0;
-    this.pageSize = 3;
-    this.searchString = null;
+    this.pageSize = 6;
     this.facets = ['topicName', 'orgName', ...competenciesKey];
   }
 }
@@ -236,6 +236,9 @@ export enum FacetType {
   subSectorId = 'subSectorId',
   subSectorNameResource = "subSectorName",
   sectorNameResource = "sectorName",
+  contentPartners = 'contentPartner.contentPartnerName',
+  topic = 'topic',
+  topicName = 'topicName',
 }
 
 export enum SortType {
@@ -251,4 +254,27 @@ export enum SortType {
 
 export enum SearchConstantLocalStorage {
   SortType = 'searchSortType',
+}
+
+export class SearchExternalRequest {
+  filterCriteriaMap: {
+    [key: string]: any;
+  };
+  requestedFields: any[];
+  pageNumber: number;
+  pageSize: number;
+  facets: string[];
+  searchString: string | null;
+  orderBy?: string;
+  orderDirection?: string;
+
+  constructor(competenciesKey: any) {
+    this.filterCriteriaMap = {};
+    this.requestedFields = [];
+    this.pageNumber = 0;
+    this.pageSize = 3;
+    this.searchString = null;
+    this.facets = ['topic', 'contentPartner.contentPartnerName', ...competenciesKey];
+    this.orderBy = 'createdOn';
+  }
 }

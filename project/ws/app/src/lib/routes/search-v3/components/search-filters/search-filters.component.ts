@@ -67,6 +67,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllSectors: boolean = false;
   showResourceCategory: boolean = false;
   showAllSubSectors: boolean = false;
+  showAllContentPartners: boolean = false;
+  showAllTopic: boolean = false;
 
   selectedFilterChips: any;
   filterQueryOrganisation = '';
@@ -81,6 +83,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQuerySubSectors: string = '';
   filterQuerySubThemes = '';
   filterCompetency = '';
+  filterQueryContentPartners = '';
+  filterQueryTopic = '';
+
   searchCategory = '';
   searchQuery = '';
   isExploreContentTab = false
@@ -159,6 +164,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
+    
   }
 
   formatSectorName(name: string): string {
@@ -311,6 +317,15 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
       case FacetType.resourceCategory:
         this.showResourceCategory = !this.showResourceCategory;
+        break;
+
+      case FacetType.contentPartners:
+        this.showAllContentPartners = !this.showAllContentPartners;
+        break;
+
+      case FacetType.topic:
+      case FacetType.topicName:
+        this.showAllTopic = !this.showAllTopic;
         break;
     }
   }
@@ -478,6 +493,9 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       { key: FacetType.Language, enableKey: 'showAllLanguage' },
       { key: FacetType.Organization, enableKey: 'showAllOrganisation' },
       { key: this.competencyThemeKey, enableKey: 'showAllCompetencyTheme' },
+      { key: FacetType.contentPartners, enableKey: 'showAllContentPartners' },
+      { key: FacetType.topic, enableKey: 'showAllTopic' },
+      { key: FacetType.topicName, enableKey: 'showAllTopic' },
     ];
   
     visibilityMap.forEach(({ key, enableKey }) => {
@@ -555,7 +573,8 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         });
       }
       
-      else if (foundFilter) {
+      
+      if (foundFilter) {
         foundFilter.isChecked = false;
         if (_.has(this.selectedFilters, item.type)) {
           _.pull(this.selectedFilters[item.type], foundFilter.name);
@@ -769,6 +788,30 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
 
     return this.showResourceCategory ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredContentPartners() {
+    let filteredList = this.formattedFacets[FacetType.contentPartners].filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryContentPartners.toLowerCase())
+    );
+
+    return this.showAllContentPartners ? filteredList : filteredList.slice(0, 4);
+  }
+
+  get filteredTopic() {
+    let filterData;
+    if(this.formattedFacets[FacetType.topic]) {
+      filterData = this.formattedFacets[FacetType.topic]
+    } else if (this.formattedFacets[FacetType.topicName]) {
+      filterData = this.formattedFacets[FacetType.topicName]
+    }
+    let filteredList = filterData.filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(this.filterQueryTopic.toLowerCase())
+    );
+
+    return this.showAllTopic ? filteredList : filteredList.slice(0, 4);
   }
 
   private recursivelySetIsCheckedFalse(filters: any[], name: string): any {

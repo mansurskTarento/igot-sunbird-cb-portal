@@ -111,12 +111,12 @@ export class NetCoreService {
             'action_time': serverTime.format('YYYY-MM-DD HH:mm:ss'),
             'action_device': 'Desktop'
         }
-        console.log('payload', payload)
+        // console.log('payload', payload)
         console.log('userpayload', userpayload)
         if(userpayload && (typeof userpayload === 'object'  || userpayload.length)) {
             payload['profile_attribute_updated'] = userpayload.toString()
         }
-        console.log('payload', payload)
+        // console.log('payload', payload)
         smartech('identify', userIdentifier)
         smartech('dispatch', eventName, payload)
     }

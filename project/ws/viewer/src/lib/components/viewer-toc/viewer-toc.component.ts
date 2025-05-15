@@ -143,9 +143,9 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.aiTutorResourceId = contentRead.result.content.identifier
     }
      // tslint:disable-next-line
-     console.log(this.hierarchyData,'hierarchyData')
+    //  console.log(this.hierarchyData,'hierarchyData')
      // tslint:disable-next-line
-     console.log(contentRead,'contentRead')
+    //  console.log(contentRead,'contentRead')
 
      
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.logos) {
@@ -329,7 +329,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         this.collectionCard = this.createCollectionCard(contentData)
         const viewerTocCardContent = this.convertContentToIViewerTocCard(contentData)
         this.isFetching = false
-        console.log('this.collection--', this.collection)
+        // console.log('this.collection--', this.collection)
         return viewerTocCardContent
       }
       return null
