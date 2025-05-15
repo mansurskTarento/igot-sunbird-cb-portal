@@ -391,4 +391,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     }
   }
+  trackByFn(_index: number, item: any): number {
+    return item.channel
+  }
 }
