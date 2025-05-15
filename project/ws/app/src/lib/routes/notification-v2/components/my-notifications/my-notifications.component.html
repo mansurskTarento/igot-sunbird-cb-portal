@@ -4,17 +4,7 @@
   </div>
 
   <div class="notification-card margin-top-l">
-    <mat-tab-group animationDuration="0ms" class="mat-tab-labels w-full strips-tabgroup">
-      <mat-tab *ngFor="let tab of tabs">
-        <ng-template mat-tab-label>
-          <span>{{tab?.title}} &nbsp;</span>
-          <span *ngIf="tab?.count > 0">({{tab?.count}})</span>
-        </ng-template>
-        <div class="flex flex-row flex-wrap content-container mt-10 mb-10">
-          sdsd {{tab?.title}}
-        </div>
-      </mat-tab>
-    </mat-tab-group>
+    <sb-uin-all-notifications></sb-uin-all-notifications>
 
   </div>
 

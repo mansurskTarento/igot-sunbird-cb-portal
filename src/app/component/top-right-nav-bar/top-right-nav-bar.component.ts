@@ -175,6 +175,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   viewAllClick(event: any) {
     console.log(event)
+    this.showNotification = false
     this.router.navigate(['/app/notifications'])
   }
 }

@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MyNotificationsComponent } from './components/my-notifications/my-notifications.component'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { AllNotificationsModule } from '@sunbird-cb/notification'
 
 @NgModule({
   declarations: [HomeComponent, NotificationEventComponent, MyNotificationsComponent],
@@ -27,7 +28,8 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
     MatRippleModule,
     MatIconModule,
     BtnPageBackModule,
-    MatTabsModule
+    MatTabsModule,
+    AllNotificationsModule
   ],
   providers: [NotificationApiService, NotificationService],
 })
