@@ -37,6 +37,7 @@ const API_ENDPOINTS = {
   withDrawRequest: '/apis/protected/v8/workflowhandler/transition',
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains',
   GET_DESIGNATION_V2: '/apis/proxies/v8/designation/search',
+  GET_ORGANIZATION_V1: '/apis/proxies/v8/org/v1/search',
 }
 
 @Injectable()
@@ -95,6 +96,10 @@ export class UserProfileService {
       .pipe(map((res: any) => {
         return res.result.response
       }))
+  }
+
+  getOrganizationData(request: any) {
+    return this.http.post<any>(API_ENDPOINTS.GET_ORGANIZATION_V1, request)
   }
 
   getAllDepartments() {
