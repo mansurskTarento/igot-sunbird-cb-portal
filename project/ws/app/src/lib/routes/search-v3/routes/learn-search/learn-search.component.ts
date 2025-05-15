@@ -650,7 +650,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
-    // this.searchRequestCourse.request.filters.courseCategory = selectedFilters
+
+    this.searchRequestEvents = new SearchV4Request([]);
+
     this.searchRequestResources = new SearchV4Request([])
     this.searchRequestExternal = new SearchExternalRequest([
       this.competencyAreaNameKey,
@@ -658,12 +660,26 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.competencySubThemeKey,
     ])
 
+    this.searchRequestCommunities = new SearchCommunitiesRequest([
+      this.competencyAreaNameKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
+    ])
+
+    this.searchRequestCommunities.pageNumber = 0;
+    this.searchRequestCommunities.pageSize = this.initialPaginationSize;
+
+    this.searchRequestPeoples.limit = this.initialPaginationSize;
+    this.searchRequestPeoples.offset = 0;
+
     if (this.searchSortFilter === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
       } else if (this.seeAllResult === SearchCategory.Courses) {
         this.searchRequestCourse.request.sort_by = {};
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by = {};
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by = {};
       }
     } else if (this.searchSortFilter === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
@@ -678,6 +694,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.People) {
         delete this.searchRequestPeoples?.sort_by?.firstName;
         this.searchRequestPeoples.sort_by.createdOn = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.createdOn = 'desc';
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
       }
     } else if (this.searchSortFilter === SortType.HighestRated) {
       if (this.seeAllResult === '') {
@@ -687,25 +708,43 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestCourse.request.sort_by.avgRating = 'desc';
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.avgRating = 'desc';
       }
     } else if (this.searchSortFilter === SortType.Ascending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Ascending;
     } else if (this.searchSortFilter === SortType.Descending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
-    } else if (this.searchSortFilter === SortType.AtoZ) {
-      this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
-      this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+    }  else if (this.searchSortFilter === SortType.AtoZ) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+      }  else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.name = SortType.Ascending;
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderDirection = SortType.Ascending;
+      }
+
     } else if (this.searchSortFilter === SortType.ZtoA) {
-      this.searchRequestCourse.request.sort_by.name = SortType.Descending;
-      this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      }  else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderDirection = SortType.Descending;
+      }
     }
 
-
-    this.searchRequestCommunities.pageNumber = 0;
-    this.searchRequestCommunities.pageSize = this.initialPaginationSize;
-
-    this.searchRequestPeoples.limit = this.initialPaginationSize;
-    this.searchRequestPeoples.offset = 0;
     this.resetPagination();
 
     Object.keys(selectedFilters).forEach((key) => {
@@ -1246,9 +1285,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestResources.request.sort_by = {};
         await this.searchResources();
       }
-      else if (this.seeAllResult === SearchCategory.ExternalContents) {
-        await this.searchExternalContents();
-      }
     } else if (event === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
         this.searchRequestCourse.request.sort_by.createdOn = 'desc';
@@ -1272,6 +1308,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by.createdOn = 'desc';
         await this.searchResources();
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
+        await this.searchExternalContents();
       }
     } else if (event === SortType.HighestRated) {
       if (this.seeAllResult === '') {
