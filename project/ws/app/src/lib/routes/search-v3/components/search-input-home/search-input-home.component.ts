@@ -305,7 +305,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         searchRequest.request.filters.contentType = 'Resource';
         searchRequest.request.facets = SearchResourceFacets
         searchRequest.request.filters.mimeType = SearchResourceMimeType
-        searchRequest.request.exists = FacetType.sectorNameResource,
+        searchRequest.request.exists = [FacetType.sectorNames_v1,FacetType.resourceCategory],
         searchRequest.request.fields = [],
         delete searchRequest.request.filters?.courseCategory;
         delete searchRequest.request.sort_by?.createdOn;

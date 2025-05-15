@@ -153,9 +153,9 @@
             <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['typeOfEvents']">
                 <ng-container *ngIf="options?.count">
               <mat-radio-button [value]="options" [checked]="options?.isChecked || getSelectedFilter(options)">
-                <span class="min-width-adjust">
-                  {{ options?.name ? capitalizeFirstLetter(options?.name) + ' (' + options?.count + ')' : '' }}
-                </span>
+                <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                    ''}}</span>
+                <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
               </mat-radio-button>
             </ng-container>
             </section>
@@ -178,9 +178,9 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredSectorId">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'sectorId')">
-                        <span class="min-width-adjust" [matTooltip]="formatSectorName(options?.name)" [matTooltipPosition]="'right'">
-                            {{ formatSectorName(options?.name) + ' (' + options.count + ')'}}
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -206,9 +206,9 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredSubSectorId">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'subSectorId')">
-                        <span class="min-width-adjust" [matTooltip]="formatSectorName(options?.name)" [matTooltipPosition]="'right'">
-                            {{ formatSectorName(options?.name) + ' (' + options.count + ')'}}
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -227,9 +227,9 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets['resourceType']">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'resourceType')">
-                        <span class="min-width-adjust" [matTooltip]="options?.name" [matTooltipPosition]="'right'">
-                            {{ options?.name + ' (' + options.count + ')'}}
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -445,9 +445,9 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredTopic">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'topicName')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -468,9 +468,9 @@
                     *ngFor="let options of (showAllOrganisation ? formattedFacets['orgName'] : formattedFacets['orgName'].slice(0, 4))">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'orgName')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -497,9 +497,9 @@
                     *ngFor="let options of filteredDesignations">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)" *ngIf="options?.name"
                         (change)="onSelectionFilter($event, options, 'profileDetails.professionalDetails.designation')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -527,9 +527,9 @@
                     *ngFor="let options of filteredRootOrgNames">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'rootOrgName')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                            {{ options?.name ? capitalizeFirstLetter(options?.name): '' }} ({{options?.count}})
-                        </span>
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
@@ -606,9 +606,9 @@
             <section class="mat-body-2 text-capitalize" *ngFor="let options of formattedFacets[competencyAreaNameKey]">
                 <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                     (change)="onSelectionFilter($event, options, competencyAreaNameKey)">
-                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                        {{ capitalizeFirstLetter(options?.name) + ' (' + options.count + ')'}}
-                    </span>
+                    <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                        ''}}</span>
+                    <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                 </mat-checkbox>
             </section>
         </mat-selection-list>

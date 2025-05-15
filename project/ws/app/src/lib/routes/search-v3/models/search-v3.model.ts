@@ -14,7 +14,7 @@ export class RequestParams {
   limit: number;
   offset: number;
   sort_by: SortBy;
-  exists?: string
+  exists?: string[]
   constructor(competenciesKey: any) {
     this.filters = new Filters();
     this.fields = [
@@ -139,8 +139,8 @@ export const SearchResourceMimeType = [
 
 export const SearchResourceFacets = [
   "resourceCategory",
-  "subSectorName",
-  "sectorName",
+  "sectorDetails_v1.subSectorName",
+  "sectorDetails_v1.sectorName",
   "years"
 ];
 

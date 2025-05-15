@@ -409,7 +409,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestResources.request.filters.contentType = 'Resource';
     this.searchRequestResources.request.facets = SearchResourceFacets
     this.searchRequestResources.request.filters.mimeType = SearchResourceMimeType
-    this.searchRequestResources.request.exists = FacetType.sectorNameResource,
+    this.searchRequestResources.request.exists = [FacetType.sectorNames_v1,FacetType.resourceCategory],
     this.searchRequestResources.request.fields = [],
 
     delete this.searchRequestEvents.request.filters?.courseCategory;
