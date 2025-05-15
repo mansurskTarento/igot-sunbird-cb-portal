@@ -16,6 +16,8 @@ import { SurveyFormQuestionComponent } from '@ws/app/src/lib/routes/app-toc/comp
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+
 
 
 @NgModule({
@@ -37,6 +39,7 @@ import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/
         MatRadioModule,
         MatSelectModule,
         MatCheckboxModule,
+        MatProgressSpinnerModule,
         TranslateModule.forChild(),
     ],
     exports: [PlayerSurveyComponent]

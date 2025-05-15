@@ -1,5 +1,6 @@
 <section #fullScreenContainer class="survey-container" *ngIf="progressStatus < 2 && currentResourceId === resourceId">
-  <!-- <lib-micro-survey class="course-survey"
+  <ng-container *ngIf="wfClientVersion !== '1.1'">
+    <lib-micro-survey class="course-survey"
       [apiData]="apiData"
       [afterSubmitAction]="afterSubmitAction"
       [isReadOnly]="isReadOnly"
@@ -7,7 +8,9 @@
       [courseId]="courseId"
       [courseName]="courseName"
       [isblendedprogram]="false"
-    ></lib-micro-survey> -->
+    ></lib-micro-survey>
+    </ng-container>
+    <ng-container *ngIf="wfClientVersion === '1.1'">
     <div class="preview-container">
       <div class="form-header">
         <div class="flex justify-between iteams-center">
@@ -44,7 +47,12 @@
           </form>
         </ng-container>
       </div>
-    </div>
+    </ng-container>
+      <ng-container *ngIf="addLoader > 0">
+      <div class="text-center my-2 loader flex justify-center items-center">
+        <mat-spinner class="inline-block"></mat-spinner>
+      </div>
+    </ng-container>
 </section>
 
 <section #fullScreenContainer class="survey-container" *ngIf="progressStatus === 2 && currentResourceId === resourceId">
