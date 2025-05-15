@@ -3,8 +3,9 @@
         <ng-container *ngFor="let rnc of rightNavConfig">
             <!-- //NOSONAR -->
             <li *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
-                <div class="relative">
-                    <mat-icon class="bell-icon" (click)="openNotifications()">notifications</mat-icon>
+                <div class="relative" (click)="openNotifications()">
+                    <mat-icon class="bell-icon">notifications</mat-icon>
+                    <span class="counter">10</span>
                 </div>
                 <div class="notification-container" *ngIf="showNotification">
                     <sb-uin-notification-dropdown (viewAllClick)="viewAllClick($event)"></sb-uin-notification-dropdown>

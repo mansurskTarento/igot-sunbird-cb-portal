@@ -7,6 +7,7 @@ import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird
 import { DomSanitizer } from '@angular/platform-browser'
 import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { Router } from '@angular/router'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -50,7 +51,8 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-    private http: HttpClient, private sanitizer: DomSanitizer) {
+    private http: HttpClient, private sanitizer: DomSanitizer,
+    private router: Router) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -173,5 +175,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   viewAllClick(event: any) {
     console.log(event)
+    this.router.navigate(['/app/notifications'])
   }
 }

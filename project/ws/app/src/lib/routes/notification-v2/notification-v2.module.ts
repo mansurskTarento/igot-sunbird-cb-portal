@@ -12,10 +12,12 @@ import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/lega
 import { MatRippleModule } from '@angular/material/core'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MyNotificationsComponent } from './components/my-notifications/my-notifications.component'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 
 @NgModule({
-  declarations: [HomeComponent, NotificationEventComponent],
+  declarations: [HomeComponent, NotificationEventComponent, MyNotificationsComponent],
   imports: [
     CommonModule,
     NotificationV2RoutingModule,
@@ -25,7 +27,8 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     MatRippleModule,
     MatIconModule,
     BtnPageBackModule,
+    MatTabsModule
   ],
   providers: [NotificationApiService, NotificationService],
 })
-export class NotificationV2Module {}
+export class NotificationV2Module { }

@@ -192,6 +192,23 @@
   cursor: default;
 }
 
+.counter {
+  position: absolute;
+  top: -3px;
+  left: 11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(209, 57, 36, 1);
+  color: white;
+  text-align: center;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Lato;
+}
+
 @media screen and (min-width: 769px) {
   .mob-lang-img {
     margin-top: 5px !important;

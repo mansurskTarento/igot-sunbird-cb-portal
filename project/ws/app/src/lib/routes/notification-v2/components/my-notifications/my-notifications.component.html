@@ -1,0 +1,21 @@
+<section class="my-4 pt-4 pb-8 pl-4 pr-4 container-balanced">
+  <div class="flex flex-col">
+    <div class="sec-header">Notifications</div>
+  </div>
+
+  <div class="notification-card margin-top-l">
+    <mat-tab-group animationDuration="0ms" class="mat-tab-labels w-full strips-tabgroup">
+      <mat-tab *ngFor="let tab of tabs">
+        <ng-template mat-tab-label>
+          <span>{{tab?.title}} &nbsp;</span>
+          <span *ngIf="tab?.count > 0">({{tab?.count}})</span>
+        </ng-template>
+        <div class="flex flex-row flex-wrap content-container mt-10 mb-10">
+          sdsd {{tab?.title}}
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+  </div>
+
+</section>
