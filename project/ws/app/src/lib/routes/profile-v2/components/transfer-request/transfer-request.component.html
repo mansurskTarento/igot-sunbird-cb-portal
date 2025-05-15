@@ -3,7 +3,14 @@
 
     <form class="flex flex-col gap-4" [formGroup]="transferRequestForm">
         <div class="flex flex-col">
-            <div class="text-sm font-bold required">{{ 'profileInfo.organization' | translate }}</div>
+            <div class="text-sm font-bold required">Current organization</div>
+            <div>{{currentOrg}}</div>
+        </div>
+        <div class="flex flex-col">
+            <div class="text-sm font-bold required">
+                Target organization
+                <!-- {{ 'profileInfo.organization' | translate }} -->
+            </div>
             <mat-form-field class="profile-form-field mat-drop-down-select" appearance="none">
                 <!-- <mat-select formControlName="organization">
                     <span class="search-box-span">
@@ -26,7 +33,7 @@
                     Please enter a valid organization.  
                   </mat-error> -->
 
-                  <mat-select placeholder="Select organization" formControlName="organization"  (closed)="onOrgDropdownClosed()"  panelClass="search-panel"
+                  <mat-select placeholder="Select organization" formControlName="organization"    panelClass="search-panel"
                    (openedChange)="setupOrgScrollListener($event)">
                     <!-- Sticky search input container -->
                     <div class="sticky-search-container" (click)="$event.stopPropagation()">
@@ -48,8 +55,8 @@
                       </div>
                     </div>
                     <!-- Options list -->
-                    <mat-option *ngFor="let dept of deptFilterData" [value]="dept">
-                            {{ dept }}
+                    <mat-option *ngFor="let org of deptFilterData;trackBy: trackByFn" [value]="org?.channel" (onSelectionChange)="onOrgSelectionChange(org)">
+                            {{ org?.channel }}
                     </mat-option>
                     <!-- Loading indicator -->
                     <div *ngIf="isLoadingMoreOrganization" class="loading-indicator">
@@ -59,11 +66,11 @@
                     <mat-option *ngIf="(deptFilterData )?.length === 0" disabled>
                             No matches found
                     </mat-option>
-                      <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
-                      class="mat-error">
-                      Please enter a valid organization.
-                      </mat-error>
                   </mat-select>
+                  <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
+                  class="mat-error">
+                  Please Select a valid organization.
+                  </mat-error>
 
             </mat-form-field>   
         </div>
