@@ -17,11 +17,12 @@ import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { SurveyFormSectionComponent } from '@ws/app/src/lib/routes/app-toc/components/survey-form-section/survey-form-section.component'
 
 
 
 @NgModule({
-    declarations: [PlayerSurveyComponent, SurveyFormQuestionComponent],
+    declarations: [PlayerSurveyComponent],
     imports: [
         CommonModule,
         MatInputModule,
@@ -40,6 +41,8 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
         MatSelectModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+        SurveyFormQuestionComponent,
+        SurveyFormSectionComponent,
         TranslateModule.forChild(),
     ],
     exports: [PlayerSurveyComponent]

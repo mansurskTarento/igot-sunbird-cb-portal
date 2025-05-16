@@ -1,8 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray } from '@angular/forms';
+import { SurveyFormQuestionComponent } from '../survey-form-question/survey-form-question.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'ws-app-survey-form-section',
+  standalone: true,
+  imports: [SurveyFormQuestionComponent, CommonModule],
   templateUrl: './survey-form-section.component.html',
   styleUrls: ['./survey-form-section.component.scss']
 })
