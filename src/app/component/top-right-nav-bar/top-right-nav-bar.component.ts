@@ -46,7 +46,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
-  showNotification: boolean = false
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
@@ -169,13 +168,9 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     webFormxhr.send()
   }
 
-  openNotifications() {
-    this.showNotification = !this.showNotification
+  viewAllClick(event: any) {
+    this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
   }
 
-  viewAllClick(event: any) {
-    console.log(event)
-    this.showNotification = false
-    this.router.navigate(['/app/notifications'])
-  }
+
 }

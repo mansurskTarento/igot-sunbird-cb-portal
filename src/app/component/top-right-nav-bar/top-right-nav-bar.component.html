@@ -2,14 +2,20 @@
     <ng-container *ngIf="rightNavConfig?.length">
         <ng-container *ngFor="let rnc of rightNavConfig">
             <!-- //NOSONAR -->
-            <li *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
-                <div class="relative" (click)="openNotifications()">
+            <li class="notification-icon"
+                *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
+                <div [matMenuTriggerFor]="menu" class="relative">
                     <mat-icon class="bell-icon">notifications</mat-icon>
                     <span class="counter">10</span>
                 </div>
-                <div class="notification-container" *ngIf="showNotification">
-                    <sb-uin-notification-dropdown (viewAllClick)="viewAllClick($event)"></sb-uin-notification-dropdown>
-                </div>
+                <ng-container>
+                    <mat-menu #menu="matMenu" xPosition="before" class="my-notifications">
+                        <div class="notification-container">
+                            <sb-uin-notification-dropdown
+                                (viewAllClick)="viewAllClick($event)"></sb-uin-notification-dropdown>
+                        </div>
+                    </mat-menu>
+                </ng-container>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
                 *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview"

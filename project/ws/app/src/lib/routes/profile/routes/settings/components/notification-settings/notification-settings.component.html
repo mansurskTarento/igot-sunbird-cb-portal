@@ -3,11 +3,11 @@
 <div class="notification-settings-container">
   <div class="notification-list-item" *ngFor="let item of notificationSettings">
     <div class="notification-item pb-2">
-      <div class="notification-list-item-header">{{ item.title }}</div>
+      <div class="notification-list-item-header">{{ translateLabels(item.title, 'notificationV2Settings') }}</div>
       <mat-slide-toggle [(ngModel)]="item.enabled"></mat-slide-toggle>
     </div>
     <div class="notification-list-item-description">
-      <p>{{ item.description }}</p>
+      <p>{{ translateLabels(item.description, 'notificationV2Settings') }}</p>
     </div>
   </div>
 </div>

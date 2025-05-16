@@ -5,20 +5,22 @@
     class="mat-elevation-z3 custom mobile-height" [ngClass]="{'mobile': isHubEnable}">
     <div class="fix-ww" id="root-tool-bar" *ngIf="isHubEnable">
       <ng-container *ngIf="mode === 'top'">
-        <a [routerLink]="'/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label>
+        <a [routerLink]="'/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home"
+          i18n-aria-title i18n-aria-label>
           <!-- <a [routerLink]="!isforPreview ? '/page/home' : '/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label> -->
           <ng-container *ngIf="jan26Data && jan26Data.isEnabled; else normalLogo">
             <div *ngIf="janDataEnable; else janDataDisabled" class="logo-box flex items-center">
-              <img  [src]="jan26Data.desktop.logoUrl" alt="Application Logo" class="app-logo-new" />
-              <span class="mat-subheading-2 ws-mat-default-text logo-text margin-left-xs"> {{ jan26Data.desktop.logoText}}</span>
+              <img [src]="jan26Data.desktop.logoUrl" alt="Application Logo" class="app-logo-new" />
+              <span class="mat-subheading-2 ws-mat-default-text logo-text margin-left-xs"> {{
+                jan26Data.desktop.logoText}}</span>
             </div>
             <ng-template #janDataDisabled>
-              <img [src]="appIcon"  alt="Application Logo" class="app-logo" />
+              <img [src]="appIcon" alt="Application Logo" class="app-logo" />
             </ng-template>
           </ng-container>
 
           <ng-template #normalLogo>
-            <img [src]="appIcon"  alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
           </ng-template>
         </a>
 
@@ -26,14 +28,15 @@
           <ng-container [ngTemplateOutlet]="karmaBadge">
           </ng-container>
         </div> -->
-        
+
         <ng-container *ngIf="primaryNavbarConfig?.mediumScreen">
           <ng-container [ngTemplateOutlet]="navbarSide" [ngTemplateOutletContext]="{ item: item }"
             *ngFor="let item of primaryNavbarConfig?.mediumScreen?.left">
           </ng-container>
-          
+
           <ng-container *ngIf="!isforPreview">
-            <ws-app-search-v3-input-home  placeHolder="{{ 'appnavbar.searchforLearningContentsV2' | translate}}" class="my-search flex-1" [ref]="'home'">
+            <ws-app-search-v3-input-home placeHolder="{{ 'appnavbar.searchforLearningContentsV2' | translate}}"
+              class="my-search flex-1" [ref]="'home'">
             </ws-app-search-v3-input-home>
           </ng-container>
           <!-- <span class="spacer"></span> -->
@@ -52,8 +55,8 @@
           </div>
           <!-- <span *ngIf="!isforPreview"  class="spacer"></span> -->
 
-          <ng-container >
-            <div  class="hidden md:block md:flex mr-auto items-center" *ngIf="!isforPreview">
+          <ng-container>
+            <div class="hidden md:block md:flex mr-auto items-center" *ngIf="!isforPreview">
               <!-- <ng-container [ngTemplateOutlet]="karmaBadge"></ng-container> -->
             </div>
             <ng-container [ngTemplateOutlet]="navbarSide" [ngTemplateOutletContext]="{ item: getItem(item) }"
@@ -66,23 +69,31 @@
 
   </mat-toolbar>
 
-  <mat-toolbar *ngIf="sShowAppNavBar && !needToHide && mode === 'bottom'" [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles" class="mat-elevation-z3 custom mobile-footer-fixed-nav">
-    
+  <mat-toolbar *ngIf="sShowAppNavBar && !needToHide && mode === 'bottom'" [color]="primaryNavbarBackground?.color"
+    [ngStyle]="primaryNavbarBackground?.styles" class="mat-elevation-z3 custom mobile-footer-fixed-nav">
+
 
     <ng-container *ngIf="primaryNavbarConfig?.smallScreen && isLoggedIn">
       <ul class="mobile-footer-fixed-nav-list-item-container">
         <ng-container *ngFor="let item of primaryNavbarConfig?.smallScreen?.all">
           <!-- item?.config?.path -->
-          <!-- //NOSONAR --> <li *ngIf="item?.type !== 'explorerButton'" [ngClass]="activeRoute === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item" (click)="redirectToPath(item?.config)">
-            <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
+          <!-- //NOSONAR -->
+          <li *ngIf="item?.type !== 'explorerButton'"
+            [ngClass]="activeRoute === item?.config?.label ? 'active-icon': ''"
+            class="mobile-footer-fixed-nav-list-item" (click)="redirectToPath(item?.config)">
+            <div class="icon-container"
+              [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
               <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" id="draft" alt="draft" title="draft" />
               <span>{{item?.config?.label | titlecase}}</span>
             </div>
           </li>
-          
-          <!-- //NOSONAR --> <li *ngIf="item?.type === 'explorerButton'" [ngClass]="activeRoute === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item" (click)="openExploreMenu()">
+
+          <!-- //NOSONAR -->
+          <li *ngIf="item?.type === 'explorerButton'"
+            [ngClass]="activeRoute === item?.config?.label ? 'active-icon': ''"
+            class="mobile-footer-fixed-nav-list-item" (click)="openExploreMenu()">
             <div class="icon-container">
-              <img   src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" id="draft" alt="draft" title="draft" />
+              <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" id="draft" alt="draft" title="draft" />
               <span>{{item?.config?.label | titlecase}}</span>
             </div>
           </li>
@@ -92,7 +103,8 @@
   </mat-toolbar>
 
   <mat-toolbar *ngIf="!sShowAppNavBar">
-    <!-- //NOSONAR --> <div class="fix-ww flex flex-row mt-3" id="root-tool-bar" title="toolbar" i18n-aria-label role="toolbar">
+    <!-- //NOSONAR -->
+    <div class="fix-ww flex flex-row mt-3" id="root-tool-bar" title="toolbar" i18n-aria-label role="toolbar">
       <ng-container *ngIf="mode === 'top'">
         <div class="flex flex-1">
           <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/page/home"
@@ -110,22 +122,26 @@
 </ng-container>
 
 <ng-template #navbarSide let-item="item">
-  <ws-top-right-nav-bar [item]="item" [showLangDropdown]="showLangDropdown" [rightNavConfig]="headerFooterConfigData"></ws-top-right-nav-bar>
+  <ws-top-right-nav-bar [item]="item" [showLangDropdown]="showLangDropdown"
+    [rightNavConfig]="headerFooterConfigData"></ws-top-right-nav-bar>
 </ng-template>
 
 <ng-template #karmaBadge>
-  <div class="flex flex-middle points-block" [class.hideForNav]="hideKPOnNav" >
-    <!-- //NOSONAR --> <img (click)="viewKarmapoints()" src="/assets/icons/home/karma-badge.svg" width="32px" height="32px" alt="Application Logo" class="app-logo cursor-pointer" />
+  <div class="flex flex-middle points-block" [class.hideForNav]="hideKPOnNav">
+    <!-- //NOSONAR --> <img (click)="viewKarmapoints()" src="/assets/icons/home/karma-badge.svg" width="32px"
+      height="32px" alt="Application Logo" class="app-logo cursor-pointer" />
     <div class="margin-left-xs">
       <p class="karma-lbl flex">
         {{ 'appnavbar.karmaPoints' | translate }}
-        <!-- //NOSONAR --> <img #tooltip="matTooltip" [matTooltipClass]="['karma-tooltip','below']" width="13.33px" height="13.33px" mat-raised-button
-        matTooltip="{{ 'appnavbar.karmaPointsToolTip' | translate }}" [matTooltipPosition]="'below'"  (click)="tooltip.show()"
-        [matTooltipHideDelay]="tooltipDelay" class="cursor-pointer margin-left-xs" src="assets/icons/info.svg" alt="" />
+        <!-- //NOSONAR --> <img #tooltip="matTooltip" [matTooltipClass]="['karma-tooltip','below']" width="13.33px"
+          height="13.33px" mat-raised-button matTooltip="{{ 'appnavbar.karmaPointsToolTip' | translate }}"
+          [matTooltipPosition]="'below'" (click)="tooltip.show()" [matTooltipHideDelay]="tooltipDelay"
+          class="cursor-pointer margin-left-xs" src="assets/icons/info.svg" alt="" />
       </p>
       <p class="karma-point">
         <ng-container *ngIf="karmaPointLoading">
-          <ws-widget-skeleton-loader [width]="'34px'" [height]="'20px'" [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
+          <ws-widget-skeleton-loader [width]="'34px'" [height]="'20px'"
+            [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
         </ng-container>
         <ng-container *ngIf="!karmaPointLoading">
           {{ countdata }}
@@ -133,8 +149,9 @@
       </p>
     </div>
   </div>
-  
-  <!-- //NOSONAR --> <div class="flex items-center arrow-back" [class.hideForNav]="!hideKPOnNav" (click)="handleNavigateBack()" >
+
+  <!-- //NOSONAR -->
+  <div class="flex items-center arrow-back" [class.hideForNav]="!hideKPOnNav" (click)="handleNavigateBack()">
     <mat-icon>arrow_back</mat-icon>
   </div>
 </ng-template>
@@ -165,7 +182,8 @@
       }
     }"></ws-widget-btn-feature>
 
-  <!-- //NOSONAR --> <div mat-menu-item *ngIf="isTourGuideAvailable" (click)="startTour()">
+  <!-- //NOSONAR -->
+  <div mat-menu-item *ngIf="isTourGuideAvailable" (click)="startTour()">
     <mat-icon>help</mat-icon>
     <span class="ml-2">Tour Guide</span>
   </div>

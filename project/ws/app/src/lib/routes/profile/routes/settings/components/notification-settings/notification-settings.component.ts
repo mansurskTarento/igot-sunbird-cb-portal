@@ -4,6 +4,7 @@ import { SettingsService } from '../../settings.service'
 import { TranslateService } from '@ngx-translate/core'
 /* tslint:disable*/
 import _ from 'lodash'
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-notification-settings',
@@ -11,38 +12,53 @@ import _ from 'lodash'
   styleUrls: ['./notification-settings.component.scss'],
 })
 export class NotificationSettingsComponent implements OnInit {
-
+  selectedLanguage = 'en'
   notificationSettings: any[] = [
     {
       id: 'email',
-      title: 'Email Notification',
-      description: 'Keep receiving notifications through email.',
+      title: 'email',
+      description: 'emailDesc',
       enabled: false,
     },
     {
       id: 'push',
-      title: 'Push Notification',
-      description: 'Keep receiving push notifications on mobile.',
+      title: 'push',
+      description: 'pushDesc',
       enabled: false,
     },
     {
       id: 'sms',
-      title: 'SMS Notification',
-      description: 'Keep receiving SMS notifications. ',
+      title: 'sms',
+      description: 'smsDesc',
       enabled: true,
     },
-
   ]
   constructor(
     //private snackBar: MatSnackBar,
     private settingsSvc: SettingsService,
     private translate: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
-      let lang = localStorage.getItem('websiteLanguage')!
+      let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
+      lang = lang.replace(/\"/g, '')
+      this.selectedLanguage = lang
       this.translate.use(lang)
     }
+
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+        this.selectedLanguage = lang
+      }
+    })
+  }
+
+  translateLabels(label: string, type: any) {
+    return this.langtranslations.translateActualLabel(label, type, '')
   }
 
   ngOnInit() {
