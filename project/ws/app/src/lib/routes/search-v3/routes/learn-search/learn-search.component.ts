@@ -226,7 +226,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         changes.searchQuery.previousValue?.searchCategory
       ) {
       this.searchContentLoader = true;
-      this.searchPeopleLoader = true;
       this.resetAllSearchParams();
       this.statedata = {
         param: this.searchQuery?.nlp
@@ -247,7 +246,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchResources();
         await this.searchExternalContents();
 
-        this.searchPeopleLoader = false
         this.searchContentLoader = false;
       }
 
@@ -335,17 +333,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
       this.coursesFacets = result.result?.facets || [];
-      // console.log('resuult', result)
-      // console.log('this.courseFacets', this.coursesFacets)
-      // console.log('this.combinedFacets', this.combinedFacets)
-     // this.combinedFacets  = JSON.parse(JSON.stringify((result.result?.facets || [])))
+
      this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
-      // this.courseSearchResults.forEach((course: any) => {
-      //   course?.organisation?.forEach((element: any) => {
-      //     this.allResultsDepartmentName.add(element);
-      //   });
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
       // });
     } else {
       this.courseSearchResults = [];
@@ -378,8 +368,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.eventSearchTotalCount = result.result?.count;
       this.eventsFacets = result.result?.facets;
       this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
     
     } else {
       this.eventsSearchResults = [];
@@ -388,6 +377,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchPeople() {
+    this.searchPeopleLoader = true;
+    
     this.searchRequestPeoples.query = this.statedata?.param || '';
     const result = await this.searchV3Service.searchConnections(
       this.searchRequestPeoples
@@ -397,19 +388,23 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peoplesSearchResults = result.result?.response?.content || [];
       this.peopleSearchTotalCount = result.result?.response?.count;
       this.peoplesFacets = result.result?.response.facets || []
+
+      this.combinedFacets = []
+      this.combinedFacets = [...this.combinedFacets, (result.result?.response.facets || [])]
       this.getAllConnectionRequests();
     } else {
       this.peoplesSearchResults = [];
       this.peopleSearchTotalCount = 0;
       this.peoplesFacets = []
     }
+    this.searchPeopleLoader = false;
   }
 
   async searchResources() {
     this.searchRequestResources.request.filters.contentType = 'Resource';
     this.searchRequestResources.request.facets = SearchResourceFacets
     this.searchRequestResources.request.filters.mimeType = SearchResourceMimeType
-    this.searchRequestResources.request.exists = FacetType.sectorNameResource,
+    this.searchRequestResources.request.exists = [FacetType.sectorNames_v1,FacetType.resourceCategory],
     this.searchRequestResources.request.fields = [],
 
     delete this.searchRequestEvents.request.filters?.courseCategory;
@@ -422,8 +417,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.resourcesSearchTotalCount = result.result?.count;
       this.resourcesFacets = result.result?.facets || []
       this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
     } else {
       this.resourcesSearchResults = [];
       this.resourcesSearchTotalCount = 0;
@@ -455,6 +449,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.communitiesFacets = this.processCommunityFacets(
         result.result?.search_results?.facets
       );
+      this.combinedFacets = []
+      this.combinedFacets = [...this.combinedFacets, (this.communitiesFacets || [])]
+
     } else {
       this.communitiesSearchResults = [];
       this.communitiesSearchTotalCount = 0;
@@ -640,7 +637,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     // }
     this.applySelectedFilters = selectedFilters
     this.searchContentLoader = true;
-    this.searchPeopleLoader = true;
     this.compentencyKeyExist = false
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
@@ -650,13 +646,33 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
-    // this.searchRequestCourse.request.filters.courseCategory = selectedFilters
+    
+    this.searchRequestEvents = new SearchV4Request([]);
+    this.searchRequestEvents.request.limit = this.initialPaginationSize;
+    
     this.searchRequestResources = new SearchV4Request([])
+    this.searchRequestResources.request.limit = this.initialPaginationSize;
+
     this.searchRequestExternal = new SearchExternalRequest([
       this.competencyAreaNameKey,
       this.competencyThemeKey,
       this.competencySubThemeKey,
     ])
+    this.searchRequestExternal.pageNumber = 0;
+    this.searchRequestExternal.pageSize = this.initialPaginationSize;
+
+    this.searchRequestCommunities = new SearchCommunitiesRequest([
+      this.competencyAreaNameKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
+    ])
+
+    this.searchRequestCommunities.pageNumber = 0;
+    this.searchRequestCommunities.pageSize = this.initialPaginationSize;
+
+    this.searchRequestPeoples = new SearchPeoplesRequest();
+    this.searchRequestPeoples.limit = this.initialPaginationSize;
+    this.searchRequestPeoples.offset = 0;
 
     if (this.searchSortFilter === SortType.MostRelevent) {
       if (this.seeAllResult === '') {
@@ -664,6 +680,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestCourse.request.sort_by = {};
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by = {};
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by = {};
       }
     } else if (this.searchSortFilter === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
@@ -678,6 +696,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.People) {
         delete this.searchRequestPeoples?.sort_by?.firstName;
         this.searchRequestPeoples.sort_by.createdOn = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.createdOn = 'desc';
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
       }
     } else if (this.searchSortFilter === SortType.HighestRated) {
       if (this.seeAllResult === '') {
@@ -687,25 +710,43 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestCourse.request.sort_by.avgRating = 'desc';
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by.avgRating = 'desc';
+      } else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.avgRating = 'desc';
       }
     } else if (this.searchSortFilter === SortType.Ascending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Ascending;
     } else if (this.searchSortFilter === SortType.Descending) {
       this.searchRequestPeoples.sort_by.firstName = SortType.Descending;
-    } else if (this.searchSortFilter === SortType.AtoZ) {
-      this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
-      this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+    }  else if (this.searchSortFilter === SortType.AtoZ) {
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Ascending;
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Ascending;
+      }  else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.name = SortType.Ascending;
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderDirection = SortType.Ascending;
+      }
+
     } else if (this.searchSortFilter === SortType.ZtoA) {
-      this.searchRequestCourse.request.sort_by.name = SortType.Descending;
-      this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      if (this.seeAllResult === '') {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.Courses) {
+        this.searchRequestCourse.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.Events) {
+        this.searchRequestEvents.request.sort_by.name = SortType.Descending;
+      }  else if (this.seeAllResult === SearchCategory.Resources) {
+        this.searchRequestResources.request.sort_by.name = SortType.Descending;
+      } else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderDirection = SortType.Descending;
+      }
     }
 
-
-    this.searchRequestCommunities.pageNumber = 0;
-    this.searchRequestCommunities.pageSize = this.initialPaginationSize;
-
-    this.searchRequestPeoples.limit = this.initialPaginationSize;
-    this.searchRequestPeoples.offset = 0;
     this.resetPagination();
 
     Object.keys(selectedFilters).forEach((key) => {
@@ -827,15 +868,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
-        else if (key === 'sectorDetails_v1.sectorName') {
-          this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'] = [
+        else if (key === FacetType.sectorNames_v1) {
+          this.searchRequestCourse.request.filters[FacetType.sectorNames_v1] = [
             ...selectedFilters[key],
           ];
+          this.searchRequestResources.request.filters[FacetType.sectorNames_v1] = [
+            ...selectedFilters[key]]
         }
-        else if (key === 'sectorDetails_v1.subSectorName') {
-          this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'] = [
+        else if (key === FacetType.subSectorNames_v1) {
+          this.searchRequestCourse.request.filters[FacetType.subSectorNames_v1] = [
             ...selectedFilters[key],
           ];
+          this.searchRequestResources.request.filters[FacetType.subSectorNames_v1] = [
+            ...selectedFilters[key],
+          ]
         }
         else if (key === FacetType.sectorNameResource) {
           this.searchRequestResources.request.filters[FacetType.sectorNameResource] = [
@@ -914,7 +960,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
    
     this.searchContentLoader = false;
-    this.searchPeopleLoader = false;
 
   }
 
@@ -1106,7 +1151,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.combinedFacets = [this.externalFacets];
     }
     // this.scrollToTop();
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
   }
 
@@ -1157,7 +1201,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async onPageChange(event: PageChangeEmitter) {
-    this.searchPeopleLoader = true
     this.searchContentLoader = true;
     this.scrollToTop();
 
@@ -1190,13 +1233,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       await this.searchcommunities();
     }
 
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
 
   }
 
   async onChangeSortSearch(event: string) {
-    this.searchPeopleLoader = true
     this.searchContentLoader = true;
     this.searchSortFilter = event
     this.resetPagination();
@@ -1246,9 +1287,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestResources.request.sort_by = {};
         await this.searchResources();
       }
-      else if (this.seeAllResult === SearchCategory.ExternalContents) {
-        await this.searchExternalContents();
-      }
     } else if (event === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
         this.searchRequestCourse.request.sort_by.createdOn = 'desc';
@@ -1272,6 +1310,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by.createdOn = 'desc';
         await this.searchResources();
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
+        await this.searchExternalContents();
       }
     } else if (event === SortType.HighestRated) {
       if (this.seeAllResult === '') {
@@ -1342,7 +1384,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
   }
 

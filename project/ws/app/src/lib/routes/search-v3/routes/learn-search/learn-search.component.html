@@ -15,8 +15,8 @@
         <mat-sidenav-content #mainContainer class="custom-sidecontent"
             [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
             <div #contentWrapper class="ml-2 md:ml-4 md:mr-0 mr-2 content-wrapper">
-                <div class="result-meta flex items-center justify-between flex-wrap"
-                    [ngClass]="{'my-3': screenSizeIsLtMedium}"
+                <div class="result-meta flex items-center justify-between flex-wrap" 
+                    [ngClass]="{'my-3': screenSizeIsLtMedium, 'mb-4': !isExploreContentTab}"
                     *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0">
                     <!-- <ng-container *ngIf="!isExploreContentTab">
                         <div class="">
@@ -26,6 +26,35 @@
                             <span class="brand-color" *ngIf="searchQuery.query">“{{searchQuery.query}}”</span>
                         </div>
                     </ng-container> -->
+                    <div class="" *ngIf="!isExploreContentTab">
+                        <ng-container *ngIf="seeAllResult === '' || seeAllResult === 'courses'">
+                            <p class="contents-title-top text-dark mb-0"> 
+                                <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count: courseSearchTotalCount } }}</span>
+                                <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' | translate:{ count: courseSearchTotalCount } }}</span>
+                            </p>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllResult === 'events'">
+                            <p class="contents-title-top text-dark mb-0">{{ 'learnsearch.event' | translate:{ count: eventSearchTotalCount } }}</p>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllResult === 'peoples'">
+                            <p class="contents-title-top text-dark mb-0">{{ 'learnsearch.peoples' | translate:{ count: peopleSearchTotalCount } }}</p>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllResult === 'communities'">
+                            <p class="contents-title-top text-dark mb-0">{{ 'learnsearch.communities' | translate:{ count: communitiesSearchTotalCount } }}</p>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllResult === 'resources'">
+                            <p class="contents-title-top text-dark mb-0"> 
+                                <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' | translate:{ count: resourcesSearchTotalCount } }}</span>
+                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.resources' | translate:{ count: resourcesSearchTotalCount } }}</span>
+                            </p>
+                        </ng-container>
+                        <ng-container *ngIf="seeAllResult === 'external-contents'">
+                            <p class="contents-title-top text-dark mb-0"> 
+                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.externalContent' | translate:{ count: externalSearchTotalCount } }}</span>
+                            </p>
+                        </ng-container>
+                    </div>
+
                     <ng-container *ngIf="isExploreContentTab">
                         <div class="explore-all-content">
                             <span>{{'cardshublist.exploreAllContent' | translate}}</span>
@@ -75,11 +104,10 @@
                     
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> 
-                                <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' |
-                                translate:{ count: courseSearchTotalCount } }}</span>
-                                <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' |
-                                    translate:{ count: courseSearchTotalCount } }}</span>
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark text-dark" 
+                                *ngIf="(seeAllResult === '' || seeAllResult === 'courses') && isExploreContentTab"> 
+                                <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count: courseSearchTotalCount } }}</span>
+                                <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' | translate:{ count: courseSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of courseSearchResults; let index = index">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
@@ -109,8 +137,8 @@
                     <ng-container
                         *ngIf="eventSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'events')">
                         <div class="search-event-card">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.event' |
-                                translate:{ count: eventSearchTotalCount } }}</p>
+                            <p *ngIf="seeAllResult === ''" 
+                                class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.event' | translate:{ count: eventSearchTotalCount } }}</p>
                             <ng-container *ngFor="let event of eventsSearchResults; let index = index">
                                 <ws-app-search-event-card [content]="event"
                                     (telemetry)="applyTelemetry($event, index)"></ws-app-search-event-card>
@@ -143,8 +171,9 @@
                     <ng-container
                         *ngIf="!searchPeopleLoader && peopleSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'peoples')">
                         <div class="search-people-card overflow-x-hidden">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.peoples' |
-                                translate:{ count: peopleSearchTotalCount } }}</p>
+                            <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
+                                {{ 'learnsearch.peoples' | translate:{ count: peopleSearchTotalCount } }}
+                            </p>
                             <ng-container *ngIf="peopleSearchTotalCount > 0 && !seeAllResult">
                                 <ws-utils-horizontal-scroller [loadStatus]="'done'">
                                     <div class="card-container mr-6"
@@ -187,8 +216,9 @@
                     <ng-container
                         *ngIf="communitiesSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'communities')">
                         <div class="communities-people-card overflow-x-hidden mb-3">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{ 'learnsearch.communities' |
-                                translate:{ count: communitiesSearchTotalCount } }}</p>
+                            <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
+                                {{ 'learnsearch.communities' | translate:{ count: communitiesSearchTotalCount } }}
+                            </p>
                             <ng-container *ngIf="communitiesSearchTotalCount > 0 && !seeAllResult">
                                 <ws-utils-horizontal-scroller [loadStatus]="'done'">
                                     <div class="card-container mr-6"
@@ -230,11 +260,9 @@
                     <ng-container
                         *ngIf="resourcesSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'resources')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> 
-                                <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' |
-                                translate:{ count: resourcesSearchTotalCount } }}</span>
-                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.resources' |
-                                    translate:{ count: resourcesSearchTotalCount } }}</span>
+                            <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark"> 
+                                <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' | translate:{ count: resourcesSearchTotalCount } }}</span>
+                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.resources' | translate:{ count: resourcesSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of resourcesSearchResults; let index = index">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
@@ -264,9 +292,8 @@
                     <ng-container
                         *ngIf="externalSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'external-contents')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-2 font-bold-imp text-dark"> 
-                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.externalContent' |
-                                translate:{ count: externalSearchTotalCount } }}</span>
+                            <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark"> 
+                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.externalContent' | translate:{ count: externalSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of externalSearchResults; let index = index">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
@@ -276,8 +303,7 @@
                             <p class="see-all-results text-center font-normal brand-color cursor-pointer"
                                 *ngIf="!seeAllResult && externalSearchTotalCount > 3"
                                 (click)="constructQueryParam('external-contents')">
-                                {{ 'learnsearch.seeAllResults'
-                                | translate }}
+                                {{ 'learnsearch.seeAllResults' | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && externalSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': externalSearchResults.length < 3}">
