@@ -167,7 +167,7 @@
         formattedFacets['sectorId'].length && (searchCategory && searchCategory === 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorId'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorId'].length > 4 || filterQuerySectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySectorNames">
@@ -178,7 +178,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredSectorId">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'sectorId')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                        <span class="min-width-adjust" [matTooltip]="formatSectorName(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? formatSectorName(options?.name) :
                             ''}}</span>
                         <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
@@ -195,10 +195,10 @@
         formattedFacets['subSectorId'].length && (searchCategory && searchCategory === 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'gyaanKarmayogi.subSectors' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['subSectorId'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['subSectorId'].length > 4 || filterQuerySubSectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
-                        [(ngModel)]="filterQuerySectorNames">
+                        [(ngModel)]="filterQuerySubSectorNames">
                     <mat-icon matPrefix class="search-icon">search</mat-icon>
                 </mat-form-field>
             </div>
@@ -206,7 +206,7 @@
                 <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredSubSectorId">
                     <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
                         (change)="onSelectionFilter($event, options, 'subSectorId')">
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                        <span class="min-width-adjust" [matTooltip]="formatSectorName(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? formatSectorName(options?.name) :
                             ''}}</span>
                         <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
                     </mat-checkbox>
@@ -240,7 +240,7 @@
         formattedFacets['sectorDetails_v1.sectorName'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorDetails_v1.sectorName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorDetails_v1.sectorName'].length > 4 || filterQuerySectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySectorNames">
@@ -271,7 +271,7 @@
         formattedFacets['sectorDetails_v1.subSectorName'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'gyaanKarmayogi.subSectors' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorDetails_v1.subSectorName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorDetails_v1.subSectorName'].length > 4 || filterQuerySubSectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySubSectorNames">
@@ -318,7 +318,7 @@
     <ng-container *ngIf="searchCategory && formattedFacets && formattedFacets['language'] && formattedFacets['language'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
         <div class="languages-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.languages' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['language'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['language'].length > 4 || filterQueryLanguage">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search" #inputSearchLanguage
                         [(ngModel)]="filterQueryLanguage">
@@ -346,7 +346,7 @@
         <div class="content-provider-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'profileInfo.organization' |
                 translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['organisation'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['organisation'].length > 4 || filterQueryOrganisation">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryOrganisation" #inputSearchContentProvider>
@@ -374,7 +374,7 @@
         <div class="content-provider-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.contentProvider' |
                 translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sourceName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sourceName'].length > 4 || filterQueryOrganisation">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryOrganisation" #inputSearchContentProvider>
@@ -434,7 +434,7 @@
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.topicName' |
                 translate}}
             </p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['topicName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['topicName'].length > 4 || filterQueryTopic">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryTopic" #inputSearchDesignation>
@@ -485,7 +485,7 @@
         <div class="competency-filter designation-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'userProfile.designation' | translate}}
             </p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['profileDetails.professionalDetails.designation'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['profileDetails.professionalDetails.designation'].length > 4 || filterQueryDesignation">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryDesignation" #inputSearchDesignation>
@@ -515,7 +515,7 @@
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'profileInfo.organization' |
                 translate}}
             </p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['rootOrgName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['rootOrgName'].length > 4 || filterQueryRootOrgName">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryRootOrgName" #inputSearchRootOrgName>
@@ -545,7 +545,7 @@
         formattedFacets['contentPartner.contentPartnerName'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'seeAllHome.contentPatner' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['contentPartner.contentPartnerName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['contentPartner.contentPartnerName'].length > 4 || filterQueryContentPartners">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryContentPartners">
@@ -574,7 +574,7 @@
         formattedFacets['topic'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'apptocsinglepage.Topics' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['topic'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['topic'].length > 4 || filterQueryTopic">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryTopic">
@@ -619,7 +619,7 @@
         formattedFacets[competencyThemeKey].length && searchCategory">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'widgetCbpFilters.competencyTheme' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets[competencyThemeKey].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets[competencyThemeKey].length > 4 || filterQueryThemes">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryThemes">
@@ -651,7 +651,7 @@
         formattedFacets[competencySubThemeKey].length && searchCategory">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'widgetCbpFilters.competencySubTheme' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets[competencySubThemeKey].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets[competencySubThemeKey].length > 4 || filterQuerySubThemes">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySubThemes">
@@ -682,7 +682,7 @@
     <ng-container *ngIf="searchCategory && formattedFacets && formattedFacets['resourceCategory'] && formattedFacets['resourceCategory'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
         <div class="languages-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.resourceCategory' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['resourceCategory'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['resourceCategory'].length > 4 || filterQueryResourceCategory">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQueryResourceCategory">
@@ -715,7 +715,7 @@
         formattedFacets['sectorName'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.sectorId' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['sectorName'].length > 4 || filterQuerySectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySectorNames">
@@ -747,7 +747,7 @@
         formattedFacets['subSectorName'].length && (searchCategory && searchCategory !== 'case-study')">
         <div class="sectorNames-filter">
             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'gyaanKarmayogi.subSectors' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['subSectorName'].length > 4">
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['subSectorName'].length > 4 || filterQuerySubSectorNames">
                 <mat-form-field appearance="outline" class="search-input-block">
                     <input matInput class="search-filter-input" placeholder="Search"
                         [(ngModel)]="filterQuerySubSectorNames">
