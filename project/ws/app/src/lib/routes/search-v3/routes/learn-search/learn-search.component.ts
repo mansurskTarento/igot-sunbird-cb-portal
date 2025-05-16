@@ -226,7 +226,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         changes.searchQuery.previousValue?.searchCategory
       ) {
       this.searchContentLoader = true;
-      this.searchPeopleLoader = true;
       this.resetAllSearchParams();
       this.statedata = {
         param: this.searchQuery?.nlp
@@ -247,7 +246,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchResources();
         await this.searchExternalContents();
 
-        this.searchPeopleLoader = false
         this.searchContentLoader = false;
       }
 
@@ -335,17 +333,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content;
       this.courseSearchTotalCount = result.result?.count;
       this.coursesFacets = result.result?.facets || [];
-      // console.log('resuult', result)
-      // console.log('this.courseFacets', this.coursesFacets)
-      // console.log('this.combinedFacets', this.combinedFacets)
-     // this.combinedFacets  = JSON.parse(JSON.stringify((result.result?.facets || [])))
+
      this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
-      // this.courseSearchResults.forEach((course: any) => {
-      //   course?.organisation?.forEach((element: any) => {
-      //     this.allResultsDepartmentName.add(element);
-      //   });
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
       // });
     } else {
       this.courseSearchResults = [];
@@ -378,8 +368,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.eventSearchTotalCount = result.result?.count;
       this.eventsFacets = result.result?.facets;
       this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
     
     } else {
       this.eventsSearchResults = [];
@@ -388,6 +377,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchPeople() {
+    this.searchPeopleLoader = true;
+    
     this.searchRequestPeoples.query = this.statedata?.param || '';
     const result = await this.searchV3Service.searchConnections(
       this.searchRequestPeoples
@@ -397,12 +388,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peoplesSearchResults = result.result?.response?.content || [];
       this.peopleSearchTotalCount = result.result?.response?.count;
       this.peoplesFacets = result.result?.response.facets || []
+
+      this.combinedFacets = []
+      this.combinedFacets = [...this.combinedFacets, (result.result?.response.facets || [])]
       this.getAllConnectionRequests();
     } else {
       this.peoplesSearchResults = [];
       this.peopleSearchTotalCount = 0;
       this.peoplesFacets = []
     }
+    this.searchPeopleLoader = false;
   }
 
   async searchResources() {
@@ -422,8 +417,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.resourcesSearchTotalCount = result.result?.count;
       this.resourcesFacets = result.result?.facets || []
       this.combinedFacets = []
-      this.combinedFacets = 
-      [...this.combinedFacets, (result.result?.facets || [])]
+      this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
     } else {
       this.resourcesSearchResults = [];
       this.resourcesSearchTotalCount = 0;
@@ -455,6 +449,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.communitiesFacets = this.processCommunityFacets(
         result.result?.search_results?.facets
       );
+      this.combinedFacets = []
+      this.combinedFacets = [...this.combinedFacets, (this.communitiesFacets || [])]
+
     } else {
       this.communitiesSearchResults = [];
       this.communitiesSearchTotalCount = 0;
@@ -640,7 +637,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     // }
     this.applySelectedFilters = selectedFilters
     this.searchContentLoader = true;
-    this.searchPeopleLoader = true;
     this.compentencyKeyExist = false
     this.searchRequestCourse = new SearchV4Request([
       this.competencyAreaNameKey,
@@ -650,15 +646,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize;
     this.searchRequestCourse.request.filters.courseCategory = [];
     this.searchRequestCourse.request.filters.avgRating = {};
-
+    
     this.searchRequestEvents = new SearchV4Request([]);
-
+    this.searchRequestEvents.request.limit = this.initialPaginationSize;
+    
     this.searchRequestResources = new SearchV4Request([])
+    this.searchRequestResources.request.limit = this.initialPaginationSize;
+
     this.searchRequestExternal = new SearchExternalRequest([
       this.competencyAreaNameKey,
       this.competencyThemeKey,
       this.competencySubThemeKey,
     ])
+    this.searchRequestExternal.pageNumber = 0;
+    this.searchRequestExternal.pageSize = this.initialPaginationSize;
 
     this.searchRequestCommunities = new SearchCommunitiesRequest([
       this.competencyAreaNameKey,
@@ -669,6 +670,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchRequestCommunities.pageNumber = 0;
     this.searchRequestCommunities.pageSize = this.initialPaginationSize;
 
+    this.searchRequestPeoples = new SearchPeoplesRequest();
     this.searchRequestPeoples.limit = this.initialPaginationSize;
     this.searchRequestPeoples.offset = 0;
 
@@ -866,15 +868,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ];
         }
-        else if (key === 'sectorDetails_v1.sectorName') {
-          this.searchRequestCourse.request.filters['sectorDetails_v1.sectorName'] = [
+        else if (key === FacetType.sectorNames_v1) {
+          this.searchRequestCourse.request.filters[FacetType.sectorNames_v1] = [
             ...selectedFilters[key],
           ];
+          this.searchRequestResources.request.filters[FacetType.sectorNames_v1] = [
+            ...selectedFilters[key]]
         }
-        else if (key === 'sectorDetails_v1.subSectorName') {
-          this.searchRequestCourse.request.filters['sectorDetails_v1.subSectorName'] = [
+        else if (key === FacetType.subSectorNames_v1) {
+          this.searchRequestCourse.request.filters[FacetType.subSectorNames_v1] = [
             ...selectedFilters[key],
           ];
+          this.searchRequestResources.request.filters[FacetType.subSectorNames_v1] = [
+            ...selectedFilters[key],
+          ]
         }
         else if (key === FacetType.sectorNameResource) {
           this.searchRequestResources.request.filters[FacetType.sectorNameResource] = [
@@ -953,7 +960,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
    
     this.searchContentLoader = false;
-    this.searchPeopleLoader = false;
 
   }
 
@@ -1145,7 +1151,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.combinedFacets = [this.externalFacets];
     }
     // this.scrollToTop();
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
   }
 
@@ -1196,7 +1201,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async onPageChange(event: PageChangeEmitter) {
-    this.searchPeopleLoader = true
     this.searchContentLoader = true;
     this.scrollToTop();
 
@@ -1229,13 +1233,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       await this.searchcommunities();
     }
 
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
 
   }
 
   async onChangeSortSearch(event: string) {
-    this.searchPeopleLoader = true
     this.searchContentLoader = true;
     this.searchSortFilter = event
     this.resetPagination();
@@ -1382,7 +1384,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     localStorage.setItem(SearchConstantLocalStorage.SortType, event);
-    this.searchPeopleLoader = false
     this.searchContentLoader = false;
   }
 
