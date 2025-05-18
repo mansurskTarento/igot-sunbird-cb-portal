@@ -169,7 +169,7 @@
                         </div>
                     </ng-container>
                     <ng-container
-                        *ngIf="!searchPeopleLoader && peopleSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'peoples')">
+                        *ngIf="peopleSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'peoples')">
                         <div class="search-people-card overflow-x-hidden">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
                                 {{ 'learnsearch.peoples' | translate:{ count: peopleSearchTotalCount } }}

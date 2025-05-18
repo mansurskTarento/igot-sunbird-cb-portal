@@ -278,3 +278,22 @@ export class SearchExternalRequest {
     this.orderBy = 'createdOn';
   }
 }
+
+export const SearchResourcesFields = [
+  'appIcon',
+  'artifactUrl',
+  'channel',
+  'contentType',
+  'createdOn',
+  'creator',
+  'description',
+  'duration',
+  'identifier',
+  'mimeType',
+  'name',
+  'posterImage',
+  'primaryCategory',
+  'resourceType',
+  'source',
+  'additionalTags'
+];
