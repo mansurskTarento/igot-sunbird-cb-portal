@@ -48,7 +48,7 @@
                             >
                             </mat-checkbox> -->
                             <span class="min-width-adjust hierichal-filter-label">
-                            {{ options?.displayName }} 
+                            {{ options?.displayName }}
                             </span> 
                             </mat-panel-title>
                         </mat-expansion-panel-header>
@@ -61,7 +61,7 @@
                                 (change)="onSelectionFilter($event, subOption, options?.displayName)"
                                 >
                                 <span class="min-width-adjust" [matTooltip]="subOption?.displayName" [matTooltipPosition]="'right'">
-                                    {{ subOption?.displayName }}
+                                    {{ subOption?.displayName }} >> CAtegory Filters Length
                                 </span>
                                 </mat-checkbox>
                             </section>
@@ -155,7 +155,7 @@
               <mat-radio-button [value]="options" [checked]="options?.isChecked || getSelectedFilter(options)">
                 <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
                     ''}}</span>
-                <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
+                <!-- <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span> -->
               </mat-radio-button>
             </ng-container>
             </section>
@@ -233,6 +233,38 @@
                     </mat-checkbox>
                 </section>
             </mat-selection-list>
+        </div>
+    </ng-container>
+    
+    <!-- Resource Category  -->
+    <ng-container *ngIf="searchCategory && formattedFacets && formattedFacets['resourceCategory'] && formattedFacets['resourceCategory'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
+        <div class="languages-filter">
+            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.resourceCategory' | translate}}</p>
+            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['resourceCategory'].length > 4 || filterQueryResourceCategory">
+                <mat-form-field appearance="outline" class="search-input-block">
+                    <input matInput class="search-filter-input" placeholder="Search"
+                        [(ngModel)]="filterQueryResourceCategory">
+                    <mat-icon matPrefix class="search-icon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <mat-selection-list>
+                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredResourceCategory">
+                    <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
+                        (change)="onSelectionFilter($event, options, 'resourceCategory')">
+                        <!-- <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
+                            {{ options?.name + ' (' + options.count + ')'}}
+                        </span> -->
+                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
+                            ''}}</span>
+                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
+                    </mat-checkbox>
+                </section>
+            </mat-selection-list>
+            <div *ngIf="(filteredResourceCategory?.length > 4) || (!filterQueryResourceCategory && formattedFacets?.['resourceCategory']?.length > 4)"
+                class="brand-color underline cursor-pointer" (click)="toggleShowMore('resourceCategory')">
+                {{ showResourceCategory ? 'See Less' : 'See More' }}
+            </div>
+
         </div>
     </ng-container>
 
@@ -675,38 +707,6 @@
                 class="brand-color underline cursor-pointer" (click)="toggleShowMore(competencySubThemeKey)">
                 {{ showAllCompetencySubTheme ? 'See Less' : 'See More' }}
             </div>
-        </div>
-    </ng-container>
-
-    <!-- Resource Category  -->
-    <ng-container *ngIf="searchCategory && formattedFacets && formattedFacets['resourceCategory'] && formattedFacets['resourceCategory'].length && (searchCategory !== categoryTypeEnum.Events && searchCategory !== categoryTypeEnum.CaseStudy)">
-        <div class="languages-filter">
-            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark mb-2">{{'searchfilters.resourceCategory' | translate}}</p>
-            <div class="mat-full-radius mb-2" *ngIf="formattedFacets['resourceCategory'].length > 4 || filterQueryResourceCategory">
-                <mat-form-field appearance="outline" class="search-input-block">
-                    <input matInput class="search-filter-input" placeholder="Search"
-                        [(ngModel)]="filterQueryResourceCategory">
-                    <mat-icon matPrefix class="search-icon">search</mat-icon>
-                </mat-form-field>
-            </div>
-            <mat-selection-list>
-                <section class="mat-body-2 text-capitalize" *ngFor="let options of filteredResourceCategory">
-                    <mat-checkbox [checked]="options?.isChecked || getSelectedFilter(options)"
-                        (change)="onSelectionFilter($event, options, 'resourceCategory')">
-                        <!-- <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'">
-                            {{ options?.name + ' (' + options.count + ')'}}
-                        </span> -->
-                        <span class="min-width-adjust" [matTooltip]="capitalizeFirstLetter(options?.name)" [matTooltipPosition]="'right'"> {{ options?.name ? capitalizeFirstLetter(options?.name) :
-                            ''}}</span>
-                        <span class="min-width-adjust">{{' (' + options?.count + ')'}}</span>
-                    </mat-checkbox>
-                </section>
-            </mat-selection-list>
-            <div *ngIf="(filteredResourceCategory?.length > 4) || (!filterQueryResourceCategory && formattedFacets?.['resourceCategory']?.length > 4)"
-                class="brand-color underline cursor-pointer" (click)="toggleShowMore('resourceCategory')">
-                {{ showResourceCategory ? 'See Less' : 'See More' }}
-            </div>
-
         </div>
     </ng-container>
 
