@@ -8,6 +8,8 @@ import { Profilev2BadgesResolve } from './resolvers/badges-resolve'
 import { ProfileKarmapointsComponent } from './routes/profile-karmapoints/profile-karmapoints.component'
 import { Profilev2CerficatesResolve } from './resolvers/profile-v2-certificates-resolver'
 import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
+import { profileResolver } from './resolvers/profile-revamp/profile.resolver'
+import { profileEntriesResolver } from './resolvers/profile-revamp/profile-entries.resolver'
 // import { ConfigurationsService } from './resolvers/config-resolver.service'
 // import { ProfileResolverService } from './resolvers/profile-resolver.service'
 
@@ -20,6 +22,19 @@ const routes: Routes = [
       module: 'Profile',
     },
     children: [
+      // {
+      //   path: 'me',
+      //   component: ProfileViewV2Component,
+      //   data: {
+      //     pageId: 'me',
+      //     module: 'Profile',
+      //   },
+      //   resolve: {
+      //     profile: Profilev2Resolve,
+      //     badges: Profilev2BadgesResolve,
+      //     certificates: Profilev2CerficatesResolve,
+      //   },
+      // },
       {
         path: 'me',
         component: ProfileViewV2Component,
@@ -28,9 +43,8 @@ const routes: Routes = [
           module: 'Profile',
         },
         resolve: {
-          profile: Profilev2Resolve,
-          badges: Profilev2BadgesResolve,
-          certificates: Profilev2CerficatesResolve,
+          profile: profileResolver,
+          entries: profileEntriesResolver
         },
       },
       {
@@ -71,6 +85,8 @@ const routes: Routes = [
     Profilev2Resolve,
     Profilev2BadgesResolve,
     Profilev2CerficatesResolve,
+    profileResolver,
+    profileEntriesResolver,
     // ConfigurationsService,
     // ProfileResolverService,
   ],

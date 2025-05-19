@@ -52,8 +52,13 @@
         </div>
         <div class="flex flex-col justify-between items-end">
           <div class="flex">
-            <mat-icon class="menu">more_vert</mat-icon>
+            <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu" [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
           </div>
+          <mat-menu #profileMenu="matMenu">
+            <button mat-menu-item (click)="openProfileEditDialog('Profile')">
+                <span>Edit Profile</span>
+            </button>
+            </mat-menu>
           <!-- <div class="flex gap-4 items-center justify-center">
             <button mat-raised-button class="transfor-request flex items-center justify-center">Make Transfor Request</button>
             <mat-icon class="info-icon">info_outline</mat-icon>
@@ -69,7 +74,7 @@
 
     <div class="flex gap-5 w-full">
       <!-- #region (left routing) -->
-      <div class="fle flex-col gap-3 left-routing-card">
+      <div class="hidden md:flex flex-col gap-3 left-routing-card">
         <ng-container *ngFor="let profileRoute of profileRoutes">
           <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute)" [ngClass]="{'active-route-card': profileRoute?.isActive}">
             <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
@@ -124,7 +129,7 @@
   <!-- #endregion (left profile )-->
 
   <!-- #region (right profile connections )-->
-  <div class="flex flex-col gap-4 profileRightSection">
+  <div class="hidden md:flex flex-col gap-4 profileRightSection">
     <div class="flex flex-col gap-3">
       <div class="people-you-may-know">
         People You May Know

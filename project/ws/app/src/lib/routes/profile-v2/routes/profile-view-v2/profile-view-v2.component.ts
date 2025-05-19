@@ -5,6 +5,8 @@ import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component';
 import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-edit/profile-entry-edit.component';
+import { ActivatedRoute } from '@angular/router';
+import * as _ from 'lodash';
 //#endregion
 
 @Component({
@@ -15,25 +17,26 @@ import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-ed
 export class ProfileViewV2Component implements OnInit {
 
   //#region (global variables)
+  profesionalDetails: any
   coverPhotoUrl = './assets/icons/profile_cover_pic.svg';
   userStats: UserStats[] = [
     {
       state: 'My Karma Points',
       totalPoints: '2,133',
-      iconUrl: '',
+      iconUrl: './assets/icons/karma-point-logo.jpg',
       vewAllUrl: '',
       stateInfo: 'My Karma Points'
     },
     {
       state: 'My Certificates',
       totalPoints: '312',
-      iconUrl: '',
+      iconUrl: './assets/icons/certificate.svg',
       vewAllUrl: ''
     },
     {
       state: 'My Posts',
       totalPoints: '312',
-      iconUrl: '',
+      iconUrl: './assets/icons/edit.svg',
       vewAllUrl: ''
     }
   ];
@@ -165,26 +168,7 @@ export class ProfileViewV2Component implements OnInit {
   ]
   aboutme = 'Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu '
   showMoreAbout = false
-  primaryDetails = {
-    group: 'Group A',
-    designation: 'Secretariat Assistant',
-    employeeId: 'KB2468',
-    email: 'harshit.rao@karmayogibharat.in',
-    mobileNumber: '+91 9972222610',
-    gender: 'Male',
-    dateOfBirth: '03/April/1990',
-    motherTongue: 'Kannada',
-    category: 'General',
-    officePinCode: '110003',
-    ehrmsId: '35011992HARS',
-    dateOfRetirement: 'N/A',
-    organizedService: 'Yes',
-    civilServiceType: 'All India Services',
-    services: 'India Forest Service',
-    cadre: 'AGMUT',
-    batch: '1960',
-    cadreControllingAuthority: 'Ministry of Environment & Forests'
-  };
+  primaryDetails: any;
   //#endregion
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -193,12 +177,49 @@ export class ProfileViewV2Component implements OnInit {
 
   constructor(
     private dialog: MatLegacyDialog,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
     const progress = (247 - ((247 * 60) / 100))
     document.documentElement.style.setProperty('--i', String(progress))
+    this.getProfileDetailsFromRoutes()
   }
+
+  getProfileDetailsFromRoutes() {
+    this.activatedRoute.data.subscribe(data => {
+      this.profesionalDetails = _.get(data, 'profile.data', {})
+      this.patchProfileDetails()
+      console.log('data', data)
+    })
+  }
+
+  patchProfileDetails() { 
+    this.primaryDetails = {
+      firstname: _.get(this.profesionalDetails, 'profiledetails.personalDetails.firstname', ''),
+      group: _.get(this.profesionalDetails, 'profiledetails.professionalDetails.group', ''),
+      designation: _.get(this.profesionalDetails, 'profiledetails.professionalDetails.designation', ''),
+      osid: _.get(this.profesionalDetails, 'profiledetails.professionalDetails.osid', ''),
+      employeeCode: _.get(this.profesionalDetails, 'profiledetails.employmentDetails.employeeCode', ''),
+      primaryEmail: _.get(this.profesionalDetails, 'profiledetails.personalDetails.primaryEmail', ''),
+      mobile: _.get(this.profesionalDetails, 'profiledetails.personalDetails.mobile', ''),
+      gender: _.get(this.profesionalDetails, 'profiledetails.personalDetails.gender', ''),
+      dob: _.get(this.profesionalDetails, 'profiledetails.personalDetails.dob', ''),
+      domicileMedium: _.get(this.profesionalDetails, 'profiledetails.personalDetails.domicileMedium', ''),
+      category: _.get(this.profesionalDetails, 'profiledetails.personalDetails.category', ''),
+      pinCode: _.get(this.profesionalDetails, 'profiledetails.employmentDetails.pinCode', ''),
+
+      dateOfRetirement: 'N/A',
+      organizedService: 'Yes',
+      civilServiceType: 'All India Services',
+      services: 'India Forest Service',
+      cadre: 'AGMUT',
+      batch: '1960',
+      cadreControllingAuthority: 'Ministry of Environment & Forests'
+    }
+  }
+
+  patchEntries() { }
 
   selectRoute(profileRoute: profileRoutes) {
     profileRoute.isActive = !profileRoute.isActive
