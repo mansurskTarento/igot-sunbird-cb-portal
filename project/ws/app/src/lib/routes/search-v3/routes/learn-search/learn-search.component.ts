@@ -936,6 +936,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       delete this.searchRequestEvents.request.filters[this.competencyAreaNameKey];
     }
 
+    if (this.isExploreContentTab && Object.keys(selectedFilters).length === 1) {
+      this.searchCourses();
+      this.searchContentLoader = false
+    }
     
     this.deleteFilterKeys();
     if (this.shouldReturnFromHere) {
