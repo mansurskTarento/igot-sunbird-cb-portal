@@ -14,74 +14,128 @@
         </div>
     </div>
 </div>
-<mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky" [selectedIndex]="selectedTabIndex" [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
-    <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag ">
-       <div class="flex flex-row align-items-center my-2">
-        <div>
-            <p>0.00</p>
-        </div>
-        <div class="ml-4">
-            <p>AI for Digital Transformation: Machine Learning and Deep Learning  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-        <div class="ml-4">
-            <mat-form-field appearance="none">
-                <select  matNativeControl required class="section-dd" >
-                  <option value="">Transcription Language: English (Auto)</option>
-                </select>
-            </mat-form-field>
-        </div>
-       </div>
-    </mat-tab>
-    <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
-        <div class="ai-tutor-get-started-mobile mt-2 ml-2" *ngIf="!viewerPage && enableAITutorFlag && isMobile">
-            <div class="flex flex-row align-items-center w-98">
-                <div class="px-2 py-2">
-                    <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px"/>
+<mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu 
+    [class.sticky-mat-tabs]="sticky" 
+    [selectedIndex]="selectedTabIndex" 
+    [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
+    
+    <!-- Transcription Tab -->
+    <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag">
+        <ng-template matTabContent>
+            <div class="flex flex-row align-items-center my-2">
+                <!-- Transcription content -->
+                <div>
+                    <p>0.00</p>
                 </div>
-                <div class="flex flex-row align-items-center">
-                    <div class="py-2">
-                        <p class="font-weight-600">Get Started with AI Tutor</p>
-                        <span>Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</span>
+                <div class="ml-4">
+                    <p>AI for Digital Transformation: Machine Learning and Deep Learning  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="ml-4">
+                    <mat-form-field appearance="none">
+                        <select matNativeControl required class="section-dd">
+                            <option value="">Transcription Language: English (Auto)</option>
+                        </select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-template>
+    </mat-tab>
+    
+    <!-- About Tab -->
+    <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
+        <ng-template matTabContent>
+            <div class="ai-tutor-get-started-mobile mt-2 ml-2" *ngIf="!viewerPage && enableAITutorFlag && isMobile">
+                <div class="flex flex-row align-items-center w-98">
+                    <div class="px-2 py-2">
+                        <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px"/>
+                    </div>
+                    <div class="flex flex-row align-items-center">
+                        <div class="py-2">
+                            <p class="font-weight-600">Get Started with AI Tutor</p>
+                            <span>Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</span>
+                        </div>
+                        
                     </div>
                     
                 </div>
-                
-            </div>
-            <div class="flex justify-end my-2 mx-2">
-                <div class="ai-tutor-btn px-2 py-1">
-                    <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
+                <div class="flex justify-end my-2 mx-2">
+                    <div class="ai-tutor-btn px-2 py-1">
+                        <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <ws-widget-app-toc-about [fromViewer]="fromViewer" [pathSet]="pathSet" [content]="content" [contentReadData]="contentReadData" [tocStructure]="tocStructure" [config]="config"  [forPreview]="false" [sticky]="sticky" [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
-        [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader" [condition]="condition" [kparray]="kparray" [showReviews]="'true'"></ws-widget-app-toc-about>
+            <ws-widget-app-toc-about 
+                [fromViewer]="fromViewer" 
+                [pathSet]="pathSet" 
+                [content]="content"
+                [contentReadData]="contentReadData" 
+                [tocStructure]="tocStructure" 
+                [config]="config" 
+                [forPreview]="false" 
+                [sticky]="sticky" 
+                [selectedBatchData]="selectedBatchData" 
+                [selectedTabValue]="selectedTabIndex"
+                [resumeData]="resumeData" 
+                [batchData]="batchData" 
+                [skeletonLoader]="skeletonLoader" 
+                [condition]="condition" 
+                [kparray]="kparray" 
+                [showReviews]="'true'">
+            </ws-widget-app-toc-about>
+        </ng-template>
     </mat-tab>
+    
+    <!-- Content Tab -->
     <ng-container *ngIf="content?.children?.length">
         <mat-tab label="{{ 'apptocsinglepage.content' | translate }}" *ngIf="contentTabFlag">
-            <ws-widget-app-toc-content [batchId]="batchId" [componentName]="componentName"  [pathSet]="pathSet" [content]="content" [tocStructure]="tocStructure" [config]="config"  [forPreview]="false"
-            [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData"></ws-widget-app-toc-content>
-        </mat-tab>
-    </ng-container>
-    <ng-container *ngIf="config?.commentsTab && !forPreview">
-        <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
-            <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
-                <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
-            </div>
+            <ng-template matTabContent>
+                <ws-widget-app-toc-content 
+                    [batchId]="batchId" 
+                    [componentName]="componentName" 
+                    [pathSet]="pathSet" 
+                    [content]="content" 
+                    [tocStructure]="tocStructure" 
+                    [config]="config" 
+                    [forPreview]="false"
+                    [resumeData]="resumeData" 
+                    [batchData]="batchData" 
+                    [skeletonLoader]="skeletonLoader" 
+                    [hierarchyMapData]="hierarchyMapData">
+                </ws-widget-app-toc-content>
+            </ng-template>
         </mat-tab>
     </ng-container>
     
-    <ng-container *ngIf="content?.referenceNodes && teacherNotesFlag && displayTeachersContent">
-        <mat-tab label="Teachers Note">
-            <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
-                <ws-widget-app-toc-teachers-notes [content]="content"></ws-widget-app-toc-teachers-notes>
-            </div>
+    <!-- Comments Tab -->
+    <ng-container *ngIf="config?.commentsTab && !forPreview">
+        <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+            <ng-template matTabContent>
+                <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
+                    <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
+                </div>
+            </ng-template>
         </mat-tab>
     </ng-container>
+    
+    <!-- Teachers Note Tab -->
+    <ng-container *ngIf="content?.referenceNodes && teacherNotesFlag && displayTeachersContent">
+        <mat-tab label="Teachers Note">
+            <ng-template matTabContent>
+                <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
+                    <ws-widget-app-toc-teachers-notes [content]="content"></ws-widget-app-toc-teachers-notes>
+                </div>
+            </ng-template>
+        </mat-tab>
+    </ng-container>
+    
+    <!-- Reference Note Tab -->
     <ng-container *ngIf="content?.referenceNodes && referenceNotesFlag">
         <mat-tab label="Reference Note">
-            <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
-                <ws-widget-app-toc-reference-notes [content]="content"></ws-widget-app-toc-reference-notes>
-            </div>
+            <ng-template matTabContent>
+                <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
+                    <ws-widget-app-toc-reference-notes [content]="content"></ws-widget-app-toc-reference-notes>
+                </div>
+            </ng-template>
         </mat-tab>
     </ng-container>
 </mat-tab-group>
