@@ -10,6 +10,12 @@ import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { WidgetContentService } from '@sunbird-cb/collection'
+import { HttpErrorResponse } from '@angular/common/http'
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
+import * as _ from 'lodash'
+
+const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
+const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 
 @Component({
   selector: 'ws-widget-player-survey',
@@ -41,6 +47,14 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   userid: any
   contentProgressHash: any = []
 
+  surveyForm!: FormGroup
+  formDetails: any
+  parentalFields: any[] = []
+  childFields: any[] = []
+  surveyFormIsValid = true
+  addLoader = 0
+  wfClientVersion: any = '0'
+
   constructor(private activatedRoute: ActivatedRoute,
               private eventSvc: EventService,
               private viewerSvc: ViewerUtilService,
@@ -48,6 +62,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
               private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
               private widgetServ: WidgetContentService,
+              private fb: FormBuilder,
     ) {
     super()
   }
@@ -55,6 +70,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   ngOnInit() {
     const identifier = this.activatedRoute.snapshot.queryParams.collectionId
     const batchId = this.activatedRoute.snapshot.queryParams.batchId
+    this.wfClientVersion = this.widgetData.wfClientVersion
     this.courseId = this.widgetData.collectionId
     this.courseName = this.widgetData.courseName
     this.progressStatus = this.widgetData.progressStatus
@@ -118,6 +134,194 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
               // console.log(this.progressStatus)
           })
         }
+      }
+    })
+
+    this.getFormDetails()
+  }
+
+  getFormDetails() {
+    this.addLoader = this.addLoader + 1
+    this.viewerSvc.getFormById(this.surveyId).subscribe((result: any) => {
+      this.addLoader = this.addLoader - 1
+      this.formDetails = {
+        title: _.get(result, 'responseData.title', ''),
+        fields: _.get(result, 'responseData.fields', [])
+      }
+      this.buildForm()
+    }, (error: HttpErrorResponse) => {
+      if (error) {
+        this.addLoader = this.addLoader - 1
+      }
+    })
+  }
+
+  buildForm() {
+    if (this.formDetails) {
+      this.surveyForm = this.fb.group({
+        fields: this.fb.array([])
+      })
+      const questionsArray = this.questionsArray
+      if (this.formDetails.fields) {
+        this.formDetails.fields.forEach((field: any) => {
+          if (field.fieldType !== 'separator' && field.fieldType !== 'heading') {
+            const validatorsArray: any = []
+            if (field.isRequired) {
+              validatorsArray.push(Validators.required)
+            }
+
+            switch (field.fieldType) {
+              case 'phone number':
+                validatorsArray.push(Validators.pattern(MOBILE_PATTERN))
+                validatorsArray.push(Validators.minLength(10))
+                validatorsArray.push(Validators.maxLength(10))
+                break
+              case 'email':
+                validatorsArray.push(Validators.pattern(EMAIL_PATTERN))
+                break
+              case 'numeric':
+                break
+            }
+
+            const questionGroup = this.fb.group({
+              question: [field.name],
+              parentId: [field.parentId],
+              questionIndex: [questionsArray.length],
+              fieldType: [field.fieldType],
+              answer: ['', validatorsArray],
+              isNA: [false]
+            })
+            field['controlIndex'] = questionsArray.length
+            field['validatorsArray'] = validatorsArray
+            questionsArray.push(questionGroup)
+            if (validatorsArray.length) {
+              this.surveyFormIsValid = false
+            }
+          }
+
+          if (field.parentId) {
+            this.childFields.push(field)
+          } else {
+            this.parentalFields.push(field)
+          }
+        })
+      }
+    }
+  }
+
+  get questionsArray(): FormArray {
+    if (this.surveyForm && this.surveyForm.controls.fields) {
+      return this.surveyForm.controls.fields as FormArray
+    }
+    return this.fb.array([])
+  }
+
+  getChildQuestionsFormArray(sectionId: string): FormArray {
+    if (this.surveyForm && this.surveyForm.controls.fields) {
+      const questionsArray = this.questionsArray
+      const childQuestionsArray = questionsArray.controls.filter((question: any) => {
+        return question.value && question.value.parentId === sectionId;
+      });
+
+      if (childQuestionsArray.length > 0) {
+        return this.fb.array(childQuestionsArray);
+      }
+    }
+    return this.fb.array([]) as FormArray
+  }
+
+  getChildFields(sectionId: string) {
+    let sectionChilds: any = []
+    if (this.childFields) {
+      sectionChilds = this.childFields.filter((field: any) => field.parentId === sectionId)
+    }
+    return sectionChilds
+  }
+
+  getQuestionControl(index: number) {
+    if (this.questionsArray.controls[index]) {
+      return this.questionsArray.controls[index]
+    }
+    return this.fb.group({})
+  }
+
+  submitForm() {
+    this.surveyForm.markAllAsTouched()
+    this.surveyForm.updateValueAndValidity()
+    if (this.surveyFormIsValid) {
+      const formBody: any = {
+        formId: this.surveyId,
+        formData: '',
+        timestamp: Date.now(),
+        version: 4,
+        dataObject: this.dataObject,
+
+      }
+
+      if (this.childFields.length) {
+        formBody['meta'] = [
+          {
+            key: '',
+            value: ''
+          }
+        ],
+          formBody['infoObject'] = {
+            '': ''
+          }
+      }
+
+      this.addLoader = this.addLoader + 1
+      this.viewerSvc.submitForm(formBody).subscribe({
+        next: res => {
+          this.addLoader = this.addLoader - 1
+          if (_.get(res, 'statusInfo.statusCode') === 200) {
+            this.openSnackbar('Form is submitted successfully')
+          } else {
+            this.openSnackbar(_.get(res, 'errorMessage', 'Something went wrong please try again'))
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          if (error) {
+            this.addLoader = this.addLoader - 1
+            this.openSnackbar('Something went wrong please try again')
+          }
+        }
+      })
+    }
+  }
+
+  get dataObject(): any {
+    const dataObject: any = {
+      // 'Course ID and Name': `${this.data.courseId},${this.data.courseName}`
+      'Course ID and Name': `do_1143060351609569281194,Mechanical Systems Design`
+    }
+
+    const fields = _.get(this.surveyForm, 'value.fields', [])
+    if (fields) {
+      fields.forEach((field: any) => {
+        let value = field.isNA ? 'N/A' : field.answer
+        if (!field.isNA && field.fieldType === 'date' && value) {
+          const formattedYear = value.getFullYear()
+          const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
+          const formattedDay = String(value.getDate()).padStart(2, '0')
+          value = `${formattedYear}-${formattedMonth}-${formattedDay}`
+        }
+        dataObject[field.question] = value
+      })
+    }
+    return dataObject
+  }
+
+  updateQuestionValues(event: any) {
+    this.questionsArray.value[event.questionIndex] = event
+    this.updateSurveyFormValidity()
+  }
+
+  updateSurveyFormValidity() { // some times reactive forms not abale to detect value changes and validity in dynamic formArray
+    this.surveyFormIsValid = true
+    this.questionsArray.controls.forEach((form: any) => {
+      if (!form.controls.answer.valid) {
+        this.surveyFormIsValid = false
       }
     })
   }

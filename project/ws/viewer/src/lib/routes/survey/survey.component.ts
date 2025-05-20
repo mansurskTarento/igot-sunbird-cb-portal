@@ -6,6 +6,7 @@ import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '../../viewer-util.service'
+import * as _ from 'lodash'
 // import { environment } from 'src/environments/environment'
 
 @Component({
@@ -33,6 +34,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
       collectionId: '',
       courseName: '',
       progressStatus: '',
+      wfClientVersion: '',
     },
   }
   isPreviewMode = false
@@ -152,6 +154,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
         () => { },
       )
     }
+    this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
   }
 
   async fetchContent() {

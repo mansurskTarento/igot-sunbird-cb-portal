@@ -1,8 +1,28 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyInputModule } from '@angular/material/legacy-input';
+import { MatLegacyRadioModule } from '@angular/material/legacy-radio';
+import { MatLegacySelectModule } from '@angular/material/legacy-select';
 
 @Component({
   selector: 'ws-app-survey-form-question',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatLegacyRadioModule,
+    MatLegacySelectModule,
+    MatLegacyCheckboxModule,
+    MatLegacyInputModule,
+    MatDatepickerModule,
+    MatIconModule,
+    MatLegacySelectModule,
+    ReactiveFormsModule, 
+    FormsModule
+  ],
   templateUrl: './survey-form-question.component.html',
   styleUrls: ['./survey-form-question.component.scss']
 })
