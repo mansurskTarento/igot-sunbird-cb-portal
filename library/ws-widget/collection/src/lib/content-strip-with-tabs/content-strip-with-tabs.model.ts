@@ -65,7 +65,8 @@ export namespace NsContentStripWithTabs {
       viewMoreText: string
       path: string
     }
-    data?: []
+    data?: [],
+    sectorWidgets?:any
   }
 
   export interface IStripRequestApi {

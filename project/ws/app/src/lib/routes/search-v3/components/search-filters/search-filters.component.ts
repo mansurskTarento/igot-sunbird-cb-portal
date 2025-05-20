@@ -163,6 +163,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['typesOfEvents'] && changes['typesOfEvents'].currentValue) {
       this.formattedFacets['typeOfEvents'] = this.typesOfEvents;
     } 
+
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters);
     
   }
@@ -179,13 +180,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   setCategoryType() {
     const params = this.activated.snapshot.queryParams;
-      if(params['q']) {
-        this.searchQuery = params['q'];
-      }
-      if((this.searchCategory && params['category'] && this.searchCategory !== params['category']) ||
-      !params['category']) {
-        this.selectedFilters = {}
-      } 
+    if(params['q']) {
+      this.searchQuery = params['q'];
+    }
+    if((this.searchCategory && params['category'] && this.searchCategory !== params['category']) ||
+    !params['category']) {
+      this.selectedFilters = {}
+    } 
 
       this.isExploreContentTab = !!params['tab'];
     
@@ -661,7 +662,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       data = this.formattedFacets[FacetType.Organization];
     }
-    let filteredList = data.filter((item: any) =>
+    let filteredList = data?.filter((item: any) =>
       item.name
         .toLowerCase()
         .includes(this.filterQueryOrganisation.toLowerCase())

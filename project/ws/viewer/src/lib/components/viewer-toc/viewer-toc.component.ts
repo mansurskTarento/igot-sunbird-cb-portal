@@ -119,6 +119,9 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   enrollmentList: any
   enableAITutorFlag = false
   aiTutorResourceId:any = ''
+  showAITutorFlag = true
+  scormAssessmentCount = 0
+  totalResource = 0
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -134,6 +137,14 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
     this.hierarchyData = this.activatedRoute.snapshot.data.hierarchyData
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
+    console.log('this.hierarchyData', this.hierarchyData)
+    if(this.hierarchyData && this.hierarchyData.result 
+      && this.hierarchyData.result.content 
+      && this.hierarchyData.result.content.children) {
+      this.showAITutorFlag = this.onlyscormAssessmentExists(this.hierarchyData.result.content.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset'])
+      console.log('this.scormExistsFlag', this.showAITutorFlag)
+    }
+    
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
     && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     const contentRead = this.activatedRoute.snapshot.data.contentRead
@@ -577,5 +588,28 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
 
   minimizenav() {
     this.hidenav.emit(false)
+  }
+
+  onlyscormAssessmentExists(data:any, key:any, value:any) {
+    for (let i=0; i<data?.length; i++) {
+      if (data[i] && data[i]['children'] && data[i]['children'].length) { 
+        // this.totalResource = this.totalResource + 1
+        this.onlyscormAssessmentExists(data[i]?.children, key, value)      
+      } else {
+        this.totalResource = this.totalResource + 1
+        if (value.includes(data[i][key])) {
+          // this.showAITutorFlag = false;
+          this.scormAssessmentCount = this.scormAssessmentCount + 1
+        } 
+      }
+    }
+    // console.log('this.totalResource',this.totalResource)
+    // console.log('this.scormAssessmentCount',this.scormAssessmentCount)
+    if(this.totalResource === this.scormAssessmentCount) {
+      this.showAITutorFlag = false;
+    } else {
+      this.showAITutorFlag = true
+    }
+    return this.showAITutorFlag;
   }
 }
