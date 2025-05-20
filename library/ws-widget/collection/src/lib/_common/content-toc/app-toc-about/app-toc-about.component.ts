@@ -201,13 +201,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     } else {
       this.isMobile = false
     }
-    if (this.content && this.content.identifier) {
+    if (this.content && this.content.identifier) {     
       this.fetchRatingSummary()
-      this.loadCompetencies()
+      // this.loadCompetencies()
     }
 
     if (this.content && this.content.contentId && this.content.contentId.includes('ext_')) {
-      this.loadCompetencies()
+     // this.loadCompetencies()
     }
 
     if (this.content) {
@@ -255,7 +255,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           'subSectorName'
         )
 
-        if(this.sectorsList && this.sectorsList.length) {
+        if(this.sectorsList && this.sectorsList.length && this.sectorsList[0]) {
           if (!this.isMobile) {
             this.handleSubsector(this.sectorsList[0])
           }          
@@ -484,7 +484,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         competencyArray.push(_tempObj)
       }
     }
-
+    this.strip['loaderWidgets'] = []
     this.strip['loaderWidgets'] = this.transformCompetenciesToWidget(this.competencySelected, competencyArray, this.strip)
   }
 

@@ -400,7 +400,7 @@
     <ng-container *ngIf="!skeletonLoader && sectorsList?.length">
         <div class="flex flex-col">
             <div class="mat-subheading-1 nodtranslate">{{ 'gyaanKarmayogi.sectors' | translate }}</div>
-            <ng-container *ngIf="sectorsList.length > 0">
+            <ng-container *ngIf="sectorsList?.length > 0">
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-row gap-3 sm:gap-4 mb-3 flex-wrap">
                         <ng-container *ngFor="let sector of sectorsList; let i = index; let isLast = last" >
