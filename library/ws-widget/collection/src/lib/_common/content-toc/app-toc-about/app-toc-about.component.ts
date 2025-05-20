@@ -59,7 +59,8 @@ interface IStripUnitContentData {
   loaderWidgets?: any
   stripBackground?: string
   secondaryHeading?: any
-  viewMoreUrl: any
+  viewMoreUrl: any,
+  sectorWidgets?:any
 }
 
 @Component({
@@ -180,7 +181,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       queryParams: '',
     },
     tabs: [],
-    filters: [],
+    filters: []
   }
 
   timer: any = {}
@@ -189,6 +190,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   sectorsList: any[] = []
   subSectorsList: any[] = []
   userProfile: any = null
+  subSectorDetailArr:any = []
+  selectedSector = ''
+  selectedSectorId = ''
   ngOnInit() {
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     this.userProfile = this.configService.userProfile
@@ -250,6 +254,12 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
             })),
           'subSectorName'
         )
+
+        if(this.sectorsList && this.sectorsList.length) {
+          if (!this.isMobile) {
+            this.handleSubsector(this.sectorsList[0])
+          }          
+        }
       }
     }
  
@@ -879,6 +889,46 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       } catch (e) {
         return false
       }
+  }
+
+  handleSubsector(item: any): void {
+    this.subSectorDetailArr = []
+    this.selectedSector = ''
+    this.selectedSectorId = ''
+    if(this.content) {
+      for(let i=0; i<this.content.sectorDetails_v1.length;i++) {
+        if(this.content.sectorDetails_v1[i]['sectorId'] === item.sectorId) {
+          if(this.content.sectorDetails_v1[i]['subSectorName']) {
+            let obj = {}
+            obj = {
+              'sectorId': this.content.sectorDetails_v1[i]['sectorId'],
+              'sectorName': this.content.sectorDetails_v1[i]['sectorName'],
+              'key': this.content.sectorDetails_v1[i]['subSectorName'],
+              'value':[this.content.sectorDetails_v1[i]['subSectorName']] 
+            }
+            this.subSectorDetailArr.push(obj)
+          }         
+        }
+      }
+      this.selectedSector =  item.sectorName
+      this.selectedSectorId = item.sectorId
+      
+      
+      const valueObj = item
+      const subSectorArray = []
+      for (const key in valueObj) {
+        if (valueObj.hasOwnProperty(key)) {
+          const _tempObj: any = {}
+          _tempObj['key'] = key
+          _tempObj['value'] = valueObj[key]
+          subSectorArray.push(_tempObj)
+        }
+      }
+      console.log('this.content.sectorDetails_v1', this.content.sectorDetails_v1)
+      console.log('this.subSectorDetailArr', this.subSectorDetailArr)
+     this.strip['sectorWidgets'] = this.transformCompetenciesToWidget('Behavioural', this.subSectorDetailArr, this.strip)
+    }
+    
   }
 
   ngOnDestroy(): void {
