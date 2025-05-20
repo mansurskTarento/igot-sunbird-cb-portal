@@ -1276,7 +1276,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       batchId: this.resBatchId,
       identifier: this.identifier,
       primaryCategory: this.primaryCategory,
-      courseId: this.resCollectionId,
+      courseId: this.forPreview ? this.collectionId:  this.resCollectionId,
       isAssessment: true,
       objectType: 'QuestionSet',
       timeLimit: this.quizJson.timeLimit,
@@ -1648,18 +1648,34 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         contextId: this.collectionId
       }
       
-      const quizV4Res: any = await this.quizSvc.publicSubmit(requestData).toPromise().catch(_error => {})
-          if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
-            if (quizV4Res.result.primaryCategory === 'Course Assessment') {
-              setTimeout(() => {
-                this.getQuizResult()
-                if(this.forPreview && this.quizData.isPublic){
-                  this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
-                }
-              },         environment.quizResultTimeout)
-            } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
-              this.assignQuizResult(quizV4Res.result)
-            }
+      if (this.selectedAssessmentCompatibilityLevel < 7) {
+        const quizV4Res: any = await this.quizSvc.publicV4Submit(requestData).toPromise().catch(_error => {})
+            if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
+              if (quizV4Res.result.primaryCategory === 'Course Assessment') {
+                setTimeout(() => {
+                  this.getQuizResult()
+                  if(this.forPreview && this.quizData.isPublic){
+                    this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
+                  }
+                },         environment.quizResultTimeout)
+              } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
+                this.assignQuizResult(quizV4Res.result)
+              }
+        }
+      } else {
+        const quizV4Res: any = await this.quizSvc.publicV5Submit(requestData).toPromise().catch(_error => {})
+            if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
+              if (quizV4Res.result.primaryCategory === 'Course Assessment') {
+                setTimeout(() => {
+                  this.getQuizResult()
+                  if(this.forPreview && this.quizData.isPublic){
+                    this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
+                  }
+                },         environment.quizResultTimeout)
+              } else if (quizV4Res.result.primaryCategory === 'Practice Question Set') {
+                this.assignQuizResult(quizV4Res.result)
+              }
+        }
       }
     }
   }
@@ -1731,7 +1747,13 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         ...this.viewerSvc.publicUserDetails,
         contextId: this.collectionId
       }
-      await this.quizSvc.publicSubmit(requestData ).toPromise().catch(_error => {}) 
+
+      if (this.selectedAssessmentCompatibilityLevel < 7) {
+      await this.quizSvc.publicV4Submit(requestData ).toPromise().catch(_error => {}) 
+      } else {
+        await this.quizSvc.publicV5Submit(requestData ).toPromise().catch(_error => {}) 
+
+      }
       if(this.forPreview && this.quizData.isPublic){
         this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.quizData)
       }
