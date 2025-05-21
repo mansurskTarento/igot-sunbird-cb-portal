@@ -3,16 +3,20 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyInputModule } from '@angular/material/legacy-input';
 import { MatLegacyRadioModule } from '@angular/material/legacy-radio';
 import { MatLegacySelectModule } from '@angular/material/legacy-select';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'ws-app-survey-form-question',
   standalone: true,
   imports: [
     CommonModule,
+    MatInputModule,
     MatLegacyRadioModule,
     MatLegacySelectModule,
     MatLegacyCheckboxModule,
@@ -21,7 +25,9 @@ import { MatLegacySelectModule } from '@angular/material/legacy-select';
     MatIconModule,
     MatLegacySelectModule,
     ReactiveFormsModule, 
-    FormsModule
+    FormsModule,
+    MatFormFieldModule,
+    TranslateModule
   ],
   templateUrl: './survey-form-question.component.html',
   styleUrls: ['./survey-form-question.component.scss']
