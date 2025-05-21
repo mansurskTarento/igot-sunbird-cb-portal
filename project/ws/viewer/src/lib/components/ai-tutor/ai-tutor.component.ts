@@ -135,6 +135,22 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        object: { id: this.content},
+        state: WsEvents.EnumTelemetrySubType.Loaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
   greetings() {
@@ -637,6 +653,22 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
      setTimeout(()=>{
       this.scrollToBottom()
     },0)
+
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        object: { },
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId:  `viewer/${this.content}`, module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
   copyPath(item:any, cindex:any) {
@@ -664,6 +696,21 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   redirectToToc(chat:any) {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        object: { id: chat?.identifier, type: chat?.contentType},
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     let path = `https://portal.igotkarmayogi.gov.in/app/toc/${chat?.identifier}/overview`
     window.open(path, '_blank')
   }
@@ -709,7 +756,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
           continue
         }
 
-        if (name.charAt(i) === name.charAt(i)) {
+        if (name && (name.charAt(i) === name.charAt(i))) {
           initials += name.charAt(i)
 
           if (initials.length === 2) {
@@ -719,7 +766,6 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
     }
     this.initials = initials.toUpperCase()
-    console.log('this.initials', this.initials)
   }
 
   getLearningStyle() {
@@ -739,7 +785,25 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       
       this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
     }
-    console.log('selectedLearningStyle--', this.selectedLearningStyle)
+   // console.log('selectedLearningStyle--', this.selectedLearningStyle)
+  }
+
+  raiseTelemetryForResource(item:any) {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title    },
+        object: { id: item?.identifier, type: item?.contentType},
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
   ngOnDestroy(): void {
@@ -747,6 +811,21 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.messageSubscription) {
       this.messageSubscription.unsubscribe();
     }
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        object: { id: this.content},
+        state: WsEvents.EnumTelemetrySubType.Unloaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     // this.websocketService.closeConnection();
   }
 }

@@ -13,7 +13,9 @@ import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import {
   // LoggerService,
   ConfigurationsService,
+  EventService,
   UtilityService,
+  WsEvents,
 } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
@@ -82,7 +84,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     private viewSvc: ViewerUtilService,
     private configSvc: ConfigurationsService,
     // private contentProgressSvc: ContentProgressService,
-    private userSvc: WidgetUserServiceLib
+    private userSvc: WidgetUserServiceLib,
+    public eventSvc: EventService
     // private tocSvc: AppTocService,
   ) {
     this.nestedTreeControl = new NestedTreeControl<IViewerTocCard>(this._getChildren)
@@ -611,5 +614,71 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.showAITutorFlag = true
     }
     return this.showAITutorFlag;
+  }
+
+  onTabChanged(event:any) {
+    // console.log('contentData', this.contentData)
+    if(event && event.index && event.index === 1) {
+      this.raiseAITutorStartTelemetry()
+      this.raiseAITutorInteractTelemetry()
+    } else {
+      this.raiseAITutorEndTelemetry()
+    }
+    
+  }
+
+  raiseAITutorStartTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`   },
+        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Loaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/viewer', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+
+  raiseAITutorEndTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`  },
+        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Unloaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/viewer', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  raiseAITutorInteractTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`  },
+        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/viewer', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 }
