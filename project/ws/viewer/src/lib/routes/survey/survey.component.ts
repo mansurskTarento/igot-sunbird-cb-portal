@@ -54,7 +54,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (
-      this.activatedRoute.snapshot.queryParamMap.get('preview') &&
+      this.activatedRoute.snapshot.queryParamMap.get('preview') === 'true' &&
       !this.accessControlSvc.authoringConfig.newDesign
     ) {
       this.isPreviewMode = true
