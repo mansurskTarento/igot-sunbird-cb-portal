@@ -1,0 +1,113 @@
+/* profile-editor.component.scss */
+.profile-editor-container {
+  padding: 24px;
+  max-width: 600px;
+  width: 600px;
+}
+
+.profile-editor-header {
+  
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
+}
+
+.solid {
+  width: calc(100% + 46px);
+  margin-left: -24px;
+  border-top: 2px solid #00000014;
+}
+
+.editor-description {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 24px;
+  /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
+}
+
+.profile-editor-form {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 245px);
+  overflow: auto;
+}
+
+.form-actions {
+
+  .cancel-btn {
+    border: 1px solid #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+  
+  .save-btn {
+    background-color: #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: white;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+  
+}
+
+.lable {
+  color: #212529;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+}
+
+:host ::ng-deep .profile-control {
+  .mat-form-field-appearance-outline .mat-form-field-flex {
+    height: 35px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 11px 0px 0px !important;
+  }
+
+  .mat-form-field-infix {
+    border-top: 0.7em !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0px !important;
+  }
+
+  .mat-mdc-icon-button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 16px !important;
+    border-left-style: solid !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none !important;
+  }
+  
+}

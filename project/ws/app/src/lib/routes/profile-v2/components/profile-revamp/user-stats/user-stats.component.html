@@ -1,0 +1,30 @@
+<div class="flex gap-5">
+  <ng-container *ngFor="let stat of userStats">
+    <div class="stateCard">
+      <div class="flex gap-2">
+        <div class="statName">{{stat?.state}}</div>
+        <ng-container *ngIf="stat?.stateInfo">
+          <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>
+        </ng-container>
+      </div>
+      
+      <div class="flex justify-between items-center mt-3">
+        <div class="flex gap-1">
+          <img [src]="stat?.iconUrl" class="statIcon" alt="statIcon">
+          <div class="statPoints">{{stat?.totalPoints}}</div>
+        </div>
+
+        <div class="viewAll">
+          <a >View All</a>
+        </div>
+
+        <!-- <button mat-button class="view-all-btn" 
+        (click)="viewAll(stat)">
+        <span class=" flex justify-center items-center ">View All
+        <mat-icon class="right-arrow pl-2">keyboard_arrow_right</mat-icon>
+      </span>
+      </button> -->
+      </div>
+    </div>
+  </ng-container>
+</div>

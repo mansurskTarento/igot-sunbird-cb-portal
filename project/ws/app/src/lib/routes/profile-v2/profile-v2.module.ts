@@ -56,6 +56,20 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
+import { UserStatsComponent } from './components/profile-revamp/user-stats/user-stats.component'
+import { AchievementsComponent } from './components/profile-revamp/achievements/achievements.component'
+import { CompetenciesComponent } from './components/profile-revamp/competencies/competencies.component'
+import { EducationalQualificationsComponent } from './components/profile-revamp/educational-qualifications/educational-qualifications.component'
+import { ServiceHistoryComponent } from './components/profile-revamp/service-history/service-history.component'
+import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
+import { CoverPhotoEditPopupComponent } from './components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
+import { PeopleSuggestionsComponent } from './components/profile-revamp/people-suggestions/people-suggestions.component'
+import { ImageCropperModule } from 'ngx-image-cropper'
+import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
+import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
+import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
+
 
 @NgModule({
     declarations: [
@@ -69,6 +83,17 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         WithdrawRequestComponent,
         DesignationRequestComponent,
         RejectionReasonPopupComponent,
+        ProfileViewV2Component,
+        UserStatsComponent,
+        ServiceHistoryComponent,
+        EducationalQualificationsComponent,
+        CompetenciesComponent,
+        AchievementsComponent,
+        CoverPhotoEditPopupComponent,
+        PeopleSuggestionsComponent,
+        PrfileEditV2Component,
+        ProfilePrimaryDetailsComponent,
+        ProfileEntryEditComponent,
     ],
     imports: [
         CommonModule,
@@ -116,6 +141,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         MatDatepickerModule,
         MatAutocompleteModule,
         TranslateModule,
+        MatLegacyMenuModule,
+        ImageCropperModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -129,6 +156,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         InitResolver,
         OtpService,
         PipeCertificateImageURL,
+        PrfileEditV2Component,
+        ProfileEntryEditComponent
     ]
 })
 export class ProfileV2Module {

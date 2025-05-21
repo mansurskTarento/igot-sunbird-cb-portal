@@ -1,0 +1,43 @@
+.people-suggestions-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.person-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.personName {
+  color: #1B2133;
+  /* stylelint-disable */
+  font: 600 14px Montserrat
+  /* stylelint-enable */;
+}
+
+.person-details {
+  color: #00000099;
+  /* stylelint-disable */
+  font: 400 12px Lato;
+  /* stylelint-enable */
+}
+  
+
+.connect{
+  a {
+    color: #1B4CA1;
+    cursor: pointer;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    text-decoration: none;
+  }
+}

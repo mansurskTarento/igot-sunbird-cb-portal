@@ -1,0 +1,260 @@
+<div class="profile-editor-container flex flex-col gap-4">
+  <!-- #region(Header) -->
+  <div class="profile-editor-header flex justify-between items-center">
+    <div class="header-title">{{ header }}</div>
+    <button mat-icon-button class="close-button" (click)="handleCancel()">
+      <mat-icon class="close-icon">close</mat-icon>
+    </button>
+  </div>
+  <hr class="solid">
+  <!-- #endregion (Header) -->
+
+  <ng-container [ngSwitch]="header">
+    <ng-container *ngSwitchCase="'Service History'" [ngTemplateOutlet]="serviceHistory"></ng-container>
+    <ng-container *ngSwitchCase="'Educational qualifications'"
+      [ngTemplateOutlet]="educationalQualifications"></ng-container>
+    <ng-container *ngSwitchCase="'Achievements'" [ngTemplateOutlet]="achievements"></ng-container>
+  </ng-container>
+
+  <!-- #region (Footer Form Actions) -->
+  <hr class="solid">
+  <div class="form-actions flex justify-end items-center gap-4">
+    <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save
+      Changes</button>
+  </div>
+  <!-- #endregion (Footer Form Actions) -->
+
+  <!-- #region (Service History) -->
+  <ng-template #serviceHistory>
+    <form [formGroup]="entryForm" class="profile-editor-form">
+      <div class="flex flex-col">
+        <!-- Organisation/Ministry -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Organisation/Ministry</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="organisation" placeholder="Select Organisation/Ministry">
+              <mat-option value="designation1">organisation 1</mat-option>
+              <mat-option value="designation2">organisation 2</mat-option>
+              <mat-option value="designation3">organisation 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('organisation', 'required')">Organisation/Ministry is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Designation -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Designation</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="designation" placeholder="Select Designation">
+              <mat-option value="designation1">Designation 1</mat-option>
+              <mat-option value="designation2">Designation 2</mat-option>
+              <mat-option value="designation3">Designation 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="flex gap-8">
+          <!-- State -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">State</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="state" placeholder="Select State">
+                <mat-option value="state1">State 1</mat-option>
+                <mat-option value="state2">State 2</mat-option>
+                <mat-option value="state3">State 3</mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasError('state', 'required')">State is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- District -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">District</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="district" placeholder="Select District">
+                <mat-option value="district1">District 1</mat-option>
+                <mat-option value="district2">District 2</mat-option>
+                <mat-option value="district3">District 3</mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasError('district', 'required')">District is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="flex gap-8">
+          <!-- Start Date -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">Start Date</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="Select Date">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+              <mat-error *ngIf="hasError('startDate', 'required')">Start Date is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- End Date -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">End Date</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="Select Date">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+              <mat-error *ngIf="hasError('endDate', 'required')">End Date is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Currently Working -->
+        <!-- <div class="flex flex-col profile-control">
+          <mat-checkbox formControlName="currentlyWorking">Currently Working</mat-checkbox>
+        </div> -->
+
+        <!-- Description -->
+        <div class="flex flex-col w-full">
+          <div class="lable">Description</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <textarea matInput formControlName="description" rows="4" placeholder="Add your description"></textarea>
+            <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
+              {{ entryForm.get('description')?.value.length }}/1000
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  <!-- #endregion (Service History) -->
+
+  <!-- #region (Educational Qualifications) -->
+  <ng-template #educationalQualifications>
+    <form [formGroup]="entryForm" class="profile-editor-form">
+      <div class="flex flex-col">
+        <!-- Degree -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Degree</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="degree" placeholder="Select Degree">
+              <mat-option value="degree1">Degree 1</mat-option>
+              <mat-option value="degree2">Degree 2</mat-option>
+              <mat-option value="degree3">Degree 3</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('degree', 'required')">Degree is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Field of Study -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Field of Study</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="fieldOfStudy"
+              placeholder="Enter the area of study, e.g if you have pursued B.Tech, then specify the branch.">
+          </mat-form-field>
+        </div>
+
+        <!-- Institute Name -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Institute Name</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="instituteName" placeholder="Select Institute Name">
+              <mat-option value="institute1">Institute 1</mat-option>
+              <mat-option value="institute2">Institute 2</mat-option>
+              <mat-option value="institute3">Institute 3</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="flex gap-8">
+          <!-- Start Year -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">Start Year</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="startYear" placeholder="Select Year">
+                <mat-option value="year1">Year 1</mat-option>
+                <mat-option value="year2">Year 2</mat-option>
+                <mat-option value="year3">Year 3</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- End Year -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">End Year</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="endYear" placeholder="Select Year">
+                <mat-option value="year1">Year 1</mat-option>
+                <mat-option value="year2">Year 2</mat-option>
+                <mat-option value="year3">Year 3</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  <!-- #endregion (Educational Qualifications) -->
+
+  <!-- #region (Achievements) -->
+  <ng-template #achievements>
+    <form [formGroup]="entryForm" class="profile-editor-form">
+      <div class="flex flex-col">
+        <div class="editor-description">
+          Awards/Publications/Other Certifications
+        </div>
+        <!-- Title field -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Title</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="title" placeholder="e.g. Excel beginner">
+            <mat-error *ngIf="hasError('title', 'required')">Title is required</mat-error>
+            <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
+              {{ entryForm.get('title')?.value.length }}/250
+            </mat-hint>
+          </mat-form-field>
+        </div>
+        <!-- Issuing Organisation -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Issuing Organisation</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="issuingOrganisation" placeholder="e.g. Microsoft">
+            <mat-hint align="end" *ngIf="entryForm.get('issuingOrganisation')?.value">
+              {{ entryForm.get('issuingOrganisation')?.value.length }}/250
+            </mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Issue Date -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">Issue Date</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issueDate" placeholder="Select Date">
+            <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #issueDatePicker></mat-datepicker>
+            <mat-error *ngIf="hasError('issueDate', 'required')">Issue Date is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- URL -->
+        <div class="flex flex-col profile-control w-full">
+          <div class="lable">URL</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="url" placeholder="e.g. https://www.example.com">
+          </mat-form-field>
+        </div>
+        <!-- Description -->
+        <div class="flex flex-col w-full">
+          <div class="lable">Description</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <textarea matInput formControlName="description" rows="4"
+              placeholder="Describe about the skills that you have gained from this learning"></textarea>
+            <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
+              {{ entryForm.get('description')?.value.length }}/1000
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  <!-- #endregion (Achievements) -->
+</div>
