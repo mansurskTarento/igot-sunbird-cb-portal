@@ -584,6 +584,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     
     })
     
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
+        object: { },
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/page/home', module: 'Home'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     
   }
 
@@ -609,6 +624,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   redirectToToc(chat:any) {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        object: { id: chat?.identifier, type: chat?.contentType},
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/page/home', module: 'Home'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     let path = `https://portal.igotkarmayogi.gov.in/app/toc/${chat?.identifier}/overview`
     window.open(path, '_blank')
   }
@@ -665,6 +695,24 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
     this.initials = initials.toUpperCase()
     console.log('this.initials', this.initials)
+  }
+
+  raiseTelemetryForResource(item:any) {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        object: { id: item?.identifier, type: item?.contentType},
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/page/home', module: 'Home'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
   ngOnDestroy(): void {
