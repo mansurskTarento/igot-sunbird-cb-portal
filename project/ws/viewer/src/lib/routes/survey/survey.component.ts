@@ -95,6 +95,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
           : ''
           this.widgetResolverSurveyData.widgetData.disableTelemetry = true
           this.isFetchingDataComplete = true
+          this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
+
         })
     } else {
       this.dataSubscription = this.activatedRoute.data.subscribe(
@@ -150,11 +152,11 @@ export class SurveyComponent implements OnInit, OnDestroy {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.surveyData)
           }
           this.isFetchingDataComplete = true
+          this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
         },
         () => { },
       )
     }
-    this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
   }
 
   async fetchContent() {

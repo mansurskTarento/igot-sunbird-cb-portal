@@ -276,6 +276,8 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
           this.addLoader = this.addLoader - 1
           if (_.get(res, 'statusInfo.statusCode') === 200) {
             this.openSnackbar('Form is submitted successfully')
+            this.progressStatus = 2
+            this.updateProgress(2)
           } else {
             this.openSnackbar(_.get(res, 'errorMessage', 'Something went wrong please try again'))
           }
