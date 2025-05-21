@@ -124,7 +124,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
-    console.log('this.content.courseCategory', this.content.courseCategory)
   }
 
   ngAfterViewInit() {
