@@ -40,12 +40,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   @Input() item: any
   @Input() rightNavConfig: any
   @Input() showLangDropdown = true
+  @Input() notificationsCount: any
   dialogRef: any
   selectedLanguage = 'en'
   multiLang: any = []
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
+  showDropdown: boolean = false
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
@@ -98,6 +100,17 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   //   })
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
+  }
+
+  onBellClick() {
+    this.showDropdown = false
+    setTimeout(() => {
+      this.showDropdown = true
+    });
+  }
+
+  onMenuClosed() {
+    this.showDropdown = false
   }
 
   selectLanguage(event: any) {

@@ -4,18 +4,19 @@
             <!-- //NOSONAR -->
             <li class="notification-icon"
                 *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
-                <div [matMenuTriggerFor]="menu" class="relative">
+                <div [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()">
                     <mat-icon class="bell-icon">notifications</mat-icon>
-                    <span class="counter">10</span>
+                    <span class="counter" *ngIf="notificationsCount > 0">{{notificationsCount}}</span>
                 </div>
-                <ng-container>
-                    <mat-menu #menu="matMenu" xPosition="before" class="my-notifications">
-                        <div class="notification-container">
-                            <sb-uin-notification-dropdown
-                                (viewAllClick)="viewAllClick($event)"></sb-uin-notification-dropdown>
-                        </div>
-                    </mat-menu>
-                </ng-container>
+                <mat-menu #menu="matMenu" xPosition="before" class="my-notifications" (closed)="onMenuClosed()">
+                    <div class="notification-container" *ngIf="notificationsCount > 0">
+                        <sb-uin-notification-dropdown (viewAllClick)="viewAllClick($event)" *ngIf="showDropdown">
+                        </sb-uin-notification-dropdown>
+                    </div>
+                    <div *ngIf="notificationsCount === 0">
+                        <div class="p-3">No new notifications.</div>
+                    </div>
+                </mat-menu>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
                 *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview"

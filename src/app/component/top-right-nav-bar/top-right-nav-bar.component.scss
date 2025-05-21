@@ -185,6 +185,11 @@
 
 ::ng-deep.my-notifications {
   min-width: 386px !important;
+
+}
+
+::ng-deep.mat-menu {
+  display: block !important;
 }
 
 .notification-container {
