@@ -2,7 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import * as _ from 'lodash';
-import { EMAIL_PATTERN, EMP_ID_PATTERN, MOBILE_PATTERN, PIN_CODE_PATTERN } from '../../models/profile-revamp.model';
+import { EMAIL_PATTERN, EMP_ID_PATTERN, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model';
+import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 
 @Component({
   selector: 'ws-app-prfile-edit-v2',
@@ -13,19 +16,23 @@ import { EMAIL_PATTERN, EMP_ID_PATTERN, MOBILE_PATTERN, PIN_CODE_PATTERN } from 
 export class PrfileEditV2Component implements OnInit {
   header: string = '';
   profileDetials: any;
-
   profileForm!: FormGroup ;
+  profileImage: string | null = null;
+  userInitials: string = 'AS';
+  statesList: state[] = [];
+  districtsList: string[] = [];
   
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any
+    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    private profileV2RevampService: ProfileV2RevampService,
+    private snackBar: MatLegacySnackBar,
   ) {
     this.header = _.get(this.data, 'header', '');
     this.profileDetials = _.get(this.data, 'profileDetails', {});
   }
 
-  //#region (intialization)
   ngOnInit(): void {
     this.initForm();
   }
@@ -34,6 +41,7 @@ export class PrfileEditV2Component implements OnInit {
     switch (this.header) {
       case 'Profile':
         this.createProfileForm();
+        this.getStatesList();
         break;
       case 'Primary Details':
         this.createPrimaryDetailsForm();
@@ -49,13 +57,83 @@ export class PrfileEditV2Component implements OnInit {
     }
   }
 
+  //#region (profile)
   private createProfileForm(): void {
     this.profileForm = this.fb.group({
-      name: [_.get(this.data, 'name', ''), Validators.required],
+      firstname: [_.get(this.data, 'name', ''), Validators.required],
       state: [_.get(this.data, 'state', ''), Validators.required],
       district: [_.get(this.data, 'district', ''), Validators.required]
     });
   }
+
+  getStatesList() {
+    this.profileV2RevampService.getStatesList().subscribe({
+      next: (res: any) => {
+        this.statesList = _.get(res, 'result.statesList', []) as state[];
+        if(_.get(this.data, 'state', '')) {
+          const stateControl = this.profileForm ? this.profileForm.get('state') : null;
+          if(stateControl) {
+            stateControl.patchValue(_.get(this.data, 'state', ''));
+          }
+          this.getDistrictsList(_.get(this.data, 'state', ''));
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.statesList = [];
+        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'));
+      }
+    })
+  }
+
+  getDistrictsList(state: string, isFirstTime: boolean = false) {
+    this.profileV2RevampService.getDistrictsList(state).subscribe({
+      next: (res: any) => {
+        this.districtsList = res;
+        if (isFirstTime) {
+          const districtControl = this.profileForm ? this.profileForm.get('district') : null;
+          if(districtControl) {
+            districtControl.patchValue(_.get(this.data, 'district', ''));
+          }
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.districtsList = [];
+        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'));
+      }
+    })
+  }
+
+  onStateSelected(state: string) {
+    this.getDistrictsList(state, false);
+    const districtControl = this.profileForm ? this.profileForm.get('district') : null;
+    if(districtControl) {
+      districtControl.patchValue('');
+    }
+  }
+
+  //#region (profile image)
+  uploadImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.profileImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  }
+
+  deleteImage() {
+    this.profileImage = null;
+  }
+  //#endregion (end of profile image)
+  //#endregion (profile)
 
   private createPrimaryDetailsForm(): void {
     this.profileForm = this.fb.group({
@@ -75,22 +153,21 @@ export class PrfileEditV2Component implements OnInit {
     this.profileForm = this.fb.group({
       employeeCode: ['', [Validators.pattern(EMP_ID_PATTERN)]],
       primaryEmail: ['', [Validators.pattern(EMAIL_PATTERN)]],
-      mobile: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       gender: ['', []],
       dob: ['', []],
-      domicileMedium: ['', []],
-      countryCode: ['', []],
-      pincode: ['', [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       category: ['', []],
-      isCadre: [false, []],
-      typeOfCivilService: [''],
-      serviceType: [''],
-      cadre: [''],
-      batch: [''],
-      cadreControllingAuthority: [''],
+      pinCode: ['', [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
+      mobile: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
+      domicileMedium: ['', []],
+      externalSystemId: ['', []],
+      retirementDate: ['', []],
+      isCadreStatus: ['', []],
+      typeOfCivilService: ['', []],
+      serviceType: ['', []],
+      cadre: ['', []],
+      cadreBatch: ['', []]
     });
   }
-  //#endregion (end of initialization)
 
   handleSubmit(): void {
     if (this.profileForm) {
@@ -118,5 +195,11 @@ export class PrfileEditV2Component implements OnInit {
   hasError(controlName: string, errorName: string): boolean {
     const control = this.profileForm.get(controlName);
     return control?.touched && control?.hasError(errorName) || false;
+  }
+
+  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
   }
 }

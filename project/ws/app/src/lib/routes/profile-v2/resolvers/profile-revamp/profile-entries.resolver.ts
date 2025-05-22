@@ -8,7 +8,7 @@ import { catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 @Injectable()
-export class profileResolver
+export class profileEntriesResolver
    {
   constructor(private profileSvc: ProfileV2RevampService, private configSvc: ConfigurationsService) { }
 
@@ -29,8 +29,8 @@ export class profileResolver
     } else {
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
-    return this.profileSvc.fetchProfile(userId).pipe(
-      map(data =>  ({ data: _.get(data, 'result'), error: null })),
+    return this.profileSvc.fetchProfileEntries(userId).pipe(
+      map(data =>  ({ data: _.get(data, 'result.result'), error: null })),
       catchError(error => of({ error, data: null })),
     )
   }

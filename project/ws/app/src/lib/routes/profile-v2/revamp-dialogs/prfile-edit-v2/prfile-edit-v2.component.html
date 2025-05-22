@@ -20,29 +20,51 @@
   <hr class="solid">
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save Changes</button>
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save
+      Changes</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
 
   <!-- #region (profile) -->
   <ng-template #profileDetails>
-    <form [formGroup]="profileForm" class="profile-editor-form">
-      <div class="form-fields-container">
-        <div class="flex flex-col profile-control">
-          <div class="lable">Name</div>
-          <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="name" placeholder="Enter Name">
-            <mat-error *ngIf="hasError('name', 'required')">Name is required</mat-error>
-          </mat-form-field>
+    <!-- #region (Profile Pic) -->
+    <div class="profile-pic-container">
+      <div class="avatar-wrapper" [class.has-image]="profileImage">
+        <!-- Show this when there's no image -->
+        <div class="initials-avatar" *ngIf="!profileImage">
+          <span class="initials">{{userInitials}}</span>
+          <div class="camera-button flex items-center justify-center" (click)="uploadImage()">
+            <mat-icon>add_a_photo</mat-icon>
+          </div>
         </div>
 
+        <!-- Show this when there's an image -->
+        <div class="image-avatar" *ngIf="profileImage">
+          <img [src]="profileImage" alt="Profile picture">
+          <button mat-icon-button class="delete-button" (click)="deleteImage()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- #endregion (Profile Pic) -->
+    <form [formGroup]="profileForm" class="profile-editor-form">
+      <div class="flex flex-col profile-control">
+        <div class="lable">Name</div>
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput formControlName="firstname" placeholder="Enter Name">
+          <mat-error *ngIf="hasError('firstname', 'required')">Name is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-fields-container">
         <div class="flex flex-col profile-control">
           <div class="lable">State</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="state">
-              <mat-option value="state1">State 1</mat-option>
-              <mat-option value="state2">State 2</mat-option>
-              <mat-option value="state3">State 3</mat-option>
+              <ng-container *ngFor="let state of statesList">
+                <mat-option [value]="state.stateId">{{ state.stateName }}</mat-option>
+                </ng-container>
             </mat-select>
             <mat-error *ngIf="hasError('state', 'required')">State is required</mat-error>
           </mat-form-field>
@@ -51,11 +73,10 @@
         <div class="flex flex-col profile-control">
           <div class="lable">District</div>
           <mat-form-field appearance="outline">
-            <mat-label>District</mat-label>
             <mat-select formControlName="district">
-              <mat-option value="district1">District 1</mat-option>
-              <mat-option value="district2">District 2</mat-option>
-              <mat-option value="district3">District 3</mat-option>
+              <ng-container *ngFor="let district of districtsList">
+                <mat-option [value]="district">{{ district }}</mat-option>
+              </ng-container>
             </mat-select>
             <mat-error *ngIf="hasError('district', 'required')">District is required</mat-error>
           </mat-form-field>
@@ -71,31 +92,31 @@
       <div class="profile-editor-description">
         These details go to your KMS for approval. Please fill these details to view your UDISE data.
       </div>
-        <div class="flex flex-col profile-control">
-          <div class="lable">Group</div>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="group">
-              <mat-option value="group_a">Group A</mat-option>
-              <mat-option value="group_b">Group B</mat-option>
-              <mat-option value="group_c">Group C</mat-option>
-              <mat-option value="group_d">Group D</mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError('group', 'required')">Group is required</mat-error>
-          </mat-form-field>
-        </div>
+      <div class="flex flex-col profile-control">
+        <div class="lable">Group</div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select formControlName="group">
+            <mat-option value="group_a">Group A</mat-option>
+            <mat-option value="group_b">Group B</mat-option>
+            <mat-option value="group_c">Group C</mat-option>
+            <mat-option value="group_d">Group D</mat-option>
+          </mat-select>
+          <mat-error *ngIf="hasError('group', 'required')">Group is required</mat-error>
+        </mat-form-field>
+      </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Designation</div>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="designation">
-              <mat-option value="junior_assistant">Junior Assistant</mat-option>
-              <mat-option value="senior_assistant">Senior Assistant</mat-option>
-              <mat-option value="teacher">Teacher</mat-option>
-              <mat-option value="principal">Principal</mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
-          </mat-form-field>
-        </div>
+      <div class="flex flex-col profile-control">
+        <div class="lable">Designation</div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select formControlName="designation">
+            <mat-option value="junior_assistant">Junior Assistant</mat-option>
+            <mat-option value="senior_assistant">Senior Assistant</mat-option>
+            <mat-option value="teacher">Teacher</mat-option>
+            <mat-option value="principal">Principal</mat-option>
+          </mat-select>
+          <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
+        </mat-form-field>
+      </div>
     </form>
   </ng-template>
   <!-- #endregion (Primary Details) -->
@@ -108,15 +129,16 @@
         previous job experiences.
       </div>
 
-        <div class="flex flex-col">
-          <div class="lable">You can write about your years of experience, Skills, Current job role and Responsibilities.</div>
-          <mat-form-field appearance="outline" class="full-width">
-            <textarea matInput formControlName="about" rows="6"></textarea>
-            <mat-hint align="end" *ngIf="profileForm.get('about')?.value">
-              {{ profileForm.get('about')?.value.length }}/2000
-            </mat-hint>
-          </mat-form-field>
+      <div class="flex flex-col">
+        <div class="lable">You can write about your years of experience, Skills, Current job role and Responsibilities.
         </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea matInput formControlName="about" rows="6"></textarea>
+          <mat-hint align="end" *ngIf="profileForm.get('about')?.value">
+            {{ profileForm.get('about')?.value.length }}/2000
+          </mat-hint>
+        </mat-form-field>
+      </div>
     </form>
   </ng-template>
   <!-- #endregion (About Me) -->
@@ -129,15 +151,15 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Employee ID</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="employeeId">
+            <input matInput formControlName="employeeCode">
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Email</div>
           <mat-form-field appearance="outline">
-            <input matInput type="email" formControlName="email">
-            <mat-error *ngIf="hasError('email', 'email')">
+            <input matInput type="email" formControlName="primaryEmail">
+            <mat-error *ngIf="hasError('primaryEmail', 'email')">
               Please enter a valid email address
             </mat-error>
           </mat-form-field>
@@ -157,7 +179,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Date of Birth</div>
           <mat-form-field appearance="outline">
-            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+            <input matInput [matDatepicker]="picker" formControlName="dob">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -179,21 +201,21 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Office Pin Code</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="caste">
+            <input matInput formControlName="pinCode">
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Mobile Number</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="caste">
+            <input matInput formControlName="mobile">
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Mother Tongue</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="category">
+            <mat-select formControlName="domicileMedium">
               <mat-option value="general">General</mat-option>
               <mat-option value="obc">OBC</mat-option>
               <mat-option value="sc">SC</mat-option>
@@ -205,21 +227,21 @@
         <div class="flex flex-col profile-control">
           <div class="lable">eHRMS ID/External System ID</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="caste">
+            <input matInput formControlName="externalSystemId">
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Date of Retirement</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="caste">
+            <input matInput formControlName="retirementDate">
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Are you from any organized service of the government?</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="category">
+            <mat-select formControlName="isCadreStatus">
               <mat-option value="general">General</mat-option>
               <mat-option value="obc">OBC</mat-option>
               <mat-option value="sc">SC</mat-option>
@@ -231,7 +253,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Type of Civil Services</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="category">
+            <mat-select formControlName="typeOfCivilService">
               <mat-option value="general">General</mat-option>
               <mat-option value="obc">OBC</mat-option>
               <mat-option value="sc">SC</mat-option>
@@ -243,7 +265,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Services</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="category">
+            <mat-select formControlName="serviceType">
               <mat-option value="general">General</mat-option>
               <mat-option value="obc">OBC</mat-option>
               <mat-option value="sc">SC</mat-option>
@@ -255,7 +277,19 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Cadre</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="category">
+            <mat-select formControlName="cadre">
+              <mat-option value="general">General</mat-option>
+              <mat-option value="obc">OBC</mat-option>
+              <mat-option value="sc">SC</mat-option>
+              <mat-option value="st">ST</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="flex flex-col profile-control">
+          <div class="lable">Batch</div>
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="cadreBatch">
               <mat-option value="general">General</mat-option>
               <mat-option value="obc">OBC</mat-option>
               <mat-option value="sc">SC</mat-option>

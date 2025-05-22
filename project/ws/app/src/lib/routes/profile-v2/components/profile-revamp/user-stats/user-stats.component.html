@@ -1,11 +1,16 @@
-<div class="flex gap-5">
+<div class="flex gap-5 states">
   <ng-container *ngFor="let stat of userStats">
     <div class="stateCard">
-      <div class="flex gap-2">
+      <div class="flex gap-1 md:gap-1 items-center">
         <div class="statName">{{stat?.state}}</div>
         <ng-container *ngIf="stat?.stateInfo">
+          <div class="hidden md:inline-flex">
           <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>
+          </div>
         </ng-container>
+        <div class="block md:hidden">
+          <mat-icon class="right-arrow">chevron_right</mat-icon>
+        </div>
       </div>
       
       <div class="flex justify-between items-center mt-3">
@@ -14,7 +19,7 @@
           <div class="statPoints">{{stat?.totalPoints}}</div>
         </div>
 
-        <div class="viewAll">
+        <div class="viewAll hidden md:block">
           <a >View All</a>
         </div>
 
