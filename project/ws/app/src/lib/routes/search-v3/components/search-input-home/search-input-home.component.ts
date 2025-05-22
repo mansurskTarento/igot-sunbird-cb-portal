@@ -86,7 +86,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     },
   ];
 
-  selectedSearchCategory: string = SearchCategory.All;
+  selectedSearchCategory: string = SearchCategory.Courses;
   openSearchTemplate = false;
   loaderSearching = false;
   responseNlpQuery = '';
@@ -203,7 +203,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       if (queryParam.has('category')) {
         this.selectedSearchCategory = queryParam.get('category') || '';
       } else {
-        this.selectedSearchCategory = '';
+        this.selectedSearchCategory = SearchCategory.Courses;
       }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
