@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
+import { NotificationsService } from 'src/app/services/notifications.service'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -53,7 +54,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
-    private router: Router) {
+    private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -111,6 +112,9 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   onMenuClosed() {
     this.showDropdown = false
+    // setTimeout(() => {
+    //   this.showDropdown = false
+    // }, 3000)
   }
 
   selectLanguage(event: any) {
@@ -182,7 +186,17 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   viewAllClick(event: any) {
+    console.log("top right nav bar", event)
     this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
+  }
+
+  reCountNotifications(event: any) {
+    console.log("reCountNotifications", event)
+    this.notificationsService.nofificationsCount.next(event)
+  }
+
+  calculateCount(event: any) {
+    console.log("sds", event)
   }
 
 

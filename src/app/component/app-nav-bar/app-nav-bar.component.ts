@@ -210,8 +210,20 @@ export class AppNavBarComponent implements OnInit, OnChanges {
       this.disableMenu = false
     }
 
+    this.notificationsService.nofificationsCount.subscribe((res: any) => {
+      if (res) {
+        this.getMyCount()
+      }
+    })
+    this.getMyCount()
+  }
+
+  getMyCount() {
     this.notificationsService.getNotificationsData().subscribe((res: any) => {
-      this.notificationsCount = _.get(res, 'result.notifications.length', 0)
+      this.notificationsCount = _.get(res, 'result.unread', 0)
+    }, error => {
+      console.error('Error while fetching notifications count', error)
+      this.notificationsCount = 0
     })
   }
 
