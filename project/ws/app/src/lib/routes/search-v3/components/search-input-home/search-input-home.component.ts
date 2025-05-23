@@ -55,7 +55,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   allSearchResults: any[] = [];
   categories = [
-    { label: 'All', value: SearchCategory.All, icon: '' },
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
     // {
     //   label: 'Programs',
@@ -84,6 +83,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },
+    { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;
