@@ -89,11 +89,11 @@ export enum SearchCategory {
 }
 
 export const SearchOthersFacet = [
-  'duration',
+  // 'duration',
   'avgRating',
   'language',
   'organisation',
-  'sectorId',
+  // 'sectorId',
   'courseCategory',
   'sectorDetails_v1.sectorName',
   'sectorDetails_v1.subSectorName',
