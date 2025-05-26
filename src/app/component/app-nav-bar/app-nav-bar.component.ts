@@ -10,6 +10,7 @@ import { NotificationsService } from 'src/app/services/notifications.service'
 
 import { UrlService } from 'src/app/shared/url.service'
 import * as _ from 'lodash'
+import { LibNotificationsService } from '@sunbird-cb/notification'
 
 @Component({
   selector: 'ws-app-nav-bar',
@@ -73,7 +74,8 @@ export class AppNavBarComponent implements OnInit, OnChanges {
     private langtranslations: MultilingualTranslationsService,
     private urlService: UrlService,
     private userSvc: WidgetUserService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private libNotificationsService: LibNotificationsService
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
     if (this.configSvc.restrictedFeatures) {
@@ -209,13 +211,10 @@ export class AppNavBarComponent implements OnInit, OnChanges {
     } else {
       this.disableMenu = false
     }
-
-    this.notificationsService.nofificationsCount.subscribe((res: any) => {
-      if (res) {
-        this.getMyCount()
-      }
-    })
     this.getMyCount()
+    this.libNotificationsService._unreadCount.subscribe(() => {
+      this.getMyCount()
+    })
   }
 
   getMyCount() {

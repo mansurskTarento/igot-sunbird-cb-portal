@@ -10,8 +10,7 @@
                 </div>
                 <mat-menu #menu="matMenu" xPosition="before" class="my-notifications" (closed)="onMenuClosed()">
                     <div class="notification-container">
-                        <sb-uin-notification-dropdown (reCountNotifications)="reCountNotifications($event)"
-                            (viewAllClick)="viewAllClick($event)" *ngIf="showDropdown">
+                        <sb-uin-notification-dropdown (viewAllClick)="viewAllClick($event)" *ngIf="showDropdown">
                         </sb-uin-notification-dropdown>
                     </div>
                 </mat-menu>

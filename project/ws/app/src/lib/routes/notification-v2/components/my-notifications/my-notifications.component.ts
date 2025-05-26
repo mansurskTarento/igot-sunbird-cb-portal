@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 
@@ -9,7 +10,9 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 })
 export class MyNotificationsComponent {
   selectedLanguage = 'en'
-  constructor(private translate: TranslateService, private langtranslations: MultilingualTranslationsService,) {
+  constructor(private translate: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
+    private router: Router) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -28,5 +31,14 @@ export class MyNotificationsComponent {
     })
   }
 
+  redirectTo(notification: any) {
+    if (notification.type === 'learn') {
+      this.router.navigate([`/app/toc/${notification.message.id}`])
+    } else if (notification.type === 'event') {
+      this.router.navigate([`/app/event-hub/home/${notification.message.id}`])
+    } else if (notification.type === 'discussion') {
+      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.id}`])
+    }
+  }
 
 }
