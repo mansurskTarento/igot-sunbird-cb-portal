@@ -79,6 +79,43 @@
   /* stylelint-enable */
 }
 
+.info-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  margin-bottom: -2px;
+  color: #00000099;
+  margin-left: 4px;
+}
+
+.upload {
+  background: #1B4CA10A;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 5px;
+  border: 1px dotted #1B4CA1;
+}
+
+.dragFileText {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 700 12px Lato;
+  /* stylelint-enable */
+}
+
+.disable {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: unset;
+}
+
+.fileNameCard {
+  background-color: #1B4CA114;
+  height: 40px;
+  border-radius: 3px;
+}
+
 :host ::ng-deep .profile-control {
   .mat-form-field-appearance-outline .mat-form-field-flex {
     height: 35px;
@@ -110,4 +147,10 @@
     display: none !important;
   }
   
+}
+
+.disableField {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: unset
 }

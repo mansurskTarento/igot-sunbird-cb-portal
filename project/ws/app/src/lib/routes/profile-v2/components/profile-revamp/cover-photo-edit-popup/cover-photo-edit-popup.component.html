@@ -10,7 +10,12 @@
   <!-- Image preview or cropper -->
   <div class="w-full">
     <ng-container *ngIf="!showCropper">
-      <img [src]="coverPhotoUrl" alt="cover photo" class="w-full">
+      <ng-container *ngIf="coverPhotoUrl; else defaultImage">
+        <img [src]="coverPhotoUrl" alt="cover photo" class="w-full">
+      </ng-container>
+      <ng-template #defaultImage>
+        <img src="./assets/icons/profile_cover_pic.svg" alt="default cover photo" class="w-full">
+      </ng-template>
     </ng-container>
     <ng-container *ngIf="showCropper">
       <image-cropper

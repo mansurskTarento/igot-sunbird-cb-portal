@@ -1,17 +1,32 @@
-.section-header {
-  color: #000000;
-  /* stylelint-disable */
-  font: 600 14px Montserrat;
-  /* stylelint-enable */
+
+.popup-header {
+  padding: 15px 24px;
+  border-bottom: 2px solid #00000014;
+  
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
 }
 
-.add-icon {
-  color: #1B4CA1;
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
-  pointer-events: all;
-  cursor: pointer;
+.container {
+  width: 744px;
+  padding: 24px;
+  gap: 22px !important;
 }
 
 .edit-icon {
@@ -54,5 +69,28 @@
     /* stylelint-disable */
     font: 400 12px Lato;
     /* stylelint-enable */
+  }
+
+  .org-description {
+    color: #000000;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+    height: 30px;
+    overflow: hidden;
+  }
+
+  .extend-description {
+    overflow: auto !important;
+    height: 100px !important;
+  }
+
+  .view-more {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 800 12px Lato;
+    /* stylelint-enable */
+    cursor: pointer;
+    pointer-events: all;
   }
 }

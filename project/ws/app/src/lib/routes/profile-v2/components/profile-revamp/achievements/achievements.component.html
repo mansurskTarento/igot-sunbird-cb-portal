@@ -1,10 +1,4 @@
 <div class="flex flex-col gap-2">
-  <div class="flex justify-between items-center">
-    <div class="section-header">Achievements</div>
-    <mat-icon class="add-icon" (click)="openEditDialog()">add</mat-icon>
-  </div>
-
-  <div class="flex flex-col gap-2">
     <ng-container *ngFor="let achievement of achievementsList">
       <div class="achievement-card flex flex-col gap-1">
         <div class="flex justify-between items-center certificate-name">
@@ -18,5 +12,4 @@
         </ng-container>
       </div>
     </ng-container>
-  </div>
 </div>

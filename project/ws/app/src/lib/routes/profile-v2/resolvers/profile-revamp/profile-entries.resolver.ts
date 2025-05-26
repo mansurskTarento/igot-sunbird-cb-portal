@@ -30,7 +30,7 @@ export class profileEntriesResolver
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
     return this.profileSvc.fetchProfileEntries(userId).pipe(
-      map(data =>  ({ data: _.get(data, 'result.result'), error: null })),
+      map(data =>  ({ data: _.get(data, 'result.response'), error: null })),
       catchError(error => of({ error, data: null })),
     )
   }

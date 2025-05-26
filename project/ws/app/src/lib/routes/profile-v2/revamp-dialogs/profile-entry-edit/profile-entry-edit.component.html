@@ -31,54 +31,54 @@
       <div class="flex flex-col">
         <!-- Organisation/Ministry -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Organisation/Ministry</div>
+          <div class="lable required">Organisation/Ministry</div>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="organisation" placeholder="Select Organisation/Ministry">
-              <mat-option value="designation1">organisation 1</mat-option>
-              <mat-option value="designation2">organisation 2</mat-option>
-              <mat-option value="designation3">organisation 3</mat-option>
+            <mat-select formControlName="orgName" placeholder="Select Organisation/Ministry">
+              <ng-container *ngFor="let org of orgList">
+                <mat-option [value]="org?.channel">{{org?.channel}}</mat-option>
+              </ng-container>
             </mat-select>
-            <mat-error *ngIf="hasError('organisation', 'required')">Organisation/Ministry is required</mat-error>
+            <mat-error *ngIf="hasError('orgName', 'required')">Please select an organization.</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Designation -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Designation</div>
+          <div class="lable required">Designation</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="designation" placeholder="Select Designation">
-              <mat-option value="designation1">Designation 1</mat-option>
-              <mat-option value="designation2">Designation 2</mat-option>
-              <mat-option value="designation3">Designation 3</mat-option>
+              <ng-container *ngFor="let designation of designationsList">
+                <mat-option [value]="designation?.name">{{designation?.name}}</mat-option>
+              </ng-container>
             </mat-select>
-            <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
+            <mat-error *ngIf="hasError('designation', 'required')">Designation is required.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="flex gap-8">
           <!-- State -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">State</div>
+            <div class="lable required">State</div>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-select formControlName="state" placeholder="Select State">
-                <mat-option value="state1">State 1</mat-option>
-                <mat-option value="state2">State 2</mat-option>
-                <mat-option value="state3">State 3</mat-option>
+              <mat-select formControlName="orgState" placeholder="Select State" (selectionChange)="getDistrictsList($event.value)">
+                <ng-container *ngFor="let state of statesList">
+                  <mat-option [value]="state?.stateName">{{state?.stateName}}</mat-option>
+                </ng-container>
               </mat-select>
-              <mat-error *ngIf="hasError('state', 'required')">State is required</mat-error>
+              <mat-error *ngIf="hasError('orgState', 'required')">State is required</mat-error>
             </mat-form-field>
           </div>
 
           <!-- District -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">District</div>
+            <div class="lable required">District</div>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-select formControlName="district" placeholder="Select District">
-                <mat-option value="district1">District 1</mat-option>
-                <mat-option value="district2">District 2</mat-option>
-                <mat-option value="district3">District 3</mat-option>
+              <mat-select formControlName="orgDistrict" placeholder="Select District">
+                <ng-container *ngFor="let district of districtsList">
+                  <mat-option [value]="district">{{district}}</mat-option>
+                </ng-container>
               </mat-select>
-              <mat-error *ngIf="hasError('district', 'required')">District is required</mat-error>
+              <mat-error *ngIf="hasError('orgDistrict', 'required')">District is required</mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -86,9 +86,10 @@
         <div class="flex gap-8">
           <!-- Start Date -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">Start Date</div>
+            <div class="lable required">Start Date</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="Select Date">
+              <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="Select Date" [max]="todayDate"
+               (dateChange)="onStartDateChange($event.value)">
               <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
               <mat-datepicker #startPicker></mat-datepicker>
               <mat-error *ngIf="hasError('startDate', 'required')">Start Date is required</mat-error>
@@ -96,10 +97,10 @@
           </div>
 
           <!-- End Date -->
-          <div class="flex flex-col profile-control w-full">
-            <div class="lable">End Date</div>
+          <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
+            <div class="lable required">End Date</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="Select Date">
+              <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="Select Date"  [min]="startDate">
               <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
               <mat-datepicker #endPicker></mat-datepicker>
               <mat-error *ngIf="hasError('endDate', 'required')">End Date is required</mat-error>
@@ -107,16 +108,18 @@
           </div>
         </div>
 
-        <!-- Currently Working -->
-        <!-- <div class="flex flex-col profile-control">
-          <mat-checkbox formControlName="currentlyWorking">Currently Working</mat-checkbox>
-        </div> -->
+        <div class="flex flex-col profile-control mb-4">
+          <mat-checkbox class="lable" [checked]="currentlyWorking === 'true'" (change)="onCurrentlyWorkingChange($event.checked)">
+            Currently Working
+          </mat-checkbox>
+        </div>
 
         <!-- Description -->
         <div class="flex flex-col w-full">
           <div class="lable">Description</div>
           <mat-form-field appearance="outline" class="full-width">
-            <textarea matInput formControlName="description" rows="4" placeholder="Add your description"></textarea>
+            <textarea matInput maxlength="1000" formControlName="description" rows="4" placeholder="Add your description"></textarea>
+            <mat-error *ngIf="hasError('description', 'pattern')">Special characters are not allowed in this field.</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/1000
             </mat-hint>
@@ -134,22 +137,40 @@
         <!-- Degree -->
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Degree</div>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="degree" placeholder="Select Degree">
-              <mat-option value="degree1">Degree 1</mat-option>
-              <mat-option value="degree2">Degree 2</mat-option>
-              <mat-option value="degree3">Degree 3</mat-option>
+          <mat-form-field appearance="outline" class="full-width" >
+            <mat-select formControlName="degree" placeholder="Select Degree" (selectionChange)="onDegreeChange($event.value)">
+              <ng-container *ngFor="let degree of degreesList">
+                <mat-option [value]="degree">{{degree}}</mat-option>
+              </ng-container>
+              <mat-option value="other">Other</mat-option>
             </mat-select>
             <mat-error *ngIf="hasError('degree', 'required')">Degree is required</mat-error>
           </mat-form-field>
         </div>
 
+        <!-- Other Degree -->
+        <ng-container *ngIf="entryForm.get('degree')?.value === 'other'">
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">Degree Name</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="otherDegree" placeholder="Enter your degree">
+              <mat-error *ngIf="hasError('otherDegree', 'required')">Degree is required</mat-error>
+              <mat-error *ngIf="hasError('otherDegree', 'pattern')">Special characters are not allowed in this field</mat-error>
+            </mat-form-field>
+          </div>
+        </ng-container>
+
         <!-- Field of Study -->
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Field of Study</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="fieldOfStudy"
+            <input matInput formControlName="fieldOfStudy" maxlength="250"
               placeholder="Enter the area of study, e.g if you have pursued B.Tech, then specify the branch.">
+            <mat-error *ngIf="hasError('fieldOfStudy', 'required')">Field of Study is required</mat-error>
+            <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">Special characters are not allowed in this field</mat-error>
+            <mat-hint align="end" *ngIf="entryForm.get('fieldOfStudy')?.value">
+              {{ entryForm.get('fieldOfStudy')?.value.length }}/250
+            </mat-hint>
           </mat-form-field>
         </div>
 
@@ -157,23 +178,35 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Institute Name</div>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="instituteName" placeholder="Select Institute Name">
-              <mat-option value="institute1">Institute 1</mat-option>
-              <mat-option value="institute2">Institute 2</mat-option>
-              <mat-option value="institute3">Institute 3</mat-option>
+            <mat-select formControlName="institutionName" placeholder="Select Institute Name" (selectionChange)="onInstituteChange($event.value)">
+              <ng-container *ngFor="let institute of institutionsList">
+                <mat-option [value]="institute">{{institute}}</mat-option>
+              </ng-container>
+              <mat-option value="other">Other</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
+
+        <ng-container *ngIf="entryForm.get('institutionName')?.value === 'other'">
+          <!-- Other Institute Name -->
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable">Other Institute Name</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="otherInstituteName" placeholder="Enter your institute name">
+              <mat-error *ngIf="hasError('otherInstituteName', 'required')">Institute Name is required</mat-error>
+            </mat-form-field>
+          </div>
+        </ng-container>
 
         <div class="flex gap-8">
           <!-- Start Year -->
           <div class="flex flex-col profile-control w-full">
             <div class="lable">Start Year</div>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-select formControlName="startYear" placeholder="Select Year">
-                <mat-option value="year1">Year 1</mat-option>
-                <mat-option value="year2">Year 2</mat-option>
-                <mat-option value="year3">Year 3</mat-option>
+              <mat-select formControlName="startYear" placeholder="Select Year" (selectionChange)="onStartYearChange($event.value)">
+                <ng-container *ngFor="let year of yeasersList">
+                  <mat-option [value]="year">{{year}}</mat-option>
+                </ng-container>
               </mat-select>
             </mat-form-field>
           </div>
@@ -183,9 +216,9 @@
             <div class="lable">End Year</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="endYear" placeholder="Select Year">
-                <mat-option value="year1">Year 1</mat-option>
-                <mat-option value="year2">Year 2</mat-option>
-                <mat-option value="year3">Year 3</mat-option>
+                <ng-container *ngFor="let year of yeasersList">
+                  <mat-option [value]="year" [disabled]="isEndYearDisabled(year)">{{year}}</mat-option>
+                </ng-container>
               </mat-select>
             </mat-form-field>
           </div>
@@ -204,9 +237,9 @@
         </div>
         <!-- Title field -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Title</div>
+          <div class="lable required">Title</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="title" placeholder="e.g. Excel beginner">
+            <input matInput formControlName="title" maxlength="250" placeholder="e.g. Excel beginner">
             <mat-error *ngIf="hasError('title', 'required')">Title is required</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
               {{ entryForm.get('title')?.value.length }}/250
@@ -217,9 +250,9 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Issuing Organisation</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="issuingOrganisation" placeholder="e.g. Microsoft">
-            <mat-hint align="end" *ngIf="entryForm.get('issuingOrganisation')?.value">
-              {{ entryForm.get('issuingOrganisation')?.value.length }}/250
+            <input matInput maxlength="250" formControlName="issuedOrganisation" placeholder="e.g. Microsoft">
+            <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
+              {{ entryForm.get('issuedOrganisation')?.value.length }}/250
             </mat-hint>
           </mat-form-field>
         </div>
@@ -228,16 +261,44 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Issue Date</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput [matDatepicker]="issueDatePicker" formControlName="issueDate" placeholder="Select Date">
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="Select Date">
             <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #issueDatePicker></mat-datepicker>
-            <mat-error *ngIf="hasError('issueDate', 'required')">Issue Date is required</mat-error>
+            <mat-error *ngIf="hasError('issuedDate', 'required')">Issue Date is required</mat-error>
           </mat-form-field>
         </div>
 
+        <div class="w-full mb-5">
+          <div class="lable">Upload from System</div>
+        <ng-container *ngIf="fileName; else uploadIcon">
+          <div class="fileNameCard flex justify-between px-2 items-center">
+            <div class="flex gap-2 items-center">
+              <img src="/assets/icons/image.svg" alt="app icon">
+              <span class="iconName">{{fileName}}</span>
+            </div>
+              <mat-icon class="remove-app-icon" (click)="removeFile()">close</mat-icon>
+          </div>
+        </ng-container>
+        <ng-template #uploadIcon>
+          <div class="upload flex justify-center items-center" [ngClass]="{'disable': disableUpload }" cdkDropList
+            [cdkDropListData]="videoData" (cdkDropListDropped)="onFileSelected($event)" (dragover)="preventDefaultCDK($event)"
+            (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
+            (drop)="onDrop($event)" onclick="document.getElementById('upload-file').click();">
+            <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg"
+              (change)="onFileSelected(file.files);">
+            <div class="flex justify-center items-center gap-2">
+              <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
+              <span class="dragFileText">Drag file to upload</span>
+            </div>
+          </div>
+        </ng-template>
+        </div>
+
         <!-- URL -->
-        <div class="flex flex-col profile-control w-full">
-          <div class="lable">URL</div>
+        <div class="flex flex-col profile-control w-full" [ngClass]="{'disable': disableUrl }">
+          <div class="lable">URL 
+            <mat-icon class="info-icon" matTooltip="You may provide the link for the achievement.">info_outline</mat-icon>
+          </div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="url" placeholder="e.g. https://www.example.com">
           </mat-form-field>
@@ -246,10 +307,10 @@
         <div class="flex flex-col w-full">
           <div class="lable">Description</div>
           <mat-form-field appearance="outline" class="full-width">
-            <textarea matInput formControlName="description" rows="4"
+            <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="Describe about the skills that you have gained from this learning"></textarea>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
-              {{ entryForm.get('description')?.value.length }}/1000
+              {{ entryForm.get('description')?.value.length }}/500
             </mat-hint>
           </mat-form-field>
         </div>

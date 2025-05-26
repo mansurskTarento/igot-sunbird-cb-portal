@@ -15,10 +15,10 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 
 export class PrfileEditV2Component implements OnInit {
   header: string = '';
-  profileDetials: any;
+  profileDetails: any;
   profileForm!: FormGroup ;
   profileImage: string | null = null;
-  userInitials: string = 'AS';
+  userInitials: string = '';
   statesList: state[] = [];
   districtsList: string[] = [];
   
@@ -30,7 +30,8 @@ export class PrfileEditV2Component implements OnInit {
     private snackBar: MatLegacySnackBar,
   ) {
     this.header = _.get(this.data, 'header', '');
-    this.profileDetials = _.get(this.data, 'profileDetails', {});
+    this.profileDetails = _.get(this.data, 'profileDetails', {});
+    this.profileImage = _.get(this.data, 'profileImage', null);
   }
 
   ngOnInit(): void {
@@ -41,6 +42,7 @@ export class PrfileEditV2Component implements OnInit {
     switch (this.header) {
       case 'Profile':
         this.createProfileForm();
+        this.getInitials();
         this.getStatesList();
         break;
       case 'Primary Details':
@@ -60,11 +62,23 @@ export class PrfileEditV2Component implements OnInit {
   //#region (profile)
   private createProfileForm(): void {
     this.profileForm = this.fb.group({
-      firstname: [_.get(this.data, 'name', ''), Validators.required],
+      firstname: [_.get(this.data, 'firstname', ''), Validators.required],
       state: [_.get(this.data, 'state', ''), Validators.required],
       district: [_.get(this.data, 'district', ''), Validators.required]
     });
   }
+
+  getInitials(): void {
+      const userName = _.get(this.data, 'firstname', '');
+      if(userName) {
+        if( userName.split(' ').length > 1) {
+          const nameArr = userName.split(' ')
+          this.userInitials = nameArr[0].charAt(0) + nameArr[1].charAt(0)
+        } else {
+          this.userInitials = userName.charAt(0)
+        }
+      }
+    }
 
   getStatesList() {
     this.profileV2RevampService.getStatesList().subscribe({
@@ -89,10 +103,12 @@ export class PrfileEditV2Component implements OnInit {
     this.profileV2RevampService.getDistrictsList(state).subscribe({
       next: (res: any) => {
         this.districtsList = res;
-        if (isFirstTime) {
-          const districtControl = this.profileForm ? this.profileForm.get('district') : null;
-          if(districtControl) {
+        const districtControl = this.profileForm ? this.profileForm.get('district') : null;
+        if(districtControl) {
+          if (isFirstTime) {
             districtControl.patchValue(_.get(this.data, 'district', ''));
+          } else {
+            districtControl.patchValue('');
           }
         }
       },
@@ -103,13 +119,6 @@ export class PrfileEditV2Component implements OnInit {
     })
   }
 
-  onStateSelected(state: string) {
-    this.getDistrictsList(state, false);
-    const districtControl = this.profileForm ? this.profileForm.get('district') : null;
-    if(districtControl) {
-      districtControl.patchValue('');
-    }
-  }
 
   //#region (profile image)
   uploadImage() {

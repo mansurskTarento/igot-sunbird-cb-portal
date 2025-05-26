@@ -10,7 +10,7 @@
   <!-- #endregion (Header) -->
 
   <ng-container [ngSwitch]="header">
-    <ng-container *ngSwitchCase="'Profile'" [ngTemplateOutlet]="profileDetails"></ng-container>
+    <ng-container *ngSwitchCase="'Profile'" [ngTemplateOutlet]="profileTopSection"></ng-container>
     <ng-container *ngSwitchCase="'Primary Details'" [ngTemplateOutlet]="primaryDetails"></ng-container>
     <ng-container *ngSwitchCase="'About Me'" [ngTemplateOutlet]="aboutMe"></ng-container>
     <ng-container *ngSwitchCase="'Other Details'" [ngTemplateOutlet]="otherDetails"></ng-container>
@@ -26,7 +26,7 @@
   <!-- #endregion (Footer Form Actions) -->
 
   <!-- #region (profile) -->
-  <ng-template #profileDetails>
+  <ng-template #profileTopSection>
     <!-- #region (Profile Pic) -->
     <div class="profile-pic-container">
       <div class="avatar-wrapper" [class.has-image]="profileImage">
@@ -61,7 +61,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">State</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="state">
+            <mat-select formControlName="state" [selectionChange]="getDistrictsList($event.value)">
               <ng-container *ngFor="let state of statesList">
                 <mat-option [value]="state.stateId">{{ state.stateName }}</mat-option>
                 </ng-container>

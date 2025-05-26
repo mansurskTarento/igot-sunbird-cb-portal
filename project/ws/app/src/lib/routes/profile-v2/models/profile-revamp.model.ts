@@ -68,6 +68,26 @@ export interface state {
   stateName: string;
 }
 
+export interface organisation {
+  channel: string;
+  isRootOrg: boolean | null;
+}
+
+export interface designation {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export const generateYears = (startYear: number = 1900): string[] => {
+  const currentYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let year = currentYear; year >= startYear; year--) {
+    years.push(year.toString());
+  }
+  return years
+};
+
 export const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
 export const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 export const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/

@@ -69,6 +69,7 @@ import { ImageCropperModule } from 'ngx-image-cropper'
 import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
+import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
 
 
 @NgModule({
@@ -143,6 +144,7 @@ import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/p
         TranslateModule,
         MatLegacyMenuModule,
         ImageCropperModule,
+        MatLegacyCheckboxModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -157,7 +159,10 @@ import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/p
         OtpService,
         PipeCertificateImageURL,
         PrfileEditV2Component,
-        ProfileEntryEditComponent
+        ProfileEntryEditComponent,
+        ServiceHistoryComponent,
+        EducationalQualificationsComponent,
+        AchievementsComponent,
     ]
 })
 export class ProfileV2Module {

@@ -154,6 +154,39 @@
   /* stylelint-enable */
 }
 
+.add-icon {
+  color: #1B4CA1;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.dividing-line {
+  width: 150px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    #FFFFFF00 0%,
+    #F3962F ,
+    #F3962F ,
+    #FFFFFF00 100%
+  );
+  margin: 16px 0 10px 0;
+}
+
+.show-all-text {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  margin-bottom: 8px;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+
 .edit-icon {
   color: #1B4CA1;
   width: 20px;
@@ -245,6 +278,10 @@
   /* stylelint-disable */
   font: 600 14px Montserrat;
   /* stylelint-enable */
+}
+
+.gif-container {
+  height: 100px;
 }
 
 @media (max-width: 768px) {
