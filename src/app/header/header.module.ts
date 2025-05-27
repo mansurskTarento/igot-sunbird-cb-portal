@@ -23,7 +23,7 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-import { NotificationDropdownModule } from '@sunbird-cb/notification'
+import { LibNotificationsService, NotificationDropdownModule } from '@sunbird-cb/notification'
 @NgModule({
   declarations: [HeaderComponent, AppNavBarComponent, FontSettingComponent, TopRightNavBarComponent],
   imports: [
@@ -65,6 +65,6 @@ import { NotificationDropdownModule } from '@sunbird-cb/notification'
     TopRightNavBarComponent,
     SharedModule,
   ],
-  providers: [],
+  providers: [LibNotificationsService],
 })
 export class HeaderModule { }
