@@ -245,9 +245,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     };
+    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
     if (this.ref === 'home') {
       this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], navigationExtras);
+      this.router.navigate(['/app/globalsearch'], mergeQueryParams? navigationExtras : {queryParams});
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
     }
