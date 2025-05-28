@@ -168,10 +168,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
               "isMdo": true,
               "isCbp": true
           },
-          "sort_by": {
-              "orgName": "asc"
-          },
-          "fields":["channel"],
+          "fields":["channel", "orgName"],
           "limit": this.organizationDefaultLoadCount,
           "offset": offsetValue
       }
