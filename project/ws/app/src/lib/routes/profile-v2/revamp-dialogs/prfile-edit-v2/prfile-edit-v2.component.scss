@@ -249,6 +249,13 @@
   /* stylelint-enable */
 }
 
+.get-otp {
+  color: $text-primary;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+
 .country-code {
   @extend .input-text;
   margin: 0.4375em 0;

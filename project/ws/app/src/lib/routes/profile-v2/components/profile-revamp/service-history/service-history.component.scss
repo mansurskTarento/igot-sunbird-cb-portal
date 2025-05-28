@@ -94,3 +94,15 @@
     pointer-events: all;
   }
 }
+
+.default-logo-card {
+  background-color: #1B4CA129;
+  width: 96px;
+  height: 54px;
+  border-radius: 4px;
+
+  .default-logo {
+    width: 18px;
+    height: 18px;
+  }
+}

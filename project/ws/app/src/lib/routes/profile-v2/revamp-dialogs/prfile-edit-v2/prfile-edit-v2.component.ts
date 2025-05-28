@@ -26,6 +26,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   profileDetails: any;
   profileForm!: FormGroup ;
   currentDate: Date = new Date();
+  initilisationInProgress = true;
 
   profileImage: string | null = null;
   userInitials = '';
@@ -208,16 +209,17 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   //#region (other details)
   private createOtherDetailsForm(): void {
+    const dob = _.get(this.profileDetails, 'dob', '');
     this.profileForm = this.fb.group({
       employeeCode: [_.get(this.profileDetails, 'employeeCode', ''), [Validators.pattern(EMP_ID_PATTERN)]],
       primaryEmail: [_.get(this.profileDetails, 'primaryEmail', ''), [Validators.pattern(EMAIL_PATTERN)]],
       gender: [_.get(this.profileDetails, 'gender', ''), []],
-      dob: [_.get(this.profileDetails, 'dob', ''), []],
+      dob: [dob ? new Date(dob) : '', []],
       category: [_.get(this.profileDetails, 'category', ''), []],
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],
-      isCadre: [_.get(this.profileDetails, '', [])],
+      isCadre: [_.get(this.profileDetails, 'isCadre', [])],
       civilServiceType: [_.get(this.profileDetails, 'civilServiceType', ''), []],
       civilServiceName: [_.get(this.profileDetails, 'civilServiceName', ''), []],
       cadreName: [_.get(this.profileDetails, 'cadreName', ''), []],
@@ -233,6 +235,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.fetchCadreData();
     this.getMasterLanguage();
     this.valueCahngeMethosdsForOtherDetails();
+    setTimeout(() => {
+      this.initilisationInProgress = false;
+    }, 10)
   }
 
   fetchCadreData() {
@@ -252,6 +257,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       next: response => {
         this.civilServiceData = _.get(response, 'result.response.value.civilServiceType')
         this.civilServiceTypes = _.get(this.civilServiceData, 'civilServiceTypeList', []).map((service: any) => service.name)
+        if(_.get(this.profileDetails, 'civilServiceType', '')) {
+          this.getService(_.get(this.profileDetails, 'civilServiceType', ''), false);
+        }
       },
       error: (err: HttpErrorResponse) => {
         if(err) {
@@ -356,7 +364,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         } else if (!value) {
           this.verifyEmail = false;
         } else if (value === _.get(this.profileDetails, 'primaryEmail', '')) {
-          this.verifyEmail = true
+          this.verifyEmail = false
         }
       })
     }
@@ -409,33 +417,40 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     }
   }
 
-  getService(event: any) {
+  getService(event: any, isReset: boolean = true) {
     const serviceNameControl = this.profileForm.get('civilServiceName')
     const cadreControl = this.profileForm.get('cadreName')
     const batchControl = this.profileForm.get('cadreBatch')
     const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
-
-    if (serviceNameControl) { serviceNameControl.reset() }
-    if (cadreControl) { cadreControl.reset() }
-    if (batchControl) { batchControl.reset() }
-    if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
+    if (isReset) {
+      if (serviceNameControl) { serviceNameControl.reset() }
+      if (cadreControl) { cadreControl.reset() }
+      if (batchControl) { batchControl.reset() }
+      if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
+    }
 
     this.serviceType = _.get(this.civilServiceData, 'civilServiceTypeList', []).find((element: any) => element.name === event)
     if (this.serviceType) {
       this.serviceListData = this.serviceType.serviceList
       this.serviceNamesList = this.serviceListData.map((service: any) => service.name)
       this.serviceId = this.serviceType.id
+      if(!isReset && serviceNameControl && serviceNameControl.value) {
+        serviceNameControl.updateValueAndValidity()
+        this.onServiceSelect(serviceNameControl.value, false)
+      }
     }
   }
 
-  onServiceSelect(event: any) {
+  onServiceSelect(event: any, isReset: boolean = true) {
     const cadreControl =  this.profileForm.get('cadreName')
     const batchControl = this.profileForm.get('cadreBatch')
     const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
-    if (cadreControl) { cadreControl.reset() }
-    if (batchControl) { batchControl.reset() }
-    if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
-    this.selectedServiceName = event.value
+    if (isReset) {
+      if (cadreControl) { cadreControl.reset() }
+      if (batchControl) { batchControl.reset() }
+      if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
+    }
+    this.selectedServiceName = event
     if (this.serviceListData) {
       this.selectedService = this.serviceListData.find((service: any) => service.name === this.selectedServiceName)
       this.civilServiceName = this.selectedService.name
@@ -447,7 +462,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     } else {
       this.cadreControllingAuthority = 'NA'
     }
-    if (this.selectedService && this.selectedService.cadreList && this.selectedService.cadreList.length === 0) {
+    if (this.selectedService && this.selectedService.cadreList && 
+      (this.selectedService.cadreList.length === 0 ||
+      !isReset && batchControl && batchControl.value)
+    ) {
       this.showBatchForNoCadre = true
       this.startBatch = this.selectedService.commonBatchStartYear
       this.endBatch = this.selectedService.commonBatchEndYear
@@ -457,6 +475,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         .filter(year => !this.exclusionYear.includes(year))
     } else {
       this.showBatchForNoCadre = false
+    }
+    if(!isReset && cadreControl && batchControl) {
+      cadreControl.updateValueAndValidity()
+      batchControl.updateValueAndValidity()
     }
   }
 
@@ -681,31 +703,34 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   get canSaveChanges(): boolean {
+    if (!this.profileForm || this.initilisationInProgress) {
+    return false;
+  }
+  const isFormValid = this.profileForm.valid;
+
     switch (this.header) {
       case 'Profile':
-        if( this.profileForm && this.profileForm.valid) {
+        if( isFormValid) {
           return true
         }
-        break;
+        return false
       case 'Primary Details':
-        if( this.profileForm && this.profileForm.valid) {
+        if( isFormValid) {
           return true
         }
-        break;
+        return false
       case 'About Me':
-        if( this.profileForm && this.profileForm.valid) {
+        if( isFormValid) {
           return true
         }
-        break;
+        return false
       case 'Other Details':
-        if( this.profileForm && this.profileForm.valid && !this.verifyEmail && !this.verifyMobile) {
+        if( isFormValid && !this.verifyEmail && !this.verifyMobile) {
           return true
         }
-        break;
-      default:
-        this.profileForm = this.fb.group({});
+        return false
     }
-    return false
+    return true
   }
 
    handleTranslateTo(menuName: string): string {

@@ -2,7 +2,12 @@
   <mat-card *ngFor="let community of communitySuggestionsList" class="community-card mb-4 flex flex-col items-center">
     <div class="flex items-center">
       <div class="mr-4">
-        <img [src]="community.imageUrl" alt="image" class="community-image">
+        <ng-container *ngIf="community.imageUrl; else defaultImage">
+          <img [src]="community.imageUrl" alt="logo" class="community-image">
+        </ng-container>
+        <ng-template #defaultImage>
+          <img src="/assets/instances/eagle/app_logos/default.png" alt="default logo" class="community-image">
+        </ng-template>
       </div>
       <div class="flex-grow">
         <div class="communityName">{{community?.communityName}}</div>

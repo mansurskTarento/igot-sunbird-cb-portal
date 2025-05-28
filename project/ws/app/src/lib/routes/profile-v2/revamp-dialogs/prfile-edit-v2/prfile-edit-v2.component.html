@@ -21,8 +21,7 @@
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
     <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
-      [ngClass]="{'disabledClass': !canSaveChanges}"
-      [disabled]="!canSaveChanges">Save
+      [ngClass]="{'disabledClass': !canSaveChanges}">Save
       Changes</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
@@ -226,10 +225,9 @@
                 {{ 'profileInfo.pleaseEnterValidMobileNumber' | translate }}
               </mat-error>
             </mat-form-field>
-            <div class="flex justify-end" *ngIf="verifyMobile">
-              <span class="get-otp sm:mr-4" (click)="handleGenerateOTP('phone')">{{ 'profileInfo.getOTP' |
-                translate }}</span>
-            </div>
+          </div>
+          <div class="flex justify-end" *ngIf="verifyMobile">
+            <span class="get-otp" (click)="handleGenerateOTP('phone')">{{ 'profileInfo.getOTP' | translate}}</span>
           </div>
         </div>
 
@@ -271,7 +269,6 @@
 
         <ng-container *ngIf="noCadreDetails">
           <div class="flex flex-col profile-control">
-            <!-- <div class="lable">Are you from any organized service of the government?</div> -->
             <div class="lable">{{ 'profileInfo.fromGovOrganization' | translate }}</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="isCadre" (selectionChange)="getIsCadreStatus($event.value)">
@@ -297,7 +294,7 @@
           <div class="flex flex-col profile-control">
             <div class="lable">Services</div>
             <mat-form-field appearance="outline">
-              <mat-select formControlName="civilServiceName" (selectionChange)="onServiceSelect($event)">
+              <mat-select formControlName="civilServiceName" (selectionChange)="onServiceSelect($event.value)">
                 <mat-option *ngFor="let service of serviceNamesList" [value]="service">{{ service }}</mat-option>
               </mat-select>
             </mat-form-field>
