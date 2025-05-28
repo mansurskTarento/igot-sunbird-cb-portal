@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ConfigurationsService, NsContent, UtilityService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, NsContent, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 import { LoadCheckService } from '@ws/app/src/lib/routes/app-toc/services/load-check.service'
@@ -55,6 +55,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   resumeDataLink:any
   enableAITutorFlag = false
   enableTranscriptionFlag = false
+  courseCategory = NsContent.ECourseCategory
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -64,6 +65,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     public tocSvc: AppTocService,
     private actionSVC: ActionService,
     private router: Router,
+    private eventSvc: EventService,
   ) { }
 
   ngOnInit() {
@@ -169,9 +171,17 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   showAiTutorConfirmPopup() {
+    this.raiseAIPopupStartTelemetry()
     if(this.isEnrolled) {
+      setTimeout(()=>{
+        this.raiseAIPopupInteractTelemetry()
+      },1000)
+     
       this.generateResumeDataLinkNew()
     } else {
+      setTimeout(()=>{
+        this.raiseAIPopupInteractTelemetry()
+      },1000)
       const dialogConfig = new MatDialogConfig()
 
       dialogConfig.width = '421px'
@@ -181,12 +191,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
 
       dialogRef.afterClosed().subscribe((response:any) => {
-        console.log('response', response)
-        if(response === 'enroll') {
+        
+        if(response === 'enroll') {          
           this.generateResumeDataLinkNew()
         } else if(response === 'needToEnroll'){
           this.enrollUserForAITutor()
-        } 
+        }
+        this.raiseAIPopupEndTelemetry() 
       });
     }
     
@@ -259,6 +270,60 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
     }
     return batchId
+  }
+
+  raiseAIPopupStartTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`   },
+        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Loaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  raiseAIPopupEndTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`  },
+        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Unloaded,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  raiseAIPopupInteractTelemetry() {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`  },
+        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
   enrollUserForAITutor() {

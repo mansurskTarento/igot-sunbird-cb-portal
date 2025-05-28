@@ -9,6 +9,7 @@ import {
 import { SearchApiService } from '../../search/apis/search-api.service';
 import {
   SearchCommunitiesRequest,
+  SearchExternalRequest,
   SearchNLP,
   SearchPeoplesRequest,
   SearchV4Request,
@@ -100,5 +101,9 @@ export class GbSearchService {
 
   enrollment(request: any, userId: string): any {
     return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request);
+  }
+
+  searchExternalContent(params: SearchExternalRequest): Promise<any> {
+    return this.http.post(API_END_POINTS.SEARCH_EXT_CONTENT, params).toPromise();
   }
 }

@@ -1424,3 +1424,14 @@ ngx-guided-tour {
     
   }
 }
+
+.dialog_sidenav {
+  height: 100vh;
+  position: fixed !important;
+  right: 0px;
+
+  .mat-dialog-container {
+    border-radius: 0px !important;
+    padding: 0px !important;
+  }
+}

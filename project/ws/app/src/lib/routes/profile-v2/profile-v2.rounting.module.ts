@@ -7,6 +7,11 @@ import { ProfileViewComponent } from './routes/profile-view/profile-view.compone
 import { Profilev2BadgesResolve } from './resolvers/badges-resolve'
 import { ProfileKarmapointsComponent } from './routes/profile-karmapoints/profile-karmapoints.component'
 import { Profilev2CerficatesResolve } from './resolvers/profile-v2-certificates-resolver'
+import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
+import { profileResolver } from './resolvers/profile-revamp/profile.resolver'
+import { profileEntriesResolver } from './resolvers/profile-revamp/profile-entries.resolver'
+import { connectionsResolverResolver } from './resolvers/profile-revamp/connections-resolver.resolver'
+import { CommunityResolverService } from './resolvers/profile-revamp/community-resolver.service'
 // import { ConfigurationsService } from './resolvers/config-resolver.service'
 // import { ProfileResolverService } from './resolvers/profile-resolver.service'
 
@@ -19,17 +24,31 @@ const routes: Routes = [
       module: 'Profile',
     },
     children: [
+      // {
+      //   path: 'me',
+      //   component: ProfileViewComponent,
+      //   data: {
+      //     pageId: 'me',
+      //     module: 'Profile',
+      //   },
+      //   resolve: {
+      //     profile: Profilev2Resolve,
+      //     badges: Profilev2BadgesResolve,
+      //     certificates: Profilev2CerficatesResolve,
+      //   },
+      // },
       {
         path: 'me',
-        component: ProfileViewComponent,
+        component: ProfileViewV2Component,
         data: {
           pageId: 'me',
           module: 'Profile',
         },
         resolve: {
-          profile: Profilev2Resolve,
-          badges: Profilev2BadgesResolve,
-          certificates: Profilev2CerficatesResolve,
+          profile: profileResolver,
+          entries: profileEntriesResolver,
+          recamendations: connectionsResolverResolver,
+          recamendedCommunity: CommunityResolverService,
         },
       },
       {
@@ -70,6 +89,10 @@ const routes: Routes = [
     Profilev2Resolve,
     Profilev2BadgesResolve,
     Profilev2CerficatesResolve,
+    profileResolver,
+    profileEntriesResolver,
+    connectionsResolverResolver,
+    CommunityResolverService
     // ConfigurationsService,
     // ProfileResolverService,
   ],

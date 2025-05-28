@@ -76,10 +76,10 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
-    console.log()
+    // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+    // console.log()
     if(this.rootOrgId) {
-      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
@@ -101,7 +101,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
   ngOnChanges() {
     if(this.rootOrgId && this.iGOTAIConfigLoaded) {
-      console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
@@ -151,9 +151,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     this.toggleFilter(this.currentFilter === 'information' ? 'information': this.currentFilter)
   }
 
-  initData(getData: any) {
+  initData(_getData: any) {
     // tslint:disable-next-line
-    console.log(getData)
+    // console.log(getData)
     this.userJourney = []
     let userDetails: any = {
       type: 'incoming',
@@ -341,41 +341,81 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   raiseChatStartTelemetry() {
-    const event = {
-      eventType: WsEvents.WsEventType.Telemetry,
-      eventLogLevel: WsEvents.WsEventLogLevel.Info,
-      data: {
-        edata: { type: '' },
-        object: { type: 'zse', id: 'asd'},
-        state: WsEvents.EnumTelemetrySubType.Loaded,
-        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-        type: 'session',
-        mode: 'view',
-      },
-      pageContext: { pageId: '/chatbot', module: 'Assistant' },
-      from: '',
-      to: 'Telemetry',
+    if(this.currentFilter !== 'sarthi') {
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: '' },
+          object: { type: 'zse', id: 'asd'},
+          state: WsEvents.EnumTelemetrySubType.Loaded,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          type: 'session',
+          mode: 'view',
+        },
+        pageContext: { pageId: '/chatbot', module: 'Assistant' },
+        from: '',
+        to: 'Telemetry',
+      }
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+    } else {       
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
+          object: { },
+          state: WsEvents.EnumTelemetrySubType.Loaded,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          mode: 'view',
+        },
+        pageContext: {pageId: '/page/home', module: 'Home'},
+        from: '',
+        to: 'Telemetry',
+      }
+      console.log('event---', event)
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     }
-    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+    
   }
 
-  raiseChatEndTelemetry() {
-    const event = {
-      eventType: WsEvents.WsEventType.Telemetry,
-      eventLogLevel: WsEvents.WsEventLogLevel.Info,
-      data: {
-        edata: { type: '' },
-        object: {},
-        state: WsEvents.EnumTelemetrySubType.Unloaded,
-        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-        type: 'session',
-        mode: 'view',
-      },
-      pageContext: { pageId: '/chatbot', module: 'Assistant' },
-      from: '',
-      to: 'Telemetry',
+  raiseChatEndTelemetry() {    
+    if(this.currentFilter !== 'sarthi') {
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: '' },
+          object: {},
+          state: WsEvents.EnumTelemetrySubType.Unloaded,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          type: 'session',
+          mode: 'view',
+        },
+        pageContext: { pageId: '/chatbot', module: 'Assistant' },
+        from: '',
+        to: 'Telemetry',
+      }
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+    } else {
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
+          object: { },
+          state: WsEvents.EnumTelemetrySubType.Unloaded,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          mode: 'view',
+        },
+        pageContext: {pageId: '/page/home', module: 'Home'},
+        from: '',
+        to: 'Telemetry',
+      }
+      console.log('event--', event)
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)     
     }
-    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+   
   }
 
   raiseTemeletyInterat(idn: string) {

@@ -18,6 +18,8 @@ export class ViewerUtilService {
     // PROGRESS_UPDATE: `/apis/protected/v8/user/realTimeProgress/update`,
     PROGRESS_UPDATE: `/apis/proxies/v8/content-progres`,
     ASSESSMENT_SECTION: `/apis/proxies/v8/assessment/v5/read`,
+    GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
+    SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`
   }
   downloadRegex = new RegExp(`(/content-store/.*?)(\\\)?\\\\?['"])`, 'gm')
   authoringBase = '/apis/authContent/'
@@ -347,5 +349,13 @@ export class ViewerUtilService {
         this.tocSvc.hashmap[contentId]['completionStatus'] = contentProgress.status
         this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
       }
+    }
+
+    getFormById(formId: string) {
+      return this.http.get(this.API_ENDPOINTS.GET_FORM_BYID(formId))
+    }
+
+    submitForm(formData: any) {
+      return this.http.post<any>(this.API_ENDPOINTS.SUBMIT_FORM, formData)
     }
 }

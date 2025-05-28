@@ -25,9 +25,13 @@ const API_END_POINTS = {
   CAN_ATTEMPT_V5: (assessmentId: any) => `/apis/proxies/v8/user/assessment/v5/retake/${assessmentId}`,
   CAN_ATTEMPT_V7: (assessmentId: any) => `/apis/proxies/v8/user/assessment/v7/retake/${assessmentId}`,
   PUBLIC_QUESTION_READ: `api/public/assessment/v5/read`,
-  PUBLIC_QUESTION_LIST: `/api/public/assessment/v1/question/list`,
+  PUBLIC_QUESTION_LIST: `/api/public/assessment/v5/question/list`,
   PUBLIC_ASSESSMENT_SUBMIT: `api/public/assessment/v5/assessment/submit`,
   PUBLIC_ASSESSMENT_RESULT: `api/public/assessment/v5/result`,
+  PUBLIC_QUESTION_V4_READ: `api/public/assessment/v1/read`,
+  PUBLIC_QUESTION_V4_LIST: `/api/public/assessment/v5/question/list`,
+  PUBLIC_ASSESSMENT_V4_SUBMIT: `api/public/assessment/v4/assessment/submit`,
+  PUBLIC_ASSESSMENT_V4_RESULT: `api/public/assessment/v5/result`,
 }
 const forcreator = window.location.href.includes('editMode=true')
 @Injectable({
@@ -119,16 +123,21 @@ export class PracticeService {
     }))
   }
 
-  publicSubmit(req: NSPractice.IQuizSubmit): Observable<any> {
+  publicV4Submit(req: NSPractice.IQuizSubmit): Observable<any> {
+    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
+      API_END_POINTS.PUBLIC_ASSESSMENT_V4_SUBMIT, req).pipe(map(response => {
+      return response
+    }))
+  }
+  publicV5Submit(req: NSPractice.IQuizSubmit): Observable<any> {
 
     return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
       API_END_POINTS.PUBLIC_ASSESSMENT_SUBMIT, req).pipe(map(response => {
       return response
     }))
   }
-
   quizResult(req: any, forPreview?: any) {
-    const url = (forPreview && !forcreator) ? API_END_POINTS.PUBLIC_ASSESSMENT_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V4
+    const url = (forPreview && !forcreator) ? API_END_POINTS.PUBLIC_ASSESSMENT_V4_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V4
     return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
       url, req).pipe(map(response => {
       return response
@@ -361,7 +370,7 @@ export class PracticeService {
         ...userDetails,
       }
       return this.http.post<{ count: Number, questions: any[] }>(
-        API_END_POINTS.PUBLIC_QUESTION_LIST, forPreviewData)
+        API_END_POINTS.PUBLIC_QUESTION_V4_LIST, forPreviewData)
     }
       if (forcreator) {
         // tslint:disable-next-line: max-line-length

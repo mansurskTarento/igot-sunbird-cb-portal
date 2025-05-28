@@ -57,7 +57,6 @@ import { SearchInputHomeComponent } from './components/search-input-home/search-
 import { CourseContentCardComponent } from './components/course-content-card/course-content-card.component';
 import { SearchEventCardComponent } from './components/search-event-card/search-event-card.component';
 import { PeopleConnectionCardComponent } from './components/people-connection-card/people-connection-card.component';
-import { ConnectionNameComponent } from '../network-v2/components/connection-name/connection-name.component';
 import { CommunityContentCardComponent } from './components/community-content-card/community-content-card.component';
 import {NumberShortenerPipe} from './pipes/number-shortener.pipe'
 import {PluralPipe} from './pipes/plural.pipe';
@@ -77,7 +76,6 @@ import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy
     CourseContentCardComponent,
     SearchEventCardComponent,
     PeopleConnectionCardComponent,
-    ConnectionNameComponent,
     CommunityContentCardComponent,
     NumberShortenerPipe,
     PluralPipe,

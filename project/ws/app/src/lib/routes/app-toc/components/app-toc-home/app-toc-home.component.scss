@@ -870,6 +870,10 @@ mat-divider {
     line-height: 20px;
     letter-spacing: 0.25;
   }
+
+  .mat-icon {
+    overflow: visible !important;
+  }
 }
 
 // Batch time CSS...

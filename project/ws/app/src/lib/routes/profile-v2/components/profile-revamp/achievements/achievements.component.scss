@@ -1,0 +1,106 @@
+.achievement-card {
+  border: 1px solid #0000000A;
+  background-color: #1B4CA10A;
+  border-radius: 8px;
+  padding: 8px;
+  gap: 3px;
+
+  .certificate-name {
+    color: #000000;
+    /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
+
+    .edit-icon {
+      color: #1B4CA1;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      pointer-events: all;
+      cursor: pointer;
+    }
+  }
+
+  .achievement-details {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+  }
+
+  .certificate {
+    width: 56px;
+  }
+
+  .document-name {
+    color: #1B2133;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+  }
+
+  .view-icon {
+    color: #1B4CA1;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  .url-card {
+    background-color: #E6E6E6;
+    width: 166px;
+    height: 33px;
+    border-radius: 17px;
+    pointer-events: all;
+    cursor: pointer;
+  }
+}
+
+.description {
+    color: #000000;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
+    height: 30px;
+    overflow: hidden;
+  }
+
+  .extend-description {
+    overflow: auto !important;
+    height: 100px !important;
+  }
+
+  .view-more {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 800 12px Lato;
+    /* stylelint-enable */
+    cursor: pointer;
+    pointer-events: all;
+  }
+
+  .linke {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    cursor: pointer;
+    pointer-events: all;
+
+    .link-icon {
+      color: #1B4CA1;
+      width: 13px;
+      height: 13px;
+      font-size: 13px;
+    }
+  }
+
+.document-card {
+  border: 1px solid #00000014;
+  background-color: #ffffff;
+  border-radius: 4px;
+  height: 56px;
+  padding: 8px;
+}

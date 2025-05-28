@@ -772,29 +772,30 @@ width: 262px;
   color: gray;
 }
 
-::ng-deep .multiline-select {
-  .mat-mdc-select-value-text {
-    white-space: pre-wrap !important;
+:host {
+  ::ng-deep .multiline-select {
+    .mat-mdc-select-value-text {
+      white-space: pre-wrap !important;
+    }
   }
- 
-}
 
-::ng-deep  .mat-pseudo-checkbox  {
-  display: none !important;
-}
-::ng-deep .mat-pseudo-checkbox-checked {
-  display: none !important;
-}
+  ::ng-deep .mat-pseudo-checkbox {
+    display: none !important;
+  }
 
-::ng-deep .multiline-select-option {
+  ::ng-deep .mat-pseudo-checkbox-checked {
+    display: none !important;
+  }
+
+  ::ng-deep .multiline-select-option {
     background-color: white !important;
-} 
+  } 
 
-::ng-deep .player-content {
-  .mat-tab-label-active {
-    opacity: 1 !important;
+  ::ng-deep .player-content {
+    .mat-tab-label-active {
+      opacity: 1 !important;
+    }
   }
-  
 }
 
 .user-icon {

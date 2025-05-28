@@ -1,0 +1,65 @@
+.recommended-communities {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.community-card {
+  padding: 16px;
+  border-radius: 8px;
+  background: white;
+}
+
+.community-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.community-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.community-info {
+  flex: 1;
+}
+
+.community-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.community-stats {
+  color: #666;
+  font-size: 14px;
+}
+
+.dot-separator {
+  margin: 0 8px;
+}
+
+.community-owner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.owner-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.view-btn {
+  width: 100%;
+  text-align: center;
+  text-transform: none;
+}

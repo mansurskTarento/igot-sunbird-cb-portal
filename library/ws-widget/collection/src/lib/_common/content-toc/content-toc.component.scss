@@ -72,12 +72,28 @@
     min-height: 80px;
 }
 
+.ai-tutor-get-started-mobile {
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background:
+        linear-gradient(to right, white, white),
+        linear-gradient(to right, #EFA34F, #4881E4);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    width: 96%;
+    min-height: 80px;
+}
+
 .align-items-center {
     align-items: center;
 }
 
 .w-565 {
     width: 565px;
+}
+
+.w-98 {
+    width: 98%;
 }
 
 .font-weight-600 {

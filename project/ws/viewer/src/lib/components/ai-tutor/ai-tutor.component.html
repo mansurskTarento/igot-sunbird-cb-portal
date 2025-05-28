@@ -187,7 +187,7 @@
             <ng-container *ngFor="let item of chat?.result; let ci=index">
             <div class="system-msg-mimetype flex flex-col" *ngIf="item?.contentType === 'Resource'">
               <ng-container *ngIf="item?.mimeType === 'application/pdf'">
-                <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank"><img src="/assets/icons/ai-pdf-icon.jpg"></a></div>
+                <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)"><img src="/assets/icons/ai-pdf-icon.jpg"></a></div>
                 <!-- <div class="resource-link">
                   <a [href]="item?.resourceLink" target="_blank">Click to view</a>
                 </div> -->
@@ -195,7 +195,7 @@
               <ng-container *ngIf="item?.mimeType === 'video/mp4'">
                 
                 <div class="resource-icon">
-                <a [href]="item?.resourceLink" target="_blank">
+                <a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)">
                   <div class="position-relative">
                     <div class="position-relative">
                       <img src="/assets/icons/ai-video-icon.jpg">
