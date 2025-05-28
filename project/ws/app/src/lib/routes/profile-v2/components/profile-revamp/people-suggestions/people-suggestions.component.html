@@ -1,19 +1,24 @@
 <div class="people-suggestions-container">
-  <mat-card *ngFor="let person of peopleSuggestionsList" class="person-card mb-4">
-    <div class="flex items-center p-4">
-      <div class="mr-4">
-        <img [src]="person.profileImage || 'assets/images/profile-placeholder.png'" 
-             alt="profile image" 
-             class="rounded-full w-16 h-16 object-cover">
+  <mat-card *ngFor="let person of peopleSuggestionsList" class="person-card mb-4 flex flex-col items-center">
+    <div class="flex items-center gap-4">
+      <div >
+        <ng-container *ngIf="profileImageUrl; else nameInitialsView">
+          <img [src]="person.profileImageUrl" alt="Profile" class="profile-image">
+        </ng-container>
+        <ng-template #nameInitialsView>
+          <div class="flex items-center justify-center profile-circle">
+            {{ person.nameInitials }}
+          </div>
+        </ng-template>
       </div>
       <div class="flex-grow">
-        <div class="personName">{{person.name}}</div>
-        <div class="person-details">{{person.designation}}</div>
+        <div class="personName">{{person?.personalDetails?.firstname}}</div>
+        <div class="person-details">{{person?.professionalDetails[0]?.designation}} | {{person?.employmentDetails?.departmentName}}</div>
       </div>
     </div>
-    <mat-divider></mat-divider>
-    <div class="connect flex justify-center items-center pt-4" (click)="connect(person)">
-      <a >{{person.connectionStatus === 'pending' ? 'Pending' : 'Connect'}}</a>
+    <div class="dividing-line mt-2"></div>
+    <div class="connect flex justify-center items-center pt-4" [ngClass]="{'pending': person.connectionStatus === 'pending'}" (click)="connect(person)">
+      <a >{{person.connectionStatus === 'pending' ? 'Pending...' : 'Connect'}}</a>
     </div>
   </mat-card>
 </div>

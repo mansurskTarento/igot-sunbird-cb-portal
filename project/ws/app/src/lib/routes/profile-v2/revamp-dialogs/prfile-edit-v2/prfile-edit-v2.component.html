@@ -20,7 +20,9 @@
   <hr class="solid">
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
+      [ngClass]="{'disabledClass': !canSaveChanges}"
+      [disabled]="!canSaveChanges">Save
       Changes</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
@@ -61,10 +63,11 @@
         <div class="flex flex-col profile-control">
           <div class="lable">State</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="state" [selectionChange]="getDistrictsList($event.value)">
+            <mat-select formControlName="state" (selectionChange)="getDistrictsList($event.value)"
+              placeholder="Select State">
               <ng-container *ngFor="let state of statesList">
-                <mat-option [value]="state.stateId">{{ state.stateName }}</mat-option>
-                </ng-container>
+                <mat-option [value]="state.stateName">{{ state.stateName }}</mat-option>
+              </ng-container>
             </mat-select>
             <mat-error *ngIf="hasError('state', 'required')">State is required</mat-error>
           </mat-form-field>
@@ -73,7 +76,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">District</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="district">
+            <mat-select formControlName="district" placeholder="Select District">
               <ng-container *ngFor="let district of districtsList">
                 <mat-option [value]="district">{{ district }}</mat-option>
               </ng-container>
@@ -152,26 +155,30 @@
           <div class="lable">Employee ID</div>
           <mat-form-field appearance="outline">
             <input matInput formControlName="employeeCode">
+            <mat-error *ngIf="hasError('employeeCode', 'pattern')">Please enter an Alpha-numeric value only</mat-error>
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Email</div>
           <mat-form-field appearance="outline">
-            <input matInput type="email" formControlName="primaryEmail">
-            <mat-error *ngIf="hasError('primaryEmail', 'email')">
-              Please enter a valid email address
+            <input matInput type="email" formControlName="primaryEmail" (keyup)="handleEmpty('primaryEmail')">
+            <mat-error *ngIf="hasError('primaryEmail', 'pattern')">
+              {{ 'profileInfo.invalidEmail' | translate }}
             </mat-error>
           </mat-form-field>
+          <div class="flex justify-end" *ngIf="verifyEmail">
+            <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'profileInfo.getOTP' | translate}}</span>
+          </div>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Gender</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="gender">
-              <mat-option value="male">Male</mat-option>
-              <mat-option value="female">Female</mat-option>
-              <mat-option value="other">Other</mat-option>
+              <ng-container *ngFor="let gender of eUserGender">
+                <mat-option [value]="gender">{{handleTranslateTo(gender.toLowerCase())}}</mat-option>
+              </ng-container>
             </mat-select>
           </mat-form-field>
         </div>
@@ -179,7 +186,7 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Date of Birth</div>
           <mat-form-field appearance="outline">
-            <input matInput [matDatepicker]="picker" formControlName="dob">
+            <input matInput [matDatepicker]="picker" formControlName="dob" [max]="currentDate">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -189,10 +196,9 @@
           <div class="lable">Category</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="category">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
+              <ng-container *ngFor="let category of eCategory">
+                <mat-option [value]="category">{{ handleTranslateTo(category?.toLowerCase()) }}</mat-option>
+              </ng-container>
             </mat-select>
           </mat-form-field>
         </div>
@@ -201,102 +207,128 @@
         <div class="flex flex-col profile-control">
           <div class="lable">Office Pin Code</div>
           <mat-form-field appearance="outline">
-            <input matInput formControlName="pinCode">
+            <input matInput maxlength="6" formControlName="pinCode">
+            <mat-error *ngIf="hasError('pinCode', 'pattern')">
+              {{ 'profileInfo.invalidPinCode' | translate }}
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Mobile Number</div>
-          <mat-form-field appearance="outline">
-            <input matInput formControlName="mobile">
-          </mat-form-field>
+          <div class="flex gap-2">
+            <div class="country-code">
+              +91
+            </div>
+            <mat-form-field appearance="outline">
+              <input matInput maxlength="10" (keyup)="handleEmpty('mobile')" formControlName="mobile">
+              <mat-error class="text-xs" *ngIf="hasError('mobile', 'required') || hasError('mobile', 'pattern')">
+                {{ 'profileInfo.pleaseEnterValidMobileNumber' | translate }}
+              </mat-error>
+            </mat-form-field>
+            <div class="flex justify-end" *ngIf="verifyMobile">
+              <span class="get-otp sm:mr-4" (click)="handleGenerateOTP('phone')">{{ 'profileInfo.getOTP' |
+                translate }}</span>
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Mother Tongue</div>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="domicileMedium">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
+            <input matInput formControlName="domicileMedium" aria-label="Domicile Medium (Mother Tongue)" matInput
+            (keydown)="onkeyDown($event)" [matAutocomplete]="languageAuto">
+            <mat-icon matSuffix>arrow_drop_down</mat-icon>
           </mat-form-field>
+          <mat-autocomplete #languageAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
+            (closed)="onAutoCompleteClosed()">
+            <ng-container *ngIf="masterLanguages.length > 0; else noLanguage">
+              <ng-container *ngFor="let language of masterLanguages">
+                <mat-option [value]="language.name">{{ language.name }}</mat-option>
+              </ng-container>
+            </ng-container>
+            <ng-template #noLanguage>
+              <mat-option disabled>No language found</mat-option>
+            </ng-template>
+          </mat-autocomplete>
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">eHRMS ID/External System ID</div>
-          <mat-form-field appearance="outline">
+          <div>{{profileDetails?.additionalProperties?.externalSystemId || 'NA'}} </div>
+          <!-- <mat-form-field appearance="outline">
             <input matInput formControlName="externalSystemId">
-          </mat-form-field>
+          </mat-form-field> -->
         </div>
 
         <div class="flex flex-col profile-control">
           <div class="lable">Date of Retirement</div>
-          <mat-form-field appearance="outline">
-            <input matInput formControlName="retirementDate">
-          </mat-form-field>
+          <div>{{profileDetails?.additionalProperties?.externalSystemDor || 'NA'}} </div>
+          <!-- <mat-form-field appearance="outline">
+            <input matInput formControlName="externalSystemDor">
+          </mat-form-field> -->
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Are you from any organized service of the government?</div>
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="isCadreStatus">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <ng-container *ngIf="noCadreDetails">
+          <div class="flex flex-col profile-control">
+            <!-- <div class="lable">Are you from any organized service of the government?</div> -->
+            <div class="lable">{{ 'profileInfo.fromGovOrganization' | translate }}</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="isCadre" (selectionChange)="getIsCadreStatus($event.value)">
+                <mat-option [value]="true">Yes</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Type of Civil Services</div>
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="typeOfCivilService">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <ng-container *ngIf="isCadreStatus">
+          <div class="flex flex-col profile-control">
+            <div class="lable">Type of Civil Services</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="civilServiceType" (selectionChange)="getService($event.value)">
+                <mat-option *ngFor="let service of civilServiceTypes" [value]="service">{{ service }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Services</div>
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="serviceType">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <ng-container *ngIf="profileForm.get('civilServiceType').value && profileForm.get('isCadre').value">
+          <div class="flex flex-col profile-control">
+            <div class="lable">Services</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="civilServiceName" (selectionChange)="onServiceSelect($event)">
+                <mat-option *ngFor="let service of serviceNamesList" [value]="service">{{ service }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Cadre</div>
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="cadre">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <ng-container *ngIf="showCadreDetails">
+          <div class="flex flex-col profile-control">
+            <div class="lable">Cadre</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="cadreName" (selectionChange)="onCadreSelect($event.value)">
+                <mat-option *ngFor="let state of cadreList" [value]="state">{{ state }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">Batch</div>
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="cadreBatch">
-              <mat-option value="general">General</mat-option>
-              <mat-option value="obc">OBC</mat-option>
-              <mat-option value="sc">SC</mat-option>
-              <mat-option value="st">ST</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <ng-container *ngIf="showBatchDetails">
+          <div class="flex flex-col profile-control">
+            <div class="lable">Batch</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="cadreBatch">
+                 <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="showControllingAuthority">
+          <div class="info-value-c" >{{ cadreControllingAuthority }}</div>
+        </ng-container>
       </div>
     </form>
   </ng-template>

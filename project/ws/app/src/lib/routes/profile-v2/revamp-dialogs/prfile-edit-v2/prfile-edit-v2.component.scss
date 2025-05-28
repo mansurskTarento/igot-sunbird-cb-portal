@@ -1,3 +1,5 @@
+@import 'ws-common';
+
 /* profile-editor.component.scss */
 .profile-editor-container {
   padding: 24px;
@@ -245,6 +247,35 @@
   /* stylelint-disable */
   font: 700 14px Lato;
   /* stylelint-enable */
+}
+
+.country-code {
+  @extend .input-text;
+  margin: 0.4375em 0;
+  padding: 0px;
+  text-align: center;
+  width: 70px;
+  height: 28px;
+  border-radius: 14px;
+  display: block !important;
+  position: relative;
+  top: -1px;
+}
+
+.info-value-c {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.2); 
+  padding: 3px;
+  border: 0.5px solid rgba(0, 0, 0, 0.1); 
+  font-size: 15px  !important;
+  height: fit-content;
+  margin-top: 0.5rem;
+}
+
+.disabledClass {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 // Responsive adjustments

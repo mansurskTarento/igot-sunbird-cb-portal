@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { CommonModule, DatePipe } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
@@ -70,6 +70,8 @@ import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-ed
 import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
 import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
+import { DragDropModule } from '@angular/cdk/drag-drop'
+import { CommunitySuggestionsComponent } from './components/profile-revamp/community-suggestions/community-suggestions.component'
 
 
 @NgModule({
@@ -95,6 +97,7 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
         PrfileEditV2Component,
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
+        CommunitySuggestionsComponent
     ],
     imports: [
         CommonModule,
@@ -145,6 +148,7 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
         MatLegacyMenuModule,
         ImageCropperModule,
         MatLegacyCheckboxModule,
+        DragDropModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -163,6 +167,7 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
         ServiceHistoryComponent,
         EducationalQualificationsComponent,
         AchievementsComponent,
+        DatePipe
     ]
 })
 export class ProfileV2Module {

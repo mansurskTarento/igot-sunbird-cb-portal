@@ -1,3 +1,32 @@
+.popup-header {
+  padding: 15px 24px;
+  border-bottom: 2px solid #00000014;
+  
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
+}
+
+.container {
+  width: 744px;
+  padding: 24px;
+}
+
 .education-card {
   border: 1px solid #0000000A;
   background-color: #1B4CA10A;

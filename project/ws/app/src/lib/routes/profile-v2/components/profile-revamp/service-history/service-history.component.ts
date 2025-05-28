@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
 import * as _ from 'lodash';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 
 @Component({
   selector: 'ws-app-service-history',
@@ -24,14 +25,20 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     private datePipe: DatePipe,
     private dialogRef: MatLegacyDialogRef<ServiceHistoryComponent>,
         @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
-    private profileV2RevampSvc: ProfileV2RevampService
+    private profileV2RevampSvc: ProfileV2RevampService,
+    private snackBar: MatLegacySnackBar,
   ) { 
     if (this.data && this.data.userId) {
       this.userId = data.userId;
       this.isPopup = true
-      this.getServiceHistoryList();
     }
   }
+
+  ngOnInit() {
+    if(this.isPopup) {
+      this.getServiceHistoryList();
+    }
+   }
 
   getServiceHistoryList() {
     if (this.userId) {
@@ -41,12 +48,12 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
           this.formateData();
         }
       }, (err: any) => {
-        console.error('Error fetching service history:', err);
+        if(err) {
+          this.openSnackbar('something went wrong while fetching service history please try again later', 5000);
+        }
       });
     }
   }
-
-  ngOnInit() { }
 
   ngOnChanges() { 
     if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
@@ -85,6 +92,12 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     if(this.isPopup) {
       this.dialogRef.close();
     }
+  }
+
+  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
   }
   //#endregion (functions)
   

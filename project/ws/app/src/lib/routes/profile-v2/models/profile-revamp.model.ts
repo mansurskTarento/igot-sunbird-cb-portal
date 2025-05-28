@@ -10,7 +10,6 @@ export interface profileRoutes {
   name: string
   url: string
   icon: string
-  isActive: boolean
   id: string
 }
 
@@ -43,14 +42,6 @@ export interface achievement {
   provider: string,
   period: string,
   certificateUrl?: string
-}
-
-export interface person {
-  id: string;
-  name: string;
-  designation: string;
-  profileImage?: string;
-  connectionStatus: 'none' | 'pending' | 'connected';
 }
 
 export interface Community {

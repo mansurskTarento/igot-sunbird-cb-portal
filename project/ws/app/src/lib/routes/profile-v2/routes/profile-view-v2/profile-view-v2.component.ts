@@ -1,6 +1,6 @@
 //#region (imports)
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { UserStats, achievement, educationalQualifications, person, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component';
@@ -40,35 +40,37 @@ export class ProfileViewV2Component implements OnInit {
       name: 'About Me',
       url: '',
       icon: 'person',
-      isActive: true,
-      id: ''
+      id: 'about-me'
+    }, {
+      name: 'Basic Details',
+      url: './assets/icons/checklist.svg',
+      icon: '',
+      id: 'basic-details'
     }, {
       name: 'Service History',
       url: '',
-      icon: 'person',
-      isActive: false,
-      id: ''
+      icon: 'history',
+      id: 'service-history'
     }, {
-      name: 'Competencies',
-      url: '',
-      icon: 'extension',
-      isActive: false,
-      id: ''
-    }, {
+      //   name: 'Competencies',
+      //   url: '',
+      //   icon: 'extension',
+      //   isActive: false,
+      //   id: ''
+      // }, {
       name: 'Educational',
       url: '',
       icon: 'school',
-      isActive: false,
-      id: ''
+      id: 'educational-qualifications'
     }, {
       name: 'Achievements',
-      url: '',
-      icon: 'trophy',
-      isActive: false,
-      id: ''
+      url: './assets/icons/trophy.svg',
+      icon: '',
+      id: 'achievements'
     },
   ]
-  locationDetails: any
+  activeRoutId: string = 'about-me';
+  locationDetails: any = {}
   serviceHistoryDetails: {
     count: number,
     serviceHistoryList: serviceHistory[]
@@ -122,29 +124,8 @@ export class ProfileViewV2Component implements OnInit {
       achievementsList: []
     }
 
-  peopleSuggestionsList: person[] = [
-    {
-      id: '1',
-      name: 'John Doe',
-      designation: 'Program Manager',
-      profileImage: './assets/icons/profile_cover_pic.svg',
-      connectionStatus: 'none'
-    },
-    {
-      id: '2',
-      name: 'Jane Smith',
-      designation: 'Project Manager',
-      profileImage: './assets/icons/profile_cover_pic.svg',
-      connectionStatus: 'none'
-    },
-    {
-      id: '3',
-      name: 'Alice Johnson',
-      designation: 'Software Engineer',
-      profileImage: './assets/icons/profile_cover_pic.svg',
-      connectionStatus: 'none'
-    }
-  ]
+  peopleSuggestionsList: any[] = []
+  communitySuggestionsList: any[] = []
   aboutme = 'Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu '
   showMoreAbout = false
   primaryDetails: any;
@@ -162,14 +143,24 @@ export class ProfileViewV2Component implements OnInit {
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
+    const lastSectionId = sessionStorage.getItem('lastProfileSection');
+    if (lastSectionId) {
+      setTimeout(() => {
+        this.selectRoute(lastSectionId);
+      }, 100);
+    }
   }
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
-      this.profesionalDetails = _.get(data, 'profile.data', {})
+      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data', {}))
+      this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.userId = _.get(data, 'profile.userId', '')
+      this.profileCompletion = _.get(data, 'profile.data.profileCompletion', 0)
       this.patchProfileDetails()
       this.patchEntries(_.get(data, 'entries.data', {}))
+      this.patchConnections(_.get(data, 'recamendations.data', []))
+      this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
       console.log('data', data)
     })
   }
@@ -177,7 +168,6 @@ export class ProfileViewV2Component implements OnInit {
   patchProfileDetails() {
     this.profileImageUrl = _.get(this.profesionalDetails, 'profileImageUrl', '')
     this.profileBannerUrl = _.get(this.profesionalDetails, 'profileBannerUrl', '')
-    this.profileCompletion = _.get(this.profesionalDetails, 'profileCompletion', 0)
     this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
@@ -194,13 +184,19 @@ export class ProfileViewV2Component implements OnInit {
       category: _.get(this.profesionalDetails, 'personalDetails.category', ''),
       pinCode: _.get(this.profesionalDetails, 'employmentDetails.pinCode', ''),
 
-      dateOfRetirement: 'N/A',
-      organizedService: 'Yes',
-      civilServiceType: 'All India Services',
-      services: 'India Forest Service',
-      cadre: 'AGMUT',
-      batch: '1960',
-      cadreControllingAuthority: 'Ministry of Environment & Forests'
+      externalSystemId: _.get(this.profesionalDetails, 'additionalProperties.externalSystemId', ''),
+      externalSystemDor: _.get(this.profesionalDetails, 'additionalProperties.externalSystemDor', ''),
+      isCadre: _.get(this.profesionalDetails, 'personalDetails.isCadre', false),
+      civilServiceTypeId: _.get(this.profesionalDetails, 'cadreDetails.civilServiceTypeId', ''),
+      civilServiceType: _.get(this.profesionalDetails, 'cadreDetails.civilServiceType', 'NA'),
+      civilServiceId: _.get(this.profesionalDetails, 'cadreDetails.civilServiceId', ''),
+      civilServiceName: _.get(this.profesionalDetails, 'cadreDetails.civilServiceName', ''),
+      cadreId: _.get(this.profesionalDetails, 'cadreDetails.cadreId', ''),
+      cadreName: _.get(this.profesionalDetails, 'cadreDetails.cadreName', ''),
+      cadreBatch: _.get(this.profesionalDetails, 'cadreDetails.cadreBatch', ''),
+      cadreControllingAuthorityName: _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', ''),
+
+      aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
     }
   }
 
@@ -228,11 +224,30 @@ export class ProfileViewV2Component implements OnInit {
     this.educationalQualificationDetails.count = _.get(entries, 'educationalQualifications.count', 0)
     this.achievementsDetails.achievementsList = _.get(entries, 'achievements.data', [])
     this.achievementsDetails.count = _.get(entries, 'achievements.count', 0)
-    this.locationDetails = _.get(entries, 'locationDetails')
+    this.locationDetails = _.get(entries, 'locationDetails.data[0]', {})
   }
 
-  selectRoute(profileRoute: profileRoutes) {
-    profileRoute.isActive = !profileRoute.isActive
+  patchConnections(connections: any) {
+    this.peopleSuggestionsList = connections
+  }
+
+  patchRecamendedCommunity(community: any) {
+    this.communitySuggestionsList = community
+  }
+
+  selectRoute(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      // Save the selected section to session storage
+      sessionStorage.setItem('lastProfileSection', sectionId);
+
+      // Smooth scroll to element
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    this.activeRoutId = sectionId
   }
 
   openCoverPhotoDialog() {
@@ -307,7 +322,7 @@ export class ProfileViewV2Component implements OnInit {
     this.profileV2RevampSvc.updateProfileDetails(formBody).subscribe({
       next: (response: any) => {
         if (response) {
-          this.patchProfileDetails()
+          this.fetchProfileDetails()
           this.openSnackbar('Updated Successfully')
         }
       },
@@ -323,7 +338,8 @@ export class ProfileViewV2Component implements OnInit {
     this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
       next: (response: any) => {
         if (response) {
-          this.profesionalDetails = _.get(response, 'result', {})
+          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result', {}))
+          this.profileCompletion = _.get(response, 'result.profileCompletion', 0)
           this.patchProfileDetails()
         }
       },
@@ -338,9 +354,12 @@ export class ProfileViewV2Component implements OnInit {
   openProfileEditDialog(header: string) {
     const dialogDetails = {
       header: header,
-      profileDetails: {
+      profileDetails: this.primaryDetails,
+    }
+    if (header === 'Profile') {
+      dialogDetails.profileDetails = {
         profileImage: this.profileImageUrl,
-        firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', ''),
+        firstname: _.get(this.primaryDetails, 'firstname', ''),
         state: _.get(this.locationDetails, 'state', ''),
         district: _.get(this.locationDetails, 'district', ''),
       }
@@ -361,8 +380,16 @@ export class ProfileViewV2Component implements OnInit {
           ) {
             this.locationDetails['state'] = _.get(result, 'state', '')
             this.locationDetails['district'] = _.get(result, 'district', '')
+            const formBody: any = {
+              request: {
+                userId: this.userId,
+                locationDetails: [this.locationDetails]
+              }
+            }
             if (_.get(this.locationDetails, 'uuid')) {
-              this.updateProfileEntry()
+              this.updateProfileEntry(formBody)
+            } else {
+              this.addProfileEntry(formBody)
             }
           }
         }
@@ -375,70 +402,124 @@ export class ProfileViewV2Component implements OnInit {
       const formBody: any = {
         request: {
           userId: this.userId,
+          profileDetails: {}
         }
       };
 
       // Define field mappings with their paths in the API response and form body
       const fieldMappings = [
         {
+          formField: 'profileImageUrl',
+          resultPath: 'profileImageUrl',
+          formBodyPath: 'profileDetails.profileImageUrl'
+        },
+        {
           formField: 'firstname',
-          apiPath: 'personalDetails.firstname',
-          formBodyPath: 'personalDetails.firstname'
+          resultPath: 'firstname',
+          formBodyPath: 'profileDetails.personalDetails.firstname'
         },
         {
           formField: 'primaryEmail',
-          apiPath: 'personalDetails.primaryEmail',
-          formBodyPath: 'personalDetails.primaryEmail'
+          resultPath: 'primaryEmail',
+          formBodyPath: 'profileDetails.personalDetails.primaryEmail'
         },
         {
           formField: 'mobile',
-          apiPath: 'personalDetails.mobile',
-          formBodyPath: 'personalDetails.mobile'
+          resultPath: 'mobile',
+          formBodyPath: 'profileDetails.personalDetails.mobile'
         },
         {
           formField: 'gender',
-          apiPath: 'personalDetails.gender',
-          formBodyPath: 'personalDetails.gender'
+          resultPath: 'gender',
+          formBodyPath: 'profileDetails.personalDetails.gender'
         },
         {
           formField: 'dob',
-          apiPath: 'personalDetails.dob',
-          formBodyPath: 'personalDetails.dob'
+          resultPath: 'dob',
+          formBodyPath: 'profileDetails.personalDetails.dob'
         },
         {
           formField: 'domicileMedium',
-          apiPath: 'personalDetails.domicileMedium',
-          formBodyPath: 'personalDetails.domicileMedium'
+          resultPath: 'domicileMedium',
+          formBodyPath: 'profileDetails.personalDetails.domicileMedium'
         },
         {
           formField: 'category',
-          apiPath: 'personalDetails.category',
-          formBodyPath: 'personalDetails.category'
+          resultPath: 'category',
+          formBodyPath: 'profileDetails.personalDetails.category'
+        },
+        {
+          formField: 'isCadre',
+          resultPath: 'isCadre',
+          formBodyPath: 'profileDetails.personalDetails.isCadre'
         },
         {
           formField: 'group',
-          apiPath: 'professionalDetails[0].group',
-          formBodyPath: 'professionalDetails[0].group'
+          resultPath: 'group',
+          formBodyPath: 'profileDetails.professionalDetails[0].group'
         },
         {
           formField: 'designation',
-          apiPath: 'professionalDetails[0].designation',
-          formBodyPath: 'professionalDetails[0].designation'
+          resultPath: 'designation',
+          formBodyPath: 'profileDetails.professionalDetails[0].designation'
         },
         {
           formField: 'osid',
-          apiPath: 'professionalDetails[0].osid',
-          formBodyPath: 'professionalDetails[0].osid'
+          resultPath: 'osid',
+          formBodyPath: 'profileDetails.professionalDetails[0].osid'
         },
         {
           formField: 'employeeCode',
-          apiPath: 'employmentDetails.employeeCode',
-          formBodyPath: 'employmentDetails.employeeCode'
+          resultPath: 'employeeCode',
+          formBodyPath: 'profileDetails.employmentDetails.employeeCode'
         },
         {
           formField: 'pinCode',
-          apiPath: 'employmentDetails.pinCode',
-          formBodyPath: 'employmentDetails.pinCode'
+          resultPath: 'pinCode',
+          formBodyPath: 'profileDetails.employmentDetails.pinCode'
+        },
+        {
+          formField: 'aboutme',
+          resultPath: 'aboutme',
+          formBodyPath: 'profileDetails.employmentDetails.aboutme'
+        }, {
+          formField: 'civilServiceTypeId',
+          resultPath: 'civilServiceTypeId',
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceTypeId'
+        }, {
+          formField: 'civilServiceType',
+          resultPath: 'civilServiceType',
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceType'
+        },
+        {
+          formField: 'civilServiceId',
+          resultPath: 'civilServiceId',
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceId'
+        },
+        {
+          formField: 'civilServiceName',
+          resultPath: 'civilServiceName',
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceName'
+        },
+        {
+          formField: 'cadreId',
+          resultPath: 'cadreId',
+          formBodyPath: 'profileDetails.cadreDetails.cadreId'
+        },
+        {
+          formField: 'cadreName',
+          resultPath: 'cadreName',
+          formBodyPath: 'profileDetails.cadreDetails.cadreName'
+        },
+        {
+          formField: 'cadreBatch',
+          resultPath: 'cadreBatch',
+          formBodyPath: 'profileDetails.cadreDetails.cadreBatch'
+        },
+        {
+          formField: 'cadreControllingAuthorityName',
+          resultPath: 'cadreControllingAuthorityName',
+          formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName'
         }
       ];
 
@@ -446,10 +527,10 @@ export class ProfileViewV2Component implements OnInit {
 
       // Compare each field and add to form body if changed
       fieldMappings.forEach(mapping => {
-        const currentValue = _.get(result, mapping.apiPath, '');
+        const currentValue = _.get(result, mapping.resultPath, '');
         const formValue = this.primaryDetails[mapping.formField];
 
-        if (formValue !== currentValue) {
+        if (formValue !== currentValue && currentValue) {
           // Create nested object structure if needed
           const pathParts = mapping.formBodyPath.split('.');
           let current = formBody.request;
@@ -468,7 +549,7 @@ export class ProfileViewV2Component implements OnInit {
 
           // Set the final value
           const finalKey = pathParts[pathParts.length - 1];
-          current[finalKey] = formValue;
+          current[finalKey] = currentValue;
           hasChanges = true;
         }
       });
@@ -498,6 +579,172 @@ export class ProfileViewV2Component implements OnInit {
         console.log('Form body with changes:', formBody);
         this.updateProfileDetails(formBody);
       }
+    }
+  }
+
+  openProfileEntryListDialog(header: string) {
+    const dialogDetails = {
+      header: header,
+      userId: this.userId
+    }
+    switch (header) {
+      case 'Service History':
+        this.openServiceHistoryListDialog(dialogDetails)
+        break;
+      // case 'Competencies':
+      //   this.openCompetenciesListDialog(dialogDetails)
+      //   break;
+      case 'Educational qualifications':
+        this.openEducationalQualificationsListDialog(dialogDetails)
+        break;
+      case 'Achievements':
+        this.openAchievementsListDialog(dialogDetails)
+        break;
+    }
+  }
+
+  openServiceHistoryListDialog(dialogDetails: any) {
+    const dialogRef = this.dialog.open(ServiceHistoryComponent, {
+      data: dialogDetails,
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.openProfileEntryEditDialog('Service History', result)
+      }
+    })
+  }
+
+  openEducationalQualificationsListDialog(dialogDetails: any) {
+    const dialogRef = this.dialog.open(EducationalQualificationsComponent, {
+      data: dialogDetails,
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.openProfileEntryEditDialog('Educational qualifications', result)
+      }
+    })
+  }
+
+  openAchievementsListDialog(dialogDetails: any) {
+    const dialogRef = this.dialog.open(AchievementsComponent, {
+      data: dialogDetails,
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.openProfileEntryEditDialog('Achievements', result)
+      }
+    })
+  }
+
+
+  //#region (profile entry edit)
+  async openProfileEntryEditDialog(header: string, entryDetails?: any) {
+    const dialogDetails = {
+      header: header,
+      entryDetails: entryDetails
+    }
+    const isNew = entryDetails ? false : true
+    const dialogRef = this.dialog.open(ProfileEntryEditComponent, {
+      data: dialogDetails,
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+
+    dialogRef.afterClosed().subscribe(async (result: any) => {
+      if (result) {
+        let formBody: any = {}
+        switch (header) {
+          case 'Service History':
+            formBody = this.generateServiceHistoryFormBody(result, entryDetails)
+            break;
+          // case 'Competencies':
+          //   this.competencies = result
+          //   break;
+          case 'Educational qualifications':
+            formBody = await this.generateEducationalQualificationsFormBody(result, entryDetails)
+            break;
+          case 'Achievements':
+            formBody = this.generateAchievementsFormBody(result, entryDetails)
+            break;
+        }
+
+        if (formBody) {
+          if (isNew) {
+            this.addProfileEntry(formBody)
+          } else {
+            this.updateProfileEntry(formBody)
+          }
+        }
+      }
+    })
+  }
+
+  generateServiceHistoryFormBody(serviceHistory: any, oldDetails: any): any {
+    delete serviceHistory['showMore']
+    delete serviceHistory['orgDetails']
+    delete serviceHistory['period']
+    const formBody: any = {
+      request: {
+        userId: this.userId,
+        serviceHistory: [serviceHistory]
+      }
+    }
+    if (_.get(oldDetails, 'uuid', '')) {
+      formBody.request['serviceHistory'][0]['uuid'] = oldDetails.uuid
+    }
+    return formBody
+  }
+
+  async generateEducationalQualificationsFormBody(educationalQualifications: any, oldDetails: any): Promise<any> {
+    const isOtherDegree = _.get(educationalQualifications, 'degree', '') === 'other' && _.get(educationalQualifications, 'otherDegree', '') ? true : false;
+    const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '') === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
+    const formBody: any = {
+      request: {
+        userId: this.userId,
+        educationalQualifications: [{
+          degree: isOtherDegree ? _.get(educationalQualifications, 'otherDegree', '') : _.get(educationalQualifications, 'degree', ''),
+          fieldOfStudy: _.get(educationalQualifications, 'fieldOfStudy', ''),
+          institutionName: isOtherInstitute ? _.get(educationalQualifications, 'otherInstituteName', '') : _.get(educationalQualifications, 'institutionName', ''),
+          endYear: _.get(educationalQualifications, 'endYear', ''),
+          startYear: _.get(educationalQualifications, 'startYear', ''),
+        }]
+      }
+    }
+    if (_.get(oldDetails, 'uuid', '')) {
+      formBody.request['educationalQualifications'][0]['uuid'] = oldDetails.uuid
+    }
+    try {
+      const addApiCalls: any = [];
+      if (isOtherDegree) {
+        const degreeBody = {
+          degreeName: _.get(educationalQualifications, 'otherDegree', ''),
+        }
+        addApiCalls.push(this.profileV2RevampSvc.updateDegree(degreeBody))
+      }
+      if (isOtherInstitute) {
+        const instituteBody = {
+          institutionName: _.get(educationalQualifications, 'otherInstituteName', ''),
+        }
+        addApiCalls.push(this.profileV2RevampSvc.updateInstitution(instituteBody))
+      }
+      if (addApiCalls.length > 0) {
+        await forkJoin(addApiCalls).toPromise()
+      }
+      return formBody
+
+    } catch (error) {
+      this.openSnackbar('Error adding degree/institute. Please try again.');
+      throw error;
     }
   }
 

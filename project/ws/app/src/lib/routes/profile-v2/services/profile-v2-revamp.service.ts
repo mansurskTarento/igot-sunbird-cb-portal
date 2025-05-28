@@ -2,18 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NSProfileDataV2 } from '../models/profile-v2.model';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, retry } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core'
+
 
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
   GET_RECOMMENDED_USERS : '/apis/protected/v8/connections/v2/connections/recommended',
+  ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
+  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
   GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // old
   APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // old
   WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition', // old
+  COURSE_BATCH_LIST: `/apis/proxies/v8/learner/course/v1/batch/list`,
+  GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
   GET_DESIGNATIONS: '/apis/proxies/v8/user/v1/positions', // old
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
@@ -26,7 +32,10 @@ const API_END_POINTS = {
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
   UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update',
-  DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete'
+  DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
+
+  approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
+
 }
 
 @Injectable({
@@ -35,7 +44,8 @@ const API_END_POINTS = {
 export class ProfileV2RevampService {
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private translateService: TranslateService
   ) { }
 
   fetchProfile(userId: string): Observable<NSProfileDataV2.IProfile> {
@@ -77,6 +87,32 @@ export class ProfileV2RevampService {
     return this.http.post<any>(API_END_POINTS.GET_RECOMMENDED_USERS, formBody)
   }
 
+  connectToNetwork(payload: any): Observable<any> {
+    return this.http.post(API_END_POINTS.ADD_CONNECTION, payload)
+  }
+
+  getCommunities(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_COMMUNITIES, formBody)
+  }
+
+  fetchCourseBatches(req: any): Observable<any> {
+    return this.http
+      .post<any>(API_END_POINTS.COURSE_BATCH_LIST, req)
+      .pipe(
+        retry(1),
+        map(
+          (data: any) => data.result.response
+        )
+      )
+  }
+
+  fetchCadre(): Observable<any> {
+    return this.http.get<any>(`${API_END_POINTS.GET_CADRE_DETAILS}`)
+  }
+
+  getMasterLanguages(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_MASTER_LANGUAGES)
+  }
   getOrgSearch(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.ORG_SEARCH, formBody)
   }
@@ -125,6 +161,16 @@ export class ProfileV2RevampService {
 
   deleteEntriesOfProfile(requestBody: any): Observable<any> {
     return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, requestBody)
+  }
+
+  getWhiteListDomain(): Observable<any> {
+      return this.http.get<any>(API_END_POINTS.approvedDomains)
+    }
+
+  handleTranslateTo(menuName: string): string {
+    // tslint:disable-next-line: prefer-template
+    const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
+    return this.translateService.instant(translationKey)
   }
 
 }

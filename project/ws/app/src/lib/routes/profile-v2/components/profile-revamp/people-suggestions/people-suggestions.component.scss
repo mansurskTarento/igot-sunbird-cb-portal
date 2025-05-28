@@ -8,11 +8,25 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
   
-  img {
+  .profile-image {
     width: 64px;
     height: 64px;
     border-radius: 50%;
     object-fit: cover;
+  }
+
+  .profile-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: rgba(27, 33, 51, 1);
+    font-weight: 600;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -29,7 +43,19 @@
   font: 400 12px Lato;
   /* stylelint-enable */
 }
-  
+
+.dividing-line {
+  width: 150px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    #FFFFFF00 0%,
+    #F3962F ,
+    #F3962F ,
+    #FFFFFF00 100%
+  );
+  margin-top: 10px;
+}
 
 .connect{
   a {
@@ -39,5 +65,11 @@
     font: 700 14px Lato;
     /* stylelint-enable */
     text-decoration: none;
+  }
+}
+
+.pending {
+  a {
+    color: #F3962F !important;
   }
 }

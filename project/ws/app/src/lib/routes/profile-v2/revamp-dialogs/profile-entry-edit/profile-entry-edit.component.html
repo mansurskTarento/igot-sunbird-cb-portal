@@ -270,11 +270,11 @@
 
         <div class="w-full mb-5">
           <div class="lable">Upload from System</div>
-        <ng-container *ngIf="fileName; else uploadIcon">
+        <ng-container *ngIf="entryDetails?.controls?.fileName?.value; else uploadIcon">
           <div class="fileNameCard flex justify-between px-2 items-center">
             <div class="flex gap-2 items-center">
               <img src="/assets/icons/image.svg" alt="app icon">
-              <span class="iconName">{{fileName}}</span>
+              <span class="iconName">{{entryDetails?.controls?.fileName?.value}}</span>
             </div>
               <mat-icon class="remove-app-icon" (click)="removeFile()">close</mat-icon>
           </div>

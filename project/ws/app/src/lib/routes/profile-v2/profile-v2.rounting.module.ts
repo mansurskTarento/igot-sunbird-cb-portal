@@ -10,6 +10,8 @@ import { Profilev2CerficatesResolve } from './resolvers/profile-v2-certificates-
 import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
 import { profileResolver } from './resolvers/profile-revamp/profile.resolver'
 import { profileEntriesResolver } from './resolvers/profile-revamp/profile-entries.resolver'
+import { connectionsResolverResolver } from './resolvers/profile-revamp/connections-resolver.resolver'
+import { CommunityResolverService } from './resolvers/profile-revamp/community-resolver.service'
 // import { ConfigurationsService } from './resolvers/config-resolver.service'
 // import { ProfileResolverService } from './resolvers/profile-resolver.service'
 
@@ -24,7 +26,7 @@ const routes: Routes = [
     children: [
       // {
       //   path: 'me',
-      //   component: ProfileViewV2Component,
+      //   component: ProfileViewComponent,
       //   data: {
       //     pageId: 'me',
       //     module: 'Profile',
@@ -44,7 +46,9 @@ const routes: Routes = [
         },
         resolve: {
           profile: profileResolver,
-          entries: profileEntriesResolver
+          entries: profileEntriesResolver,
+          recamendations: connectionsResolverResolver,
+          recamendedCommunity: CommunityResolverService,
         },
       },
       {
@@ -87,6 +91,8 @@ const routes: Routes = [
     Profilev2CerficatesResolve,
     profileResolver,
     profileEntriesResolver,
+    connectionsResolverResolver,
+    CommunityResolverService
     // ConfigurationsService,
     // ProfileResolverService,
   ],

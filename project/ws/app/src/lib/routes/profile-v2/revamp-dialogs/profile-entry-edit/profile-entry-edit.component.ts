@@ -33,7 +33,6 @@ export class ProfileEntryEditComponent implements OnInit {
 
   disableUpload = false;
   disableUrl = false;
-  fileName = '';
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
@@ -326,6 +325,7 @@ export class ProfileEntryEditComponent implements OnInit {
       issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250)]],
       issuedDate: [_.get(this.entryDetails, 'issuedDate', '')],
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
+      fileName: [_.get(this.entryDetails, 'fileName', '')],
       url: [_.get(this.entryDetails, 'url', '')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
@@ -342,7 +342,11 @@ export class ProfileEntryEditComponent implements OnInit {
             documentUrlControl.patchValue('');
             documentUrlControl.updateValueAndValidity();
           }
-          this.fileName = '';
+          const fileNameControl = this.entryForm.get('fileName');
+          if (fileNameControl) {
+            fileNameControl.patchValue('');
+            fileNameControl.updateValueAndValidity();
+          }
           this.disableUpload = true;
           this.disableUrl = false;
         } else {
@@ -365,9 +369,13 @@ export class ProfileEntryEditComponent implements OnInit {
       urlControl.enable();
       urlControl.updateValueAndValidity();
     }
+    const fileNameControl = this.entryForm.get('fileName');
+          if (fileNameControl) {
+            fileNameControl.patchValue('');
+            fileNameControl.updateValueAndValidity();
+          }
     this.disableUpload = false;
     this.disableUrl = false;
-    this.fileName = '';
   }
 
   preventDefaultCDK(event: DragEvent, isEneter = ''): void {
@@ -437,7 +445,11 @@ export class ProfileEntryEditComponent implements OnInit {
               urlControl.disable()
               urlControl.updateValueAndValidity()
             }
-            this.fileName = fileName
+            const fileNameControl = this.entryForm.get('fileName');
+          if (fileNameControl) {
+            fileNameControl.patchValue(fileName);
+            fileNameControl.updateValueAndValidity();
+          }
             this.disableUrl = true
             this.disableUpload = false
           }

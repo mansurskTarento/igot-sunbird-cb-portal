@@ -19,6 +19,18 @@ export class AchievementsComponent implements OnInit {
   openEditDialog(entry: any = {}): void {
     this.openProfileEntryEditDialog.emit(entry);
   }
+
+  viewMore(achievement: any): void {
+    if(achievement && achievement.showMore) {
+      achievement.showMore = false;
+    } else {
+      achievement['showMore'] = true;
+    }
+  }
+
+  openUrl(url: string): void {
+    window.open(url, '_blank');
+  }
   //#endregion (functions)
 
 }

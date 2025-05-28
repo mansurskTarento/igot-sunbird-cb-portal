@@ -53,9 +53,11 @@
             <div class="profile-details">
               user role
             </div>
-            <div class="profile-details">
-              user location
-            </div>
+            <ng-container *ngIf="locationDetails?.state || locationDetails?.district">
+              <div class="profile-details">
+                {{locationDetails?.district}} | {{locationDetails?.state}}
+              </div>
+            </ng-container>
             <!-- <button mat-raised-button class="view-mentor-profile flex items-center justify-center">View Mentor Profile</button> -->
           </div>
         </div>
@@ -85,8 +87,13 @@
       <!-- #region (left routing) -->
       <div class="hidden md:flex flex-col gap-3 left-routing-card">
         <ng-container *ngFor="let profileRoute of profileRoutes">
-          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute)" [ngClass]="{'active-route-card': profileRoute?.isActive}">
-            <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
+          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)" [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
+            <ng-container *ngIf="profileRoute?.url; else routeIcon">
+              <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
+            </ng-container>
+            <ng-template #routeIcon>
+              <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
+            </ng-template>
             {{profileRoute?.name}}
           </div>
         </ng-container>
@@ -95,7 +102,7 @@
 
       <!-- #region (user details ) -->
       <div class="flex flex-col gap-4 w-full">
-        <div class="user-details">
+        <div id="about-me" class="user-details">
           <div class="flex justify-between items-center mb-2">
             <div class="section-header">About me</div>
             <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
@@ -108,12 +115,12 @@
           </div>
         </div>
 
-        <div class="user-details">
+        <div id="basic-details" class="user-details">
           <ws-app-profile-primary-details [primaryDetails]="primaryDetails"
           (openProfileEditDialog)="openProfileEditDialog($event)"></ws-app-profile-primary-details>
         </div>
 
-        <div class="user-details">
+        <div id="service-history" class="user-details">
           <div class="flex justify-between items-center mb-2">
             <div class="section-header">Service History</div>
             <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
@@ -134,7 +141,7 @@
           <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
         </div> -->
 
-        <div class="user-details">
+        <div id="educational-qualifications" class="user-details">
           <div class="flex justify-between items-center mb-2">
             <div class="section-header">Educational Qualifications</div>
             <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
@@ -151,7 +158,7 @@
           </ng-container>
         </div>
 
-        <div class="user-details">
+        <div id="achievements" class="user-details">
           <div class="flex justify-between items-center mb-2">
             <div class="section-header">Achievements</div>
             <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
@@ -180,7 +187,7 @@
         People You May Know
       </div>
       <div>
-        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"></ws-app-people-suggestions>
+        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList" [currentUser]="profesionalDetails"></ws-app-people-suggestions>
       </div>
     </div>
 
@@ -189,7 +196,7 @@
         Recommended Communities
       </div>
       <div>
-        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"></ws-app-people-suggestions>
+        <ws-app-community-suggestions [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
       </div>
     </div>
   </div>
