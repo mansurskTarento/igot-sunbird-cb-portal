@@ -38,6 +38,8 @@ export class MyNotificationsComponent {
       this.router.navigate([`/app/event-hub/home/${notification.message.id}`])
     } else if (notification.type === 'discussion') {
       this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.id}`])
+    } else if (notification.type === 'network') {
+      this.router.navigate([`/app/network-v2/my-connection`])
     }
   }
 
