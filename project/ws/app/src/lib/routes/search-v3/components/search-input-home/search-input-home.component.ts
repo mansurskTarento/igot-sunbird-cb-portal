@@ -55,7 +55,6 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   allSearchResults: any[] = [];
   categories = [
-    { label: 'All', value: SearchCategory.All, icon: '' },
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
     // {
     //   label: 'Programs',
@@ -84,9 +83,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },
+    { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
-  selectedSearchCategory: string = SearchCategory.All;
+  selectedSearchCategory: string = SearchCategory.Courses;
   openSearchTemplate = false;
   loaderSearching = false;
   responseNlpQuery = '';
@@ -113,7 +113,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
-        if (value.length > 15) {
+        if (value.length > 100) {
           await this.searchFromQuery(value);
           this.loaderSearching = false;
         } else {
@@ -203,7 +203,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       if (queryParam.has('category')) {
         this.selectedSearchCategory = queryParam.get('category') || '';
       } else {
-        this.selectedSearchCategory = '';
+        this.selectedSearchCategory = SearchCategory.Courses;
       }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
@@ -245,9 +245,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     };
+    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
     if (this.ref === 'home') {
       this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], navigationExtras);
+      this.router.navigate(['/app/globalsearch'], mergeQueryParams? navigationExtras : {queryParams});
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
     }
