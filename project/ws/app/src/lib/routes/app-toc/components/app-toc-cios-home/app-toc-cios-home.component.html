@@ -155,6 +155,7 @@
                             </ng-container>
                             <ng-container *ngIf="!skeletonLoader">
                                 <ws-widget-app-toc-about 
+                                    [contentReadData]="extContentReadData"
                                     [showReviews]="false" 
                                     [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length >  0 && userExtCourseEnroll?.progress === 100" 
                                     [content]="extContentReadData" 
