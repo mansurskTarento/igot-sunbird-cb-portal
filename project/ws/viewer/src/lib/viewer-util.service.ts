@@ -180,8 +180,9 @@ export class ViewerUtilService {
     if (!this.forPreview) {
       if (tempContentData && tempContentReadData.cumulativeTracking &&
         (tempContentData.primaryCategory === NsContent.EPrimaryCategory.PROGRAM ||
-       tempContentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM ||
-       tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM)
+       tempContentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM 
+      //  || tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM //should be enabled once we nedd to track course level
+      )
        ) {
        tempContentData.children.forEach(async (childList: NsContent.IContent) => {
          if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
