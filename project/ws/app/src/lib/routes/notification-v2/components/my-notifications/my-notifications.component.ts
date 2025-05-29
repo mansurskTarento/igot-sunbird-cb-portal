@@ -31,15 +31,20 @@ export class MyNotificationsComponent {
     })
   }
 
+
   redirectTo(notification: any) {
-    if (notification.type === 'learn') {
+    if (notification.category === 'LEARN') {
       this.router.navigate([`/app/toc/${notification.message.id}`])
-    } else if (notification.type === 'event') {
+    } else if (notification.category === 'EVENT') {
       this.router.navigate([`/app/event-hub/home/${notification.message.id}`])
-    } else if (notification.type === 'discussion') {
-      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.id}`])
-    } else if (notification.type === 'network') {
-      this.router.navigate([`/app/network-v2/my-connection`])
+    } else if (notification.category === 'DISCUSSION') {
+      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.communityId}/${notification.message.postId}`])
+    } else if (notification.category === 'NETWORK') {
+      if (notification.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
+        this.router.navigate([`/app/person-profile/${notification.message.id}`])
+      } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
+        this.router.navigate([`/app/network-v2/connection-requests`])
+      }
     }
   }
 

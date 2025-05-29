@@ -186,15 +186,21 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   viewAllClick(event: any) {
-    if (event.type) {
-      if (event.type === 'learn') {
+    if (event.category) {
+      if (event.category === 'LEARN') {
         this.router.navigate([`/app/toc/${event.message.id}`])
-      } else if (event.type === 'event') {
+      } else if (event.category === 'EVENT') {
         this.router.navigate([`/app/event-hub/home/${event.message.id}`])
-      } else if (event.type === 'discussion') {
-        this.router.navigate([`/app/discussion-forum-v2/community/${event.message.id}`])
+      } else if (event.category === 'DISCUSSION') {
+        this.router.navigate([`/app/discussion-forum-v2/community/${event.message.communityId}/${event.message.postId}`])
+      } else if (event.category === 'NETWORK') {
+        if (event.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
+          this.router.navigate([`/app/person-profile/${event.message.id}`])
+        } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
+          this.router.navigate([`/app/network-v2/connection-requests`])
+        }
       } else {
-        this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
+        this.router.navigate(['/app/notifications'])
       }
     } else {
       this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
