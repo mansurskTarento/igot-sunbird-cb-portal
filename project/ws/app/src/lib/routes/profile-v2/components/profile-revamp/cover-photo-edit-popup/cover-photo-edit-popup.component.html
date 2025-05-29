@@ -1,0 +1,58 @@
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <div class="section-header">Cover Photo</div>
+    <mat-icon class="close-icon" (click)="closePopup()">close</mat-icon>
+  </div>
+
+  <!-- Hidden file input -->
+  <input type="file" #fileInput style="display: none" (change)="onFileChange($event)" accept="image/*">
+
+  <!-- Image preview or cropper -->
+  <div class="w-full">
+    <ng-container *ngIf="!showCropper">
+      <ng-container *ngIf="coverPhotoUrl; else defaultImage">
+        <img [src]="coverPhotoUrl" alt="cover photo" class="w-full">
+      </ng-container>
+      <ng-template #defaultImage>
+        <img src="./assets/icons/profile_cover_pic.svg" alt="default cover photo" class="w-full">
+      </ng-template>
+    </ng-container>
+    <ng-container *ngIf="showCropper">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="858/215"
+        format="png"
+        [roundCropper]="false"
+        [cropperMinWidth]="1200"
+        [cropperMinHeight]="110"
+        [resizeToWidth]="1200"
+        [cropperStaticWidth]="1200"
+        [cropperStaticHeight]="110"
+        [canvasRotation]="0"
+        [alignImage]="'center'"
+        [fit]="'cover'"
+        [style.display]="showCropper ? null : 'none'"
+        [cropperMaxWidth]="1200"
+        [backgroundColor]="'#fff'"
+        [cropper]="cropperPosition"
+        [onlyScaleDown]="false"
+        [maintainAspectRatio]="true"
+        [hideResizeSquares]="true"
+        [containWithinAspectRatio]="false"
+        (imageCropped)="imageCropped($event)"
+      ></image-cropper>
+    </ng-container>
+  </div>
+
+  <div class="flex justify-between">
+    <div class="delete-button" (click)="deleteCoverPhoto()">
+      <a >Delete Cover Photo</a>
+    </div>
+    <div class="flex gap-4">
+      <button mat-button class="change-photo-button" (click)="fileInput.click()">Change Cover Photo</button>
+      <button mat-button class="apply-button" (click)="applyChanges()">Apply</button>
+    </div>
+  </div>
+</div>
+

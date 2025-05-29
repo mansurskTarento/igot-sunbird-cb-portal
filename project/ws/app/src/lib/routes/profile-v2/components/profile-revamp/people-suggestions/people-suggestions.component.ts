@@ -1,0 +1,72 @@
+import { Component, Input, OnChanges } from '@angular/core';
+import * as _ from 'lodash';
+import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+
+@Component({
+  selector: 'ws-app-people-suggestions',
+  templateUrl: './people-suggestions.component.html',
+  styleUrls: ['./people-suggestions.component.scss']
+})
+export class PeopleSuggestionsComponent implements OnChanges {
+  //#region (global variables)
+  @Input() peopleSuggestionsList: any[] = [];
+  @Input() currentUser: any = '';
+  //#endregion
+
+  constructor(
+    private profileV2RevampSvc: ProfileV2RevampService,
+    private snackBar: MatLegacySnackBar,
+  ) { }
+
+  ngOnChanges(): void {
+    if(this.peopleSuggestionsList && this.peopleSuggestionsList.length > 0) {
+      this.peopleSuggestionsList.forEach(person => {
+        person['connectionStatus'] = 'connect'
+        const userName = _.get(person, 'personalDetails.firstname', '')
+            if (userName) {
+              if (userName.split(' ').length > 1) {
+                const nameArr = userName.split(' ')
+                person['nameInitials'] = nameArr[0].charAt(0) + nameArr[1].charAt(0)
+              } else {
+                person['nameInitials'] = userName.charAt(0)
+              }
+            }
+      });
+    }
+  }
+
+  connect(person: any): void {
+    this.sendConnectionRequest(person);
+  }
+
+  sendConnectionRequest(person: any): void {
+    if(person) {
+      debugger
+      const formBody = {
+        connectionId: person.id || person.identifier || person.wid,
+        userIdFrom: _.get(this.currentUser, 'userId', ''),
+        userNameFrom: _.get(this.currentUser, 'userId', ''),
+        userDepartmentFrom: _.get(this.currentUser, 'employmentDetails.departmentName', ''),
+        userIdTo: person.userId,
+        userNameTo: person.id || person.identifier || person.wid,
+        userDepartmentTo: person.employmentDetails ? person.employmentDetails.departmentName : '',
+      }
+
+      this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
+        next: () => {
+          person.connectionStatus = 'pending';
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong while sending connection request');
+        }
+      });
+    }
+  }
+
+  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
+  }
+}

@@ -1,0 +1,213 @@
+<div class="flex flex-row gap-5">
+  <!-- #region (left profile )-->
+  <div class="flex flex-col gap-4 items-center justify-center profileLeftSection">
+    <div class="profile">
+      <!-- #region (cover photo ) -->
+      <div>
+        <ng-container *ngIf="profileBannerUrl; else defaultCoverPhoto">
+          <img class="cover-picture" [src]="profileBannerUrl" alt="cover-photo">
+        </ng-container>
+        <ng-template #defaultCoverPhoto>
+          <img class="cover-picture" src="./assets/icons/profile_cover_pic.svg" alt="default cover photo">
+        </ng-template>
+        <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
+          <mat-icon class="cover-photo-menu-icon" >more_vert</mat-icon>
+        </div>
+        <mat-menu #coverPhotoMenu="matMenu">
+          <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
+            <span>Edit Cover Photo</span>
+          </button>
+        </mat-menu>
+      </div>
+      <!-- #endregion (cover photo ) -->
+
+      <!-- #region (profile details ) -->
+      <div class="profile-details p-4 flex justify-between">
+        <div class="flex gap-3">
+          <div class="progress-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100" height="100">
+              <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+              <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+            </svg>
+            <div class="user-img">
+              <div class="image-container">
+                <ng-container *ngIf="profileImageUrl; else nameInitialsView">
+                    <img [src]="profileImageUrl" alt="Profile" class="profile-image">
+                </ng-container>
+                <ng-template #nameInitialsView>
+                  <div class="flex items-center justify-center profile-circle">
+                    {{ nameInitials }}
+                  </div>
+                </ng-template>
+              </div>
+              <span class="percentage-block">{{profileCompletion}}%</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col profile-details">
+            <div class="flex gap-2"> 
+              <span class="profile-name">{{primaryDetails?.firstname}} </span>
+              <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
+              <span class="user-name">(user name)</span>
+            </div>
+            <div class="profile-details">
+              user role
+            </div>
+            <ng-container *ngIf="locationDetails?.state || locationDetails?.district">
+              <div class="profile-details">
+                {{locationDetails?.district}} | {{locationDetails?.state}}
+              </div>
+            </ng-container>
+            <!-- <button mat-raised-button class="view-mentor-profile flex items-center justify-center">View Mentor Profile</button> -->
+          </div>
+        </div>
+        <div class="flex flex-col justify-between items-end">
+          <div class="flex">
+            <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu" [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
+          </div>
+          <mat-menu #profileMenu="matMenu">
+            <button mat-menu-item (click)="openProfileEditDialog('Profile')">
+                <span>Edit Profile</span>
+            </button>
+            <button mat-menu-item (click)="openProfileEditDialog('Primary Details')">
+                <span>Make Transfer Request</span>
+            </button>
+            </mat-menu>
+          <!-- <div class="flex gap-4 items-center justify-center">
+            <button mat-raised-button class="transfor-request flex items-center justify-center">Make Transfor Request</button>
+            <mat-icon class="info-icon">info_outline</mat-icon>
+          </div> -->
+        </div>
+      </div>
+      <!-- #endregion (profile details ) -->
+    </div>
+    
+    <div>
+      <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
+    </div>
+
+    <div class="flex gap-5 w-full">
+      <!-- #region (left routing) -->
+      <div class="hidden md:flex flex-col gap-3 left-routing-card">
+        <ng-container *ngFor="let profileRoute of profileRoutes">
+          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)" [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
+            <ng-container *ngIf="profileRoute?.url; else routeIcon">
+              <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
+            </ng-container>
+            <ng-template #routeIcon>
+              <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
+            </ng-template>
+            {{profileRoute?.name}}
+          </div>
+        </ng-container>
+      </div>
+      <!-- #endregion (left routing) -->
+
+      <!-- #region (user details ) -->
+      <div class="flex flex-col gap-4 w-full">
+        <div id="about-me" class="user-details">
+          <div class="flex justify-between items-center mb-2">
+            <div class="section-header">About me</div>
+            <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+          </div>
+          <ng-container *ngIf="aboutme; else emptyGif">
+            <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
+              {{aboutme}}
+            </div>
+            <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+              {{showMoreAbout ? 'view less' : 'view more'}}
+            </div>
+          </ng-container>
+        </div>
+
+        <div id="basic-details" class="user-details">
+          <ws-app-profile-primary-details [primaryDetails]="primaryDetails"
+          (openProfileEditDialog)="openProfileEditDialog($event)"></ws-app-profile-primary-details>
+        </div>
+
+        <div id="service-history" class="user-details">
+          <div class="flex justify-between items-center mb-2">
+            <div class="section-header">Service History</div>
+            <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
+          </div>
+          <ng-container *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
+            <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList" 
+            (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
+            <ng-container *ngIf="serviceHistoryDetails?.count > 2">
+              <div class="flex flex-col justify-between items-center">
+                <div class="dividing-line"></div>
+                <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- <div class="user-details">
+          <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
+        </div> -->
+
+        <div id="educational-qualifications" class="user-details">
+          <div class="flex justify-between items-center mb-2">
+            <div class="section-header">Educational Qualifications</div>
+            <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
+          </div>
+          <ng-container *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
+            <ws-app-educational-qualifications [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications" 
+            (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
+            <ng-container *ngIf="educationalQualificationDetails?.count > 2">
+              <div class="flex flex-col justify-between items-center">
+                <div class="dividing-line"></div>
+                <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All</div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <div id="achievements" class="user-details">
+          <div class="flex justify-between items-center mb-2">
+            <div class="section-header">Achievements</div>
+            <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+          </div>
+          <ng-container *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
+            <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList" 
+            (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
+            <ng-container *ngIf="achievementsDetails?.count > 2">
+              <div class="flex flex-col justify-between items-center">
+                <div class="dividing-line"></div>
+                <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <!-- #endregion (user details ) -->
+    </div>
+  </div>
+  <!-- #endregion (left profile )-->
+
+  <!-- #region (right profile connections )-->
+  <div class="hidden md:flex flex-col gap-4 profileRightSection">
+    <div class="flex flex-col gap-3">
+      <div class="people-you-may-know">
+        People You May Know
+      </div>
+      <div>
+        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList" [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="people-you-may-know">
+        Recommended Communities
+      </div>
+      <div>
+        <ws-app-community-suggestions [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+      </div>
+    </div>
+  </div>
+  <!-- #endregion (right profile connections )-->
+</div>
+
+<ng-template #emptyGif>
+  <div class="flex justify-center items-center w-full gif-container"></div>
+</ng-template>
