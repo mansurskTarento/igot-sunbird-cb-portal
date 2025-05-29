@@ -129,6 +129,14 @@ export const CATEGORY_TYPE = [
     filters: [],
     disabled: false,
   },
+  {
+    name: 'external-contents',
+    count: 0,
+    isChecked: false,
+    displayName: 'External Contents',
+    filters: [],
+    disabled: false,
+  },
 ];
 
 export const SEARCH_SORT_DROPDOWN = [

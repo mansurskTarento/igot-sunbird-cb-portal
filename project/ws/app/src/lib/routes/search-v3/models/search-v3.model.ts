@@ -14,7 +14,7 @@ export class RequestParams {
   limit: number;
   offset: number;
   sort_by: SortBy;
-  exists?: string
+  exists?: string[]
   constructor(competenciesKey: any) {
     this.filters = new Filters();
     this.fields = [
@@ -85,14 +85,15 @@ export enum SearchCategory {
   CaseStudy = 'case-study',
   Communities = 'communities',
   Resources = 'resources',
+  ExternalContents = 'external-contents',
 }
 
 export const SearchOthersFacet = [
-  'duration',
+  // 'duration',
   'avgRating',
   'language',
   'organisation',
-  'sectorId',
+  // 'sectorId',
   'courseCategory',
   'sectorDetails_v1.sectorName',
   'sectorDetails_v1.subSectorName',
@@ -138,8 +139,8 @@ export const SearchResourceMimeType = [
 
 export const SearchResourceFacets = [
   "resourceCategory",
-  "subSectorName",
-  "sectorName",
+  "sectorDetails_v1.subSectorName",
+  "sectorDetails_v1.sectorName",
   "years"
 ];
 
@@ -181,7 +182,7 @@ export class SearchCommunitiesRequest {
   pageNumber: number;
   pageSize: number;
   facets: string[];
-  searchString: string | null;
+  searchString?: string;
   orderBy?: string;
   orderDirection?: string;
 
@@ -191,8 +192,7 @@ export class SearchCommunitiesRequest {
     };
     this.requestedFields = [];
     this.pageNumber = 0;
-    this.pageSize = 3;
-    this.searchString = null;
+    this.pageSize = 6;
     this.facets = ['topicName', 'orgName', ...competenciesKey];
   }
 }
@@ -236,6 +236,9 @@ export enum FacetType {
   subSectorId = 'subSectorId',
   subSectorNameResource = "subSectorName",
   sectorNameResource = "sectorName",
+  contentPartners = 'contentPartner.contentPartnerName',
+  topic = 'topic',
+  topicName = 'topicName',
 }
 
 export enum SortType {
@@ -252,3 +255,45 @@ export enum SortType {
 export enum SearchConstantLocalStorage {
   SortType = 'searchSortType',
 }
+
+export class SearchExternalRequest {
+  filterCriteriaMap: {
+    [key: string]: any;
+  };
+  requestedFields: any[];
+  pageNumber: number;
+  pageSize: number;
+  facets: string[];
+  searchString: string | null;
+  orderBy?: string;
+  orderDirection?: string;
+
+  constructor(competenciesKey: any) {
+    this.filterCriteriaMap = {};
+    this.requestedFields = [];
+    this.pageNumber = 0;
+    this.pageSize = 3;
+    this.searchString = null;
+    this.facets = ['topic', 'contentPartner.contentPartnerName', ...competenciesKey];
+    this.orderBy = 'createdOn';
+  }
+}
+
+export const SearchResourcesFields = [
+  'appIcon',
+  'artifactUrl',
+  'channel',
+  'contentType',
+  'createdOn',
+  'creator',
+  'description',
+  'duration',
+  'identifier',
+  'mimeType',
+  'name',
+  'posterImage',
+  'primaryCategory',
+  'resourceType',
+  'source',
+  'additionalTags'
+];

@@ -80,8 +80,8 @@
   position: absolute;
   top: 40px;
   z-index: 9999;
-  max-width: 650px;
-  min-width: 650px;
+  max-width: 710px;
+  min-width: 710px;
   @media (max-width: 768px) {
     min-width: 375px;
   }
@@ -117,11 +117,11 @@
   }
 
   .mat-chip-list-wrapper {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .mat-chip-list-wrapper .mat-standard-chip {
-    margin: 4px 1px;
+    margin: 4px 2px;
 }
 }
 

@@ -6,6 +6,7 @@ import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '../../viewer-util.service'
+import * as _ from 'lodash'
 // import { environment } from 'src/environments/environment'
 
 @Component({
@@ -33,6 +34,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
       collectionId: '',
       courseName: '',
       progressStatus: '',
+      wfClientVersion: '',
     },
   }
   isPreviewMode = false
@@ -52,7 +54,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (
-      this.activatedRoute.snapshot.queryParamMap.get('preview') &&
+      this.activatedRoute.snapshot.queryParamMap.get('preview') === 'true' &&
       !this.accessControlSvc.authoringConfig.newDesign
     ) {
       this.isPreviewMode = true
@@ -93,6 +95,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
           : ''
           this.widgetResolverSurveyData.widgetData.disableTelemetry = true
           this.isFetchingDataComplete = true
+          this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
+
         })
     } else {
       this.dataSubscription = this.activatedRoute.data.subscribe(
@@ -148,6 +152,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.surveyData)
           }
           this.isFetchingDataComplete = true
+          this.widgetResolverSurveyData.widgetData.wfClientVersion = _.get(this.surveyData, 'wfClientVersion', '')
         },
         () => { },
       )

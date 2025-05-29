@@ -130,8 +130,17 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   async getRedirectUrlData(content: any) {
-    if (content && content.objectType === 'Event' && content.identifier) {
-      this.router.navigate([`app/event-hub/home/${content.identifier}`]);
+    if(content && content?.contentType === 'Resource' && content?.identifier) {
+      let resourceType;
+      if(!content?.resourceType) { 
+        resourceType = 'youtube';
+      }else {
+        resourceType = content?.resourceType === 'MP4' ? 'video' : content?.resourceType.toLowerCase();
+      }
+      this.telemetry.emit(content);
+      this.router.navigate([`app/amrit-gyaan-kosh/player/${(resourceType).toLowerCase()}/${content?.identifier}`], {
+        queryParams: { primaryCategory: content?.primaryCategory },
+      });
     } else {
       this.telemetry.emit(content);
       const urlData = await this.contSvc.getResourseLink(content);

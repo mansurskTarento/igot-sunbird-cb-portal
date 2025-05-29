@@ -327,7 +327,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
       //   payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
       // }
-      console.log('payload', payload)
+      // console.log('payload', payload)
       if(this.extContentReadData && this.extContentReadData.name) {
         payload['content_name'] = this.extContentReadData.name
       }

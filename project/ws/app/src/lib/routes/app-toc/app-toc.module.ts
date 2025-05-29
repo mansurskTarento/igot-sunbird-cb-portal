@@ -174,8 +174,6 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     EnrollQuestionnaireComponent,
     EnrollProfileFormComponent,
     AppTocCiosHomeComponent,
-    SurveyFormQuestionComponent,
-    SurveyFormSectionComponent,
   ],
   imports: [
     CommonModule,
@@ -268,7 +266,9 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     ReactiveFormsModule,
     WidgetCommentModule,
     SlidersDynamicModule,
-    NonReleventFeedbackDialogModule
+    NonReleventFeedbackDialogModule,
+    SurveyFormQuestionComponent,
+    SurveyFormSectionComponent,
   ],
   providers: [
     AppTocResolverService,

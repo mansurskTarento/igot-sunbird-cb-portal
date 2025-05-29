@@ -27,7 +27,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     designation: new UntypedFormControl('', [Validators.required]),
     searchDesignation: new UntypedFormControl(''),
   })
-  departmentData: any[] = []
+  organizationData: any[] = []
   otherDetails = false
   deptFilterData: any[] = []
   // deptFilterData  : Observable<string[]>
@@ -39,12 +39,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   designationDefaultLoadCount =  50
   isLoadingMoreDesignations = false;
   desigantionFilterEnable = false
+  currentOrg: any = ''
 
   // deptFilterData: any[] = []
-  organizationListLoadCount = 50
-  organizationDefaultLoadCount =  50
+  organizationListLoadCount = 20
+  organizationDefaultLoadCount =  20
   isLoadingMoreOrganization = false
-  organizationFilterEnable = false
+  organizationDataTotalCount = 0
 
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
@@ -58,7 +59,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.transferRequestForm.controls.designation.setValue(this.data.portalProfile.professionalDetails[0].designation || '')
     }
     if (this.data.portalProfile.employmentDetails) {
-      this.transferRequestForm.controls.organization.setValue(this.data.portalProfile.employmentDetails.departmentName)
+      // this.transferRequestForm.controls.organization.setValue(this.data.portalProfile.employmentDetails.departmentName)
+      this.currentOrg = this.data.portalProfile.employmentDetails.departmentName
     }
 
     this.transferRequestForm.get('organization')!.valueChanges
@@ -72,27 +74,20 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       })
 
     if (this.transferRequestForm.get('searchOrganization')) {
+     
       this.transferRequestForm.get('searchOrganization')!.valueChanges
-        .pipe(
-          debounceTime(250),
-          distinctUntilChanged(),
-          startWith(''),
-        )
-        .subscribe(res => {
-          if (res) {
-            this.deptFilterData = this.departmentData &&
-             this.departmentData.filter(item => item.toLowerCase().includes(res && res.toLowerCase()))
-             const orgSearchVal = this.transferRequestForm.controls['organization']
-             if (this.deptFilterData && this.deptFilterData.length && this.deptFilterData.length > 0) {
-              orgSearchVal.setErrors(null)
-             } else {
-            orgSearchVal.setErrors({ invalidSelection: true })
-             }
-          } else {
-            this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
-            this.checkCurrentOrganizationPresent()
-          }
-        })
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+      )
+      .subscribe(searchText => {
+        // this.organizationFilterEnable = !!searchText;
+        
+          // Call API with search instead of just filtering local data
+          this.organizationData = []; // Clear existing data
+          this.getAllDeptData(true, 0, searchText);
+        
+      });
     }
     if (this.transferRequestForm.get('searchDesignation')) {
       this.transferRequestForm.get('searchDesignation')!.valueChanges
@@ -122,7 +117,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getAllDeptData()
 
   }
 
@@ -130,18 +124,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.dialogRef.close()
   }
 
-  organizationSearch(value: string) {
-    const filterVal = value.toLowerCase()
-    return this.departmentData.filter(option => option.toLowerCase().includes(filterVal))
-  }
-
-  searchOrg(value: any) {
-    if (value && value.length) {
-      this.departmentData = this.organizationSearch(value)
-    } else {
-      this.getAllDeptData()
-    }
-  }
 
   handleSubmitRequest(): void {
     if (this.transferRequestForm.valid) {
@@ -177,13 +159,52 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAllDeptData(): void {
-    this.userProfileService.getAllDepartments()
+  getOrgRequest(_newCall:boolean , offsetValue: number, searchText:string): any {
+    const request: any = {
+      "request": {
+          "filters": {
+              "isTenant": true,
+              "status": 1,
+              "isMdo": true,
+              "isCbp": true
+          },
+          "fields":["channel", "orgName"],
+          "limit": this.organizationDefaultLoadCount,
+          "offset": offsetValue
+      }
+    }
+
+    if (searchText && searchText.trim() !== '') {
+      request.request.query = searchText;
+    }
+    return request
+  }
+
+  getAllDeptData(onLoad:boolean, offsetValue: number,searchText:string): void {
+    this.userProfileService.getOrganizationData(this.getOrgRequest(onLoad, offsetValue, searchText))
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
-        this.departmentData = res.sort((a: any, b: any) => {
-          return a.toLowerCase().localeCompare(b.toLowerCase())
-        })
+        // Check if we have valid response data
+      if (res && res.result && res.result.response && res.result.response.content && res.result.response.content.length) {
+        // If onLoad is true, replace the existing data
+        if (onLoad) {
+          this.organizationData = [...res.result.response.content];
+          this.organizationDataTotalCount =res.result.response.count
+        } else {
+          // Otherwise append the new data
+          this.organizationData = [...this.organizationData, ...res.result.response.content];
+        }
+        
+        // Update the filtered data for display
+        this.deptFilterData = this.organizationData;
+        
+      } else {
+        if(onLoad) {
+          this.organizationData = []
+          this.deptFilterData = []
+        }
+      }
+        this.isLoadingMoreOrganization = false
       },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('orgFetchDataFailed'))
@@ -201,7 +222,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   assignValue(): void {
     if (this.onLoad) {
-      this.deptFilterData = this.departmentData
+      this.deptFilterData = this.organizationData
       this.onLoad = false
     }
   }
@@ -237,24 +258,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
 
-  checkCurrentOrganizationPresent() {
-    const currentOrg = this.transferRequestForm.get('organization')!.value;
-    if (currentOrg) {
-      const exists = this.deptFilterData.some(org => org.toLowerCase() === currentOrg.toLowerCase());
-      if (!exists) {
-        const newOrg = {
-          name: currentOrg,
-          id: 'custom-' + Date.now(),
-          status: 'Active',
-        };
-        if (this.deptFilterData.length >= this.organizationListLoadCount) {
-          this.deptFilterData.pop();
-        }
-        this.deptFilterData.unshift(newOrg.name);
-      }
-    }
-  }
-
   setupScrollListener(opened: boolean): void {
     if (opened) {
       if (this.transferRequestForm.get('searchDesignation')) {
@@ -284,34 +287,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  setupOrgScrollListener(opened: boolean): void {
-    if (opened) {
-      if (this.transferRequestForm.get('searchOrganization')) {
-        this.transferRequestForm.get('searchOrganization')!.setValue('');
-      }
-      this.organizationFilterEnable = false
-      this.organizationListLoadCount = this.organizationDefaultLoadCount; // Reset the load count
-      this.deptFilterData = this.departmentData.slice(0, this.organizationDefaultLoadCount);
-
-      this.checkCurrentOrganizationPresent()
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-org-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-          const panel = document.querySelector('.mat-select-panel');
-          if (panel) {
-            // Add scroll event listener to the panel
-            panel.addEventListener('scroll', this.onOrgSelectScroll.bind(this));
-          }
-        
-      }, 100);
-    }
-  }
+  
 
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
@@ -337,27 +313,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  onOrgSelectScroll(event: any): void { 
-    const element = event.target;
-    if(!this.organizationFilterEnable){
-      // Check if user has scrolled to the bottom (with a small threshold)
-      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
-        // Only load more if not already loading and if there are potentially more items
-        if (!this.isLoadingMoreOrganization && this.departmentData.length > this.deptFilterData.length) {
-          this.isLoadingMoreOrganization = true;
-          
-          // Increase the load count by designationDefaultLoadCount
-          this.organizationListLoadCount += this.organizationDefaultLoadCount;
-          // Update the filtered list with more items
-          setTimeout(() => {
-            this.deptFilterData = this.departmentData.slice(0, this.organizationListLoadCount)
-            this.checkCurrentOrganizationPresent()
-            this.isLoadingMoreOrganization = false;
-          }, 500); // Small timeout to simulate loading and prevent multiple triggers
-        }
-      }
-    }
-  }
+
 
   onDesignationDropdownClosed(): void {
     // Keep the designation value but clear the search input
@@ -376,20 +332,63 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  onOrgDropdownClosed(): void {
-    // Keep the designation value but clear the search input
-    const currentOrg = this.transferRequestForm.get('organization')!.value;
-    setTimeout(() => {
-      if (this.transferRequestForm.get('searchOrganization')) {
+  onOrgSelectionChange(org: any) {
+    if (org && org.channel) {
+      this.transferRequestForm.controls.organization.setValue(org.channel)
+    }
+  }
+  setupOrgScrollListener(opened: boolean): void {
+    if (opened) {
+      if (this.transferRequestForm.get('searchOrganization')?.value) {
         this.transferRequestForm.get('searchOrganization')!.setValue('');
+      } else {
+        this.getAllDeptData(true, 0, '');
       }
-      // Ensure the designation value remains selected
-      if (currentOrg) {
-        const organizationControl = this.transferRequestForm.get('organization');
-        if (organizationControl) {
-          organizationControl.setValue(currentOrg);
+      // this.organizationFilterEnable = false
+      this.organizationListLoadCount = this.organizationDefaultLoadCount; 
+
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-org-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
         }
+      }, 100);
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+          const panel = document.querySelector('.mat-select-panel');
+          if (panel) {
+            // Add scroll event listener to the panel
+            panel.addEventListener('scroll', this.onOrgSelectScroll.bind(this));
+          }
+        
+      }, 100);
+    }
+  }
+
+  onOrgSelectScroll(event: any): void { 
+    const element = event.target;
+    
+    // Check if user has scrolled to the bottom (with a small threshold)
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+      // Only load more if:
+      // 1. Not already loading
+      // 2. We haven't reached the total available count yet
+      if (!this.isLoadingMoreOrganization && this.organizationData.length < this.organizationDataTotalCount) {
+        this.isLoadingMoreOrganization = true;
+        
+        // Calculate the next offset
+        const nextOffset = this.organizationData.length;
+        
+        // Call API to get more data
+        this.getAllDeptData(false, nextOffset, this.transferRequestForm.get('searchOrganization')?.value || '');
+        
+        // Increase the load count
+        this.organizationListLoadCount += this.organizationDefaultLoadCount;
       }
-    }, 100);
+    }
+  }
+  trackByFn(_index: number, item: any): number {
+    return item.channel
   }
 }
