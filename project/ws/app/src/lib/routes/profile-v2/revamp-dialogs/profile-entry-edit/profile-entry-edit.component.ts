@@ -329,6 +329,17 @@ export class ProfileEntryEditComponent implements OnInit {
       url: [_.get(this.entryDetails, 'url', '')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
+    if(_.get(this.entryDetails, 'fileName', '')) {
+      const urlControl = this.entryForm.controls.url;
+      urlControl.patchValue('')
+      urlControl.disable()
+      urlControl.updateValueAndValidity()
+      this.disableUpload = false;
+      this.disableUrl = true;
+    } else if (_.get(this.entryDetails, 'url', '')) {
+      this.disableUpload = true;
+      this.disableUrl = false;
+    }
     this.valueChanges();
   }
 

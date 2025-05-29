@@ -81,8 +81,9 @@
   }
 
   .extend-description {
-    overflow: auto !important;
-    height: 100px !important;
+    // overflow: auto !important;
+    // height: 100px !important;
+    height: fit-content !important;
   }
 
   .view-more {

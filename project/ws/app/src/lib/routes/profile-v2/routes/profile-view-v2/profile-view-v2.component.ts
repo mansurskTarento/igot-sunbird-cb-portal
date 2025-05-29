@@ -126,7 +126,7 @@ export class ProfileViewV2Component implements OnInit {
 
   peopleSuggestionsList: any[] = []
   communitySuggestionsList: any[] = []
-  aboutme = 'Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu metus eget aliquet. Proin in sem non nulla vehicula venenatis lacinia vitae justo. Etiam a commodo magna. Nulla aliquet lacus id mi euismod ultricies quis et odio. Proin porta nisi ultrices risus accumsan ornare. Donec interdum eu '
+  aboutme = ''
   showMoreAbout = false
   primaryDetails: any;
   //#endregion
@@ -161,7 +161,6 @@ export class ProfileViewV2Component implements OnInit {
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.patchConnections(_.get(data, 'recamendations.data', []))
       this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
-      console.log('data', data)
     })
   }
 
@@ -198,6 +197,7 @@ export class ProfileViewV2Component implements OnInit {
 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
     }
+    this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
   }
 
   getInitials(): void {
@@ -553,30 +553,7 @@ export class ProfileViewV2Component implements OnInit {
           hasChanges = true;
         }
       });
-
-      // // Handle additional fields that might not be in the API response
-      // const additionalFields = [
-      //   'dateOfRetirement',
-      //   'organizedService',
-      //   'civilServiceType',
-      //   'services',
-      //   'cadre',
-      //   'batch',
-      //   'cadreControllingAuthority'
-      // ];
-
-      // additionalFields.forEach(field => {
-      //   // Since these fields aren't in the API response, we'll assume they're new/changed
-      //   // You can add specific logic here if needed
-      //   if (this.primaryDetails[field] !== undefined && this.primaryDetails[field] !== '') {
-      //     formBody.request[field] = this.primaryDetails[field];
-      //     hasChanges = true;
-      //   }
-      // });
-
-      // Only call update API if there are actual changes
       if (hasChanges) {
-        console.log('Form body with changes:', formBody);
         this.updateProfileDetails(formBody);
       }
     }

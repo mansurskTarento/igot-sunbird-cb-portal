@@ -149,6 +149,11 @@
   
 }
 
+.remove-file {
+  cursor: pointer;
+  pointer-events: all;
+}
+
 .disableField {
   opacity: 0.5;
   pointer-events: none;
