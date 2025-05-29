@@ -21,7 +21,7 @@
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
     <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
-      [ngClass]="{'disabledClass': !canSaveChanges}">Save
+      [ngClass]="{'disableBtn': !canSaveChanges}">Save
       Changes</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
@@ -60,7 +60,7 @@
 
       <div class="form-fields-container">
         <div class="flex flex-col profile-control">
-          <div class="lable">State</div>
+          <div class="lable">Office State</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="state" (selectionChange)="getDistrictsList($event.value)"
               placeholder="Select State">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="flex flex-col profile-control">
-          <div class="lable">District</div>
+          <div class="lable">Office District</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="district" placeholder="Select District">
               <ng-container *ngFor="let district of districtsList">
@@ -135,9 +135,9 @@
         <div class="lable">You can write about your years of experience, Skills, Current job role and Responsibilities.
         </div>
         <mat-form-field appearance="outline" class="full-width">
-          <textarea matInput formControlName="about" rows="6"></textarea>
+          <textarea matInput formControlName="aboutme" rows="6"></textarea>
           <mat-hint align="end" *ngIf="profileForm.get('about')?.value">
-            {{ profileForm.get('about')?.value.length }}/2000
+            {{ profileForm.get('aboutme')?.value.length }}/2000
           </mat-hint>
         </mat-form-field>
       </div>

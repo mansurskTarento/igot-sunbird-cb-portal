@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'ws-app-community-suggestions',
@@ -10,7 +12,13 @@ export class CommunitySuggestionsComponent {
     @Input() communitySuggestionsList: any[] = [];
     //#endregion
 
+    constructor(
+      private router: Router
+    ) {}
+
     viewCommunity(community: any): void {
-      if(community) {}
+      if(community && community.communityId) {
+        this.router.navigate(['/app/discussion-forum-v2/community/', community.communityId]);
+      }
     }
 }

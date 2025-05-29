@@ -21,7 +21,7 @@ export class CommunityResolverService {
       },
       requestedFields: [],
       pageNumber: 0,
-      pageSize: 0,
+      pageSize: 3,
       facets: [
         "topicName"
       ]

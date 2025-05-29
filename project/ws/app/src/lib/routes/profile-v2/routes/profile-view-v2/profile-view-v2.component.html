@@ -110,12 +110,14 @@
             <div class="section-header">About me</div>
             <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
           </div>
-          <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
-            {{aboutme}}
-          </div>
-          <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-            {{showMoreAbout ? 'view less' : 'view more'}}
-          </div>
+          <ng-container *ngIf="aboutme; else emptyGif">
+            <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
+              {{aboutme}}
+            </div>
+            <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+              {{showMoreAbout ? 'view less' : 'view more'}}
+            </div>
+          </ng-container>
         </div>
 
         <div id="basic-details" class="user-details">

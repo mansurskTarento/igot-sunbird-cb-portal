@@ -280,9 +280,10 @@
   margin-top: 0.5rem;
 }
 
-.disabledClass {
-  pointer-events: none;
-  opacity: 0.5;
+.disableBtn {
+  pointer-events: none !important;
+  // opacity: 0.5;
+  background-color: #999999 !important;
 }
 
 // Responsive adjustments

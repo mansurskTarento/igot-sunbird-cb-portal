@@ -110,11 +110,15 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   //#region (profile)
   private createProfileForm(): void {
+    this.profileImage = _.get(this.profileDetails, 'profileImage', null);
     this.profileForm = this.fb.group({
       firstname: [_.get(this.profileDetails, 'firstname', ''), Validators.required],
       state: [_.get(this.profileDetails, 'state', ''), Validators.required],
       district: [_.get(this.profileDetails, 'district', ''), Validators.required]
     });
+    setTimeout(() => {
+      this.initilisationInProgress = false;
+    }, 10)
   }
 
   getInitials(): void {
@@ -199,12 +203,18 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       designation: [_.get(this.profileDetails, 'designation', ''), Validators.required],
       searchDesignation: [_.get(this.profileDetails, 'searchDesignation', ''), Validators.required],
     });
+    setTimeout(() => {
+      this.initilisationInProgress = false;
+    }, 10)
   }
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
-      about: [_.get(this.profileDetails, 'about', '')]
+      aboutme: [_.get(this.profileDetails, 'aboutme', '')]
     });
+    setTimeout(() => {
+      this.initilisationInProgress = false;
+    }, 10)
   }
 
   //#region (other details)
@@ -377,7 +387,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           } else {
             this.verifyMobile = false
           }
-        } else if (!value) {
+        } else if (!value || value === _.get(this.profileDetails, 'mobile', '')) {
           this.verifyMobile = false;
         }
       })
