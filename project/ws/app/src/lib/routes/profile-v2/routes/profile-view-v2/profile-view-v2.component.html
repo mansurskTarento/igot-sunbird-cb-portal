@@ -76,20 +76,20 @@
               </button>
               <ng-container *ngIf="enableWTR; else transferRequest">
                 <button mat-menu-item (click)="handleWithdrawTransferRequest()">
-                  <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span>
+                  <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span>
                 </button>
               </ng-container>
               <ng-template #transferRequest>
                 <ng-container *ngIf="!enableWR">
                   <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="below"
                           matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO.">
-                      <span>{{ 'profileInfo.makeTransferRequest' | translate }}</span>
+                      <span>{{ 'profileInfo?.makeTransferRequest' | translate }}</span>
                   </button>
                 </ng-container>
                 <ng-container *ngIf="enableWR">
                   <button mat-menu-item class="disable-button" matTooltipPosition="below"
-                          matTooltip="{{ 'profileInfo.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
-                      <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span>
+                          matTooltip="{{ 'profileInfo?.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
+                      <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span>
                   </button>
                 </ng-container>
               </ng-template>
