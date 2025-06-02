@@ -1,6 +1,6 @@
 <div class="people-suggestions-container">
   <mat-card *ngFor="let person of peopleSuggestionsList" class="person-card mb-4 flex flex-col items-center">
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4 pointers" (click)="goToUserProfile(person)">
       <div >
         <ng-container *ngIf="profileImageUrl; else nameInitialsView">
           <img [src]="person.profileImageUrl" alt="Profile" class="profile-image">

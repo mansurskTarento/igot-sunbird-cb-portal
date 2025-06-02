@@ -298,6 +298,22 @@
   height: 100px;
 }
 
+.mentor-profile {
+  background-color: #1B4CA1;
+  width: 125px;
+  height: 20px;
+  border-radius: 4px;
+  /* stylelint-disable */
+  font: 400 10px Lato;
+  /* stylelint-enable */
+  color: #FFFFFF;
+}
+
+.disable-button {
+  opacity: 0.5;
+  pointer-events: none; 
+}
+
 @media (max-width: 768px) {
   .user-details {
     border-radius: 0px;

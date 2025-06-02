@@ -11,7 +11,9 @@
     <div class="education-card flex flex-col gap-0">
       <div class="flex justify-between">
         <div class="designation">{{educationalQualification?.degree}}</div>
-        <mat-icon class="edit-icon" (click)="openEditDialog(educationalQualification)">edit</mat-icon>
+        <ng-container *ngIf="isCurrentUser">
+          <mat-icon class="edit-icon" (click)="openEditDialog(educationalQualification)">edit</mat-icon>
+        </ng-container>
       </div>
       <div class="education-details">{{educationalQualification?.fieldOfStudy ? educationalQualification?.fieldOfStudy + ', ' : '' }} {{educationalQualification?.institutionName}}</div>
       <div class="education-period">{{educationalQualification?.startYear}} - {{educationalQualification?.endYear}}</div>

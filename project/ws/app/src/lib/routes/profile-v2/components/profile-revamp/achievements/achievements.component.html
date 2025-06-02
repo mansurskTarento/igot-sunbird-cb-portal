@@ -1,9 +1,19 @@
+<ng-container *ngIf="isPopup">
+  <div class="popup-header flex justify-between items-center">
+    <div class="header-title">Educational Qualifications</div>
+    <button mat-icon-button class="close-button" (click)="closePopup()">
+      <mat-icon class="close-icon">close</mat-icon>
+    </button>
+  </div>
+</ng-container>
 <div class="flex flex-col gap-2">
     <ng-container *ngFor="let achievement of achievementsList">
       <div class="achievement-card flex flex-col gap-1">
         <div class="flex justify-between items-center certificate-name">
           {{achievement?.title}}
-          <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
+          <ng-container *ngIf="isCurrentUser">
+            <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
+          </ng-container>
         </div>
         <div class="achievement-details"> {{achievement?.issuedOrganisation}}</div>
         <div class="achievement-details"> {{achievement?.issuedDate | date:'dd MMM, yyyy'}}</div>

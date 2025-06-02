@@ -10,7 +10,7 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
-  GET_RECOMMENDED_USERS : '/apis/protected/v8/connections/v2/connections/recommended',
+  GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v2/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
@@ -22,6 +22,7 @@ const API_END_POINTS = {
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
   GET_DESIGNATIONS: '/apis/proxies/v8/user/v1/positions', // old
+  GET_GROUPS: '/api/user/v1/groups', //OLD
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
   GET_DEGREES_LIST: 'apis/proxies/v8/masterdata/list/degrees',
@@ -33,7 +34,6 @@ const API_END_POINTS = {
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
   UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update',
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
-
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
 
 }
@@ -117,8 +117,12 @@ export class ProfileV2RevampService {
     return this.http.post<any>(API_END_POINTS.ORG_SEARCH, formBody)
   }
   getDesignations(_req: any): Observable<any> {
-      return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
-    }
+    return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
+  }
+
+  getGroups(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_GROUPS)
+  }
 
   getStatesList(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_STATES_LIST)
@@ -164,7 +168,15 @@ export class ProfileV2RevampService {
   }
 
   getWhiteListDomain(): Observable<any> {
-      return this.http.get<any>(API_END_POINTS.approvedDomains)
+    return this.http.get<any>(API_END_POINTS.approvedDomains)
+  }
+
+  fetchApprovalDetails(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.APPROVAL_DETAILS, requestBody)
+  }
+
+  withDrawRequest(payload: any): Observable<any> {
+      return this.http.post<any>(API_END_POINTS.WITHDRAW_REQUEST, payload)
     }
 
   handleTranslateTo(menuName: string): string {

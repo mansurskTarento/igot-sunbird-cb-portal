@@ -197,6 +197,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   //#endregion (end of profile image)
   //#endregion (profile)
 
+
+  //#region (primary details)
   private createPrimaryDetailsForm(): void {
     this.profileForm = this.fb.group({
       group: [_.get(this.profileDetails, 'group', ''), Validators.required],
@@ -207,6 +209,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.initilisationInProgress = false;
     }, 10)
   }
+
+  
+
+  // #endregion (end of primary details)
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({

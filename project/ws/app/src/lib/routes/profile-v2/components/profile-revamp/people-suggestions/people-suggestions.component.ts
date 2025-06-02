@@ -2,6 +2,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 import * as _ from 'lodash';
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ws-app-people-suggestions',
@@ -17,6 +18,7 @@ export class PeopleSuggestionsComponent implements OnChanges {
   constructor(
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
+    private router: Router,
   ) { }
 
   ngOnChanges(): void {
@@ -42,7 +44,6 @@ export class PeopleSuggestionsComponent implements OnChanges {
 
   sendConnectionRequest(person: any): void {
     if(person) {
-      debugger
       const formBody = {
         connectionId: person.id || person.identifier || person.wid,
         userIdFrom: _.get(this.currentUser, 'userId', ''),
@@ -62,6 +63,11 @@ export class PeopleSuggestionsComponent implements OnChanges {
         }
       });
     }
+  }
+
+  goToUserProfile(person: any) {
+    const userId = person.userId || person.id || person.wid
+    this.router.navigate(['/app/person-profile', (userId)], { fragment: 'profileInfo' })
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

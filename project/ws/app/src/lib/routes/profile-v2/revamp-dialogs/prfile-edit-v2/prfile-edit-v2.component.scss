@@ -146,6 +146,11 @@
   overflow: auto;
 }
 
+.profile-top-editor-form {
+  height: calc(100vh - 460px);
+  overflow: auto;
+}
+
 .form-fields-container {
   display: grid;
   grid-template-columns: 1fr 1fr;

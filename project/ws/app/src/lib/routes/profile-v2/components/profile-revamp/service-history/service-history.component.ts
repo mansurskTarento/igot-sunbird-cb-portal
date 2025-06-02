@@ -15,6 +15,7 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)
   @Input() serviceHistoryList: serviceHistory[] = []
+  @Input() isCurrentUser = false;
   @Output() openProfileEntryEditDialog = new EventEmitter();
 
   userId: string = '';
