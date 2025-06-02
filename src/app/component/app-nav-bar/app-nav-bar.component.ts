@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { Router, NavigationStart, NavigationEnd } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -11,13 +11,14 @@ import { NotificationsService } from 'src/app/services/notifications.service'
 import { UrlService } from 'src/app/shared/url.service'
 import * as _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
+import { Subscription } from 'rxjs'
 
 @Component({
   selector: 'ws-app-nav-bar',
   templateUrl: './app-nav-bar.component.html',
   styleUrls: ['./app-nav-bar.component.scss'],
 })
-export class AppNavBarComponent implements OnInit, OnChanges {
+export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mode: 'top' | 'bottom' = 'top'
   @Input() headerFooterConfigData: any
   hideKPOnNav = false
@@ -64,6 +65,7 @@ export class AppNavBarComponent implements OnInit, OnChanges {
   disableMenu = false
   showLangDropdown = true
   notificationsCount: number = 0
+  private myNotificationsSubscription!: Subscription
   constructor(
     private domSanitizer: DomSanitizer,
     private configSvc: ConfigurationsService,
@@ -211,8 +213,10 @@ export class AppNavBarComponent implements OnInit, OnChanges {
     } else {
       this.disableMenu = false
     }
-    this.getMyCount()
-    this.libNotificationsService._unreadCount.subscribe(() => {
+    if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+      this.getMyCount()
+    }
+    this.myNotificationsSubscription = this.libNotificationsService._unreadCount.subscribe(() => {
       this.getMyCount()
     })
   }
@@ -434,6 +438,12 @@ export class AppNavBarComponent implements OnInit, OnChanges {
     this.userSvc.fetchUserBatchList(userId).subscribe(_res => {
 
     })
+  }
+
+  ngOnDestroy() {
+    if (this.myNotificationsSubscription) {
+      this.myNotificationsSubscription.unsubscribe()
+    }
   }
 
 }
