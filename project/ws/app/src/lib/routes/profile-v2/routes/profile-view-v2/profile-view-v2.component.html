@@ -12,7 +12,7 @@
         </ng-template>
         <ng-container *ngIf="isCurrentUser">
           <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
-            <mat-icon class="cover-photo-menu-icon" >more_vert</mat-icon>
+            <mat-icon class="cover-photo-menu-icon">more_vert</mat-icon>
           </div>
           <mat-menu #coverPhotoMenu="matMenu">
             <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
@@ -27,14 +27,15 @@
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
           <div class="progress-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100" height="100">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+              viewBox="37 -5 110 120" width="100" height="100">
               <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
               <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
             </svg>
             <div class="user-img">
               <div class="image-container">
                 <ng-container *ngIf="profileImageUrl; else nameInitialsView">
-                    <img [src]="profileImageUrl" alt="Profile" class="profile-image">
+                  <img [src]="profileImageUrl" alt="Profile" class="profile-image">
                 </ng-container>
                 <ng-template #nameInitialsView>
                   <div class="flex items-center justify-center profile-circle">
@@ -47,7 +48,7 @@
           </div>
 
           <div class="flex flex-col profile-details">
-            <div class="flex gap-2"> 
+            <div class="flex gap-2">
               <span class="profile-name">{{primaryDetails?.firstname}} </span>
               <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
               <span class="user-name">(user name)</span>
@@ -61,35 +62,40 @@
               </div>
             </ng-container>
             <ng-container *ngIf="isMentor">
-              <button mat-raised-button class="mentor-profile" i18n (click)="viewMentorProfile()">View My Mentor Profile</button>
+              <button mat-raised-button class="mentor-profile" i18n (click)="viewMentorProfile()">View My Mentor
+                Profile</button>
             </ng-container>
           </div>
         </div>
         <ng-container *ngIf="isCurrentUser">
           <div class="flex flex-col justify-between items-end">
             <div class="flex">
-              <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu" [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
+              <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
+                [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
             </div>
             <mat-menu #profileMenu="matMenu">
               <button mat-menu-item (click)="openProfileEditDialog('Profile')">
-                  <span>Edit Profile</span>
+                <span>Edit Profile</span>
               </button>
               <ng-container *ngIf="enableWTR; else transferRequest">
                 <button mat-menu-item (click)="handleWithdrawTransferRequest()">
-                  <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span>
+                  <!-- <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span> -->
+                  <span>With draw Transfer Request</span>
                 </button>
               </ng-container>
               <ng-template #transferRequest>
                 <ng-container *ngIf="!enableWR">
                   <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="below"
-                          matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO.">
-                      <span>{{ 'profileInfo?.makeTransferRequest' | translate }}</span>
+                    matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO.">
+                    <!-- <span>{{ 'profileInfo?.makeTransferRequest' | translate }}</span> -->
+                    <span>Make Transfer Request</span>
                   </button>
                 </ng-container>
                 <ng-container *ngIf="enableWR">
                   <button mat-menu-item class="disable-button" matTooltipPosition="below"
-                          matTooltip="{{ 'profileInfo?.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
-                      <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span>
+                    matTooltip="{{ 'profileInfo?.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
+                    <!-- <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span> -->
+                    <span>Withdraw Transfer Request</span>
                   </button>
                 </ng-container>
               </ng-template>
@@ -99,7 +105,7 @@
       </div>
       <!-- #endregion (profile details ) -->
     </div>
-    
+
     <div>
       <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
     </div>
@@ -108,7 +114,8 @@
       <!-- #region (left routing) -->
       <div class="hidden md:flex flex-col gap-3 left-routing-card">
         <ng-container *ngFor="let profileRoute of profileRoutes">
-          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)" [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
+          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)"
+            [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
             <ng-container *ngIf="profileRoute?.url; else routeIcon">
               <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
             </ng-container>
@@ -121,100 +128,206 @@
       </div>
       <!-- #endregion (left routing) -->
 
-      <!-- #region (user details ) -->
-      <div class="flex flex-col gap-4 w-full">
-        <div id="about-me" class="user-details">
-          <div class="flex justify-between items-center mb-2">
-            <div class="section-header">About me</div>
-            <ng-container *ngIf="isCurrentUser">
-              <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
-            </ng-container>
-          </div>
-          <ng-container *ngIf="aboutme; else emptyGif">
-            <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
-              {{aboutme}}
-            </div>
-            <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-              {{showMoreAbout ? 'view less' : 'view more'}}
-            </div>
-          </ng-container>
-        </div>
+      <mat-tab-group class="profile-tabs hide-for-desktop flex" [selectedIndex]="selectedTabIndex" id="matTabGroup">
+        <mat-tab label="Profile">
+          <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
+        </mat-tab>
+        <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
+          <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
+        </mat-tab>
+      </mat-tab-group>
 
-        <div id="basic-details" class="user-details">
-          <ws-app-profile-primary-details 
-            [primaryDetails]="primaryDetails" 
-            [unVerifiedObj]="unVerifiedObj" 
-            [rejectedFields]="rejectedFields"
-            [isCurrentUser]="isCurrentUser"
-            [enableWTR]="enableWTR"
-            [enableWR]="enableWR"
-            [approvalPendingFields]="approvalPendingFields"
-            (openProfileEditDialog)="openProfileEditDialog($event)"
-            (getApprovalStatus)="getSendApprovalStatus()"></ws-app-profile-primary-details>
-        </div>
-
-        <div id="service-history" class="user-details">
-          <div class="flex justify-between items-center mb-2">
-            <div class="section-header">Service History</div>
-            <ng-container *ngIf="isCurrentUser">
-              <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
-            </ng-container>
-          </div>
-          <ng-container *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
-            <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList" [isCurrentUser]="isCurrentUser"
-            (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
-            <ng-container *ngIf="serviceHistoryDetails?.count > 2">
-              <div class="flex flex-col justify-between items-center">
-                <div class="dividing-line"></div>
-                <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
-              </div>
-            </ng-container>
-          </ng-container>
-        </div>
-
-        <!-- <div class="user-details">
-          <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
-        </div> -->
-
-        <div id="educational-qualifications" class="user-details">
-          <div class="flex justify-between items-center mb-2">
-            <div class="section-header">Educational Qualifications</div>
-            <ng-container *ngIf="isCurrentUser">
-              <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
-            </ng-container>
-          </div>
-          <ng-container *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
-            <ws-app-educational-qualifications [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications" 
-            [isCurrentUser]="isCurrentUser" (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
-            <ng-container *ngIf="educationalQualificationDetails?.count > 2">
-              <div class="flex flex-col justify-between items-center">
-                <div class="dividing-line"></div>
-                <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All</div>
-              </div>
-            </ng-container>
-          </ng-container>
-        </div>
-
-        <div id="achievements" class="user-details">
-          <div class="flex justify-between items-center mb-2">
-            <div class="section-header">Achievements</div>
-            <ng-container *ngIf="isCurrentUser">
-              <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
-            </ng-container>
-          </div>
-          <ng-container *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
-            <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList" [isCurrentUser]="isCurrentUser"
-            (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
-            <ng-container *ngIf="achievementsDetails?.count > 2">
-              <div class="flex flex-col justify-between items-center">
-                <div class="dividing-line"></div>
-                <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
-              </div>
-            </ng-container>
-          </ng-container>
-        </div>
+      <div class="hidden md:flex">
+        <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
       </div>
+      <!-- #region (user details ) -->
+      <ng-template #profileSection>
+        <div class="flex flex-col gap-4 w-full">
+          <div id="about-me" class="user-details">
+            <div class="flex justify-between items-center mb-2">
+              <div class="section-header">About me</div>
+              <ng-container *ngIf="isCurrentUser">
+                <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+              </ng-container>
+            </div>
+            <ng-container *ngIf="aboutme; else emptyGif">
+              <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
+                {{aboutme}}
+              </div>
+              <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                {{showMoreAbout ? 'view less' : 'view more'}}
+              </div>
+            </ng-container>
+          </div>
+
+          <div id="basic-details" class="user-details">
+            <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
+              [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
+              [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
+              (openProfileEditDialog)="openProfileEditDialog($event)"
+              (getApprovalStatus)="getSendApprovalStatus()"></ws-app-profile-primary-details>
+          </div>
+
+          <div id="service-history" class="user-details">
+            <div class="flex justify-between items-center mb-2">
+              <div class="section-header">Service History</div>
+              <ng-container *ngIf="isCurrentUser">
+                <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
+              </ng-container>
+            </div>
+            <ng-container
+              *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
+              <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
+                [isCurrentUser]="isCurrentUser"
+                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
+              <ng-container *ngIf="serviceHistoryDetails?.count > 2">
+                <div class="flex flex-col justify-between items-center">
+                  <div class="dividing-line"></div>
+                  <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <!-- <div class="user-details">
+            <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
+          </div> -->
+
+          <div id="educational-qualifications" class="user-details">
+            <div class="flex justify-between items-center mb-2">
+              <div class="section-header">Educational Qualifications</div>
+              <ng-container *ngIf="isCurrentUser">
+                <mat-icon class="add-icon"
+                  (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
+              </ng-container>
+            </div>
+            <ng-container
+              *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
+              <ws-app-educational-qualifications
+                [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
+                [isCurrentUser]="isCurrentUser"
+                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
+              <ng-container *ngIf="educationalQualificationDetails?.count > 2">
+                <div class="flex flex-col justify-between items-center">
+                  <div class="dividing-line"></div>
+                  <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <div id="achievements" class="user-details">
+            <div class="flex justify-between items-center mb-2">
+              <div class="section-header">Achievements</div>
+              <ng-container *ngIf="isCurrentUser">
+                <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+              </ng-container>
+            </div>
+            <ng-container
+              *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
+              <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
+                [isCurrentUser]="isCurrentUser"
+                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
+              <ng-container *ngIf="achievementsDetails?.count > 2">
+                <div class="flex flex-col justify-between items-center">
+                  <div class="dividing-line"></div>
+                  <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
       <!-- #endregion (user details ) -->
+
+      <!-- #region (activity section ) -->
+      <ng-template #activitySection>
+        <div class="flex flex-col gap-4 p-2">
+          <!-- <div class="flex flex-row gap-4 horizontal-strip mt-4">
+            <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"
+              [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}
+            </div>
+            <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">
+              {{ 'profileInfo.myKarmaPoints' | translate }}</div>
+          </div> -->
+
+          <div class="tab-heading mt-4">{{ 'profileInfo.yourStats' | translate }}</div>
+
+          <div class="profile-section">
+            <ws-widget-profile-card-stats [isMobile]="true" (expandCollapse)="expandCollapse($event)"
+              [insightsData]="insightsData" [profileData]="pageData.profileCard"
+              [isLoading]="insightsDataLoading"></ws-widget-profile-card-stats>
+          </div>
+
+          <div class="flex" id="my-leaderboard-section">
+            <ws-widget-user-leaderboard></ws-widget-user-leaderboard>
+          </div>
+
+          <div id="my-weekly-claps">
+            <ws-widget-weekly-claps [weeklyData]="pageData.weeklyClaps" [insightsData]="insightsData"
+              [isLoading]="insightsDataLoading"></ws-widget-weekly-claps>
+          </div>
+
+          <!-- <div class="assessments-wrapper" *ngIf="assessmentsData">
+            <div class="assessments-info-wrapper">
+              <div class="flex justify-between">
+                <div class="flex flex-col">
+                  <div class="flex flex-between flex-middle">
+                    <p class="flex-align-start upcoming-assessment-title flex flex-middle margin-remove">{{
+                      'profileInfo.upcomingAssessments' | translate }}
+                      <img class="margin-left-s cursor-pointer" width="20px" height="20px"
+                        src="assets/icons/home/help_icon.svg" />
+                    </p>
+                  </div>
+                  <button
+                    class="bg-blue-700 text-sm font-semibold text-white py-3 px-5 rounded-full border-none cursor-pointer mt-4 mb-2 tracking-wide"
+                    [routerLink]="['/app/discussion-forum']">{{ 'profileInfo.start' | translate }}</button>
+                </div>
+                <div class="flex justify-center system-icon">
+                  <mat-icon class="custom-size">desktop_mac</mat-icon>
+                </div>
+              </div>
+            </div>
+            <div class="cred-container">
+              <div class="flex flex-middle flex-between">
+                <div class="flex flex-middle">
+                  <span class="cred-title">{{ credMessage }}</span>
+                </div>
+                <div class="flex">
+                  <mat-icon class="ws-mat-default-text cursor-pointer" (click)="toggleCreds()">{{showCreds ?
+                    'keyboard_arrow_up'
+                    : 'keyboard_arrow_down'}}</mat-icon>
+                </div>
+              </div>
+              <div class="my-credentials p-3" *ngIf="showCreds">
+                <div class="flex flex-middle" style="padding: 5px 0px;">
+                  <span class="pr-5 font-semibold">{{ 'profileInfo.userName' | translate }}</span>
+                  <div class="flex flex-middle copy-items">
+                    <span class="pr-2 custom-width">{{ assessmentsData?.userName }}</span>
+                    <span class=""><mat-icon class="cursor-pointer copy-icon"
+                        (click)="copyToClipboard('Venkat')">content_copy</mat-icon></span>
+                  </div>
+                </div>
+                <div class="flex flex-middle" style="padding: 5px 0px;">
+                  <span class="pr-6 font-semibold">{{ 'profileInfo.password' | translate }}</span>
+                  <div class="flex flex-middle copy-items">
+                    <span class="pr-2  custom-width">{{ assessmentsData?.password }}</span>
+                    <span class=""><mat-icon class="cursor-pointer copy-icon"
+                        (click)="copyToClipboard('Test@1234')">content_copy</mat-icon></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- <div class="flex">
+            <ws-widget-pending-request [pendingRequestData]="pendingRequestData"
+              [isLoading]="pendingRequestSkeleton"></ws-widget-pending-request>
+          </div> -->
+        </div>
+      </ng-template>
+      <!-- #endregion (activity section ) -->
     </div>
   </div>
   <!-- #endregion (left profile )-->
@@ -226,7 +339,8 @@
         People You May Know
       </div>
       <div>
-        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList" [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
+          [currentUser]="profesionalDetails"></ws-app-people-suggestions>
       </div>
     </div>
 
@@ -235,7 +349,8 @@
         Recommended Communities
       </div>
       <div>
-        <ws-app-community-suggestions [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+        <ws-app-community-suggestions
+          [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
       </div>
     </div>
   </div>

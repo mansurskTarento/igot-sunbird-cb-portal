@@ -8,8 +8,9 @@
     <ng-container *ngIf="disablePrimaryDetailsEdit">
       <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'" [matTooltip]="'profileInfo?.pdTooltipWarnMsg' | translate">edit</mat-icon>
     </ng-container>
-    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">{{
-      'profileInfo?.withdrawRequest' | translate }}
+    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">
+      <!-- {{'profileInfo?.withdrawRequest' | translate }} -->
+       Withdraw Request
     </div>
   </div>
   <div class="details-grid">
@@ -39,7 +40,8 @@
             <div class="w-full flex justify-end items-center">
               <div>
                 <div mat-icon-button class="flex gap-2 items-center viewApprovalStatuas w-full">
-                  <span>{{ 'profileInfo?.viewApprovalStatus' | translate }}</span>
+                  <!-- <span>{{ 'profileInfo?.viewApprovalStatus' | translate }}</span> -->
+                  <span>View Approval Status</span>
                   <mat-icon>{{panelOpenState ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
                 </div>
               </div>
@@ -47,33 +49,39 @@
           </mat-expansion-panel-header>
           <div>
             <div class="approvalStatusHeader">
-              {{ 'profileInfo?.approvalStatus' | translate }}
+              <!-- {{ 'profileInfo?.approvalStatus' | translate }} -->
+              Approval Status
             </div>
             <ng-container *ngIf="unVerifiedObj?.group || rejectedFields?.group">
               <div class="flex justify-between items-center px-5 py-3">
                 <ng-container *ngIf="showGroupPending">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div> -->
+                    <div class="statusLable">Group</div>
                     <div class="approvalStausValue">{{unVerifiedObj?.group}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
+                      translate }}</div> -->
+                    <div class="approvalStatusPending flex justify-center items-center">Pending</div>
                   </div>
                   <div class="w-full flex justify-center" style="width: 200px;">-</div>
                 </ng-container>
                 <ng-container *ngIf="showGroupRejection">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div> -->
+                    <div class="statusLable">Group</div>
                     <div class="approvalStausValue">{{rejectedFields?.group}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
+                      translate }}</div> -->
+                    <div class="approvalStatusRejected flex justify-center items-center">Rejected</div>
                   </div>
                   <div mat-icon-button (click)="viewReason(rejectedFields?.groupRejectionComments)"
                     class="flex gap-2 items-center viewReason">
-                    <span>{{ 'profileInfo?.viewReason' | translate }}</span>
+                    <!-- <span>{{ 'profileInfo?.viewReason' | translate }}</span> -->
+                    <span>View Reason</span>
                   </div>
                 </ng-container>
               </div>
@@ -82,27 +90,32 @@
               <div class="flex justify-between items-center px-5 py-3">
                 <ng-container *ngIf="showDesignationPending">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div> -->
+                    <div class="statusLable">Designation</div>
                     <div class="approvalStausValue">{{unVerifiedObj?.designation}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
+                      translate }}</div> -->
+                    <div class="approvalStatusPending flex justify-center items-center">Pending</div>
                   </div>
                   <div class="flex justify-center" style="width: 200px;">-</div>
                 </ng-container>
                 <ng-container *ngIf="showDesignationRejection">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div> -->
+                    <div class="statusLable">Designation</div>
                     <div class="approvalStausValue">{{rejectedFields?.designation}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
+                      translate }}</div> -->
+                    <div class="approvalStatusRejected flex justify-center items-center">Rejected</div>
                   </div>
                   <div mat-icon-button (click)="viewReason(rejectedFields?.designationRejectionComments)"
                     class="flex gap-2 items-center viewReason">
-                    <span>{{ 'profileInfo?.viewReason' | translate }}</span>
+                    <!-- <span>{{ 'profileInfo?.viewReason' | translate }}</span> -->
+                    <span>View Reason</span>
                   </div>
                 </ng-container>
               </div>

@@ -20,9 +20,15 @@
   <hr class="solid">
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
-      [ngClass]="{'disableBtn': !canSaveChanges}">Save
-      Changes</button>
+    <ng-container *ngIf="header === 'Primary Details'; else saveChanges">
+      <button mat-button [disabled]="!enableEditBtn" [ngClass]="{'disableBtn': !enableEditBtn}" class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">
+        {{ 'profileInfo.sendForApproval' | translate }}</button>
+    </ng-container>
+    <ng-template #saveChanges>
+      <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
+        [ngClass]="{'disableBtn': !canSaveChanges}">Save
+        Changes</button>
+    </ng-template>
   </div>
   <!-- #endregion (Footer Form Actions) -->
 
@@ -51,7 +57,7 @@
     <!-- #endregion (Profile Pic) -->
     <form [formGroup]="profileForm" class="profile-top-editor-form flex flex-col">
       <div class="flex flex-col profile-control">
-        <div class="lable">Name</div>
+        <div class="lable required">Name</div>
         <mat-form-field appearance="outline" class="full-width">
           <input matInput formControlName="firstname" placeholder="Enter Name">
           <mat-error *ngIf="hasError('firstname', 'required')">Name is required</mat-error>
@@ -60,7 +66,7 @@
 
       <div class="form-fields-container">
         <div class="flex flex-col profile-control">
-          <div class="lable">Office State</div>
+          <div class="lable required">Office State</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="state" (selectionChange)="getDistrictsList($event.value)"
               placeholder="Select State">
@@ -73,7 +79,7 @@
         </div>
 
         <div class="flex flex-col profile-control">
-          <div class="lable">Office District</div>
+          <div class="lable required">Office District</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="district" placeholder="Select District">
               <ng-container *ngFor="let district of districtsList">
@@ -98,25 +104,34 @@
         <div class="lable">Group</div>
         <mat-form-field appearance="outline" class="full-width">
           <mat-select formControlName="group">
-            <mat-option value="group_a">Group A</mat-option>
-            <mat-option value="group_b">Group B</mat-option>
-            <mat-option value="group_c">Group C</mat-option>
-            <mat-option value="group_d">Group D</mat-option>
+            <mat-option value="" disabled>{{ 'profileInfo.chooseAGroup' | translate }}</mat-option>
+            <mat-option *ngFor="let group of groupsList" value="{{group}}">{{ group }}</mat-option>
           </mat-select>
-          <mat-error *ngIf="hasError('group', 'required')">Group is required</mat-error>
         </mat-form-field>
       </div>
 
       <div class="flex flex-col profile-control">
         <div class="lable">Designation</div>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-select formControlName="designation">
-            <mat-option value="junior_assistant">Junior Assistant</mat-option>
-            <mat-option value="senior_assistant">Senior Assistant</mat-option>
-            <mat-option value="teacher">Teacher</mat-option>
-            <mat-option value="principal">Principal</mat-option>
+          <mat-select formControlName="designation" placeholder="Select Designation"
+            (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
+            <div class="sticky-search-container" (click)="$event.stopPropagation()">
+              <div class="search-input-wrapper">
+                <input type="text" placeholder="Search designation" formControlName="searchDesignation"
+                  class="search-input" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                  autocomplete="off">
+              </div>
+            </div>
+            <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
+              {{ option?.name }}
+            </mat-option>
+            <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+              Loading more...
+            </div>
+            <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
+              No matches found
+            </mat-option>
           </mat-select>
-          <mat-error *ngIf="hasError('designation', 'required')">Designation is required</mat-error>
         </mat-form-field>
       </div>
     </form>
@@ -235,7 +250,7 @@
           <div class="lable">Mother Tongue</div>
           <mat-form-field appearance="outline">
             <input matInput formControlName="domicileMedium" aria-label="Domicile Medium (Mother Tongue)" matInput
-            (keydown)="onkeyDown($event)" [matAutocomplete]="languageAuto">
+              (keydown)="onkeyDown($event)" [matAutocomplete]="languageAuto">
             <mat-icon matSuffix>arrow_drop_down</mat-icon>
           </mat-form-field>
           <mat-autocomplete #languageAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
@@ -281,7 +296,7 @@
 
         <ng-container *ngIf="isCadreStatus">
           <div class="flex flex-col profile-control">
-            <div class="lable">Type of Civil Services</div>
+            <div class="lable required">Type of Civil Services</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="civilServiceType" (selectionChange)="getService($event.value)">
                 <mat-option *ngFor="let service of civilServiceTypes" [value]="service">{{ service }}</mat-option>
@@ -292,7 +307,7 @@
 
         <ng-container *ngIf="profileForm.get('civilServiceType').value && profileForm.get('isCadre').value">
           <div class="flex flex-col profile-control">
-            <div class="lable">Services</div>
+            <div class="lable required">Services</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="civilServiceName" (selectionChange)="onServiceSelect($event.value)">
                 <mat-option *ngFor="let service of serviceNamesList" [value]="service">{{ service }}</mat-option>
@@ -303,7 +318,7 @@
 
         <ng-container *ngIf="showCadreDetails">
           <div class="flex flex-col profile-control">
-            <div class="lable">Cadre</div>
+            <div class="lable required">Cadre</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="cadreName" (selectionChange)="onCadreSelect($event.value)">
                 <mat-option *ngFor="let state of cadreList" [value]="state">{{ state }}</mat-option>
@@ -314,17 +329,17 @@
 
         <ng-container *ngIf="showBatchDetails">
           <div class="flex flex-col profile-control">
-            <div class="lable">Batch</div>
+            <div class="lable required">Batch</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="cadreBatch">
-                 <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
+                <mat-option *ngFor="let year of yearArray" [value]="year">{{ year }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
         </ng-container>
 
         <ng-container *ngIf="showControllingAuthority">
-          <div class="info-value-c" >{{ cadreControllingAuthority }}</div>
+          <div class="info-value-c required">{{ cadreControllingAuthority }}</div>
         </ng-container>
       </div>
     </form>

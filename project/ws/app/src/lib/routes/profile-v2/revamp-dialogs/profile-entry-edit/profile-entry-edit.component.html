@@ -20,8 +20,8 @@
   <hr class="solid">
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save
-      Changes</button>
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()" [ngClass]="{'disable-btn': entryForm.invalid}"  >
+      {{entryDetails !== '' ? 'Update' : 'Add'}}</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
 

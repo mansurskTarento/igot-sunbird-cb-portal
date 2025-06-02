@@ -36,6 +36,9 @@ const API_END_POINTS = {
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
 
+  INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
+  // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
+
 }
 
 @Injectable({
@@ -184,5 +187,14 @@ export class ProfileV2RevampService {
     const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
+
+  getInsightsData(payload: any) {
+    const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
+    return result
+  }
+
+  // getAssessmentinfo(): Observable<any> {
+  //     return this.http.get(API_END_POINTS.ASSESSMENT_DATA)
+  //   }
 
 }

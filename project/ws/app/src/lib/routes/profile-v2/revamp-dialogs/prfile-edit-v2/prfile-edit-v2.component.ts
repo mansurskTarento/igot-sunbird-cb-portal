@@ -11,7 +11,7 @@ import { EMAIL_PATTERN, EMP_ID_PATTERN, MOBILE_PATTERN, PIN_CODE_PATTERN, state 
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { OtpService } from '../../../user-profile/services/otp.services';
-import {VerifyOtpComponent} from '../../components/verify-otp/verify-otp.component'
+import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { DatePipe } from '@angular/common';
 
@@ -24,7 +24,7 @@ import { DatePipe } from '@angular/common';
 export class PrfileEditV2Component implements OnInit, OnDestroy {
   header = '';
   profileDetails: any;
-  profileForm!: FormGroup ;
+  profileForm!: FormGroup;
   currentDate: Date = new Date();
   initilisationInProgress = true;
 
@@ -32,6 +32,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   userInitials = '';
   statesList: state[] = [];
   districtsList: string[] = [];
+
+  groupsList: any[] = [];
+  designationsMeta: any[] = [];
+  filterDesignationsMeta: any = []
+  isLoadingMoreDesignations = false;
+  desigantionFilterEnable = false
+  designationListLoadCount = 50
+  designationDefaultLoadCount = 50
 
   verifyEmail: boolean = false;
   verifyMobile: boolean = false;
@@ -67,7 +75,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   selectedCadreName: any;
   selectedCadre: any;
 
-  
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
@@ -81,6 +89,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.header = _.get(this.data, 'header', '');
     this.profileDetails = _.get(this.data, 'profileDetails', {});
     this.profileImage = _.get(this.data, 'profileImage', null);
+    this.groupsList = _.get(this.data, 'groupsList', []);
+    this.designationsMeta = _.get(this.data, 'designationsMeta', []);
   }
 
   ngOnInit(): void {
@@ -122,24 +132,24 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   getInitials(): void {
-      const userName = _.get(this.profileDetails, 'firstname', '');
-      if(userName) {
-        if( userName.split(' ').length > 1) {
-          const nameArr = userName.split(' ')
-          this.userInitials = nameArr[0].charAt(0) + nameArr[1].charAt(0)
-        } else {
-          this.userInitials = userName.charAt(0)
-        }
+    const userName = _.get(this.profileDetails, 'firstname', '');
+    if (userName) {
+      if (userName.split(' ').length > 1) {
+        const nameArr = userName.split(' ')
+        this.userInitials = nameArr[0].charAt(0) + nameArr[1].charAt(0)
+      } else {
+        this.userInitials = userName.charAt(0)
       }
     }
+  }
 
   getStatesList() {
     this.profileV2RevampService.getStatesList().subscribe({
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[];
-        if(_.get(this.profileDetails, 'state', '')) {
+        if (_.get(this.profileDetails, 'state', '')) {
           const stateControl = this.profileForm ? this.profileForm.get('state') : null;
-          if(stateControl) {
+          if (stateControl) {
             stateControl.patchValue(_.get(this.profileDetails, 'state', ''));
           }
           this.getDistrictsList(_.get(this.profileDetails, 'state', ''), true);
@@ -157,7 +167,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       next: (res: any) => {
         this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
         const districtControl = this.profileForm ? this.profileForm.get('district') : null;
-        if(districtControl) {
+        if (districtControl) {
           if (isFirstTime) {
             districtControl.patchValue(_.get(this.profileDetails, 'district', ''));
           } else {
@@ -203,14 +213,124 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.profileForm = this.fb.group({
       group: [_.get(this.profileDetails, 'group', ''), Validators.required],
       designation: [_.get(this.profileDetails, 'designation', ''), Validators.required],
-      searchDesignation: [_.get(this.profileDetails, 'searchDesignation', ''), Validators.required],
+      searchDesignation: [''],
     });
     setTimeout(() => {
       this.initilisationInProgress = false;
     }, 10)
+    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    if (searchDesignationControl) {
+      searchDesignationControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.desigantionFilterEnable = true
+            this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+              val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+            this.desigantionFilterEnable = false
+            this.designationListLoadCount = this.designationDefaultLoadCount;
+            this.checkCurrentDesignationPresent()
+          }
+        })
+
+      if(_.get(this.profileDetails, 'designation', '')){
+        searchDesignationControl.setValue(_.get(this.profileDetails, 'designation', ''));
+      }
+      setTimeout(() => {
+        const designationControl = this.profileForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(_.get(this.profileDetails, 'designation', ''));
+        }
+      }, 10)
+    }
   }
 
-  
+  setupScrollListener(opened: boolean): void {
+    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    if (opened && searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount;
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentDesignationPresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        }
+      }, 100);
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.desigantionFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+          this.isLoadingMoreDesignations = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoreDesignations = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  checkCurrentDesignationPresent() {
+
+    // Get the current designation value
+    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filterDesignationsMeta.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = {
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDesignationsMeta.pop();
+        }
+        this.filterDesignationsMeta.unshift(newDesignation);
+      }
+    }
+  }
 
   // #endregion (end of primary details)
 
@@ -233,7 +353,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       dob: [dob ? new Date(dob) : '', []],
       category: [_.get(this.profileDetails, 'category', ''), []],
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
-      mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
+      mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],
       isCadre: [_.get(this.profileDetails, 'isCadre', [])],
       civilServiceType: [_.get(this.profileDetails, 'civilServiceType', ''), []],
@@ -273,12 +393,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       next: response => {
         this.civilServiceData = _.get(response, 'result.response.value.civilServiceType')
         this.civilServiceTypes = _.get(this.civilServiceData, 'civilServiceTypeList', []).map((service: any) => service.name)
-        if(_.get(this.profileDetails, 'civilServiceType', '')) {
+        if (_.get(this.profileDetails, 'civilServiceType', '')) {
           this.getService(_.get(this.profileDetails, 'civilServiceType', ''), false);
         }
       },
       error: (err: HttpErrorResponse) => {
-        if(err) {
+        if (err) {
           this.openSnackbar(this.handleTranslateTo('unableFetchCadreData'))
         }
       },
@@ -319,11 +439,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const serviceNameControl = this.profileForm.get('civilServiceName');
     const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
     const isCadreControl = this.profileForm.get('isCadre');
-    if(typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
+    if (typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
       serviceNameControl && serviceNameControl.value &&
       isCadreControl && isCadreControl.value &&
       servicesList.includes(serviceNameControl.value)) {
-        return true;
+      return true;
     }
     return false;
   }
@@ -338,7 +458,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
     const isCadreControl = this.profileForm.get('isCadre');
     const cadreNameControl = this.profileForm.get('cadreName');
-    if(
+    if (
       typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
       serviceNameControl && serviceNameControl.value &&
       isCadreControl && isCadreControl.value && (
@@ -349,8 +469,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           !servicesList.includes(serviceNameControl.value)
         )
       )
-     ) {
-        return true;
+    ) {
+      return true;
     }
     return false
   }
@@ -371,7 +491,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
     if (primaryEmailControl) {
       primaryEmailControl.valueChanges.subscribe((value: string) => {
-        if(value && value !== _.get(this.profileDetails, 'primaryEmail', '')) {
+        if (value && value !== _.get(this.profileDetails, 'primaryEmail', '')) {
           if (EMAIL_PATTERN.test(value)) {
             this.verifyEmail = true
           } else {
@@ -385,9 +505,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       })
     }
 
-    if( mobileControl) {
+    if (mobileControl) {
       mobileControl.valueChanges.subscribe((value: string) => {
-        if(value && value !== _.get(this.profileDetails, 'mobile', '')) {
+        if (value && value !== _.get(this.profileDetails, 'mobile', '')) {
           if (MOBILE_PATTERN.test(value)) {
             this.verifyMobile = true
           } else {
@@ -399,7 +519,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       })
     }
 
-    if(domicileMediumControl) {
+    if (domicileMediumControl) {
       domicileMediumControl.valueChanges
         .pipe(
           debounceTime(250),
@@ -416,20 +536,32 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   getIsCadreStatus(value: boolean) {
     this.isCadreStatus = value
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
+    const serviceNameControl = this.profileForm.get('civilServiceName');
+    const cadreNameControl = this.profileForm.get('cadreName');
+    const cadreBatchControl = this.profileForm.get('cadreBatch');
+    const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority');
     if (value) {
-      this.profileForm.patchValue({
-        civilServiceType: '',
-        civilServiceName: '',
-        cadreName: '',
-        cadreBatch: '',
-        cadreControllingAuthority: '',
-      });
+      this.addValidation(typeOfCivilServiceControl);
+      this.addValidation(serviceNameControl);
+      this.addValidation(cadreNameControl);
+      this.addValidation(cadreBatchControl);
+      this.addValidation(cadreControllingAuthorityControl);
       this.civilServiceTypeId = '';
       this.civilServiceId = '';
       this.cadreId = '';
     }
     else {
       this.showBatchForNoCadre = false
+    }
+  }
+
+  addValidation(control: any) {
+    if (control) {
+      control.reset();
+      control.setValidators([Validators.required]);
+      control.updateValueAndValidity();
+      control.markAsUntouched();
     }
   }
 
@@ -450,7 +582,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.serviceListData = this.serviceType.serviceList
       this.serviceNamesList = this.serviceListData.map((service: any) => service.name)
       this.serviceId = this.serviceType.id
-      if(!isReset && serviceNameControl && serviceNameControl.value) {
+      if (!isReset && serviceNameControl && serviceNameControl.value) {
         serviceNameControl.updateValueAndValidity()
         this.onServiceSelect(serviceNameControl.value, false)
       }
@@ -458,7 +590,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   onServiceSelect(event: any, isReset: boolean = true) {
-    const cadreControl =  this.profileForm.get('cadreName')
+    const cadreControl = this.profileForm.get('cadreName')
     const batchControl = this.profileForm.get('cadreBatch')
     const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
     if (isReset) {
@@ -478,9 +610,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     } else {
       this.cadreControllingAuthority = 'NA'
     }
-    if (this.selectedService && this.selectedService.cadreList && 
+    if (this.selectedService && this.selectedService.cadreList &&
       (this.selectedService.cadreList.length === 0 ||
-      !isReset && batchControl && batchControl.value)
+        !isReset && batchControl && batchControl.value)
     ) {
       this.showBatchForNoCadre = true
       this.startBatch = this.selectedService.commonBatchStartYear
@@ -492,7 +624,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     } else {
       this.showBatchForNoCadre = false
     }
-    if(!isReset && cadreControl && batchControl) {
+    if (!isReset && cadreControl && batchControl) {
       cadreControl.updateValueAndValidity()
       batchControl.updateValueAndValidity()
     }
@@ -604,7 +736,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   handleGenerateOTP(verifyType?: string): void {
-    if(this.mobileControl) {
+    if (this.mobileControl) {
       this.otpService.sendOtp(this.mobileControl.value)
         .pipe(takeUntil(this.destroySubject$))
         .subscribe((_res: any) => {
@@ -617,7 +749,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
             this.openSnackbar(this.handleTranslateTo('mobileOTPSentFail'))
           }
         })
-      }
+    }
   }
 
   handleEmpty(type: string): void {
@@ -655,7 +787,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         if (this.profileImage) {
           profileData['profileImageUrl'] = this.profileImage;
         }
-        if(this.header === 'Other Details') {
+        if (this.header === 'Other Details') {
           this.genrateOtehrDetailsForm()
         } else {
           this.dialogRef.close(this.profileForm.value);
@@ -671,7 +803,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     // if (this.primaryEmailControl && _.get(this.profileDetails, 'primaryEmail', '') !== this.primaryEmailControl.value) {
     //   this.updateEmail(this.primaryEmailControl.value)
     // }
-    if(formBody && formBody.dob) {
+    if (formBody && formBody.dob) {
       const dobDate = new Date(formBody.dob);
       formBody.dob = this.datePipe.transform(dobDate, 'dd-MM-yyyy')
     }
@@ -680,7 +812,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const isCadreControl = this.profileForm.get('isCadre');
     const cadreBatchControl = this.profileForm.get('cadreBatch');
     if (typeOfCivilServiceControl && serviceNameControl && isCadreControl && cadreBatchControl) {
-      if((
+      if ((
         typeOfCivilServiceControl.value &&
         serviceNameControl.value &&
         cadreBatchControl.value
@@ -703,7 +835,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   handleCancel(): void {
     this.dialogRef.close();
   }
-  
+
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -712,7 +844,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   hasError(controlName: string, errorName: string): boolean {
     const control = this.profileForm.get(controlName);
     return control?.touched && control?.hasError(errorName) || false;
@@ -720,28 +852,28 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   get canSaveChanges(): boolean {
     if (!this.profileForm || this.initilisationInProgress) {
-    return false;
-  }
-  const isFormValid = this.profileForm.valid;
+      return false;
+    }
+    const isFormValid = this.profileForm.valid;
 
     switch (this.header) {
       case 'Profile':
-        if( isFormValid) {
+        if (isFormValid) {
           return true
         }
         return false
       case 'Primary Details':
-        if( isFormValid) {
+        if (isFormValid) {
           return true
         }
         return false
       case 'About Me':
-        if( isFormValid) {
+        if (isFormValid) {
           return true
         }
         return false
       case 'Other Details':
-        if( isFormValid && !this.verifyEmail && !this.verifyMobile) {
+        if (isFormValid && !this.verifyEmail && !this.verifyMobile) {
           return true
         }
         return false
@@ -749,7 +881,21 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     return true
   }
 
-   handleTranslateTo(menuName: string): string {
+  get enableEditBtn(): boolean {
+    const groupControl = this.profileForm.get('group');
+    const designationControl = this.profileForm.get('designation');
+    if (groupControl && designationControl) {
+      if (
+        (groupControl.value && groupControl.value !== _.get(this.profileDetails, 'group', '')) ||
+        (designationControl.value && designationControl.value !== _.get(this.profileDetails, 'designation', ''))
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  handleTranslateTo(menuName: string): string {
     return this.profileV2RevampService.handleTranslateTo(menuName)
   }
 

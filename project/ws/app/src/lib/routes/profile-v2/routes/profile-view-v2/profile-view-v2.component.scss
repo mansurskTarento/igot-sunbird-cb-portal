@@ -319,3 +319,17 @@
     border-radius: 0px;
   }
 }
+
+// activities
+.profile-section {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, .08);
+  opacity: 1;
+  background-color: #fff;
+}
+
+@media screen and (min-width: 640px) {
+  .hide-for-desktop {
+    display: none !important;
+  }
+}
