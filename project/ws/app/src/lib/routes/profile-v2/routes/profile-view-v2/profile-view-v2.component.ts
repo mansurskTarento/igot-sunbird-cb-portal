@@ -1,5 +1,5 @@
 //#region (imports)
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
@@ -13,9 +13,12 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ServiceHistoryComponent } from '../../components/profile-revamp/service-history/service-history.component';
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component';
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component';
-import { forkJoin } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { forkJoin, Subject } from 'rxjs';
+import { mergeMap, takeUntil } from 'rxjs/operators';
+import { environment } from 'src/environments/environment'
+import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
+import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 
 //#endregion
 
@@ -25,9 +28,11 @@ import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
   styleUrls: ['./profile-view-v2.component.scss'],
   providers: [PipeCertificateImageURL]
 })
-export class ProfileViewV2Component implements OnInit {
+export class ProfileViewV2Component implements OnInit, OnDestroy {
 
   //#region (global variables)
+  private destroySubject$ = new Subject()
+  isCurrentUser = false;
   userId: string = '';
   profesionalDetails: any
   profileImageUrl = '';
@@ -129,6 +134,29 @@ export class ProfileViewV2Component implements OnInit {
   aboutme = ''
   showMoreAbout = false
   primaryDetails: any;
+
+  groupsList: any[] = []
+  designationsList: any[] = []
+  isMentor = false
+  enableWTR = false; // to enable withdraw transfer request
+  enableWR = false; // to enable withdraw request
+  unVerifiedObj = {
+    designation: '',
+    group: '',
+    organization: '',
+    groupRequestTime: 0,
+    designationRequestTime: 0,
+  }
+  rejectedFields = {
+    name: '',
+    group: '',
+    designation: '',
+    groupRejectionComments: '',
+    designationRejectionComments: '',
+    groupRejectionTime: 0,
+    designationRejectionTime: 0,
+  }
+  approvalPendingFields = []
   //#endregion
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -139,6 +167,7 @@ export class ProfileViewV2Component implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private pipeImgUrl: PipeCertificateImageURL,
+    private configSvc: ConfigurationsService
   ) { }
 
   ngOnInit() {
@@ -148,6 +177,45 @@ export class ProfileViewV2Component implements OnInit {
       setTimeout(() => {
         this.selectRoute(lastSectionId);
       }, 100);
+    }
+    this.getSendApprovalStatus()
+    this.getRejectedStatus()
+    this.getGroupData()
+    this.loadDesignations()
+    this.checkIsMentor()
+    if( this.configSvc.userProfile && this.configSvc.userProfile.userId) {
+      this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
+    }
+  }
+
+  //#region (initialization)
+
+  getGroupData(): void {
+      this.profileV2RevampSvc.getGroups()
+        .pipe(takeUntil(this.destroySubject$))
+        .subscribe((res: any) => {
+          this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
+        }, (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
+          }
+        })
+    }
+
+    loadDesignations() {
+      this.profileV2RevampSvc.getDesignations({}).subscribe(
+        (data: any) => {
+          this.designationsList = data.responseData
+        },
+        (_err: any) => {
+          this.openSnackbar('Failed to load designations')
+        })
+    }
+
+  checkIsMentor() {
+    const userRoles: any = _.get(this.configSvc, 'userRoles', []);
+    if( userRoles && userRoles.length > 0) {
+      this.isMentor = userRoles.includes('mentor') || userRoles.includes('MENTOR') || userRoles.includes('Mentor') ? true : false;
     }
   }
 
@@ -173,6 +241,8 @@ export class ProfileViewV2Component implements OnInit {
       firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', ''),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
+      profileGroupStatus: _.get(this.profesionalDetails, 'profileGroupStatus', ''),
+      profileDesignationStatus: _.get(this.profesionalDetails, 'profileDesignationStatus', ''),
       osid: _.get(this.profesionalDetails, 'professionalDetails[0].osid', ''),
       employeeCode: _.get(this.profesionalDetails, 'employmentDetails.employeeCode', ''),
       primaryEmail: _.get(this.profesionalDetails, 'personalDetails.primaryEmail', ''),
@@ -196,6 +266,8 @@ export class ProfileViewV2Component implements OnInit {
       cadreControllingAuthorityName: _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', ''),
 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
+
+      currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
   }
@@ -234,6 +306,7 @@ export class ProfileViewV2Component implements OnInit {
   patchRecamendedCommunity(community: any) {
     this.communitySuggestionsList = community
   }
+  //#endregion (initialization)
 
   selectRoute(sectionId: string) {
     const element = document.getElementById(sectionId);
@@ -559,6 +632,120 @@ export class ProfileViewV2Component implements OnInit {
     }
   }
 
+  getSendApprovalStatus(): void {
+    const formBody = {
+      serviceName: 'profile',
+      applicationStatus: 'SEND_FOR_APPROVAL',
+    }
+    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((responce: any) => {
+        this.unVerifiedObj.groupRequestTime = 0
+        this.unVerifiedObj.designationRequestTime = 0
+        this.approvalPendingFields = _.get(responce, 'result.data', [])
+
+        if (this.approvalPendingFields && this.approvalPendingFields.length === 0) {
+          this.enableWTR = false
+          return
+        }
+        const exists = this.approvalPendingFields.filter((obj: any) => {
+          if (obj.hasOwnProperty('name')) {
+            this.unVerifiedObj.organization = obj.name
+          }
+          if (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.unVerifiedObj.groupRequestTime) {
+            this.unVerifiedObj.group = obj.group
+            this.unVerifiedObj.groupRequestTime = obj.lastUpdatedOn
+          }
+          if (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.unVerifiedObj.designationRequestTime) {
+            this.unVerifiedObj.designation = obj.designation
+            this.unVerifiedObj.designationRequestTime = obj.lastUpdatedOn
+          }
+          return obj.hasOwnProperty('name')
+        }).length > 0
+
+        if (exists) {
+          this.enableWTR = true
+        } else {
+          this.enableWR = true
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('approvalStatusFailed'))
+        }
+      })
+  }
+
+  getRejectedStatus(): void {
+    const formBody = {
+      serviceName: 'profile',
+      applicationStatus: 'REJECTED',
+    }
+    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        if (res.result && res.result.data && Array.isArray(res.result.data)) {
+          res.result.data.forEach((obj: any) => {
+            if (obj.hasOwnProperty('name')) {
+              this.rejectedFields.name = obj.name
+            }
+            if (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.rejectedFields.groupRejectionTime) {
+              this.rejectedFields.group = obj.group
+              this.rejectedFields.groupRejectionComments = obj.comment
+              this.rejectedFields.groupRejectionTime = obj.lastUpdatedOn
+            }
+            if (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.rejectedFields.designationRejectionTime) {
+              this.rejectedFields.designation = obj.designation
+              this.rejectedFields.designationRejectionComments = obj.comment
+              this.rejectedFields.designationRejectionTime = obj.lastUpdatedOn
+            }
+          })
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('rejectedStatusFailed'))
+        }
+      })
+  }
+
+  handleTransferRequest(): void {
+      const dialogRef = this.dialog.open(TransferRequestComponent, {
+        data: { portalProfile: this.profesionalDetails, groupData: this.groupsList, designationsMeta: this.designationsList },
+        disableClose: true,
+        panelClass: 'common-modal',
+      })
+  
+      dialogRef.componentInstance.enableWithdraw.subscribe((value: boolean) => {
+        if (value) {
+          this.enableWTR = true
+          this.getSendApprovalStatus()
+          this.fetchProfileDetails()
+        }
+      })
+    }
+
+    handleWithdrawTransferRequest(): void {
+        const dialogRef = this.dialog.open(WithdrawRequestComponent, {
+          data: {
+            approvalPendingFields: this.approvalPendingFields,
+            withDrawType: 'department',
+          },
+          disableClose: true,
+          panelClass: 'common-modal',
+        })
+    
+        dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
+          if (value) {
+            this.enableWTR = false
+            this.unVerifiedObj.group = ''
+            this.unVerifiedObj.designation = ''
+          }
+        })
+      }
+
+    
+  viewMentorProfile() {
+      window.open(`${environment.contentHost}/mentorship`, '_blank')
+    }
   openProfileEntryListDialog(header: string) {
     const dialogDetails = {
       header: header,
@@ -789,10 +976,18 @@ export class ProfileViewV2Component implements OnInit {
 
   //#endregion (profile entry edit)
 
+  handleTranslateTo(menuName: string): string {
+    return this.profileV2RevampSvc.handleTranslateTo(menuName)
+  }
+
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
+  }
+
+  ngOnDestroy() {
+    this.destroySubject$.unsubscribe()
   }
 
 }

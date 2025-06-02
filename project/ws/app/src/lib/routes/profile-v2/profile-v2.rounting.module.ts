@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router'
 import { ProfileComponent } from './routes/profile/profile.component'
 // import { InitResolver } from './resol./routes/profile-v2/discuss-all.component'
 import { Profilev2Resolve } from './resolvers/profile-v2-resolve'
-import { ProfileViewComponent } from './routes/profile-view/profile-view.component'
+// import { ProfileViewComponent } from './routes/profile-view/profile-view.component'
 import { Profilev2BadgesResolve } from './resolvers/badges-resolve'
 import { ProfileKarmapointsComponent } from './routes/profile-karmapoints/profile-karmapoints.component'
 import { Profilev2CerficatesResolve } from './resolvers/profile-v2-certificates-resolver'
@@ -64,17 +64,31 @@ const routes: Routes = [
           // profileData: ProfileResolverService,
         },
       },
+      // {
+      //   path: ':userId',
+      //   component: ProfileViewComponent,
+      //   data: {
+      //     pageId: ':userId',
+      //     module: 'Network',
+      //   },
+      //   resolve: {
+      //     profile: Profilev2Resolve,
+      //     badges: Profilev2BadgesResolve,
+      //     // profileData: ProfileResolverService,
+      //   },
+      // },
       {
         path: ':userId',
-        component: ProfileViewComponent,
+        component: ProfileViewV2Component,
         data: {
           pageId: ':userId',
           module: 'Network',
         },
         resolve: {
-          profile: Profilev2Resolve,
-          badges: Profilev2BadgesResolve,
-          // profileData: ProfileResolverService,
+          profile: profileResolver,
+          entries: profileEntriesResolver,
+          recamendations: connectionsResolverResolver,
+          recamendedCommunity: CommunityResolverService,
         },
       },
 

@@ -1,24 +1,128 @@
 <div>
+  <!-- # region Primary Details -->
   <div class="section-header mb-4 flex justify-between items-center">
     <span>Primary Details <mat-icon class="info-icon">info_outline</mat-icon></span>
-    <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
+    <ng-container *ngIf="showPrimaryDetailsEdit">
+      <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
+    </ng-container>
+    <ng-container *ngIf="disablePrimaryDetailsEdit">
+      <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'" [matTooltip]="'profileInfo.pdTooltipWarnMsg' | translate">edit</mat-icon>
+    </ng-container>
+    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">{{
+      'profileInfo.withdrawRequest' | translate }}
+    </div>
   </div>
   <div class="details-grid">
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">Group</span>
-      <span class="value">{{ primaryDetails.group }} <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status"></span>
+      <span class="value">{{ primaryDetails.group }}
+        <ng-container *ngIf="primaryDetails.profileGroupStatus === 'VERIFIED'">
+          <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
+        </ng-container>
+      </span>
     </div>
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">Designation</span>
-      <span class="value">{{ primaryDetails.designation }} <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status"></span>
+      <span class="value">{{ primaryDetails.designation }}
+        <ng-container *ngIf="primaryDetails.profileDesignationStatus === 'VERIFIED'">
+          <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
+        </ng-container>
+      </span>
     </div>
   </div>
 
+  <ng-container *ngIf="showApprovalStatus">
+    <div class="profile-approval-status mb-4">
+      <mat-accordion>
+        <mat-expansion-panel hideToggle (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+            <div class="w-full flex justify-end items-center">
+              <div>
+                <div mat-icon-button class="flex gap-2 items-center viewApprovalStatuas w-full">
+                  <span>{{ 'profileInfo.viewApprovalStatus' | translate }}</span>
+                  <mat-icon>{{panelOpenState ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+          <div>
+            <div class="approvalStatusHeader">
+              {{ 'profileInfo.approvalStatus' | translate }}
+            </div>
+            <ng-container *ngIf="unVerifiedObj.group || rejectedFields.group">
+              <div class="flex justify-between items-center px-5 py-3">
+                <ng-container *ngIf="showGroupPending">
+                  <div class="w-full">
+                    <div class="statusLable">{{ 'profileInfo.group' | translate }}</div>
+                    <div class="approvalStausValue">{{unVerifiedObj.group}}</div>
+                  </div>
+                  <div class="w-full">
+                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending' |
+                      translate }}</div>
+                  </div>
+                  <div class="w-full flex justify-center" style="width: 200px;">-</div>
+                </ng-container>
+                <ng-container *ngIf="showGroupRejection">
+                  <div class="w-full">
+                    <div class="statusLable">{{ 'profileInfo.group' | translate }}</div>
+                    <div class="approvalStausValue">{{rejectedFields.group}}</div>
+                  </div>
+                  <div class="w-full">
+                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo.rejected' |
+                      translate }}</div>
+                  </div>
+                  <div mat-icon-button (click)="viewReason(rejectedFields.groupRejectionComments)"
+                    class="flex gap-2 items-center viewReason">
+                    <span>{{ 'profileInfo.viewReason' | translate }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="unVerifiedObj.designation || rejectedFields.designation">
+              <div class="flex justify-between items-center px-5 py-3">
+                <ng-container *ngIf="showDesignationPending">
+                  <div class="w-full">
+                    <div class="statusLable">{{ 'profileInfo.designation' | translate }}</div>
+                    <div class="approvalStausValue">{{unVerifiedObj.designation}}</div>
+                  </div>
+                  <div class="w-full">
+                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending' |
+                      translate }}</div>
+                  </div>
+                  <div class="flex justify-center" style="width: 200px;">-</div>
+                </ng-container>
+                <ng-container *ngIf="showDesignationRejection">
+                  <div class="w-full">
+                    <div class="statusLable">{{ 'profileInfo.designation' | translate }}</div>
+                    <div class="approvalStausValue">{{rejectedFields.designation}}</div>
+                  </div>
+                  <div class="w-full">
+                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo.rejected' |
+                      translate }}</div>
+                  </div>
+                  <div mat-icon-button (click)="viewReason(rejectedFields.designationRejectionComments)"
+                    class="flex gap-2 items-center viewReason">
+                    <span>{{ 'profileInfo.viewReason' | translate }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </ng-container>
+
+  <!-- #endregion Primary Details -->
+
   <hr class="divider my-3" />
 
+  <!-- #region Other Details -->
   <div class="section-header mb-4 flex justify-between items-center">
     <span>Other Details</span>
-    <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
+    <ng-container *ngIf="isCurrentUser">
+      <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
+    </ng-container>
   </div>
   <div class="details-grid">
     <div class="flex flex-col gap-2 pr-3">
@@ -96,4 +200,5 @@
       </div>
     </ng-container>
   </div>
+  <!-- #endregion Other Details -->
 </div>

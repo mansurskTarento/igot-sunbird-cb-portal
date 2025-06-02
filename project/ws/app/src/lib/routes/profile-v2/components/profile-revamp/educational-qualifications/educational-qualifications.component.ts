@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
+  @Input() isCurrentUser = false;
   @Output() openProfileEntryEditDialog = new EventEmitter();
 
   userId: string = '';
