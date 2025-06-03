@@ -19,7 +19,6 @@ import { environment } from 'src/environments/environment'
 import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
-
 //#endregion
 
 @Component({
@@ -187,6 +186,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
+    this.profileV2RevampSvc.getWebSiteLanguage()
     const lastSectionId = sessionStorage.getItem('lastProfileSection');
     if (lastSectionId) {
       setTimeout(() => {
@@ -367,14 +367,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.profileV2RevampSvc.updateBannerPic(formdata).pipe(
         mergeMap((res: any) => {
           const createdUrl = _.get(res, 'result.url', '')
-          const urlToReplace = 'https://storage.googleapis.com/igot'
-          const urlSplice = createdUrl.slice(urlToReplace.length)
-          // let uploadedFile = createdUrl
-          // if (createdUrl.startsWith(urlToReplace)) {
-          //   const urlSplice = createdUrl.slice(urlToReplace.length)
-          //   uploadedFile = `${environment.domainName}assets/public/${urlSplice}`
-          // }
-          const uploadedFile = this.pipeImgUrl.transform(urlSplice)
+          const folderNameToSplit = '/profileBanner/'
+          const urlSplice = createdUrl.split(folderNameToSplit)[1]
+          const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
           const formBody = {
             request: {
               userId: this.userId,

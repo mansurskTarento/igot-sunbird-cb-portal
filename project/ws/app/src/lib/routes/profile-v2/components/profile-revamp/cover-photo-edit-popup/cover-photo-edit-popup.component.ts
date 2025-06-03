@@ -64,6 +64,7 @@ export class CoverPhotoEditPopupComponent implements OnInit {
   onFileChange(event: any): void {
     this.imageChangedEvent = event;
     this.showCropper = true;
+    this.fileName = event.target.files[0].name || 'coverPhoto.png';
   }
 
   imageCropped(event: ImageCroppedEvent) {

@@ -97,7 +97,10 @@ export class ProfileEntryEditComponent implements OnInit {
         sort_by: {
            orgName: 'asc'
         },
-        fields: ['channel'],
+        fields: [
+          'channel',
+          'imgUrl'
+        ],
         limit: 20,
         offset: 0
       }
@@ -437,14 +440,9 @@ export class ProfileEntryEditComponent implements OnInit {
         next: (res: any) => {
           if (res) {
             const createdUrl = _.get(res, 'result.url', '')
-            const urlToReplace = 'https://storage.googleapis.com/igot'
-            const urlSplice = createdUrl.slice(urlToReplace.length)
-            // let uploadedFile = createdUrl
-            // if (createdUrl.startsWith(urlToReplace)) {
-            //   const urlSplice = createdUrl.slice(urlToReplace.length)
-            //   uploadedFile = `${environment.domainName}assets/public/${urlSplice}`
-            // }
-            const uploadedFile = this.pipeImgUrl.transform(urlSplice)
+            const folderNameToSplit = '/userAchievements/'
+            const urlSplice = createdUrl.split(folderNameToSplit)[1]
+            const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
             const documentUrlControl = this.entryForm.get('uploadedDocumentUrl');
             if (documentUrlControl) {
               documentUrlControl.patchValue(uploadedFile)
@@ -476,10 +474,19 @@ export class ProfileEntryEditComponent implements OnInit {
 
   //#endregion (achievements)
 
-  handleSubmit(): void {
+handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-        this.dialogRef.close(this.entryForm.value);
+          const formValue = this.entryForm.value;
+        if (this.header === 'Service History') {
+          if (formValue.orgName && this.orgList.length > 0) {
+            const org = this.orgList.find((org: any) => org.channel === formValue.orgName);
+            if (org) {
+              formValue['orgLogo'] = _.get(org, 'imgUrl', '') ;
+            }
+          }
+        }
+        this.dialogRef.close(formValue);
       } else {
         this.markFormGroupTouched(this.entryForm);
       }
