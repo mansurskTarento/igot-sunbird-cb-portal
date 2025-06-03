@@ -41,7 +41,7 @@ export class MyNotificationsComponent {
       this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.communityId}/${notification.message.postId}`])
     } else if (notification.category === 'NETWORK') {
       if (notification.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
-        this.router.navigate([`/app/person-profile/${notification.message.id}`])
+        this.router.navigate([`/app/network-v2/my-connection`])
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
