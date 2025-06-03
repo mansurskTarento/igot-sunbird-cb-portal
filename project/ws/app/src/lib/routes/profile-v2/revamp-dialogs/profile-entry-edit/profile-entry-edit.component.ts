@@ -7,6 +7,7 @@ import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service
 import { designation, generateYears, organisation, state } from '../../models/profile-revamp.model';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'ws-app-profile-entry-edit',
@@ -20,7 +21,12 @@ export class ProfileEntryEditComponent implements OnInit {
   entryForm!: FormGroup;
 
   orgList: organisation[] = [];
-  designationsList: designation[] = [];
+  designationsMeta: designation[] = [];
+  filterDesignationsMeta: any = []
+  isLoadingMoreDesignations = false;
+  desigantionFilterEnable = false
+  designationListLoadCount = 50
+  designationDefaultLoadCount = 50
   statesList: state[] = [];
   districtsList: string[] = [];
   todayDate: Date = new Date();
@@ -66,10 +72,11 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (intialization)
 
   //#region (service history)
-    private createServiceHistoryForm(): void {
+  private createServiceHistoryForm(): void {
     this.entryForm = this.fb.group({
       orgName: [_.get(this.entryDetails, 'orgName', ''), [Validators.required]],
       designation: [_.get(this.entryDetails, 'designation', ''), [Validators.required]],
+      searchDesignation: [''],
       orgState: [_.get(this.entryDetails, 'orgState', ''), [Validators.required]],
       orgDistrict: [_.get(this.entryDetails, 'orgDistrict', ''), [Validators.required]],
       startDate: [_.get(this.entryDetails, 'startDate', ''), [Validators.required]],
@@ -78,13 +85,54 @@ export class ProfileEntryEditComponent implements OnInit {
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
     this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
+    if( this.isCurrentlyWorking) {
+      const endDateControl = this.entryForm.get('endDate');
+      if (endDateControl) {
+        endDateControl.disable();
+        endDateControl.clearValidators();
+        endDateControl.updateValueAndValidity();
+      }
+    }
     this.getOrgList();
-    this.getDesignationsList();
+    this.getdesignationsMeta();
     this.getStatesList()
-    if(_.get(this.entryDetails, 'startDate', '')) {
+    if (_.get(this.entryDetails, 'startDate', '')) {
       this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
     }
+    const searchDesignationControl = this.entryForm.get('searchDesignation');
+        if (searchDesignationControl) {
+          searchDesignationControl.valueChanges
+            .pipe(
+              debounceTime(250),
+              distinctUntilChanged(),
+              startWith(''),
+            )
+            .subscribe(searchText => {
+              if (searchText) {
+                this.desigantionFilterEnable = true
+                this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+                  val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+                )
+              } else {
+                this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+                this.desigantionFilterEnable = false
+                this.designationListLoadCount = this.designationDefaultLoadCount;
+                this.checkCurrentDesignationPresent()
+              }
+            })
+    
+          if(_.get(this.entryDetails, 'designation', '')){
+            searchDesignationControl.setValue(_.get(this.entryDetails, 'designation', ''));
+          }
+          setTimeout(() => {
+            const designationControl = this.entryForm.get('designation');
+            if (designationControl) {
+              designationControl.setValue(_.get(this.entryDetails, 'designation', ''));
+            }
+          }, 10)
+        }
   }
+
   getOrgList() { 
     const formBody = { request: 
       { 
@@ -99,7 +147,8 @@ export class ProfileEntryEditComponent implements OnInit {
         },
         fields: [
           'channel',
-          'imgUrl'
+          'imgUrl',
+          'identifier'
         ],
         limit: 20,
         offset: 0
@@ -122,39 +171,134 @@ export class ProfileEntryEditComponent implements OnInit {
     })
   }
 
-  getDesignationsList() {
+  getdesignationsMeta() {
     this.ProfileV2RevampService.getDesignations({}).subscribe({
       next: (res: any) => {
-        this.designationsList = _.get(res, 'responseData', []) as designation[]
-        if(this.entryForm) {
+        this.designationsMeta = _.get(res, 'responseData', []) as designation[]
+        if (this.entryForm) {
           const designationControl = this.entryForm.get('designation');
-          if(designationControl) {
+          if (designationControl) {
             designationControl.patchValue(_.get(this.entryDetails, 'designation', ''));
           }
         }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
   }
 
+  setupScrollListener(opened: boolean): void {
+    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    if (opened && searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount;
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentDesignationPresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        }
+      }, 100);
+    }
+  }
+  checkCurrentDesignationPresent() {
+    // Get the current designation value
+    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filterDesignationsMeta.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = {
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDesignationsMeta.pop();
+        }
+        this.filterDesignationsMeta.unshift(newDesignation);
+      }
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.desigantionFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+          this.isLoadingMoreDesignations = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoreDesignations = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.entryForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.entryForm.get('searchDesignation')) {
+        this.entryForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.entryForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+
   getStatesList() {
     this.ProfileV2RevampService.getStatesList().subscribe({
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[]
-        if(this.entryForm) {
+        if (this.entryForm) {
           const stateControl = this.entryForm.get('orgState');
-          if(stateControl) {
+          if (stateControl) {
             stateControl.patchValue(_.get(this.entryDetails, 'orgState', ''));
           }
-          if(_.get(this.entryDetails, 'orgState', '')) {
+          if (_.get(this.entryDetails, 'orgState', '')) {
             this.getDistrictsList(_.get(this.entryDetails, 'orgState', ''), true);
           }
         }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
@@ -165,8 +309,8 @@ export class ProfileEntryEditComponent implements OnInit {
     this.ProfileV2RevampService.getDistrictsList(state).subscribe({
       next: (res: any) => {
         this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
-          const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
-        if(districtControl) {
+        const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
+        if (districtControl) {
           if (isFirstTime) {
             districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
           } else {
@@ -176,17 +320,17 @@ export class ProfileEntryEditComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.districtsList = [];
-        if(err) {
+        if (err) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.');
         }
       }
     })
   }
 
-  onCurrentlyWorkingChange(event: boolean): void{
+  onCurrentlyWorkingChange(event: boolean): void {
     this.isCurrentlyWorking = event;
     const currentlyWorkingControl = this.entryForm.get('currentlyWorking');
-    if(currentlyWorkingControl) {
+    if (currentlyWorkingControl) {
       currentlyWorkingControl.patchValue(event.toString());
     }
     if (event) {
@@ -219,6 +363,29 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     }
   }
+
+  // onOrgChange(orgName: string): void {
+  //   const orgId = this.getOrgId(orgName);
+  //   this.ProfileV2RevampService.getOrgReadData(orgId)
+  //   .pipe(
+  //     mergeMap((res: any) => {
+  //       const frameworkid = _.get(res, 'result.response.frameworkid', '');
+  //       if (!frameworkid) {
+  //         return [];
+  //       }
+  //       return this.ProfileV2RevampService.getFrameworkInfo(frameworkid)
+  //     })
+  //   ).subscribe({
+  //     next: (res: any) => {
+  //       console.log('Framework Info:', res);
+  //     },
+  //     error: (error: HttpErrorResponse) => {
+  //       if (error) {
+  //         this.openSnackbar('Something went wrong. Please refresh or try again later.')
+  //       }
+  //     }
+  //   })
+  // }
   //#endregion (service history)
 
   //#region (educational qualifications)
@@ -226,8 +393,8 @@ export class ProfileEntryEditComponent implements OnInit {
     this.entryForm = this.fb.group({
       degree: [_.get(this.entryDetails, 'degree', ''), [Validators.required]],
       otherDegree: [''],
-      fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''), 
-        [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
+      fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''),
+      [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
       institutionName: [_.get(this.entryDetails, 'institutionName', ''), [Validators.required]],
       otherInstituteName: [''],
       startYear: [_.get(this.entryDetails, 'startYear', ''), [Validators.required]],
@@ -240,20 +407,19 @@ export class ProfileEntryEditComponent implements OnInit {
   generateYearsList(): void {
     this.yeasersList = generateYears(1900);
   }
-    
 
   getDegreesList() {
     this.ProfileV2RevampService.getDegreesList().subscribe({
       next: (res: any) => {
         this.degreesList = _.get(res, 'result.degreesList.degrees', []) as string[];
-        if(this.entryForm) {
+        if (this.entryForm) {
           const degreeControl = this.entryForm.get('degree');
-          if(degreeControl) {
+          if (degreeControl) {
             degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
           }
         }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
@@ -264,14 +430,14 @@ export class ProfileEntryEditComponent implements OnInit {
     this.ProfileV2RevampService.getInstitutionsList().subscribe({
       next: (res: any) => {
         this.institutionsList = _.get(res, 'result.institutionList.institutions', []) as string[];
-        if(this.entryForm) {
+        if (this.entryForm) {
           const instituteNameControl = this.entryForm.get('institutionName');
-          if(instituteNameControl) {
+          if (instituteNameControl) {
             instituteNameControl.patchValue(_.get(this.entryDetails, 'institutionName', ''));
           }
         }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
@@ -293,7 +459,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   onInstituteChange(selectedInstitute: string): void {
     const otherInstituteControl = this.entryForm.get('otherInstituteName');
-    if(otherInstituteControl) {
+    if (otherInstituteControl) {
       if (selectedInstitute === 'Other') {
         otherInstituteControl.setValidators([Validators.required]);
       } else {
@@ -332,7 +498,7 @@ export class ProfileEntryEditComponent implements OnInit {
       url: [_.get(this.entryDetails, 'url', '')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
-    if(_.get(this.entryDetails, 'fileName', '')) {
+    if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url;
       urlControl.patchValue('')
       urlControl.disable()
@@ -384,10 +550,10 @@ export class ProfileEntryEditComponent implements OnInit {
       urlControl.updateValueAndValidity();
     }
     const fileNameControl = this.entryForm.get('fileName');
-          if (fileNameControl) {
-            fileNameControl.patchValue('');
-            fileNameControl.updateValueAndValidity();
-          }
+    if (fileNameControl) {
+      fileNameControl.patchValue('');
+      fileNameControl.updateValueAndValidity();
+    }
     this.disableUpload = false;
     this.disableUrl = false;
   }
@@ -455,10 +621,10 @@ export class ProfileEntryEditComponent implements OnInit {
               urlControl.updateValueAndValidity()
             }
             const fileNameControl = this.entryForm.get('fileName');
-          if (fileNameControl) {
-            fileNameControl.patchValue(fileName);
-            fileNameControl.updateValueAndValidity();
-          }
+            if (fileNameControl) {
+              fileNameControl.patchValue(fileName);
+              fileNameControl.updateValueAndValidity();
+            }
             this.disableUrl = true
             this.disableUpload = false
           }
@@ -474,15 +640,16 @@ export class ProfileEntryEditComponent implements OnInit {
 
   //#endregion (achievements)
 
-handleSubmit(): void {
+  handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-          const formValue = this.entryForm.value;
+        const formValue = this.entryForm.value;
         if (this.header === 'Service History') {
           if (formValue.orgName && this.orgList.length > 0) {
             const org = this.orgList.find((org: any) => org.channel === formValue.orgName);
             if (org) {
               formValue['orgLogo'] = _.get(org, 'imgUrl', '') ;
+              formValue['orgId'] = _.get(org, 'identifier', '');
             }
           }
         }
@@ -491,6 +658,17 @@ handleSubmit(): void {
         this.markFormGroupTouched(this.entryForm);
       }
     }
+  }
+
+  getOrgId(orgName: string): string {
+    let orgId = '';
+    if (orgName && this.orgList.length > 0) {
+      const org = this.orgList.find((org: any) => org.channel === orgName);
+      if (org) {
+        orgId = _.get(org, 'identifier', '');
+      }
+    }
+    return orgId;
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {

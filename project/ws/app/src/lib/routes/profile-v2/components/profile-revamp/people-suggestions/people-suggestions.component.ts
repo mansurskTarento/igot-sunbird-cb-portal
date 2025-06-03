@@ -57,6 +57,7 @@ export class PeopleSuggestionsComponent implements OnChanges {
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
           person.connectionStatus = 'pending';
+          this.openSnackbar('Connection request sent successfully');
         },
         error: () => {
           this.openSnackbar('Something went wrong while sending connection request');

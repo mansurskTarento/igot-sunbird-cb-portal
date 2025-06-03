@@ -19,6 +19,8 @@ import { environment } from 'src/environments/environment'
 import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { TranslateService } from '@ngx-translate/core';
 //#endregion
 
 @Component({
@@ -34,6 +36,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isCurrentUser = false;
   userId: string = '';
   profesionalDetails: any
+  profileData: any;
   profileImageUrl = '';
   profileBannerUrl = '';
   profileCompletion: number = 0;
@@ -167,6 +170,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion
 
   connectionStatus = 'Connect'
+  isMobile = false;
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
   //#endregion
@@ -177,8 +181,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private pipeImgUrl: PipeCertificateImageURL,
-    private configSvc: ConfigurationsService
-  ) { }
+    private configSvc: ConfigurationsService,
+    private breakpointObserver: BreakpointObserver,
+    private translateService: TranslateService
+  ) {
+     this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+      });
+  }
 
   ngAfterViewInit(): void {
     this.selectedTabIndex = 0
@@ -186,7 +197,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
-    this.profileV2RevampSvc.getWebSiteLanguage()
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
+    // this.profileV2RevampSvc.getWebSiteLanguage()
     const lastSectionId = sessionStorage.getItem('lastProfileSection');
     if (lastSectionId) {
       setTimeout(() => {
@@ -240,6 +256,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
       this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
+      this.profileData = _.get(data, 'profile.data', {})
       this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.userId = _.get(data, 'profile.userId', '')
       this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
@@ -258,7 +275,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
-      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', ''),
+      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', '')),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
       profileGroupStatus: _.get(this.profesionalDetails, 'profileGroupStatus', ''),
@@ -288,6 +305,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
 
       currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
+      profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
   }
@@ -320,7 +338,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   patchConnections(connections: any) {
-    this.peopleSuggestionsList = connections
+    this.peopleSuggestionsList = connections.slice(0, 3)
   }
 
   patchRecamendedCommunity(community: any) {
@@ -351,6 +369,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         coverPhotoUrl: this.profileBannerUrl
       },
       disableClose: true,
+      autoFocus: false,
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result && result.isUpdated) {
@@ -1060,7 +1079,7 @@ sendConnectionRequest(): void {
         connectionId: this.userId,
         userIdFrom: _.get(currentUser, 'userId', ''),
         userNameFrom: _.get(currentUser, 'userId', ''),
-        userDepartmentFrom: _.get(currentUser, 'employmentDetails.departmentName', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
         userIdTo: this.userId,
         userNameTo: this.userId,
         userDepartmentTo: this.primaryDetails.departmentName || '',
@@ -1069,6 +1088,7 @@ sendConnectionRequest(): void {
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
           this.connectionStatus = 'Pending';
+          this.openSnackbar('Connection request sent successfully');
         },
         error: () => {
           this.openSnackbar('Something went wrong while sending connection request');

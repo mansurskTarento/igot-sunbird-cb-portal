@@ -113,10 +113,10 @@
       <div class="flex flex-col profile-control">
         <div class="lable">Designation</div>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-select formControlName="designation" placeholder="Select Designation"
+          <mat-select formControlName="designation" placeholder="Select Designation" panelClass="profile-control"
             (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
             <div class="sticky-search-container" (click)="$event.stopPropagation()">
-              <div class="search-input-wrapper">
+              <div class="search-input-wrapper profile-control">
                 <input type="text" placeholder="Search designation" formControlName="searchDesignation"
                   class="search-input" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
                   autocomplete="off">

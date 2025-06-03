@@ -29,6 +29,10 @@ const API_END_POINTS = {
   GET_INSTITUTIONS_LIST: 'apis/proxies/v8/masterdata/list/institutions',
   UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree',
   UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution',
+  GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
+  // ORG_READ: '/api/org/v1/read', //OLD
+  // ORGANISATION_FW: (frameworkName: string) =>
+  //   `/api/framework/v1/read/${frameworkName}`, //OLD
 
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
@@ -119,6 +123,27 @@ export class ProfileV2RevampService {
   getOrgSearch(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.ORG_SEARCH, formBody)
   }
+
+  getMinistriesList(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_MINISTRY)
+  }
+
+  // getOrgReadData(organisationId: string): Observable<any> {
+  //   const request = {
+  //     request: {
+  //       organisationId,
+  //     },
+  //   };
+  //   return this.http.post<any>(API_END_POINTS.ORG_READ, request)
+  // }
+
+  // getFrameworkInfo(frameWorkName: string): Observable<any> {
+  //   return this.http
+  //     .get(`${API_END_POINTS.ORGANISATION_FW(frameWorkName)}`, {
+  //       withCredentials: true,
+  //     })
+  // }
+
   getDesignations(_req: any): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
   }
@@ -179,15 +204,15 @@ export class ProfileV2RevampService {
   }
 
   withDrawRequest(payload: any): Observable<any> {
-      return this.http.post<any>(API_END_POINTS.WITHDRAW_REQUEST, payload)
-    }
+    return this.http.post<any>(API_END_POINTS.WITHDRAW_REQUEST, payload)
+  }
 
   handleTranslateTo(menuName: string): string {
     // tslint:disable-next-line: prefer-template
     const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
-  
+
   getWebSiteLanguage() {
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')

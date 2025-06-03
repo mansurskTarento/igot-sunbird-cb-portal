@@ -50,7 +50,9 @@
           <div class="flex flex-col profile-details">
             <div class="flex gap-2">
               <span class="profile-name">{{primaryDetails?.firstname}} </span>
-              <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
+              <ng-container *ngIf="primaryDetails?.profileStatus === 'VERIFIED'">
+                <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
+              </ng-container>
               <span class="user-name">(user name)</span>
             </div>
             <div class="profile-details">
@@ -62,7 +64,7 @@
               </div>
             </ng-container>
             <ng-container *ngIf="isMentor">
-              <button mat-raised-button class="mentor-profile" i18n (click)="viewMentorProfile()">View My Mentor
+              <button mat-button class="mentor-profile" i18n (click)="viewMentorProfile()">View My Mentor
                 Profile</button>
             </ng-container>
           </div>
@@ -79,22 +81,22 @@
               </button>
               <ng-container *ngIf="enableWTR; else transferRequest">
                 <button mat-menu-item (click)="handleWithdrawTransferRequest()">
-                  <!-- <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span> -->
-                  <span>With draw Transfer Request</span>
+                  <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span>
+                  <!-- <span>With draw Transfer Request</span> -->
                 </button>
               </ng-container>
               <ng-template #transferRequest>
                 <ng-container *ngIf="!enableWR">
                   <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="below"
                     matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO.">
-                    <!-- <span>{{ 'profileInfo?.makeTransferRequest' | translate }}</span> -->
-                    <span>Make Transfer Request</span>
+                    <span>{{ 'profileInfo.makeTransferRequest' | translate }}</span>
+                    <!-- <span>Make Transfer Request</span> -->
                   </button>
                 </ng-container>
                 <ng-container *ngIf="enableWR">
                   <button mat-menu-item class="disable-button" matTooltipPosition="below"
-                    matTooltip="{{ 'profileInfo?.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
-                    <!-- <span>{{ 'profileInfo?.withdrawTransferRequest' | translate }}</span> -->
+                    matTooltip="{{ 'profileInfo.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
+                    <!-- <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span> -->
                     <span>Withdraw Transfer Request</span>
                   </button>
                 </ng-container>
@@ -109,14 +111,14 @@
                 [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
             </div>
             <mat-menu #profileMenu="matMenu">
-              <button mat-menu-item (click)="blockProfile()">
+              <!-- <button mat-menu-item (click)="blockProfile()">
                 <span>Block this profile</span>
-              </button>
+              </button> -->
               <button mat-menu-item (click)="copyProfileLink()">
                 <span>Copy profile link</span>
               </button>
             </mat-menu>
-            <button mat-raised-button class="connectButton" i18n (click)="sendConnectionRequest()">
+            <button mat-button class="connectButton" i18n (click)="sendConnectionRequest()">
               <ng-container *ngIf="connectionStatus === 'Connect'">
                 <mat-icon class="connect-icon mr-2">person_add</mat-icon>
               </ng-container>
@@ -150,18 +152,22 @@
       </div>
       <!-- #endregion (left routing) -->
 
-      <mat-tab-group class="profile-tabs hide-for-desktop flex" [selectedIndex]="selectedTabIndex" id="matTabGroup">
-        <mat-tab label="Profile">
-          <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
-        </mat-tab>
-        <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
-          <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
-        </mat-tab>
-      </mat-tab-group>
+      <ng-container *ngIf="isMobile; else desktopTabs">
+        <mat-tab-group class="profile-tabs flex" [selectedIndex]="selectedTabIndex" id="matTabGroup">
+          <mat-tab label="Profile">
+            <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
+          </mat-tab>
+          <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
+            <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
+          </mat-tab>
+        </mat-tab-group>
+      </ng-container>
 
-      <div class="hidden md:flex">
-        <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
-      </div>
+      <ng-template #desktopTabs>
+        <div class="w-full">
+          <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
+        </div>
+      </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
         <div class="flex flex-col gap-4 w-full">

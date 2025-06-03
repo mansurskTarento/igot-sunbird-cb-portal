@@ -332,6 +332,23 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     }
   }
 
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.profileForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.profileForm.get('searchDesignation')) {
+        this.profileForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.profileForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+
   // #endregion (end of primary details)
 
   private createAboutMeForm(): void {
@@ -858,7 +875,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
     switch (this.header) {
       case 'Profile':
-        if (isFormValid) {
+        if (isFormValid || this.profileImage) {
           return true
         }
         return false

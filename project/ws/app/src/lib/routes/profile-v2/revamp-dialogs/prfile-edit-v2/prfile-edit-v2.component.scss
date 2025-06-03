@@ -303,7 +303,18 @@
   }
 }
 
-:host ::ng-deep .profile-control {
+::ng-deep .profile-control {
+  .search-input {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    width: 98%;
+    height: 30px;
+    border-radius: 17px;
+    &:focus {
+      outline: none;
+      border-color: #F3962F;
+      box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
+    }
+  }
   .mat-form-field-appearance-outline .mat-form-field-flex {
     height: 35px;
   }
