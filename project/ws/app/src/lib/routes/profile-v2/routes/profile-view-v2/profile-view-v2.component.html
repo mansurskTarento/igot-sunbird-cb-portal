@@ -67,7 +67,7 @@
             </ng-container>
           </div>
         </div>
-        <ng-container *ngIf="isCurrentUser">
+        <ng-container *ngIf="isCurrentUser; else notCurrentUser">
           <div class="flex flex-col justify-between items-end">
             <div class="flex">
               <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
@@ -102,6 +102,28 @@
             </mat-menu>
           </div>
         </ng-container>
+        <ng-template #notCurrentUser>
+          <div class="flex flex-col justify-between items-end">
+            <div class="flex">
+              <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
+                [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
+            </div>
+            <mat-menu #profileMenu="matMenu">
+              <button mat-menu-item (click)="blockProfile()">
+                <span>Block this profile</span>
+              </button>
+              <button mat-menu-item (click)="copyProfileLink()">
+                <span>Copy profile link</span>
+              </button>
+            </mat-menu>
+            <button mat-raised-button class="connectButton" i18n (click)="sendConnectionRequest()">
+              <ng-container *ngIf="connectionStatus === 'Connect'">
+                <mat-icon class="connect-icon mr-2">person_add</mat-icon>
+              </ng-container>
+              {{connectionStatus}}
+            </button>
+          </div>
+        </ng-template>
       </div>
       <!-- #endregion (profile details ) -->
     </div>

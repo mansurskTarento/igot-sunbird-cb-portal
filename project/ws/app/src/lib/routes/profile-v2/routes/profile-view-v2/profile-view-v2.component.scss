@@ -333,3 +333,22 @@
     display: none !important;
   }
 }
+
+.connectButton {
+  width: 140px;
+  height: 32px;
+  background-color: #1B4CA11A !important;
+  border: 1px solid #1B4CA1;
+  border-radius: 17px;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  color: #1B4CA1 !important;
+  
+  .connect-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    color: #1B4CA1;
+  }
+}

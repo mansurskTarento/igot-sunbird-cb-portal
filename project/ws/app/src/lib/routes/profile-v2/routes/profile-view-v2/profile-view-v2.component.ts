@@ -165,8 +165,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   orgId: any
   pageData: any
   assessmentsData: any
-  
   //#endregion
+
+  connectionStatus = 'Connect'
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
   //#endregion
@@ -271,7 +272,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       domicileMedium: _.get(this.profesionalDetails, 'personalDetails.domicileMedium', ''),
       category: _.get(this.profesionalDetails, 'personalDetails.category', ''),
       pinCode: _.get(this.profesionalDetails, 'employmentDetails.pinCode', ''),
-
+      departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
       externalSystemId: _.get(this.profesionalDetails, 'additionalProperties.externalSystemId', ''),
       externalSystemDor: _.get(this.profesionalDetails, 'additionalProperties.externalSystemDor', ''),
       isCadre: _.get(this.profesionalDetails, 'personalDetails.isCadre', false),
@@ -436,7 +437,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
       next: (response: any) => {
         if (response) {
-          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result', {}))
+          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result.profileDetails', _.get(response, 'result', {})))
           this.profileCompletion = _.get(response, 'result.profileCompletion', 0)
           this.patchProfileDetails()
         }
@@ -1040,6 +1041,45 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
+  }
+
+  blockProfile() {
+    this.connectionStatus = 'Unblock';
+  }
+
+  copyProfileLink() {
+  const currentUrl = window.location.href; // Get the current URL
+  navigator.clipboard.writeText(currentUrl) // Copy the URL to the clipboard
+    .then(() => {
+      this.openSnackbar('Profile link copied to clipboard'); // Notify the user
+    })
+    .catch(() => {
+      this.openSnackbar('Failed to copy profile link'); // Handle errors
+    });
+}
+
+sendConnectionRequest(): void {
+  const currentUser = this.configSvc.userProfile
+    if(this.userId && currentUser) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'userId', ''),
+        userDepartmentFrom: _.get(currentUser, 'employmentDetails.departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.userId,
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
+        next: () => {
+          this.connectionStatus = 'Pending';
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong while sending connection request');
+        }
+      });
+    }
   }
 
   //#region (activities)

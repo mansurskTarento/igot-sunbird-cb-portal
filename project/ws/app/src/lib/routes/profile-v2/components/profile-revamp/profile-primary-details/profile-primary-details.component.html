@@ -128,90 +128,92 @@
 
   <!-- #endregion Primary Details -->
 
-  <hr class="divider my-3" />
+  <ng-container *ngIf="isCurrentUser">
+    <hr class="divider my-3" />
 
-  <!-- #region Other Details -->
-  <div class="section-header mb-4 flex justify-between items-center">
-    <span>Other Details</span>
-    <ng-container *ngIf="isCurrentUser">
-      <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
-    </ng-container>
-  </div>
-  <div class="details-grid">
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Employee ID</span>
-      <span class="value">{{ primaryDetails?.employeeCode }}</span>
+    <!-- #region Other Details -->
+    <div class="section-header mb-4 flex justify-between items-center">
+      <span>Other Details</span>
+      <ng-container *ngIf="isCurrentUser">
+        <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
+      </ng-container>
     </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Email</span>
-      <span class="value">{{ primaryDetails?.primaryEmail }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Mobile Number</span>
-      <span class="value">+91 {{ primaryDetails?.mobile }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Gender</span>
-      <span class="value">{{ primaryDetails?.gender }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Date of Birth</span>
-      <span class="value">{{ primaryDetails?.dob }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Mother Tongue</span>
-      <span class="value">{{ primaryDetails?.domicileMedium }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Category</span>
-      <span class="value">{{ primaryDetails?.category }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Office Pin Code</span>
-      <span class="value">{{ primaryDetails?.pinCode }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">eHRMS ID/External System ID</span>
-      <span class="value">{{ primaryDetails?.externalSystemId || 'N/A' }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Date of Retirement</span>
-      <span class="value">{{ primaryDetails?.externalSystemDor || 'N/A' }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Are you from any organized service of the government?</span>
-      <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
-    </div>
-    <ng-container *ngIf="primaryDetails?.civilServiceType">
+    <div class="details-grid">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Civil Service Type</span>
-        <span class="value">{{ primaryDetails?.civilServiceType }}</span>
+        <span class="label">Employee ID</span>
+        <span class="value">{{ primaryDetails?.employeeCode }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.civilServiceName">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Services</span>
-        <span class="value">{{ primaryDetails?.civilServiceName }}</span>
+        <span class="label">Email</span>
+        <span class="value">{{ primaryDetails?.primaryEmail }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.isCadre">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Cadre</span>
-        <span class="value">{{ primaryDetails?.cadreName }}</span>
+        <span class="label">Mobile Number</span>
+        <span class="value">+91 {{ primaryDetails?.mobile }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.cadreBatch">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Batch</span>
-        <span class="value">{{ primaryDetails?.cadreBatch }}</span>
+        <span class="label">Gender</span>
+        <span class="value">{{ primaryDetails?.gender }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Cadre Controlling Authority</span>
-        <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
+        <span class="label">Date of Birth</span>
+        <span class="value">{{ primaryDetails?.dob }}</span>
       </div>
-    </ng-container>
-  </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Mother Tongue</span>
+        <span class="value">{{ primaryDetails?.domicileMedium }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Category</span>
+        <span class="value">{{ primaryDetails?.category }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Office Pin Code</span>
+        <span class="value">{{ primaryDetails?.pinCode }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">eHRMS ID/External System ID</span>
+        <span class="value">{{ primaryDetails?.externalSystemId || 'N/A' }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Date of Retirement</span>
+        <span class="value">{{ primaryDetails?.externalSystemDor || 'N/A' }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Are you from any organized service of the government?</span>
+        <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
+      </div>
+      <ng-container *ngIf="primaryDetails?.civilServiceType">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Civil Service Type</span>
+          <span class="value">{{ primaryDetails?.civilServiceType }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.civilServiceName">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Services</span>
+          <span class="value">{{ primaryDetails?.civilServiceName }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.isCadre">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Cadre</span>
+          <span class="value">{{ primaryDetails?.cadreName }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.cadreBatch">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Batch</span>
+          <span class="value">{{ primaryDetails?.cadreBatch }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Cadre Controlling Authority</span>
+          <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
   <!-- #endregion Other Details -->
 </div>
