@@ -21,7 +21,6 @@ export class UserStatsComponent implements OnInit {
   }
 
   viewAll(state: UserStats) {
-    debugger
     if (state.vewAllUrl) {
       this.router.navigateByUrl(state.vewAllUrl);
     }
