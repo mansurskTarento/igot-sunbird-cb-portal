@@ -4,7 +4,7 @@ import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/le
 import { HttpErrorResponse } from '@angular/common/http';
 import * as _ from 'lodash';
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
-import { designation, generateYears, organisation, state } from '../../models/profile-revamp.model';
+import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
@@ -495,7 +495,7 @@ export class ProfileEntryEditComponent implements OnInit {
       issuedDate: [_.get(this.entryDetails, 'issuedDate', '')],
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],
-      url: [_.get(this.entryDetails, 'url', '')],
+      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
     if (_.get(this.entryDetails, 'fileName', '')) {

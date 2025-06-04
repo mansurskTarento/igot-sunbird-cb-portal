@@ -14,6 +14,12 @@ import { OtpService } from '../../../user-profile/services/otp.services';
 import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { DatePipe } from '@angular/common';
+import { ImageCropComponent } from '@sunbird-cb/utils-v2';
+import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
+import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
+import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
+import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
+
 
 @Component({
   selector: 'ws-app-prfile-edit-v2',
@@ -184,19 +190,79 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
 
   //#region (profile image)
+
+  handleUploadProfileImg(file: File) {
+      const formData = new FormData()
+      const fileName = file.name.replace(/[^A-Za-z0-9.]/g, '')
+      if (
+        !(
+          PROFILE_IMAGE_SUPPORT_TYPES.indexOf(
+            `.${fileName
+              .toLowerCase()
+              .split('.')
+              .pop()}`,
+          ) > -1
+        )
+      ) {
+        this.snackBar.openFromComponent(NotificationComponent, {
+          data: {
+            type: Notify.INVALID_IMG_FORMAT,
+          },
+          duration: NOTIFICATION_TIME * 1500,
+        })
+        return
+      }
+  
+      if (file.size > IMAGE_MAX_SIZE) {
+        this.snackBar.openFromComponent(NotificationComponent, {
+          data: {
+            type: Notify.PROFILE_IMG_SIZE_ERROR,
+          },
+          duration: NOTIFICATION_TIME * 1500,
+        })
+        return
+      }
+  
+      const dialogRef = this.dialog.open(ImageCropComponent, {
+        width: '70%',
+        data: {
+          isRoundCrop: true,
+          imageFile: file,
+          width: 272,
+          height: 148,
+          isThumbnail: true,
+          imageFileName: fileName,
+        },
+      })
+  
+      dialogRef.afterClosed().subscribe({
+        next: (result: File) => {
+          if (result) {
+            debugger
+            formData.append('data', result, fileName)
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+              this.profileImage = e.target.result;
+            };
+            reader.readAsDataURL(result);
+          }
+        },
+      })
+    }
   uploadImage() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = (event: any) => {
       const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.profileImage = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
+      this.handleUploadProfileImg(file);
+      // if (file) {
+      //   const reader = new FileReader();
+      //   reader.onload = (e: any) => {
+      //     this.profileImage = e.target.result;
+      //   };
+      //   reader.readAsDataURL(file);
+      // }
     };
     input.click();
   }

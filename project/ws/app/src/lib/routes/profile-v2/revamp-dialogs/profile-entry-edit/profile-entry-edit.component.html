@@ -315,6 +315,7 @@
           </div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="url" placeholder="e.g. https://www.example.com">
+            <mat-error *ngIf="hasError('url', 'pattern')">Please give valid URL</mat-error>
           </mat-form-field>
         </div>
         <!-- Description -->

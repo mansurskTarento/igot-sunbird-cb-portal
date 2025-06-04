@@ -276,6 +276,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.setProfileCompletionGraph()
     this.primaryDetails = {
       firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', '')),
+      username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
       profileGroupStatus: _.get(this.profesionalDetails, 'profileGroupStatus', ''),
