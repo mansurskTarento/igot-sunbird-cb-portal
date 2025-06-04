@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 
 @Component({
   selector: 'ws-app-my-notifications',
@@ -12,7 +12,7 @@ export class MyNotificationsComponent {
   selectedLanguage = 'en'
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
-    private router: Router) {
+    private router: Router, private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -33,6 +33,7 @@ export class MyNotificationsComponent {
 
 
   redirectTo(notification: any) {
+    this.raiseTelemetryEventForNotification(notification)
     if (notification.category === 'LEARN') {
       this.router.navigate([`/app/toc/${notification.message.id}`])
     } else if (notification.category === 'EVENT') {
@@ -46,6 +47,20 @@ export class MyNotificationsComponent {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
     }
+  }
+
+  raiseTelemetryEventForNotification(notification: any) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'notification-engine',
+        id: notification.notification_id,
+      },
+      {},
+      {
+        module: 'Home',
+      }
+    )
   }
 
 }
