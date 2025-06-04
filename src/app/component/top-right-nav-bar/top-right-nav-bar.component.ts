@@ -3,7 +3,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { DomSanitizer } from '@angular/platform-browser'
 import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
@@ -54,6 +54,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
+    private events: EventService,
     private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -187,6 +188,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   viewAllClick(event: any) {
     if (event.category) {
+      this.raiseTelemetryEventForNotification(event)
       if (event.category === 'LEARN') {
         this.router.navigate([`/app/toc/${event.message.id}`])
       } else if (event.category === 'EVENT') {
@@ -214,6 +216,20 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   calculateCount(event: any) {
     console.log("sds", event)
+  }
+
+  raiseTelemetryEventForNotification(notification: any) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: 'notification-engine',
+        id: notification.notification_id,
+      },
+      {},
+      {
+        module: 'Home',
+      }
+    )
   }
 
 
