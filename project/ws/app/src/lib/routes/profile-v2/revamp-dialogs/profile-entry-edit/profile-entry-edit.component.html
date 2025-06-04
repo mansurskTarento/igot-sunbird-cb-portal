@@ -150,7 +150,7 @@
       <div class="flex flex-col">
         <!-- Degree -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Degree</div>
+          <div class="lable required">Degree</div>
           <mat-form-field appearance="outline" class="full-width" >
             <mat-select formControlName="degree" placeholder="Select Degree" (selectionChange)="onDegreeChange($event.value)">
               <ng-container *ngFor="let degree of degreesList">
@@ -158,7 +158,7 @@
               </ng-container>
               <mat-option value="other">Other</mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('degree', 'required')">Degree is required</mat-error>
+            <mat-error *ngIf="hasError('degree', 'required')">Please select a degree</mat-error>
           </mat-form-field>
         </div>
 
@@ -176,11 +176,11 @@
 
         <!-- Field of Study -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Field of Study</div>
+          <div class="lable required">Field of Study</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="fieldOfStudy" maxlength="250"
               placeholder="Enter the area of study, e.g if you have pursued B.Tech, then specify the branch.">
-            <mat-error *ngIf="hasError('fieldOfStudy', 'required')">Field of Study is required</mat-error>
+            <mat-error *ngIf="hasError('fieldOfStudy', 'required')">Please enter field of study</mat-error>
             <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">Special characters are not allowed in this field</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('fieldOfStudy')?.value">
               {{ entryForm.get('fieldOfStudy')?.value.length }}/250
@@ -190,7 +190,7 @@
 
         <!-- Institute Name -->
         <div class="flex flex-col profile-control w-full">
-          <div class="lable">Institute Name</div>
+          <div class="lable required">Institute Name</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="institutionName" placeholder="Select Institute Name" (selectionChange)="onInstituteChange($event.value)">
               <ng-container *ngFor="let institute of institutionsList">
@@ -198,6 +198,7 @@
               </ng-container>
               <mat-option value="other">Other</mat-option>
             </mat-select>
+            <mat-error *ngIf="hasError('institutionName', 'required')">Please select an institute</mat-error>
           </mat-form-field>
         </div>
 
@@ -215,13 +216,14 @@
         <div class="flex gap-8">
           <!-- Start Year -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">Start Year</div>
+            <div class="lable required">Start Year</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="startYear" placeholder="Select Year" (selectionChange)="onStartYearChange($event.value)">
                 <ng-container *ngFor="let year of yeasersList">
                   <mat-option [value]="year">{{year}}</mat-option>
                 </ng-container>
               </mat-select>
+              <mat-error *ngIf="hasError('startYear', 'required')">Please select a start year</mat-error>
             </mat-form-field>
           </div>
 
@@ -234,6 +236,7 @@
                   <mat-option [value]="year" [disabled]="isEndYearDisabled(year)">{{year}}</mat-option>
                 </ng-container>
               </mat-select>
+              <mat-error *ngIf="hasError('endYear', 'required')">Please select an end year</mat-error>
             </mat-form-field>
           </div>
         </div>
