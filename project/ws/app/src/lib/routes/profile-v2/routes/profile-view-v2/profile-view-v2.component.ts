@@ -41,7 +41,27 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   profileBannerUrl = '';
   profileCompletion: number = 0;
   nameInitials: string = '';
-  userStats: UserStats[] = [];
+  userStats: UserStats[] = [
+    {
+      state: 'My Karma Points',
+      totalPoints: '2,133',
+      iconUrl: './assets/icons/karma-point-logo.jpg',
+      vewAllUrl: 'app/person-profile/karma-points',
+      stateInfo: 'My Karma Points'
+    },
+    {
+      state: 'My Certificates',
+      totalPoints: '312',
+      iconUrl: './assets/icons/certificate.svg',
+      vewAllUrl: ''
+    },
+    {
+      state: 'My Posts',
+      totalPoints: '312',
+      iconUrl: './assets/icons/edit.svg',
+      vewAllUrl: ''
+    }
+  ];
   profileRoutes: profileRoutes[] = [
     {
       name: 'About Me',
@@ -821,7 +841,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   openProfileEntryListDialog(header: string) {
     const dialogDetails = {
       header: header,
-      userId: this.userId
+      userId: this.userId,
+      isCurrentUser : this.isCurrentUser || false
     }
     switch (header) {
       case 'Service History':
