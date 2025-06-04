@@ -4,7 +4,7 @@
             <!-- //NOSONAR -->
             <li class="notification-icon"
                 *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
-                <div [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()">
+                <div [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()" title="Notifications">
                     <mat-icon class="bell-icon">notifications</mat-icon>
                     <span class="counter" *ngIf="notificationsCount > 0">{{notificationsCount}}</span>
                 </div>
