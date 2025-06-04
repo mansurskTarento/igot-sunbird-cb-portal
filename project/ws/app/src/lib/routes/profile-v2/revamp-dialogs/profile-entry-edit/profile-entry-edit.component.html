@@ -20,8 +20,8 @@
   <hr class="solid">
   <div class="form-actions flex justify-end items-center gap-4">
     <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">Cancel</button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()">Save
-      Changes</button>
+    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()" [ngClass]="{'disable-btn': entryForm.invalid}"  >
+      {{entryDetails !== '' ? 'Update' : 'Add'}}</button>
   </div>
   <!-- #endregion (Footer Form Actions) -->
 
@@ -46,11 +46,25 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">Designation</div>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="designation" placeholder="Select Designation">
-              <ng-container *ngFor="let designation of designationsList">
-                <mat-option [value]="designation?.name">{{designation?.name}}</mat-option>
-              </ng-container>
-            </mat-select>
+            <mat-select formControlName="designation" placeholder="Select Designation" panelClass="profile-control"
+            (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
+            <div class="sticky-search-container" (click)="$event.stopPropagation()">
+              <div class="">
+                <input type="text" placeholder="Search designation" formControlName="searchDesignation"
+                  class="search-input" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                  autocomplete="off">
+              </div>
+            </div>
+            <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
+              {{ option?.name }}
+            </mat-option>
+            <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+              Loading more...
+            </div>
+            <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
+              No matches found
+            </mat-option>
+          </mat-select>
             <mat-error *ngIf="hasError('designation', 'required')">Designation is required.</mat-error>
           </mat-form-field>
         </div>
@@ -109,7 +123,7 @@
         </div>
 
         <div class="flex flex-col profile-control mb-4">
-          <mat-checkbox class="lable" [checked]="currentlyWorking === 'true'" (change)="onCurrentlyWorkingChange($event.checked)">
+          <mat-checkbox class="lable" [checked]="isCurrentlyWorking === true" (change)="onCurrentlyWorkingChange($event.checked)">
             Currently Working
           </mat-checkbox>
         </div>
@@ -261,7 +275,7 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable">Issue Date</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="Select Date">
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="Select Date" [max]="todayDate">
             <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #issueDatePicker></mat-datepicker>
             <mat-error *ngIf="hasError('issuedDate', 'required')">Issue Date is required</mat-error>
@@ -301,6 +315,7 @@
           </div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="url" placeholder="e.g. https://www.example.com">
+            <mat-error *ngIf="hasError('url', 'pattern')">Please give valid URL</mat-error>
           </mat-form-field>
         </div>
         <!-- Description -->

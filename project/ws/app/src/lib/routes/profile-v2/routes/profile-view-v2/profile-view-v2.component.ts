@@ -1,5 +1,5 @@
 //#region (imports)
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
@@ -19,7 +19,8 @@ import { environment } from 'src/environments/environment'
 import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
-
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { TranslateService } from '@ngx-translate/core';
 //#endregion
 
 @Component({
@@ -28,13 +29,14 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
   styleUrls: ['./profile-view-v2.component.scss'],
   providers: [PipeCertificateImageURL]
 })
-export class ProfileViewV2Component implements OnInit, OnDestroy {
+export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy {
 
   //#region (global variables)
   private destroySubject$ = new Subject()
   isCurrentUser = false;
   userId: string = '';
   profesionalDetails: any
+  profileData: any;
   profileImageUrl = '';
   profileBannerUrl = '';
   profileCompletion: number = 0;
@@ -157,9 +159,21 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     designationRejectionTime: 0,
   }
   approvalPendingFields = []
+
+  //#region (m web and activites varailbles)
+  selectedTabIndex: any = 0;
+  insightsDataLoading = false
+  insightsData: any
+  orgId: any
+  pageData: any
+  assessmentsData: any
   //#endregion
 
+  connectionStatus = 'Connect'
+  isMobile = false;
+
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
+  //#endregion
 
   constructor(
     private dialog: MatLegacyDialog,
@@ -167,11 +181,28 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private pipeImgUrl: PipeCertificateImageURL,
-    private configSvc: ConfigurationsService
-  ) { }
+    private configSvc: ConfigurationsService,
+    private breakpointObserver: BreakpointObserver,
+    private translateService: TranslateService
+  ) {
+     this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.selectedTabIndex = 0
+  }
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
+    // this.profileV2RevampSvc.getWebSiteLanguage()
     const lastSectionId = sessionStorage.getItem('lastProfileSection');
     if (lastSectionId) {
       setTimeout(() => {
@@ -183,53 +214,59 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     this.getGroupData()
     this.loadDesignations()
     this.checkIsMentor()
-    if( this.configSvc.userProfile && this.configSvc.userProfile.userId) {
+    if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
       this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
     }
+
+    this.getInsightsData()
+    
   }
 
   //#region (initialization)
 
   getGroupData(): void {
-      this.profileV2RevampSvc.getGroups()
-        .pipe(takeUntil(this.destroySubject$))
-        .subscribe((res: any) => {
-          this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
-        }, (error: HttpErrorResponse) => {
-          if (!error.ok) {
-            this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
-          }
-        })
-    }
+    this.profileV2RevampSvc.getGroups()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
+        }
+      })
+  }
 
-    loadDesignations() {
-      this.profileV2RevampSvc.getDesignations({}).subscribe(
-        (data: any) => {
-          this.designationsList = data.responseData
-        },
-        (_err: any) => {
-          this.openSnackbar('Failed to load designations')
-        })
-    }
+  loadDesignations() {
+    this.profileV2RevampSvc.getDesignations({}).subscribe(
+      (data: any) => {
+        this.designationsList = data.responseData
+      },
+      (_err: any) => {
+        this.openSnackbar('Failed to load designations')
+      })
+  }
 
   checkIsMentor() {
     const userRoles: any = _.get(this.configSvc, 'userRoles', []);
-    if( userRoles && userRoles.length > 0) {
+    if (userRoles && userRoles.length > 0) {
       this.isMentor = userRoles.includes('mentor') || userRoles.includes('MENTOR') || userRoles.includes('Mentor') ? true : false;
     }
   }
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
-      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data', {}))
+      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
+      this.profileData = _.get(data, 'profile.data', {})
       this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.userId = _.get(data, 'profile.userId', '')
+      this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
       this.profileCompletion = _.get(data, 'profile.data.profileCompletion', 0)
       this.patchProfileDetails()
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.patchConnections(_.get(data, 'recamendations.data', []))
       this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
     })
+    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
   }
 
   patchProfileDetails() {
@@ -238,7 +275,8 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
-      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', ''),
+      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', '')),
+      username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
       profileGroupStatus: _.get(this.profesionalDetails, 'profileGroupStatus', ''),
@@ -252,7 +290,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
       domicileMedium: _.get(this.profesionalDetails, 'personalDetails.domicileMedium', ''),
       category: _.get(this.profesionalDetails, 'personalDetails.category', ''),
       pinCode: _.get(this.profesionalDetails, 'employmentDetails.pinCode', ''),
-
+      departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
       externalSystemId: _.get(this.profesionalDetails, 'additionalProperties.externalSystemId', ''),
       externalSystemDor: _.get(this.profesionalDetails, 'additionalProperties.externalSystemDor', ''),
       isCadre: _.get(this.profesionalDetails, 'personalDetails.isCadre', false),
@@ -268,6 +306,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
 
       currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
+      profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
   }
@@ -300,7 +339,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
   }
 
   patchConnections(connections: any) {
-    this.peopleSuggestionsList = connections
+    this.peopleSuggestionsList = connections.slice(0, 3)
   }
 
   patchRecamendedCommunity(community: any) {
@@ -331,6 +370,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
         coverPhotoUrl: this.profileBannerUrl
       },
       disableClose: true,
+      autoFocus: false,
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result && result.isUpdated) {
@@ -347,14 +387,9 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
       this.profileV2RevampSvc.updateBannerPic(formdata).pipe(
         mergeMap((res: any) => {
           const createdUrl = _.get(res, 'result.url', '')
-          const urlToReplace = 'https://storage.googleapis.com/igot'
-          const urlSplice = createdUrl.slice(urlToReplace.length)
-          // let uploadedFile = createdUrl
-          // if (createdUrl.startsWith(urlToReplace)) {
-          //   const urlSplice = createdUrl.slice(urlToReplace.length)
-          //   uploadedFile = `${environment.domainName}assets/public/${urlSplice}`
-          // }
-          const uploadedFile = this.pipeImgUrl.transform(urlSplice)
+          const folderNameToSplit = '/profileBanner/'
+          const urlSplice = createdUrl.split(folderNameToSplit)[1]
+          const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
           const formBody = {
             request: {
               userId: this.userId,
@@ -396,7 +431,13 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response) {
           this.fetchProfileDetails()
-          this.openSnackbar('Updated Successfully')
+          if (_.get(formBody, 'request.profileDetails.professionalDetails')) {
+            this.openSnackbar('Sent for Approval')
+            this.enableWR = true
+            this.getSendApprovalStatus()
+          } else {
+            this.openSnackbar('Updated Successfully')
+          }
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -411,7 +452,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
       next: (response: any) => {
         if (response) {
-          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result', {}))
+          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result.profileDetails', _.get(response, 'result', {})))
           this.profileCompletion = _.get(response, 'result.profileCompletion', 0)
           this.patchProfileDetails()
         }
@@ -425,7 +466,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
   }
 
   openProfileEditDialog(header: string) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header: header,
       profileDetails: this.primaryDetails,
     }
@@ -436,6 +477,9 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
         state: _.get(this.locationDetails, 'state', ''),
         district: _.get(this.locationDetails, 'district', ''),
       }
+    } else if (header === 'Primary Details') {
+      dialogDetails['groupsList'] = this.groupsList
+      dialogDetails['designationsMeta'] = this.designationsList
     }
     const dialogRef = this.dialog.open(PrfileEditV2Component, {
       data: dialogDetails,
@@ -446,7 +490,8 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.generateBasicProfileFormBody(result)
+        const handleSendApproval = header === 'Primary Details'
+        this.generateBasicProfileFormBody(result, handleSendApproval)
         if (_.get(result, 'state', '') || _.get(result, 'district', '')) {
           if (_.get(result, 'state', '') !== _.get(this.locationDetails, 'state', '') ||
             _.get(result, 'district', '') !== _.get(this.locationDetails, 'district', '')
@@ -470,7 +515,7 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
     })
   }
 
-  generateBasicProfileFormBody(result: any): any {
+  generateBasicProfileFormBody(result: any, handleSendApproval: boolean): any {
     if (result) {
       const formBody: any = {
         request: {
@@ -626,6 +671,33 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
           hasChanges = true;
         }
       });
+
+      if (handleSendApproval) {
+        // const data: any = {}
+        // if ((
+        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
+        //   _.get(result, 'group', '') &&
+        //   _.get(result, 'group', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].group', '')) ||
+        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
+        //     _.get(result, 'group', ''))) {
+        //   data['group'] = _.get(result, 'group', '')
+        // }
+        // if ((
+        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
+        //   _.get(result, 'designation', '') &&
+        //   _.get(result, 'designation', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].designation', '')) ||
+        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
+        //     _.get(result, 'designation', ''))) {
+        //   data['designation'] = _.get(result, 'designation', '')
+        // }
+
+        // if(data['group'] || data['designation']) {
+        //   formBody.request.profileDetails['professionalDetails'] = _.get(this.profesionalDetails, 'professionalDetails', [])
+        //   formBody.request.profileDetails['professionalDetails'].push(data)
+        //   hasChanges = true;
+        // }
+      }
+
       if (hasChanges) {
         this.updateProfileDetails(formBody);
       }
@@ -708,44 +780,44 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
   }
 
   handleTransferRequest(): void {
-      const dialogRef = this.dialog.open(TransferRequestComponent, {
-        data: { portalProfile: this.profesionalDetails, groupData: this.groupsList, designationsMeta: this.designationsList },
-        disableClose: true,
-        panelClass: 'common-modal',
-      })
-  
-      dialogRef.componentInstance.enableWithdraw.subscribe((value: boolean) => {
-        if (value) {
-          this.enableWTR = true
-          this.getSendApprovalStatus()
-          this.fetchProfileDetails()
-        }
-      })
-    }
+    const portalProfile = _.get(this.profesionalDetails, 'profileDetails', this.profesionalDetails)
+    const dialogRef = this.dialog.open(TransferRequestComponent, {
+      data: { portalProfile, groupData: this.groupsList, designationsMeta: this.designationsList },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
 
-    handleWithdrawTransferRequest(): void {
-        const dialogRef = this.dialog.open(WithdrawRequestComponent, {
-          data: {
-            approvalPendingFields: this.approvalPendingFields,
-            withDrawType: 'department',
-          },
-          disableClose: true,
-          panelClass: 'common-modal',
-        })
-    
-        dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
-          if (value) {
-            this.enableWTR = false
-            this.unVerifiedObj.group = ''
-            this.unVerifiedObj.designation = ''
-          }
-        })
+    dialogRef.componentInstance.enableWithdraw.subscribe((value: boolean) => {
+      if (value) {
+        this.enableWTR = true
+        this.getSendApprovalStatus()
+        this.fetchProfileDetails()
       }
+    })
+  }
 
-    
+  handleWithdrawTransferRequest(): void {
+    const dialogRef = this.dialog.open(WithdrawRequestComponent, {
+      data: {
+        approvalPendingFields: this.approvalPendingFields,
+        withDrawType: 'department',
+      },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
+
+    dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
+      if (value) {
+        this.enableWTR = false
+        this.unVerifiedObj.group = ''
+        this.unVerifiedObj.designation = ''
+      }
+    })
+  }
+
   viewMentorProfile() {
-      window.open(`${environment.contentHost}/mentorship`, '_blank')
-    }
+    window.open(`${environment.contentHost}/mentorship`, '_blank')
+  }
   openProfileEntryListDialog(header: string) {
     const dialogDetails = {
       header: header,
@@ -985,6 +1057,108 @@ export class ProfileViewV2Component implements OnInit, OnDestroy {
       duration,
     })
   }
+
+  blockProfile() {
+    this.connectionStatus = 'Unblock';
+  }
+
+  copyProfileLink() {
+  const currentUrl = window.location.href; // Get the current URL
+  navigator.clipboard.writeText(currentUrl) // Copy the URL to the clipboard
+    .then(() => {
+      this.openSnackbar('Profile link copied to clipboard'); // Notify the user
+    })
+    .catch(() => {
+      this.openSnackbar('Failed to copy profile link'); // Handle errors
+    });
+}
+
+sendConnectionRequest(): void {
+  const currentUser = this.configSvc.userProfile
+    if(this.userId && currentUser) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'userId', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.userId,
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
+        next: () => {
+          this.connectionStatus = 'Pending';
+          this.openSnackbar('Connection request sent successfully');
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong while sending connection request');
+        }
+      });
+    }
+  }
+
+  //#region (activities)
+  getInsightsData() {
+    this.insightsDataLoading = true
+    const request = {
+      request: {
+        filters: {
+          primaryCategory: 'programs',
+          organisations: [
+            'across',
+            this.orgId,
+          ],
+        },
+      },
+    }
+    this.profileV2RevampSvc.getInsightsData(request)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        if (res.result.response) {
+          this.insightsData = res.result.response
+
+          this.constructNudgeData()
+          if (this.insightsData && this.insightsData['weekly-claps']) {
+            this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
+          }
+        } else {
+          this.insightsDataLoading = false
+        }
+      }, (_error: HttpErrorResponse) => {
+        this.insightsDataLoading = false
+      })
+  }
+
+  constructNudgeData() {
+    const nudgeData: any = {
+      type: 'data',
+      iconsDisplay: false,
+      cardClass: 'slider-container',
+      height: 'auto',
+      width: '',
+      sliderData: [],
+      negativeDisplay: false,
+      'dot-default': 'dot-grey',
+      'dot-active': 'dot-active',
+    }
+    const sliderData: { title: any; icon: string; data: string; colorData: string; }[] = []
+    this.insightsData.nudges.forEach((ele: any) => {
+      if (ele) {
+        const data = {
+          title: ele.label,
+          icon: ele.growth === 'positive' ? 'arrow_upward' : 'arrow_downward',
+          data: ele.growth === 'positive' && ele.progress > 1 ? `+${Math.round(ele.progress)}%` : '',
+          colorData: ele.growth === 'positive' ? 'color-green' : 'color-red',
+        }
+        sliderData.push(data)
+      }
+    })
+    nudgeData.sliderData = sliderData
+    this.insightsData['sliderData'] = nudgeData
+    this.insightsDataLoading = false
+  }
+  //#endregion (activities)
 
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()

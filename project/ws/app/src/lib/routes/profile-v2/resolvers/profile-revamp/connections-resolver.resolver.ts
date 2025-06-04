@@ -16,7 +16,7 @@ export class connectionsResolverResolver {
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<NSProfileDataV2.IProfile>> {
     const formBody = {
-      size: 3,
+      // size: 0,
       offset: 0,
       search: [
         {

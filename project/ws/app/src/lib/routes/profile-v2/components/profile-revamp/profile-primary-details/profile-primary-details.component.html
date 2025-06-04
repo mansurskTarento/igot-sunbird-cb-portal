@@ -8,25 +8,38 @@
     <ng-container *ngIf="disablePrimaryDetailsEdit">
       <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'" [matTooltip]="'profileInfo?.pdTooltipWarnMsg' | translate">edit</mat-icon>
     </ng-container>
-    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">{{
-      'profileInfo?.withdrawRequest' | translate }}
+    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">
+      <!-- {{'profileInfo?.withdrawRequest' | translate }} -->
+       Withdraw Request
     </div>
   </div>
   <div class="details-grid">
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">Group</span>
       <span class="value">{{ primaryDetails?.group }}
-        <ng-container *ngIf="primaryDetails?.profileGroupStatus === 'VERIFIED'">
+        <ng-container *ngIf="primaryDetails?.profileGroupStatus === 'VERIFIED'; else groupNotVerified">
           <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
         </ng-container>
+        <ng-template #groupNotVerified>
+          <div class="profile-not-verified">
+            <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
+            <mat-icon>info_outline</mat-icon>
+          </div>
+        </ng-template>
       </span>
     </div>
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">Designation</span>
       <span class="value">{{ primaryDetails?.designation }}
-        <ng-container *ngIf="primaryDetails?.profileDesignationStatus === 'VERIFIED'">
+        <ng-container *ngIf="primaryDetails?.profileDesignationStatus === 'VERIFIED'; else designationNotVerified">
           <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
         </ng-container>
+        <ng-template #designationNotVerified>
+          <div class="profile-not-verified">
+            <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
+            <mat-icon>info_outline</mat-icon>
+          </div>
+        </ng-template>
       </span>
     </div>
   </div>
@@ -39,7 +52,8 @@
             <div class="w-full flex justify-end items-center">
               <div>
                 <div mat-icon-button class="flex gap-2 items-center viewApprovalStatuas w-full">
-                  <span>{{ 'profileInfo?.viewApprovalStatus' | translate }}</span>
+                  <!-- <span>{{ 'profileInfo?.viewApprovalStatus' | translate }}</span> -->
+                  <span>View Approval Status</span>
                   <mat-icon>{{panelOpenState ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
                 </div>
               </div>
@@ -47,33 +61,39 @@
           </mat-expansion-panel-header>
           <div>
             <div class="approvalStatusHeader">
-              {{ 'profileInfo?.approvalStatus' | translate }}
+              <!-- {{ 'profileInfo?.approvalStatus' | translate }} -->
+              Approval Status
             </div>
             <ng-container *ngIf="unVerifiedObj?.group || rejectedFields?.group">
               <div class="flex justify-between items-center px-5 py-3">
                 <ng-container *ngIf="showGroupPending">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div> -->
+                    <div class="statusLable">Group</div>
                     <div class="approvalStausValue">{{unVerifiedObj?.group}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
+                      translate }}</div> -->
+                    <div class="approvalStatusPending flex justify-center items-center">Pending</div>
                   </div>
                   <div class="w-full flex justify-center" style="width: 200px;">-</div>
                 </ng-container>
                 <ng-container *ngIf="showGroupRejection">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.group' | translate }}</div> -->
+                    <div class="statusLable">Group</div>
                     <div class="approvalStausValue">{{rejectedFields?.group}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
+                      translate }}</div> -->
+                    <div class="approvalStatusRejected flex justify-center items-center">Rejected</div>
                   </div>
                   <div mat-icon-button (click)="viewReason(rejectedFields?.groupRejectionComments)"
                     class="flex gap-2 items-center viewReason">
-                    <span>{{ 'profileInfo?.viewReason' | translate }}</span>
+                    <!-- <span>{{ 'profileInfo?.viewReason' | translate }}</span> -->
+                    <span>View Reason</span>
                   </div>
                 </ng-container>
               </div>
@@ -82,27 +102,32 @@
               <div class="flex justify-between items-center px-5 py-3">
                 <ng-container *ngIf="showDesignationPending">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div> -->
+                    <div class="statusLable">Designation</div>
                     <div class="approvalStausValue">{{unVerifiedObj?.designation}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo?.pending' |
+                      translate }}</div> -->
+                    <div class="approvalStatusPending flex justify-center items-center">Pending</div>
                   </div>
                   <div class="flex justify-center" style="width: 200px;">-</div>
                 </ng-container>
                 <ng-container *ngIf="showDesignationRejection">
                   <div class="w-full">
-                    <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div>
+                    <!-- <div class="statusLable">{{ 'profileInfo?.designation' | translate }}</div> -->
+                    <div class="statusLable">Designation</div>
                     <div class="approvalStausValue">{{rejectedFields?.designation}}</div>
                   </div>
                   <div class="w-full">
-                    <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
-                      translate }}</div>
+                    <!-- <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo?.rejected' |
+                      translate }}</div> -->
+                    <div class="approvalStatusRejected flex justify-center items-center">Rejected</div>
                   </div>
                   <div mat-icon-button (click)="viewReason(rejectedFields?.designationRejectionComments)"
                     class="flex gap-2 items-center viewReason">
-                    <span>{{ 'profileInfo?.viewReason' | translate }}</span>
+                    <!-- <span>{{ 'profileInfo?.viewReason' | translate }}</span> -->
+                    <span>View Reason</span>
                   </div>
                 </ng-container>
               </div>
@@ -115,90 +140,92 @@
 
   <!-- #endregion Primary Details -->
 
-  <hr class="divider my-3" />
+  <ng-container *ngIf="isCurrentUser">
+    <hr class="divider my-3" />
 
-  <!-- #region Other Details -->
-  <div class="section-header mb-4 flex justify-between items-center">
-    <span>Other Details</span>
-    <ng-container *ngIf="isCurrentUser">
-      <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
-    </ng-container>
-  </div>
-  <div class="details-grid">
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Employee ID</span>
-      <span class="value">{{ primaryDetails?.employeeCode }}</span>
+    <!-- #region Other Details -->
+    <div class="section-header mb-4 flex justify-between items-center">
+      <span>Other Details</span>
+      <ng-container *ngIf="isCurrentUser">
+        <mat-icon class="edit-icon" (click)="editPrimaryDetails('Other Details')">edit</mat-icon>
+      </ng-container>
     </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Email</span>
-      <span class="value">{{ primaryDetails?.primaryEmail }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Mobile Number</span>
-      <span class="value">+91 {{ primaryDetails?.mobile }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Gender</span>
-      <span class="value">{{ primaryDetails?.gender }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Date of Birth</span>
-      <span class="value">{{ primaryDetails?.dob }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Mother Tongue</span>
-      <span class="value">{{ primaryDetails?.domicileMedium }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Category</span>
-      <span class="value">{{ primaryDetails?.category }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Office Pin Code</span>
-      <span class="value">{{ primaryDetails?.pinCode }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">eHRMS ID/External System ID</span>
-      <span class="value">{{ primaryDetails?.externalSystemId || 'N/A' }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Date of Retirement</span>
-      <span class="value">{{ primaryDetails?.externalSystemDor || 'N/A' }}</span>
-    </div>
-    <div class="flex flex-col gap-2 pr-3">
-      <span class="label">Are you from any organized service of the government?</span>
-      <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
-    </div>
-    <ng-container *ngIf="primaryDetails?.civilServiceType">
+    <div class="details-grid">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Civil Service Type</span>
-        <span class="value">{{ primaryDetails?.civilServiceType }}</span>
+        <span class="label">Employee ID</span>
+        <span class="value">{{ primaryDetails?.employeeCode }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.civilServiceName">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Services</span>
-        <span class="value">{{ primaryDetails?.civilServiceName }}</span>
+        <span class="label">Email</span>
+        <span class="value">{{ primaryDetails?.primaryEmail }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.isCadre">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Cadre</span>
-        <span class="value">{{ primaryDetails?.cadreName }}</span>
+        <span class="label">Mobile Number</span>
+        <span class="value">+91 {{ primaryDetails?.mobile }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.cadreBatch">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Batch</span>
-        <span class="value">{{ primaryDetails?.cadreBatch }}</span>
+        <span class="label">Gender</span>
+        <span class="value">{{ primaryDetails?.gender }}</span>
       </div>
-    </ng-container>
-    <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
       <div class="flex flex-col gap-2 pr-3">
-        <span class="label">Cadre Controlling Authority</span>
-        <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
+        <span class="label">Date of Birth</span>
+        <span class="value">{{ primaryDetails?.dob }}</span>
       </div>
-    </ng-container>
-  </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Mother Tongue</span>
+        <span class="value">{{ primaryDetails?.domicileMedium }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Category</span>
+        <span class="value">{{ primaryDetails?.category }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Office Pin Code</span>
+        <span class="value">{{ primaryDetails?.pinCode }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">eHRMS ID/External System ID</span>
+        <span class="value">{{ primaryDetails?.externalSystemId || 'N/A' }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Date of Retirement</span>
+        <span class="value">{{ primaryDetails?.externalSystemDor || 'N/A' }}</span>
+      </div>
+      <div class="flex flex-col gap-2 pr-3">
+        <span class="label">Are you from any organized service of the government?</span>
+        <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
+      </div>
+      <ng-container *ngIf="primaryDetails?.civilServiceType">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Civil Service Type</span>
+          <span class="value">{{ primaryDetails?.civilServiceType }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.civilServiceName">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Services</span>
+          <span class="value">{{ primaryDetails?.civilServiceName }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.isCadre">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Cadre</span>
+          <span class="value">{{ primaryDetails?.cadreName }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.cadreBatch">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Batch</span>
+          <span class="value">{{ primaryDetails?.cadreBatch }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
+        <div class="flex flex-col gap-2 pr-3">
+          <span class="label">Cadre Controlling Authority</span>
+          <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
   <!-- #endregion Other Details -->
 </div>

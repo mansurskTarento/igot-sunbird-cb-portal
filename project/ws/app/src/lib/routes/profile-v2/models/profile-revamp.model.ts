@@ -83,3 +83,4 @@ export const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-
 export const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 export const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
 export const EMP_ID_PATTERN = /^[a-z0-9]+$/i
+export const URL_PATRON = /^(https?|http):\/\/[^\s/$.?#].[^\s]*$/

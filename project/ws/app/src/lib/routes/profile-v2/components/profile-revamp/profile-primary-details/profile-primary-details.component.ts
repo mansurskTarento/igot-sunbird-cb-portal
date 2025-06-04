@@ -6,6 +6,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog';
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component';
+import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component';
 
 @Component({
   selector: 'ws-app-profile-primary-details',
@@ -179,6 +180,18 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     }
     return false
   }
+
+  viewReason(comments: string) {
+      this.dialog.open(RejectionReasonPopupComponent, {
+        data: {
+          comments,
+          buttonText: 'OK',
+        },
+        disableClose: true,
+        width: '500px',
+        maxWidth: '90vw',
+      })
+    }
 
   showWithdrawRequestPopup() {
       const dialogRef = this.dialog.open(WithdrawRequestComponent, {
