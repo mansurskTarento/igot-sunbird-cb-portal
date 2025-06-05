@@ -133,6 +133,12 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <div class="note-container p-2">
+          <div class="flex flex-start items-center gap-2">
+            <mat-icon>info</mat-icon>
+            <div class="designation-note" [innerHTML]="'profileInfo.designationHint' | translate"></div>
+          </div>
+        </div>
       </div>
     </form>
   </ng-template>
