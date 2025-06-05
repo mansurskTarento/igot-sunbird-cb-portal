@@ -44,22 +44,25 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   userStats: UserStats[] = [
     {
       state: 'My Karma Points',
-      totalPoints: '2,133',
+      totalPoints: '0',
       iconUrl: './assets/icons/karma-point-logo.jpg',
       vewAllUrl: 'app/person-profile/karma-points',
-      stateInfo: 'My Karma Points'
+      stateInfo: 'My Karma Points',
+      identifier: 'karmaPoints'
     },
     {
       state: 'My Certificates',
-      totalPoints: '312',
+      totalPoints: '0',
       iconUrl: './assets/icons/certificate.svg',
-      vewAllUrl: ''
+      vewAllUrl: 'app/seeAll/new?key=continueLearning',
+      identifier: 'certificateCount'
     },
     {
       state: 'My Posts',
-      totalPoints: '312',
+      totalPoints: '0',
       iconUrl: './assets/icons/edit.svg',
-      vewAllUrl: ''
+      vewAllUrl: '/app/discussion-forum-v2',
+      identifier: 'postCount'
     }
   ];
   profileRoutes: profileRoutes[] = [
@@ -234,9 +237,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getGroupData()
     this.loadDesignations()
     this.checkIsMentor()
-    if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
-      this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
-    }
 
     this.getInsightsData()
     
@@ -275,13 +275,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
+      this.userId = _.get(data, 'profile.userId', '')
+      if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
+        this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
+      }
       this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
       this.profileData = _.get(data, 'profile.data', {})
       this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
-      this.userId = _.get(data, 'profile.userId', '')
       this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
       this.profileCompletion = _.get(data, 'profile.data.profileCompletion', 0)
       this.patchProfileDetails()
+      this.setUserStats()
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.patchConnections(_.get(data, 'recamendations.data', []))
       this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
@@ -329,6 +333,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
+    if(!this.isCurrentUser && this.aboutme !== '') {
+      this.filterProfileRoutes('about-me')
+    }
   }
 
   getInitials(): void {
@@ -348,6 +355,24 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     document.documentElement.style.setProperty('--i', String(progress))
   }
 
+  setUserStats() {
+    if(this.userStats && this.userStats.length > 0 && this.profesionalDetails) {
+      this.userStats.forEach((userStat: UserStats) => {
+        switch (userStat.identifier) {
+          case 'karmaPoints':
+            userStat.totalPoints = _.get(this.profesionalDetails, 'karmaPoints', 0)
+            break;
+          case 'certificateCount':
+            userStat.totalPoints = _.get(this.profesionalDetails, 'certificateCount', 0)
+            break;
+          case 'postCount':
+            userStat.totalPoints = _.get(this.profesionalDetails, 'postCount', 0)
+            break;
+        }
+      })
+    }
+  }
+
   patchEntries(entries: any) {
     this.serviceHistoryDetails.serviceHistoryList = _.get(entries, 'serviceHistory.data', [])
     this.serviceHistoryDetails.count = _.get(entries, 'serviceHistory.count', 0)
@@ -356,6 +381,22 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.achievementsDetails.achievementsList = _.get(entries, 'achievements.data', [])
     this.achievementsDetails.count = _.get(entries, 'achievements.count', 0)
     this.locationDetails = _.get(entries, 'locationDetails.data[0]', {})
+
+    if(!this.isCurrentUser) {
+      if (_.get(this.serviceHistoryDetails, 'serviceHistoryList', []).length === 0) {
+        this.filterProfileRoutes('service-history')
+      }
+      if (_.get(this.educationalQualificationDetails, 'educationalQualifications', []).length === 0) {
+        this.filterProfileRoutes('educational-qualifications')
+      }
+      if(_.get(this.achievementsDetails, 'achievementsList', []).length === 0) {
+        this.filterProfileRoutes('achievements')
+      }
+    }
+  }
+
+  filterProfileRoutes(routesId: string) {
+    this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => route.id !== routesId)
   }
 
   patchConnections(connections: any) {

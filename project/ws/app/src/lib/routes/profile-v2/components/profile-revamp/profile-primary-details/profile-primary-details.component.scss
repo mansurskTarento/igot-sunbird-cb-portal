@@ -168,12 +168,20 @@
 
 .profile-not-verified {
   // @extend .common-verified-css;
-  border: 1px solid #1B4CA1;
+  border: 1px solid rgba(0, 0, 0, 0.16);
   background: #D13924;
   color: white;
-
+  border-radius: 20px;
+  line-height: 12px;
+  /* stylelint-disable */
+  font: 400 10px Lato;
+  /* stylelint-enable */
+  padding: 2px 3px;
 
   .mat-icon {
+    font-size: 14px;
+    height: 14px;
+    width: 14px;
     color: white;
   }
 }
