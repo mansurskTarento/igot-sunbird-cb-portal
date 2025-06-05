@@ -89,6 +89,10 @@ export class ProfileEntryEditComponent implements OnInit {
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
+    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    if (orgDistrictControl && _.get(this.entryDetails, 'orgState', '') === '') {
+      orgDistrictControl.disable();
+    }
     this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
     if (this.isCurrentlyWorking) {
       const endDateControl = this.entryForm.get('endDate');
@@ -315,25 +319,35 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   getDistrictsList(state: string, isFirstTime: boolean = false) {
-    this.ProfileV2RevampService.getDistrictsList(state).subscribe({
-      next: (res: any) => {
-        this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
-        const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
-        if (districtControl) {
-          if (isFirstTime) {
-            districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
-          } else {
-            districtControl.patchValue('');
+    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    if (state) {
+      if (orgDistrictControl) {
+        orgDistrictControl.enable();
+      }
+      this.ProfileV2RevampService.getDistrictsList(state).subscribe({
+        next: (res: any) => {
+          this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
+          const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
+          if (districtControl) {
+            if (isFirstTime) {
+              districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
+            } else {
+              districtControl.patchValue('');
+            }
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.districtsList = [];
+          if (err) {
+            this.openSnackbar('Something went wrong. Please refresh or try again later.');
           }
         }
-      },
-      error: (err: HttpErrorResponse) => {
-        this.districtsList = [];
-        if (err) {
-          this.openSnackbar('Something went wrong. Please refresh or try again later.');
-        }
+      })
+    } else {
+      if (orgDistrictControl) {
+        orgDistrictControl.disable();
       }
-    })
+    }
   }
 
   onCurrentlyWorkingChange(event: boolean): void {

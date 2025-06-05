@@ -84,7 +84,9 @@
           </div>
 
           <!-- District -->
-          <div class="flex flex-col profile-control w-full">
+          <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': !entryForm?.get('orgState')?.value}"
+            matTooltip="{{ entryForm?.get('orgState')?.value ? '' : 'Please select a state first.' }}" 
+            [matTooltipDisabled]="entryForm?.get('orgState')?.value !== ''" matTooltipPosition="above">
             <div class="lable required">District</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="orgDistrict" placeholder="Select District">
