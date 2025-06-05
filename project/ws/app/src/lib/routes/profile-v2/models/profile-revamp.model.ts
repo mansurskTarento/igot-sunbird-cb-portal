@@ -4,6 +4,7 @@ export interface UserStats {
   iconUrl: string
   vewAllUrl: string
   stateInfo?: string
+  identifier?: string
 }
 
 export interface profileRoutes {

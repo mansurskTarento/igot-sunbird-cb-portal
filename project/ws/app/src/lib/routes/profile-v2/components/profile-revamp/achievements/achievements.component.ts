@@ -44,7 +44,7 @@ export class AchievementsComponent implements OnInit {
 
   getAchievementsList(): void {
     if (this.userId) {
-      this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'achievements').subscribe({
+      this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'achievement').subscribe({
         next: (res: any) => {
           if (res) {
             this.achievementsList = _.get(res, 'result.response.achievements', []);
@@ -58,6 +58,7 @@ export class AchievementsComponent implements OnInit {
       })
     }
   }
+
   openEditDialog(entry: any = {}): void {
     this.openProfileEntryEditDialog.emit(entry);
   }

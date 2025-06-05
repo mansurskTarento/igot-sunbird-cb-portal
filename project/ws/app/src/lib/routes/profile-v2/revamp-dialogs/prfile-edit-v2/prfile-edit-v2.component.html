@@ -266,7 +266,7 @@
           </mat-autocomplete>
         </div>
 
-        <div class="flex flex-col profile-control">
+        <div class="flex flex-col profile-control mb-2">
           <div class="lable">eHRMS ID/External System ID</div>
           <div>{{profileDetails?.additionalProperties?.externalSystemId || 'NA'}} </div>
           <!-- <mat-form-field appearance="outline">
@@ -295,7 +295,7 @@
         </ng-container>
 
         <ng-container *ngIf="isCadreStatus">
-          <div class="flex flex-col profile-control">
+          <div class="flex flex-col profile-control justify-center">
             <div class="lable required">Type of Civil Services</div>
             <mat-form-field appearance="outline">
               <mat-select formControlName="civilServiceType" (selectionChange)="getService($event.value)">

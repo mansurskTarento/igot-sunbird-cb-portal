@@ -6,7 +6,7 @@
     </button>
   </div>
 </ng-container>
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2"  [ngClass]="{'container': isPopup}">
     <ng-container *ngFor="let achievement of achievementsList">
       <div class="achievement-card flex flex-col gap-1">
         <div class="flex justify-between items-center certificate-name">

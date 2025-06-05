@@ -1,6 +1,6 @@
 <div class="flex flex-row gap-5">
   <!-- #region (left profile )-->
-  <div class="flex flex-col gap-4 items-center justify-center profileLeftSection">
+  <div class="flex flex-col gap-4 items-center profileLeftSection">
     <div class="profile">
       <!-- #region (cover photo ) -->
       <div>
@@ -130,9 +130,11 @@
       <!-- #endregion (profile details ) -->
     </div>
 
-    <div>
-      <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
-    </div>
+    <ng-container *ngIf="isCurrentUser">
+      <div>
+        <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
+      </div>
+    </ng-container>
 
     <div class="flex gap-5 w-full">
       <!-- #region (left routing) -->
@@ -171,22 +173,24 @@
       <!-- #region (user details ) -->
       <ng-template #profileSection>
         <div class="flex flex-col gap-4 w-full">
-          <div id="about-me" class="user-details">
-            <div class="flex justify-between items-center mb-2">
-              <div class="section-header">About me</div>
-              <ng-container *ngIf="isCurrentUser">
-                <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+          <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
+            <div id="about-me" class="user-details">
+              <div class="flex justify-between items-center mb-2">
+                <div class="section-header">About me</div>
+                <ng-container *ngIf="isCurrentUser">
+                  <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+                </ng-container>
+              </div>
+              <ng-container *ngIf="aboutme; else emptyGif">
+                <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
+                  {{aboutme}}
+                </div>
+                <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                  {{showMoreAbout ? 'view less' : 'view more'}}
+                </div>
               </ng-container>
             </div>
-            <ng-container *ngIf="aboutme; else emptyGif">
-              <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
-                {{aboutme}}
-              </div>
-              <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-                {{showMoreAbout ? 'view less' : 'view more'}}
-              </div>
-            </ng-container>
-          </div>
+          </ng-container>
 
           <div id="basic-details" class="user-details">
             <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
@@ -196,75 +200,83 @@
               (getApprovalStatus)="getSendApprovalStatus()"></ws-app-profile-primary-details>
           </div>
 
-          <div id="service-history" class="user-details">
-            <div class="flex justify-between items-center mb-2">
-              <div class="section-header">Service History</div>
-              <ng-container *ngIf="isCurrentUser">
-                <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
-              </ng-container>
-            </div>
-            <ng-container
-              *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
-              <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
-                [isCurrentUser]="isCurrentUser"
-                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
-              <ng-container *ngIf="serviceHistoryDetails?.count > 2">
-                <div class="flex flex-col justify-between items-center">
-                  <div class="dividing-line"></div>
-                  <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
-                </div>
-              </ng-container>
-            </ng-container>
-          </div>
-
-          <!-- <div class="user-details">
-            <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
-          </div> -->
-
-          <div id="educational-qualifications" class="user-details">
-            <div class="flex justify-between items-center mb-2">
-              <div class="section-header">Educational Qualifications</div>
-              <ng-container *ngIf="isCurrentUser">
-                <mat-icon class="add-icon"
-                  (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
-              </ng-container>
-            </div>
-            <ng-container
-              *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
-              <ws-app-educational-qualifications
-                [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
-                [isCurrentUser]="isCurrentUser"
-                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
-              <ng-container *ngIf="educationalQualificationDetails?.count > 2">
-                <div class="flex flex-col justify-between items-center">
-                  <div class="dividing-line"></div>
-                  <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All
+          <ng-container *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
+            <div id="service-history" class="user-details">
+              <div class="flex justify-between items-center mb-2">
+                <div class="section-header">Service History</div>
+                <ng-container *ngIf="isCurrentUser">
+                  <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
+                </ng-container>
+              </div>
+              <ng-container
+                *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
+                <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
+                  [isCurrentUser]="isCurrentUser"
+                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
+                <ng-container *ngIf="serviceHistoryDetails?.count > 2">
+                  <div class="flex flex-col justify-between items-center">
+                    <div class="dividing-line"></div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
                   </div>
-                </div>
-              </ng-container>
-            </ng-container>
-          </div>
-
-          <div id="achievements" class="user-details">
-            <div class="flex justify-between items-center mb-2">
-              <div class="section-header">Achievements</div>
-              <ng-container *ngIf="isCurrentUser">
-                <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+                </ng-container>
               </ng-container>
             </div>
-            <ng-container
-              *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
-              <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
-                [isCurrentUser]="isCurrentUser"
-                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
-              <ng-container *ngIf="achievementsDetails?.count > 2">
-                <div class="flex flex-col justify-between items-center">
-                  <div class="dividing-line"></div>
-                  <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
-                </div>
+          </ng-container>
+
+          <ng-container *ngIf="isCurrentUser || (competencies && competencies?.length > 0)">
+            <div class="user-details">
+              <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
+            <div id="educational-qualifications" class="user-details">
+              <div class="flex justify-between items-center mb-2">
+                <div class="section-header">Educational Qualifications</div>
+                <ng-container *ngIf="isCurrentUser">
+                  <mat-icon class="add-icon"
+                    (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
+                </ng-container>
+              </div>
+              <ng-container
+                *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
+                <ws-app-educational-qualifications
+                  [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
+                  [isCurrentUser]="isCurrentUser"
+                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
+                <ng-container *ngIf="educationalQualificationDetails?.count > 2">
+                  <div class="flex flex-col justify-between items-center">
+                    <div class="dividing-line"></div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All
+                    </div>
+                  </div>
+                </ng-container>
               </ng-container>
-            </ng-container>
-          </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
+            <div id="achievements" class="user-details">
+              <div class="flex justify-between items-center mb-2">
+                <div class="section-header">Achievements</div>
+                <ng-container *ngIf="isCurrentUser">
+                  <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+                </ng-container>
+              </div>
+              <ng-container
+                *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
+                <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
+                  [isCurrentUser]="isCurrentUser"
+                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
+                <ng-container *ngIf="achievementsDetails?.count > 2">
+                  <div class="flex flex-col justify-between items-center">
+                    <div class="dividing-line"></div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </ng-container>
         </div>
       </ng-template>
       <!-- #endregion (user details ) -->
