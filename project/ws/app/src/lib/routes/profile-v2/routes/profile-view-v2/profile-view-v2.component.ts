@@ -1005,7 +1005,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   async generateEducationalQualificationsFormBody(educationalQualifications: any, oldDetails: any): Promise<any> {
     const isOtherDegree = _.get(educationalQualifications, 'degree', '') === 'other' && _.get(educationalQualifications, 'otherDegree', '') ? true : false;
-    const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '') === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
+    const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '').toLowerCase() === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
     const formBody: any = {
       request: {
         userId: this.userId,

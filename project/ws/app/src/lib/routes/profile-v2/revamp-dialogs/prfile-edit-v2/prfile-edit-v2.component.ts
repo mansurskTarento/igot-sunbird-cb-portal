@@ -238,7 +238,6 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe({
         next: (result: File) => {
           if (result) {
-            debugger
             formData.append('data', result, fileName)
             const reader = new FileReader();
             reader.onload = (e: any) => {
@@ -281,6 +280,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       designation: [_.get(this.profileDetails, 'designation', ''), Validators.required],
       searchDesignation: [''],
     });
+    this.checkCurrentDesignationPresent();
     setTimeout(() => {
       this.initilisationInProgress = false;
     }, 10)
@@ -371,7 +371,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkCurrentDesignationPresent() {
 
     // Get the current designation value
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('designation');
     const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
     // Check if current designation exists in the list
     if (currentDesignation) {

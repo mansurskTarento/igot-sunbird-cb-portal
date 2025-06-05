@@ -192,17 +192,30 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">Institute Name</div>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="institutionName" placeholder="Select Institute Name" (selectionChange)="onInstituteChange($event.value)">
-              <ng-container *ngFor="let institute of institutionsList">
+            <mat-select formControlName="institutionName" placeholder="Select Institute Name" panelClass="profile-control" 
+            (openedChange)="setupInstituteScrollListener($event)" (closed)="onInstituteDropdownClosed()" >
+            <div class="sticky-search-container" (click)="$event.stopPropagation()">
+              <div class="">
+                <input type="text" placeholder="Search institute" formControlName="searchInstitute"
+                  class="search-input" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                  autocomplete="off">
+              </div>
+            </div>
+              <ng-container *ngFor="let institute of filterInstitutionsList">
                 <mat-option [value]="institute">{{institute}}</mat-option>
               </ng-container>
-              <mat-option value="other">Other</mat-option>
+                <div *ngIf="isLoadingMoreInstitutions" class="loading-indicator">
+                Loading more...
+              </div>
+              <mat-option *ngIf="(filterInstitutionsList )?.length === 0" disabled>
+                No matches found
+              </mat-option>
             </mat-select>
             <mat-error *ngIf="hasError('institutionName', 'required')">Please select an institute</mat-error>
           </mat-form-field>
         </div>
 
-        <ng-container *ngIf="entryForm.get('institutionName')?.value === 'other'">
+        <ng-container *ngIf="entryForm.get('institutionName')?.value === 'Other'">
           <!-- Other Institute Name -->
           <div class="flex flex-col profile-control w-full">
             <div class="lable">Other Institute Name</div>
@@ -229,7 +242,7 @@
 
           <!-- End Year -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">End Year</div>
+            <div class="lable required">End Year</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="endYear" placeholder="Select Year">
                 <ng-container *ngFor="let year of yeasersList">
