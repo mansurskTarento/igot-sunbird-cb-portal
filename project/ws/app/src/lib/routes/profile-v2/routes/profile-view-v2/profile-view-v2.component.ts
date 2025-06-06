@@ -267,9 +267,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   checkIsMentor() {
-    const userRoles: any = _.get(this.configSvc, 'userRoles', []);
-    if (userRoles && userRoles.length > 0) {
-      this.isMentor = userRoles.includes('mentor') || userRoles.includes('MENTOR') || userRoles.includes('Mentor') ? true : false;
+    const userRoles: any = _.get(this.configSvc, 'userRoles');
+    if (userRoles) {
+      this.isMentor = userRoles.has('mentor') || userRoles.has('MENTOR') || userRoles.has('Mentor') ? true : false;
     }
   }
 
@@ -706,11 +706,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
       // Compare each field and add to form body if changed
       fieldMappings.forEach(mapping => {
-        const currentValue = _.get(result, mapping.resultPath, '');
+        const currentValue = _.get(result, mapping.resultPath, null);
         const formValue = this.primaryDetails[mapping.formField];
 
-        if (formValue !== currentValue && currentValue) {
-          // Create nested object structure if needed
+        if ((formValue !== currentValue && currentValue !== null) && 
+           (
+            (formValue === 'NA' && currentValue !== '') || 
+            formValue !== 'NA'
+          )) {
           const pathParts = mapping.formBodyPath.split('.');
           let current = formBody.request;
 

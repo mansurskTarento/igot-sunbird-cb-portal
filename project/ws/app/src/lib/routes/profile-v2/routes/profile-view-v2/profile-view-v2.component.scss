@@ -299,14 +299,16 @@
 }
 
 .mentor-profile {
-  background-color: #1B4CA1;
+  background-color: #1B4CA1 !important;
   width: 125px;
   height: 20px;
   border-radius: 4px;
   /* stylelint-disable */
   font: 400 10px Lato;
   /* stylelint-enable */
-  color: #FFFFFF;
+  color: #FFFFFF !important;
+  padding: 5px;
+  margin-top: 5px;
 }
 
 .disable-button {

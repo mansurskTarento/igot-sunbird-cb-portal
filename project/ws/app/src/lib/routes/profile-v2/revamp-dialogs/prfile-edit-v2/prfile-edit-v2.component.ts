@@ -438,7 +438,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],
-      isCadre: [_.get(this.profileDetails, 'isCadre', [])],
+      isCadre: [_.get(this.profileDetails, 'isCadre')],
       civilServiceType: [_.get(this.profileDetails, 'civilServiceType', ''), []],
       civilServiceName: [_.get(this.profileDetails, 'civilServiceName', ''), []],
       cadreName: [_.get(this.profileDetails, 'cadreName', ''), []],
@@ -907,7 +907,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       } else {
         formBody['civilServiceType'] = '';
         formBody['civilServiceName'] = '';
-        formBody['isCadre'] = '';
+        formBody['isCadre'] = false;
         formBody['cadreBatch'] = '';
         formBody['cadreControllingAuthorityName'] = '';
       }
