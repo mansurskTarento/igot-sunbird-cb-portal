@@ -238,7 +238,6 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe({
         next: (result: File) => {
           if (result) {
-            debugger
             formData.append('data', result, fileName)
             const reader = new FileReader();
             reader.onload = (e: any) => {
@@ -281,6 +280,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       designation: [_.get(this.profileDetails, 'designation', ''), Validators.required],
       searchDesignation: [''],
     });
+    this.checkCurrentDesignationPresent();
     setTimeout(() => {
       this.initilisationInProgress = false;
     }, 10)
@@ -371,7 +371,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkCurrentDesignationPresent() {
 
     // Get the current designation value
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('designation');
     const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
     // Check if current designation exists in the list
     if (currentDesignation) {
@@ -419,7 +419,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
-      aboutme: [_.get(this.profileDetails, 'aboutme', '')]
+      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
     setTimeout(() => {
       this.initilisationInProgress = false;
@@ -438,7 +438,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],
-      isCadre: [_.get(this.profileDetails, 'isCadre', [])],
+      isCadre: [_.get(this.profileDetails, 'isCadre')],
       civilServiceType: [_.get(this.profileDetails, 'civilServiceType', ''), []],
       civilServiceName: [_.get(this.profileDetails, 'civilServiceName', ''), []],
       cadreName: [_.get(this.profileDetails, 'cadreName', ''), []],
@@ -907,7 +907,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       } else {
         formBody['civilServiceType'] = '';
         formBody['civilServiceName'] = '';
-        formBody['isCadre'] = '';
+        formBody['isCadre'] = false;
         formBody['cadreBatch'] = '';
         formBody['cadreControllingAuthorityName'] = '';
       }
