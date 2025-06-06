@@ -22,7 +22,6 @@
           [attr.title]="placeHolder" id="global-search-input" i18n-placeholder="search content"
           [placeholder]="placeHolder" i18-aria-label aria-label="search content" (focus)="openSearchTemplateF()"
           [formControl]="queryControl" maxlength="100" (input)="loaderSearching = true" autocomplete="off" />
-
         <ng-container *ngIf="queryControl.value && !loaderSearching">
           <mat-icon matSuffix (click)="clearSearchText();" class="cursor-pointer search-close-icon">close</mat-icon>
         </ng-container>
@@ -49,12 +48,12 @@
         <mat-list *ngIf="recentSearches.length">
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
-            <span class="text-sm clear-all font-normal">Clear All</span>
-          </div>
+            <a class="text-sm clear-all font-normal cursor-pointer" (click)="recentDeleteByUserId()">Clear All</a>
+          </div> 
           <ng-container *ngFor="let query of recentSearches">
             <mat-list-item class="w-full">
-              <div matLine class="text-left text-xs font-normal recent-search-text">{{ query }}</div>
-              <button mat-icon-button>
+              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query.search_category, query.nlp_search_query)">{{ query.search_query }}</a>
+              <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
               </button>
             </mat-list-item>
