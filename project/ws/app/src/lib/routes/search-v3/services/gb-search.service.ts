@@ -23,6 +23,10 @@ const API_END_POINTS = {
   SEARCH_PEOPLE: `/apis/proxies/v8/user/v5/public/search`,
   SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
   SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
+  RECENT_CREATE: `apis/proxies/v8/search/v1/recent/create`,
+  RECENT_READ:`apis/proxies/v8/search/v1/recent/read`,
+  RECENT_DELETE_BY_USERID: `apis/proxies/v8/search/v1/recent/delete`,
+  RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `apis/proxies/v8/search/v1/recent/delete/timestamp/${id}`},
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`;
   },
@@ -98,6 +102,19 @@ export class GbSearchService {
   nlpSearch(params: SearchNLP): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise();
   }
+  recentCreate(req: any): Promise<any> {
+    return this.http.post(API_END_POINTS.RECENT_CREATE, req).toPromise(); 
+  }
+  recentRead() {
+    return this.http.get(API_END_POINTS.RECENT_READ); 
+  }
+
+  recentDeleteByUser() {
+    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_USERID); 
+  }
+  recentDeleteByTime(id:any) {
+    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_TIMESTAMP(id)); 
+  }
 
   enrollment(request: any, userId: string): any {
     return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request);
@@ -106,4 +123,5 @@ export class GbSearchService {
   searchExternalContent(params: SearchExternalRequest): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_EXT_CONTENT, params).toPromise();
   }
+
 }
