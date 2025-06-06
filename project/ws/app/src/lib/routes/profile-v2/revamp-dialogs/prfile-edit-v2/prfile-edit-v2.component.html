@@ -156,8 +156,9 @@
         <div class="lable">You can write about your years of experience, Skills, Current job role and Responsibilities.
         </div>
         <mat-form-field appearance="outline" class="full-width">
-          <textarea matInput formControlName="aboutme" rows="6"></textarea>
-          <mat-hint align="end" *ngIf="profileForm.get('about')?.value">
+          <textarea matInput formControlName="aboutme" rows="6"  maxlength="2000"></textarea>
+          <mat-error *ngIf="hasError('aboutme', 'pattern')">Special characters are not allowed in this field.</mat-error>
+          <mat-hint align="end" *ngIf="profileForm.get('aboutme')?.value">
             {{ profileForm.get('aboutme')?.value.length }}/2000
           </mat-hint>
         </mat-form-field>

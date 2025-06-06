@@ -342,6 +342,7 @@
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="Describe about the skills that you have gained from this learning"></textarea>
+               <mat-error *ngIf="hasError('description', 'pattern')">Special characters are not allowed in this field.</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/500
             </mat-hint>

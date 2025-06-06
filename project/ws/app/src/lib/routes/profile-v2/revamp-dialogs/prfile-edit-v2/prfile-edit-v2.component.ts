@@ -419,7 +419,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
-      aboutme: [_.get(this.profileDetails, 'aboutme', '')]
+      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
     setTimeout(() => {
       this.initilisationInProgress = false;
