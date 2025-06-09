@@ -565,7 +565,7 @@ export class ProfileEntryEditComponent implements OnInit {
     const otherDegreeControl = this.entryForm.get('otherDegree');
     if (otherDegreeControl) {
       if (selectedDegree === 'other') {
-        otherDegreeControl.setValidators([Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]);
+        otherDegreeControl.setValidators([Validators.required, Validators.maxLength(80), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
       } else {
         otherDegreeControl.clearValidators();
       }
@@ -578,7 +578,7 @@ export class ProfileEntryEditComponent implements OnInit {
     const otherInstituteControl = this.entryForm.get('otherInstituteName');
     if (otherInstituteControl) {
       if (selectedInstitute === 'Other') {
-        otherInstituteControl.setValidators([Validators.required]);
+        otherInstituteControl.setValidators([Validators.required, Validators.maxLength(125), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
       } else {
         otherInstituteControl.clearValidators();
       }
@@ -609,8 +609,8 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250)]],
-      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250)]],
+      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
       issuedDate: [_.get(this.entryDetails, 'issuedDate', '')],
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],

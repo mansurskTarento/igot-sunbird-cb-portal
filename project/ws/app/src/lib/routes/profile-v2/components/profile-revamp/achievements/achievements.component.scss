@@ -25,6 +25,7 @@
 .container {
   width: 744px;
   padding: 24px;
+  max-width: calc(100% - 44px);
 }
 
 .achievement-card {

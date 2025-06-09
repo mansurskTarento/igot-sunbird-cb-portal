@@ -69,7 +69,7 @@
           </mat-form-field>
         </div>
 
-        <div class="flex gap-8">
+        <div class="flex flex-col gap-0 md:flex-row md:gap-8">
           <!-- State -->
           <div class="flex flex-col profile-control w-full">
             <div class="lable">State</div>
@@ -99,7 +99,7 @@
           </div>
         </div>
 
-        <div class="flex gap-8">
+        <div class="flex flex-col gap-0 md:flex-row md:gap-8">
           <!-- Start Date -->
           <div class="flex flex-col profile-control w-full">
             <div class="lable">Start Date</div>
@@ -169,9 +169,12 @@
           <div class="flex flex-col profile-control w-full">
             <div class="lable">Degree Name</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput formControlName="otherDegree" placeholder="Enter your degree">
+              <input matInput formControlName="otherDegree" placeholder="Enter your degree" maxlength="80">
               <mat-error *ngIf="hasError('otherDegree', 'required')">Degree is required</mat-error>
               <mat-error *ngIf="hasError('otherDegree', 'pattern')">Special characters are not allowed in this field</mat-error>
+              <mat-hint align="end" *ngIf="entryForm.get('otherDegree')?.value">
+                {{ entryForm.get('otherDegree')?.value.length }}/80
+              </mat-hint>
             </mat-form-field>
           </div>
         </ng-container>
@@ -181,7 +184,7 @@
           <div class="lable required">Field of Study</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="fieldOfStudy" maxlength="250"
-              placeholder="Enter the area of study, e.g if you have pursued B.Tech, then specify the branch.">
+              placeholder="Enter your specialization(e.g., IT, Civil)">
             <mat-error *ngIf="hasError('fieldOfStudy', 'required')">Please enter field of study</mat-error>
             <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">Special characters are not allowed in this field</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('fieldOfStudy')?.value">
@@ -222,13 +225,17 @@
           <div class="flex flex-col profile-control w-full">
             <div class="lable">Other Institute Name</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput formControlName="otherInstituteName" placeholder="Enter your institute name">
+              <input matInput formControlName="otherInstituteName" placeholder="Enter your institute name" maxlength="125">
               <mat-error *ngIf="hasError('otherInstituteName', 'required')">Institute Name is required</mat-error>
+              <mat-error *ngIf="hasError('otherInstituteName', 'pattern')">Special characters are not allowed in this field</mat-error>
+              <mat-hint align="end" *ngIf="entryForm.get('otherInstituteName')?.value">
+                {{ entryForm.get('otherInstituteName')?.value.length }}/125
+              </mat-hint>
             </mat-form-field>
           </div>
         </ng-container>
 
-        <div class="flex gap-8">
+        <div class="flex flex-col gap-0 md:flex-row md:gap-8">
           <!-- Start Year -->
           <div class="flex flex-col profile-control w-full">
             <div class="lable required">Start Year</div>
@@ -273,6 +280,7 @@
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="title" maxlength="250" placeholder="e.g. Excel beginner">
             <mat-error *ngIf="hasError('title', 'required')">Title is required</mat-error>
+            <mat-error *ngIf="hasError('title', 'pattern')">Special characters are not allowed, except for: ( ) & - /</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
               {{ entryForm.get('title')?.value.length }}/250
             </mat-hint>
@@ -283,6 +291,7 @@
           <div class="lable">Issuing Organisation</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput maxlength="250" formControlName="issuedOrganisation" placeholder="e.g. Microsoft">
+            <mat-error *ngIf="hasError('issuedOrganisation', 'pattern')">Special characters are not allowed, except for: ( ) &</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
               {{ entryForm.get('issuedOrganisation')?.value.length }}/250
             </mat-hint>

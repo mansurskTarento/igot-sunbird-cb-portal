@@ -176,3 +176,11 @@
   opacity: 0.5;
   cursor: unset
 }
+
+@media screen and (max-width: 768px) {
+  .profile-editor-container {
+    width: calc(100% - 30px);
+    padding: 15px;
+  }
+  
+}

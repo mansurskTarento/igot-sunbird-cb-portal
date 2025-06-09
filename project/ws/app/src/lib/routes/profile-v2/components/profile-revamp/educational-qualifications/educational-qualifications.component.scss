@@ -25,6 +25,7 @@
 .container {
   width: 744px;
   padding: 24px;
+  max-width: calc(100% - 44px);
 }
 
 .education-card {
@@ -41,6 +42,7 @@
   font: 600 14px Montserrat;
   /* stylelint-enable */
   width: calc(100% - 20px);
+  word-wrap: break-word;
 }
 .edit-icon {
   color: #1B4CA1;
@@ -63,6 +65,7 @@
   /* stylelint-disable */
   font: 400 12px Lato;
   /* stylelint-enable */
+  word-wrap: break-word;
 }
 
 .education-period {
