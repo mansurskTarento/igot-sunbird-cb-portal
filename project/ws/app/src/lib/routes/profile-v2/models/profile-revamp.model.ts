@@ -18,7 +18,8 @@ export interface serviceHistory {
   designation: string,
   orgDetails: string,
   period: string,
-  orgLogo: string
+  orgLogo: string,
+  showMore?: boolean
 }
 
 export interface educationalQualifications {

@@ -96,7 +96,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     }
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
