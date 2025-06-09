@@ -5,7 +5,6 @@
   </div>
 
   <!-- Hidden file input -->
-  <input type="file" #fileInput style="display: none" (change)="onFileChange($event)" accept="image/*">
 
   <!-- Image preview or cropper -->
   <div class="w-full">
@@ -50,7 +49,13 @@
       <a >Delete Cover Photo</a>
     </div>
     <div class="flex gap-4">
-      <button mat-button class="change-photo-button" (click)="fileInput.click()">Change Cover Photo</button>
+      <ng-container *ngIf="uploadImage; else otherImage">
+        <input type="file" #fileInput class="hidden" (change)="onFileChange($event)" accept="image/*">
+        <button mat-button class="change-photo-button" (click)="fileInput.click()">Change Cover Photo</button>
+      </ng-container>
+      <ng-template #otherImage>
+        <button mat-button class="change-photo-button">Change Cover Photo</button>
+      </ng-template>
       <button mat-button class="apply-button" (click)="applyChanges()">Apply</button>
     </div>
   </div>

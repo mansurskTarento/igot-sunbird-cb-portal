@@ -82,10 +82,10 @@ export class ProfileEntryEditComponent implements OnInit {
       orgName: [_.get(this.entryDetails, 'orgName', ''), [Validators.required]],
       designation: [_.get(this.entryDetails, 'designation', ''), [Validators.required]],
       searchDesignation: [''],
-      orgState: [_.get(this.entryDetails, 'orgState', ''), [Validators.required]],
-      orgDistrict: [_.get(this.entryDetails, 'orgDistrict', ''), [Validators.required]],
-      startDate: [_.get(this.entryDetails, 'startDate', ''), [Validators.required]],
-      endDate: [_.get(this.entryDetails, 'endDate', ''), [Validators.required]],
+      orgState: [_.get(this.entryDetails, 'orgState', '')],
+      orgDistrict: [_.get(this.entryDetails, 'orgDistrict', '')],
+      startDate: [_.get(this.entryDetails, 'startDate', '')],
+      endDate: [_.get(this.entryDetails, 'endDate', '')],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });

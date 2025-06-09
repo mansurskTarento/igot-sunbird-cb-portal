@@ -72,7 +72,7 @@
         <div class="flex gap-8">
           <!-- State -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable required">State</div>
+            <div class="lable">State</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="orgState" placeholder="Select State" (selectionChange)="getDistrictsList($event.value)">
                 <ng-container *ngFor="let state of statesList">
@@ -87,7 +87,7 @@
           <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': !entryForm?.get('orgState')?.value}"
             matTooltip="{{ entryForm?.get('orgState')?.value ? '' : 'Please select a state first.' }}" 
             [matTooltipDisabled]="entryForm?.get('orgState')?.value !== ''" matTooltipPosition="above">
-            <div class="lable required">District</div>
+            <div class="lable">District</div>
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="orgDistrict" placeholder="Select District">
                 <ng-container *ngFor="let district of districtsList">
@@ -102,7 +102,7 @@
         <div class="flex gap-8">
           <!-- Start Date -->
           <div class="flex flex-col profile-control w-full">
-            <div class="lable required">Start Date</div>
+            <div class="lable">Start Date</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="Select Date" [max]="todayDate"
                (dateChange)="onStartDateChange($event.value)">
@@ -114,7 +114,7 @@
 
           <!-- End Date -->
           <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
-            <div class="lable required">End Date</div>
+            <div class="lable">End Date</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="Select Date"  [min]="startDate">
               <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
