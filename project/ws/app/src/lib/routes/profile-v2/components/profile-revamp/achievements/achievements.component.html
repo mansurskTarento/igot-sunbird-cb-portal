@@ -9,8 +9,8 @@
 <div class="flex flex-col gap-2"  [ngClass]="{'container': isPopup}">
     <ng-container *ngFor="let achievement of achievementsList">
       <div class="achievement-card flex flex-col gap-1">
-        <div class="flex justify-between items-center certificate-name">
-          {{achievement?.title}}
+        <div class="flex justify-between items-start certificate-name">
+          <div class="achievement-title">{{achievement?.title}}</div>
           <ng-container *ngIf="isCurrentUser">
             <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
           </ng-container>

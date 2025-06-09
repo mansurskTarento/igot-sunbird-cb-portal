@@ -35,6 +35,13 @@
   gap: 3px;
 }
 
+.degree {
+  color: #000000;
+  /* stylelint-disable */
+  font: 600 14px Montserrat;
+  /* stylelint-enable */
+  width: calc(100% - 20px);
+}
 .edit-icon {
   color: #1B4CA1;
   width: 16px;
