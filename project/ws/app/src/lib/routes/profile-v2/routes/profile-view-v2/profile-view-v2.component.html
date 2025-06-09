@@ -223,11 +223,11 @@
             </div>
           </ng-container>
 
-          <ng-container *ngIf="isCurrentUser || (competencies && competencies?.length > 0)">
+          <!-- <ng-container *ngIf="isCurrentUser || (competencies && competencies?.length > 0)">
             <div class="user-details">
               <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
             </div>
-          </ng-container>
+          </ng-container> -->
 
           <ng-container *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
             <div id="educational-qualifications" class="user-details">

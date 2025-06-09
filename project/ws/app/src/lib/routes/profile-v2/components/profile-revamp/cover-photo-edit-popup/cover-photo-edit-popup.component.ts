@@ -1,5 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
+import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
+import { IMAGE_MAX_SIZE } from '@ws/author/src/lib/constants/upload';
+import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
@@ -20,11 +25,13 @@ export class CoverPhotoEditPopupComponent implements OnInit {
   };
   imageFile: File | null = null;
   fileName = ''
+  uploadImage = true
   //#endregion (global variables)
 
   constructor(
     private dialogRef: MatLegacyDialogRef<CoverPhotoEditPopupComponent>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any
+    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
+    private snackBar: MatLegacySnackBar,
   ) { }
 
   ngOnInit(): void {
@@ -62,13 +69,40 @@ export class CoverPhotoEditPopupComponent implements OnInit {
   // }
 
   onFileChange(event: any): void {
-    this.imageChangedEvent = event;
-    this.showCropper = true;
-    this.fileName = event.target.files[0].name || 'coverPhoto.png';
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0]
+
+      // Validate file type
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        this.snackBar.openFromComponent(NotificationComponent, {
+          data: {
+            type: Notify.INVALID_IMG_FORMAT,
+          },
+          duration: NOTIFICATION_TIME * 1500,
+        })
+        return
+      }
+      if (file.size > IMAGE_MAX_SIZE) {
+        this.snackBar.openFromComponent(NotificationComponent, {
+          data: {
+            type: Notify.PROFILE_IMG_SIZE_ERROR,
+          },
+          duration: NOTIFICATION_TIME * 1500,
+        })
+        return
+      }
+      this.imageChangedEvent = event;
+      this.showCropper = true;
+      this.fileName = event.target.files[0].name || 'coverPhoto.png';
+      this.uploadImage = false
+    }
   }
 
   imageCropped(event: ImageCroppedEvent) {
     const base64 = event.base64;
+    this.uploadImage = true
     if (base64) {
       this.coverPhotoUrl = base64;
       this.imageFile = this.base64ToFile(base64, this.fileName || 'coverPhoto.png');
@@ -109,6 +143,7 @@ export class CoverPhotoEditPopupComponent implements OnInit {
     this.imageFile = null;
     this.fileName = '';
     this.showCropper = false;
+    this.uploadImage = true;
   }
 
 }

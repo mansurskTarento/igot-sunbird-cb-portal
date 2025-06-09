@@ -94,9 +94,10 @@
     /* stylelint-enable */
     height: 30px;
     overflow: hidden;
+    word-break: break-word;
   }
 
-  .extend-description {
+.extend-description {
     // overflow: auto !important;
     // height: 100px !important;
     height: fit-content !important;
