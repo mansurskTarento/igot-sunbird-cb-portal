@@ -29,7 +29,7 @@
         <ng-container *ngIf="service?.description">
           <div class="org-description" [ngClass]="{'extend-description': service?.showMore}" >{{service?.description}}</div>
           <div class="view-more" (click)="service.showMore = !service.showMore">
-            {{service?.showMore ? 'view less' : 'view more'}}
+            {{service?.showMore ? 'View less' : 'View more'}}
           </div>
         </ng-container>
       </div>

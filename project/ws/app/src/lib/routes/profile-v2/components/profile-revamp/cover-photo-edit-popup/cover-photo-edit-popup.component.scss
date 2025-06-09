@@ -50,6 +50,11 @@
   height: 32px;
 }
 
+.image-cropper {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
 :host ::ng-deep {
   .ngx-ic-cropper {
     border: 2px solid white !important;

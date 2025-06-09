@@ -17,30 +17,32 @@
       </ng-template>
     </ng-container>
     <ng-container *ngIf="showCropper">
-      <image-cropper
-        [imageChangedEvent]="imageChangedEvent"
-        [maintainAspectRatio]="true"
-        [aspectRatio]="858/215"
-        format="png"
-        [roundCropper]="false"
-        [cropperMinWidth]="1200"
-        [cropperMinHeight]="110"
-        [resizeToWidth]="1200"
-        [cropperStaticWidth]="1200"
-        [cropperStaticHeight]="110"
-        [canvasRotation]="0"
-        [alignImage]="'center'"
-        [fit]="'cover'"
-        [style.display]="showCropper ? null : 'none'"
-        [cropperMaxWidth]="1200"
-        [backgroundColor]="'#fff'"
-        [cropper]="cropperPosition"
-        [onlyScaleDown]="false"
-        [maintainAspectRatio]="true"
-        [hideResizeSquares]="true"
-        [containWithinAspectRatio]="false"
-        (imageCropped)="imageCropped($event)"
-      ></image-cropper>
+      <div class="image-cropper">
+        <image-cropper
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="858/215"
+          format="png"
+          [roundCropper]="false"
+          [cropperMinWidth]="1200"
+          [cropperMinHeight]="110"
+          [resizeToWidth]="1200"
+          [cropperStaticWidth]="1200"
+          [cropperStaticHeight]="110"
+          [canvasRotation]="0"
+          [alignImage]="'center'"
+          [fit]="'cover'"
+          [style.display]="showCropper ? null : 'none'"
+          [cropperMaxWidth]="1200"
+          [backgroundColor]="'#fff'"
+          [cropper]="cropperPosition"
+          [onlyScaleDown]="false"
+          [maintainAspectRatio]="true"
+          [hideResizeSquares]="true"
+          [containWithinAspectRatio]="false"
+          (imageCropped)="imageCropped($event)"
+        ></image-cropper>
+      </div>
     </ng-container>
   </div>
 
