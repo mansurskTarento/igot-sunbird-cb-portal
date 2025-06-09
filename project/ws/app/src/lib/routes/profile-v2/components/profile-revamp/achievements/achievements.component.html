@@ -18,7 +18,7 @@
         <div class="achievement-details"> {{achievement?.issuedOrganisation}}</div>
         <div class="achievement-details"> {{achievement?.issuedDate | date:'dd MMM, yyyy'}}</div>
         <ng-container *ngIf="achievement?.description">
-          <div class="description my-2" [ngClass]="{'extend-description': service?.showMore}" >{{achievement?.description}}</div>
+          <div class="description my-2" [ngClass]="{'extend-description': achievement?.showMore}" >{{achievement?.description}}</div>
           <div class="view-more" (click)="viewMore(achievement)">
             {{achievement?.showMore ? 'view less' : 'view more'}}
           </div>
