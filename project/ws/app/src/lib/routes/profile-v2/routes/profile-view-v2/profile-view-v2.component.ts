@@ -356,17 +356,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setUserStats() {
-    if(this.userStats && this.userStats.length > 0 && this.profesionalDetails) {
+    if(this.userStats && this.userStats.length > 0 && this.profileData) {
       this.userStats.forEach((userStat: UserStats) => {
         switch (userStat.identifier) {
           case 'karmaPoints':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'karmaPoints', 0)
+            userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
             break;
           case 'certificateCount':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'certificateCount', 0)
+            userStat.totalPoints = _.get(this.profileData, 'certificateCount', 0)
             break;
           case 'postCount':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'postCount', 0)
+            userStat.totalPoints = _.get(this.profileData, 'postCount', 0)
             break;
         }
       })
@@ -425,7 +425,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   openCoverPhotoDialog() {
     const dialogRef = this.dialog.open(CoverPhotoEditPopupComponent, {
-      width: '500px',
+      width: this.isMobile ? '100vw' : '500px',
+      maxWidth: this.isMobile ? '100vw' : '500px',
+      height: this.isMobile ? '100vh' : 'auto',
       panelClass: 'cover-photo-edit-popup',
       data: {
         coverPhotoUrl: this.profileBannerUrl

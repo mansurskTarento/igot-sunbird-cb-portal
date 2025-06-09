@@ -1,7 +1,7 @@
 <div class="flex flex-row gap-5">
   <!-- #region (left profile )-->
   <div class="flex flex-col gap-4 items-center profileLeftSection">
-    <div class="profile">
+    <div class="profile w-full">
       <!-- #region (cover photo ) -->
       <div>
         <ng-container *ngIf="profileBannerUrl; else defaultCoverPhoto">
@@ -95,9 +95,9 @@
                 </ng-container>
                 <ng-container *ngIf="enableWR">
                   <button mat-menu-item class="disable-button" matTooltipPosition="below"
-                    matTooltip="{{ 'profileInfo.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">
+                    matTooltip="{{ 'profileInfo.makeTransferRequest' | translate }}" (click)="MTRTooltip.toggle()">
                     <!-- <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span> -->
-                    <span>Withdraw Transfer Request</span>
+                    <span>Make Transfer Request</span>
                   </button>
                 </ng-container>
               </ng-template>
