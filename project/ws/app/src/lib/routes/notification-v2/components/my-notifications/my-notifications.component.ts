@@ -35,11 +35,11 @@ export class MyNotificationsComponent {
   redirectTo(notification: any) {
     this.raiseTelemetryEventForNotification(notification)
     if (notification.category === 'LEARN') {
-      this.router.navigate([`/app/toc/${notification.message.id}`])
+      this.router.navigate([`/app/toc/${notification.message.data.id}`])
     } else if (notification.category === 'EVENT') {
-      this.router.navigate([`/app/event-hub/home/${notification.message.id}`])
+      this.router.navigate([`/app/event-hub/home/${notification.message.data.id}`])
     } else if (notification.category === 'DISCUSSION') {
-      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.communityId}/${notification.message.postId}`])
+      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
     } else if (notification.category === 'NETWORK') {
       if (notification.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/my-connection`])
