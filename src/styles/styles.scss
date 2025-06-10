@@ -1434,4 +1434,9 @@ ngx-guided-tour {
     border-radius: 0px !important;
     padding: 0px !important;
   }
+
+  @media screen and (max-width: 768px) {
+    max-width: 100vw !important;
+    width: 100vw;
+  }
 }
