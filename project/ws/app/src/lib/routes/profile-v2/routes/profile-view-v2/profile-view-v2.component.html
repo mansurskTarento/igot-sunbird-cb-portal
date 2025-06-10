@@ -16,7 +16,7 @@
           </div>
           <mat-menu #coverPhotoMenu="matMenu">
             <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
-              <span>Edit Cover Photo</span>
+              <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
             </button>
           </mat-menu>
         </ng-container>
@@ -64,8 +64,8 @@
               </div>
             </ng-container>
             <ng-container *ngIf="isMentor">
-              <button mat-button class="mentor-profile" i18n (click)="viewMentorProfile()">View My Mentor
-                Profile</button>
+              <button mat-button class="mentor-profile" i18n (click)="viewMentorProfile()">
+                {{ 'NetworkV2Profile.viewMyMentorProfile' | translate }}</button>
             </ng-container>
           </div>
         </div>
@@ -77,27 +77,24 @@
             </div>
             <mat-menu #profileMenu="matMenu">
               <button mat-menu-item (click)="openProfileEditDialog('Profile')">
-                <span>Edit Profile</span>
+                <span>{{ 'NetworkV2Profile.editProfile' | translate }}</span>
               </button>
               <ng-container *ngIf="enableWTR; else transferRequest">
                 <button mat-menu-item (click)="handleWithdrawTransferRequest()">
-                  <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span>
-                  <!-- <span>With draw Transfer Request</span> -->
+                  <span>{{ 'NetworkV2Profile.withdrawTransferRequest' | translate }}</span>
                 </button>
               </ng-container>
               <ng-template #transferRequest>
                 <ng-container *ngIf="!enableWR">
                   <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="below"
-                    matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO.">
-                    <span>{{ 'profileInfo.makeTransferRequest' | translate }}</span>
-                    <!-- <span>Make Transfer Request</span> -->
+                    matTooltip="{{ 'NetworkV2Profile.clickToTransferTooltip' | translate }}" #MTRTooltip="matTooltip">
+                    <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
                   </button>
                 </ng-container>
                 <ng-container *ngIf="enableWR">
                   <button mat-menu-item class="disable-button" matTooltipPosition="below"
-                    matTooltip="{{ 'profileInfo.makeTransferRequest' | translate }}" (click)="MTRTooltip.toggle()">
-                    <!-- <span>{{ 'profileInfo.withdrawTransferRequest' | translate }}</span> -->
-                    <span>Make Transfer Request</span>
+                    matTooltip="{{ 'NetworkV2Profile.makeTransferRequest' | translate }}" (click)="MTRTooltip.toggle()">
+                    <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
                   </button>
                 </ng-container>
               </ng-template>
@@ -115,7 +112,7 @@
                 <span>Block this profile</span>
               </button> -->
               <button mat-menu-item (click)="copyProfileLink()">
-                <span>Copy profile link</span>
+                <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
               </button>
             </mat-menu>
             <button mat-button class="connectButton" i18n (click)="sendConnectionRequest()">
@@ -176,7 +173,7 @@
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
-                <div class="section-header">About me</div>
+                <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' : 'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
                 <ng-container *ngIf="isCurrentUser">
                   <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
                 </ng-container>
@@ -186,7 +183,7 @@
                   {{aboutme}}
                 </div>
                 <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-                  {{showMoreAbout ? 'view less' : 'view more'}}
+                  {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
                 </div>
               </ng-container>
             </div>
@@ -203,7 +200,7 @@
           <ng-container *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
             <div id="service-history" class="user-details">
               <div class="flex justify-between items-center mb-2">
-                <div class="section-header">Service History</div>
+                <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
                 <ng-container *ngIf="isCurrentUser">
                   <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                 </ng-container>
@@ -216,7 +213,7 @@
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">Show All</div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">{{'NetworkV2Profile.showAll' | translate}}</div>
                   </div>
                 </ng-container>
               </ng-container>
@@ -232,7 +229,7 @@
           <ng-container *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
             <div id="educational-qualifications" class="user-details">
               <div class="flex justify-between items-center mb-2">
-                <div class="section-header">Educational Qualifications</div>
+                <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
                 <ng-container *ngIf="isCurrentUser">
                   <mat-icon class="add-icon"
                     (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
@@ -247,7 +244,7 @@
                 <ng-container *ngIf="educationalQualificationDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">Show All
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">{{'NetworkV2Profile.showAll' | translate}}
                     </div>
                   </div>
                 </ng-container>
@@ -258,7 +255,7 @@
           <ng-container *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
             <div id="achievements" class="user-details">
               <div class="flex justify-between items-center mb-2">
-                <div class="section-header">Achievements</div>
+                <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
                 <ng-container *ngIf="isCurrentUser">
                   <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                 </ng-container>
@@ -271,7 +268,7 @@
                 <ng-container *ngIf="achievementsDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">Show All</div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">{{'NetworkV2Profile.showAll' | translate}}</div>
                   </div>
                 </ng-container>
               </ng-container>
@@ -376,7 +373,7 @@
   <div class="hidden md:flex flex-col gap-4 profileRightSection">
     <div class="flex flex-col gap-3">
       <div class="people-you-may-know">
-        People You May Know
+        {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
       </div>
       <div>
         <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
@@ -386,7 +383,7 @@
 
     <div class="flex flex-col gap-3">
       <div class="people-you-may-know">
-        Recommended Communities
+        {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
       </div>
       <div>
         <ws-app-community-suggestions

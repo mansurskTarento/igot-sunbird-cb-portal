@@ -43,7 +43,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   nameInitials: string = '';
   userStats: UserStats[] = [
     {
-      state: 'My Karma Points',
+      state: 'NetworkV2Profile.myKarmaPoints',
       totalPoints: '0',
       iconUrl: './assets/icons/karma-point-logo.jpg',
       vewAllUrl: 'app/person-profile/karma-points',
@@ -51,14 +51,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       identifier: 'karmaPoints'
     },
     {
-      state: 'My Certificates',
+      state: 'NetworkV2Profile.myCertificates',
       totalPoints: '0',
       iconUrl: './assets/icons/certificate.svg',
       vewAllUrl: 'app/seeAll/new?key=continueLearning',
       identifier: 'certificateCount'
     },
     {
-      state: 'My Posts',
+      state: 'NetworkV2Profile.myPosts',
       totalPoints: '0',
       iconUrl: './assets/icons/edit.svg',
       vewAllUrl: '/app/discussion-forum-v2',
