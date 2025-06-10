@@ -9,8 +9,8 @@
 <div class="flex flex-col gap-2"  [ngClass]="{'container': isPopup}">
     <ng-container *ngFor="let achievement of achievementsList">
       <div class="achievement-card flex flex-col gap-1">
-        <div class="flex justify-between items-center certificate-name">
-          {{achievement?.title}}
+        <div class="flex justify-between items-start certificate-name">
+          <div class="achievement-title">{{achievement?.title}}</div>
           <ng-container *ngIf="isCurrentUser">
             <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
           </ng-container>
@@ -20,7 +20,7 @@
         <ng-container *ngIf="achievement?.description">
           <div class="description my-2" [ngClass]="{'extend-description': achievement?.showMore}" >{{achievement?.description}}</div>
           <div class="view-more" (click)="viewMore(achievement)">
-            {{achievement?.showMore ? 'view less' : 'view more'}}
+            {{achievement?.showMore ? 'View less' : 'View more'}}
           </div>
         </ng-container>
         <ng-container *ngIf="achievement?.uploadedDocumentUrl">

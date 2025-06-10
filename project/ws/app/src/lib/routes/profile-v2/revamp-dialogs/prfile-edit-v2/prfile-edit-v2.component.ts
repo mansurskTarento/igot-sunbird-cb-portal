@@ -14,7 +14,7 @@ import { OtpService } from '../../../user-profile/services/otp.services';
 import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { DatePipe } from '@angular/common';
-import { ImageCropComponent } from '@sunbird-cb/utils-v2';
+import { ImageCropComponent, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
 import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
@@ -50,7 +50,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   verifyEmail: boolean = false;
   verifyMobile: boolean = false;
   approvedDomainList: any = []
-  private destroySubject$ = new Subject()
+  destroySubject$ = new Subject()
   contextToken: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
@@ -63,7 +63,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   civilServiceId = '';
   cadreId = '';
   noCadreDetails = true
-  civilServiceData: any[] = []
+  civilServiceData: any
   civilServiceTypes: any[] = []
   serviceType: any
   serviceListData: any
@@ -85,12 +85,13 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
     private profileV2RevampService: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private otpService: OtpService,
     private dialog: MatLegacyDialog,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private pipeImgUrl: PipeCertificateImageURL,
   ) {
     this.header = _.get(this.data, 'header', '');
     this.profileDetails = _.get(this.data, 'profileDetails', {});
@@ -240,14 +241,29 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           if (result) {
             formData.append('data', result, fileName)
             const reader = new FileReader();
-            reader.onload = (e: any) => {
-              this.profileImage = e.target.result;
+            reader.onload = () => {
+              this.genrateProfileImageUrl(result, fileName);
             };
             reader.readAsDataURL(result);
           }
         },
       })
     }
+
+  genrateProfileImageUrl(file: any, fileName?: string) {
+    if(file) {
+      const formdata = new FormData()
+      formdata.append('data', file, fileName)
+      this.profileV2RevampService.updateProfilePic(formdata).subscribe({
+        next: (res: any) => {
+          const createdUrl = _.get(res, 'result.url', '')
+          const folderNameToSplit = '/profileImage/'
+          const urlSplice = createdUrl.split(folderNameToSplit)[1]
+          this.profileImage = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
+        }
+      })
+    }
+  }
   uploadImage() {
     const input = document.createElement('input');
     input.type = 'file';

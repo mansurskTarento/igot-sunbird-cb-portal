@@ -43,7 +43,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   nameInitials: string = '';
   userStats: UserStats[] = [
     {
-      state: 'My Karma Points',
+      state: 'NetworkV2Profile.myKarmaPoints',
       totalPoints: '0',
       iconUrl: './assets/icons/karma-point-logo.jpg',
       vewAllUrl: 'app/person-profile/karma-points',
@@ -51,14 +51,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       identifier: 'karmaPoints'
     },
     {
-      state: 'My Certificates',
+      state: 'NetworkV2Profile.myCertificates',
       totalPoints: '0',
       iconUrl: './assets/icons/certificate.svg',
       vewAllUrl: 'app/seeAll/new?key=continueLearning',
       identifier: 'certificateCount'
     },
     {
-      state: 'My Posts',
+      state: 'NetworkV2Profile.myPosts',
       totalPoints: '0',
       iconUrl: './assets/icons/edit.svg',
       vewAllUrl: '/app/discussion-forum-v2',
@@ -181,7 +181,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     groupRejectionTime: 0,
     designationRejectionTime: 0,
   }
-  approvalPendingFields = []
+  approvalPendingFields: any = []
 
   //#region (m web and activites varailbles)
   selectedTabIndex: any = 0;
@@ -356,17 +356,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setUserStats() {
-    if(this.userStats && this.userStats.length > 0 && this.profesionalDetails) {
+    if(this.userStats && this.userStats.length > 0 && this.profileData) {
       this.userStats.forEach((userStat: UserStats) => {
         switch (userStat.identifier) {
           case 'karmaPoints':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'karmaPoints', 0)
+            userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
             break;
           case 'certificateCount':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'certificateCount', 0)
+            userStat.totalPoints = _.get(this.profileData, 'certificateCount', 0)
             break;
           case 'postCount':
-            userStat.totalPoints = _.get(this.profesionalDetails, 'postCount', 0)
+            userStat.totalPoints = _.get(this.profileData, 'postCount', 0)
             break;
         }
       })
@@ -425,7 +425,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   openCoverPhotoDialog() {
     const dialogRef = this.dialog.open(CoverPhotoEditPopupComponent, {
-      width: '500px',
+      width: this.isMobile ? '100vw' : '500px',
+      maxWidth: this.isMobile ? '100vw' : '500px',
+      height: this.isMobile ? '100vh' : 'auto',
       panelClass: 'cover-photo-edit-popup',
       data: {
         coverPhotoUrl: this.profileBannerUrl

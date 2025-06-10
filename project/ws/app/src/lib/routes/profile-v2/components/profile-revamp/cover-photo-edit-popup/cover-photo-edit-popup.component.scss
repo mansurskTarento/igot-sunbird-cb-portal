@@ -50,6 +50,59 @@
   height: 32px;
 }
 
+.image-cropper {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+.mWebDelete {
+  color: #D13924;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  cursor: pointer;
+  .delete-icon {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    color: #D13924 !important;
+  }
+}
+
+.mWebChange {
+  cursor: pointer;
+  .mWeb-change-photo-button {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .img-icon {
+    color: #1B4CA1;
+    width: 24px;
+    height: 24px;
+    font-size: 24px
+  }
+}
+
+.mWebSave {
+  cursor: pointer;
+  .save-photo-button {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .check-icon {
+    color: #1B4CA1;
+    width: 24px;
+    height: 24px;
+    font-size: 24px
+  }
+}
+
 :host ::ng-deep {
   .ngx-ic-cropper {
     border: 2px solid white !important;

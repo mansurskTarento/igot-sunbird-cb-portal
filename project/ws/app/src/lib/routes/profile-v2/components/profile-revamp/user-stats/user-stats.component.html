@@ -2,7 +2,7 @@
   <ng-container *ngFor="let stat of userStats">
     <div class="stateCard">
       <div class="flex gap-1 md:gap-1 items-center">
-        <div class="statName">{{stat?.state}}</div>
+        <div class="statName">{{stat?.state | translate}}</div>
         <ng-container *ngIf="stat?.stateInfo">
           <div class="hidden md:inline-flex">
           <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>

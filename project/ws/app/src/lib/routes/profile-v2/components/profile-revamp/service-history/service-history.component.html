@@ -18,10 +18,10 @@
         </div>
       </ng-template>
       <div class="flex flex-col w-full gap-1">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-start">
           <div class="designation">{{service?.designation}}</div>
           <ng-container *ngIf="isCurrentUser">
-          <mat-icon class="edit-icon" (click)="openEditDialog(service)">edit</mat-icon>
+            <mat-icon class="edit-icon" (click)="openEditDialog(service)">edit</mat-icon>
           </ng-container>
         </div>
         <div class="org-details">{{service?.orgDetails}}</div>
@@ -29,7 +29,7 @@
         <ng-container *ngIf="service?.description">
           <div class="org-description" [ngClass]="{'extend-description': service?.showMore}" >{{service?.description}}</div>
           <div class="view-more" (click)="service.showMore = !service.showMore">
-            {{service?.showMore ? 'view less' : 'view more'}}
+            {{service?.showMore ? 'View less' : 'View more'}}
           </div>
         </ng-container>
       </div>

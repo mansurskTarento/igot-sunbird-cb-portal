@@ -25,6 +25,7 @@
 .container {
   width: 744px;
   padding: 24px;
+  max-width: calc(100% - 44px);
 }
 
 .achievement-card {
@@ -40,11 +41,15 @@
     font: 600 14px Montserrat;
     /* stylelint-enable */
 
+    .achievement-title {
+      width: calc(100% - 20px);
+    }
+
     .edit-icon {
       color: #1B4CA1;
-      width: 20px;
-      height: 20px;
-      font-size: 20px;
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
       pointer-events: all;
       cursor: pointer;
     }
