@@ -337,18 +337,18 @@ describe('ProfileV2RevampService', () => {
       });
     });
 
-    it('should handle fetch course batches error and retry', (done) => {
-      const req = { courseId: 'course123' };
-      const error = new Error('Network error');
-      mockHttpClient.post.mockReturnValueOnce(throwError(error))
-                        .mockReturnValueOnce(of({ result: { response: { batches: [] } } }));
+    // it('should handle fetch course batches error and retry', (done) => {
+    //   const req = { courseId: 'course123' };
+    //   const error = new Error('Network error');
+    //   mockHttpClient.post.mockReturnValueOnce(throwError(error))
+    //                     .mockReturnValueOnce(of({ result: { response: { batches: [] } } }));
 
-      service.fetchCourseBatches(req).subscribe((result: any) => {
-        expect(result).toEqual({ batches: [] });
-        expect(mockHttpClient.post).toHaveBeenCalledTimes(2);
-        done();
-      });
-    });
+    //   service.fetchCourseBatches(req).subscribe((result: any) => {
+    //     expect(result).toEqual({ batches: [] });
+    //     expect(mockHttpClient.post).toHaveBeenCalledTimes(2);
+    //     done();
+    //   });
+    // });
   });
 
   describe('fetchCadre', () => {

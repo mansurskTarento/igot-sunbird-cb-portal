@@ -181,7 +181,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     groupRejectionTime: 0,
     designationRejectionTime: 0,
   }
-  approvalPendingFields = []
+  approvalPendingFields: any = []
 
   //#region (m web and activites varailbles)
   selectedTabIndex: any = 0;

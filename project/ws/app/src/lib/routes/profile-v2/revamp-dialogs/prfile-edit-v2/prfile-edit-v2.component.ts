@@ -50,7 +50,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   verifyEmail: boolean = false;
   verifyMobile: boolean = false;
   approvedDomainList: any = []
-  private destroySubject$ = new Subject()
+  destroySubject$ = new Subject()
   contextToken: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
@@ -63,7 +63,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   civilServiceId = '';
   cadreId = '';
   noCadreDetails = true
-  civilServiceData: any[] = []
+  civilServiceData: any
   civilServiceTypes: any[] = []
   serviceType: any
   serviceListData: any
@@ -85,7 +85,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
     private profileV2RevampService: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private otpService: OtpService,
