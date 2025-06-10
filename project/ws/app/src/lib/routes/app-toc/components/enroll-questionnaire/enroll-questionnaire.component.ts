@@ -238,7 +238,9 @@ export class EnrollQuestionnaireComponent implements OnInit {
           value = `${formattedYear}-${formattedMonth}-${formattedDay}`
         }
         // dataObject[field.question] = field.fieldType === 'date' ? this.datePipe.transform(value, 'yyyy/MM/dd') : value
-        dataObject[field.question] = value
+        if(!field.isNA) {
+          dataObject[field.question] = value
+        }
       })
     }
     return dataObject

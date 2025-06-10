@@ -308,7 +308,9 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
           const formattedDay = String(value.getDate()).padStart(2, '0')
           value = `${formattedYear}-${formattedMonth}-${formattedDay}`
         }
-        dataObject[field.question] = value
+        if(!field.isNA) {
+          dataObject[field.question] = value
+        }
       })
     }
     return dataObject
