@@ -1292,6 +1292,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           // this.enrollBtnLoading = false
         },
         (_error: any) => {
+          this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
           this.enrollBtnLoading = false
         }
       )
