@@ -561,7 +561,7 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
-      if (content.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
+      if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE && content?.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
         for (let i = 0; i < content.children.length; i += 1) {
           // content.children.forEach(async (parentChild,index) => {
             const parentChild = content.children[i]
@@ -626,39 +626,40 @@ export class AppTocService {
                   this.contentLoader.next(false)
                 }
               }
-            } else {
-              if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-                this.contentLoader.next(true)
-                const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
-                if (foundContent) {
-                  const req = {
-                    request: {
-                      batchId: foundContent.batch.batchId,
-                      userId: foundContent.userId,
-                      courseId: foundContent.collectionId,
-                      contentIds: [],
-                      fields: [
-                        'progressdetails',
-                      ],
-                    },
-                  }
-                  await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-                    const data: any  = progressdata
-                    if (data.result && data.result.contentList.length > 0) {
-                      const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-                      this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-                      totalCount = completedLeafNodes.length
-                      inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-                      this.updateResumaData(inprogressDataCheck)
-                      this.mapCompletionPercentage(content, data.result.contentList)
-                    }
-                    this.contentLoader.next(false)
-                    return progressdata
-                  })
-                }
-                this.contentLoader.next(false)
-              }
             }
+            //  else {
+            //   if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+            //     this.contentLoader.next(true)
+            //     const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
+            //     if (foundContent) {
+            //       const req = {
+            //         request: {
+            //           batchId: foundContent.batch.batchId,
+            //           userId: foundContent.userId,
+            //           courseId: foundContent.collectionId,
+            //           contentIds: [],
+            //           fields: [
+            //             'progressdetails',
+            //           ],
+            //         },
+            //       }
+            //       await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+            //         const data: any  = progressdata
+            //         if (data.result && data.result.contentList.length > 0) {
+            //           const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+            //           this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+            //           totalCount = completedLeafNodes.length
+            //           inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+            //           this.updateResumaData(inprogressDataCheck)
+            //           this.mapCompletionPercentage(content, data.result.contentList)
+            //         }
+            //         this.contentLoader.next(false)
+            //         return progressdata
+            //       })
+            //     }
+            //     this.contentLoader.next(false)
+            //   }
+            // }
             this.contentLoader.next(false)
           }
       }
