@@ -58,7 +58,7 @@
       <div class="flex flex-col profile-control">
         <div class="lable required">{{'NetworkV2Profile.name' | translate}} </div>
         <mat-form-field appearance="outline" class="full-width">
-          <input matInput formControlName="firstname" placeholder="{{'NetworkV2Profile.enterName' | translate}}">
+          <input matInput formControlName="firstname" placeholder="{{'NetworkV2Profile.enterName' | translate}}" maxlength="200">
           <mat-error *ngIf="hasError('firstname', 'required')">{{'NetworkV2Profile.pleaseEnterName' | translate}}</mat-error>
           <mat-error *ngIf="hasError('firstname', 'pattern')">{{'NetworkV2Profile.specialCharAndNumNotAllowed' | translate}} </mat-error>
           <mat-error *ngIf="hasError('firstname', 'minlength')"> {{'NetworkV2Profile.pleaseEnterAtLeast2Chars' | translate}}</mat-error>
