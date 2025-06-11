@@ -151,7 +151,7 @@
       </div>
       <!-- #endregion (left routing) -->
 
-      <ng-container *ngIf="isMobile; else profileSection">
+      <ng-container *ngIf="isMobile; else desktopTabs">
         <mat-tab-group class="profile-tabs flex" [selectedIndex]="selectedTabIndex" id="matTabGroup">
           <mat-tab label="Profile">
             <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
@@ -169,7 +169,7 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <div class="flex flex-col gap-4 profile-section">
+        <div class="flex flex-col gap-4">
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
@@ -179,12 +179,16 @@
                 </ng-container>
               </div>
               <ng-container *ngIf="aboutme; else emptyGif">
-                <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
-                  {{aboutme}}
+                <div [ngClass]="{'show-less': !showMoreAbout}">
+                  <div class="about-text" #aboutMeElement>
+                    {{aboutme}}
+                  </div>
                 </div>
-                <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-                  {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
-                </div>
+                <ng-container *ngIf="showViewMoreBtn">
+                  <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                    {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
           </ng-container>

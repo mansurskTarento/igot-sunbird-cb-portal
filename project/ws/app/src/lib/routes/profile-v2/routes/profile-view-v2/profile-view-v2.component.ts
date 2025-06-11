@@ -32,7 +32,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy {
 
   //#region (global variables)
-  private destroySubject$ = new Subject()
+  destroySubject$ = new Subject()
+  @ViewChild('aboutMeElement') aboutMeElement !: ElementRef
   isCurrentUser = false;
   userId: string = '';
   profesionalDetails: any
@@ -158,6 +159,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   communitySuggestionsList: any[] = []
   aboutme = ''
   showMoreAbout = false
+  showViewMoreBtn =  false
   primaryDetails: any;
 
   groupsList: any[] = []
@@ -211,6 +213,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
      this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
+        this.setAboutMeButton()
       });
   }
 
@@ -236,7 +239,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getRejectedStatus()
     this.getGroupData()
     this.loadDesignations()
-    this.checkIsMentor()
 
     this.getInsightsData()
     
@@ -268,7 +270,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   checkIsMentor() {
     const userRoles: any = _.get(this.configSvc, 'userRoles');
-    if (userRoles) {
+    if (userRoles && this.isCurrentUser) {
       this.isMentor = userRoles.has('mentor') || userRoles.has('MENTOR') || userRoles.has('Mentor') ? true : false;
     }
   }
@@ -289,6 +291,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.patchConnections(_.get(data, 'recamendations.data', []))
       this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
+      this.checkIsMentor()
     })
     this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
   }
@@ -299,7 +302,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
-      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', '')),
+      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', _.get(this.profileData, 'firstName', ''))),
       username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
@@ -333,6 +336,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
+    this.setAboutMeButton()
     if(!this.isCurrentUser && this.aboutme !== '') {
       this.filterProfileRoutes('about-me')
     }
@@ -397,6 +401,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   filterProfileRoutes(routesId: string) {
     this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => route.id !== routesId)
+  }
+
+  setAboutMeButton() {
+    if (this.aboutme !== '') {
+      setTimeout(() => {
+        if(this.aboutMeElement && this.aboutMeElement.nativeElement && this.aboutMeElement.nativeElement.offsetHeight) {
+          this.showViewMoreBtn = this.aboutMeElement.nativeElement.offsetHeight > 56
+        }
+      }, 10)
+    }
   }
 
   patchConnections(connections: any) {

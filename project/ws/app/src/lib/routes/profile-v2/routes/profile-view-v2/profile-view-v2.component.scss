@@ -218,6 +218,8 @@
   font: 400 14px Lato;
   /* stylelint-enable */
   line-height: 18px;
+  min-height: 56px;
+  height: fit-content;
 }
 
 .view-more {
@@ -230,8 +232,8 @@
 }
 
 .show-less {
-  height: 56px;
   overflow: hidden;
+  height: 56px;
 }
 
 .image-container {
