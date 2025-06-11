@@ -112,6 +112,10 @@
   }
 }
 
+.hide-circle {
+  visibility: hidden;
+}
+
 .left-routing-card {
   background-color: #FFFFFF;
   width: 160px;
@@ -288,6 +292,10 @@
         /* stylelint-enable */
         text-align: center;
       }
+  }
+
+  .other-user-img {
+    top: 4px !important;
   }
 }
 

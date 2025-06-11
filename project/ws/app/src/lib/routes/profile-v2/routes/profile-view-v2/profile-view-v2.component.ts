@@ -299,7 +299,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   patchProfileDetails() {
     this.profileImageUrl = _.get(this.profesionalDetails, 'profileImageUrl', '')
     this.profileBannerUrl = _.get(this.profesionalDetails, 'profileBannerUrl', '')
-    this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
       firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', _.get(this.profileData, 'firstName', ''))),
@@ -340,10 +339,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     if(!this.isCurrentUser && this.aboutme !== '') {
       this.filterProfileRoutes('about-me')
     }
+    this.getInitials()
   }
 
   getInitials(): void {
-    const userName = _.get(this.profesionalDetails, 'personalDetails.firstname', '');
+    const userName = _.get(this.primaryDetails, 'firstname', '');
     if (userName) {
       if (userName.split(' ').length > 1) {
         const nameArr = userName.split(' ')

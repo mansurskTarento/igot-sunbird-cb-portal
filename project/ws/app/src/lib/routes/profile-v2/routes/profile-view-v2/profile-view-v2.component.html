@@ -27,12 +27,12 @@
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
           <div class="progress-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
               viewBox="37 -5 110 120" width="100" height="100">
               <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
               <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
             </svg>
-            <div class="user-img">
+            <div class="user-img" [ngClass]="{'other-user-img': !isCurrentUser}">
               <div class="image-container">
                 <ng-container *ngIf="profileImageUrl; else nameInitialsView">
                   <img [src]="profileImageUrl" alt="Profile" class="profile-image">
@@ -43,7 +43,9 @@
                   </div>
                 </ng-template>
               </div>
-              <span class="percentage-block">{{profileCompletion}}%</span>
+              <ng-container *ngIf="isCurrentUser">
+                <span class="percentage-block">{{profileCompletion}}%</span>
+              </ng-container>
             </div>
           </div>
 
