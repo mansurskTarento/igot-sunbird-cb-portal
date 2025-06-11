@@ -198,7 +198,7 @@
               [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
               [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
               (openProfileEditDialog)="openProfileEditDialog($event)"
-              (getApprovalStatus)="getSendApprovalStatus()"></ws-app-profile-primary-details>
+              (getApprovalStatus)="getSendApprovalStatus()" (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
           </div>
 
           <ng-container *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">

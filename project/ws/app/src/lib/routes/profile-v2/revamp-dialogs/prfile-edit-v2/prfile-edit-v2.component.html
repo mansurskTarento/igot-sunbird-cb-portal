@@ -158,7 +158,7 @@
         </div>
         <mat-form-field appearance="outline" class="full-width">
           <textarea matInput formControlName="aboutme" rows="6"  maxlength="2000" placeholder="{{'NetworkV2Profile.typeHere' | translate}}"></textarea>
-          <mat-error *ngIf="hasError('aboutme', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+          <mat-error *ngIf="hasError('aboutme', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()-' | translate}}</mat-error>
           <mat-hint align="end" *ngIf="profileForm.get('aboutme')?.value">
             {{ profileForm.get('aboutme')?.value.length }}/2000
           </mat-hint>

@@ -827,6 +827,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       })
   }
 
+  updateWithdrawalStatus() {
+    this.enableWR = false
+  }
+
   getRejectedStatus(): void {
     const formBody = {
       serviceName: 'profile',
