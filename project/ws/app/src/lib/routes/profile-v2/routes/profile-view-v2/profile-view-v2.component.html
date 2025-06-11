@@ -119,7 +119,7 @@
               <ng-container *ngIf="connectionStatus === 'Connect'">
                 <mat-icon class="connect-icon mr-2">person_add</mat-icon>
               </ng-container>
-              {{connectionStatus}}
+              {{connectionStatus | translate}}
             </button>
           </div>
         </ng-template>
@@ -145,13 +145,13 @@
             <ng-template #routeIcon>
               <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
             </ng-template>
-            {{profileRoute?.name}}
+            {{profileRoute?.name | translate}}
           </div>
         </ng-container>
       </div>
       <!-- #endregion (left routing) -->
 
-      <ng-container *ngIf="isMobile; else desktopTabs">
+      <ng-container *ngIf="isMobile; else profileSection">
         <mat-tab-group class="profile-tabs flex" [selectedIndex]="selectedTabIndex" id="matTabGroup">
           <mat-tab label="Profile">
             <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
@@ -169,7 +169,7 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <div class="flex flex-col gap-4 w-full">
+        <div class="flex flex-col gap-4 profile-section">
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
@@ -395,5 +395,7 @@
 </div>
 
 <ng-template #emptyGif>
-  <div class="flex justify-center items-center w-full gif-container"></div>
+  <div class="flex justify-center items-center w-full">
+    <img class="empty-gif" src="./assets/icons/empty.gif" alt="empty gif">
+  </div>
 </ng-template>

@@ -387,6 +387,8 @@ export class ProfileEntryEditComponent implements OnInit {
     }
   }
 
+  //#endregion (Service History)
+
   //#region (educational qualifications)
   private createEducationalQualificationsForm(): void {
     this.entryForm = this.fb.group({

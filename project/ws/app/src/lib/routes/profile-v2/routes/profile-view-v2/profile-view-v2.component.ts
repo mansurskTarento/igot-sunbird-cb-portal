@@ -67,17 +67,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   ];
   profileRoutes: profileRoutes[] = [
     {
-      name: 'About Me',
+      name: 'NetworkV2Profile.aboutMe',
       url: '',
       icon: 'person',
       id: 'about-me'
     }, {
-      name: 'Basic Details',
+      name: 'NetworkV2Profile.basicDetails',
       url: './assets/icons/checklist.svg',
       icon: '',
       id: 'basic-details'
     }, {
-      name: 'Service History',
+      name: 'NetworkV2Profile.serviceHistory',
       url: '',
       icon: 'history',
       id: 'service-history'
@@ -88,12 +88,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       //   isActive: false,
       //   id: ''
       // }, {
-      name: 'Educational',
+      name: 'NetworkV2Profile.educational',
       url: '',
       icon: 'school',
       id: 'educational-qualifications'
     }, {
-      name: 'Achievements',
+      name: 'NetworkV2Profile.achievements',
       url: './assets/icons/trophy.svg',
       icon: '',
       id: 'achievements'
@@ -192,7 +192,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   assessmentsData: any
   //#endregion
 
-  connectionStatus = 'Connect'
+  connectionStatus = 'NetworkV2Profile.connect'
   isMobile = false;
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -1126,7 +1126,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   blockProfile() {
-    this.connectionStatus = 'Unblock';
+    this.connectionStatus = 'NetworkV2Profile.unblock';
   }
 
   copyProfileLink() {
@@ -1155,7 +1155,7 @@ sendConnectionRequest(): void {
 
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
-          this.connectionStatus = 'Pending';
+          this.connectionStatus = 'NetworkV2Profile.pending';
           this.openSnackbar('Connection request sent successfully');
         },
         error: () => {

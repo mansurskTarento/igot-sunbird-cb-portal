@@ -3,6 +3,7 @@
 }
 .profileLeftSection {
   width: 858px;
+  max-width: 100vw;
 
   .profile {
     position: relative;
@@ -295,8 +296,13 @@
   /* stylelint-enable */
 }
 
-.gif-container {
-  height: 100px;
+.empty-gif {
+  height: 80px;
+}
+
+.profile-section {
+  width: 659px;
+  max-width: 100vw;
 }
 
 .mentor-profile {
