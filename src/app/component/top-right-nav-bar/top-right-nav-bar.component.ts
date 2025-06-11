@@ -190,14 +190,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     if (event.category) {
       this.raiseTelemetryEventForNotification(event)
       if (event.category === 'LEARN') {
-        this.router.navigate([`/app/toc/${event.message.id}`])
+        this.router.navigate([`/app/toc/${event.message.data.id}`])
       } else if (event.category === 'EVENT') {
-        this.router.navigate([`/app/event-hub/home/${event.message.id}`])
+        this.router.navigate([`/app/event-hub/home/${event.message.data.id}`])
       } else if (event.category === 'DISCUSSION') {
-        this.router.navigate([`/app/discussion-forum-v2/community/${event.message.communityId}/${event.message.postId}`])
+        this.router.navigate([`/app/discussion-forum-v2/community/${event.message.data.communityId}/${event.message.data.discussionId}`])
       } else if (event.category === 'NETWORK') {
         if (event.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
-          this.router.navigate([`/app/person-profile/${event.message.id}`])
+          this.router.navigate([`/app/person-profile/${event.message.data.id}`])
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
