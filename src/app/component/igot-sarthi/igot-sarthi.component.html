@@ -28,6 +28,26 @@
             
 
           </div>
+          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="!chat?.reterivedChunks && (chat?.answer || chat.shortAnswer) && chat?.showFromInternet">
+            <div class="system-msg padding-xs mx-10">
+              I couldn't find an answer to that. Would you like me to search the web, or would you like to rephrase your question?
+            </div>
+
+          </div>
+          <div *ngIf="!chat?.reterivedChunks && (chat?.answer || chat.shortAnswer) && chat?.showFromInternet">
+            <div class="flex row my-2 justify-start mx-10">
+              <div (click)="callFromInternet(chat, i)">
+                <button type="button" class="web-button px-4 cursor-pointer">
+                  <mat-icon class="web-search-icon">search  </mat-icon><span class="blue-color">Search the web</span>
+                </button>
+              </div>
+              <div (click)="rejectFromInternet(i)" class="mx-2">
+                <button type="button" class="web-button py-2 px-4 cursor-pointer">
+                  <mat-icon class="web-close-icon">close</mat-icon><span class="blue-color">No</span>
+                </button>
+              </div>
+          </div>
+          </div>
           <!-- <div class="flex row-start incoming-msg margin-bottom-s">
             <div class="system-icon"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
             <div *ngIf="chat?.contentType === 'Resource'" class="system-msg padding-xs" [innerHTML]="chat.message">
@@ -50,7 +70,7 @@
                       <img src="/assets/icons/ai-video-icon.jpg">
   
                     </div>
-                    <div class="content-duration flex" *ngIf="item?.contentStart > -1 && item?.contentEnd > -1">
+                    <div class="content-duration flex" *ngIf="item?.contentStart > -1 && item?.contentEnd > -1 && !(item?.fromInternet)">
                       <span><mat-icon>access_time</mat-icon>&nbsp;</span>
                       <span *ngIf="item?.contentStart > -1">
                         <span *ngIf="item?.contentStart">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
@@ -65,12 +85,16 @@
               </div>
             </ng-container>
               <div class="flex flex-row cursor-pointer">
-              <div class="resource-link">
+              <div class="resource-link" *ngIf="!(item?.fromInternet)">
                 <a [href]="item?.resourceLink" target="_blank">Click to view</a>
               </div>
-              <div class="cursor-pointer ml-3" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource'">
+              <div class="cursor-pointer ml-3 copy-icon" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource' && !(item?.fromInternet)">
                 <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
+              </div>
+              <div class="feefback-section flex flex-row">
+                <div (click)="sharePositiveContentRating(item)" class="cursor-pointer"><img src="/assets/ai-tutor/up.svg"></div>
+                <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer"><img src="/assets/ai-tutor/down.svg"></div>
               </div>
             </div>
             
@@ -83,31 +107,40 @@
             <div class="my-5px mr-2 w-92" *ngIf="item?.contentType !== 'Resource'">
               <ng-container>
                 <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
-                  <mat-icon class="vertical-middle">navigate_next</mat-icon>
+                  <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                 </div>
-                <div>
+                <div *ngIf="!(item?.fromInternet)">
                   {{item?.description}}
                 </div>
               </ng-container>
             </div>
             <div class="flex flex-row font-12 my-2">
 
-              <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource'">
+              <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
                 <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
               </div>
-              <div class="ml-2 mr-2"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
-              <div class="ai-generated-content ml-2">These are AI generated results</div>
+              <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
+                <div (click)="sharePositiveContentRating(item)" class="cursor-pointer"><img src="/assets/ai-tutor/up.svg"></div>
+                <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer"><img src="/assets/ai-tutor/down.svg"></div>
+              </div>   
+            </div>
+            <div class="flex flex-row font-12 my-2">
+              <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+              <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
             </div>
           </div>
         </ng-container>
           
           
         </ng-container>
-        <ng-container *ngIf="!chat?.answer">
-          <div class="flex row-start incoming-msg margin-bottom-s">
+        <ng-container>
+          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="!chat?.answer">
             <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
-            <div class="loading-bar-icon"><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
+            <div class="loading-bar-icon flex flex-row vertical-middle">
+              <div class="mt-2"><span class="blue-color">Retrieving content</span></div>
+              <div><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
+            </div>
           </div>
 
         </ng-container>

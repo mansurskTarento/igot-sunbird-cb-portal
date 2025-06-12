@@ -140,12 +140,10 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
     this.hierarchyData = this.activatedRoute.snapshot.data.hierarchyData
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
-    console.log('this.hierarchyData', this.hierarchyData)
     if(this.hierarchyData && this.hierarchyData.result 
       && this.hierarchyData.result.content 
       && this.hierarchyData.result.content.children) {
-      this.showAITutorFlag = this.onlyscormAssessmentExists(this.hierarchyData.result.content.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset'])
-      console.log('this.scormExistsFlag', this.showAITutorFlag)
+      this.showAITutorFlag = this.onlyscormAssessmentExists(this.hierarchyData.result.content.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset'])      
     }
     
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
