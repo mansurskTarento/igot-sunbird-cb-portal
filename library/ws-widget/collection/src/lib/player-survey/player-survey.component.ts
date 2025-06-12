@@ -85,7 +85,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
       customizedHeader: {},
     }
     this.widgetData.disableTelemetry = false
-    this.updateProgress(1)
+    // this.updateProgress(1)
 
     if (!this.widgetData.disableTelemetry) {
       this.runnerSubs = interval(30000).subscribe(_ => {
