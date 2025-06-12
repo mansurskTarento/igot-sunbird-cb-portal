@@ -835,8 +835,8 @@ export class EnrollProfileFormComponent implements OnInit {
           if (this.pGroup) {
             fieldControl.setValue(this.pGroup)
             if (this.profileFormType === 'Available user filled iGOT profile') {
-              this.canShowGroup = false
-              this.showGroup = false
+              this.canShowGroup = true
+              this.showGroup = true
             }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
@@ -862,8 +862,8 @@ export class EnrollProfileFormComponent implements OnInit {
           if (this.pDesignation) {
             fieldControl.patchValue(this.pDesignation)
             if (this.profileFormType === 'Available user filled iGOT profile') {
-              this.canShowDesignation = false
-              this.showDesignation = false
+              this.canShowDesignation = true
+              this.showDesignation = true
             }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
