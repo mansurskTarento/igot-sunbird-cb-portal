@@ -32,6 +32,7 @@ declare var window: IWindowMobileAppModified
 })
 export class MobileAppsService {
   mobileTopHeaderVisibilityStatus = new Subject()
+  clearGlobalSearchForHomePage = new Subject()
   constructor(
     // private authSvc: AuthKeycloakService,
     private navigateSvc: NavigationExternalService,
