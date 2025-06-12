@@ -74,11 +74,11 @@ export class CoverPhotoEditPopupComponent implements OnInit {
       const file = input.files[0]
 
       // Validate file type
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
       if (!allowedTypes.includes(file.type)) {
         this.snackBar.openFromComponent(NotificationComponent, {
           data: {
-            type: Notify.INVALID_IMG_FORMAT,
+            type: 'Only png, jpg, jpeg, svg images types are supported',
           },
           duration: NOTIFICATION_TIME * 1500,
         })
@@ -93,12 +93,66 @@ export class CoverPhotoEditPopupComponent implements OnInit {
         })
         return
       }
+      if (file.type === 'image/svg+xml') {
+      // Convert SVG to PNG for cropping
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const svgData = e.target.result;
+        this.convertSvgToPng(svgData).then((pngDataUrl: any) => {
+          this.imageChangedEvent = { target: { files: [this.dataURLtoFile(pngDataUrl, 'converted-image.png')] } };
+          this.showCropper = true;
+        });
+      };
+      reader.readAsText(file);
+    } else {
+      // Handle PNG/JPEG files directly
       this.imageChangedEvent = event;
       this.showCropper = true;
+    }
       this.fileName = event.target.files[0].name || 'coverPhoto.png';
       this.uploadImage = false
     }
   }
+
+  private convertSvgToPng(svgData: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/png'));
+    };
+
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+
+    img.src = url;
+  });
+}
+
+private dataURLtoFile(dataUrl: string, filename: string): File {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)?.[1] || '';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], filename, { type: mime });
+}
 
   imageCropped(event: ImageCroppedEvent) {
     const base64 = event.base64;

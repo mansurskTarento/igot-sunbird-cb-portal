@@ -129,9 +129,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   private createProfileForm(): void {
     this.profileImage = _.get(this.profileDetails, 'profileImage', null);
     this.profileForm = this.fb.group({
-      firstname: [_.get(this.profileDetails, 'firstname', ''), Validators.required],
-      state: [_.get(this.profileDetails, 'state', ''), Validators.required],
-      district: [_.get(this.profileDetails, 'district', ''), Validators.required]
+      firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^[a-zA-Z\s]*$/), Validators.maxLength(200), Validators.minLength(2)]],
+      state: [_.get(this.profileDetails, 'state', '')],
+      district: [_.get(this.profileDetails, 'district', '')]
     });
     setTimeout(() => {
       this.initilisationInProgress = false;
@@ -435,7 +435,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
-      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
+      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000), Validators.pattern(/^[a-zA-Z0-9\s().,'-]*$/)]]
     });
     setTimeout(() => {
       this.initilisationInProgress = false;

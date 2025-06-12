@@ -18,7 +18,7 @@
     </div>
     <div class="dividing-line mt-2"></div>
     <div class="connect flex justify-center items-center pt-4" [ngClass]="{'pending': person.connectionStatus === 'pending'}" (click)="connect(person)">
-      <a >{{person.connectionStatus === 'pending' ? 'Pending...' : 'Connect'}}</a>
+      <a >{{(person.connectionStatus === 'pending' ? 'NetworkV2Profile.pendingDaught' : 'NetworkV2Profile.connect') | translate}}</a>
     </div>
   </mat-card>
 </div>

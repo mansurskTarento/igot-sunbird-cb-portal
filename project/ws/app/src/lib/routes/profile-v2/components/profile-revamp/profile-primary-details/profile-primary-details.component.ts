@@ -38,6 +38,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
 
   @Output() openProfileEditDialog = new EventEmitter(); 
   @Output() getApprovalStatus = new EventEmitter();
+  @Output() updateWithdrawalStatus = new EventEmitter();
 
 
   groupApprovedTime = 0
@@ -230,6 +231,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
               this.unVerifiedObj.designation = ''
               this.openSnackbar(this.handleTranslateTo('withdrawRequestSuccess'))
               this.enableWR = false
+              this.updateWithdrawalStatus.emit(false)
             }, (error: HttpErrorResponse) => {
               if (!error.ok) {
                 this.openSnackbar(this.handleTranslateTo('unableWithdrawRequest'))

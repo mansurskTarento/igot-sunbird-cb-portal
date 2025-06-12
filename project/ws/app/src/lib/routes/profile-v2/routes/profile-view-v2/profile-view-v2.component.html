@@ -27,12 +27,12 @@
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
           <div class="progress-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
               viewBox="37 -5 110 120" width="100" height="100">
               <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
               <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
             </svg>
-            <div class="user-img">
+            <div class="user-img" [ngClass]="{'other-user-img': !isCurrentUser}">
               <div class="image-container">
                 <ng-container *ngIf="profileImageUrl; else nameInitialsView">
                   <img [src]="profileImageUrl" alt="Profile" class="profile-image">
@@ -43,7 +43,9 @@
                   </div>
                 </ng-template>
               </div>
-              <span class="percentage-block">{{profileCompletion}}%</span>
+              <ng-container *ngIf="isCurrentUser">
+                <span class="percentage-block">{{profileCompletion}}%</span>
+              </ng-container>
             </div>
           </div>
 
@@ -119,7 +121,7 @@
               <ng-container *ngIf="connectionStatus === 'Connect'">
                 <mat-icon class="connect-icon mr-2">person_add</mat-icon>
               </ng-container>
-              {{connectionStatus}}
+              {{connectionStatus | translate}}
             </button>
           </div>
         </ng-template>
@@ -145,7 +147,7 @@
             <ng-template #routeIcon>
               <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
             </ng-template>
-            {{profileRoute?.name}}
+            {{profileRoute?.name | translate}}
           </div>
         </ng-container>
       </div>
@@ -169,7 +171,7 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <div class="flex flex-col gap-4 w-full">
+        <div class="flex flex-col gap-4">
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
@@ -179,12 +181,16 @@
                 </ng-container>
               </div>
               <ng-container *ngIf="aboutme; else emptyGif">
-                <div class="about-text" [ngClass]="{'show-less': !showMoreAbout}">
-                  {{aboutme}}
+                <div [ngClass]="{'show-less': !showMoreAbout}">
+                  <div class="about-text" #aboutMeElement>
+                    {{aboutme}}
+                  </div>
                 </div>
-                <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-                  {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
-                </div>
+                <ng-container *ngIf="showViewMoreBtn">
+                  <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                    {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
           </ng-container>
@@ -194,7 +200,7 @@
               [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
               [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
               (openProfileEditDialog)="openProfileEditDialog($event)"
-              (getApprovalStatus)="getSendApprovalStatus()"></ws-app-profile-primary-details>
+              (getApprovalStatus)="getSendApprovalStatus()" (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
           </div>
 
           <ng-container *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
@@ -395,5 +401,7 @@
 </div>
 
 <ng-template #emptyGif>
-  <div class="flex justify-center items-center w-full gif-container"></div>
+  <div class="flex justify-center items-center w-full">
+    <img class="empty-gif" src="./assets/icons/empty.gif" alt="empty gif">
+  </div>
 </ng-template>
