@@ -9,7 +9,6 @@ export class HighlightPipe implements PipeTransform {
 
   transform(text: string, keyword: string, shouldHighlight: boolean): SafeHtml {
     if (!shouldHighlight || !keyword || !text) return text;
-    console.log(shouldHighlight, keyword, text)
    // const escapedKeyword = keyword.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 
     try {

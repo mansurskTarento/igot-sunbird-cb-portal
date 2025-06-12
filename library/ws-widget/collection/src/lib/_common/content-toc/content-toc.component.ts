@@ -58,15 +58,15 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   enableAITutorFlag = false
   enableTranscriptionFlag = false
   courseCategory = NsContent.ECourseCategory
-  subTitles$:any = []
+  subTitles$:Subscription | null = null
   resourceIdentifier:any
-  resourceIdentifier$:any = ''
+  resourceIdentifier$:Subscription | null = null
   subTitles:any = []
   keywordToHighlight:any= ''
   highlightCondition  = false
   vttLangArr:any = []
   transcriptionActiveLanguage = 'en'
-  transriptionLanguageSub:any
+  transriptionLanguageSub:Subscription | null = null
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -402,7 +402,20 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let startTime = subtitle.startTime/1000
       let endTime = subtitle.endTime/1000
       this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
+    }    
+  }
+
+  ngOnDestroy() {
+    if(this.resourceIdentifier$) {
+      this.resourceIdentifier$.unsubscribe()
     }
-    
+
+    if(this.subTitles$) {
+      this.subTitles$.unsubscribe()
+    }
+
+    if(this.transriptionLanguageSub) {
+      this.transriptionLanguageSub.unsubscribe()
+    }
   }
 }

@@ -15,6 +15,7 @@ import {
 import { WidgetContentService } from '../_services/widget-content.service'
 import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { Subscription } from 'rxjs'
 const videoJsOptions: videoJs.PlayerOptions = {
   controls: true,
   autoplay: true,
@@ -62,6 +63,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   transcriptionSubscriptionData:any = {}
   playerInitObj:any
   previousSubtitleLanguage = 'en'
+  playTranscriptionVideoSubscription:Subscription | null = null
+  changeTranscriptionLanguageEventSubscription: Subscription | null = null
   constructor(
     private eventSvc: EventService,
     private contentSvc: WidgetContentService,
@@ -83,10 +86,9 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   //   }
   // )
 
-  this.appTocService.playTranscriptionVideo.subscribe((playTime:any)=>{
+  this.playTranscriptionVideoSubscription = this.appTocService.playTranscriptionVideo.subscribe((playTime:any)=>{
     let startTime  = playTime.startTime
     let endTime  = playTime.endTime
-    console.log('playTime--', playTime)
     if(startTime && endTime) {
       this.playerInitObj.player.currentTime(startTime); // jump to start  
       setTimeout(()=>{
@@ -138,7 +140,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
         // this.initializePlayer()
-        this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{
+        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{
           if(data && data?.activeLang) {
             // console.log('data--', data)
             this.transcriptionLangArr = []
@@ -268,6 +270,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.dispose()
     }
     this.clearTimeInterval()
+
+    if(this.changeTranscriptionLanguageEventSubscription) {
+      this.changeTranscriptionLanguageEventSubscription.unsubscribe()
+    }
+    if(this.playTranscriptionVideoSubscription) {
+      this.playTranscriptionVideoSubscription.unsubscribe()
+    }
+    
   }
   private initializeVPlayer() {
     // alert()

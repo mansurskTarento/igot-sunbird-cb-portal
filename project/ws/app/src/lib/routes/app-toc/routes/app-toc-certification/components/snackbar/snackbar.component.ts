@@ -16,7 +16,6 @@ export class SnackbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('this.snackbarData', this.snackbarData)
     if (!this.snackbarData) {
       this.snackbarData = {
         action: '',
