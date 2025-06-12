@@ -86,12 +86,12 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     } else {
       this.enableAITutorFlag = false
     }
-    if(this.configService.iGOTAIConfig && !this.configService.iGOTAIConfig.transcription) {
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
 
       this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
         // console.log('resource identifier', value)
         if(value &&  value?.identifier) {
-          this.resourceIdentifier = 'do_1138891198489067521147' // value?.identifier
+          this.resourceIdentifier = value?.identifier // value?.identifier
           this.parseVTT()
         }
         
