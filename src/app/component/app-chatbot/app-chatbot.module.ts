@@ -12,6 +12,7 @@ import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
 import { MarkdownModule } from 'ngx-markdown';
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
+import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
 
 @NgModule({
   declarations: [
@@ -28,9 +29,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
     CommonModule,
     PipeDurationTransformModule,
     MarkdownModule.forRoot(),
-    DragDropModule
+    DragDropModule,
+    NonReleventFeedbackDialogModule
   ],
-  exports: [AppChatbotComponent, MarkdownModule],
+  exports: [AppChatbotComponent, MarkdownModule, NonReleventFeedbackDialogModule],
   providers: [ChatbotService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

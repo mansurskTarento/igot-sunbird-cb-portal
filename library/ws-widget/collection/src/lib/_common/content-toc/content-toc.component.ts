@@ -11,6 +11,8 @@ import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig 
 import { viewerRouteGenerator } from '@sunbird-cb/collection'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
+import { VttFile } from '@polyflix/vtt-parser';
+import { tap } from 'rxjs/operators'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -56,6 +58,15 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   enableAITutorFlag = false
   enableTranscriptionFlag = false
   courseCategory = NsContent.ECourseCategory
+  subTitles$:Subscription | null = null
+  resourceIdentifier:any
+  resourceIdentifier$:Subscription | null = null
+  subTitles:any = []
+  keywordToHighlight:any= ''
+  highlightCondition  = false
+  vttLangArr:any = []
+  transcriptionActiveLanguage = 'en'
+  transriptionLanguageSub:Subscription | null = null
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -69,12 +80,39 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {
+    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
     }
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+
+      this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
+        // console.log('resource identifier', value)
+        if(value &&  value?.identifier) {
+          this.resourceIdentifier = value?.identifier // value?.identifier
+          this.parseVTT()
+        }
+        
+      })
+
+      this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value:any)=>{
+       // console.log('value', value)
+        this.keywordToHighlight = value
+      })
+
+      this.transriptionLanguageSub = this.tocSvc.transriptionActiveLanguageDataObject$
+      .pipe(
+        tap((langvalue:any) => console.log('tap langvalue:', langvalue))
+      )
+      .subscribe((langvalue: any) => {
+        // console.log('langValue', langvalue);
+        if(langvalue) {
+          this.renderSelectedLanguageTranscription({ target: { value: langvalue } });
+        }
+
+      });
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
@@ -124,6 +162,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
+
+    
   }
 
   ngAfterViewInit() {
@@ -328,5 +368,54 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   enrollUserForAITutor() {
     this.enrollUserToAI.emit()
+  }
+
+  async parseVTT() {
+    let identifier = this.resourceIdentifier 
+    await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
+      let data:any = datas.data
+      if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
+       this.vttLangArr = data[0]['transcription_urls']
+        let url =  data[0]['transcription_urls'][0]['uri']
+        const file = await VttFile.fromUrl(url);
+       let blocks:any = file.getBlocks();
+          this.subTitles = blocks
+          this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
+      }
+
+    })
+
+  }
+
+  async renderSelectedLanguageTranscription(event:any)  {
+    this.transcriptionActiveLanguage = event.target.value
+    let currentPath = this.vttLangArr.filter((item:any)=> item?.language === this.transcriptionActiveLanguage)
+    const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
+       let blocks:any = file.getBlocks();
+    this.subTitles = blocks
+    this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
+
+  }
+
+  playFromSlot(subtitle:any) {
+    if(subtitle) {
+      let startTime = subtitle.startTime/1000
+      let endTime = subtitle.endTime/1000
+      this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
+    }    
+  }
+
+  ngOnDestroy() {
+    if(this.resourceIdentifier$) {
+      this.resourceIdentifier$.unsubscribe()
+    }
+
+    if(this.subTitles$) {
+      this.subTitles$.unsubscribe()
+    }
+
+    if(this.transriptionLanguageSub) {
+      this.transriptionLanguageSub.unsubscribe()
+    }
   }
 }

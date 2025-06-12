@@ -14,7 +14,8 @@ import {
 } from '../_services/videojs-util'
 import { WidgetContentService } from '../_services/widget-content.service'
 import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
-
+import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { Subscription } from 'rxjs'
 const videoJsOptions: videoJs.PlayerOptions = {
   controls: true,
   autoplay: true,
@@ -57,11 +58,19 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   timerInterval: any
   video: any
   replayVideoFlag = false
+  activeTranscriptionLanguage = 'en'
+  transcriptionLangArr = []
+  transcriptionSubscriptionData:any = {}
+  playerInitObj:any
+  previousSubtitleLanguage = 'en'
+  playTranscriptionVideoSubscription:Subscription | null = null
+  changeTranscriptionLanguageEventSubscription: Subscription | null = null
   constructor(
     private eventSvc: EventService,
     private contentSvc: WidgetContentService,
     private viewerSvc: ViewerUtilService,
     private activatedRoute: ActivatedRoute,
+    private appTocService: AppTocService
   ) {
     super()
   }
@@ -76,6 +85,33 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   //     }
   //   }
   // )
+
+  this.playTranscriptionVideoSubscription = this.appTocService.playTranscriptionVideo.subscribe((playTime:any)=>{
+    let startTime  = playTime.startTime
+    let endTime  = playTime.endTime
+    if(startTime && endTime) {
+      this.playerInitObj.player.currentTime(startTime); // jump to start  
+      setTimeout(()=>{
+        // initObj.player.autoplay()
+        if(this.videoTag && this.videoTag.nativeElement) {
+          this.videoTag.nativeElement.muted = true
+          this.videoTag.nativeElement.play();
+        } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
+          this.realvideoTag.nativeElement.muted = true
+          this.realvideoTag.nativeElement.play();
+        }
+        
+      },0)      
+     // initObj.player.play();    
+     this.playerInitObj.player.on('timeupdate',  ()=> {
+        if (endTime && this.playerInitObj.player.currentTime() >= endTime) {
+          this.playerInitObj.player.pause();
+        }
+      });
+    }
+
+
+  })
 
   }
 
@@ -96,12 +132,80 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     this.widgetData = {
       ...this.widgetData,
     }
+    this.appTocService.transriptionIdentifier.next(this.widgetData)
     if (this.widgetData && this.widgetData.identifier && !this.widgetData.url) {
+      
       await this.fetchContent()
     }
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
-        this.initializePlayer()
+        // this.initializePlayer()
+        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{
+          if(data && data?.activeLang) {
+            // console.log('data--', data)
+            this.transcriptionLangArr = []
+            this.transcriptionSubscriptionData = data   
+            this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
+            this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
+            if(this.transcriptionSubscriptionData?.loadPlayer) {
+              this.initializePlayer()  
+            } else {
+              if (Array.isArray(this.transcriptionLangArr)) {
+  
+                let tracks = this.playerInitObj.player.textTracks()
+                //let allCues:any = []
+                for (let i = 0; i < tracks.length; i++) {
+                  const track = tracks[i];
+                  // console.log(tracks[i].label, tracks[i]);
+  
+                  if (track.kind === 'subtitles' || track.kind === 'metadata') {
+                  //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+                  if (track.language === this.activeTranscriptionLanguage) {
+                    track.mode = 'showing';
+  
+                  } else {
+                    track.mode = 'disabled'; // prevent multiple from showing
+                  }
+  
+  
+  
+                    track.addEventListener('cuechange', () => {
+                      const activeCues = track.activeCues;
+  
+                      if (activeCues && activeCues.length > 0) {
+                        for (let j = 0; j < activeCues.length; j++) {
+                          const cue:any = activeCues[j];
+  
+                          // Log or store cue
+                          // allCues.push({
+                          //   start: cue.startTime,
+                          //   end: cue.endTime,
+                          //   text: cue?.text
+                          // });
+  
+                          this.appTocService.setTranscriptionData({
+                            start: cue.startTime,
+                            end: cue.endTime,
+                            text: cue?.text
+                          })
+  
+                          // Show in browser
+                          // const entry = document.createElement('div');
+                          // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
+                          // cueLog.appendChild(entry);
+                        }
+                        //console.log('cue', allCues)
+                      }
+                    });
+                  }
+                }
+              }
+            }
+  
+          } else {
+            this.initializePlayer()   
+          }
+        })
       } else {
         this.initializeVPlayer()
       }
@@ -144,6 +248,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
       }
     }
+
+    
   }
 
   clearTimeInterval() {
@@ -164,6 +270,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.dispose()
     }
     this.clearTimeInterval()
+
+    if(this.changeTranscriptionLanguageEventSubscription) {
+      this.changeTranscriptionLanguageEventSubscription.unsubscribe()
+    }
+    if(this.playTranscriptionVideoSubscription) {
+      this.playTranscriptionVideoSubscription.unsubscribe()
+    }
+    
   }
   private initializeVPlayer() {
     // alert()
@@ -345,19 +459,22 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.widgetData.mimeType,
       this.widgetData.size
     )
+    this.playerInitObj = initObj
     this.player = initObj.player
     this.dispose = initObj.dispose
     
     
 
     initObj.player.ready(() => {
-      
+      this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
+      this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
+      // console.log('this.transcriptionLangArr----', this.transcriptionLangArr)
       if (Array.isArray(this.widgetData.subtitles)) {
         this.widgetData.subtitles.forEach((u, index) => {
           initObj.player.addRemoteTextTrack(
             {
               default: index === 0,
-              kind: 'captions',
+              kind: 'subtitles',
               label: u.label,
               srclang: u.srclang,
               src: u.url,
@@ -406,6 +523,90 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           });
         }
 
+      }
+
+      if (Array.isArray(this.transcriptionLangArr)) {
+        // console.log('in---')
+        this.transcriptionLangArr.forEach((track:any) => {
+          // console.log('track--', track)
+          initObj.player.addRemoteTextTrack({
+            kind: 'subtitles',
+            src: track.uri,
+            srclang: track.label,
+            label: track.language,
+            default: track.default_lang
+          }, false);
+        });
+
+        initObj.player.on('texttrackchange', () => {
+          const tracks = initObj.player.textTracks();
+          for (let i = 0; i < tracks.length; i++) {
+            const track = tracks[i];
+            if (track.mode === 'showing') {
+              const currentLang = track.language;
+
+              if (currentLang !== this.previousSubtitleLanguage) {
+                //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
+
+                this.previousSubtitleLanguage = currentLang; // Update for next comparison
+                this.activeTranscriptionLanguage = currentLang;
+
+                // Optional: sync with a service or trigger UI update
+                // this.appTocService.setActiveSubtitleLanguage(currentLang);
+               // console.log('About to call next with:', currentLang);
+                this.appTocService.setActiveSubtitleLanguage(currentLang);
+                //console.log('Called next');
+              }
+
+              break; // Only one track should be 'showing'
+            }
+          }
+        });
+        // console.log('initObj--', initObj.player.textTracks())
+        let tracks = initObj.player.textTracks()
+        //let allCues:any = []
+        for (let i = 0; i < tracks.length; i++) {
+          const track = tracks[i];
+          // console.log(tracks[i].label, tracks[i]);
+
+          if (track.kind === 'subtitles' || track.kind === 'metadata') {
+          //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+          if (track.language === this.activeTranscriptionLanguage) {
+            track.mode = 'showing';
+          } else {
+            track.mode = 'disabled'; // prevent multiple from showing
+          }
+
+            track.addEventListener('cuechange', () => {
+              const activeCues = track.activeCues;
+
+              if (activeCues && activeCues.length > 0) {
+                for (let j = 0; j < activeCues.length; j++) {
+                  const cue:any = activeCues[j];
+
+                  // Log or store cue
+                  // allCues.push({
+                  //   start: cue.startTime,
+                  //   end: cue.endTime,
+                  //   text: cue?.text
+                  // });
+
+                  this.appTocService.setTranscriptionData({
+                    start: cue.startTime,
+                    end: cue.endTime,
+                    text: cue?.text
+                  })
+
+                  // Show in browser
+                  // const entry = document.createElement('div');
+                  // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
+                  // cueLog.appendChild(entry);
+                }
+                //console.log('cue', allCues)
+              }
+            });
+          }
+        }
       }
     })
 
