@@ -307,23 +307,14 @@ export class ProfileEntryEditComponent implements OnInit {
       searchOrgNameControl.setValue('')
       this.organisationFilterEnable = false
       this.orgOffset = 0
-      // this.orgList = []
-      // this.getOrgList('')
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-      // this.checkCurrentOrganisationPresent()
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
-        }
-      }, 100);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
+      }
     }
   }
 
@@ -377,22 +368,15 @@ export class ProfileEntryEditComponent implements OnInit {
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount;
       this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
       this.checkCurrentDesignationPresent()
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
-        }
-      }, 100);
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+      }
     }
   }
   checkCurrentDesignationPresent() {
@@ -654,22 +638,15 @@ export class ProfileEntryEditComponent implements OnInit {
       this.degreesFilterEnable = false
       this.degreeListLoadCount = this.degreeDefaultLoadCount;
       this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeDefaultLoadCount);
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
       this.checkCurrentDegreePresent()
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this));
-        }
-      }, 100);
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this));
+      }
     }
   }
 
