@@ -214,7 +214,7 @@
               <ng-container
                 *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
                 <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
-                  [isCurrentUser]="isCurrentUser"
+                  [isCurrentUser]="isCurrentUser" [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
                   (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">

@@ -37,6 +37,8 @@ export class AchievementsComponent implements OnInit {
   ngOnInit() {
     if (this.isPopup) {
       this.getAchievementsList();
+    } else {
+      this.sortAchivements();
     }
   }
 
@@ -48,6 +50,7 @@ export class AchievementsComponent implements OnInit {
         next: (res: any) => {
           if (res) {
             this.achievementsList = _.get(res, 'result.response.achievements', []);
+            this.sortAchivements()
           }
         },
         error: (err: any) => {
@@ -57,6 +60,24 @@ export class AchievementsComponent implements OnInit {
         }
       })
     }
+  }
+
+  sortAchivements(): void {
+    this.achievementsList = this.achievementsList.sort((a, b) => {
+    const dateA = a.issuedDate ? new Date(a.issuedDate).getTime() : 0; // Assign 0 if issuedDate is empty
+    const dateB = b.issuedDate ? new Date(b.issuedDate).getTime() : 0; // Assign 0 if issuedDate is empty
+
+    // Sort by date in descending order, placing empty dates at the bottom
+    if (dateA === 0 && dateB === 0) {
+      return 0; // Both are empty, keep their order
+    } else if (dateA === 0) {
+      return 1; // Place `a` after `b`
+    } else if (dateB === 0) {
+      return -1; // Place `b` after `a`
+    } else {
+      return dateB - dateA; // Sort by latest date first
+    }
+  });
   }
 
   openEditDialog(entry: any = {}): void {

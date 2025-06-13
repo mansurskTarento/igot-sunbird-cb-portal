@@ -129,7 +129,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   private createProfileForm(): void {
     this.profileImage = _.get(this.profileDetails, 'profileImage', null);
     this.profileForm = this.fb.group({
-      firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^[a-zA-Z\s]*$/), Validators.maxLength(200), Validators.minLength(2)]],
+      firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^(?!.*\s{2,})(?!.*[-']{2,})[a-zA-Z\s'-]*$/), Validators.maxLength(200), Validators.minLength(2)]],
       state: [_.get(this.profileDetails, 'state', '')],
       district: [_.get(this.profileDetails, 'district', '')]
     });
@@ -187,6 +187,26 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'));
       }
     })
+  }
+
+  get customNameValidation(): string {
+    const userName = this.profileForm.get('firstname');
+    if (userName && userName.value) {
+      if (/[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value) && /\d/.test(userName.value)) {
+        return 'NetworkV2Profile.invalidNameFormat';
+      } else if (!userName.value.trim()) {
+        return 'NetworkV2Profile.nameIsRequired';
+      } else if (/^\s|[-'\s]$/.test(userName.value)) {
+        return 'NetworkV2Profile.nameCannotStartOrEndWithSpace';
+      } else if (/\d/.test(userName.value)) {
+        return 'NetworkV2Profile.nameCannotContainNumbers';
+      } else if (/[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
+        return 'NetworkV2Profile.specialCharNotAllowedInName';
+      } else if (/(\s{2,}|[-']{2,})/.test(userName.value)) {
+        return 'NetworkV2Profile.pleaseAvoidMultipleSpaces';
+      }
+    }
+    return 'NetworkV2Profile.invalidNameFormat'
   }
 
 
@@ -271,13 +291,6 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     input.onchange = (event: any) => {
       const file = event.target.files[0];
       this.handleUploadProfileImg(file);
-      // if (file) {
-      //   const reader = new FileReader();
-      //   reader.onload = (e: any) => {
-      //     this.profileImage = e.target.result;
-      //   };
-      //   reader.readAsDataURL(file);
-      // }
     };
     input.click();
   }
@@ -544,6 +557,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       servicesList.includes(serviceNameControl.value)) {
       return true;
     }
+    const cadreNameControl = this.profileForm.get('cadreName');
+    if (cadreNameControl) {
+      this.removeValidation(cadreNameControl);
+    }
     return false;
   }
 
@@ -652,6 +669,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     }
     else {
       this.showBatchForNoCadre = false
+      this.removeValidation(typeOfCivilServiceControl);
+      this.removeValidation(serviceNameControl);
+      this.removeValidation(cadreNameControl);
+      this.removeValidation(cadreBatchControl);
+      this.removeValidation(cadreControllingAuthorityControl);
     }
   }
 
@@ -659,6 +681,15 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (control) {
       control.reset();
       control.setValidators([Validators.required]);
+      control.updateValueAndValidity();
+      control.markAsUntouched();
+    }
+  }
+
+  removeValidation(control: any) {
+    if (control) {
+      control.reset();
+      control.clearValidators();
       control.updateValueAndValidity();
       control.markAsUntouched();
     }

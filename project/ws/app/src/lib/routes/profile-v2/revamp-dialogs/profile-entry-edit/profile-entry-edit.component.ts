@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as _ from 'lodash';
@@ -9,6 +9,23 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
+export function endDateValidator(startDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control?.parent?.get(startDateControlName)?.value;
+    const endDate = control?.value;
+
+    if (!endDate) {
+      return null; // Skip validation if endDate is not set
+    }
+
+    if (startDate && new Date(endDate) < new Date(startDate)) {
+      return { endDateLessThanStartDate: true };
+    }
+
+    return null; // Valid
+  };
+}
+
 @Component({
   selector: 'ws-app-profile-entry-edit',
   templateUrl: './profile-entry-edit.component.html',
@@ -16,11 +33,24 @@ import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
   providers: [PipeCertificateImageURL]
 })
 export class ProfileEntryEditComponent implements OnInit {
+  //#region (global variables)
   header: string = '';
   entryDetails: any;
   entryForm!: FormGroup;
+  apiSubscriptions: any
 
+  //#region (service history variables)
+  isCurrentOrgDetails = false
+  selctedOrgDetails: any = {};
+  selectedOrgLogo: string = '';
+  selectedOrgId: string = '';
   orgList: organisation[] = [];
+  orgOffset = 0;
+  orgLimit = 50;
+  organisationFilterEnable = false
+  isLoadingMoreOrganisations = false
+  organisationsCount = 50
+
   designationsMeta: designation[] = [];
   filterDesignationsMeta: any = []
   isLoadingMoreDesignations = false;
@@ -32,8 +62,17 @@ export class ProfileEntryEditComponent implements OnInit {
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  //#endregion (service history variables)
 
-  degreesList: string[] = [];
+  //#region (educational qualifications variables)
+  degreesMeta: string[] = [];
+  filterDegreesMeta: any = []
+  isLoadingMoredegrees = false;
+  degreesFilterEnable = false
+  degreeListLoadCount = 50
+  degreeDefaultLoadCount = 50
+
+  yearsList: string[] = [];
   institutionsList: string[] = []
   filterInstitutionsList: string[] = []
   isLoadingMoreInstitutions = false
@@ -41,9 +80,11 @@ export class ProfileEntryEditComponent implements OnInit {
   institutionListLoadCount = 50
   institutionDefaultLoadCount = 50
   yeasersList: string[] = [];
+  //#endregion (educational qualifications variables)
 
   disableUpload = false;
   disableUrl = false;
+  //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
@@ -80,18 +121,25 @@ export class ProfileEntryEditComponent implements OnInit {
   private createServiceHistoryForm(): void {
     this.entryForm = this.fb.group({
       orgName: [_.get(this.entryDetails, 'orgName', ''), [Validators.required]],
+      searchOrgName: [''],
       designation: [_.get(this.entryDetails, 'designation', ''), [Validators.required]],
       searchDesignation: [''],
       orgState: [_.get(this.entryDetails, 'orgState', '')],
       orgDistrict: [_.get(this.entryDetails, 'orgDistrict', '')],
       startDate: [_.get(this.entryDetails, 'startDate', '')],
-      endDate: [_.get(this.entryDetails, 'endDate', '')],
+      endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
+    this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
     const orgDistrictControl = this.entryForm.get('orgDistrict');
     if (orgDistrictControl && _.get(this.entryDetails, 'orgState', '') === '') {
       orgDistrictControl.disable();
+    }
+    if(_.get(this.entryDetails, 'orgName', '')) {
+      this.selctedOrgDetails['orgName'] = _.get(this.entryDetails, 'orgName', '');
+      this.selctedOrgDetails['orgId'] = _.get(this.entryDetails, 'orgId', '');
+      this.selctedOrgDetails['orgLogo'] = _.get(this.entryDetails, 'orgLogo', '');
     }
     this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
     if (this.isCurrentlyWorking) {
@@ -102,13 +150,19 @@ export class ProfileEntryEditComponent implements OnInit {
         endDateControl.updateValueAndValidity();
       }
     }
-    this.getOrgList();
+    this.getOrgList('', true);
     this.getdesignationsMeta();
     this.getStatesList()
     if (_.get(this.entryDetails, 'startDate', '')) {
       this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
     }
+    this.serviceHistoryValueChangeFunctions();
+  }
+
+  serviceHistoryValueChangeFunctions(): void {
     const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const searchOrgNameControl = this.entryForm.get('searchOrgName')
+    const orgNameControl = this.entryForm.get('orgName')
     if (searchDesignationControl) {
       searchDesignationControl.valueChanges
         .pipe(
@@ -140,10 +194,50 @@ export class ProfileEntryEditComponent implements OnInit {
         }
       }, 10)
     }
+
+    if( searchOrgNameControl) {
+      let settingValueChange = true
+      searchOrgNameControl.valueChanges.pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          this.orgOffset = 0
+          this.orgList = []
+          if (searchText) {
+            this.organisationFilterEnable = true
+            this.getOrgList(searchText)
+          } else {
+            if(!settingValueChange) {
+              this.getOrgList()  
+            }
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+            this.organisationFilterEnable = false
+            this.checkCurrentOrganisationPresent()
+          }
+          settingValueChange = false
+        })
+        
+    }
+
+    if(orgNameControl) {
+      orgNameControl.valueChanges.subscribe((value: string) => {
+        if(value) {
+          const selectedOrgDetails = this.orgList.find(org => org.channel === value)
+          if(selectedOrgDetails) {
+            this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
+            this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
+            this.selctedOrgDetails['orgName'] = selectedOrgDetails.channel
+          }
+        }
+      })
+    }
   }
 
-  getOrgList() {
-    const formBody = {
+  //#region (organisation)
+  getOrgList(query?: string, isFirstTime = false) {
+    const formBody: any = {
       request:
       {
         filters: {
@@ -160,19 +254,31 @@ export class ProfileEntryEditComponent implements OnInit {
           'imgUrl',
           'identifier'
         ],
-        limit: 20,
-        offset: 0
+        limit: this.orgLimit,
+        offset: this.orgOffset
       }
     }
-    this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
+    if(query) {
+      formBody.request['query'] = query
+    }
+    this.isLoadingMoreOrganisations = true;
+    if(this.apiSubscriptions) {
+      this.apiSubscriptions.unsubscribe()
+    }
+    this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
       next: (res: any) => {
-        this.orgList = _.get(res, 'result.response.content', []) as organisation[]
-        if (this.entryForm) {
-          const orgNameControl = this.entryForm.get('orgName');
-          if (orgNameControl) {
-            orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
-          }
+        this.organisationsCount = _.get(res, 'result.response.count', 50);
+        this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
+        if(isFirstTime) {
+          this.checkCurrentOrganisationPresent()
         }
+        this.isLoadingMoreOrganisations = false;
+        // if (this.entryForm) {
+        //   const orgNameControl = this.entryForm.get('orgName');
+        //   if (orgNameControl) {
+        //     orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
@@ -180,6 +286,60 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     })
   }
+  
+  checkCurrentOrganisationPresent() {
+    if(this.selctedOrgDetails['orgName'] && this.orgList) {
+      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.channel === this.selctedOrgDetails['orgName']).length > 0
+      if(!selectedOrgIsPresent) {
+        const orgDetails: organisation = {
+          identifier: this.selctedOrgDetails['orgId'],
+          channel: this.selctedOrgDetails['orgName'],
+          imgUrl: this.selctedOrgDetails['orgLogo']
+        }
+        this.orgList.unshift(orgDetails)
+      }
+    }
+  }
+
+  setupScrollListenerForOrg(opened: boolean): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if(opened && searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+      this.organisationFilterEnable = false
+      this.orgOffset = 0
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
+      }
+    }
+  }
+
+  onOrganisationSelectScroll(event: any): void {
+    const element = event.target;
+    // if (!this.organisationFilterEnable) {
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
+          this.orgOffset = this.orgOffset + 1;
+          const searchOrgNameControl = this.entryForm.get('searchOrgName');
+          let query = searchOrgNameControl ? searchOrgNameControl.value : ''
+          this.getOrgList( query, false);
+        }
+      }
+    // }
+  }
+
+  onOrganisationDropdownClosed(): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if (searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+    }
+    this.checkCurrentOrganisationPresent()
+  }
+  //#endregion (organisation)
 
   //#region (designations)
   getdesignationsMeta() {
@@ -208,22 +368,15 @@ export class ProfileEntryEditComponent implements OnInit {
       this.desigantionFilterEnable = false
       this.designationListLoadCount = this.designationDefaultLoadCount;
       this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
       this.checkCurrentDesignationPresent()
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
-        }
-      }, 100);
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+      }
     }
   }
   checkCurrentDesignationPresent() {
@@ -393,6 +546,7 @@ export class ProfileEntryEditComponent implements OnInit {
   private createEducationalQualificationsForm(): void {
     this.entryForm = this.fb.group({
       degree: [_.get(this.entryDetails, 'degree', ''), [Validators.required]],
+      searchDegrees: [''],
       otherDegree: [''],
       fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''),
       [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
@@ -410,6 +564,39 @@ export class ProfileEntryEditComponent implements OnInit {
   educationFormValuChange(): void {
     const searchInstituteControl = this.entryForm.get('searchInstitute');
     const institutionNameControl = this.entryForm.get('institutionName');
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if (searchDegreeControl) {
+      searchDegreeControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.degreesFilterEnable = true
+            this.filterDegreesMeta = this.degreesMeta.filter((val: any) =>
+              val && val.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.designationDefaultLoadCount)
+            this.degreesFilterEnable = false
+            this.degreeListLoadCount = this.degreeDefaultLoadCount;
+            this.checkCurrentDegreePresent()
+          }
+        })
+
+      if (_.get(this.entryDetails, 'degree', '')) {
+        searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+      }
+      setTimeout(() => {
+        const degreeControl = this.entryForm.get('degree');
+        if (degreeControl) {
+          degreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+        }
+      }, 10)
+    }
+
     if (searchInstituteControl && institutionNameControl) {
       searchInstituteControl.valueChanges
         .pipe(
@@ -444,6 +631,63 @@ export class ProfileEntryEditComponent implements OnInit {
     }
   }
 
+  setupScrollListenerForDegrees(opened: boolean): void {
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if(opened && searchDegreeControl) {
+      searchDegreeControl.setValue('')
+      this.degreesFilterEnable = false
+      this.degreeListLoadCount = this.degreeDefaultLoadCount;
+      this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeDefaultLoadCount);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      this.checkCurrentDegreePresent()
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this));
+      }
+    }
+  }
+
+  onDegreesSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.degreesFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoredegrees && this.degreesMeta.length > this.filterDegreesMeta.length) {
+          this.isLoadingMoredegrees = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.degreeListLoadCount += this.degreeDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoredegrees = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  onDegreesDropdownClosed(): void {
+    setTimeout(() => {
+      const degreeControlControl = this.entryForm.get('degree');
+      const searchDegreeControl = this.entryForm.get('searchDegrees');
+      if (searchDegreeControl) {
+        searchDegreeControl.setValue('');
+      }
+      if (degreeControlControl && degreeControlControl.value) {
+        this.checkCurrentDegreePresent()
+        // degreeControlControl.setValue(degreeControlControl.value);
+      }
+    }, 100);
+  }
+
   generateYearsList(): void {
     this.yeasersList = generateYears(1900);
   }
@@ -451,19 +695,39 @@ export class ProfileEntryEditComponent implements OnInit {
   getDegreesList() {
     this.ProfileV2RevampService.getDegreesList().subscribe({
       next: (res: any) => {
-        this.degreesList = _.get(res, 'result.degreesList.degrees', []) as string[];
-        if (this.entryForm) {
-          const degreeControl = this.entryForm.get('degree');
-          if (degreeControl) {
-            degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
-          }
-        }
+        this.degreesMeta = _.get(res, 'result.degreesList.degrees', []) as string[];
+        this.checkCurrentDegreePresent()
+        // if (this.entryForm) {
+        //   const degreeControl = this.entryForm.get('degree');
+        //   if (degreeControl) {
+        //     degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
+  }
+
+  checkCurrentDegreePresent() {
+    const degreeControl = this.entryForm.get('degree');
+    const currentDegree = degreeControl ? degreeControl.value : '';
+    if (currentDegree) {
+      const degreeExists = this.filterDegreesMeta.some(
+        (degree: any) => degree.toLowerCase() === currentDegree.toLowerCase()
+      );
+
+      if (!degreeExists) {
+        const newDegree = currentDegree;
+        if (this.filterDegreesMeta.length >= this.degreeListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDegreesMeta.pop();
+        }
+        this.filterDegreesMeta.unshift(newDegree);
+      }
+    }
   }
 
   getInstitutionsList() {
@@ -779,17 +1043,6 @@ export class ProfileEntryEditComponent implements OnInit {
         this.markFormGroupTouched(this.entryForm);
       }
     }
-  }
-
-  getOrgId(orgName: string): string {
-    let orgId = '';
-    if (orgName && this.orgList.length > 0) {
-      const org = this.orgList.find((org: any) => org.channel === orgName);
-      if (org) {
-        orgId = _.get(org, 'identifier', '');
-      }
-    }
-    return orgId;
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {

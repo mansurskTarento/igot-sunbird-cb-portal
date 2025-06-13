@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
+// import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
 import { IMAGE_MAX_SIZE } from '@ws/author/src/lib/constants/upload';
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -84,12 +84,15 @@ export class CoverPhotoEditPopupComponent implements OnInit {
         })
         return
       }
-      if (file.size > IMAGE_MAX_SIZE) {
-        this.snackBar.openFromComponent(NotificationComponent, {
-          data: {
-            type: Notify.PROFILE_IMG_SIZE_ERROR,
-          },
-          duration: NOTIFICATION_TIME * 1500,
+      if (file.size > IMAGE_MAX_SIZE * 2) { // 2MB
+        // this.snackBar.openFromComponent(NotificationComponent, {
+        //   data: {
+        //     type: Notify.PROFILE_IMG_SIZE_ERROR,
+        //   },
+        //   duration: NOTIFICATION_TIME * 1500,
+        // })
+        this.snackBar.open('Maximum upload file size: 2MB', 'X', {
+          duration: 1500,
         })
         return
       }

@@ -14,14 +14,6 @@ export interface profileRoutes {
   id: string
 }
 
-export interface serviceHistory {
-  designation: string,
-  orgDetails: string,
-  period: string,
-  orgLogo: string,
-  showMore?: boolean
-}
-
 export interface educationalQualifications {
   education: string,
   instituteAndLocation: string,
@@ -44,6 +36,7 @@ export interface achievement {
   provider: string,
   period: string,
   certificateUrl?: string
+  issuedDate: string | number | Date
 }
 
 export interface Community {
@@ -62,8 +55,10 @@ export interface state {
 }
 
 export interface organisation {
+  identifier: string;
   channel: string;
-  isRootOrg: boolean | null;
+  imgUrl: string;
+  isRootOrg?: boolean | null;
 }
 
 export interface designation {
