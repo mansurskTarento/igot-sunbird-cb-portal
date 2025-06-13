@@ -50,7 +50,7 @@
           </div>
 
           <div class="flex flex-col profile-details">
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
               <span class="profile-name">{{primaryDetails?.firstname}} </span>
               <ng-container *ngIf="primaryDetails?.profileStatus === 'VERIFIED'">
                 <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
@@ -377,15 +377,17 @@
 
   <!-- #region (right profile connections )-->
   <div class="hidden md:flex flex-col gap-4 profileRightSection">
-    <div class="flex flex-col gap-3">
-      <div class="people-you-may-know">
-        {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+    <ng-container *ngIf="peopleSuggestionsList?.length > 0">
+      <div class="flex flex-col gap-3">
+        <div class="people-you-may-know">
+          {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+        </div>
+        <div>
+          <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
+            [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+        </div>
       </div>
-      <div>
-        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
-          [currentUser]="profesionalDetails"></ws-app-people-suggestions>
-      </div>
-    </div>
+    </ng-container>
 
     <div class="flex flex-col gap-3">
       <div class="people-you-may-know">
