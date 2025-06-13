@@ -1,6 +1,6 @@
 <div class="people-suggestions-container">
   <mat-card *ngFor="let person of peopleSuggestionsList" class="person-card mb-4 flex flex-col items-center">
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4 pointers" (click)="goToUserProfile(person)">
       <div >
         <ng-container *ngIf="profileImageUrl; else nameInitialsView">
           <img [src]="person.profileImageUrl" alt="Profile" class="profile-image">
@@ -18,7 +18,7 @@
     </div>
     <div class="dividing-line mt-2"></div>
     <div class="connect flex justify-center items-center pt-4" [ngClass]="{'pending': person.connectionStatus === 'pending'}" (click)="connect(person)">
-      <a >{{person.connectionStatus === 'pending' ? 'Pending...' : 'Connect'}}</a>
+      <a >{{(person.connectionStatus === 'pending' ? 'NetworkV2Profile.pendingDaught' : 'NetworkV2Profile.connect') | translate}}</a>
     </div>
   </mat-card>
 </div>

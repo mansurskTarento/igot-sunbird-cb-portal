@@ -1,3 +1,33 @@
+.popup-header {
+  padding: 15px 24px;
+  border-bottom: 2px solid #00000014;
+  
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
+}
+
+.container {
+  width: 744px;
+  padding: 24px;
+  max-width: calc(100% - 44px);
+}
+
 .achievement-card {
   border: 1px solid #0000000A;
   background-color: #1B4CA10A;
@@ -11,11 +41,15 @@
     font: 600 14px Montserrat;
     /* stylelint-enable */
 
+    .achievement-title {
+      width: calc(100% - 20px);
+    }
+
     .edit-icon {
       color: #1B4CA1;
-      width: 20px;
-      height: 20px;
-      font-size: 20px;
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
       pointer-events: all;
       cursor: pointer;
     }
@@ -65,9 +99,10 @@
     /* stylelint-enable */
     height: 30px;
     overflow: hidden;
+    word-break: break-word;
   }
 
-  .extend-description {
+.extend-description {
     // overflow: auto !important;
     // height: 100px !important;
     height: fit-content !important;

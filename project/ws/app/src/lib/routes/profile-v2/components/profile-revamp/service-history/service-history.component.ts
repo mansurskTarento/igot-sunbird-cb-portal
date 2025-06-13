@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { serviceHistory } from '../../../models/profile-revamp.model';
 import { DatePipe } from '@angular/common';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
@@ -14,7 +13,10 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)
-  @Input() serviceHistoryList: serviceHistory[] = []
+  @Input() serviceHistoryList: any[] = []
+  @Input() isCurrentUser = false;
+  @Input() currentDesignation = '';
+  @Input() currentOrgName = '';
   @Output() openProfileEntryEditDialog = new EventEmitter();
 
   userId: string = '';
@@ -31,6 +33,9 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     if (this.data && this.data.userId) {
       this.userId = data.userId;
       this.isPopup = true
+      this.isCurrentUser = data.isCurrentUser || false;
+      this.currentDesignation = data.currentDesignation || '';
+      this.currentOrgName = data.currentOrgName || '';
     }
   }
 
@@ -63,7 +68,12 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
 
   formateData() {
     if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
+      let hasCurrentOrgDetails = false
       this.serviceHistoryList.forEach((service: any) => {
+        if(service.orgName === this.currentOrgName && service.designation === this.currentDesignation) {
+          service['isCurrentOrgDetails'] = true
+          hasCurrentOrgDetails = true
+        }
         const orgDetails = `${service?.orgName}, ${service?.orgDistrict}, ${service?.orgState}`
         const startDate = service.startDate ? new Date(service.startDate) : null
         let endDate = service.currentlyWorking === 'true' ? null : service.endDate ? new Date(service.endDate) : null
@@ -74,8 +84,25 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
         service['orgDetails'] = orgDetails
         service['period'] = `${formatedStartDate} - ${formatedEndDate} - ${yearGap} year${yearGap === 1 ? 's' : ''}`
         service['showMore'] = false;
-        // service['description'] = 'isCurrentlyWorking something that is not real and is used for practice or to deceive: The device is not a real bomb but a dummy. UK. in some sports, especially football, an act of pretending to kick or hit the ball in a particular direction, in order to deceive the other players. something that is not real and is used for practice or to deceive: The device is not a real bomb but a dummy. UK. in some sports, especially football, an act of pretending to kick or hit the ball in a particular direction, in order to deceive the other players.'
       })
+      if(!hasCurrentOrgDetails) {
+        const orgDetails: any = {
+          orgName: this.currentOrgName,
+          orgLogo: '',
+          designation: this.currentDesignation,
+          isCurrentOrgDetails: true,
+          orgDetails: this.currentOrgName,
+        }
+        if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
+          this.serviceHistoryList.unshift(orgDetails)
+        } else {
+          this.serviceHistoryList = [orgDetails]
+        }
+
+        if(!this.isPopup && this.serviceHistoryList && this.serviceHistoryList.length > 2) {
+          this.serviceHistoryList = this.serviceHistoryList.slice(0, 2)
+        }
+      }
     } 
   }
   
@@ -94,7 +121,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     }
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })

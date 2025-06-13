@@ -32,7 +32,7 @@ import {
   SearchV4Request,
 } from '../../models/search-v3.model';
 import { WidgetContentLibService } from '@sunbird-cb/consumption';
-import { MobileAppsService } from 'src/app/services/mobile-apps.service';
+import { MobileAppsService } from '../../../../../../../../../src/app/services/mobile-apps.service';
 
 
 @Component({

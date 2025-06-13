@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UserStats } from '../../../models/profile-revamp.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ws-app-user-stats',
@@ -12,14 +13,16 @@ export class UserStatsComponent implements OnInit {
   @Input() userStats: UserStats[] = [];
   //#endregion
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ) { }
 
   ngOnInit() {
   }
 
   viewAll(state: UserStats) {
     if (state.vewAllUrl) {
-      console.log('state.vewAllUrl', state.vewAllUrl);
+      this.router.navigateByUrl(state.vewAllUrl);
     }
   }
 

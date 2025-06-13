@@ -1,12 +1,30 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as _ from 'lodash';
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
-import { designation, generateYears, organisation, state } from '../../models/profile-revamp.model';
+import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
+
+export function endDateValidator(startDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control?.parent?.get(startDateControlName)?.value;
+    const endDate = control?.value;
+
+    if (!endDate) {
+      return null; // Skip validation if endDate is not set
+    }
+
+    if (startDate && new Date(endDate) < new Date(startDate)) {
+      return { endDateLessThanStartDate: true };
+    }
+
+    return null; // Valid
+  };
+}
 
 @Component({
   selector: 'ws-app-profile-entry-edit',
@@ -15,24 +33,58 @@ import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
   providers: [PipeCertificateImageURL]
 })
 export class ProfileEntryEditComponent implements OnInit {
+  //#region (global variables)
   header: string = '';
   entryDetails: any;
   entryForm!: FormGroup;
+  apiSubscriptions: any
 
+  //#region (service history variables)
+  isCurrentOrgDetails = false
+  selctedOrgDetails: any = {};
+  selectedOrgLogo: string = '';
+  selectedOrgId: string = '';
   orgList: organisation[] = [];
-  designationsList: designation[] = [];
+  orgOffset = 0;
+  orgLimit = 50;
+  organisationFilterEnable = false
+  isLoadingMoreOrganisations = false
+  organisationsCount = 50
+
+  designationsMeta: designation[] = [];
+  filterDesignationsMeta: any = []
+  isLoadingMoreDesignations = false;
+  desigantionFilterEnable = false
+  designationListLoadCount = 50
+  designationDefaultLoadCount = 50
   statesList: state[] = [];
   districtsList: string[] = [];
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  //#endregion (service history variables)
 
-  degreesList: string[] = [];
-  institutionsList: string[] = [];
+  //#region (educational qualifications variables)
+  degreesMeta: string[] = [];
+  filterDegreesMeta: any = []
+  isLoadingMoredegrees = false;
+  degreesFilterEnable = false
+  degreeListLoadCount = 50
+  degreeDefaultLoadCount = 50
+
+  yearsList: string[] = [];
+  institutionsList: string[] = []
+  filterInstitutionsList: string[] = []
+  isLoadingMoreInstitutions = false
+  inistitutionFilterEnable = false
+  institutionListLoadCount = 50
+  institutionDefaultLoadCount = 50
   yeasersList: string[] = [];
+  //#endregion (educational qualifications variables)
 
   disableUpload = false;
   disableUrl = false;
+  //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
@@ -42,7 +94,7 @@ export class ProfileEntryEditComponent implements OnInit {
     private pipeImgUrl: PipeCertificateImageURL
   ) {
     this.header = _.get(this.data, 'header', '');
-    this.entryDetails = _.get(this.data, 'entryDetails', {});
+    this.entryDetails = _.get(this.data, 'entryDetails', '');
   }
   ngOnInit(): void {
     this.initForm();
@@ -66,92 +118,353 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (intialization)
 
   //#region (service history)
-    private createServiceHistoryForm(): void {
+  private createServiceHistoryForm(): void {
     this.entryForm = this.fb.group({
       orgName: [_.get(this.entryDetails, 'orgName', ''), [Validators.required]],
+      searchOrgName: [''],
       designation: [_.get(this.entryDetails, 'designation', ''), [Validators.required]],
-      orgState: [_.get(this.entryDetails, 'orgState', ''), [Validators.required]],
-      orgDistrict: [_.get(this.entryDetails, 'orgDistrict', ''), [Validators.required]],
-      startDate: [_.get(this.entryDetails, 'startDate', ''), [Validators.required]],
-      endDate: [_.get(this.entryDetails, 'endDate', ''), [Validators.required]],
+      searchDesignation: [''],
+      orgState: [_.get(this.entryDetails, 'orgState', '')],
+      orgDistrict: [_.get(this.entryDetails, 'orgDistrict', '')],
+      startDate: [_.get(this.entryDetails, 'startDate', '')],
+      endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
-    this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
-    this.getOrgList();
-    this.getDesignationsList();
-    this.getStatesList()
-    if(_.get(this.entryDetails, 'startDate', '')) {
-      this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
+    this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
+    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    if (orgDistrictControl && _.get(this.entryDetails, 'orgState', '') === '') {
+      orgDistrictControl.disable();
     }
-  }
-  getOrgList() { 
-    const formBody = { request: 
-      { 
-        filters: { 
-          isTenant: true, 
-          status: 1, 
-          isMdo: true, 
-          isCbp: true 
-        },
-        sort_by: {
-           orgName: 'asc'
-        },
-        fields: ['channel'],
-        limit: 20,
-        offset: 0
+    if(_.get(this.entryDetails, 'orgName', '')) {
+      this.selctedOrgDetails['orgName'] = _.get(this.entryDetails, 'orgName', '');
+      this.selctedOrgDetails['orgId'] = _.get(this.entryDetails, 'orgId', '');
+      this.selctedOrgDetails['orgLogo'] = _.get(this.entryDetails, 'orgLogo', '');
+    }
+    this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
+    if (this.isCurrentlyWorking) {
+      const endDateControl = this.entryForm.get('endDate');
+      if (endDateControl) {
+        endDateControl.disable();
+        endDateControl.clearValidators();
+        endDateControl.updateValueAndValidity();
       }
     }
-    this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
-      next: (res: any) => {
-        this.orgList = _.get(res, 'result.response.content', []) as organisation[]
-        if(this.entryForm) {
-          const orgNameControl = this.entryForm.get('orgName');
-          if(orgNameControl) {
-            orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
+    this.getOrgList('', true);
+    this.getdesignationsMeta();
+    this.getStatesList()
+    if (_.get(this.entryDetails, 'startDate', '')) {
+      this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
+    }
+    this.serviceHistoryValueChangeFunctions();
+  }
+
+  serviceHistoryValueChangeFunctions(): void {
+    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const searchOrgNameControl = this.entryForm.get('searchOrgName')
+    const orgNameControl = this.entryForm.get('orgName')
+    if (searchDesignationControl) {
+      searchDesignationControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.desigantionFilterEnable = true
+            this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+              val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+            this.desigantionFilterEnable = false
+            this.designationListLoadCount = this.designationDefaultLoadCount;
+            this.checkCurrentDesignationPresent()
+          }
+        })
+
+      if (_.get(this.entryDetails, 'designation', '')) {
+        searchDesignationControl.setValue(_.get(this.entryDetails, 'designation', ''));
+      }
+      setTimeout(() => {
+        const designationControl = this.entryForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(_.get(this.entryDetails, 'designation', ''));
+        }
+      }, 10)
+    }
+
+    if( searchOrgNameControl) {
+      let settingValueChange = true
+      searchOrgNameControl.valueChanges.pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          this.orgOffset = 0
+          this.orgList = []
+          if (searchText) {
+            this.organisationFilterEnable = true
+            this.getOrgList(searchText)
+          } else {
+            if(!settingValueChange) {
+              this.getOrgList()  
+            }
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+            this.organisationFilterEnable = false
+            this.checkCurrentOrganisationPresent()
+          }
+          settingValueChange = false
+        })
+        
+    }
+
+    if(orgNameControl) {
+      orgNameControl.valueChanges.subscribe((value: string) => {
+        if(value) {
+          const selectedOrgDetails = this.orgList.find(org => org.channel === value)
+          if(selectedOrgDetails) {
+            this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
+            this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
+            this.selctedOrgDetails['orgName'] = selectedOrgDetails.channel
           }
         }
+      })
+    }
+  }
+
+  //#region (organisation)
+  getOrgList(query?: string, isFirstTime = false) {
+    const formBody: any = {
+      request:
+      {
+        filters: {
+          isTenant: true,
+          status: 1,
+          isMdo: true,
+          isCbp: true
+        },
+        sort_by: {
+          orgName: 'asc'
+        },
+        fields: [
+          'channel',
+          'imgUrl',
+          'identifier'
+        ],
+        limit: this.orgLimit,
+        offset: this.orgOffset
+      }
+    }
+    if(query) {
+      formBody.request['query'] = query
+    }
+    this.isLoadingMoreOrganisations = true;
+    if(this.apiSubscriptions) {
+      this.apiSubscriptions.unsubscribe()
+    }
+    this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
+      next: (res: any) => {
+        this.organisationsCount = _.get(res, 'result.response.count', 50);
+        this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
+        if(isFirstTime) {
+          this.checkCurrentOrganisationPresent()
+        }
+        this.isLoadingMoreOrganisations = false;
+        // if (this.entryForm) {
+        //   const orgNameControl = this.entryForm.get('orgName');
+        //   if (orgNameControl) {
+        //     orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
+          this.openSnackbar('Something went wrong. Please refresh or try again later.')
+        }
+      }
+    })
+  }
+  
+  checkCurrentOrganisationPresent() {
+    if(this.selctedOrgDetails['orgName'] && this.orgList) {
+      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.channel === this.selctedOrgDetails['orgName']).length > 0
+      if(!selectedOrgIsPresent) {
+        const orgDetails: organisation = {
+          identifier: this.selctedOrgDetails['orgId'],
+          channel: this.selctedOrgDetails['orgName'],
+          imgUrl: this.selctedOrgDetails['orgLogo']
+        }
+        this.orgList.unshift(orgDetails)
+      }
+    }
+  }
+
+  setupScrollListenerForOrg(opened: boolean): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if(opened && searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+      this.organisationFilterEnable = false
+      this.orgOffset = 0
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
+      }
+    }
+  }
+
+  onOrganisationSelectScroll(event: any): void {
+    const element = event.target;
+    // if (!this.organisationFilterEnable) {
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
+          this.orgOffset = this.orgOffset + 1;
+          const searchOrgNameControl = this.entryForm.get('searchOrgName');
+          let query = searchOrgNameControl ? searchOrgNameControl.value : ''
+          this.getOrgList( query, false);
+        }
+      }
+    // }
+  }
+
+  onOrganisationDropdownClosed(): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if (searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+    }
+    this.checkCurrentOrganisationPresent()
+  }
+  //#endregion (organisation)
+
+  //#region (designations)
+  getdesignationsMeta() {
+    this.ProfileV2RevampService.getDesignations({}).subscribe({
+      next: (res: any) => {
+        this.designationsMeta = _.get(res, 'responseData', []) as designation[]
+        this.checkCurrentDesignationPresent()
+        // if (this.entryForm) {
+        //   const designationControl = this.entryForm.get('designation');
+        //   if (designationControl) {
+        //     designationControl.patchValue(_.get(this.entryDetails, 'designation', ''));
+        //   }
+        // }
+      }, error: (error: HttpErrorResponse) => {
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
   }
 
-  getDesignationsList() {
-    this.ProfileV2RevampService.getDesignations({}).subscribe({
-      next: (res: any) => {
-        this.designationsList = _.get(res, 'responseData', []) as designation[]
-        if(this.entryForm) {
-          const designationControl = this.entryForm.get('designation');
-          if(designationControl) {
-            designationControl.patchValue(_.get(this.entryDetails, 'designation', ''));
-          }
+  setupScrollListener(opened: boolean): void {
+    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    if (opened && searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount;
+      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      this.checkCurrentDesignationPresent()
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+      }
+    }
+  }
+  checkCurrentDesignationPresent() {
+    // Get the current designation value
+    const searchDesignationControl = this.entryForm.get('designation');
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.filterDesignationsMeta.some(
+        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      );
+
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = {
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          status: 'Active'
+        };
+        // Make sure the custom designation appears in the filtered list
+        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDesignationsMeta.pop();
         }
-      }, error: (error: HttpErrorResponse) => {
-        if (error) { 
-          this.openSnackbar('Something went wrong. Please refresh or try again later.')
+        this.filterDesignationsMeta.unshift(newDesignation);
+      }
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.desigantionFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+          this.isLoadingMoreDesignations = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.designationListLoadCount += this.designationDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoreDesignations = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
         }
       }
-    })
+    }
   }
+
+  onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.entryForm.get('designation')!.value;
+    setTimeout(() => {
+      if (this.entryForm.get('searchDesignation')) {
+        this.entryForm.get('searchDesignation')!.setValue('');
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.entryForm.get('designation');
+        if (designationControl) {
+          designationControl.setValue(currentDesignation);
+        }
+      }
+    }, 100);
+  }
+  //#endregion (Designations)
 
   getStatesList() {
     this.ProfileV2RevampService.getStatesList().subscribe({
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[]
-        if(this.entryForm) {
+        if (this.entryForm) {
           const stateControl = this.entryForm.get('orgState');
-          if(stateControl) {
+          if (stateControl) {
             stateControl.patchValue(_.get(this.entryDetails, 'orgState', ''));
           }
-          if(_.get(this.entryDetails, 'orgState', '')) {
+          if (_.get(this.entryDetails, 'orgState', '')) {
             this.getDistrictsList(_.get(this.entryDetails, 'orgState', ''), true);
           }
         }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
@@ -159,31 +472,41 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   getDistrictsList(state: string, isFirstTime: boolean = false) {
-    this.ProfileV2RevampService.getDistrictsList(state).subscribe({
-      next: (res: any) => {
-        this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
+    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    if (state) {
+      if (orgDistrictControl) {
+        orgDistrictControl.enable();
+      }
+      this.ProfileV2RevampService.getDistrictsList(state).subscribe({
+        next: (res: any) => {
+          this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
           const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
-        if(districtControl) {
-          if (isFirstTime) {
-            districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
-          } else {
-            districtControl.patchValue('');
+          if (districtControl) {
+            if (isFirstTime) {
+              districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
+            } else {
+              districtControl.patchValue('');
+            }
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.districtsList = [];
+          if (err) {
+            this.openSnackbar('Something went wrong. Please refresh or try again later.');
           }
         }
-      },
-      error: (err: HttpErrorResponse) => {
-        this.districtsList = [];
-        if(err) {
-          this.openSnackbar('Something went wrong. Please refresh or try again later.');
-        }
+      })
+    } else {
+      if (orgDistrictControl) {
+        orgDistrictControl.disable();
       }
-    })
+    }
   }
 
-  onCurrentlyWorkingChange(event: boolean): void{
+  onCurrentlyWorkingChange(event: boolean): void {
     this.isCurrentlyWorking = event;
     const currentlyWorkingControl = this.entryForm.get('currentlyWorking');
-    if(currentlyWorkingControl) {
+    if (currentlyWorkingControl) {
       currentlyWorkingControl.patchValue(event.toString());
     }
     if (event) {
@@ -216,70 +539,299 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     }
   }
-  //#endregion (service history)
+
+  //#endregion (Service History)
 
   //#region (educational qualifications)
   private createEducationalQualificationsForm(): void {
     this.entryForm = this.fb.group({
       degree: [_.get(this.entryDetails, 'degree', ''), [Validators.required]],
+      searchDegrees: [''],
       otherDegree: [''],
-      fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''), 
-        [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
+      fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''),
+      [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
       institutionName: [_.get(this.entryDetails, 'institutionName', ''), [Validators.required]],
+      searchInstitute: [''],
       otherInstituteName: [''],
       startYear: [_.get(this.entryDetails, 'startYear', ''), [Validators.required]],
       endYear: [_.get(this.entryDetails, 'endYear', ''), [Validators.required]],
     });
     this.getDegreesList();
     this.getInstitutionsList();
+    this.educationFormValuChange()
+  }
+
+  educationFormValuChange(): void {
+    const searchInstituteControl = this.entryForm.get('searchInstitute');
+    const institutionNameControl = this.entryForm.get('institutionName');
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if (searchDegreeControl) {
+      searchDegreeControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.degreesFilterEnable = true
+            this.filterDegreesMeta = this.degreesMeta.filter((val: any) =>
+              val && val.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.designationDefaultLoadCount)
+            this.degreesFilterEnable = false
+            this.degreeListLoadCount = this.degreeDefaultLoadCount;
+            this.checkCurrentDegreePresent()
+          }
+        })
+
+      if (_.get(this.entryDetails, 'degree', '')) {
+        searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+      }
+      setTimeout(() => {
+        const degreeControl = this.entryForm.get('degree');
+        if (degreeControl) {
+          degreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+        }
+      }, 10)
+    }
+
+    if (searchInstituteControl && institutionNameControl) {
+      searchInstituteControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.inistitutionFilterEnable = true
+            this.filterInstitutionsList = this.institutionsList.filter((val: any) =>
+              val && val.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterInstitutionsList = this.institutionsList.slice(0, this.institutionDefaultLoadCount)
+            this.inistitutionFilterEnable = false
+            this.institutionListLoadCount = this.institutionDefaultLoadCount;
+            this.checkCurrentInstitutePresent()
+          }
+        })
+
+      if (_.get(this.entryDetails, 'institutionName', '')) {
+        searchInstituteControl.setValue(_.get(this.entryDetails, 'institutionName', ''));
+      }
+      setTimeout(() => {
+        institutionNameControl.setValue(_.get(this.entryDetails, 'institutionName', ''));
+        this.onInstituteChange(_.get(this.entryDetails, 'institutionName', ''))
+        institutionNameControl.valueChanges.subscribe((name: string) => {
+          this.onInstituteChange(name)
+        })
+      }, 10)
+    }
+  }
+
+  setupScrollListenerForDegrees(opened: boolean): void {
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if(opened && searchDegreeControl) {
+      searchDegreeControl.setValue('')
+      this.degreesFilterEnable = false
+      this.degreeListLoadCount = this.degreeDefaultLoadCount;
+      this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeDefaultLoadCount);
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
+      this.checkCurrentDegreePresent()
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this));
+      }
+    }
+  }
+
+  onDegreesSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.degreesFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoredegrees && this.degreesMeta.length > this.filterDegreesMeta.length) {
+          this.isLoadingMoredegrees = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.degreeListLoadCount += this.degreeDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoredegrees = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  onDegreesDropdownClosed(): void {
+    setTimeout(() => {
+      const degreeControlControl = this.entryForm.get('degree');
+      const searchDegreeControl = this.entryForm.get('searchDegrees');
+      if (searchDegreeControl) {
+        searchDegreeControl.setValue('');
+      }
+      if (degreeControlControl && degreeControlControl.value) {
+        this.checkCurrentDegreePresent()
+        // degreeControlControl.setValue(degreeControlControl.value);
+      }
+    }, 100);
   }
 
   generateYearsList(): void {
     this.yeasersList = generateYears(1900);
   }
-    
 
   getDegreesList() {
     this.ProfileV2RevampService.getDegreesList().subscribe({
       next: (res: any) => {
-        this.degreesList = _.get(res, 'result.degreesList.degrees', []) as string[];
-        if(this.entryForm) {
-          const degreeControl = this.entryForm.get('degree');
-          if(degreeControl) {
-            degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
-          }
-        }
+        this.degreesMeta = _.get(res, 'result.degreesList.degrees', []) as string[];
+        this.checkCurrentDegreePresent()
+        // if (this.entryForm) {
+        //   const degreeControl = this.entryForm.get('degree');
+        //   if (degreeControl) {
+        //     degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
+  }
+
+  checkCurrentDegreePresent() {
+    const degreeControl = this.entryForm.get('degree');
+    const currentDegree = degreeControl ? degreeControl.value : '';
+    if (currentDegree) {
+      const degreeExists = this.filterDegreesMeta.some(
+        (degree: any) => degree.toLowerCase() === currentDegree.toLowerCase()
+      );
+
+      if (!degreeExists) {
+        const newDegree = currentDegree;
+        if (this.filterDegreesMeta.length >= this.degreeListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDegreesMeta.pop();
+        }
+        this.filterDegreesMeta.unshift(newDegree);
+      }
+    }
   }
 
   getInstitutionsList() {
     this.ProfileV2RevampService.getInstitutionsList().subscribe({
       next: (res: any) => {
         this.institutionsList = _.get(res, 'result.institutionList.institutions', []) as string[];
-        if(this.entryForm) {
-          const instituteNameControl = this.entryForm.get('institutionName');
-          if(instituteNameControl) {
-            instituteNameControl.patchValue(_.get(this.entryDetails, 'institutionName', ''));
-          }
-        }
+        this.institutionsList.push('Other')
+        this.checkCurrentInstitutePresent()
       }, error: (error: HttpErrorResponse) => {
-        if (error) { 
+        if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
   }
 
+
+  setupInstituteScrollListener(opened: boolean): void {
+    const searchInstituteControl = this.entryForm.get('searchInstitute');
+    if (opened && searchInstituteControl) {
+      searchInstituteControl.setValue('')
+      this.inistitutionFilterEnable = false
+      this.institutionListLoadCount = this.institutionDefaultLoadCount;
+      this.filterInstitutionsList = this.institutionsList.slice(0, this.institutionDefaultLoadCount);
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentInstitutePresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onInstituteSelectScroll.bind(this));
+        }
+      }, 100);
+    }
+  }
+  checkCurrentInstitutePresent() {
+    const institutionNameControl = this.entryForm.get('institutionName');
+    const currentInstitute = institutionNameControl ? institutionNameControl.value : '';
+    if (currentInstitute) {
+      const instituteExists = this.filterInstitutionsList.some(
+        (institute: any) => institute.toLowerCase() === currentInstitute.toLowerCase()
+      );
+
+      if (!instituteExists) {
+        const newInstitute = currentInstitute;
+        if (this.filterInstitutionsList.length >= this.institutionListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterInstitutionsList.pop();
+        }
+        this.filterInstitutionsList.unshift(newInstitute);
+      }
+    }
+  }
+
+  onInstituteSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.inistitutionFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreInstitutions && this.institutionsList.length > this.filterInstitutionsList.length) {
+          this.isLoadingMoreInstitutions = true;
+
+          this.institutionListLoadCount += this.institutionDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterInstitutionsList = this.institutionsList.slice(0, this.institutionListLoadCount);
+            this.checkCurrentInstitutePresent()
+            this.isLoadingMoreInstitutions = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  onInstituteDropdownClosed(): void {
+    setTimeout(() => {
+      const institutionNameControl = this.entryForm.get('institutionName');
+      const searchInstituteControl = this.entryForm.get('searchInstitute');
+      if (searchInstituteControl) {
+        searchInstituteControl.setValue('');
+      }
+      if (institutionNameControl && institutionNameControl.value) {
+        if (institutionNameControl) {
+          institutionNameControl.setValue(institutionNameControl.value);
+        }
+      }
+    }, 100);
+  }
+
   onDegreeChange(selectedDegree: string): void {
     const otherDegreeControl = this.entryForm.get('otherDegree');
     if (otherDegreeControl) {
       if (selectedDegree === 'other') {
-        otherDegreeControl.setValidators([Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]);
+        otherDegreeControl.setValidators([Validators.required, Validators.maxLength(80), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
       } else {
         otherDegreeControl.clearValidators();
       }
@@ -288,15 +840,17 @@ export class ProfileEntryEditComponent implements OnInit {
     }
   }
 
-  onInstituteChange(selectedInstitute: string): void {
+  onInstituteChange(selectedInstitute: string, isPatching = false): void {
     const otherInstituteControl = this.entryForm.get('otherInstituteName');
-    if(otherInstituteControl) {
+    if (otherInstituteControl) {
       if (selectedInstitute === 'Other') {
-        otherInstituteControl.setValidators([Validators.required]);
+        otherInstituteControl.setValidators([Validators.required, Validators.maxLength(125), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
       } else {
         otherInstituteControl.clearValidators();
       }
-      otherInstituteControl.setValue('');
+      if (!isPatching) {
+        otherInstituteControl.setValue('');
+      }
       otherInstituteControl.updateValueAndValidity();
     }
   }
@@ -321,15 +875,15 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250)]],
-      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250)]],
+      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
       issuedDate: [_.get(this.entryDetails, 'issuedDate', '')],
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],
-      url: [_.get(this.entryDetails, 'url', '')],
+      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
-    if(_.get(this.entryDetails, 'fileName', '')) {
+    if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url;
       urlControl.patchValue('')
       urlControl.disable()
@@ -381,10 +935,10 @@ export class ProfileEntryEditComponent implements OnInit {
       urlControl.updateValueAndValidity();
     }
     const fileNameControl = this.entryForm.get('fileName');
-          if (fileNameControl) {
-            fileNameControl.patchValue('');
-            fileNameControl.updateValueAndValidity();
-          }
+    if (fileNameControl) {
+      fileNameControl.patchValue('');
+      fileNameControl.updateValueAndValidity();
+    }
     this.disableUpload = false;
     this.disableUrl = false;
   }
@@ -437,14 +991,9 @@ export class ProfileEntryEditComponent implements OnInit {
         next: (res: any) => {
           if (res) {
             const createdUrl = _.get(res, 'result.url', '')
-            const urlToReplace = 'https://storage.googleapis.com/igot'
-            const urlSplice = createdUrl.slice(urlToReplace.length)
-            // let uploadedFile = createdUrl
-            // if (createdUrl.startsWith(urlToReplace)) {
-            //   const urlSplice = createdUrl.slice(urlToReplace.length)
-            //   uploadedFile = `${environment.domainName}assets/public/${urlSplice}`
-            // }
-            const uploadedFile = this.pipeImgUrl.transform(urlSplice)
+            const folderNameToSplit = '/userAchievements/'
+            const urlSplice = createdUrl.split(folderNameToSplit)[1]
+            const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
             const documentUrlControl = this.entryForm.get('uploadedDocumentUrl');
             if (documentUrlControl) {
               documentUrlControl.patchValue(uploadedFile)
@@ -457,10 +1006,10 @@ export class ProfileEntryEditComponent implements OnInit {
               urlControl.updateValueAndValidity()
             }
             const fileNameControl = this.entryForm.get('fileName');
-          if (fileNameControl) {
-            fileNameControl.patchValue(fileName);
-            fileNameControl.updateValueAndValidity();
-          }
+            if (fileNameControl) {
+              fileNameControl.patchValue(fileName);
+              fileNameControl.updateValueAndValidity();
+            }
             this.disableUrl = true
             this.disableUpload = false
           }
@@ -479,7 +1028,17 @@ export class ProfileEntryEditComponent implements OnInit {
   handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-        this.dialogRef.close(this.entryForm.value);
+        const formValue = this.entryForm.value;
+        if (this.header === 'Service History') {
+          if (formValue.orgName && this.orgList.length > 0) {
+            const org = this.orgList.find((org: any) => org.channel === formValue.orgName);
+            if (org) {
+              formValue['orgLogo'] = _.get(org, 'imgUrl', '');
+              formValue['orgId'] = _.get(org, 'identifier', '');
+            }
+          }
+        }
+        this.dialogRef.close(formValue);
       } else {
         this.markFormGroupTouched(this.entryForm);
       }

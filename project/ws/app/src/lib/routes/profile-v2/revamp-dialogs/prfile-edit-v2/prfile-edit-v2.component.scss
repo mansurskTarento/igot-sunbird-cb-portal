@@ -146,6 +146,11 @@
   overflow: auto;
 }
 
+.profile-top-editor-form {
+  height: calc(100vh - 460px);
+  overflow: auto;
+}
+
 .form-fields-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -270,8 +275,6 @@
 }
 
 .info-value-c {
-  display: flex;
-  flex-direction: column;
   background-color: rgba(0, 0, 0, 0.2); 
   padding: 3px;
   border: 0.5px solid rgba(0, 0, 0, 0.1); 
@@ -284,6 +287,7 @@
   pointer-events: none !important;
   // opacity: 0.5;
   background-color: #999999 !important;
+  color: #ffffff !important;
 }
 
 // Responsive adjustments
@@ -297,7 +301,18 @@
   }
 }
 
-:host ::ng-deep .profile-control {
+::ng-deep .profile-control {
+  .search-input {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    width: 98%;
+    height: 30px;
+    border-radius: 17px;
+    &:focus {
+      outline: none;
+      border-color: #F3962F;
+      box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
+    }
+  }
   .mat-form-field-appearance-outline .mat-form-field-flex {
     height: 35px;
   }
@@ -328,4 +343,25 @@
     display: none !important;
   }
   
+}
+
+.note-container {
+  background-color: #EBEBEB;
+  border: 1px solid #c3c3c3;
+  border-radius: 5px;
+  width: fit-content;
+
+  .designation-note {
+    font-family: Lato;
+    font-size: 12px;
+    line-height: 14.4px;
+    color: black;
+  }
+}
+
+:host ::ng-deep .designation-note {
+  .note-email {
+    color: #1b4ca1!important;
+    text-decoration: underline!important;
+  }
 }

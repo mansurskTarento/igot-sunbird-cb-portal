@@ -1,6 +1,6 @@
 //#region (imports)
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { UserStats, achievement, educationalQualifications, profileRoutes } from '../../models/profile-revamp.model';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component';
@@ -13,10 +13,14 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ServiceHistoryComponent } from '../../components/profile-revamp/service-history/service-history.component';
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component';
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component';
-import { forkJoin } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
-
+import { forkJoin, Subject } from 'rxjs';
+import { mergeMap, takeUntil } from 'rxjs/operators';
+import { environment } from 'src/environments/environment'
+import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
+import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { TranslateService } from '@ngx-translate/core';
 //#endregion
 
 @Component({
@@ -25,29 +29,56 @@ import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
   styleUrls: ['./profile-view-v2.component.scss'],
   providers: [PipeCertificateImageURL]
 })
-export class ProfileViewV2Component implements OnInit {
+export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy {
 
   //#region (global variables)
+  destroySubject$ = new Subject()
+  @ViewChild('aboutMeElement') aboutMeElement !: ElementRef
+  isCurrentUser = false;
   userId: string = '';
   profesionalDetails: any
+  profileData: any;
   profileImageUrl = '';
   profileBannerUrl = '';
   profileCompletion: number = 0;
   nameInitials: string = '';
-  userStats: UserStats[] = [];
+  userStats: UserStats[] = [
+    {
+      state: 'NetworkV2Profile.myKarmaPoints',
+      totalPoints: '0',
+      iconUrl: './assets/icons/karma-point-logo.jpg',
+      vewAllUrl: 'app/person-profile/karma-points',
+      stateInfo: 'My Karma Points',
+      identifier: 'karmaPoints'
+    },
+    {
+      state: 'NetworkV2Profile.myCertificates',
+      totalPoints: '0',
+      iconUrl: './assets/icons/certificate.svg',
+      vewAllUrl: 'app/seeAll/new?key=continueLearning',
+      identifier: 'certificateCount'
+    },
+    {
+      state: 'NetworkV2Profile.myPosts',
+      totalPoints: '0',
+      iconUrl: './assets/icons/edit.svg',
+      vewAllUrl: '/app/discussion-forum-v2',
+      identifier: 'postCount'
+    }
+  ];
   profileRoutes: profileRoutes[] = [
     {
-      name: 'About Me',
+      name: 'NetworkV2Profile.aboutMe',
       url: '',
       icon: 'person',
       id: 'about-me'
     }, {
-      name: 'Basic Details',
+      name: 'NetworkV2Profile.basicDetails',
       url: './assets/icons/checklist.svg',
       icon: '',
       id: 'basic-details'
     }, {
-      name: 'Service History',
+      name: 'NetworkV2Profile.serviceHistory',
       url: '',
       icon: 'history',
       id: 'service-history'
@@ -58,12 +89,12 @@ export class ProfileViewV2Component implements OnInit {
       //   isActive: false,
       //   id: ''
       // }, {
-      name: 'Educational',
+      name: 'NetworkV2Profile.educational',
       url: '',
       icon: 'school',
       id: 'educational-qualifications'
     }, {
-      name: 'Achievements',
+      name: 'NetworkV2Profile.achievements',
       url: './assets/icons/trophy.svg',
       icon: '',
       id: 'achievements'
@@ -73,7 +104,7 @@ export class ProfileViewV2Component implements OnInit {
   locationDetails: any = {}
   serviceHistoryDetails: {
     count: number,
-    serviceHistoryList: serviceHistory[]
+    serviceHistoryList: any[]
   } = {
       count: 0,
       serviceHistoryList: []
@@ -128,10 +159,46 @@ export class ProfileViewV2Component implements OnInit {
   communitySuggestionsList: any[] = []
   aboutme = ''
   showMoreAbout = false
+  showViewMoreBtn =  false
   primaryDetails: any;
+
+  groupsList: any[] = []
+  designationsList: any[] = []
+  isMentor = false
+  enableWTR = false; // to enable withdraw transfer request
+  enableWR = false; // to enable withdraw request
+  unVerifiedObj = {
+    designation: '',
+    group: '',
+    organization: '',
+    groupRequestTime: 0,
+    designationRequestTime: 0,
+  }
+  rejectedFields = {
+    name: '',
+    group: '',
+    designation: '',
+    groupRejectionComments: '',
+    designationRejectionComments: '',
+    groupRejectionTime: 0,
+    designationRejectionTime: 0,
+  }
+  approvalPendingFields: any = []
+
+  //#region (m web and activites varailbles)
+  selectedTabIndex: any = 0;
+  insightsDataLoading = false
+  insightsData: any
+  orgId: any
+  pageData: any
+  assessmentsData: any
   //#endregion
 
+  connectionStatus = 'NetworkV2Profile.connect'
+  isMobile = false;
+
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
+  //#endregion
 
   constructor(
     private dialog: MatLegacyDialog,
@@ -139,40 +206,107 @@ export class ProfileViewV2Component implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private pipeImgUrl: PipeCertificateImageURL,
-  ) { }
+    private configSvc: ConfigurationsService,
+    private breakpointObserver: BreakpointObserver,
+    private translateService: TranslateService
+  ) {
+     this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+        this.setAboutMeButton()
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.selectedTabIndex = 0
+  }
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
+    // this.profileV2RevampSvc.getWebSiteLanguage()
     const lastSectionId = sessionStorage.getItem('lastProfileSection');
     if (lastSectionId) {
       setTimeout(() => {
         this.selectRoute(lastSectionId);
       }, 100);
     }
+    this.getSendApprovalStatus()
+    this.getRejectedStatus()
+    this.getGroupData()
+    this.loadDesignations()
+
+    this.getInsightsData()
+    
+  }
+
+  //#region (initialization)
+
+  getGroupData(): void {
+    this.profileV2RevampSvc.getGroups()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
+        }
+      })
+  }
+
+  loadDesignations() {
+    this.profileV2RevampSvc.getDesignations({}).subscribe(
+      (data: any) => {
+        this.designationsList = data.responseData
+      },
+      (_err: any) => {
+        this.openSnackbar('Failed to load designations')
+      })
+  }
+
+  checkIsMentor() {
+    const userRoles: any = _.get(this.configSvc, 'userRoles');
+    if (userRoles && this.isCurrentUser) {
+      this.isMentor = userRoles.has('mentor') || userRoles.has('MENTOR') || userRoles.has('Mentor') ? true : false;
+    }
   }
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
-      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data', {}))
-      this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.userId = _.get(data, 'profile.userId', '')
+      if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
+        this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
+      }
+      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
+      this.profileData = _.get(data, 'profile.data', {})
+      this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
+      this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
       this.profileCompletion = _.get(data, 'profile.data.profileCompletion', 0)
       this.patchProfileDetails()
+      this.setUserStats()
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.patchConnections(_.get(data, 'recamendations.data', []))
       this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
+      this.checkIsMentor()
     })
+    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
   }
 
   patchProfileDetails() {
     this.profileImageUrl = _.get(this.profesionalDetails, 'profileImageUrl', '')
     this.profileBannerUrl = _.get(this.profesionalDetails, 'profileBannerUrl', '')
-    this.getInitials()
     this.setProfileCompletionGraph()
     this.primaryDetails = {
-      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', ''),
+      firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', _.get(this.profileData, 'firstName', ''))),
+      username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
       group: _.get(this.profesionalDetails, 'professionalDetails[0].group', ''),
       designation: _.get(this.profesionalDetails, 'professionalDetails[0].designation', ''),
+      profileGroupStatus: _.get(this.profesionalDetails, 'profileGroupStatus', ''),
+      profileDesignationStatus: _.get(this.profesionalDetails, 'profileDesignationStatus', ''),
       osid: _.get(this.profesionalDetails, 'professionalDetails[0].osid', ''),
       employeeCode: _.get(this.profesionalDetails, 'employmentDetails.employeeCode', ''),
       primaryEmail: _.get(this.profesionalDetails, 'personalDetails.primaryEmail', ''),
@@ -182,7 +316,7 @@ export class ProfileViewV2Component implements OnInit {
       domicileMedium: _.get(this.profesionalDetails, 'personalDetails.domicileMedium', ''),
       category: _.get(this.profesionalDetails, 'personalDetails.category', ''),
       pinCode: _.get(this.profesionalDetails, 'employmentDetails.pinCode', ''),
-
+      departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
       externalSystemId: _.get(this.profesionalDetails, 'additionalProperties.externalSystemId', ''),
       externalSystemDor: _.get(this.profesionalDetails, 'additionalProperties.externalSystemDor', ''),
       isCadre: _.get(this.profesionalDetails, 'personalDetails.isCadre', false),
@@ -196,12 +330,20 @@ export class ProfileViewV2Component implements OnInit {
       cadreControllingAuthorityName: _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', ''),
 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
+
+      currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
+      profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
+    this.setAboutMeButton()
+    if(!this.isCurrentUser && this.aboutme !== '') {
+      this.filterProfileRoutes('about-me')
+    }
+    this.getInitials()
   }
 
   getInitials(): void {
-    const userName = _.get(this.profesionalDetails, 'personalDetails.firstname', '');
+    const userName = _.get(this.primaryDetails, 'firstname', '');
     if (userName) {
       if (userName.split(' ').length > 1) {
         const nameArr = userName.split(' ')
@@ -217,6 +359,24 @@ export class ProfileViewV2Component implements OnInit {
     document.documentElement.style.setProperty('--i', String(progress))
   }
 
+  setUserStats() {
+    if(this.userStats && this.userStats.length > 0 && this.profileData) {
+      this.userStats.forEach((userStat: UserStats) => {
+        switch (userStat.identifier) {
+          case 'karmaPoints':
+            userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
+            break;
+          case 'certificateCount':
+            userStat.totalPoints = _.get(this.profileData, 'certificateCount', 0)
+            break;
+          case 'postCount':
+            userStat.totalPoints = _.get(this.profileData, 'postCount', 0)
+            break;
+        }
+      })
+    }
+  }
+
   patchEntries(entries: any) {
     this.serviceHistoryDetails.serviceHistoryList = _.get(entries, 'serviceHistory.data', [])
     this.serviceHistoryDetails.count = _.get(entries, 'serviceHistory.count', 0)
@@ -225,15 +385,42 @@ export class ProfileViewV2Component implements OnInit {
     this.achievementsDetails.achievementsList = _.get(entries, 'achievements.data', [])
     this.achievementsDetails.count = _.get(entries, 'achievements.count', 0)
     this.locationDetails = _.get(entries, 'locationDetails.data[0]', {})
+
+    if(!this.isCurrentUser) {
+      if (_.get(this.serviceHistoryDetails, 'serviceHistoryList', []).length === 0) {
+        this.filterProfileRoutes('service-history')
+      }
+      if (_.get(this.educationalQualificationDetails, 'educationalQualifications', []).length === 0) {
+        this.filterProfileRoutes('educational-qualifications')
+      }
+      if(_.get(this.achievementsDetails, 'achievementsList', []).length === 0) {
+        this.filterProfileRoutes('achievements')
+      }
+    }
+  }
+
+  filterProfileRoutes(routesId: string) {
+    this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => route.id !== routesId)
+  }
+
+  setAboutMeButton() {
+    if (this.aboutme !== '') {
+      setTimeout(() => {
+        if(this.aboutMeElement && this.aboutMeElement.nativeElement && this.aboutMeElement.nativeElement.offsetHeight) {
+          this.showViewMoreBtn = this.aboutMeElement.nativeElement.offsetHeight > 56
+        }
+      }, 10)
+    }
   }
 
   patchConnections(connections: any) {
-    this.peopleSuggestionsList = connections
+    this.peopleSuggestionsList = connections.slice(0, 3)
   }
 
   patchRecamendedCommunity(community: any) {
     this.communitySuggestionsList = community
   }
+  //#endregion (initialization)
 
   selectRoute(sectionId: string) {
     const element = document.getElementById(sectionId);
@@ -252,12 +439,15 @@ export class ProfileViewV2Component implements OnInit {
 
   openCoverPhotoDialog() {
     const dialogRef = this.dialog.open(CoverPhotoEditPopupComponent, {
-      width: '500px',
+      width: this.isMobile ? '100vw' : '500px',
+      maxWidth: this.isMobile ? '100vw' : '500px',
+      height: this.isMobile ? '100vh' : 'auto',
       panelClass: 'cover-photo-edit-popup',
       data: {
         coverPhotoUrl: this.profileBannerUrl
       },
       disableClose: true,
+      autoFocus: false,
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result && result.isUpdated) {
@@ -274,14 +464,9 @@ export class ProfileViewV2Component implements OnInit {
       this.profileV2RevampSvc.updateBannerPic(formdata).pipe(
         mergeMap((res: any) => {
           const createdUrl = _.get(res, 'result.url', '')
-          const urlToReplace = 'https://storage.googleapis.com/igot'
-          const urlSplice = createdUrl.slice(urlToReplace.length)
-          // let uploadedFile = createdUrl
-          // if (createdUrl.startsWith(urlToReplace)) {
-          //   const urlSplice = createdUrl.slice(urlToReplace.length)
-          //   uploadedFile = `${environment.domainName}assets/public/${urlSplice}`
-          // }
-          const uploadedFile = this.pipeImgUrl.transform(urlSplice)
+          const folderNameToSplit = '/profileBanner/'
+          const urlSplice = createdUrl.split(folderNameToSplit)[1]
+          const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
           const formBody = {
             request: {
               userId: this.userId,
@@ -323,7 +508,13 @@ export class ProfileViewV2Component implements OnInit {
       next: (response: any) => {
         if (response) {
           this.fetchProfileDetails()
-          this.openSnackbar('Updated Successfully')
+          if (_.get(formBody, 'request.profileDetails.professionalDetails')) {
+            this.openSnackbar('Sent for Approval')
+            this.enableWR = true
+            this.getSendApprovalStatus()
+          } else {
+            this.openSnackbar('Updated Successfully')
+          }
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -338,7 +529,7 @@ export class ProfileViewV2Component implements OnInit {
     this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
       next: (response: any) => {
         if (response) {
-          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result', {}))
+          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result.profileDetails', _.get(response, 'result', {})))
           this.profileCompletion = _.get(response, 'result.profileCompletion', 0)
           this.patchProfileDetails()
         }
@@ -352,7 +543,7 @@ export class ProfileViewV2Component implements OnInit {
   }
 
   openProfileEditDialog(header: string) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header: header,
       profileDetails: this.primaryDetails,
     }
@@ -363,6 +554,9 @@ export class ProfileViewV2Component implements OnInit {
         state: _.get(this.locationDetails, 'state', ''),
         district: _.get(this.locationDetails, 'district', ''),
       }
+    } else if (header === 'Primary Details') {
+      dialogDetails['groupsList'] = this.groupsList
+      dialogDetails['designationsMeta'] = this.designationsList
     }
     const dialogRef = this.dialog.open(PrfileEditV2Component, {
       data: dialogDetails,
@@ -373,7 +567,8 @@ export class ProfileViewV2Component implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.generateBasicProfileFormBody(result)
+        const handleSendApproval = header === 'Primary Details'
+        this.generateBasicProfileFormBody(result, handleSendApproval)
         if (_.get(result, 'state', '') || _.get(result, 'district', '')) {
           if (_.get(result, 'state', '') !== _.get(this.locationDetails, 'state', '') ||
             _.get(result, 'district', '') !== _.get(this.locationDetails, 'district', '')
@@ -397,7 +592,7 @@ export class ProfileViewV2Component implements OnInit {
     })
   }
 
-  generateBasicProfileFormBody(result: any): any {
+  generateBasicProfileFormBody(result: any, handleSendApproval: boolean): any {
     if (result) {
       const formBody: any = {
         request: {
@@ -527,11 +722,14 @@ export class ProfileViewV2Component implements OnInit {
 
       // Compare each field and add to form body if changed
       fieldMappings.forEach(mapping => {
-        const currentValue = _.get(result, mapping.resultPath, '');
+        const currentValue = _.get(result, mapping.resultPath, null);
         const formValue = this.primaryDetails[mapping.formField];
 
-        if (formValue !== currentValue && currentValue) {
-          // Create nested object structure if needed
+        if ((formValue !== currentValue && currentValue !== null) && 
+           (
+            (formValue === 'NA' && currentValue !== '') || 
+            formValue !== 'NA'
+          )) {
           const pathParts = mapping.formBodyPath.split('.');
           let current = formBody.request;
 
@@ -553,16 +751,162 @@ export class ProfileViewV2Component implements OnInit {
           hasChanges = true;
         }
       });
+
+      if (handleSendApproval) {
+        // const data: any = {}
+        // if ((
+        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
+        //   _.get(result, 'group', '') &&
+        //   _.get(result, 'group', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].group', '')) ||
+        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
+        //     _.get(result, 'group', ''))) {
+        //   data['group'] = _.get(result, 'group', '')
+        // }
+        // if ((
+        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
+        //   _.get(result, 'designation', '') &&
+        //   _.get(result, 'designation', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].designation', '')) ||
+        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
+        //     _.get(result, 'designation', ''))) {
+        //   data['designation'] = _.get(result, 'designation', '')
+        // }
+
+        // if(data['group'] || data['designation']) {
+        //   formBody.request.profileDetails['professionalDetails'] = _.get(this.profesionalDetails, 'professionalDetails', [])
+        //   formBody.request.profileDetails['professionalDetails'].push(data)
+        //   hasChanges = true;
+        // }
+      }
+
       if (hasChanges) {
         this.updateProfileDetails(formBody);
       }
     }
   }
 
+  getSendApprovalStatus(): void {
+    const formBody = {
+      serviceName: 'profile',
+      applicationStatus: 'SEND_FOR_APPROVAL',
+    }
+    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((responce: any) => {
+        this.unVerifiedObj.groupRequestTime = 0
+        this.unVerifiedObj.designationRequestTime = 0
+        this.approvalPendingFields = _.get(responce, 'result.data', [])
+
+        if (this.approvalPendingFields && this.approvalPendingFields.length === 0) {
+          this.enableWTR = false
+          return
+        }
+        const exists = this.approvalPendingFields.filter((obj: any) => {
+          if (obj.hasOwnProperty('name')) {
+            this.unVerifiedObj.organization = obj.name
+          }
+          if (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.unVerifiedObj.groupRequestTime) {
+            this.unVerifiedObj.group = obj.group
+            this.unVerifiedObj.groupRequestTime = obj.lastUpdatedOn
+          }
+          if (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.unVerifiedObj.designationRequestTime) {
+            this.unVerifiedObj.designation = obj.designation
+            this.unVerifiedObj.designationRequestTime = obj.lastUpdatedOn
+          }
+          return obj.hasOwnProperty('name')
+        }).length > 0
+
+        if (exists) {
+          this.enableWTR = true
+        } else {
+          this.enableWR = true
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('approvalStatusFailed'))
+        }
+      })
+  }
+
+  updateWithdrawalStatus() {
+    this.enableWR = false
+  }
+
+  getRejectedStatus(): void {
+    const formBody = {
+      serviceName: 'profile',
+      applicationStatus: 'REJECTED',
+    }
+    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        if (res.result && res.result.data && Array.isArray(res.result.data)) {
+          res.result.data.forEach((obj: any) => {
+            if (obj.hasOwnProperty('name')) {
+              this.rejectedFields.name = obj.name
+            }
+            if (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.rejectedFields.groupRejectionTime) {
+              this.rejectedFields.group = obj.group
+              this.rejectedFields.groupRejectionComments = obj.comment
+              this.rejectedFields.groupRejectionTime = obj.lastUpdatedOn
+            }
+            if (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.rejectedFields.designationRejectionTime) {
+              this.rejectedFields.designation = obj.designation
+              this.rejectedFields.designationRejectionComments = obj.comment
+              this.rejectedFields.designationRejectionTime = obj.lastUpdatedOn
+            }
+          })
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('rejectedStatusFailed'))
+        }
+      })
+  }
+
+  handleTransferRequest(): void {
+    const portalProfile = _.get(this.profesionalDetails, 'profileDetails', this.profesionalDetails)
+    const dialogRef = this.dialog.open(TransferRequestComponent, {
+      data: { portalProfile, groupData: this.groupsList, designationsMeta: this.designationsList },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
+
+    dialogRef.componentInstance.enableWithdraw.subscribe((value: boolean) => {
+      if (value) {
+        this.enableWTR = true
+        this.getSendApprovalStatus()
+        this.fetchProfileDetails()
+      }
+    })
+  }
+
+  handleWithdrawTransferRequest(): void {
+    const dialogRef = this.dialog.open(WithdrawRequestComponent, {
+      data: {
+        approvalPendingFields: this.approvalPendingFields,
+        withDrawType: 'department',
+      },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
+
+    dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
+      if (value) {
+        this.enableWTR = false
+        this.unVerifiedObj.group = ''
+        this.unVerifiedObj.designation = ''
+      }
+    })
+  }
+
+  viewMentorProfile() {
+    window.open(`${environment.contentHost}/mentorship`, '_blank')
+  }
   openProfileEntryListDialog(header: string) {
     const dialogDetails = {
       header: header,
-      userId: this.userId
+      userId: this.userId,
+      isCurrentUser : this.isCurrentUser || false
     }
     switch (header) {
       case 'Service History':
@@ -581,6 +925,8 @@ export class ProfileViewV2Component implements OnInit {
   }
 
   openServiceHistoryListDialog(dialogDetails: any) {
+    dialogDetails['currentDesignation'] = _.get(this.primaryDetails, 'designation', '')
+    dialogDetails['currentOrgName'] = _.get(this.primaryDetails, 'currentOrgName', '')
     const dialogRef = this.dialog.open(ServiceHistoryComponent, {
       data: dialogDetails,
       disableClose: true,
@@ -684,7 +1030,7 @@ export class ProfileViewV2Component implements OnInit {
 
   async generateEducationalQualificationsFormBody(educationalQualifications: any, oldDetails: any): Promise<any> {
     const isOtherDegree = _.get(educationalQualifications, 'degree', '') === 'other' && _.get(educationalQualifications, 'otherDegree', '') ? true : false;
-    const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '') === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
+    const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '').toLowerCase() === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
     const formBody: any = {
       request: {
         userId: this.userId,
@@ -789,10 +1135,120 @@ export class ProfileViewV2Component implements OnInit {
 
   //#endregion (profile entry edit)
 
+  handleTranslateTo(menuName: string): string {
+    return this.profileV2RevampSvc.handleTranslateTo(menuName)
+  }
+
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
+  }
+
+  blockProfile() {
+    this.connectionStatus = 'NetworkV2Profile.unblock';
+  }
+
+  copyProfileLink() {
+  const currentUrl = window.location.href; // Get the current URL
+  navigator.clipboard.writeText(currentUrl) // Copy the URL to the clipboard
+    .then(() => {
+      this.openSnackbar('Profile link copied to clipboard'); // Notify the user
+    })
+    .catch(() => {
+      this.openSnackbar('Failed to copy profile link'); // Handle errors
+    });
+}
+
+sendConnectionRequest(): void {
+  const currentUser = this.configSvc.userProfile
+    if(this.userId && currentUser) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'userId', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.userId,
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
+        next: () => {
+          this.connectionStatus = 'NetworkV2Profile.pending';
+          this.openSnackbar('Connection request sent successfully');
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong while sending connection request');
+        }
+      });
+    }
+  }
+
+  //#region (activities)
+  getInsightsData() {
+    this.insightsDataLoading = true
+    const request = {
+      request: {
+        filters: {
+          primaryCategory: 'programs',
+          organisations: [
+            'across',
+            this.orgId,
+          ],
+        },
+      },
+    }
+    this.profileV2RevampSvc.getInsightsData(request)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        if (res.result.response) {
+          this.insightsData = res.result.response
+
+          this.constructNudgeData()
+          if (this.insightsData && this.insightsData['weekly-claps']) {
+            this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
+          }
+        } else {
+          this.insightsDataLoading = false
+        }
+      }, (_error: HttpErrorResponse) => {
+        this.insightsDataLoading = false
+      })
+  }
+
+  constructNudgeData() {
+    const nudgeData: any = {
+      type: 'data',
+      iconsDisplay: false,
+      cardClass: 'slider-container',
+      height: 'auto',
+      width: '',
+      sliderData: [],
+      negativeDisplay: false,
+      'dot-default': 'dot-grey',
+      'dot-active': 'dot-active',
+    }
+    const sliderData: { title: any; icon: string; data: string; colorData: string; }[] = []
+    this.insightsData.nudges.forEach((ele: any) => {
+      if (ele) {
+        const data = {
+          title: ele.label,
+          icon: ele.growth === 'positive' ? 'arrow_upward' : 'arrow_downward',
+          data: ele.growth === 'positive' && ele.progress > 1 ? `+${Math.round(ele.progress)}%` : '',
+          colorData: ele.growth === 'positive' ? 'color-green' : 'color-red',
+        }
+        sliderData.push(data)
+      }
+    })
+    nudgeData.sliderData = sliderData
+    this.insightsData['sliderData'] = nudgeData
+    this.insightsDataLoading = false
+  }
+  //#endregion (activities)
+
+  ngOnDestroy() {
+    this.destroySubject$.unsubscribe()
   }
 
 }

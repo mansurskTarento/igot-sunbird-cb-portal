@@ -10,7 +10,7 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
-  GET_RECOMMENDED_USERS : '/apis/protected/v8/connections/v2/connections/recommended',
+  GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v2/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
@@ -22,19 +22,26 @@ const API_END_POINTS = {
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
   GET_DESIGNATIONS: '/apis/proxies/v8/user/v1/positions', // old
+  GET_GROUPS: '/api/user/v1/groups', //OLD
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
   GET_DEGREES_LIST: 'apis/proxies/v8/masterdata/list/degrees',
   GET_INSTITUTIONS_LIST: 'apis/proxies/v8/masterdata/list/institutions',
   UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree',
   UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution',
+  GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
+  // ORG_READ: '/api/org/v1/read', //OLD
+  // ORGANISATION_FW: (frameworkName: string) =>
+  //   `/api/framework/v1/read/${frameworkName}`, //OLD
 
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
   UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update',
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
-
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
+
+  INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
+  // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
 }
 
@@ -116,9 +123,34 @@ export class ProfileV2RevampService {
   getOrgSearch(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.ORG_SEARCH, formBody)
   }
+
+  getMinistriesList(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_MINISTRY)
+  }
+
+  // getOrgReadData(organisationId: string): Observable<any> {
+  //   const request = {
+  //     request: {
+  //       organisationId,
+  //     },
+  //   };
+  //   return this.http.post<any>(API_END_POINTS.ORG_READ, request)
+  // }
+
+  // getFrameworkInfo(frameWorkName: string): Observable<any> {
+  //   return this.http
+  //     .get(`${API_END_POINTS.ORGANISATION_FW(frameWorkName)}`, {
+  //       withCredentials: true,
+  //     })
+  // }
+
   getDesignations(_req: any): Observable<any> {
-      return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
-    }
+    return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
+  }
+
+  getGroups(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_GROUPS)
+  }
 
   getStatesList(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_STATES_LIST)
@@ -164,13 +196,38 @@ export class ProfileV2RevampService {
   }
 
   getWhiteListDomain(): Observable<any> {
-      return this.http.get<any>(API_END_POINTS.approvedDomains)
-    }
+    return this.http.get<any>(API_END_POINTS.approvedDomains)
+  }
+
+  fetchApprovalDetails(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.APPROVAL_DETAILS, requestBody)
+  }
+
+  withDrawRequest(payload: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.WITHDRAW_REQUEST, payload)
+  }
 
   handleTranslateTo(menuName: string): string {
     // tslint:disable-next-line: prefer-template
     const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
+
+  getWebSiteLanguage() {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
+  }
+
+  getInsightsData(payload: any) {
+    const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
+    return result
+  }
+
+  // getAssessmentinfo(): Observable<any> {
+  //     return this.http.get(API_END_POINTS.ASSESSMENT_DATA)
+  //   }
 
 }

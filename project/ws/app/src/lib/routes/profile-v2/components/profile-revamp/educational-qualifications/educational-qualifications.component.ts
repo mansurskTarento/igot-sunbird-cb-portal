@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
+  @Input() isCurrentUser = false;
   @Output() openProfileEntryEditDialog = new EventEmitter();
 
   userId: string = '';
@@ -27,7 +28,8 @@ export class EducationalQualificationsComponent implements OnInit {
   ) { 
     if (this.data && this.data.userId) {
       this.userId = data.userId;
-      this.isPopup = true
+      this.isPopup = true;
+      this.isCurrentUser = data.isCurrentUser || false;
     }
   }
 
@@ -69,7 +71,7 @@ export class EducationalQualificationsComponent implements OnInit {
     }
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })

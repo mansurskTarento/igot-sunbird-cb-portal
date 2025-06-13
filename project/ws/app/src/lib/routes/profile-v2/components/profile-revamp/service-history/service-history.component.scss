@@ -27,6 +27,7 @@
   width: 744px;
   padding: 24px;
   gap: 22px !important;
+  max-width: calc(100% - 44px);
 }
 
 .edit-icon {
@@ -55,6 +56,7 @@
     /* stylelint-disable */
     font: 600 14px Montserrat;
     /* stylelint-enable */
+    width: calc(100% - 20px);
   }
 
   .org-details {
@@ -78,6 +80,7 @@
     /* stylelint-enable */
     height: 30px;
     overflow: hidden;
+    word-break: break-word;
   }
 
   .extend-description {
