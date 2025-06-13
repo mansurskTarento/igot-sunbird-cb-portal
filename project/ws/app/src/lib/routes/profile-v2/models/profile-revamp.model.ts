@@ -36,6 +36,7 @@ export interface achievement {
   provider: string,
   period: string,
   certificateUrl?: string
+  issuedDate: string | number | Date
 }
 
 export interface Community {
