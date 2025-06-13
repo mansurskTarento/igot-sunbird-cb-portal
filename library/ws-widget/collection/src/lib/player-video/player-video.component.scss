@@ -1,3 +1,7 @@
+.video-js .vjs-control {
+  display: block !important;
+}
+
 :host.video-full {
   .video-js {
     height: 100%;

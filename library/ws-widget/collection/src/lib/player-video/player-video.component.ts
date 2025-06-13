@@ -139,8 +139,11 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     }
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
-        // this.initializePlayer()
-        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{
+        if(!this.playerInitObj) {
+          this.initializePlayer()
+        }
+        
+        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{          
           if(data && data?.activeLang) {
             // console.log('data--', data)
             this.transcriptionLangArr = []
@@ -372,7 +375,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   private initializePlayer() {
-    
+    console.log('initializePlayer--')
     let startTime = 0
     let endTime = 0
     if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {

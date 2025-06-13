@@ -87,11 +87,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.enableAITutorFlag = false
     }
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
-
       this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
         // console.log('resource identifier', value)
         if(value &&  value?.identifier) {
-          this.resourceIdentifier = value?.identifier // value?.identifier
+          this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
           this.parseVTT()
         }
         
@@ -372,6 +371,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   async parseVTT() {
     let identifier = this.resourceIdentifier 
+    console.log('identifier--', identifier)
     await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
