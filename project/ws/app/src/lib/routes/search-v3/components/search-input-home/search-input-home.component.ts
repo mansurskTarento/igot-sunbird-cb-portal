@@ -8,6 +8,7 @@ import {
   OnInit,
   Output,
   SimpleChange,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
@@ -16,7 +17,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
-import { MobileAppsService } from 'src/app/services/mobile-apps.service';
+// import { MobileAppsService } from '';
 import {
   FacetType,
   SearchCategory,
@@ -31,6 +32,8 @@ import {
   SearchV4Request,
 } from '../../models/search-v3.model';
 import { WidgetContentLibService } from '@sunbird-cb/consumption';
+import { MobileAppsService } from 'src/app/services/mobile-apps.service';
+
 
 @Component({
   selector: 'ws-app-search-v3-input-home',
@@ -58,7 +61,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   searchQuery = ''
   allSearchResults: any[] = [];
   nlpSearchValue :any
-  // private hasReadRecentBeenCalled = false;
+  private hasReadRecentBeenCalled = false;
   searchCat: any
   categories = [
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
@@ -97,6 +100,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   loaderSearching = false;
   responseNlpQuery = '';
   searchSubscription:any
+   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target)) {
@@ -120,9 +124,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
     this.searchSubscription = this.mobileAppsService.clearGlobalSearchForHomePage.subscribe((value:any)=>{
       if(value) {
-        this.clearSearchText()
+        this.clearSearchTextElement()
       } 
     })
+
+   
     
     this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -134,6 +140,13 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           this.loaderSearching = false;
         }
       });
+  }
+
+   clearSearchTextElement() {
+    this.queryControl.setValue('')
+    if (this.searchInput) {
+      this.searchInput.nativeElement.value = ''
+    }
   }
 
   ngOnInit() {
@@ -926,11 +939,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
   openSearchTemplateF() {
     this.openSearchTemplate = true;
-    // console.log(this.hasReadRecentBeenCalled, "this.hasReadRecentBeenCalled===")
-    // if (!this.hasReadRecentBeenCalled) {
-    //   this.readRecent();
-    //   this.hasReadRecentBeenCalled = true;
-    // }
+    if (!this.hasReadRecentBeenCalled) {
+      this.readRecent();
+      this.hasReadRecentBeenCalled = true;
+    }
 
     if(this.openSearchTemplate) {
        this.readRecent();
