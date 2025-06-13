@@ -136,7 +136,7 @@ import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy
     SkeletonLoaderModule,
     MatRadioModule
   ],
-  exports: [SearchInputHomeComponent],
+  exports: [SearchInputHomeComponent, NumberShortenerPipe, PluralPipe],
   providers: [],
 })
 export class SearchV3Module {}

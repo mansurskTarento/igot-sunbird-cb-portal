@@ -12,9 +12,9 @@
       <div class="flex-grow">
         <div class="communityName">{{community?.communityName}}</div>
         <div class="community-details flex gap-4 items-center mt-1">
-          <span>{{community?.countOfPeopleJoined}}K Members</span>
+          <span>{{community?.countOfPeopleJoined | numberShortener}} {{ community?.countOfPeopleJoined | plural:'Member':'Members' }}</span>
           <span>-</span>
-          <span>{{community?.countOfPostCreated}}K Posts</span>
+          <span>{{community?.countOfPostCreated | numberShortener}} {{ community?.countOfPeopleJoined | plural:'Post':'Posts' }}</span>
         </div>
         <div class="flex gap-1">
           <div class="logo flex items-center justify-center">

@@ -73,7 +73,7 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CommunitySuggestionsComponent } from './components/profile-revamp/community-suggestions/community-suggestions.component'
 import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
-
+import { SearchV3Module } from '../search-v3/search-v3.module'
 
 @NgModule({
     declarations: [
@@ -151,6 +151,7 @@ import { CertificateViewPopupComponent } from './components/profile-revamp/certi
         ImageCropperModule,
         MatLegacyCheckboxModule,
         DragDropModule,
+        SearchV3Module,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
