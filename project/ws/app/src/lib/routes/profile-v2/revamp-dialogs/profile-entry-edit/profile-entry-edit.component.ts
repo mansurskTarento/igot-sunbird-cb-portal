@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as _ from 'lodash';
@@ -8,6 +8,23 @@ import { designation, generateYears, organisation, state, URL_PATRON } from '../
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
+
+export function endDateValidator(startDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control?.parent?.get(startDateControlName)?.value;
+    const endDate = control?.value;
+
+    if (!endDate) {
+      return null; // Skip validation if endDate is not set
+    }
+
+    if (startDate && new Date(endDate) < new Date(startDate)) {
+      return { endDateLessThanStartDate: true };
+    }
+
+    return null; // Valid
+  };
+}
 
 @Component({
   selector: 'ws-app-profile-entry-edit',
@@ -104,7 +121,7 @@ export class ProfileEntryEditComponent implements OnInit {
       orgState: [_.get(this.entryDetails, 'orgState', '')],
       orgDistrict: [_.get(this.entryDetails, 'orgDistrict', '')],
       startDate: [_.get(this.entryDetails, 'startDate', '')],
-      endDate: [_.get(this.entryDetails, 'endDate', '')],
+      endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
