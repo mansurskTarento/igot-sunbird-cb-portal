@@ -834,20 +834,20 @@ export class EnrollProfileFormComponent implements OnInit {
         if (fieldControl) {
           if (this.pGroup) {
             fieldControl.setValue(this.pGroup)
-            if (this.profileFormType === 'Available user filled iGOT profile') {
-              this.canShowGroup = true
-              this.showGroup = true
-            }
+            // if (this.profileFormType === 'Available user filled iGOT profile') {
+            //   this.canShowGroup = true
+            //   this.showGroup = true
+            // }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].group
             ) {
               fieldControl.setValue(this.userProfileObject.profileDetails.professionalDetails[0].group)
-              if (this.profileFormType === 'Available user filled iGOT profile') {
-                this.canShowGroup = false
-                this.showGroup = false
-              }
+              // if (this.profileFormType === 'Available user filled iGOT profile') {
+              //   this.canShowGroup = false
+              //   this.showGroup = false
+              // }
             }
           }
           fieldControl.setValidators([Validators.required])
@@ -861,19 +861,19 @@ export class EnrollProfileFormComponent implements OnInit {
         if (fieldControl) {
           if (this.pDesignation) {
             fieldControl.patchValue(this.pDesignation)
-            if (this.profileFormType === 'Available user filled iGOT profile') {
-              this.canShowDesignation = true
-              this.showDesignation = true
-            }
+            // if (this.profileFormType === 'Available user filled iGOT profile') {
+            //   this.canShowDesignation = true
+            //   this.showDesignation = true
+            // }
           } else {
             if (this.userProfileObject.profileDetails.professionalDetails &&
               this.userProfileObject.profileDetails.professionalDetails.length &&
               this.userProfileObject.profileDetails.professionalDetails[0].designation) {
               fieldControl.patchValue(this.userProfileObject.profileDetails.professionalDetails[0].designation)
-              if (this.profileFormType === 'Available user filled iGOT profile') {
-                this.canShowDesignation = false
-                this.showDesignation = false
-              }
+              // if (this.profileFormType === 'Available user filled iGOT profile') {
+              //   this.canShowDesignation = false
+              //   this.showDesignation = false
+              // }
             }
           }
           fieldControl.setValidators([Validators.required])
