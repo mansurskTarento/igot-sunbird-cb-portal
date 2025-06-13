@@ -174,7 +174,8 @@
 
 .disableField {
   opacity: 0.5;
-  cursor: unset
+  cursor: unset;
+  pointer-events: none;
 }
 
 @media screen and (max-width: 768px) {

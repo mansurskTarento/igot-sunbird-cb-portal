@@ -1,6 +1,6 @@
 //#region (imports)
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { UserStats, achievement, educationalQualifications, profileRoutes, serviceHistory } from '../../models/profile-revamp.model';
+import { UserStats, achievement, educationalQualifications, profileRoutes } from '../../models/profile-revamp.model';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component';
@@ -104,7 +104,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   locationDetails: any = {}
   serviceHistoryDetails: {
     count: number,
-    serviceHistoryList: serviceHistory[]
+    serviceHistoryList: any[]
   } = {
       count: 0,
       serviceHistoryList: []
@@ -925,6 +925,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   openServiceHistoryListDialog(dialogDetails: any) {
+    dialogDetails['currentDesignation'] = _.get(this.primaryDetails, 'designation', '')
+    dialogDetails['currentOrgName'] = _.get(this.primaryDetails, 'currentOrgName', '')
     const dialogRef = this.dialog.open(ServiceHistoryComponent, {
       data: dialogDetails,
       disableClose: true,

@@ -16,11 +16,24 @@ import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
   providers: [PipeCertificateImageURL]
 })
 export class ProfileEntryEditComponent implements OnInit {
+  //#region (global variables)
   header: string = '';
   entryDetails: any;
   entryForm!: FormGroup;
+  apiSubscriptions: any
 
+  //#region (service history variables)
+  isCurrentOrgDetails = false
+  selctedOrgDetails: any = {};
+  selectedOrgLogo: string = '';
+  selectedOrgId: string = '';
   orgList: organisation[] = [];
+  orgOffset = 0;
+  orgLimit = 50;
+  organisationFilterEnable = false
+  isLoadingMoreOrganisations = false
+  organisationsCount = 50
+
   designationsMeta: designation[] = [];
   filterDesignationsMeta: any = []
   isLoadingMoreDesignations = false;
@@ -32,7 +45,10 @@ export class ProfileEntryEditComponent implements OnInit {
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  //#endregion (service history variables)
 
+  //#region (educational qualifications variables)
+  yearsList: string[] = [];
   degreesList: string[] = [];
   institutionsList: string[] = []
   filterInstitutionsList: string[] = []
@@ -41,9 +57,11 @@ export class ProfileEntryEditComponent implements OnInit {
   institutionListLoadCount = 50
   institutionDefaultLoadCount = 50
   yeasersList: string[] = [];
+  //#endregion (educational qualifications variables)
 
   disableUpload = false;
   disableUrl = false;
+  //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
@@ -80,6 +98,7 @@ export class ProfileEntryEditComponent implements OnInit {
   private createServiceHistoryForm(): void {
     this.entryForm = this.fb.group({
       orgName: [_.get(this.entryDetails, 'orgName', ''), [Validators.required]],
+      searchOrgName: [''],
       designation: [_.get(this.entryDetails, 'designation', ''), [Validators.required]],
       searchDesignation: [''],
       orgState: [_.get(this.entryDetails, 'orgState', '')],
@@ -89,9 +108,15 @@ export class ProfileEntryEditComponent implements OnInit {
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
     });
+    this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
     const orgDistrictControl = this.entryForm.get('orgDistrict');
     if (orgDistrictControl && _.get(this.entryDetails, 'orgState', '') === '') {
       orgDistrictControl.disable();
+    }
+    if(_.get(this.entryDetails, 'orgName', '')) {
+      this.selctedOrgDetails['orgName'] = _.get(this.entryDetails, 'orgName', '');
+      this.selctedOrgDetails['orgId'] = _.get(this.entryDetails, 'orgId', '');
+      this.selctedOrgDetails['orgLogo'] = _.get(this.entryDetails, 'orgLogo', '');
     }
     this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
     if (this.isCurrentlyWorking) {
@@ -102,13 +127,19 @@ export class ProfileEntryEditComponent implements OnInit {
         endDateControl.updateValueAndValidity();
       }
     }
-    this.getOrgList();
+    this.getOrgList('', true);
     this.getdesignationsMeta();
     this.getStatesList()
     if (_.get(this.entryDetails, 'startDate', '')) {
       this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
     }
+    this.serviceHistoryValueChangeFunctions();
+  }
+
+  serviceHistoryValueChangeFunctions(): void {
     const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const searchOrgNameControl = this.entryForm.get('searchOrgName')
+    const orgNameControl = this.entryForm.get('orgName')
     if (searchDesignationControl) {
       searchDesignationControl.valueChanges
         .pipe(
@@ -140,10 +171,50 @@ export class ProfileEntryEditComponent implements OnInit {
         }
       }, 10)
     }
+
+    if( searchOrgNameControl) {
+      let settingValueChange = true
+      searchOrgNameControl.valueChanges.pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          this.orgOffset = 0
+          this.orgList = []
+          if (searchText) {
+            this.organisationFilterEnable = true
+            this.getOrgList(searchText)
+          } else {
+            if(!settingValueChange) {
+              this.getOrgList()  
+            }
+            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+            this.organisationFilterEnable = false
+            this.checkCurrentOrganisationPresent()
+          }
+          settingValueChange = false
+        })
+        
+    }
+
+    if(orgNameControl) {
+      orgNameControl.valueChanges.subscribe((value: string) => {
+        if(value) {
+          const selectedOrgDetails = this.orgList.find(org => org.channel === value)
+          if(selectedOrgDetails) {
+            this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
+            this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
+            this.selctedOrgDetails['orgName'] = selectedOrgDetails.channel
+          }
+        }
+      })
+    }
   }
 
-  getOrgList() {
-    const formBody = {
+  //#region (organisation)
+  getOrgList(query?: string, isFirstTime = false) {
+    const formBody: any = {
       request:
       {
         filters: {
@@ -160,19 +231,31 @@ export class ProfileEntryEditComponent implements OnInit {
           'imgUrl',
           'identifier'
         ],
-        limit: 20,
-        offset: 0
+        limit: this.orgLimit,
+        offset: this.orgOffset
       }
     }
-    this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
+    if(query) {
+      formBody.request['query'] = query
+    }
+    this.isLoadingMoreOrganisations = true;
+    if(this.apiSubscriptions) {
+      this.apiSubscriptions.unsubscribe()
+    }
+    this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
       next: (res: any) => {
-        this.orgList = _.get(res, 'result.response.content', []) as organisation[]
-        if (this.entryForm) {
-          const orgNameControl = this.entryForm.get('orgName');
-          if (orgNameControl) {
-            orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
-          }
+        this.organisationsCount = _.get(res, 'result.response.count', 50);
+        this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
+        if(isFirstTime) {
+          this.checkCurrentOrganisationPresent()
         }
+        this.isLoadingMoreOrganisations = false;
+        // if (this.entryForm) {
+        //   const orgNameControl = this.entryForm.get('orgName');
+        //   if (orgNameControl) {
+        //     orgNameControl.patchValue(_.get(this.entryDetails, 'orgName', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
@@ -180,6 +263,69 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     })
   }
+  
+  checkCurrentOrganisationPresent() {
+    if(this.selctedOrgDetails['orgName'] && this.orgList) {
+      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.channel === this.selctedOrgDetails['orgName']).length > 0
+      if(!selectedOrgIsPresent) {
+        const orgDetails: organisation = {
+          identifier: this.selctedOrgDetails['orgId'],
+          channel: this.selctedOrgDetails['orgName'],
+          imgUrl: this.selctedOrgDetails['orgLogo']
+        }
+        this.orgList.unshift(orgDetails)
+      }
+    }
+  }
+
+  setupScrollListenerForOrg(opened: boolean): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if(opened && searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+      this.organisationFilterEnable = false
+      this.orgOffset = 0
+      // this.orgList = []
+      // this.getOrgList('')
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      // this.checkCurrentOrganisationPresent()
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
+        }
+      }, 100);
+    }
+  }
+
+  onOrganisationSelectScroll(event: any): void {
+    const element = event.target;
+    // if (!this.organisationFilterEnable) {
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
+          this.orgOffset = this.orgOffset + 1;
+          const searchOrgNameControl = this.entryForm.get('searchOrgName');
+          let query = searchOrgNameControl ? searchOrgNameControl.value : ''
+          this.getOrgList( query, false);
+        }
+      }
+    // }
+  }
+
+  onOrganisationDropdownClosed(): void {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    if (searchOrgNameControl) {
+      searchOrgNameControl.setValue('')
+    }
+    this.checkCurrentOrganisationPresent()
+  }
+  //#endregion (organisation)
 
   //#region (designations)
   getdesignationsMeta() {
@@ -779,17 +925,6 @@ export class ProfileEntryEditComponent implements OnInit {
         this.markFormGroupTouched(this.entryForm);
       }
     }
-  }
-
-  getOrgId(orgName: string): string {
-    let orgId = '';
-    if (orgName && this.orgList.length > 0) {
-      const org = this.orgList.find((org: any) => org.channel === orgName);
-      if (org) {
-        orgId = _.get(org, 'identifier', '');
-      }
-    }
-    return orgId;
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
