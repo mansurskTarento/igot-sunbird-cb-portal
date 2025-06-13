@@ -52,7 +52,10 @@
           </div> 
           <ng-container *ngFor="let query of recentSearches">
             <mat-list-item class="w-full">
-              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query.search_category, query.nlp_search_query)">{{ query.search_query }}</a>
+             <!-- {{ query.nlp_search_query | json }} ////
+             {{ query.search_category | json }} ---- -->
+            
+              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query)">{{ query.search_query }}</a>
               <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
               </button>

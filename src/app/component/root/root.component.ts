@@ -57,6 +57,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   hideHeaderAndFooter = false
   disableHeightOnTop = false
   iGOTAIConfigLoaded = false
+  // dataSubject = new BehaviorSubject<boolean>(false)
+  isHomePage = false
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -77,6 +79,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private utilitySvc: UtilityService,
     private urlService: UrlService,
     private iGOTAIService: iGOTAIService
+     
     // private dialogRef: MatDialogRef<any>,
   ) {
 
@@ -262,8 +265,17 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.prevUrl = this.currUrl
+     
       this.currUrl = event.url
+      
       this.urlService.setPreviousUrl(this.prevUrl)
+      if(this.currUrl === '/page/home') {
+       this.isHomePage = true
+       this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
+      } else {
+        this.isHomePage = false
+        this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
+      }
     })
 
     this.router.events.subscribe((event: any) => {
