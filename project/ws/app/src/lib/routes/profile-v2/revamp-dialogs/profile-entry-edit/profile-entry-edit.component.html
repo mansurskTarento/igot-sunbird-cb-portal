@@ -178,14 +178,26 @@
         <!-- Degree -->
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">{{'NetworkV2Profile.degree' | translate}}</div>
-          <mat-form-field appearance="outline" class="full-width" >
-            <mat-select formControlName="degree" placeholder="{{'NetworkV2Profile.selectDegree' | translate}}" (selectionChange)="onDegreeChange($event.value)">
-              <ng-container *ngFor="let degree of degreesList">
-                <mat-option [value]="degree">{{degree}}</mat-option>
-              </ng-container>
-              <mat-option value="other">{{'NetworkV2Profile.other' | translate}}</mat-option>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="degree" placeholder="{{'NetworkV2Profile.selectDegree' | translate}}" (selectionChange)="onDegreeChange($event.value)"
+                panelClass="profile-control" (openedChange)="setupScrollListenerForDegrees($event)" (closed)="onDegreesDropdownClosed()">
+              <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                <div class="">
+                  <input type="text" placeholder="{{'NetworkV2Profile.searchDegrees' | translate}}" formControlName="searchDegrees"
+                    class="search-input" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                    autocomplete="off">
+                </div>
+              </div>
+              <mat-option *ngFor="let degree of filterDegreesMeta" [value]="degree">
+                {{ degree }}
+              </mat-option>
+              <div *ngIf="isLoadingMoredegrees" class="loading-indicator">
+                {{'NetworkV2Profile.loadingMore' | translate}}
+              </div>
+              <mat-option *ngIf="(filterDegreesMeta )?.length === 0" disabled>
+                {{'NetworkV2Profile.noMatchesFound' | translate}}
+              </mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('degree', 'required')">{{'NetworkV2Profile.pleaseSelectDegree' | translate}}</mat-error>
           </mat-form-field>
         </div>
 

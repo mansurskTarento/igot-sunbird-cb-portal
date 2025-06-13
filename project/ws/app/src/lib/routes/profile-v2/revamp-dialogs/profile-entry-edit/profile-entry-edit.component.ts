@@ -65,8 +65,14 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (service history variables)
 
   //#region (educational qualifications variables)
+  degreesMeta: string[] = [];
+  filterDegreesMeta: any = []
+  isLoadingMoredegrees = false;
+  degreesFilterEnable = false
+  degreeListLoadCount = 50
+  degreeDefaultLoadCount = 50
+
   yearsList: string[] = [];
-  degreesList: string[] = [];
   institutionsList: string[] = []
   filterInstitutionsList: string[] = []
   isLoadingMoreInstitutions = false
@@ -556,6 +562,7 @@ export class ProfileEntryEditComponent implements OnInit {
   private createEducationalQualificationsForm(): void {
     this.entryForm = this.fb.group({
       degree: [_.get(this.entryDetails, 'degree', ''), [Validators.required]],
+      searchDegrees: [''],
       otherDegree: [''],
       fieldOfStudy: [_.get(this.entryDetails, 'fieldOfStudy', ''),
       [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/), Validators.maxLength(250)]],
@@ -573,6 +580,39 @@ export class ProfileEntryEditComponent implements OnInit {
   educationFormValuChange(): void {
     const searchInstituteControl = this.entryForm.get('searchInstitute');
     const institutionNameControl = this.entryForm.get('institutionName');
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if (searchDegreeControl) {
+      searchDegreeControl.valueChanges
+        .pipe(
+          debounceTime(250),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(searchText => {
+          if (searchText) {
+            this.degreesFilterEnable = true
+            this.filterDegreesMeta = this.degreesMeta.filter((val: any) =>
+              val && val.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
+            )
+          } else {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.designationDefaultLoadCount)
+            this.degreesFilterEnable = false
+            this.degreeListLoadCount = this.degreeDefaultLoadCount;
+            this.checkCurrentDegreePresent()
+          }
+        })
+
+      if (_.get(this.entryDetails, 'degree', '')) {
+        searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+      }
+      setTimeout(() => {
+        const degreeControl = this.entryForm.get('degree');
+        if (degreeControl) {
+          degreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+        }
+      }, 10)
+    }
+
     if (searchInstituteControl && institutionNameControl) {
       searchInstituteControl.valueChanges
         .pipe(
@@ -607,6 +647,70 @@ export class ProfileEntryEditComponent implements OnInit {
     }
   }
 
+  setupScrollListenerForDegrees(opened: boolean): void {
+    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    if(opened && searchDegreeControl) {
+      searchDegreeControl.setValue('')
+      this.degreesFilterEnable = false
+      this.degreeListLoadCount = this.degreeDefaultLoadCount;
+      this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeDefaultLoadCount);
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+      this.checkCurrentDegreePresent()
+      // Wait for the panel to be rendered in the DOM
+      setTimeout(() => {
+        // Find the panel element
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this));
+        }
+      }, 100);
+    }
+  }
+
+  onDegreesSelectScroll(event: any): void {
+    const element = event.target;
+
+    if (!this.degreesFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoredegrees && this.degreesMeta.length > this.filterDegreesMeta.length) {
+          this.isLoadingMoredegrees = true;
+
+          // Increase the load count by designationDefaultLoadCount
+          this.degreeListLoadCount += this.degreeDefaultLoadCount;
+
+          // Update the filtered list with more items
+          setTimeout(() => {
+            this.filterDegreesMeta = this.degreesMeta.slice(0, this.degreeListLoadCount);
+            this.checkCurrentDesignationPresent()
+            this.isLoadingMoredegrees = false;
+          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+        }
+      }
+    }
+  }
+
+  onDegreesDropdownClosed(): void {
+    setTimeout(() => {
+      const degreeControlControl = this.entryForm.get('degree');
+      const searchDegreeControl = this.entryForm.get('searchDegrees');
+      if (searchDegreeControl) {
+        searchDegreeControl.setValue('');
+      }
+      if (degreeControlControl && degreeControlControl.value) {
+        this.checkCurrentDegreePresent()
+        // degreeControlControl.setValue(degreeControlControl.value);
+      }
+    }, 100);
+  }
+
   generateYearsList(): void {
     this.yeasersList = generateYears(1900);
   }
@@ -614,19 +718,39 @@ export class ProfileEntryEditComponent implements OnInit {
   getDegreesList() {
     this.ProfileV2RevampService.getDegreesList().subscribe({
       next: (res: any) => {
-        this.degreesList = _.get(res, 'result.degreesList.degrees', []) as string[];
-        if (this.entryForm) {
-          const degreeControl = this.entryForm.get('degree');
-          if (degreeControl) {
-            degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
-          }
-        }
+        this.degreesMeta = _.get(res, 'result.degreesList.degrees', []) as string[];
+        this.checkCurrentDegreePresent()
+        // if (this.entryForm) {
+        //   const degreeControl = this.entryForm.get('degree');
+        //   if (degreeControl) {
+        //     degreeControl.patchValue(_.get(this.entryDetails, 'degree', ''));
+        //   }
+        // }
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
+  }
+
+  checkCurrentDegreePresent() {
+    const degreeControl = this.entryForm.get('degree');
+    const currentDegree = degreeControl ? degreeControl.value : '';
+    if (currentDegree) {
+      const degreeExists = this.filterDegreesMeta.some(
+        (degree: any) => degree.toLowerCase() === currentDegree.toLowerCase()
+      );
+
+      if (!degreeExists) {
+        const newDegree = currentDegree;
+        if (this.filterDegreesMeta.length >= this.degreeListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.filterDegreesMeta.pop();
+        }
+        this.filterDegreesMeta.unshift(newDegree);
+      }
+    }
   }
 
   getInstitutionsList() {
