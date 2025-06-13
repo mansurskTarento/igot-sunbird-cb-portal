@@ -371,7 +371,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   async parseVTT() {
     let identifier = this.resourceIdentifier 
-    console.log('identifier--', identifier)
     await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {

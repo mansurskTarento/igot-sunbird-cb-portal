@@ -375,7 +375,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   private initializePlayer() {
-    console.log('initializePlayer--')
     let startTime = 0
     let endTime = 0
     if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
