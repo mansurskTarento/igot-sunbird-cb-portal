@@ -3,6 +3,7 @@
     <div class="sec-header">{{ 'myNotifications.notifications' | translate }}</div>
   </div>
   <div class="notification-card margin-top-l">
-    <sb-uin-all-notifications [showIcon]='true' (redirectTo)="redirectTo($event)"></sb-uin-all-notifications>
+    <sb-uin-all-notifications [showIcon]='true' (redirectTo)="redirectTo($event)"
+      [showMarkAllAsRead]="true"></sb-uin-all-notifications>
   </div>
 </section>
