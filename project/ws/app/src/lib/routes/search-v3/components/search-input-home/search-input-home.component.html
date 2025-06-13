@@ -55,7 +55,8 @@
              <!-- {{ query.nlp_search_query | json }} ////
              {{ query.search_category | json }} ---- -->
             
-              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query)">{{ query.search_query }}</a>
+              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query)">
+                <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">{{ query?.search_query }}</a>
               <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
               </button>
