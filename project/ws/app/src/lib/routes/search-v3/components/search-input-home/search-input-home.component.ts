@@ -16,6 +16,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SearchServService } from '../../../search/services/search-serv.service';
 import { GbSearchService } from '../../services/gb-search.service';
+import { MobileAppsService } from 'src/app/services/mobile-apps.service';
 import {
   FacetType,
   SearchCategory,
@@ -42,6 +43,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   @Input() placeHolder = '';
   @Input() ref = '';
   @Output() closed: EventEmitter<boolean> = new EventEmitter();
+ 
+ 
   queryControl: UntypedFormControl;
   languageSearch: string[] = [];
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif';
@@ -55,6 +58,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   searchQuery = ''
   allSearchResults: any[] = [];
   nlpSearchValue :any
+  // private hasReadRecentBeenCalled = false;
   searchCat: any
   categories = [
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
@@ -92,6 +96,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   openSearchTemplate = false;
   loaderSearching = false;
   responseNlpQuery = '';
+  searchSubscription:any
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target)) {
@@ -106,12 +111,19 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     private route: ActivatedRoute,
     private eRef: ElementRef,
     private searchV3Service: GbSearchService,
-    private contSvc: WidgetContentLibService
+    private contSvc: WidgetContentLibService,
+    private mobileAppsService: MobileAppsService
   ) {
     this.queryControl = new UntypedFormControl(
       this.activated.snapshot.queryParams.q || ''
     );
 
+    this.searchSubscription = this.mobileAppsService.clearGlobalSearchForHomePage.subscribe((value:any)=>{
+      if(value) {
+        this.clearSearchText()
+      } 
+    })
+    
     this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
@@ -146,6 +158,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         this.placeHolder = this.placeHolder;
       }
     }
+
   }
 
   autoFilter() {
@@ -205,7 +218,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       if (queryParam.has('category')) {
         this.selectedSearchCategory = queryParam.get('category') || '';
       } else {
-        this.selectedSearchCategory = SearchCategory.All;
+        // this.selectedSearchCategory = SearchCategory.All;
+        this.selectedSearchCategory = SearchCategory.Courses;
       }
 
       const isAutoCompleteAllowed = this.route.snapshot.data.searchPageData
@@ -232,8 +246,24 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
+  async updateRecentSearchQuery(query: any) {
+    if (query) {
+      const reqBody = {
+        nlpSearchQuery: query.nlp_search_query,
+        searchQuery:query.search_query,
+        searchCategory: query.search_category[0]
+      }
+      await this.searchV3Service.recentCreate(reqBody).then(() => {
+        this.processRecentSearchText(query);
+      }).catch(() => {
+        this.processRecentSearchText(query);
+      });
+    } else {
+      this.processRecentSearchText(query);
+    }
+  }
+
   async createRecent(data: any) {
-   
     const reqBody = {
       nlpSearchQuery: data,
       searchQuery: this.queryControl.value,
@@ -259,8 +289,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     })
   }
 
-  goToSearchItem(category: any, query: any) {
-    if (category && category[0] === 'courses' && query) {
+  goToSearchItem(query: any) {
+    const category = query?.search_category && query?.search_category[0]
+    const nlpSearchQuery = query?.nlp_search_query
+    if (category && category === 'courses' && nlpSearchQuery) {
       const req = {
         "request": {
           "filters": {
@@ -304,7 +336,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "competencies_v6.competencyThemeName",
             "competencies_v6.competencySubThemeName"
           ],
-          "query": query,
+          "query": nlpSearchQuery,
           "limit": 3,
           "offset": 0,
           "sort_by": {}
@@ -312,11 +344,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
       this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
         if(res) {
-          this.updateQuery(query);
+          this.updateRecentSearchQuery(query);
         }
       })
     }
-    if (category && category[0] === 'events' && query) {
+    if (category && category === 'events' && nlpSearchQuery) {
       const req = {
         "request": {
           "filters": {
@@ -355,7 +387,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "competencies_v6.competencyThemeName",
             "competencies_v6.competencySubThemeName"
           ],
-          "query": query,
+          "query": nlpSearchQuery,
           "limit": 3,
           "offset": 0,
           "sort_by": {}
@@ -363,12 +395,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
       this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
         if (res) {
-          this.updateQuery(query);
+          this.updateRecentSearchQuery(query);
         }
       })
     }
 
-    if (category && category[0] === 'peoples' && query) {
+    if (category && category === 'peoples' && nlpSearchQuery) {
       const req = {
         filters: {},
         facets: [
@@ -379,12 +411,14 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         limit: 5,
         offset: 0,
         sort_by: {},
-        query: query,
+        query: nlpSearchQuery,
       }
-      this.searchV3Service.searchConnections(req).catch()
+      this.searchV3Service.searchConnections(req).then(
+        // this.updateRecentSearchQuery(query)
+      ).catch()
     }
 
-    if (category && category[0] === 'resources' && query) {
+    if (category && category === 'resources' && nlpSearchQuery) {
       const req = {
         "request": {
             "filters": {
@@ -408,7 +442,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
                 "sectorDetails_v1.sectorName",
                 "years"
             ],
-            "query": query,
+            "query": nlpSearchQuery,
             "limit": 3,
             "offset": 0,
             "sort_by": {},
@@ -421,11 +455,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
     this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
       if (res) {
-        this.updateQuery(query);
+        this.updateRecentSearchQuery(query);
       }
     })
   }
-      if (category && category[0] === 'communities' && query) {
+      if (category && category === 'communities' && nlpSearchQuery) {
         const req = {
           "filterCriteriaMap": {
               "status": "active"
@@ -440,18 +474,18 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
               "competencies_v6.competencyThemeName",
               "competencies_v6.competencySubThemeName"
           ],
-          "searchString": query
+          "searchString": nlpSearchQuery
       }
         this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
           if (res) {
-            this.updateQuery(query);
+            this.updateRecentSearchQuery(query);
           }
         })
 
 
     }
 
-    if (category && category[0] === 'all' && query) {
+    if (category && category === 'all' && nlpSearchQuery) {
        const catReq = {
         "request": {
           "filters": {
@@ -495,7 +529,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "competencies_v6.competencyThemeName",
             "competencies_v6.competencySubThemeName"
           ],
-          "query": query,
+          "query": nlpSearchQuery,
           "limit": 3,
           "offset": 0,
           "sort_by": {}
@@ -503,7 +537,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
       this.searchV3Service.fetchSearchDataByCategory(catReq).subscribe((res: any) => {
         if(res) {
-          this.updateQuery(query);
+          this.updateRecentSearchQuery(query);
         }
       })
 
@@ -545,7 +579,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "competencies_v6.competencyThemeName",
             "competencies_v6.competencySubThemeName"
           ],
-          "query": query,
+          "query": nlpSearchQuery,
           "limit": 3,
           "offset": 0,
           "sort_by": {}
@@ -553,7 +587,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
       this.searchV3Service.fetchSearchDataByCategory(eventReq).subscribe((res: any) => {
         if (res) {
-          this.updateQuery(query);
+          this.updateRecentSearchQuery(query);
         }
       })
 
@@ -567,7 +601,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         limit: 5,
         offset: 0,
         sort_by: {},
-        query: query,
+        query: nlpSearchQuery,
       }
       this.searchV3Service.searchConnections(peopleReq).catch()
 
@@ -607,7 +641,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
     this.searchV3Service.fetchSearchDataByCategory(resourceReq).subscribe((res: any) => {
       if (res) {
-        this.updateQuery(query);
+        this.updateRecentSearchQuery(query);
       }
     })
 
@@ -625,11 +659,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           "competencies_v6.competencyThemeName",
           "competencies_v6.competencySubThemeName"
       ],
-      "searchString": query
+      "searchString": nlpSearchQuery
   }
     this.searchV3Service.fetchSearchDataByCategory(communitiesreq).subscribe((res: any) => {
       if (res) {
-        this.updateQuery(query);
+        this.updateRecentSearchQuery(query);
       }
     })
 
@@ -651,6 +685,32 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         this.readRecent()
       }
     })
+  }
+
+    processRecentSearchText(query: any) {
+    document.getElementById('global-search-input')?.blur();
+    const queryParams = {
+      q: query?.nlp_search_query ? query?.nlp_search_query?.trim() : '',
+      // search: query && this.responseNlpQuery ? this.responseNlpQuery : null,
+      category: query?.search_category[0] || null,
+      p: null,
+      f: null,
+      tab: null,
+      filtersPanel: 'show',
+    };
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    };
+    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
+    if (this.ref === 'home') {
+      this.closed.emit(false);
+      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams });
+    } else {
+      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
+    }
+    localStorage.removeItem('activeRoute');
+    this.openSearchTemplate = false;
   }
 
   processSearchText(query: any) {
@@ -855,6 +915,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           if (response?.data?.keywords.length > 0) {
             this.responseNlpQuery = response?.data?.keywords[0]?.keyword;
             this.createRecent(this.responseNlpQuery)
+            this.readRecent();
           }
         } else {
           this.responseNlpQuery = '';
@@ -864,11 +925,24 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   openSearchTemplateF() {
-    this.readRecent()
     this.openSearchTemplate = true;
+    // console.log(this.hasReadRecentBeenCalled, "this.hasReadRecentBeenCalled===")
+    // if (!this.hasReadRecentBeenCalled) {
+    //   this.readRecent();
+    //   this.hasReadRecentBeenCalled = true;
+    // }
 
+    if(this.openSearchTemplate) {
+       this.readRecent();
+    }
     if (!this.selectedSearchCategory) {
       // this.searchFromQuery(this.responseNlpQuery);
+    }
+  }
+
+   ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
     }
   }
 }
