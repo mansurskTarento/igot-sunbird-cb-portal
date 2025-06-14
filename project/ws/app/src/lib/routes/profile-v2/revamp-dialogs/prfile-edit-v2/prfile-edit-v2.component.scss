@@ -299,6 +299,14 @@
       grid-column: span 1;
     }
   }
+
+  .cancel-btn {
+    display: none !important;
+  }
+
+  .save-btn {
+    width: 100% !important;
+  }
 }
 
 ::ng-deep .profile-control {
