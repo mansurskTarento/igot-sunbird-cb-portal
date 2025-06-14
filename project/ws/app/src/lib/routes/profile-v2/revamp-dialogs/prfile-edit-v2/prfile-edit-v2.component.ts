@@ -957,6 +957,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         formBody['isCadre'] = false;
         formBody['cadreBatch'] = '';
         formBody['cadreControllingAuthorityName'] = '';
+        formBody['civilServiceTypeId'] = '';
+        formBody['civilServiceId'] = '';
+        formBody['cadreControllingAuthorityName'] = '';
+        formBody['cadreBatch'] = '';
       }
     }
     this.dialogRef.close(formBody);

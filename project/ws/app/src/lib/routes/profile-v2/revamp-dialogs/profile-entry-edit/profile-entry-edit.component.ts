@@ -1030,12 +1030,9 @@ export class ProfileEntryEditComponent implements OnInit {
       if (this.entryForm.valid) {
         const formValue = this.entryForm.value;
         if (this.header === 'Service History') {
-          if (formValue.orgName && this.orgList.length > 0) {
-            const org = this.orgList.find((org: any) => org.channel === formValue.orgName);
-            if (org) {
-              formValue['orgLogo'] = _.get(org, 'imgUrl', '');
-              formValue['orgId'] = _.get(org, 'identifier', '');
-            }
+          if(formValue.orgName === this.selctedOrgDetails['orgName']) {
+            formValue['orgLogo'] = this.selctedOrgDetails['orgLogo']
+            formValue['orgId'] = this.selctedOrgDetails['orgId']
           }
         }
         this.dialogRef.close(formValue);

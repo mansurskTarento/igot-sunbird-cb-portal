@@ -183,5 +183,13 @@
     width: calc(100% - 30px);
     padding: 15px;
   }
+
+  .cancel-btn {
+    display: none !important;
+  }
+
+  .save-btn {
+    width: 100% !important;
+  }
   
 }

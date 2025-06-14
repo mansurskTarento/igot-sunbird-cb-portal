@@ -224,6 +224,9 @@
   line-height: 18px;
   min-height: 56px;
   height: fit-content;
+  word-wrap: break-word;
+  width: 630px;
+  max-width: calc(100vw - 35px);
 }
 
 .view-more {
@@ -363,5 +366,12 @@
     height: 24px;
     font-size: 24px;
     color: #1B4CA1;
+  }
+}
+
+:host ::ng-deep .profile-tabs {
+  .mat-tab-header {
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
   }
 }

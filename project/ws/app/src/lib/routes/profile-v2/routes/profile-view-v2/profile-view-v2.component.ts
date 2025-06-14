@@ -268,12 +268,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       })
   }
 
-  checkIsMentor() {
-    const userRoles: any = _.get(this.configSvc, 'userRoles');
-    if (userRoles && this.isCurrentUser) {
-      this.isMentor = userRoles.has('mentor') || userRoles.has('MENTOR') || userRoles.has('Mentor') ? true : false;
-    }
-  }
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
@@ -419,6 +413,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   patchRecamendedCommunity(community: any) {
     this.communitySuggestionsList = community
+  }
+
+  checkIsMentor() {
+    const userRoles: any = _.get(this.profileData, 'roles');
+    if (userRoles) {
+      this.isMentor = userRoles.some((role: string) => role.toLowerCase() === 'mentor')
+    }
   }
   //#endregion (initialization)
 

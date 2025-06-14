@@ -1,6 +1,6 @@
 <div class="flex flex-row gap-5">
   <!-- #region (left profile )-->
-  <div class="flex flex-col gap-4 items-center profileLeftSection">
+  <div class="flex flex-col gap-0 md:gap-4 items-center profileLeftSection">
     <div class="profile w-full">
       <!-- #region (cover photo ) -->
       <div>
@@ -50,7 +50,7 @@
           </div>
 
           <div class="flex flex-col profile-details">
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
               <span class="profile-name">{{primaryDetails?.firstname}} </span>
               <ng-container *ngIf="primaryDetails?.profileStatus === 'VERIFIED'">
                 <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
@@ -129,9 +129,9 @@
       <!-- #endregion (profile details ) -->
     </div>
 
-    <ng-container *ngIf="isCurrentUser">
+    <ng-container *ngIf="isCurrentUser && !isMobile">
       <div>
-        <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
+        <ws-app-user-stats [userStats]="userStats" ></ws-app-user-stats>
       </div>
     </ng-container>
 
@@ -172,6 +172,12 @@
       <!-- #region (user details ) -->
       <ng-template #profileSection>
         <div class="flex flex-col gap-4">
+          <ng-container *ngIf="isCurrentUser && isMobile">
+            <div>
+              <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"></ws-app-user-stats>
+            </div>
+          </ng-container>
+
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
@@ -377,15 +383,17 @@
 
   <!-- #region (right profile connections )-->
   <div class="hidden md:flex flex-col gap-4 profileRightSection">
-    <div class="flex flex-col gap-3">
-      <div class="people-you-may-know">
-        {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+    <ng-container *ngIf="peopleSuggestionsList?.length > 0">
+      <div class="flex flex-col gap-3">
+        <div class="people-you-may-know">
+          {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+        </div>
+        <div>
+          <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
+            [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+        </div>
       </div>
-      <div>
-        <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
-          [currentUser]="profesionalDetails"></ws-app-people-suggestions>
-      </div>
-    </div>
+    </ng-container>
 
     <div class="flex flex-col gap-3">
       <div class="people-you-may-know">
