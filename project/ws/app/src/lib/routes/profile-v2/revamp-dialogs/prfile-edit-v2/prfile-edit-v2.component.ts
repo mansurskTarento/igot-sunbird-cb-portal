@@ -7,7 +7,7 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { EMAIL_PATTERN, EMP_ID_PATTERN, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model';
+import { EMAIL_PATTERN, EMP_ID_PATTERN, IMAGE_SIZE_1MB, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model';
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { OtpService } from '../../../user-profile/services/otp.services';
@@ -16,7 +16,7 @@ import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile
 import { DatePipe } from '@angular/common';
 import { ImageCropComponent, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
+import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
 
@@ -234,7 +234,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         return
       }
   
-      if (file.size > IMAGE_MAX_SIZE) {
+      if (file.size > IMAGE_SIZE_1MB * 2) {
         this.snackBar.openFromComponent(NotificationComponent, {
           data: {
             type: Notify.PROFILE_IMG_SIZE_ERROR,

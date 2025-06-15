@@ -165,7 +165,7 @@
       </ng-container>
 
       <ng-template #desktopTabs>
-        <div class="w-full">
+        <div class="w-full content">
           <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
         </div>
       </ng-template>
@@ -217,8 +217,6 @@
                   <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                 </ng-container>
               </div>
-              <ng-container
-                *ngIf="serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0; else emptyGif">
                 <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
                   [isCurrentUser]="isCurrentUser" [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
                   (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
@@ -228,7 +226,6 @@
                     <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">{{'NetworkV2Profile.showAll' | translate}}</div>
                   </div>
                 </ng-container>
-              </ng-container>
             </div>
           </ng-container>
 
