@@ -126,8 +126,8 @@
                         </div>
                       </div>
                       <!-- Options list -->
-                      <mat-option *ngFor="let option of designationData " [value]="option?.name">
-                              {{ option?.name }}
+                      <mat-option *ngFor="let option of designationData " [value]="option?.designation">
+                              {{ option?.designation }}
                       </mat-option>
                       <!-- Loading indicator -->
                       <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">

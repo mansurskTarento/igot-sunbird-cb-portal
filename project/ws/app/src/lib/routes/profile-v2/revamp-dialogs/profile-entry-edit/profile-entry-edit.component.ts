@@ -196,7 +196,6 @@ export class ProfileEntryEditComponent implements OnInit {
         )
         .subscribe(searchText => {
           this.orgOffset = 0
-          this.orgList = []
           if (searchText) {
             this.organisationFilterEnable = true
             this.getOrgList(searchText)
@@ -259,7 +258,11 @@ export class ProfileEntryEditComponent implements OnInit {
     this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
       next: (res: any) => {
         this.organisationsCount = _.get(res, 'result.response.count', 50);
-        this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
+        if(this.orgOffset === 0) {
+          this.orgList = _.get(res, 'result.response.content', []) as organisation[]
+        } else {
+          this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
+        }
         if(isFirstTime) {
           this.checkCurrentOrganisationPresent()
         }
@@ -298,6 +301,7 @@ export class ProfileEntryEditComponent implements OnInit {
       searchOrgNameControl.setValue('')
       this.organisationFilterEnable = false
       this.orgOffset = 0
+      this.getOrgList()
       const searchInput = document.querySelector('.search-input') as HTMLInputElement;
       if (searchInput) {
         searchInput.focus();
@@ -369,6 +373,7 @@ export class ProfileEntryEditComponent implements OnInit {
     if (opened && searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationsOffset = 0
+      this.getdesignationsMeta()
       const searchInput = document.querySelector('.search-input') as HTMLInputElement;
       if (searchInput) {
         searchInput.focus();

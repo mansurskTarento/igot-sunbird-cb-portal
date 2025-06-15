@@ -374,6 +374,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (opened && searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationsOffset = 0
+      this.getdesignationsMeta()
       const searchInput = document.querySelector('.search-input') as HTMLInputElement;
       if (searchInput) {
         searchInput.focus();
@@ -1021,7 +1022,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     return this.profileV2RevampService.handleTranslateTo(menuName)
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
