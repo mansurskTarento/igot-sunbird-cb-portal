@@ -41,11 +41,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   groupsList: any[] = [];
   designationsMeta: any[] = [];
+  designationsTotalCount = 0
+  designationSearchText = ''
+  designationsOffset = 0
   filterDesignationsMeta: any = []
   isLoadingMoreDesignations = false;
-  desigantionFilterEnable = false
   designationListLoadCount = 50
-  designationDefaultLoadCount = 50
 
   verifyEmail: boolean = false;
   verifyMobile: boolean = false;
@@ -97,7 +98,6 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.profileDetails = _.get(this.data, 'profileDetails', {});
     this.profileImage = _.get(this.data, 'profileImage', null);
     this.groupsList = _.get(this.data, 'groupsList', []);
-    this.designationsMeta = _.get(this.data, 'designationsMeta', []);
   }
 
   ngOnInit(): void {
@@ -113,6 +113,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         break;
       case 'Primary Details':
         this.createPrimaryDetailsForm();
+        this.getdesignationsMeta();
         break;
       case 'About Me':
         this.createAboutMeForm();
@@ -301,7 +302,6 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   //#endregion (end of profile image)
   //#endregion (profile)
 
-
   //#region (primary details)
   private createPrimaryDetailsForm(): void {
     this.profileForm = this.fb.group({
@@ -315,6 +315,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     }, 10)
     const searchDesignationControl = this.profileForm.get('searchDesignation');
     if (searchDesignationControl) {
+      let settingValueChange = true
       searchDesignationControl.valueChanges
         .pipe(
           debounceTime(250),
@@ -322,78 +323,80 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           startWith(''),
         )
         .subscribe(searchText => {
+          this.designationsOffset = 0
+          this.designationSearchText = searchText
           if (searchText) {
-            this.desigantionFilterEnable = true
-            this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-              val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
-            )
+            this.getdesignationsMeta()
           } else {
-            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
-            this.desigantionFilterEnable = false
-            this.designationListLoadCount = this.designationDefaultLoadCount;
+            if(!settingValueChange) {
+              this.getdesignationsMeta() 
+            }
             this.checkCurrentDesignationPresent()
           }
+          settingValueChange = false
         })
-
-      if(_.get(this.profileDetails, 'designation', '')){
-        searchDesignationControl.setValue(_.get(this.profileDetails, 'designation', ''));
-      }
-      setTimeout(() => {
-        const designationControl = this.profileForm.get('designation');
-        if (designationControl) {
-          designationControl.setValue(_.get(this.profileDetails, 'designation', ''));
-        }
-      }, 10)
     }
+  }
+
+  getdesignationsMeta() {
+    const requestBody: any = {
+      filterCriteriaMap: {
+        status: 'Active'
+      },
+      requestedFields: [],
+      pageNumber: this.designationsOffset,
+      pageSize: this.designationListLoadCount
+    }
+    if(this.designationSearchText){
+      requestBody['searchString'] = this.designationSearchText
+    }
+    this.isLoadingMoreDesignations = true
+    this.profileV2RevampService.searchDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false
+        if(this.designationsOffset === 0) {
+          this.designationsMeta = _.get(res, 'result.result.data', [])
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.result.data', [])]
+        }
+        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0)
+        this.checkCurrentDesignationPresent()
+      }, error: (error: HttpErrorResponse) => {
+        if(error) {
+          this.openSnackbar('Something went wrong. Please refresh or try again later.')
+        }
+      }
+    })
   }
 
   setupScrollListener(opened: boolean): void {
     const searchDesignationControl = this.profileForm.get('searchDesignation');
     if (opened && searchDesignationControl) {
       searchDesignationControl.setValue('')
-      this.desigantionFilterEnable = false
-      this.designationListLoadCount = this.designationDefaultLoadCount;
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
+      this.designationsOffset = 0
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
+      }
       this.checkCurrentDesignationPresent()
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
-        }
-      }, 100);
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        // Add scroll event listener to the panel
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+      }
     }
   }
 
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
 
-    if (!this.desigantionFilterEnable) {
-      // Check if user has scrolled to the bottom (with a small threshold)
-      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
-        // Only load more if not already loading and if there are potentially more items
-        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+      // Only load more if not already loading and if there are potentially more items
+      if (!this.isLoadingMoreDesignations && this.designationsMeta.length < this.designationsTotalCount) {
           this.isLoadingMoreDesignations = true;
-
-          // Increase the load count by designationDefaultLoadCount
-          this.designationListLoadCount += this.designationDefaultLoadCount;
-
-          // Update the filtered list with more items
-          setTimeout(() => {
-            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
-            this.checkCurrentDesignationPresent()
-            this.isLoadingMoreDesignations = false;
-          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+          this.designationsOffset += 1;
+          this.getdesignationsMeta()
         }
-      }
     }
   }
 
@@ -404,44 +407,29 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
     // Check if current designation exists in the list
     if (currentDesignation) {
-      const designationExists = this.filterDesignationsMeta.some(
-        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+      const designationExists = this.designationsMeta.some(
+        (designation: any) => designation.designation.toLowerCase() === currentDesignation.toLowerCase()
       );
 
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
         // Create a new designation object to match the structure of other items
         const newDesignation = {
-          name: currentDesignation,
-          // Add any other required properties matching your data structure
-          id: 'custom-' + Date.now(),
+          designation: currentDesignation,
           status: 'Active'
         };
-        // Make sure the custom designation appears in the filtered list
-        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
-          // Replace the last item with the new one to maintain the same number of items
-          this.filterDesignationsMeta.pop();
-        }
-        this.filterDesignationsMeta.unshift(newDesignation);
+        this.designationsMeta.unshift(newDesignation);
       }
     }
   }
 
   onDesignationDropdownClosed(): void {
-    // Keep the designation value but clear the search input
-    const currentDesignation = this.profileForm.get('designation')!.value;
-    setTimeout(() => {
-      if (this.profileForm.get('searchDesignation')) {
-        this.profileForm.get('searchDesignation')!.setValue('');
-      }
-      // Ensure the designation value remains selected
-      if (currentDesignation) {
-        const designationControl = this.profileForm.get('designation');
-        if (designationControl) {
-          designationControl.setValue(currentDesignation);
-        }
-      }
-    }, 100);
+    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    if (searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.designationSearchText = ''
+    }
+    this.checkCurrentDesignationPresent()
   }
 
   // #endregion (end of primary details)

@@ -124,13 +124,13 @@
                   autocomplete="off">
               </div>
             </div>
-            <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
-              {{ option?.name }}
+            <mat-option *ngFor="let option of designationsMeta" [value]="option?.designation">
+              {{ option?.designation }}
             </mat-option>
             <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
               {{'NetworkV2Profile.loadingMore' | translate}}
             </div>
-            <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
+            <mat-option *ngIf="(designationsMeta )?.length === 0" disabled>
               {{'NetworkV2Profile.noMatchesFound' | translate}}
             </mat-option>
           </mat-select>
