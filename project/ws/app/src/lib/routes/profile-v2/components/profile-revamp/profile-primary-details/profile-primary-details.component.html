@@ -185,35 +185,37 @@
         <span class="label">{{ 'NetworkV2Profile.fromGovOrganization' | translate }}</span>
         <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
       </div>
-      <ng-container *ngIf="primaryDetails?.civilServiceType">
-        <div class="flex flex-col gap-2 pr-3">
-          <span class="label">{{ 'NetworkV2Profile.civilServiceType' | translate }}</span>
-          <span class="value">{{ primaryDetails?.civilServiceType }}</span>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="primaryDetails?.civilServiceName">
-        <div class="flex flex-col gap-2 pr-3">
-          <span class="label">{{ 'NetworkV2Profile.services' | translate }}</span>
-          <span class="value">{{ primaryDetails?.civilServiceName }}</span>
-        </div>
-      </ng-container>
       <ng-container *ngIf="primaryDetails?.isCadre">
-        <div class="flex flex-col gap-2 pr-3">
-          <span class="label">{{ 'NetworkV2Profile.cadre' | translate }}</span>
-          <span class="value">{{ primaryDetails?.cadreName }}</span>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="primaryDetails?.cadreBatch">
-        <div class="flex flex-col gap-2 pr-3">
-          <span class="label">{{ 'NetworkV2Profile.batch' | translate }}</span>
-          <span class="value">{{ primaryDetails?.cadreBatch }}</span>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
-        <div class="flex flex-col gap-2 pr-3">
-          <span class="label">{{ 'NetworkV2Profile.cadreControllingAuthority' | translate }}</span>
-          <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
-        </div>
+        <ng-container *ngIf="primaryDetails?.civilServiceType">
+          <div class="flex flex-col gap-2 pr-3">
+            <span class="label">{{ 'NetworkV2Profile.civilServiceType' | translate }}</span>
+            <span class="value">{{ primaryDetails?.civilServiceType }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="primaryDetails?.civilServiceName">
+          <div class="flex flex-col gap-2 pr-3">
+            <span class="label">{{ 'NetworkV2Profile.services' | translate }}</span>
+            <span class="value">{{ primaryDetails?.civilServiceName }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="primaryDetails?.cadreName">
+          <div class="flex flex-col gap-2 pr-3">
+            <span class="label">{{ 'NetworkV2Profile.cadre' | translate }}</span>
+            <span class="value">{{ primaryDetails?.cadreName }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="primaryDetails?.cadreBatch">
+          <div class="flex flex-col gap-2 pr-3">
+            <span class="label">{{ 'NetworkV2Profile.batch' | translate }}</span>
+            <span class="value">{{ primaryDetails?.cadreBatch }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="primaryDetails?.cadreControllingAuthorityName">
+          <div class="flex flex-col gap-2 pr-3">
+            <span class="label">{{ 'NetworkV2Profile.cadreControllingAuthority' | translate }}</span>
+            <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
+          </div>
+        </ng-container>
       </ng-container>
     </div>
   </ng-container>

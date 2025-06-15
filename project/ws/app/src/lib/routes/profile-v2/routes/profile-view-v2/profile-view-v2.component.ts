@@ -294,6 +294,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileImageUrl = _.get(this.profesionalDetails, 'profileImageUrl', '')
     this.profileBannerUrl = _.get(this.profesionalDetails, 'profileBannerUrl', '')
     this.setProfileCompletionGraph()
+    const isCadre = _.get(this.profesionalDetails, 'personalDetails.isCadre', false)
     this.primaryDetails = {
       firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', _.get(this.profileData, 'firstName', ''))),
       username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
@@ -313,20 +314,22 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
       externalSystemId: _.get(this.profesionalDetails, 'additionalProperties.externalSystemId', ''),
       externalSystemDor: _.get(this.profesionalDetails, 'additionalProperties.externalSystemDor', ''),
-      isCadre: _.get(this.profesionalDetails, 'personalDetails.isCadre', false),
-      civilServiceTypeId: _.get(this.profesionalDetails, 'cadreDetails.civilServiceTypeId', ''),
-      civilServiceType: _.get(this.profesionalDetails, 'cadreDetails.civilServiceType', 'NA'),
-      civilServiceId: _.get(this.profesionalDetails, 'cadreDetails.civilServiceId', ''),
-      civilServiceName: _.get(this.profesionalDetails, 'cadreDetails.civilServiceName', ''),
-      cadreId: _.get(this.profesionalDetails, 'cadreDetails.cadreId', ''),
-      cadreName: _.get(this.profesionalDetails, 'cadreDetails.cadreName', ''),
-      cadreBatch: _.get(this.profesionalDetails, 'cadreDetails.cadreBatch', ''),
-      cadreControllingAuthorityName: _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', ''),
+      isCadre: isCadre,
 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
 
       currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
       profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
+    }
+    if(isCadre) {
+      this.primaryDetails['civilServiceTypeId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceTypeId', '')
+      this.primaryDetails['civilServiceType'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceType', 'NA')
+      this.primaryDetails['civilServiceId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceId', '')
+      this.primaryDetails['civilServiceName'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceName', '')
+      this.primaryDetails['cadreId'] = _.get(this.profesionalDetails, 'cadreDetails.cadreId', '')
+      this.primaryDetails['cadreName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreName', '')
+      this.primaryDetails['cadreBatch'] = _.get(this.profesionalDetails, 'cadreDetails.cadreBatch', '')
+      this.primaryDetails['cadreControllingAuthorityName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', '')
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
@@ -603,7 +606,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       };
 
       // Define field mappings with their paths in the API response and form body
-      const fieldMappings = [
+      const fieldMappings:{
+          formField: string,
+          resultPath: string,
+          formBodyPath: string,
+          isCader?: boolean
+        }[] = [
         {
           formField: 'profileImageUrl',
           resultPath: 'profileImageUrl',
@@ -678,46 +686,61 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           formField: 'aboutme',
           resultPath: 'aboutme',
           formBodyPath: 'profileDetails.employmentDetails.aboutme'
-        }, {
+        }
+      ];
+
+      if(result && result.isCadre) {
+        const cadreDetailsFieldMappings = [
+          {
           formField: 'civilServiceTypeId',
           resultPath: 'civilServiceTypeId',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceTypeId'
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceTypeId',
+          isCader: true
         }, {
           formField: 'civilServiceType',
           resultPath: 'civilServiceType',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceType'
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceType',
+          isCader: true
         },
         {
           formField: 'civilServiceId',
           resultPath: 'civilServiceId',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceId'
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceId',
+          isCader: true
         },
         {
           formField: 'civilServiceName',
           resultPath: 'civilServiceName',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceName'
+          formBodyPath: 'profileDetails.cadreDetails.civilServiceName',
+          isCader: true
         },
         {
           formField: 'cadreId',
           resultPath: 'cadreId',
-          formBodyPath: 'profileDetails.cadreDetails.cadreId'
+          formBodyPath: 'profileDetails.cadreDetails.cadreId',
+          isCader: true
         },
         {
           formField: 'cadreName',
           resultPath: 'cadreName',
-          formBodyPath: 'profileDetails.cadreDetails.cadreName'
+          formBodyPath: 'profileDetails.cadreDetails.cadreName',
+          isCader: true
         },
         {
           formField: 'cadreBatch',
           resultPath: 'cadreBatch',
-          formBodyPath: 'profileDetails.cadreDetails.cadreBatch'
+          formBodyPath: 'profileDetails.cadreDetails.cadreBatch',
+          isCader: true
         },
         {
           formField: 'cadreControllingAuthorityName',
           resultPath: 'cadreControllingAuthorityName',
-          formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName'
+          formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName',
+          isCader: true
         }
-      ];
+        ]
+        fieldMappings.push(...cadreDetailsFieldMappings)
+      }
 
       let hasChanges = false;
 
@@ -726,11 +749,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         const currentValue = _.get(result, mapping.resultPath, null);
         const formValue = this.primaryDetails[mapping.formField];
 
-        if ((formValue !== currentValue && currentValue !== null) && 
-           (
-            (formValue === 'NA' && currentValue !== '') || 
-            formValue !== 'NA'
-          )) {
+        if ((
+              (formValue !== currentValue && currentValue !== null) && 
+              (
+                (formValue === 'NA' && currentValue !== '') || 
+                formValue !== 'NA'
+              )
+            )
+            || mapping.isCader
+        ) {
           const pathParts = mapping.formBodyPath.split('.');
           let current = formBody.request;
 
