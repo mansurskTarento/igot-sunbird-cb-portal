@@ -21,6 +21,7 @@ import { TransferRequestComponent } from '../../components/transfer-request/tran
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
+import { DatePipe } from '@angular/common';
 //#endregion
 
 @Component({
@@ -40,7 +41,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   profileData: any;
   profileImageUrl = '';
   profileBannerUrl = '';
-  profileCompletion: number = 0;
+  profileCompletionPercentage: number = 0;
   nameInitials: string = '';
   userStats: UserStats[] = [
     {
@@ -209,7 +210,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private pipeImgUrl: PipeCertificateImageURL,
     private configSvc: ConfigurationsService,
     private breakpointObserver: BreakpointObserver,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private datePipe: DatePipe,
   ) {
      this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
@@ -283,7 +285,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.profileData = _.get(data, 'profile.data', {})
       this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
-      this.profileCompletion = _.get(data, 'profile.data.profileCompletion', 0)
+      this.profileCompletionPercentage = _.get(data, 'profile.data.profileCompletionPercentage', 0)
       this.patchProfileDetails()
       this.setUserStats()
       this.patchEntries(_.get(data, 'entries.data', {}))
@@ -337,7 +339,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       primaryEmail: _.get(this.profesionalDetails, 'personalDetails.primaryEmail', ''),
       mobile: _.get(this.profesionalDetails, 'personalDetails.mobile', ''),
       gender: _.get(this.profesionalDetails, 'personalDetails.gender', ''),
-      dob: _.get(this.profesionalDetails, 'personalDetails.dob', ''),
+      dob: this.getDateFromText(_.get(this.profesionalDetails, 'personalDetails.dob', '')),
       domicileMedium: _.get(this.profesionalDetails, 'personalDetails.domicileMedium', ''),
       category: _.get(this.profesionalDetails, 'personalDetails.category', ''),
       pinCode: _.get(this.profesionalDetails, 'employmentDetails.pinCode', ''),
@@ -369,6 +371,20 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getInitials()
   }
 
+  getDateFromText(dateString: string): any {
+    if (dateString) {
+      const sv: string[] = dateString.split('T')
+      if (sv && sv.length > 1) {
+        return sv[0]
+      }
+      const splitValues: string[] = dateString.split('-')
+      const [dd, mm, yyyy] = splitValues
+      const dateToBeConverted = dd.length !== 4 ? `${yyyy}-${mm}-${dd}` : `${dd}-${mm}-${yyyy}`
+      return this.datePipe.transform(new Date(dateToBeConverted), 'dd MMMM yyyy')
+    }
+    return ''
+  }
+
   getInitials(): void {
     const userName = _.get(this.primaryDetails, 'firstname', '');
     if (userName) {
@@ -382,7 +398,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setProfileCompletionGraph() {
-    const progress = (247 - ((247 * this.profileCompletion) / 100))
+    const progress = (247 - ((247 * this.profileCompletionPercentage) / 100))
     document.documentElement.style.setProperty('--i', String(progress))
   }
 
@@ -563,8 +579,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
       next: (response: any) => {
         if (response) {
-          this.profesionalDetails = _.get(response, 'result.profiledetails', _.get(response, 'result.profileDetails', _.get(response, 'result', {})))
-          this.profileCompletion = _.get(response, 'result.profileCompletion', 0)
+          this.profesionalDetails = _.get(response, 'result.response.profiledetails', _.get(response, 'result.response.profileDetails', _.get(response, 'result', {})))
+          this.profileCompletionPercentage = _.get(response, 'result.response.profileCompletionPercentage', 0)
           this.patchProfileDetails()
         }
       },
@@ -777,7 +793,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       // Compare each field and add to form body if changed
       fieldMappings.forEach(mapping => {
         const currentValue = _.get(result, mapping.resultPath, null);
-        const formValue = this.primaryDetails[mapping.formField];
+        let formValue = this.primaryDetails[mapping.formField];
+        if(mapping.formField === 'dob' && formValue) {
+          formValue = this.datePipe.transform(new Date(formValue), 'dd-MM-yyyy');
+        }
 
         if ((
               (formValue !== currentValue && currentValue !== null) && 

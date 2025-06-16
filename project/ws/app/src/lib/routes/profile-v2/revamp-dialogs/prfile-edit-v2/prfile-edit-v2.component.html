@@ -70,7 +70,7 @@
 
       <div class="form-fields-container">
         <div class="flex flex-col profile-control">
-          <div class="lable required">{{'NetworkV2Profile.officeState' | translate}}</div>
+          <div class="lable">{{'NetworkV2Profile.officeState' | translate}}</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="state" (selectionChange)="getDistrictsList($event.value)"
               placeholder="{{'NetworkV2Profile.selectState' | translate}}">
@@ -82,7 +82,7 @@
         </div>
 
         <div class="flex flex-col profile-control">
-          <div class="lable required">{{'NetworkV2Profile.officeDistrict' | translate}}</div>
+          <div class="lable">{{'NetworkV2Profile.officeDistrict' | translate}}</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="district" placeholder="Select District">
               <ng-container *ngFor="let district of districtsList">

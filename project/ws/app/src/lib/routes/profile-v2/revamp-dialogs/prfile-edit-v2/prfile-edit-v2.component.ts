@@ -35,6 +35,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   initilisationInProgress = true;
 
   profileImage: string | null = null;
+  profileImageChanged = false;
   userInitials = '';
   statesList: state[] = [];
   districtsList: string[] = [];
@@ -281,6 +282,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           const folderNameToSplit = '/profileImage/'
           const urlSplice = createdUrl.split(folderNameToSplit)[1]
           this.profileImage = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
+          this.profileImageChanged = true
         }
       })
     }
@@ -297,7 +299,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   deleteImage() {
-    this.profileImage = null;
+    this.profileImage = '';
+    this.profileImageChanged = true
   }
   //#endregion (end of profile image)
   //#endregion (profile)
@@ -901,10 +904,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   handleSubmit(): void {
     if (this.profileForm) {
-      if (this.profileForm.valid) {
+      if (this.canSaveChanges) {
         const profileData = this.profileForm.value;
-        if (this.profileImage) {
+        if (this.profileImageChanged) {
           profileData['profileImageUrl'] = this.profileImage;
+          const firstNameControl = this.profileForm.get('firstName');
+          if (firstNameControl && !firstNameControl.value) {
+            profileData['firstName'] = this.profileDetails['firstName'];
+          }
         }
         if (this.header === 'Other Details') {
           this.genrateOtehrDetailsForm()
@@ -981,7 +988,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
     switch (this.header) {
       case 'Profile':
-        if (isFormValid || this.profileImage) {
+        if (isFormValid || this.profileImageChanged) {
           return true
         }
         return false
