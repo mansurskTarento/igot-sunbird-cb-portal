@@ -1,9 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
-// import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { IMAGE_SIZE_1MB } from '../../../models/profile-revamp.model';
 
@@ -76,21 +73,12 @@ export class CoverPhotoEditPopupComponent implements OnInit {
       // Validate file type
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
       if (!allowedTypes.includes(file.type)) {
-        this.snackBar.openFromComponent(NotificationComponent, {
-          data: {
-            type: 'Only png, jpg, jpeg, svg images types are supported',
-          },
-          duration: NOTIFICATION_TIME * 1500,
+        this.snackBar.open('Only png, jpg, jpeg, svg images types are supported', 'X', {
+          duration: 1500,
         })
         return
       }
       if (file.size > IMAGE_SIZE_1MB * 2) { // 2MB
-        // this.snackBar.openFromComponent(NotificationComponent, {
-        //   data: {
-        //     type: Notify.PROFILE_IMG_SIZE_ERROR,
-        //   },
-        //   duration: NOTIFICATION_TIME * 1500,
-        // })
         this.snackBar.open('Maximum upload file size: 2MB', 'X', {
           duration: 1500,
         })
