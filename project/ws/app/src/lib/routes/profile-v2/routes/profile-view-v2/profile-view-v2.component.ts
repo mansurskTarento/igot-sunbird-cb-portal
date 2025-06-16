@@ -194,7 +194,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   assessmentsData: any
   //#endregion
 
-  connectionStatus = 'NetworkV2Profile.connect'
+  connectionStatus = 'Connect'
+  connectionStatusTranslation = 'NetworkV2Profile.connect'
   isMobile = false;
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -274,6 +275,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.userId = _.get(data, 'profile.userId', '')
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
         this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
+        if(!this.isCurrentUser){
+          this.getConnectionStatus()
+        }
       }
       this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
       this.profileData = _.get(data, 'profile.data', {})
@@ -288,6 +292,32 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.checkIsMentor()
     })
     this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
+  }
+
+  getConnectionStatus() {
+    this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
+      this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
+      switch (this.connectionStatus.toLowerCase()) {
+        case 'connect':
+          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
+          break;
+        case 'pending':
+          this.connectionStatusTranslation = 'NetworkV2Profile.pending'
+          break;
+        case 'unblock':
+          this.connectionStatusTranslation = 'NetworkV2Profile.unblock'
+          break;
+        case 'approved':
+          this.connectionStatusTranslation = 'NetworkV2Profile.approved'
+          break;
+        case 'rejected':
+          this.connectionStatusTranslation = 'NetworkV2Profile.rejected'
+          break;
+        default:
+          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
+          break;
+      }
+    })
   }
 
   patchProfileDetails() {
@@ -1174,7 +1204,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   blockProfile() {
-    this.connectionStatus = 'NetworkV2Profile.unblock';
+    this.connectionStatus = 'Unblock';
+    this.connectionStatusTranslation = 'NetworkV2Profile.unblock';
   }
 
   copyProfileLink() {
@@ -1203,7 +1234,8 @@ sendConnectionRequest(): void {
 
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
-          this.connectionStatus = 'NetworkV2Profile.pending';
+          this.connectionStatus = 'Pending';
+          this.connectionStatusTranslation = 'NetworkV2Profile.pending';
           this.openSnackbar('Connection request sent successfully');
         },
         error: () => {

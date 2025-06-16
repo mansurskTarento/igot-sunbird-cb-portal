@@ -45,6 +45,16 @@
   /* stylelint-enable */
 }
 
+.primaryDetailsvalue {
+  color: #212529;
+  /* stylelint-disable */
+  font: 400 16px Lato;
+  /* stylelint-enable */
+  word-wrap: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Ensure compatibility */
+  white-space: normal;
+}
+
 .value {
   color: #212529;
   /* stylelint-disable */
