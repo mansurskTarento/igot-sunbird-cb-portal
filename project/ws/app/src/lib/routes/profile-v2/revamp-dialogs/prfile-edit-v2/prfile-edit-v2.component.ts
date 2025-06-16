@@ -239,7 +239,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       if (file.size > IMAGE_SIZE_1MB * 2) {
         this.snackBar.openFromComponent(NotificationComponent, {
           data: {
-            type: Notify.PROFILE_IMG_SIZE_ERROR,
+            type: 'Maximum upload file size: 2MB',
           },
           duration: NOTIFICATION_TIME * 1500,
         })
