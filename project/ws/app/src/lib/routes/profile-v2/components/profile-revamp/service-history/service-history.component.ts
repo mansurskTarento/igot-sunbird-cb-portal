@@ -61,13 +61,13 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() { 
-    if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
+    if(this.serviceHistoryList) {
       this.formateData();
     } 
   }
 
   formateData() {
-    if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
+    if(this.serviceHistoryList) {
       let hasCurrentOrgDetails = false
       this.serviceHistoryList.forEach((service: any) => {
         if(service.orgName === this.currentOrgName && service.designation === this.currentDesignation) {

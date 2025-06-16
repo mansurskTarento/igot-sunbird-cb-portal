@@ -22,6 +22,7 @@ const API_END_POINTS = {
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
   GET_DESIGNATIONS: '/apis/proxies/v8/user/v1/positions', // old
+  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', //OLD
   GET_GROUPS: '/api/user/v1/groups', //OLD
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
@@ -146,6 +147,10 @@ export class ProfileV2RevampService {
 
   getDesignations(_req: any): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
+  }
+
+  searchDesignation(_req: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_SEARCH_DESIGNATIONS, _req)
   }
 
   getGroups(): Observable<any> {

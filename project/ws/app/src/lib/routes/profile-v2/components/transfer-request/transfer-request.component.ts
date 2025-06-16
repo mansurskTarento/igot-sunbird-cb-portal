@@ -10,6 +10,8 @@ import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/o
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Subject } from 'rxjs'
+import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
+import * as _ from 'lodash'
 
 @Component({
   selector: 'ws-transfer-request',
@@ -32,6 +34,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   deptFilterData: any[] = []
   // deptFilterData  : Observable<string[]>
   designationData: any[] = []
+  designationsTotalCount = 0
+  designationSearchText = ''
+  designationsOffset = 0
   private destroySubject$ = new Subject()
   isInValidOrgSelection = false
   onLoad = true
@@ -52,7 +57,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private userProfileService: UserProfileService,
     private matSnackBar: MatSnackBar,
-    private configService: ConfigurationsService
+    private configService: ConfigurationsService,
+    private profileV2RevampService: ProfileV2RevampService
   ) {
     if (this.data.portalProfile.professionalDetails && this.data.portalProfile.professionalDetails.length) {
       this.transferRequestForm.controls.group.setValue(this.data.portalProfile.professionalDetails[0].group)
@@ -90,6 +96,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       });
     }
     if (this.transferRequestForm.get('searchDesignation')) {
+      let settingValueChange = true
       this.transferRequestForm.get('searchDesignation')!.valueChanges
         .pipe(
           debounceTime(250),
@@ -97,23 +104,60 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           startWith(''),
         )
         .subscribe(res => {
+          this.designationsOffset = 0
+          this.designationSearchText = res
           if (res) {
-            const designonData = this.data && this.data.designationsMeta
-            this.designationData = designonData.filter((val: any) =>
-              val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
-            )
-            const designationSearchVal = this.transferRequestForm.controls['designation']
-            if (this.designationData && this.designationData.length && this.designationData.length > 0) {
-              designationSearchVal.setErrors(null)
-             } else {
-            designationSearchVal.setErrors({ invalidSelection: true })
-             }
+            this.getdesignationsMeta()
+            // const designonData = this.data && this.data.designationsMeta
+            // this.designationData = designonData.filter((val: any) =>
+            //   val && val.name.trim().toLowerCase().includes(res && res.toLowerCase())
+            // )
+            // const designationSearchVal = this.transferRequestForm.controls['designation']
+            // if (this.designationData && this.designationData.length && this.designationData.length > 0) {
+            //   designationSearchVal.setErrors(null)
+            //  } else {
+            // designationSearchVal.setErrors({ invalidSelection: true })
+            //  }
           } else {
-            this.designationData = this.data &&  this.data.designationsMeta.slice(0, this.designationDefaultLoadCount);
+            if(!settingValueChange) {
+              this.getdesignationsMeta() 
+            }
             this.checkCurrentDesignationPresent()
-           }
+          }
+          settingValueChange = false
         })
     }
+  }
+
+  getdesignationsMeta() {
+    const requestBody: any = {
+      filterCriteriaMap: {
+        status: 'Active'
+      },
+      requestedFields: [],
+      pageNumber: this.designationsOffset,
+      pageSize: this.designationListLoadCount
+    }
+    if(this.designationSearchText){
+      requestBody['searchString'] = this.designationSearchText
+    }
+    this.isLoadingMoreDesignations = true
+    this.profileV2RevampService.searchDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false
+        if(this.designationsOffset === 0) {
+          this.designationData = _.get(res, 'result.result.data', [])
+        } else {
+          this.designationData = [...this.designationData, ..._.get(res, 'result.result.data', [])]
+        }
+        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0)
+        this.checkCurrentDesignationPresent()
+      }, error: (error: HttpErrorResponse) => {
+        if(error) {
+          this.matSnackBar.open('Something went wrong. Please try again later.')
+        }
+      }
+    })
   }
 
   ngOnInit() {
@@ -235,23 +279,23 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     // Check if current designation exists in the list
     if (currentDesignation) {
       const designationExists = this.designationData.some(
-        (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
+        (designation: any) => designation.designation.toLowerCase() === currentDesignation.toLowerCase()
       );
       
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
         // Create a new designation object to match the structure of other items
         const newDesignation = { 
-          name: currentDesignation,
+          designation: currentDesignation,
           // Add any other required properties matching your data structure
           id: 'custom-' + Date.now(),
           status: 'Active'
         };
         // Make sure the custom designation appears in the filtered list
-        if (this.designationData.length >= this.designationListLoadCount) {
-          // Replace the last item with the new one to maintain the same number of items
-          this.designationData.pop();
-        }
+        // if (this.designationData.length >= this.designationListLoadCount) {
+        //   // Replace the last item with the new one to maintain the same number of items
+        //   this.designationData.pop();
+        // }
         this.designationData.unshift(newDesignation);
       }
     }
@@ -263,9 +307,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       if (this.transferRequestForm.get('searchDesignation')) {
         this.transferRequestForm.get('searchDesignation')!.setValue('');
       }
-      this.desigantionFilterEnable = false
-      this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
-      this.designationData = this.data.designationsMeta.slice(0, this.designationDefaultLoadCount);
+      this.designationsOffset = 0
+      this.getdesignationsMeta()
+      // this.desigantionFilterEnable = false
+      // this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
+      // this.designationData = this.data.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
       this.checkCurrentDesignationPresent()
       setTimeout(() => {
@@ -292,44 +338,52 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
     
-    if(!this.desigantionFilterEnable){
+    // if(!this.desigantionFilterEnable){
       // Check if user has scrolled to the bottom (with a small threshold)
       if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
         // Only load more if not already loading and if there are potentially more items
-        if (!this.isLoadingMoreDesignations && this.data.designationsMeta.length > this.designationData.length) {
+        if (!this.isLoadingMoreDesignations && this.designationData.length < this.designationsTotalCount) {
           this.isLoadingMoreDesignations = true;
+          this.designationsOffset += 1;
+          this.getdesignationsMeta()
           
-          // Increase the load count by designationDefaultLoadCount
-          this.designationListLoadCount += this.designationDefaultLoadCount;
+          // // Increase the load count by designationDefaultLoadCount
+          // this.designationListLoadCount += this.designationDefaultLoadCount;
           
-          // Update the filtered list with more items
-          setTimeout(() => {
-            this.designationData = this.data.designationsMeta.slice(0, this.designationListLoadCount);
-            this.checkCurrentDesignationPresent()
-            this.isLoadingMoreDesignations = false;
-          }, 500); // Small timeout to simulate loading and prevent multiple triggers
+          // // Update the filtered list with more items
+          // setTimeout(() => {
+          //   this.designationData = this.data.designationsMeta.slice(0, this.designationListLoadCount);
+          //   this.checkCurrentDesignationPresent()
+          //   this.isLoadingMoreDesignations = false;
+          // }, 500); // Small timeout to simulate loading and prevent multiple triggers
         }
       }
-    }
+    // }
   }
 
 
 
   onDesignationDropdownClosed(): void {
+    const searchDesignationControl = this.transferRequestForm.get('searchDesignation');
+    if (searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.designationSearchText = ''
+    }
+    this.checkCurrentDesignationPresent()
     // Keep the designation value but clear the search input
-    const currentDesignation = this.transferRequestForm.get('designation')!.value;
-    setTimeout(() => {
-      if (this.transferRequestForm.get('searchDesignation')) {
-        this.transferRequestForm.get('searchDesignation')!.setValue('');
-      }
-      // Ensure the designation value remains selected
-      if (currentDesignation) {
-        const designationControl = this.transferRequestForm.get('designation');
-        if (designationControl) {
-          designationControl.setValue(currentDesignation);
-        }
-      }
-    }, 100);
+    // const currentDesignation = this.transferRequestForm.get('designation')!.value;
+    // setTimeout(() => {
+    //   if (this.transferRequestForm.get('searchDesignation')) {
+    //     this.transferRequestForm.get('searchDesignation')!.setValue('');
+    //   }
+    //   // Ensure the designation value remains selected
+    //   if (currentDesignation) {
+    //     const designationControl = this.transferRequestForm.get('designation');
+    //     if (designationControl) {
+    //       designationControl.setValue(currentDesignation);
+    //     }
+    //   }
+    // }, 100);
   }
 
   onOrgSelectionChange(org: any) {
