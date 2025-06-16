@@ -105,6 +105,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   onBellClick() {
+    if (this.notificationsCount > 0) {
+      this.notificationsService.resetNotificationsCount().subscribe((res: any) => {
+        if (res.responseCode === 'OK') {
+          this.notificationsCount = 0
+        }
+      }, error => {
+        console.error('Error while fetching notifications count', error)
+      })
+    }
     this.showDropdown = false
     setTimeout(() => {
       this.showDropdown = true
