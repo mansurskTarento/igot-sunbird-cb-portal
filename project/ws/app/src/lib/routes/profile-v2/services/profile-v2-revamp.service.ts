@@ -42,6 +42,7 @@ const API_END_POINTS = {
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
 
   INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
+  GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
 }
@@ -229,6 +230,10 @@ export class ProfileV2RevampService {
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
     return result
+  }
+
+  getConnectionStatus(userId: string) {
+    return this.http.get(`${API_END_POINTS.GET_CONNECTION_STATUS(userId)}`)
   }
 
   // getAssessmentinfo(): Observable<any> {

@@ -18,7 +18,7 @@
   <div class="flex gap-10">
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">{{ 'NetworkV2Profile.group' | translate }}</span>
-      <span class="value flex gap-2 items-center">{{ primaryDetails?.group }}
+      <span class="primaryDetailsvalue flex gap-2 items-center">{{ primaryDetails?.group }}
         <ng-container *ngIf="primaryDetails?.profileGroupStatus === 'VERIFIED'; else groupNotVerified">
           <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
         </ng-container>
@@ -32,7 +32,7 @@
     </div>
     <div class="flex flex-col gap-2 pr-3">
       <span class="label">{{ 'NetworkV2Profile.designation' | translate }}</span>
-      <span class="value flex gap-2 items-center">{{ primaryDetails?.designation }}
+      <span class="primaryDetailsvalue flex gap-2 items-center">{{ primaryDetails?.designation }}
         <ng-container *ngIf="primaryDetails?.profileDesignationStatus === 'VERIFIED'; else designationNotVerified">
           <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
         </ng-container>
