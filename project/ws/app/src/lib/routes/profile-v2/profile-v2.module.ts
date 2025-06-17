@@ -74,6 +74,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CommunitySuggestionsComponent } from './components/profile-revamp/community-suggestions/community-suggestions.component'
 import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
 import { SearchV3Module } from '../search-v3/search-v3.module'
+import { DescriptionComponent } from './components/profile-revamp/description/description.component'
 
 @NgModule({
     declarations: [
@@ -99,7 +100,8 @@ import { SearchV3Module } from '../search-v3/search-v3.module'
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
         CommunitySuggestionsComponent,
-        CertificateViewPopupComponent
+        CertificateViewPopupComponent,
+        DescriptionComponent
     ],
     imports: [
         CommonModule,

@@ -421,6 +421,18 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   patchEntries(entries: any) {
+    this.serviceHistoryDetails = {
+      serviceHistoryList: [],
+      count: 0
+    }
+    this.educationalQualificationDetails = {
+      educationalQualifications: [],
+      count: 0
+    }
+    this.achievementsDetails = {
+      achievementsList: [],
+      count: 0
+    }
     this.serviceHistoryDetails.serviceHistoryList = _.get(entries, 'serviceHistory.data', [])
     this.serviceHistoryDetails.count = _.get(entries, 'serviceHistory.count', 0)
     this.educationalQualificationDetails.educationalQualifications = _.get(entries, 'educationalQualifications.data', [])
@@ -1008,7 +1020,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       data: dialogDetails,
       disableClose: true,
       panelClass: 'dialog_sidenav',
-      autoFocus: false
+      autoFocus: false,
+      width: this.isMobile ? '100vw' : '795px'
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
@@ -1022,7 +1035,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       data: dialogDetails,
       disableClose: true,
       panelClass: 'dialog_sidenav',
-      autoFocus: false
+      autoFocus: false,
+      width: this.isMobile ? '100vw' : '795px'
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
@@ -1036,7 +1050,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       data: dialogDetails,
       disableClose: true,
       panelClass: 'dialog_sidenav',
-      autoFocus: false
+      autoFocus: false,
+      width: this.isMobile ? '100vw' : '795px'
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
