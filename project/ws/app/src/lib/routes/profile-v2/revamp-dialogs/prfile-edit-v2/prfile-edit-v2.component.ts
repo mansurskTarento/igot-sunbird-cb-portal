@@ -327,11 +327,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         )
         .subscribe(searchText => {
           this.designationsOffset = 0
-          this.designationSearchText = searchText
-          if (searchText) {
+          if (searchText && searchText.length > 1) {
+          this.designationSearchText = searchText // to avoid api call with single character
             this.getdesignationsMeta()
-          } else {
+          } else if(!searchText) {
             if(!settingValueChange) {
+              this.designationSearchText = searchText
               this.getdesignationsMeta() 
             }
             this.checkCurrentDesignationPresent()

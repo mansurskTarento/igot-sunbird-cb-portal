@@ -104,7 +104,7 @@
                       </mat-error>
                 </mat-form-field> -->
 
-                <mat-form-field appearance="none" class="profile-form-field">
+                <mat-form-field appearance="none" class="profile-form-field search-panel">
                     <mat-select placeholder="Select Designation" formControlName="designation"  (closed)="onDesignationDropdownClosed()"  panelClass="search-panel" (openedChange)="setupScrollListener($event)">
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
