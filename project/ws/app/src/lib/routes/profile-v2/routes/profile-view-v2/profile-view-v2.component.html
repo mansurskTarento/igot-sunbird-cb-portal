@@ -217,7 +217,7 @@
                   <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                 </ng-container>
               </div>
-                <ws-app-service-history [serviceHistoryList]="serviceHistoryDetails?.serviceHistoryList"
+                <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails"
                   [isCurrentUser]="isCurrentUser" [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
                   (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">

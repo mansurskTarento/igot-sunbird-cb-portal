@@ -27,10 +27,15 @@
         <div class="org-details">{{service?.orgDetails}}</div>
         <div class="org-period">{{service?.period}}</div>
         <ng-container *ngIf="service?.description">
-          <div class="org-description" [ngClass]="{'extend-description': service?.showMore}" >{{service?.description}}</div>
-          <div class="view-more" (click)="service.showMore = !service.showMore">
-            {{(service?.showMore ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+          <div [ngClass]="{'extend-description': service?.showMore}" class="org-description">
+            <ws-app-description [description]="service?.description" [minHeight]="30"
+              (showViewMoreBtn)="service['showViewMoreBtn'] = $event"></ws-app-description>
           </div>
+          <ng-container *ngIf="service.showViewMoreBtn">
+            <div class="view-more" (click)="service.showMore = !service.showMore">
+              {{(service?.showMore ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+            </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>

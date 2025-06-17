@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
@@ -13,12 +13,14 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)
-  @Input() serviceHistoryList: any[] = []
+  @Input() serviceHistoryDetails: any = {};
   @Input() isCurrentUser = false;
   @Input() currentDesignation = '';
   @Input() currentOrgName = '';
+  @Input() isUpdated = false;
   @Output() openProfileEntryEditDialog = new EventEmitter();
 
+  serviceHistoryList: any[] = []
   userId: string = '';
   isPopup: boolean = false;
   //#endregion (global variables)
@@ -29,6 +31,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
         @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
+    private cdr: ChangeDetectorRef
   ) { 
     if (this.data && this.data.userId) {
       this.userId = data.userId;
@@ -50,6 +53,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
       this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'serviceHistory').subscribe((res: any) => {
         if (res) {
           this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', []);
+          this.serviceHistoryDetails = _.get(res, 'result.response', []);
           this.formateData();
         }
       }, (err: any) => {
@@ -61,7 +65,8 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() { 
-    if(this.serviceHistoryList) {
+    if(this.serviceHistoryDetails) {
+      this.serviceHistoryList = _.get(this.serviceHistoryDetails, 'serviceHistoryList', []);
       this.formateData();
     } 
   }
@@ -98,11 +103,13 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
         } else {
           this.serviceHistoryList = [orgDetails]
         }
+        this.serviceHistoryDetails.count = this.serviceHistoryDetails.count + 1
 
         if(!this.isPopup && this.serviceHistoryList && this.serviceHistoryList.length > 2) {
           this.serviceHistoryList = this.serviceHistoryList.slice(0, 2)
         }
       }
+      this.cdr.detectChanges()
     } 
   }
   
