@@ -138,7 +138,6 @@ export class EventDetailComponent implements OnInit {
       }
       if (this.eventData.competencies_v6) {
         this.loadCompetencies()
-        this.skeletonLoader = false
       }
       /* tslint:disable */
       console.log(this.eventSvc)
@@ -191,6 +190,8 @@ export class EventDetailComponent implements OnInit {
         }
       }
     })
+
+    this.skeletonLoader = false
   }
 
   getUserIsEnrolled() {
