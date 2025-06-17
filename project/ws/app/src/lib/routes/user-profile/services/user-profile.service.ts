@@ -38,6 +38,7 @@ const API_ENDPOINTS = {
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains',
   GET_DESIGNATION_V2: '/apis/proxies/v8/designation/search',
   GET_ORGANIZATION_V1: '/apis/proxies/v8/org/v1/search',
+  ORG_CUSTOM_FIELDS: `apis/proxies/v8/customFields/v1/search`
 }
 
 @Injectable()
@@ -184,5 +185,9 @@ export class UserProfileService {
   }
   getWhiteListDomain(): Observable<any> {
     return this.http.get<any>(API_ENDPOINTS.approvedDomains)
+  }
+
+  fetchCustomFields(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_ENDPOINTS.ORG_CUSTOM_FIELDS, requestBody)
   }
 }

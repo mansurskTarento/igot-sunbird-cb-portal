@@ -10,7 +10,7 @@
                 matTooltip="{{ 'profileInfo.pdTooltipMsg' | translate }}"
                 (click)="pTooltip.toggle()">info_outline</mat-icon>
             </div>
-            
+
             <ng-container *ngIf="!enableWTR && !enableWR && isCurrentUser && !(isNotMyUser || isIgotOrg)">
               <div class="flex flex-row">
                 <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editProfile"
@@ -20,7 +20,7 @@
                 </div>
               </div>
             </ng-container>
-            
+
             <ng-container *ngIf="enableWTR && !(isNotMyUser && isIgotOrg)">
               <div class="flex flex-row">
                 <div class="flex flex-row gap-2 items-center edit-button disable-button" [matTooltipPosition]="'below'"
@@ -31,11 +31,12 @@
                 </div>
               </div>
             </ng-container>
-  
-            <div class="withdraw-text edit-button" *ngIf="enableWR && isCurrentUser && !(isNotMyUser && isIgotOrg)" (click)="showWithdrawRequestPopup()">{{
+
+            <div class="withdraw-text edit-button" *ngIf="enableWR && isCurrentUser && !(isNotMyUser && isIgotOrg)"
+              (click)="showWithdrawRequestPopup()">{{
               'profileInfo.withdrawRequest' | translate }}</div>
           </div>
-          
+
           <div class="grid grid-flow-row sm:grid-flow-col gap-6 grid-col grid-container-2">
             <div class="info-div">
               <div class="label">{{ 'profileInfo.group' | translate }}</div>
@@ -43,7 +44,7 @@
                 <ws-widget-skeleton-loader [bindingClass]="'flex rounded-full'" [width]="'100px'"
                   [height]="'28px'"></ws-widget-skeleton-loader>
               </ng-container>
-  
+
               <ng-container *ngIf="!skeletonLoader">
                 <ng-container *ngIf="!editProfile">
                   <ng-container
@@ -64,9 +65,10 @@
                   <div class="flex gap-2 items-center info-value"
                     *ngIf="(!portalProfile?.professionalDetails?.length || !portalProfile?.professionalDetails[0]?.group)">
                     NA<div class="profile-not-verified">
-                        <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
-                        <mat-icon>info_outline</mat-icon>
-                      </div></div>
+                      <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
+                      <mat-icon>info_outline</mat-icon>
+                    </div>
+                  </div>
 
                   <!-- <ng-container *ngIf="(!enableWTR && !enableWR) && rejectedFields?.group">
                     <div class="flex flex-row gap-2 items-center info-value">
@@ -97,7 +99,7 @@
                     *ngIf="!unVerifiedObj.group && !rejectedFields.group && (!portalProfile?.professionalDetails?.length || !portalProfile?.professionalDetails[0]?.group)">
                     NA</div> -->
                 </ng-container>
-  
+
                 <ng-container *ngIf="editProfile">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="group">
@@ -108,21 +110,22 @@
                 </ng-container>
               </ng-container>
             </div>
-  
+
             <div class="info-div">
               <div class="label">{{ 'profileInfo.designation' | translate }}</div>
               <ng-container *ngIf="skeletonLoader">
                 <ws-widget-skeleton-loader [bindingClass]="'flex rounded-full'" [width]="'100px'"
                   [height]="'28px'"></ws-widget-skeleton-loader>
               </ng-container>
-  
+
               <ng-container *ngIf="!skeletonLoader">
                 <ng-container *ngIf="!editProfile">
                   <ng-container
                     *ngIf="(portalProfile?.professionalDetails?.length && portalProfile?.professionalDetails[0]?.designation)">
                     <div class="flex flex-row gap-2 items-center">
                       <div class="flex">{{ portalProfile?.professionalDetails[0]?.designation }}</div>
-                      <ng-container *ngIf="portalProfile?.profileDesignationStatus === 'VERIFIED'; else designationNotVerified">
+                      <ng-container
+                        *ngIf="portalProfile?.profileDesignationStatus === 'VERIFIED'; else designationNotVerified">
                         <mat-icon class="verified-check">check_circle</mat-icon>
                       </ng-container>
                       <ng-template #designationNotVerified>
@@ -133,11 +136,12 @@
                       </ng-template>
                     </div>
                   </ng-container>
-                  <ng-container *ngIf="(!portalProfile?.professionalDetails?.length || !portalProfile?.professionalDetails[0]?.designation)">
+                  <ng-container
+                    *ngIf="(!portalProfile?.professionalDetails?.length || !portalProfile?.professionalDetails[0]?.designation)">
                     <div class="flex gap-2 items-center info-value">NA<div class="profile-not-verified">
-                      <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
-                      <mat-icon>info_outline</mat-icon>
-                    </div>
+                        <div class="text">{{ 'profileInfo.notVerified' | translate }}</div>
+                        <mat-icon>info_outline</mat-icon>
+                      </div>
                     </div>
                   </ng-container>
 
@@ -191,33 +195,27 @@
                     </mat-autocomplete>
 
                     </mat-form-field> -->
-                    
+
                     <div class="custom-select-container">
                       <mat-form-field appearance="outline" class="fixed-height-select">
-                        <mat-select placeholder="Select Designation" formControlName="designation" panelClass="search-panel" (openedChange)="setupScrollListener($event)" (closed)="onDesignationDropdownClosed()">
+                        <mat-select placeholder="Select Designation" formControlName="designation"
+                          panelClass="search-panel" (openedChange)="setupScrollListener($event)"
+                          (closed)="onDesignationDropdownClosed()">
                           <!-- Sticky search input container -->
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper">
-                              <input 
-                                          type="text" 
-                                          placeholder="Search designation" 
-                                          formControlName="searchDesignation" 
-                                          class="search-input"
-                                          (keydown)="$event.stopPropagation()"
-                                          (click)="$event.stopPropagation()"
-                                          autocomplete="off">
-                              <button 
-                                          *ngIf="searchDesignation?.value" 
-                                          type="button" 
-                                          class="clear-button" 
-                                          (click)="clearSearchDesignation($event)">
-                                          ✕
+                              <input type="text" placeholder="Search designation" formControlName="searchDesignation"
+                                class="search-input" (keydown)="$event.stopPropagation()"
+                                (click)="$event.stopPropagation()" autocomplete="off">
+                              <button *ngIf="searchDesignation?.value" type="button" class="clear-button"
+                                (click)="clearSearchDesignation($event)">
+                                ✕
                               </button>
                             </div>
                           </div>
                           <!-- Options list -->
                           <mat-option *ngFor="let option of filterDesignationsMeta" [value]="option?.name">
-                                  {{ option?.name }}
+                            {{ option?.name }}
                           </mat-option>
                           <!-- Loading indicator -->
                           <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
@@ -225,7 +223,7 @@
                           </div>
                           <!-- No results message -->
                           <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
-                                  No matches found
+                            No matches found
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
@@ -246,12 +244,12 @@
             <div class="profile-approval-status">
               <mat-accordion>
                 <mat-expansion-panel hideToggle (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-                  <mat-expansion-panel-header >
+                  <mat-expansion-panel-header>
                     <div class="w-full flex justify-end items-center">
                       <div>
                         <div mat-icon-button class="flex gap-2 items-center viewApprovalStatuas w-full">
                           <span>{{ 'profileInfo.viewApprovalStatus' | translate }}</span>
-                          <mat-icon >{{panelOpenState ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
+                          <mat-icon>{{panelOpenState ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
                         </div>
                       </div>
                     </div>
@@ -261,28 +259,32 @@
                       {{ 'profileInfo.approvalStatus' | translate }}
                     </div>
                     <ng-container *ngIf="unVerifiedObj.group || rejectedFields.group">
-                      <div class="flex justify-between items-center px-5 py-3" [ngClass]="{'separator': (unVerifiedObj.designation || rejectedFields.designation)}">
+                      <div class="flex justify-between items-center px-5 py-3"
+                        [ngClass]="{'separator': (unVerifiedObj.designation || rejectedFields.designation)}">
                         <ng-container *ngIf="showGroupPending">
                           <div class="w-full">
                             <div class="statusLable">{{ 'profileInfo.group' | translate }}</div>
                             <div class="approvalStausValue">{{unVerifiedObj.group}}</div>
                           </div>
                           <div class="w-full">
-                            <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending' | translate }}</div>
+                            <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending'
+                              | translate }}</div>
                           </div>
-                            <div class="w-full flex justify-center" style="width: 200px;">-</div>
+                          <div class="w-full flex justify-center" style="width: 200px;">-</div>
                         </ng-container>
                         <ng-container *ngIf="showGroupRejection">
-                            <div class="w-full">
-                              <div class="statusLable">{{ 'profileInfo.group' | translate }}</div>
-                              <div class="approvalStausValue">{{rejectedFields.group}}</div>
-                            </div>
-                            <div class="w-full">
-                              <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo.rejected' | translate }}</div>
-                            </div>
-                              <div mat-icon-button (click)="viewReason(rejectedFields.groupRejectionComments)" class="flex gap-2 items-center viewReason">
-                                <span >{{ 'profileInfo.viewReason' | translate }}</span>
-                              </div>
+                          <div class="w-full">
+                            <div class="statusLable">{{ 'profileInfo.group' | translate }}</div>
+                            <div class="approvalStausValue">{{rejectedFields.group}}</div>
+                          </div>
+                          <div class="w-full">
+                            <div class="approvalStatusRejected flex justify-center items-center">{{
+                              'profileInfo.rejected' | translate }}</div>
+                          </div>
+                          <div mat-icon-button (click)="viewReason(rejectedFields.groupRejectionComments)"
+                            class="flex gap-2 items-center viewReason">
+                            <span>{{ 'profileInfo.viewReason' | translate }}</span>
+                          </div>
                         </ng-container>
                       </div>
                     </ng-container>
@@ -294,9 +296,10 @@
                             <div class="approvalStausValue">{{unVerifiedObj.designation}}</div>
                           </div>
                           <div class="w-full">
-                            <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending' | translate }}</div>
+                            <div class="approvalStatusPending flex justify-center items-center">{{ 'profileInfo.pending'
+                              | translate }}</div>
                           </div>
-                            <div class="flex justify-center" style="width: 200px;">-</div>
+                          <div class="flex justify-center" style="width: 200px;">-</div>
                         </ng-container>
                         <ng-container *ngIf="showDesignationRejection">
                           <div class="w-full">
@@ -304,11 +307,13 @@
                             <div class="approvalStausValue">{{rejectedFields.designation}}</div>
                           </div>
                           <div class="w-full">
-                            <div class="approvalStatusRejected flex justify-center items-center">{{ 'profileInfo.rejected' | translate }}</div>
+                            <div class="approvalStatusRejected flex justify-center items-center">{{
+                              'profileInfo.rejected' | translate }}</div>
                           </div>
-                            <div mat-icon-button (click)="viewReason(rejectedFields.designationRejectionComments)" class="flex gap-2 items-center viewReason">
-                              <span >{{ 'profileInfo.viewReason' | translate }}</span>
-                            </div>
+                          <div mat-icon-button (click)="viewReason(rejectedFields.designationRejectionComments)"
+                            class="flex gap-2 items-center viewReason">
+                            <span>{{ 'profileInfo.viewReason' | translate }}</span>
+                          </div>
                         </ng-container>
                       </div>
                     </ng-container>
@@ -317,7 +322,7 @@
               </mat-accordion>
             </div>
           </ng-container>
-  
+
           <!-- <ng-container *ngIf="(!approvalPendingFields || !approvalPendingFields.length) && !portalProfile?.verifiedKarmayogi">
             <ng-container *ngFor="let item of rejectedByMDOData">
               <ng-container *ngIf="item?.comment">
@@ -330,17 +335,19 @@
               </ng-container>
             </ng-container>
           </ng-container> -->
-  
+
           <div class="flex flex-row gap-4" *ngIf="editProfile">
-            <button class="outline-button" (click)="editProfile = !editProfile;cancelRequest()">{{ 'profileInfo.cancel' | translate
+            <button class="outline-button" (click)="editProfile = !editProfile;cancelRequest()">{{ 'profileInfo.cancel'
+              | translate
               }}</button>
-              <button [disabled]="!enableEditBtn" [ngClass]="{'disable-button': !enableEditBtn}" class="save-button" (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
+            <button [disabled]="!enableEditBtn" [ngClass]="{'disable-button': !enableEditBtn}" class="save-button"
+              (click)="handleSendApproval()">{{ 'profileInfo.sendForApproval' | translate
               }}</button>
           </div>
         </div>
       </div>
     </form>
-  
+
     <div class="common-card-css" *ngIf="isCurrentUser">
       <div class="flex flex-col gap-5">
         <div class="flex flex-row gap-4 items-center justify-between">
@@ -364,11 +371,12 @@
         <form [formGroup]="otherDetailsForm">
           <div class="flex flex-col gap-6 sm:gap-8">
             <div class="grid-container">
-  
+
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.employeeId' | translate }}</div>
                 <ng-container *ngIf="!editDetails">
-                  <div class="info-value employee-value">{{ portalProfile?.employmentDetails?.employeeCode || 'NA' }}</div>
+                  <div class="info-value employee-value">{{ portalProfile?.employmentDetails?.employeeCode || 'NA' }}
+                  </div>
                 </ng-container>
                 <div class="flex flex-col" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
@@ -380,7 +388,7 @@
                   </mat-error>
                 </div>
               </div>
-  
+
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.email' | translate }}</div>
                 <div class="info-value" *ngIf="!editDetails">{{ portalProfile?.personalDetails?.primaryEmail || 'NA' }}
@@ -390,7 +398,8 @@
                     <input type="email" class="input-text" matInput (keyup)="handleEmpty('primaryEmail')"
                       formControlName="primaryEmail" />
                   </mat-form-field>
-                  <mat-error class="text-xs" *ngIf="otherDetailsForm.get('primaryEmail').hasError('required') || otherDetailsForm.get('primaryEmail').hasError('pattern')">
+                  <mat-error class="text-xs"
+                    *ngIf="otherDetailsForm.get('primaryEmail').hasError('required') || otherDetailsForm.get('primaryEmail').hasError('pattern')">
                     {{ 'profileInfo.invalidEmail' | translate }}
                   </mat-error>
                 </div>
@@ -402,12 +411,14 @@
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.mobileNumber' | translate }}</div>
                 <div class="info-value" *ngIf="!editDetails">
-                  <span class="flex flex-row gap-2 items-center" *ngIf="portalProfile?.personalDetails?.mobile && portalProfile?.personalDetails?.phoneVerified">
+                  <span class="flex flex-row gap-2 items-center"
+                    *ngIf="portalProfile?.personalDetails?.mobile && portalProfile?.personalDetails?.phoneVerified">
                     +91 {{ portalProfile?.personalDetails?.mobile }}
                   </span>
-                  <span *ngIf="!portalProfile?.personalDetails?.mobile || !portalProfile?.personalDetails?.phoneVerified">NA</span>
+                  <span
+                    *ngIf="!portalProfile?.personalDetails?.mobile || !portalProfile?.personalDetails?.phoneVerified">NA</span>
                 </div>
-  
+
                 <div class="flex flex-row gap-2" *ngIf="editDetails">
                   <div class="country-code">
                     +91
@@ -432,7 +443,8 @@
               </div>
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.gender' | translate }}</div>
-                <div class="info-value" *ngIf="!editDetails">{{ (portalProfile?.personalDetails?.gender | titlecase) || 'NA' }}</div>
+                <div class="info-value" *ngIf="!editDetails">{{ (portalProfile?.personalDetails?.gender | titlecase) ||
+                  'NA' }}</div>
                 <div class="flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="gender">
@@ -443,7 +455,7 @@
                 </div>
               </div>
             </div>
-  
+
             <div class="grid-container">
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.dob' | translate }}</div>
@@ -454,8 +466,8 @@
                 </div>
                 <div class="info-value" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
-                    <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker" [value]="userDate"
-                      formControlName="dob" />
+                    <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker"
+                      [value]="userDate" formControlName="dob" />
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
@@ -469,17 +481,19 @@
                 <div class="info-value flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <div class="flex flex-row auto-complete-row">
-                      <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput (keydown)="onkeyDown($event)"
-                        formControlName="domicileMedium" [matAutocomplete]="languageAuto" />
+                      <input type="text" class="input-text" aria-label="Domicile Medium (Mother Tongue)" matInput
+                        (keydown)="onkeyDown($event)" formControlName="domicileMedium"
+                        [matAutocomplete]="languageAuto" />
                       <mat-icon>arrow_drop_down</mat-icon>
                     </div>
-                    <mat-autocomplete #languageAuto="matAutocomplete" (opened)="onAutoCompleteOpened()" (closed)="onAutoCompleteClosed()">
+                    <mat-autocomplete #languageAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
+                      (closed)="onAutoCompleteClosed()">
                       <!-- <mat-option *ngFor="let language of masterLanguages" [value]="language.name">
                         {{ language.name }}
                       </mat-option> -->
                       <ng-container *ngIf="masterLanguages.length > 0; else noLanguage">
                         <ng-container *ngFor="let language of masterLanguages">
-                          <mat-option  [value]="language.name">{{ language.name }}</mat-option>
+                          <mat-option [value]="language.name">{{ language.name }}</mat-option>
                         </ng-container>
                       </ng-container>
                       <ng-template #noLanguage>
@@ -491,7 +505,8 @@
               </div>
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.category' | translate }}</div>
-                <div class="info-value" *ngIf="!editDetails">{{ portalProfile?.personalDetails?.category || 'NA' }}</div>
+                <div class="info-value" *ngIf="!editDetails">{{ portalProfile?.personalDetails?.category || 'NA' }}
+                </div>
                 <div class="info-value flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="category">
@@ -503,7 +518,8 @@
               </div>
               <div class="info-div">
                 <div class="label">{{ 'profileInfo.officePinCode' | translate }}</div>
-                <div class="info-value" *ngIf="!editDetails">{{ portalProfile?.employmentDetails?.pinCode || 'NA' }}</div> 
+                <div class="info-value" *ngIf="!editDetails">{{ portalProfile?.employmentDetails?.pinCode || 'NA' }}
+                </div>
                 <!-- <div class="info-value" *ngIf="!editDetails">{{  portalProfile?.employmentDetails.pinCode || 'NA' }}</div>  -->
                 <div class="flex flex-col" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
@@ -528,7 +544,8 @@
                   {{ 'profileInfo.fromGovOrganization' | translate }}
                 </div>
                 <div class="info-value" *ngIf="!editDetails">
-                  <span *ngIf="!portalProfile.hasOwnProperty('cadreDetails') || !portalProfile?.personalDetails.hasOwnProperty('isCadre'); else elsCadreDetails">NA</span>
+                  <span
+                    *ngIf="!portalProfile.hasOwnProperty('cadreDetails') || !portalProfile?.personalDetails.hasOwnProperty('isCadre'); else elsCadreDetails">NA</span>
                   <ng-template #elsCadreDetails>{{ isCadreStatus ? 'Yes' : 'No' }}</ng-template>
                 </div>
                 <div class="flex" *ngIf="editDetails">
@@ -540,15 +557,16 @@
                   </mat-form-field>
                 </div>
               </div>
-              
+
 
               <div class="info-div" *ngIf="otherDetailsForm.get('isCadre').value || !editDetails">
                 <ng-container *ngIf="isCadreStatus">
-                <div class="label">{{ 'profileInfo.typeOfCivilService' | translate }}<span class="asterisk" style="color: red;"> *</span></div>
-                <div class="info-value" *ngIf="!editDetails">
-                  {{ portalProfile?.cadreDetails?.civilServiceType || 'NA'  }}
-                </div>
-              </ng-container>
+                  <div class="label">{{ 'profileInfo.typeOfCivilService' | translate }}<span class="asterisk"
+                      style="color: red;"> *</span></div>
+                  <div class="info-value" *ngIf="!editDetails">
+                    {{ portalProfile?.cadreDetails?.civilServiceType || 'NA' }}
+                  </div>
+                </ng-container>
                 <div class="flex" *ngIf="editDetails && isCadreStatus">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="typeOfCivilService" (selectionChange)="getService($event.value)">
@@ -557,18 +575,20 @@
                   </mat-form-field>
                 </div>
               </div>
-              
 
-              <div class="info-div" *ngIf="otherDetailsForm.get('typeOfCivilService').value && otherDetailsForm.get('isCadre').value || !editDetails">
+
+              <div class="info-div"
+                *ngIf="otherDetailsForm.get('typeOfCivilService').value && otherDetailsForm.get('isCadre').value || !editDetails">
                 <ng-container *ngIf="isCadreStatus">
-                <div class="label">{{ 'profileInfo.serviceType' | translate }}<span class="asterisk" style="color: red;"> *</span></div>
-                
-                <div class="info-value" *ngIf="!editDetails">
-                  <span class="flex flex-row gap-2 items-center">
-                    {{ portalProfile?.cadreDetails?.civilServiceName || 'NA' }}
-                  </span>
-                </div>
-              </ng-container>
+                  <div class="label">{{ 'profileInfo.serviceType' | translate }}<span class="asterisk"
+                      style="color: red;"> *</span></div>
+
+                  <div class="info-value" *ngIf="!editDetails">
+                    <span class="flex flex-row gap-2 items-center">
+                      {{ portalProfile?.cadreDetails?.civilServiceName || 'NA' }}
+                    </span>
+                  </div>
+                </ng-container>
                 <div class="flex flex-row gap-2" *ngIf="editDetails">
                   <div class="flex-1">
                     <div class="flex flex-col">
@@ -581,7 +601,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- ((!showBatchForNoCadre) && otherDetailsForm.get('serviceType').value && 
                                                                       otherDetailsForm.get('isCadre').value 
                                                                       && otherDetailsForm.get('typeOfCivilService').value) 
@@ -594,11 +614,12 @@
                 otherDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
               )">
                 <ng-container *ngIf="isCadreStatus">
-                <div class="label">{{ 'profileInfo.cadre' | translate }}<span class="asterisk" style="color: red;"> *</span></div>
-                <div class="info-value" *ngIf="!editDetails">
-                  {{ portalProfile?.cadreDetails?.cadreName || 'NA' }}
-                </div>
-              </ng-container>
+                  <div class="label">{{ 'profileInfo.cadre' | translate }}<span class="asterisk" style="color: red;">
+                      *</span></div>
+                  <div class="info-value" *ngIf="!editDetails">
+                    {{ portalProfile?.cadreDetails?.cadreName || 'NA' }}
+                  </div>
+                </ng-container>
                 <div class="flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="cadre" (selectionChange)="onCadreSelect($event.value)">
@@ -606,7 +627,7 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-              </div> 
+              </div>
               <!-- showBatchForNoCadre && otherDetailsForm.get('serviceType').value  || otherDetailsForm.get('cadre').value && otherDetailsForm.get('isCadre').value && otherDetailsForm.get('serviceType').value && otherDetailsForm.get('typeOfCivilService').value|| !editDetails && this.cadreStatus -->
               <div class="info-div" *ngIf="(otherDetailsForm.get('serviceType').value && 
               otherDetailsForm.get('isCadre').value && otherDetailsForm.get('typeOfCivilService').value && (
@@ -621,12 +642,13 @@
                 otherDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
               ))) ? true : false">
                 <ng-container *ngIf="isCadreStatus">
-                <div class="label">{{ 'profileInfo.batch' | translate }}<span class="asterisk" style="color: red;"> *</span></div>
-              
-                <div class="info-value" *ngIf="!editDetails">
-                  {{ portalProfile?.cadreDetails?.cadreBatch || 'NA' }}
-                </div>
-              </ng-container>
+                  <div class="label">{{ 'profileInfo.batch' | translate }}<span class="asterisk" style="color: red;">
+                      *</span></div>
+
+                  <div class="info-value" *ngIf="!editDetails">
+                    {{ portalProfile?.cadreDetails?.cadreBatch || 'NA' }}
+                  </div>
+                </ng-container>
                 <div class="flex" *ngIf="editDetails">
                   <mat-form-field class="profile-form-field">
                     <mat-select formControlName="batch">
@@ -634,38 +656,41 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-               
+
               </div>
               <!-- showBatchForNoCadre && otherDetailsForm.get('batch').value  || otherDetailsForm.get('cadre').value && otherDetailsForm.get('isCadre').value && otherDetailsForm.get('serviceType').value && otherDetailsForm.get('typeOfCivilService').value&& otherDetailsForm.get('batch').value || !editDetails -->
-               
-              <div class="info-div" *ngIf="otherDetailsForm.get('isCadre').value &&  otherDetailsForm.get('batch').value">
+
+              <div class="info-div"
+                *ngIf="otherDetailsForm.get('isCadre').value &&  otherDetailsForm.get('batch').value">
                 <ng-container *ngIf="isCadreStatus">
-                <div class="label">{{ 'profileInfo.cadreControllingAuthority' | translate }}<span class="asterisk" style="color: red;"> *</span></div>
-              
-                <div class="info-value" *ngIf="!editDetails">
-                  {{ this.portalProfile?.cadreDetails?.cadreControllingAuthorityName || 'NA' }}
-                </div>
-              </ng-container>
+                  <div class="label">{{ 'profileInfo.cadreControllingAuthority' | translate }}<span class="asterisk"
+                      style="color: red;"> *</span></div>
+
+                  <div class="info-value" *ngIf="!editDetails">
+                    {{ this.portalProfile?.cadreDetails?.cadreControllingAuthorityName || 'NA' }}
+                  </div>
+                </ng-container>
                 <div class="info-value-c" *ngIf="editDetails">{{ cadreControllingAuthority }}</div>
               </div>
             </div>
-  
+
             <ng-container *ngIf="editDetails">
               <div class="flex flex-row gap-4 justify-center sm:justify-end">
                 <button class="outline-button" (click)="handleCancelUpdate()">{{ 'profileInfo.cancel' | translate
                   }}</button>
-                  <!-- [disabled]="(otherDetailsForm?.invalid && !saveChanges) || verifyEmail || verifyMobile"
+                <!-- [disabled]="(otherDetailsForm?.invalid && !saveChanges) || verifyEmail || verifyMobile"
                 [ngClass]="{'disable-button': (otherDetailsForm?.invalid && !saveChanges)|| verifyEmail || verifyMobile}" -->
-                <button class="save-button" [disabled]="(otherDetailsForm?.invalid && !saveChanges) || verifyEmail || verifyMobile"
-                [ngClass]="{'disable-button': (otherDetailsForm?.invalid && !saveChanges)|| verifyEmail || verifyMobile}" 
-                (click)="handleSaveOtherDetails()">{{ 'profileInfo.saveChanges' | translate }}</button> 
+                <button class="save-button"
+                  [disabled]="(otherDetailsForm?.invalid && !saveChanges) || verifyEmail || verifyMobile"
+                  [ngClass]="{'disable-button': (otherDetailsForm?.invalid && !saveChanges)|| verifyEmail || verifyMobile}"
+                  (click)="handleSaveOtherDetails()">{{ 'profileInfo.saveChanges' | translate }}</button>
               </div>
             </ng-container>
           </div>
         </form>
       </div>
     </div>
-  
+
     <div class="common-card-css" *ngIf="isCurrentUser">
       <div class="flex flex-col gap-5">
         <div class="flex flex-row gap-4 items-center justify-between">
@@ -683,14 +708,87 @@
         </div>
       </div>
     </div>
+
+    <div class="common-card-css" *ngIf="isCurrentUser">
+      <div class="flex flex-col gap-5 mb-5">
+        <div class="flex flex-row gap-4 items-center justify-between">
+          <div class="flex flex-row gap-2 title-div items-center">
+            <div class="title">Custom fileds</div>
+          </div>
+          <div class="flex flex-row info-value">
+            <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
+              (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
+              <mat-icon>edit</mat-icon>
+              {{ 'profileInfo.edit' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
+        <div class="grid-container">
+          <div *ngFor="let item of customAttrList">
+            <div *ngIf="item?.type === 'text'">
+              <div class="flex flex-col gap-2 pr-3 info-div">
+                <span class="label">{{item?.name}}</span>
+                <span class="value">{{item?.value || '-'}}</span>
+              </div>
+            </div>
+            <div *ngIf="item?.type === 'masterList'">
+              <div class="flex flex-col gap-2 pr-3 info-div">
+                <span class="label">{{item?.name}}</span>
+                <span class="value">{{item?.value || '-'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-attr-edit" *ngIf="editCustomDetails">
+        <form [formGroup]="customAttrForm">
+          <div class="grid-container">
+            <div *ngFor="let field of customAttrList">
+              <div class="flex flex-col gap-2 pr-3 " *ngIf="field.type === 'text'">
+
+                <div class="info-div">
+                  <div class="label">{{field.name}}</div>
+                </div>
+                <mat-form-field class="profile-form-field">
+                  <input type="text" class="input-text" matInput [formControlName]="field.attributeName" />
+                  <mat-error class="text-xs mt-3"
+                    *ngIf="customAttrForm.get(field.attributeName)?.touched && customAttrForm.get(field.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
+                    {{field.name }} is required
+                  </mat-error>
+                  <mat-error class="text-xs mt-3"
+                    *ngIf="customAttrForm.get(field.attributeName)?.touched && !customAttrForm.get(field.attributeName)?.hasError('required') && customAttrForm.get(field.attributeName)?.hasError('pattern')">
+                    Invalid input.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="flex flex-col gap-2 pr-3 " *ngIf="field.type === 'text'">
+
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-row gap-4 justify-end">
+            <button class="outline-button" (click)="cancelCustomFormRequest()">{{ 'profileInfo.cancel'
+              | translate
+              }}</button>
+            <button [disabled]="!customAttrForm.valid" [ngClass]="{'disable-button': !customAttrForm.valid}"
+              class="save-button" (click)="handleSaveCustomForm()">Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </ng-template>
 
 <ng-template #activitySection>
   <div class="flex flex-col gap-4">
     <div class="flex flex-row gap-4 horizontal-strip mt-4">
-      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
-      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">{{ 'profileInfo.myKarmaPoints' | translate }}</div>
+      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"
+        [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}</div>
+      <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">{{
+        'profileInfo.myKarmaPoints' | translate }}</div>
       <!-- <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/discussion-forum']" [queryParams]="{page: 'home'}">{{ 'profileInfo.myDiscussions' | translate }}</div> -->
     </div>
 
@@ -707,15 +805,17 @@
     </div>
 
     <div id="my-weekly-claps">
-      <ws-widget-weekly-claps [weeklyData]="pageData.weeklyClaps" [insightsData]="insightsData" [isLoading]="insightsDataLoading"></ws-widget-weekly-claps>
+      <ws-widget-weekly-claps [weeklyData]="pageData.weeklyClaps" [insightsData]="insightsData"
+        [isLoading]="insightsDataLoading"></ws-widget-weekly-claps>
     </div>
-  
+
     <div class="assessments-wrapper" *ngIf="assessmentsData">
       <div class="assessments-info-wrapper">
         <div class="flex justify-between">
           <div class="flex flex-col">
             <div class="flex flex-between flex-middle">
-              <p class="flex-align-start upcoming-assessment-title flex flex-middle margin-remove">{{ 'profileInfo.upcomingAssessments' | translate }}
+              <p class="flex-align-start upcoming-assessment-title flex flex-middle margin-remove">{{
+                'profileInfo.upcomingAssessments' | translate }}
                 <img class="margin-left-s cursor-pointer" width="20px" height="20px"
                   src="assets/icons/home/help_icon.svg" />
               </p>
@@ -735,7 +835,8 @@
             <span class="cred-title">{{ credMessage }}</span>
           </div>
           <div class="flex">
-            <mat-icon class="ws-mat-default-text cursor-pointer" (click)="toggleCreds()">{{showCreds ? 'keyboard_arrow_up'
+            <mat-icon class="ws-mat-default-text cursor-pointer" (click)="toggleCreds()">{{showCreds ?
+              'keyboard_arrow_up'
               : 'keyboard_arrow_down'}}</mat-icon>
           </div>
         </div>
@@ -782,7 +883,7 @@
   <div class="flex flex-col sm:flex-row gap-4 profile-header">
     <div class="flex flex-row sm:flex-col justify-center sm:justify-start items-center profile-circle-container">
       <ng-container *ngIf="portalProfile?.profileImageUrl">
-          <img src="{{ portalProfile?.profileImageUrl }}" class="profile-pic shadow-md" alt="profile image" />
+        <img src="{{ portalProfile?.profileImageUrl }}" class="profile-pic shadow-md" alt="profile image" />
       </ng-container>
       <ng-container *ngIf="!portalProfile?.profileImageUrl">
         <div class="flex items-center justify-center profile-circle">
@@ -808,21 +909,23 @@
           </div>
         </div>
         <div class="flex flex-row justify-between">
-          <div class="flex flex-row gap-4 items-center" *ngIf="!editName"> 
+          <div class="flex flex-row gap-4 items-center" *ngIf="!editName">
             <div class="name">{{ portalProfile?.personalDetails?.firstname | titlecase}}</div>
-            <mat-icon class="profile-verified-check" *ngIf="portalProfile?.profileStatus === 'VERIFIED'">check_circle</mat-icon>
+            <mat-icon class="profile-verified-check"
+              *ngIf="portalProfile?.profileStatus === 'VERIFIED'">check_circle</mat-icon>
             <mat-icon class="cursor-pointer" *ngIf="isCurrentUser" (click)="editName = !editName">edit</mat-icon>
             <div *ngIf="isMentor" class="blue-bg-mentor">
               Mentor
             </div>
           </div>
-          <div *ngIf="isMentor" class="flex flex-row gap-2 items-center view-mentor-profile" (click)="viewMentorProfile()">
+          <div *ngIf="isMentor" class="flex flex-row gap-2 items-center view-mentor-profile"
+            (click)="viewMentorProfile()">
             <div class="text-sm blue-background-outline">
               {{ 'profileInfo.viewMentorProfile' | translate }}
-            </div>          
-          </div> 
+            </div>
+          </div>
         </div>
-      
+
         <!-- <div class="flex flex-row gap-4 items-center" *ngIf="!editName"> 
           <div class="name">{{ portalProfile?.personalDetails?.firstname | titlecase}}</div>
           <mat-icon class="profile-verified-check" *ngIf="portalProfile?.profileStatus === 'VERIFIED'">check_circle</mat-icon>
@@ -830,14 +933,15 @@
         </div> -->
         <div class="flex flex-row gap-4 items-center edit-name" *ngIf="editName">
           <!--  pattern="/^[a-z0-9._-]+$/i" -->
-          <input #profileNameVar="ngModel" type="text" name="profileNameVar" [(ngModel)]="profileName" class="input-text" (input)="validateName($event.target.value)"/>          
+          <input #profileNameVar="ngModel" type="text" name="profileNameVar" [(ngModel)]="profileName"
+            class="input-text" (input)="validateName($event.target.value)" />
           <!-- <div
             *ngIf="profileNameVar.invalid && (profileNameVar.dirty || profileNameVar.touched)"
             class="alert"
           >Test</div> -->
           <mat-icon class="save cursor-pointer" (click)="handleUpdateName()">check</mat-icon>
           <mat-icon (click)="editName = !editName" class="cancel cursor-pointer">close</mat-icon>
-        </div>       
+        </div>
         <ng-container *ngIf="portalProfile?.professionalDetails?.length">
           <div class="position">{{ portalProfile?.professionalDetails[0]?.designation }}</div>
         </ng-container>
@@ -846,63 +950,72 @@
             <div class="institute">{{ portalProfile?.employmentDetails?.departmentName }}</div>
             <div class="flex flex-row">
               <ng-container *ngIf="skeletonLoader">
-                <ws-widget-skeleton-loader [bindingClass]="'flex rounded-full'" [width]="'240px'" [height]="'40px'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [bindingClass]="'flex rounded-full'" [width]="'240px'"
+                  [height]="'40px'"></ws-widget-skeleton-loader>
               </ng-container>
 
               <ng-container *ngIf="!skeletonLoader">
-              
+
                 <ng-container *ngIf="!enableWTR && isCurrentUser">
                   <div class="flex flex-row gap-2 items-center make-transfer-div">
                     <ng-container *ngIf="!enableWR">
-                      <div class="text-sm make-transer" (click)="handleTransferRequest()">{{ 'profileInfo.makeTransferRequest' | translate }}</div>
+                      <div class="text-sm make-transer" (click)="handleTransferRequest()">{{
+                        'profileInfo.makeTransferRequest' | translate }}</div>
                       <mat-icon [matTooltipPosition]="'below'" #tooltip="matTooltip"
-                        matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO." (click)="tooltip.toggle()">info_outline</mat-icon>
+                        matTooltip="Click on the button to request a transfer to another MDO, but first, withdraw any pending fields awaiting approval from your current MDO."
+                        (click)="tooltip.toggle()">info_outline</mat-icon>
                     </ng-container>
                     <ng-container *ngIf="enableWR">
                       <div class="text-sm make-transer disable-button" [matTooltipPosition]="'below'"
-                        #MTRTooltip="matTooltip" matTooltip="{{ 'profileInfo.withdrawPrimaryDetails' | translate }}" (click)="MTRTooltip.toggle()">{{ 'profileInfo.makeTransferRequest' | translate }}</div>
+                        #MTRTooltip="matTooltip" matTooltip="{{ 'profileInfo.withdrawPrimaryDetails' | translate }}"
+                        (click)="MTRTooltip.toggle()">{{ 'profileInfo.makeTransferRequest' | translate }}</div>
                     </ng-container>
                   </div>
                 </ng-container>
-  
-             <ng-container *ngIf="enableWTR">
+
+                <ng-container *ngIf="enableWTR">
                   <div class="flex flex-row gap-2 items-center make-transfer-div">
-                    <div class="text-sm make-transer" (click)="handleWithdrawTransferRequest()">{{ 'profileInfo.withdrawTransferRequest' | translate }}</div> 
+                    <div class="text-sm make-transer" (click)="handleWithdrawTransferRequest()">{{
+                      'profileInfo.withdrawTransferRequest' | translate }}</div>
                     <!-- <mat-icon [matTooltipPosition]="'below'" #wTooltip="matTooltip" matTooltip="{{ 'profileInfo.withdrawTransferToolTip' | translate }}" (click)="wTooltip.toggle()">info_outline</mat-icon> -->
                     <!-- <mat-icon [matTooltipPosition]="'below'" #wTooltip="matTooltip"  matTooltip="If you choose to withdraw your transfer request, your transfer request will get cancelled" (click)="wTooltip.toggle()">info_outline</mat-icon> -->
                   </div>
                 </ng-container>
               </ng-container>
             </div>
-            <div *ngIf="isMentor" class="flex flex-row gap-2 items-center view-mentor-profile-mob" (click)="viewMentorProfile()">
+            <div *ngIf="isMentor" class="flex flex-row gap-2 items-center view-mentor-profile-mob"
+              (click)="viewMentorProfile()">
               <div class="text-sm blue-background-outline">
                 {{ 'profileInfo.viewMentorProfile' | translate }}
-              </div>          
+              </div>
             </div>
           </div>
         </ng-container>
         <div class="divider hide-for-mobile" *ngIf="isCurrentUser"></div>
-        <div class="not-my-user-container margin-top-m" *ngIf="isNotMyUser && isIgotOrg">        
+        <div class="not-my-user-container margin-top-m" *ngIf="isNotMyUser && isIgotOrg">
           <div class="not-my-user-content">
-              <div>
-                  <mat-icon class="warning-icon" [ngStyle]="{'color':'red'}">warning</mat-icon>
-              </div>
-              <div class="not-my-user-data">
-                  <p>
-                    {{ 'profileInfo.notMyUseAccessRevoke' | translate }}
-                    
-                  </p>
-              </div>
+            <div>
+              <mat-icon class="warning-icon" [ngStyle]="{'color':'red'}">warning</mat-icon>
+            </div>
+            <div class="not-my-user-data">
+              <p>
+                {{ 'profileInfo.notMyUseAccessRevoke' | translate }}
+
+              </p>
+            </div>
           </div>
+        </div>
       </div>
-      </div>
-      <div class="flex flex-col sm:flex-row sm:items-center gap-5 hide-for-mobile" *ngIf="isCurrentUser && !(isNotMyUser && isIgotOrg)">
-        <button class="flex flex-row gap-2 items-center karma-points justify-center" [routerLink]="['/app/person-profile/karma-points']">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-5 hide-for-mobile"
+        *ngIf="isCurrentUser && !(isNotMyUser && isIgotOrg)">
+        <button class="flex flex-row gap-2 items-center karma-points justify-center"
+          [routerLink]="['/app/person-profile/karma-points']">
           <img src="/assets/icons/home/karma-badge.svg" alt="badge icon" />
           {{ 'profileInfo.myKarmaPoints' | translate }}
           <mat-icon>chevron_right</mat-icon>
         </button>
-        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll/new']"  [queryParams]="{key: 'continueLearning', tab: 'completed'}">
+        <a class="flex flex-row gap-2 items-center certificate-button justify-center" [routerLink]="['/app/seeAll/new']"
+          [queryParams]="{key: 'continueLearning', tab: 'completed'}">
           <img src="/assets/icons/home/certificate.svg" alt="certificate icon" />
           {{ 'profileInfo.viewMyCertificates' | translate }}
           <mat-icon>chevron_right</mat-icon>
