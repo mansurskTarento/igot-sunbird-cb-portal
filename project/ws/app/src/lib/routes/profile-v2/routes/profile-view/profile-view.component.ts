@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Params, Router } from '@angular/router'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { FormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { MomentDateAdapter } from '@angular/material-moment-adapter'
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
@@ -230,7 +230,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private netCoreService: NetCoreService,
     private signupService: SignupService,
     private events: EventService,
-    private fb: FormBuilder
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -399,31 +398,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         })
     }
-
-    this.getCustomAttributes()
-
-    this.route.fragment.subscribe(fragment => {
-      if (fragment === 'customAttr') {
-        this.editCustomDetails = false
-
-      }
-    })
-  }
-
-  buildDynamicForm() {
-    const formControls: { [key: string]: any } = {}
-    const activeFields = this.customAttrList.filter((field: any) => field.isActive)
-    activeFields.forEach((field: any) => {
-      const validators = []
-      if (field.isMandatory) {
-        validators.push(Validators.required);
-      }
-      if (field.validation) {
-        validators.push(Validators.pattern(new RegExp(field.validation)))
-      }
-      formControls[field.attributeName] = ['', validators]
-    })
-    this.customAttrForm = this.fb.group(formControls)
   }
 
   cancelCustomFormRequest() {
@@ -433,30 +407,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   handleSaveCustomForm() {
     console.log('save', this.customAttrForm)
   }
-
-  //#region (Get custom attributes)Add commentMore actions
-  getCustomAttributes(): void {
-    let payload = {
-      filterCriteriaMap: {
-        //organisationId: this.isIgotOrg,
-        organisationId: "0140788510336040962",
-        isEnabled: true
-      },
-      requestedFields: [],
-      pageNumber: 0,
-      pageSize: 50,
-      orderDirection: "DESC",
-      orderBy: 'updatedOn',
-      facets: []
-    }
-    this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
-      this.customAttrList = _.get(res, 'result.searchResults.data', [])
-      this.buildDynamicForm()
-      console.log('Custom Attributes', this.customAttrList)
-    })
-
-  }
-  //#endregion (end of Custom Attributes)
 
   // Sujith
   getService(event: any) {

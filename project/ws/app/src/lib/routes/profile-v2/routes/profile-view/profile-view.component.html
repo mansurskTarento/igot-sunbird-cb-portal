@@ -708,77 +708,9 @@
         </div>
       </div>
     </div>
-
-    <div class="common-card-css" *ngIf="isCurrentUser">
-      <div class="flex flex-col gap-5 mb-5">
-        <div class="flex flex-row gap-4 items-center justify-between">
-          <div class="flex flex-row gap-2 title-div items-center">
-            <div class="title">Custom fileds</div>
-          </div>
-          <div class="flex flex-row info-value">
-            <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
-              (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
-              <mat-icon>edit</mat-icon>
-              {{ 'profileInfo.edit' | translate }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
-        <div class="grid-container">
-          <div *ngFor="let item of customAttrList">
-            <div *ngIf="item?.type === 'text'">
-              <div class="flex flex-col gap-2 pr-3 info-div">
-                <span class="label">{{item?.name}}</span>
-                <span class="value">{{item?.value || '-'}}</span>
-              </div>
-            </div>
-            <div *ngIf="item?.type === 'masterList'">
-              <div class="flex flex-col gap-2 pr-3 info-div">
-                <span class="label">{{item?.name}}</span>
-                <span class="value">{{item?.value || '-'}}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="custom-attr-edit" *ngIf="editCustomDetails">
-        <form [formGroup]="customAttrForm">
-          <div class="grid-container">
-            <div *ngFor="let field of customAttrList">
-              <div class="flex flex-col gap-2 pr-3 " *ngIf="field.type === 'text'">
-
-                <div class="info-div">
-                  <div class="label">{{field.name}}</div>
-                </div>
-                <mat-form-field class="profile-form-field">
-                  <input type="text" class="input-text" matInput [formControlName]="field.attributeName" />
-                  <mat-error class="text-xs mt-3"
-                    *ngIf="customAttrForm.get(field.attributeName)?.touched && customAttrForm.get(field.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
-                    {{field.name }} is required
-                  </mat-error>
-                  <mat-error class="text-xs mt-3"
-                    *ngIf="customAttrForm.get(field.attributeName)?.touched && !customAttrForm.get(field.attributeName)?.hasError('required') && customAttrForm.get(field.attributeName)?.hasError('pattern')">
-                    Invalid input.
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div class="flex flex-col gap-2 pr-3 " *ngIf="field.type === 'text'">
-
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-row gap-4 justify-end">
-            <button class="outline-button" (click)="cancelCustomFormRequest()">{{ 'profileInfo.cancel'
-              | translate
-              }}</button>
-            <button [disabled]="!customAttrForm.valid" [ngClass]="{'disable-button': !customAttrForm.valid}"
-              class="save-button" (click)="handleSaveCustomForm()">Save
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <ng-container *ngIf="isCurrentUser">
+      <ws-app-custom-fields></ws-app-custom-fields>
+    </ng-container>
   </div>
 </ng-template>
 
