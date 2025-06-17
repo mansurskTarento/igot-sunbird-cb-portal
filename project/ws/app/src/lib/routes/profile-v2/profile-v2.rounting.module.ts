@@ -81,7 +81,7 @@ const routes: Routes = [
         path: ':userId',
         component: ProfileViewV2Component,
         data: {
-          pageId: ':userId',
+          pageId: 'page/network:userId',
           module: 'Network',
         },
         resolve: {

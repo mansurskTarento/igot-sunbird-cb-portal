@@ -174,10 +174,11 @@ export class ProfileEntryEditComponent implements OnInit {
         )
         .subscribe(searchText => {
           this.designationsOffset = 0
+          if (searchText && searchText.length > 1) {
           this.designationSearchText = searchText
-          if (searchText) {
             this.getdesignationsMeta()
-          } else {
+          } else if (!searchText) {
+          this.designationSearchText = searchText
             if(!settingValueChange) {
               this.getdesignationsMeta() 
             }

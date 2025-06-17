@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { Router } from '@angular/router';
+import { EventService, WsEvents } from '@sunbird-cb/utils-v2';
 
 @Component({
   selector: 'ws-app-people-suggestions',
@@ -19,6 +20,7 @@ export class PeopleSuggestionsComponent implements OnChanges {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private router: Router,
+    private events: EventService,
   ) { }
 
   ngOnChanges(): void {
@@ -68,7 +70,23 @@ export class PeopleSuggestionsComponent implements OnChanges {
 
   goToUserProfile(person: any) {
     const userId = person.userId || person.id || person.wid
+    this.raiseTelemetry(userId)
     this.router.navigate(['/app/person-profile', (userId)], { fragment: 'profileInfo' })
+  }
+
+  raiseTelemetry(userId: string) {
+    this.events.raiseInteractTelemetry(
+            { // edata
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'profile-card'
+      },
+      {
+        id: userId,
+        type: 'User'
+      }, // object details
+      { // env
+        module: WsEvents.EnumTelemetrymodules.NETWORK,
+      })
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

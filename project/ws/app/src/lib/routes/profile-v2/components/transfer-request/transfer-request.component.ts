@@ -105,8 +105,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe(res => {
           this.designationsOffset = 0
+          if (res && res.length > 1) {
           this.designationSearchText = res
-          if (res) {
             this.getdesignationsMeta()
             // const designonData = this.data && this.data.designationsMeta
             // this.designationData = designonData.filter((val: any) =>
@@ -118,7 +118,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
             //  } else {
             // designationSearchVal.setErrors({ invalidSelection: true })
             //  }
-          } else {
+          } else if (!res) {
+          this.designationSearchText = res
             if(!settingValueChange) {
               this.getdesignationsMeta() 
             }
