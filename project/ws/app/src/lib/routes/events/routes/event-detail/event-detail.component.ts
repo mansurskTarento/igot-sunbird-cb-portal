@@ -189,9 +189,9 @@ export class EventDetailComponent implements OnInit {
           this.discussWidgetData = { ...this.discussWidgetData }
         }
       }
+      this.skeletonLoader = false
     })
 
-    this.skeletonLoader = false
   }
 
   getUserIsEnrolled() {
