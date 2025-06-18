@@ -647,7 +647,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         pageNumber:  pageNumber ? pageNumber : 1,  
         query: this.aiTutorResult.query,  
         query_id: this.aiTutorResult.query_id,
-
+        feedback: '',
         resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
@@ -823,7 +823,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  sharePositiveContentRating(item:any) {
+  sharePositiveContentRating(item:any, index:any, cindex:any) {
     let requestBody:any = {
       "query_id": item?.query_id,
       // "response": item?.description,
@@ -835,6 +835,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, 't', this.userInfo?.userId).subscribe((data:any)=>{
     if(data && data.status === 'success') {
+      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+        if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+          this.aiTutorResultArr[index].result[cindex]['feedback'] = 'up'
+      }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
         { duration: 5000, panelClass: ['success'] }
@@ -849,25 +853,33 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   })
   }
 
-  openAIFeedbackPopup(item:any) {
-
-   const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
-    disableClose: true,
-    width: '502px',
-    panelClass: ['relevent-feedback-dialog'],
-  })
-  dialogRef.afterClosed().subscribe((result: any) => {
-    if (result) {
-      this.shareAIFeedback(item, result);
-      dialogRef.close();
-    } else {
-      dialogRef.close();
+  openAIFeedbackPopup(item:any, index:any, cindex:any) {
+    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+      if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex] && this.aiTutorResultArr[index].result[cindex]['feedback'] !== 'down') {
+        const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
+          disableClose: true,
+          width: '502px',
+          panelClass: ['relevent-feedback-dialog'],
+        })
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result) {
+            this.shareAIFeedback(item, result, index, cindex);
+            dialogRef.close();
+          } else {
+            dialogRef.close();
+          }
+        })
+      } else {
+        this.matSnackBarNew.open(
+          'You have already submitted feedback', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
     }
-  })
 
   }
 
-  shareAIFeedback(item:any, result:any) {
+  shareAIFeedback(item:any, result:any, index:any, cindex:any) {
 
     let requestBody:any = {
       "query_id": item?.query_id,
@@ -879,6 +891,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
    }
      this.chatbotService.shareAIFeedback(requestBody, '', this.userInfo?.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
+        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+            this.aiTutorResultArr[index].result[cindex]['feedback'] = 'down'
+        }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
@@ -928,6 +944,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
           query: this.cloneSearchQuery,
           query_id: idata.query_id,
           resourceLink : '', 
+          feedback: '',
           fromInternet: true
         }
 

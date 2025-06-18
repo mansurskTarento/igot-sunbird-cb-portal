@@ -222,10 +222,10 @@
   
                     </div>
                     <div class="content-duration flex" *ngIf="item?.contentStart > -1 && item?.contentEnd > -1 && !(item?.fromInternet)">
-                      <span><mat-icon>access_time</mat-icon>&nbsp;</span>
+                      <span><mat-icon>access_time</mat-icon>&nbsp;&nbsp;</span>
                       <span *ngIf="item?.contentStart > -1">
-                        <span *ngIf="item?.contentStart">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
-                        <span *ngIf="item.contentStart === 0">0</span>
+                        <span *ngIf="item?.contentStart > 0">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
+                        <span *ngIf="item.contentStart === '0'">0</span>
                       </span>
                       <span *ngIf="item?.contentEnd > -1">&nbsp;-&nbsp;{{item?.contentEnd | pipeDurationTransform: 'hms'}}</span>
                     </div>
@@ -244,8 +244,14 @@
                     <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                   </div>
                   <div class="feefback-section flex flex-row">
-                    <div (click)="sharePositiveContentRating(item)" class="cursor-pointer rotate-180 feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
-                    <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                    <!-- <div (click)="sharePositiveContentRating(item)" class="cursor-pointer rotate-180 feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                    <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div> -->
+                    <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item,i, ci)"
+                 class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
+                 <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                 <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                </div>
+                <div *ngIf="item?.feedback !== 'up'" (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
                   </div>
                 </div>
               
@@ -267,8 +273,14 @@
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
                 <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
-                  <div (click)="sharePositiveContentRating(item)" class="cursor-pointer rotate-180 feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
-                  <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                  <!-- <div (click)="sharePositiveContentRating(item)" class="cursor-pointer rotate-180 feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                  <div (click)="openAIFeedbackPopup(item)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div> -->
+                  <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item, i,ci)" 
+                class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
+                  <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                  <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                </div>
+                <div *ngIf="item?.feedback !== 'up'"  (click)="openAIFeedbackPopup(item, i,ci)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
                 </div>  
               </div>
               <div class="flex flex-row font-12 my-2">
