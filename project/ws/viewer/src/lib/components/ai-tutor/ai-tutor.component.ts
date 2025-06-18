@@ -655,7 +655,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.iGOTAITutorResultArr.push(resultObj)
       
     })
-    let answer = this.aiTutorResult.answer ? this.aiTutorResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
+    let answer = this.aiTutorResult.answer ? this.aiTutorResult.answer.trim().replace(/\n/g, '<br>') : ""
  
     let shortAnswer =  this.splitParagraphByWords(answer)
    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
@@ -913,7 +913,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     if( this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
       this.aiTutorResultArr[index]['showFromInternet'] = false
     }
-    if(item && !item.reterivedChunks) {
+    if(item && !item.answer) {
 
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,

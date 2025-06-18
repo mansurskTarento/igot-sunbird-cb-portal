@@ -7,12 +7,19 @@
     <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
 
       <ng-container *ngIf="chat.type === 'incoming'">
-        <ng-container *ngIf="chat?.answer">
+        <ng-container *ngIf="chat?.answer || chat?.showFromInternet">
           <div class="flex row-start incoming-msg margin-bottom-s">
-            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+            <div *ngIf="chat?.answer || chat?.showFromInternet" class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
           
             <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
             </div> -->
+            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
+              <div class="system-msg padding-xs">
+                I couldn’t find any relevant results for your query. Would you like me to search outside the iGOT platform for more information?
+              </div>
+  
+            </div>
+            <ng-container *ngIf="chat?.answer">
             <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
               <markdown [data]="chat?.answer"></markdown>
             </div>
@@ -22,20 +29,15 @@
                 <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">show less</a>
                 <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">show more</a>
               </div>
-             
+            </ng-container>
               <!-- <div *ngIf="!chat?.showLess && chat?.wordsCount > 30" (click)="toggleShow(i, 'less')">Show Less</div>
               <div *ngIf="chat?.showLess && chat?.wordsCount > 30" (click)="toggleShow(i, 'more')">Show More</div> -->
-            
+             
 
           </div>
-          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
-            <div class="system-msg padding-xs mx-10">
-              I couldn't find an answer to that. Would you like me to search the web, or would you like to rephrase your question?
-            </div>
-
-          </div>
+          
           <div *ngIf="chat?.showFromInternet">
-            <div class="flex row my-2 justify-start mx-10">
+            <div class="flex row my-2 justify-start mx-10 my-5">
               <div (click)="callFromInternet(chat, i)">
                 <button type="button" class="web-button px-4 cursor-pointer">
                   <mat-icon class="web-search-icon">search  </mat-icon><span class="blue-color">Search the web</span>
@@ -108,7 +110,7 @@
             <div class="ml-2"><img src="/assets/ai-tutor/down.svg"></div>
           </div> -->
           <div class="recommended-question my-5px" [ngClass]="{'margin-left-5': item?.message }">
-            <div class="my-5px mr-2 w-92" *ngIf="item?.contentType !== 'Resource'">
+            <div class="my-5px mr-2 w-92" *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
               <ng-container>
                 <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
                   <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
@@ -143,7 +145,7 @@
           
         </ng-container>
         <ng-container>
-          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="!chat?.answer">
+          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.newMessage === '' && !resultFetch ">
             <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             <div class="loading-bar-icon flex flex-row vertical-middle">
               <div class="mt-2"><span class="blue-color">Retrieving Results</span></div>

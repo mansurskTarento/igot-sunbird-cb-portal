@@ -165,8 +165,8 @@
       </div>
       <ng-container *ngFor="let chat of aiTutorResultArr; let i =index">
         <ng-container *ngIf="chat.type === 'incoming'">
-          <ng-container *ngIf="chat?.answer">
-            <div class="flex row-start incoming-msg margin-bottom-s">
+          <ng-container *ngIf="chat?.answer || chat?.showFromInternet">
+            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.answer">
               <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             
               <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
@@ -186,7 +186,7 @@
             </div>
             <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
               <div class="system-msg padding-xs mx-10">
-                I couldn't find an answer to that. Would you like me to search the web, or would you like to rephrase your question?
+                I couldn’t find any relevant results for your query. Would you like me to search outside the iGOT platform for more information?
               </div>
   
             </div>
