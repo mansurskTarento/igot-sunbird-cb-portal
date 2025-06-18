@@ -613,11 +613,11 @@
   position: absolute;
     background: black;
     color: white;
-    width: 110px;
+    width: 100px;
     border-radius: 8px;
     text-align: center;
     bottom: 11px;
-    left: 70px;
+    left: 13px;
     padding: 0 5px;
     font-size: 14px;
     display: flex;
@@ -732,4 +732,13 @@
 .web-close-icon {
   color:#1B4CA1;
   vertical-align: middle;
+}
+
+.rotate-180 {
+  rotate: 180deg;
+}
+
+.feedback-icon {
+  height: 18px;
+  width: 18px;
 }

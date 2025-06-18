@@ -659,7 +659,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
  
     let shortAnswer =  this.splitParagraphByWords(answer)
    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
-    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)})
+    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.answer ? true : false)})
     this.aiTutorResultArr.map((item:any, index:any)=>{
       if(item && item.answer === '') {
         // delete this.aiSearchResultArr[index]
