@@ -507,7 +507,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   submitSearchQuery() {
-    console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.answer === '' || item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
@@ -648,7 +648,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       //     message: 'Thank you for your feedback.', type: 'success',
       //   }, duration: 5000, panelClass: 'course-success-snackbar',
       // })
-      console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
+      // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
       if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
         if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
           this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
