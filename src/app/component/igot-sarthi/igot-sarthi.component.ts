@@ -575,6 +575,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         pageNumber:   pageNumber,
         query: this.aiSearchResult.query,
         query_id: this.aiSearchResult.query_id,
+        feedback: '',
         resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
@@ -584,7 +585,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     })
     let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
     let shortAnswer =  this.splitParagraphByWords(answer)
-    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (this.aiSearchResult.RetrievedChunks === null ? true : false)})
+    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) ? true : false)})
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && item.answer === '') {
         // delete this.aiSearchResultArr[index]
@@ -615,7 +616,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     
   }
 
-  sharePositiveContentRating(item:any) {
+  sharePositiveContentRating(item:any, index:any, cindex:any) {
     let requestBody:any = {
       "query_id": item?.query_id,
       // "response": item?.description,
@@ -633,6 +634,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       //     message: 'Thank you for your feedback.', type: 'success',
       //   }, duration: 5000, panelClass: 'course-success-snackbar',
       // })
+      console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
+      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
+      }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
         { duration: 5000, panelClass: ['success'] }
@@ -648,25 +654,35 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   })
   }
 
-  openAIFeedbackPopup(item:any) {
-
-    const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
-     disableClose: true,
-     width: '502px',
-     panelClass: ['relevent-feedback-dialog'],
-   })
-   dialogRef.afterClosed().subscribe((result: any) => {
-     if (result) {
-       this.shareAIFeedback(item, result);
-       dialogRef.close();
-     } else {
-       dialogRef.close();
-     }
-   })
+  openAIFeedbackPopup(item:any, index:any, cindex:any) {
+    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index] && this.aiSearchResultArr[index]) {
+      if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex] && this.aiSearchResultArr[index].result[cindex]['feedback'] !== 'down') {
+        const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
+          disableClose: true,
+          width: '502px',
+          panelClass: ['relevent-feedback-dialog'],
+        })
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result) {
+            this.shareAIFeedback(item, result, index, cindex);
+            dialogRef.close();
+          } else {
+            dialogRef.close();
+          }
+        })
+      } else {
+        this.matSnackBarNew.open(
+          'You have already submitted feedback', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
+      
+    }
+   
  
   }
 
-  shareAIFeedback(item:any, result:any) {
+  shareAIFeedback(item:any, result:any, index:any, cindex:any) {
 
     let requestBody:any = {
       "query_id": item?.query_id,
@@ -678,6 +694,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    }
      this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
+        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+            this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
+        }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
@@ -728,7 +748,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
           query: this.cloneSearchQuery,
           query_id: idata.query_id,
           resourceLink : '', 
-          fromInternet: true
+          fromInternet: true,
+          feedback: ''
         }
 
         this.iGOTAISearchResultArr.push(resultObj)

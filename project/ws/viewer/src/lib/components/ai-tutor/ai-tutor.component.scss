@@ -671,11 +671,11 @@ width: 262px;
   position: absolute;
     background: black;
     color: white;
-    width: 110px;
+    width: 100px;
     border-radius: 8px;
     text-align: center;
     bottom: 11px;
-    left: 70px;
+    left: 13px;
     padding: 0 5px;
     font-size: 14px;
     display: flex;
@@ -863,4 +863,13 @@ width: 262px;
 
 ::ng-deep  .mat-mdc-select-panel {
   background-color: white !important;
+}
+
+.rotate-180 {
+  rotate: 180deg;
+}
+
+.feedback-icon {
+  height: 18px;
+  width: 18px;
 }
