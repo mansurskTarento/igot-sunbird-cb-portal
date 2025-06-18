@@ -45,7 +45,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   random = Math.random().toString(36).slice(2)
   iGOTAISearchResultArr:any = []
   // public initials!: string
-
+  resultFetch = false
   private colors = [
     '#EB7181', // red
     '#306933', // green
@@ -507,6 +507,14 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   submitSearchQuery() {
+    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    this.aiSearchResultArr.map((item:any, index:any)=>{
+      if(item && (item.answer === '' || item.newMessage === '')) {
+        // delete this.aiSearchResultArr[index]
+        this.aiSearchResultArr.splice(index,1)
+      }
+     })
+     this.resultFetch = false 
   //  console.log(this.searchQuery)
    this.cloneSearchQuery = ''
     // this.searchQuery = 'Basics of National Income Accounting'
@@ -517,7 +525,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    }
    this.cloneSearchQuery = cloneDeep(this.searchQuery);
    this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
    
    if(this.aiSearchResultArr.length > 2) {
     setTimeout(()=>{
@@ -543,7 +551,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "query":this.cloneSearchQuery
    }
     this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
+      this.resultFetch = true
     this.aiSearchResult = data 
+
+   if(this.aiSearchResult && !this.aiSearchResult.answer) {
+    this.aiSearchResult.RetrievedChunks = []
+   }
+    
     //let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let startTime = 0
@@ -583,11 +597,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       this.iGOTAISearchResultArr.push(resultObj)
       
     })
-    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
+    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
     let shortAnswer =  this.splitParagraphByWords(answer)
     this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) ? true : false)})
     this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && item.answer === '') {
+      if(item && (item.answer === '' || item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
         this.aiSearchResultArr.splice(index,1)
       }
@@ -634,7 +648,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       //     message: 'Thank you for your feedback.', type: 'success',
       //   }, duration: 5000, panelClass: 'course-success-snackbar',
       // })
-      console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
+      // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
       if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
         if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
           this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
@@ -712,11 +726,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   callFromInternet(item:any, index:any) {
-    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
+    this.resultFetch = false
+    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
     if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
-    if(item && !item.reterivedChunks) {
+    
+    if(item && !item.answer) {
 
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,
@@ -724,9 +740,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
       this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata:any)=>{
-        
+        this.resultFetch = true
         this.aiSearchResultArr.map((item:any, index:any)=>{
-          if(item && item.answer === '') {
+          if(item && (item.answer === '' || item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiSearchResultArr.splice(index,1)
           }
@@ -753,6 +769,18 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         }
 
         this.iGOTAISearchResultArr.push(resultObj)
+        let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
+        let shortAnswer =  this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.map((item:any, index:any)=>{
+          if(item && (item.answer === '' || item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiSearchResultArr.splice(index,1)
+          }
+         })
+        setTimeout(()=>{
+          this.scrollToBottomEvent.emit() 
+        },0)
       })
     }
   }
@@ -761,6 +789,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
+    this.resultFetch = true
+    this.aiSearchResultArr.map((item:any, index:any)=>{
+      if(item && (item.answer === '' || item.newMessage === '')) {
+        // delete this.aiSearchResultArr[index]
+        this.aiSearchResultArr.splice(index,1)
+      }
+     })
   }
 
   copyPath(item:any, cindex:any) {
