@@ -94,14 +94,27 @@
                 <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
               </div>
-              <div class="feefback-section flex flex-row">
+              <div class="feefback-section flex flex-row" *ngIf="(item?.feedback)">
+                <div *ngIf="item?.feedback !== 'down'"
+                 class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
+                 <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                 <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                </div>
+                <div *ngIf="item?.feedback !== 'up'"  class="ml-2 cursor-pointer feedback-icon">
+                  <img src="/assets/ai-tutor/fill-down.svg">
+                </div>
+              </div>
+              <div class="feefback-section flex flex-row" *ngIf="item?.feedback === ''">
                 <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item,i, ci)"
                  class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
                  <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
                  <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
                 </div>
-                <div *ngIf="item?.feedback !== 'up'" (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                <div *ngIf="item?.feedback !== 'up'" (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon">
+                  <img src="/assets/ai-tutor/down.svg">
+                </div>
               </div>
+              
             </div>
             
           </div>
@@ -127,12 +140,26 @@
                 <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
               </div>
               <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
-                <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item, i,ci)" 
-                class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
-                  <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
-                  <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                <div class="feefback-section flex flex-row" *ngIf="(item?.feedback)">
+                  <div *ngIf="item?.feedback !== 'down'"
+                   class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
+                   <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                   <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                  </div>
+                  <div *ngIf="item?.feedback !== 'up'"  class="ml-2 cursor-pointer feedback-icon">
+                    <img src="/assets/ai-tutor/fill-down.svg">
+                  </div>
                 </div>
-                <div *ngIf="item?.feedback !== 'up'"  (click)="openAIFeedbackPopup(item, i,ci)" class="ml-2 cursor-pointer feedback-icon"><img src="/assets/ai-tutor/down.svg"></div>
+                <div class="feefback-section flex flex-row" *ngIf="item?.feedback === ''">
+                  <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item,i, ci)"
+                   class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
+                   <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                   <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                  </div>
+                  <div *ngIf="item?.feedback !== 'up'" (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon">
+                    <img src="/assets/ai-tutor/down.svg">
+                  </div>
+                </div>
               </div>   
             </div>
             <div class="flex flex-row font-12 my-2">
