@@ -171,6 +171,13 @@
             
               <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
               </div> -->
+              <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
+                <div class="system-msg padding-xs mx-10">
+                  I couldn’t find any relevant results for your query. Would you like me to search outside the iGOT platform for more information?
+                </div>
+    
+              </div>
+              <ng-container *ngIf="chat?.answer">
               <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
                 <markdown [data]="chat?.answer"></markdown>
               </div>
@@ -181,17 +188,13 @@
                   <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">Show Less</a>
                   <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">Show More</a>
                 </div>
+              </ng-container>
               
   
             </div>
-            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
-              <div class="system-msg padding-xs mx-10">
-                I couldn’t find any relevant results for your query. Would you like me to search outside the iGOT platform for more information?
-              </div>
-  
-            </div>
+            
             <div *ngIf="chat?.showFromInternet">
-              <div class="flex row my-2 justify-start mx-10">
+              <div class="flex row my-2 justify-start mx-10 my-5">
                 <div (click)="callFromInternet(chat, i)">
                   <button type="button" class="web-button px-4 cursor-pointer">
                     <mat-icon class="web-search-icon">search  </mat-icon><span class="blue-color">Search the web</span>
@@ -258,7 +261,7 @@
             </div>
             <div class="recommended-question my-5px" [ngClass]="{'margin-left-5': item?.message }">
               <div class="my-5px mr-2 w-92">
-                <ng-container *ngIf="item?.contentType !== 'Resource'">
+                <ng-container *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
                   <div class="btn-default" (click)="redirectToToc(item)">{{item?.title}}
                     <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                   </div>
@@ -293,7 +296,7 @@
             
           </ng-container>
           <ng-container>
-            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="!chat?.answer">
+            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.newMessage === '' && !resultFetch">
               <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
               <div class="loading-bar-icon flex flex-row vertical-middle">
                 <div class="mt-2"><span class="blue-color">Retrieving Results</span></div>

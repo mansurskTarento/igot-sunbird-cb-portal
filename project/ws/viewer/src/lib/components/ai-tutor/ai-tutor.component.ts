@@ -100,6 +100,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     { title: 'Storytelling', subtitle: 'Learn through relatable narratives and real-life examples.' },
   ]
   selectedLearningStyle :any
+  resultFetch = false
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -548,6 +549,14 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   submitSearchQuery() {
+    this.aiTutorResultArr.map((item:any, index:any)=>{
+      if(item && (item.answer === '' || item.newMessage === '')) {
+        // delete this.aiTutorResultArr[index]
+        this.aiTutorResultArr.splice(index,1)
+      }
+     })
+     this.resultFetch = false 
+     this.cloneSearchQuery = ''
    this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
   // this.searchQuery = 'Soil Erosion and Conservation'
    let sendMsgObj = {
@@ -557,7 +566,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
    }
    
    this.aiTutorResultArr.push(sendMsgObj)
-   this.aiTutorResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
+   this.aiTutorResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '',newMessage: ''})
   //  this.searchQuery = ''
   //  this.aiGlobalSearch()
   //  this.getAiTutorMessage()
@@ -593,6 +602,8 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       .subscribe((message: string) => {
        // this.messages.push(message);
        this.aiTutorResult = message
+       this.resultFetch = true
+       
       this.aiTutorResultMessage()
       //  this.searchQueryAItutor = '';
        
@@ -618,6 +629,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
    // let arr:any = []
+   if(this.aiTutorResult && !this.aiTutorResult.answer) {
+    this.aiTutorResult.retrievedChunks = []
+   }
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
       let startTime = 0
       let endTime = 0
@@ -661,7 +675,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
     this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.answer ? true : false)})
     this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && item.answer === '') {
+      if(item && (item.answer === '' || item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
         this.aiTutorResultArr.splice(index,1)
       }
@@ -921,8 +935,9 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
       this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, '', this.userInfo?.userId).subscribe((idata:any)=>{
+        this.resultFetch = true
         this.aiTutorResultArr.map((item:any, index:any)=>{
-          if(item && item.answer === '') {
+          if(item && (item.answer === '' || item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiTutorResultArr.splice(index,1)
           }
@@ -949,6 +964,15 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
 
         this.iGOTAITutorResultArr.push(resultObj)
+        let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
+        let shortAnswer =  this.splitParagraphByWords(answer)
+        this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false})
+        this.aiTutorResultArr.map((item:any, index:any)=>{
+          if(item && (item.answer === '' || item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiTutorResultArr.splice(index,1)
+          }
+         })
       })
     }
   }
@@ -957,6 +981,13 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     if( this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
       this.aiTutorResultArr[index]['showFromInternet'] = false
     }
+    this.resultFetch = true
+    this.aiTutorResultArr.map((item:any, index:any)=>{
+      if(item && (item.answer === '' || item.newMessage === '')) {
+        // delete this.aiSearchResultArr[index]
+        this.aiTutorResultArr.splice(index,1)
+      }
+     })
   }
 
   ngOnDestroy(): void {
