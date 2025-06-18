@@ -1,8 +1,8 @@
-<div class="common-card-css">
+<div class="common-card-css" *ngIf="customAttrList && customAttrList.length">
   <div class="flex flex-col gap-5 mb-5">
     <div class="flex flex-row gap-4 items-center justify-between">
       <div class="flex flex-row gap-2 title-div items-center">
-        <div class="title">Custom fileds</div>
+        <div class="title">Custom fields</div>
       </div>
       <div class="flex flex-row info-value">
         <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
@@ -15,14 +15,35 @@
   </div>
   <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
     <div class="grid-container">
-      <div *ngFor="let item of customAttrList">
-        <div *ngIf="item?.type === 'text' || item?.type === 'masterList'">
+      <!-- Text fields - Each in its own grid cell -->
+      <ng-container *ngFor="let item of customFieldValues">
+        <div *ngIf="item?.type === 'text'" class="grid-item">
           <div class="flex flex-col gap-2 pr-3 info-div">
-            <span class="label">{{item?.name}}</span>
+            <span class="label">{{getName(item?.attributeName)}}</span>
             <span class="value">{{item?.value || '-'}}</span>
           </div>
         </div>
-      </div>
+      </ng-container>
+
+      <!-- MasterList fields - Each level gets its own grid cell -->
+      <ng-container *ngFor="let item of customFieldValues">
+        <ng-container *ngIf="item?.type === 'masterList' && item?.values?.length">
+          <ng-container *ngFor="let hierarchy of item?.values">
+            <div class="grid-item">
+              <div class="flex flex-col gap-2 pr-3 info-div">
+                <span class="label">
+                  <!-- Show parent field name only for the first item -->
+                  <ng-container>
+                    {{getName(item?.attributeName)}} -
+                  </ng-container>
+                  {{hierarchy?.attributeName | titlecase}}
+                </span>
+                <span class="value">{{hierarchy?.value || '-'}}</span>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
   <div class="custom-attr-edit" *ngIf="editCustomDetails">
@@ -34,7 +55,8 @@
             <div class="info-div">
               <div class="label">{{field.name}}</div>
               <mat-form-field class="profile-form-field w-full">
-                <input type="text" class="input-text w-full" matInput [formControlName]="field.attributeName" />
+                <input type="text" class="input-text w-full" matInput [formControlName]="field.attributeName"
+                  [value]="getValue(field.attributeName)" />
                 <mat-error class="text-xs mt-3"
                   *ngIf="customAttrForm.get(field.attributeName)?.touched && customAttrForm.get(field.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
                   {{field.name }} is required

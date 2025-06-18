@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { UserProfileService } from '../../../user-profile/services/user-profile.service';
 import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router';
+import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 @Component({
   selector: 'ws-app-custom-fields',
   templateUrl: './custom-fields.component.html',
@@ -13,21 +14,30 @@ export class CustomFieldsComponent {
   editCustomDetails = false
   customAttrList: any = []
   customAttrForm: any = {}
+  customFieldValues: any = []
 
-  // Add these properties to your component
-  hierarchyFields: { [key: string]: string[] } = {}; // Tracks hierarchy fields for each master list
-  fieldOptions: { [key: string]: { [field: string]: any[] } } = {}; // Stores options for each field
-  masterListFormGroups: { [key: string]: FormGroup } = {}; // Nested form groups for each masterList field
+  hierarchyFields: { [key: string]: string[] } = {}
+  fieldOptions: { [key: string]: { [field: string]: any[] } } = {}
+  masterListFormGroups: { [key: string]: FormGroup } = {}
 
   // For tracking which data structure to use
-  useReversedData: { [key: string]: boolean } = {}; // Whether to use reversed data for a field
+  useReversedData: { [key: string]: boolean } = {}
+
+  userId: string = ''
+  orgId: string = ''
+  currentUser: any = {}
 
   constructor(private fb: FormBuilder,
     private userProfileService: UserProfileService,
     private route: ActivatedRoute,
+    private configService: ConfigurationsService,
   ) { }
 
   ngOnInit() {
+    this.currentUser = this.configService && this.configService.userProfile
+    console.log('Current User', this.currentUser)
+    this.userId = this.currentUser.userId || ''
+    this.orgId = this.currentUser.rootOrgId || ''
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'customAttr') {
         this.editCustomDetails = false
@@ -53,16 +63,32 @@ export class CustomFieldsComponent {
     }
     this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
-      this.buildDynamicForm()
+      this.readCustomattributeDetails()
       console.log('Custom Attributes', this.customAttrList)
     })
 
   }
 
 
+  readCustomattributeDetails() {
+    this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
+      this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
+
+    })
+  }
+
+  getValue(attributeName: string) {
+    const customField = this.customFieldValues.find((item: any) => item.attributeName === attributeName);
+    return customField ? customField.value : '';
+  }
+
+  getName(attributeName: string) {
+    return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName;
+  }
 
   cancelCustomFormRequest() {
     this.editCustomDetails = false
+    this.customAttrForm.reset()
   }
 
   buildDynamicForm() {
@@ -455,12 +481,50 @@ export class CustomFieldsComponent {
 
   // Handle edit mode - populating existing values
   populateFormWithExistingValues() {
+    // First, create a map for quick lookup
+    const customFieldMap: { [attributeName: string]: any } = {};
+    this.customFieldValues.forEach((item: any) => {
+      customFieldMap[item.attributeName] = item;
+    });
+
     this.customAttrList.forEach((field: any) => {
-      if (field.type === 'text' && field.value) {
-        this.customAttrForm.get(field.attributeName)?.setValue(field.value);
-      } else if (field.type === 'masterList' && field.selectedValues) {
-        // For masterList fields, populate each level of the hierarchy
-        this.populateHierarchicalValues(field);
+      const customField = customFieldMap[field.attributeName];
+
+      if (!customField) {
+        console.log(`No custom field value found for ${field.attributeName}`);
+        return;
+      }
+
+      if (field.type === 'text') {
+        // For text fields, just set the value directly
+        field.value = customField.value; // Store for reference
+        this.customAttrForm.get(field.attributeName)?.setValue(customField.value);
+
+      } else if (field.type === 'masterList' && customField.values && customField.values.length > 0) {
+        // For masterList fields, extract the values from the hierarchy levels
+        const selectedValues: { [key: string]: string } = {};
+
+        // Convert the array of values to a map for easier access
+        const valuesByAttr: { [attributeName: string]: string } = {};
+        customField.values.forEach((val: any) => {
+          valuesByAttr[val.attributeName] = val.value;
+        });
+
+        // Map these to the hierarchy fields
+        const hierarchy = this.hierarchyFields[field.attributeName];
+        if (hierarchy) {
+          hierarchy.forEach(hierarchyField => {
+            if (valuesByAttr[hierarchyField]) {
+              selectedValues[hierarchyField] = valuesByAttr[hierarchyField];
+            }
+          });
+
+          // Store selected values on the field for later use
+          field.selectedValues = selectedValues;
+
+          // Now populate the form controls with these values
+          this.populateHierarchicalValues(field);
+        }
       }
     });
   }
@@ -545,35 +609,55 @@ export class CustomFieldsComponent {
       });
       return;
     }
-
-    // Prepare the form data for submission
-    const formData: any = {};
-
+    let payload: any = []
     this.customAttrList.forEach((field: any) => {
-      if (field.type === 'text') {
-        formData[field.attributeName] = this.customAttrForm.get(field.attributeName)?.value;
-      } else if (field.type === 'masterList') {
-        // For masterList fields, include both combined value and structured values
-        formData[field.attributeName] = {
-          displayValue: this.customAttrForm.get(field.attributeName)?.value,
-          structuredValues: field.selectedValues || {}
-        };
+      let data: any = {
+        customFieldId: field.customFieldId,
+        type: field.type,
+        attributeName: field.attributeName
       }
-    });
-
-    console.log('Form data to submit:', formData);
-
-    // Call your API to save the data
-    // this.userProfileService.saveCustomFields(formData).subscribe(...);
-
-    this.editCustomDetails = false;
+      if (field.type === 'text') {
+        data['value'] = this.customAttrForm.get(field.attributeName)?.value,
+          payload.push(data)
+      } else if (field.type === 'masterList') {
+        let values: any = []
+        this.hierarchyFields[field.attributeName].forEach((hierarchyField: any, index) => {
+          values.push({
+            attributeName: hierarchyField,
+            value: field.selectedValues[hierarchyField],
+            level: index + 1
+          })
+        })
+        data['values'] = values
+        payload.push(data)
+      }
+    })
+    let requestPalyoud: any = {
+      userId: this.userId,
+      organisationId: this.orgId,
+      customFieldValues: payload
+    }
+    this.userProfileService.updateCustomFields(requestPalyoud).subscribe((res: any) => {
+      this.editCustomDetails = false
+      this.customAttrForm.reset()
+      console.log('Custom fields saved successfully:', res);
+    }, error => {
+      console.error('Error saving custom fields:', error);
+    })
   }
 
   // Update handleEditCustomDetails to build the form and populate values
   handleEditCustomDetails() {
-    this.editCustomDetails = true;
+    this.editCustomDetails = true
     this.buildDynamicForm();
-    this.populateFormWithExistingValues();
+    this.customAttrList.forEach((field: any) => {
+      if (field.type === 'masterList') {
+        field.selectedValues = {}; // Reset any previously stored values
+      } else {
+        field.value = ''; // Reset text field values
+      }
+    });
+    this.populateFormWithExistingValues()
   }
 
   // Add this method to handle dropdown changes
