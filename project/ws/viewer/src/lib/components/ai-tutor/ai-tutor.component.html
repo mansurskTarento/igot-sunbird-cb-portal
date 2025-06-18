@@ -285,7 +285,8 @@
                     <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                   </div>
                   <div *ngIf="!(item?.fromInternet)">
-                    {{item?.description}}
+                    <!-- {{item?.description}} -->
+                     <markdown [data]="item?.description"></markdown>
                   </div>
                 </ng-container>
               </div>
