@@ -128,7 +128,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   // }
 
   async ngAfterViewInit() {
-
+    //console.log('this.widgetData--', this.widgetData)
     this.widgetData = {
       ...this.widgetData,
     }
@@ -185,7 +185,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                           //   end: cue.endTime,
                           //   text: cue?.text
                           // });
-  
+                          // console.log(cue)
                           this.appTocService.setTranscriptionData({
                             start: cue.startTime,
                             end: cue.endTime,
