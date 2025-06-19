@@ -1,0 +1,19 @@
+<div class="navigation-card w-full flex flex-col gap-1 p-2">
+  <ng-container *ngFor="let item of navigationItems">
+    <a 
+      [routerLink]="item.navigationUrl" 
+      routerLinkActive="active" 
+      class="navigation-item flex items-center gap-2 px-2 rounded hover:bg-gray-200"
+    >
+    <ng-container *ngIf="item.icon; else routImg">
+      <mat-icon class="route-icons">
+        {{ item.icon }}
+      </mat-icon>
+    </ng-container>
+    <ng-template #routImg>
+      <img class="route-icons" [src]="item.imageUrl" alt="route icon">
+    </ng-template>
+      {{ item.name }}
+    </a>
+  </ng-container>
+</div>

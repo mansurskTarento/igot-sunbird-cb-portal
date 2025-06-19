@@ -1,0 +1,22 @@
+<div class="profile-card w-full flex flex-col gap-4 justify-center items-center">
+  <div class="profile-card-header w-full flex flex-col justify-center items-center">
+    <ng-container *ngIf="bannerImageUrl; else defaultBanner">
+      <img class="banner-image" [src]="bannerImageUrl" alt="banner pic" />
+    </ng-container>
+    <ng-template #defaultBanner>
+      <img class="banner-image" src="./assets/icons/profile_cover_pic.svg" alt="default banner pic" />
+    </ng-template>
+    <ng-container *ngIf="profileImageUrl; else nameInitialsView">
+      <img [src]="profileImageUrl" alt="Profile" class="profile-image">
+    </ng-container>
+    <ng-template #nameInitialsView>
+      <div class="flex items-center justify-center profile-circle">
+        {{ nameInitials }}
+      </div>
+    </ng-template>
+  </div>
+  <div class="userName">
+    {{ userName }}
+  </div>
+  <button mat-button class="view-profile-btn mb-4" (click)="viewProfile()">View Profile</button>
+</div>
