@@ -1,20 +1,31 @@
 <div class="common-card-css" *ngIf="customAttrList && customAttrList.length">
-  <div class="flex flex-col gap-5 mb-5">
+  <div class="flex flex-col gap-5">
     <div class="flex flex-row gap-4 items-center justify-between">
-      <div class="flex flex-row gap-2 title-div items-center">
+      <div class="flex flex-row gap-2 title-div items-center mb-4">
         <div class="title">Custom fields</div>
       </div>
-      <div class="flex flex-row info-value">
-        <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
-          (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
-          <mat-icon>edit</mat-icon>
-          {{ 'profileInfo.edit' | translate }}
+      <ng-container *ngIf="customFieldValues && customFieldValues.length">
+        <div class="flex flex-row info-value">
+          <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
+            (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
+            <mat-icon>edit</mat-icon>
+            {{ 'profileInfo.edit' | translate }}
+          </div>
         </div>
-      </div>
+      </ng-container>
+      <ng-container *ngIf="customFieldValues && customFieldValues.length === 0">
+        <div class="flex flex-row info-value">
+          <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
+            (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
+            <mat-icon>add</mat-icon>
+            {{ 'profileInfo.add' | translate }}
+          </div>
+        </div>
+      </ng-container>
     </div>
   </div>
   <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
-    <div class="grid-container">
+    <div class="grid-container mt-2" *ngIf="customFieldValues && customFieldValues.length">
       <!-- Text fields - Each in its own grid cell -->
       <ng-container *ngFor="let item of customFieldValues">
         <div *ngIf="item?.type === 'text'" class="grid-item">
@@ -44,6 +55,9 @@
           </ng-container>
         </ng-container>
       </ng-container>
+    </div>
+    <div class="font-medium" *ngIf="customFieldValues && customFieldValues.length === 0">
+      {{ 'profileInfo.noCustomFields' | translate }}
     </div>
   </div>
   <div class="custom-attr-edit" *ngIf="editCustomDetails">

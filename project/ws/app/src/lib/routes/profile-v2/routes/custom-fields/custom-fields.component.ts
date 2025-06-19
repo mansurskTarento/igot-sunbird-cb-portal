@@ -4,6 +4,7 @@ import { UserProfileService } from '../../../user-profile/services/user-profile.
 import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'ws-app-custom-fields',
   templateUrl: './custom-fields.component.html',
@@ -31,13 +32,15 @@ export class CustomFieldsComponent {
     private userProfileService: UserProfileService,
     private route: ActivatedRoute,
     private configService: ConfigurationsService,
+    private matSnackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {
     this.currentUser = this.configService && this.configService.userProfile
     console.log('Current User', this.currentUser)
     this.userId = this.currentUser.userId || ''
-    this.orgId = this.currentUser.rootOrgId || ''
+    //this.orgId = this.currentUser.rootOrgId || ''
+    this.orgId = "0140788510336040962"
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'customAttr') {
         this.editCustomDetails = false
@@ -604,10 +607,10 @@ export class CustomFieldsComponent {
             control.get(nestedKey)?.markAsTouched();
           });
         } else {
-          control?.markAsTouched();
+          control?.markAsTouched()
         }
-      });
-      return;
+      })
+      return
     }
     let payload: any = []
     this.customAttrList.forEach((field: any) => {
@@ -638,11 +641,15 @@ export class CustomFieldsComponent {
       customFieldValues: payload
     }
     this.userProfileService.updateCustomFields(requestPalyoud).subscribe((res: any) => {
-      this.editCustomDetails = false
-      this.customAttrForm.reset()
-      console.log('Custom fields saved successfully:', res);
+      if (res && res.result && res.result.response && res.result.response === "success") {
+        this.editCustomDetails = false
+        this.customAttrForm.reset()
+        this.getCustomAttributes()
+        this.matSnackBar.open("Custom fields saved successfully")
+      }
     }, error => {
-      console.error('Error saving custom fields:', error);
+      this.matSnackBar.open(error.error.params.errMsg)
+      console.error('Error saving custom fields:', error.error.params.errMsg);
     })
   }
 
