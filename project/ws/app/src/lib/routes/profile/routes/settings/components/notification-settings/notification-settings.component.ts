@@ -55,6 +55,7 @@ export class NotificationSettingsComponent implements OnInit {
         this.selectedLanguage = lang
       }
     })
+    this.notificationSettings = []
   }
 
   translateLabels(label: string, type: any) {
