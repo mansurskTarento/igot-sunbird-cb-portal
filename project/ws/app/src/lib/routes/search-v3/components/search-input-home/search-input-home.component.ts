@@ -280,7 +280,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     const reqBody = {
       nlpSearchQuery: data,
       searchQuery: this.queryControl.value,
-      searchCategory: this.selectedSearchCategory
+      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
     }
    
     await this.searchV3Service.recentCreate(
