@@ -8,6 +8,8 @@ export class HighlightPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
 
   transform(text: string, keyword: string, shouldHighlight: boolean): SafeHtml {
+    // console.log('text',text)
+    // console.log('keyword',keyword)
     if (!shouldHighlight || !keyword || !text) return text;
    // const escapedKeyword = keyword.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 

@@ -87,8 +87,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.enableAITutorFlag = false
     }
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      // console.log('in')
       this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
-        // console.log('resource identifier', value)
+        //  console.log('resource identifier', value)
         if(value &&  value?.identifier) {
           this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
           this.parseVTT()
@@ -97,7 +98,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       })
 
       this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value:any)=>{
-       // console.log('value', value)
+        // console.log('value', value)
         this.keywordToHighlight = value
       })
 
@@ -264,8 +265,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.content.name,
       )
       this.actionSVC.setUpdateCompGroupO = this.resumeDataLink
-      console.log('this.resumeDataLink',this.resumeDataLink)
-      console.log('this.actionSVC', this.actionSVC)
+      // console.log('this.resumeDataLink',this.resumeDataLink)
+      // console.log('this.actionSVC', this.actionSVC)
       this.router.navigate([this.resumeDataLink.url], {
         queryParams: this.resumeDataLink.queryParams
       });
@@ -371,14 +372,25 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   async parseVTT() {
     let identifier = this.resourceIdentifier 
+    // console.log('identifier--', identifier)
     await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
-        let url =  data[0]['transcription_urls'][0]['uri']
+       // let url =  data[0]['transcription_urls'][0]['uri']
+       this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
+       let url = this.vttLangArr.filter((item:any)=>item.label === this.transcriptionActiveLanguage)[0]['uri']
+        // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
        let blocks:any = file.getBlocks();
           this.subTitles = blocks
+          // console.log('this.vttLangArr--',this.vttLangArr)
+          // if(this.vttLangArr && this.vttLangArr.length) {
+          //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
+          // } else {
+          //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
+          // }
+          
           this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
       }
 
