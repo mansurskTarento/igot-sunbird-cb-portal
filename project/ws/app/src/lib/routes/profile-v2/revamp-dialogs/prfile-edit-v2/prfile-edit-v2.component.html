@@ -199,7 +199,7 @@
           <mat-form-field appearance="outline">
             <mat-select formControlName="gender">
               <ng-container *ngFor="let gender of eUserGender">
-                <mat-option [value]="gender">{{handleTranslateTo(gender.toLowerCase())}}</mat-option>
+                <mat-option [value]="gender">{{handleTranslateToProfile(gender.toLowerCase())}}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>
@@ -219,7 +219,7 @@
           <mat-form-field appearance="outline">
             <mat-select formControlName="category">
               <ng-container *ngFor="let category of eCategory">
-                <mat-option [value]="category">{{ handleTranslateTo(category?.toLowerCase()) }}</mat-option>
+                <mat-option [value]="category">{{ handleTranslateToProfile(category?.toLowerCase()) }}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>
