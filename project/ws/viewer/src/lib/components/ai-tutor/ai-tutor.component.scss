@@ -343,6 +343,9 @@
       max-width: 80%;
       height: 100%;
       word-break: break-word;
+      ::ng-deep markdown p {
+        margin: 0;
+      }
     }
   }
   .word-break {
