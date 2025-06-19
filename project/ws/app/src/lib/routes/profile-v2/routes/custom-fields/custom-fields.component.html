@@ -70,7 +70,7 @@
               <div class="label">{{field.name}}</div>
               <mat-form-field class="profile-form-field w-full">
                 <input type="text" class="input-text w-full" matInput [formControlName]="field.attributeName"
-                  [value]="getValue(field.attributeName)" />
+                  [value]="getValue(field.attributeName)" [maxlength]="field?.attributeMaxLength" />
                 <mat-error class="text-xs mt-3"
                   *ngIf="customAttrForm.get(field.attributeName)?.touched && customAttrForm.get(field.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
                   {{field.name }} is required
