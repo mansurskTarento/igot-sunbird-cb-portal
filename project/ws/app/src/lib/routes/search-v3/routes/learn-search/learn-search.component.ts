@@ -211,6 +211,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.peopleSearchTotalCount = 0;
       this.communitiesSearchTotalCount = 0;
       this.searchRequestCourse.request.limit = this.initialPaginationSize;
+      this.searchRequestCourse.request.sort_by.createdOn = 'desc';
       await this.searchCourses();
       this.sideNavBarOpened = false
       this.searchContentLoader = false;
