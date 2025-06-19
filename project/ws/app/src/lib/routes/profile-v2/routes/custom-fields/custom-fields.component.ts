@@ -39,8 +39,8 @@ export class CustomFieldsComponent {
     this.currentUser = this.configService && this.configService.userProfile
     console.log('Current User', this.currentUser)
     this.userId = this.currentUser.userId || ''
-    //this.orgId = this.currentUser.rootOrgId || ''
-    this.orgId = "0140788510336040962"
+    this.orgId = this.currentUser.rootOrgId || ''
+    //this.orgId = "0140788510336040962"
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'customAttr') {
         this.editCustomDetails = false
@@ -53,8 +53,8 @@ export class CustomFieldsComponent {
   getCustomAttributes(): void {
     let payload = {
       filterCriteriaMap: {
-        //organisationId: this.isIgotOrg,
-        organisationId: "0140788510336040962",
+        organisationId: this.orgId,
+        //organisationId: "0140788510336040962",
         isEnabled: true
       },
       requestedFields: [],
@@ -66,8 +66,12 @@ export class CustomFieldsComponent {
     }
     this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
-      this.readCustomattributeDetails()
+      if (this.customAttrList && this.customAttrList.length > 0) {
+        this.readCustomattributeDetails()
+      }
       console.log('Custom Attributes', this.customAttrList)
+    }, error => {
+      console.log('Error', error)
     })
 
   }
@@ -76,7 +80,8 @@ export class CustomFieldsComponent {
   readCustomattributeDetails() {
     this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
-
+    }, error => {
+      console.log('Error', error)
     })
   }
 
