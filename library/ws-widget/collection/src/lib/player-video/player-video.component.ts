@@ -128,7 +128,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   // }
 
   async ngAfterViewInit() {
-    console.log('this.widgetData--', this.widgetData)
+    //console.log('this.widgetData--', this.widgetData)
     this.widgetData = {
       ...this.widgetData,
     }
