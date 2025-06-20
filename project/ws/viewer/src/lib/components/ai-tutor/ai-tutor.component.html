@@ -213,15 +213,15 @@
                 <!-- <div class="resource-icon"><a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)">
                   <img src="/assets/icons/ai-pdf-icon.jpg"></a>
                 </div> -->
-                <div class="recommended-question-for-resource mx-10">
+                <div class="recommended-question-for-resource mx-10" (click)="redirectToResource(item);raiseTelemetryForResource(item)">
                   <!-- <div class="resource-icon">
                     <a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)">
                     <img src="/assets/ai-tutor/pdf.svg">
                     </a>
                     <p>{{item?.message}}</p>
                   </div> -->
-                  <div class="btn-default mb-2" (click)="redirectToToc(item)">
-                    <a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)">
+                  <div class="btn-default mb-2">
+                    <a [href]="item?.resourceLink" target="_blank">
                       <img class="vertical-middle h-w-34" src="/assets/ai-tutor/pdf.svg">
                     </a>
                     {{item?.title}}
@@ -256,12 +256,12 @@
               </div>
             </ng-container> -->
             <ng-container *ngIf="item?.mimeType === 'video/mp4'">
-              <div class="recommended-question-for-resource mx-10">
+              <div class="recommended-question-for-resource mx-10" (click)="redirectToResource(item);raiseTelemetryForResource(item)">
                 
-                <div class="btn-default mb-2" (click)="redirectToToc(item)">
+                <div class="btn-default mb-2">
                   <div class="flex flex-row">
                   <div>
-                  <a [href]="item?.resourceLink" target="_blank" (click)="raiseTelemetryForResource(item)">
+                  <a [href]="item?.resourceLink" target="_blank">
                     <img class="vertical-middle h-w-34" src="/assets/ai-tutor/video.svg">
                   </a>
                 </div>
