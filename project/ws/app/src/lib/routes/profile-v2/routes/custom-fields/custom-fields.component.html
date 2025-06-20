@@ -1,4 +1,4 @@
-<div class="common-card-css" *ngIf="customAttrList && customAttrList.length">
+<div class="common-card-css" *ngIf="customAttrListIds && customAttrListIds.length">
   <div class="flex flex-col gap-5">
     <div class="flex flex-row gap-4 items-center justify-between">
       <div class="flex flex-row gap-2 title-div items-center mb-4">
@@ -27,26 +27,26 @@
   <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
     <div class="grid-container mt-2" *ngIf="customFieldValues && customFieldValues.length">
       <!-- Text fields - Each in its own grid cell -->
-      <ng-container *ngFor="let item of customFieldValues">
+      <ng-container *ngFor="let item of customAttrList">
         <div *ngIf="item?.type === 'text'" class="grid-item">
           <div class="flex flex-col gap-2 pr-3 info-div">
-            <span class="label">{{getName(item?.attributeName)}}</span>
-            <span class="value">{{item?.value || '-'}}</span>
+            <span class="label">{{item?.name}}</span>
+            <span class="value">{{getValue(item?.attributeName) || '-'}}</span>
           </div>
         </div>
       </ng-container>
 
       <!-- MasterList fields - Each level gets its own grid cell -->
-      <ng-container *ngFor="let item of customFieldValues">
-        <ng-container *ngIf="item?.type === 'masterList' && item?.values?.length">
-          <ng-container *ngFor="let hierarchy of item?.values">
+      <ng-container *ngFor="let item of customAttrList">
+        <ng-container *ngIf="item?.type === 'masterList' && item?.originalCustomFieldData">
+          <ng-container *ngFor="let filed of item?.originalCustomFieldData">
             <div class="grid-item">
               <div class="flex flex-col gap-2 pr-3 info-div">
                 <span class="label">
                   <!-- Show parent field name only for the first item -->
-                  {{hierarchy?.attributeName | titlecase}}
+                  {{filed?.name | titlecase}}
                 </span>
-                <span class="value">{{hierarchy?.value || '-'}}</span>
+                <span class="value">{{getListItemName(item, filed) || ''}}</span>
               </div>
             </div>
           </ng-container>

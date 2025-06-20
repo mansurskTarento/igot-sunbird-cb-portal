@@ -699,11 +699,13 @@
           </div>
         </div>
         <div class="flex flex-wrap gap-2" *ngIf="portalProfile?.additionalProperties?.tag">
-          <ng-container *ngFor="let tag of portalProfile?.additionalProperties?.tag">
+          <ng-container
+            *ngFor="let tag of portalProfile?.additionalProperties?.tag && portalProfile?.additionalProperties?.tag?.length > 0">
             <div class="chips">{{ tag }}</div>
           </ng-container>
         </div>
-        <div class="font-medium" *ngIf="!portalProfile?.additionalProperties?.tag">
+        <div class="font-medium"
+          *ngIf="portalProfile?.additionalProperties?.tag && portalProfile?.additionalProperties?.tag?.length === 0">
           {{ 'profileInfo.tagsNotFound' | translate }}
         </div>
       </div>

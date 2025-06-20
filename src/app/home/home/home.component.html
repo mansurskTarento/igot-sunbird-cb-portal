@@ -225,9 +225,9 @@
 
 <div class="footer footer-update-mobile-number" *ngIf="canShowCustomAttrOpen">
     <!-- //NOSONAR -->
-    <div (click)="handleRemindLater()" class="desktop-cross">X</div>
+    <div (click)="remaindCustomAttPopup()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
-        <!-- //NOSONAR --><span (click)="handleRemindLater()" class="mobile-cross">X</span>
+        <!-- //NOSONAR --><span (click)="remaindCustomAttPopup()" class="mobile-cross">X</span>
         <p class="updatetitle">{{ 'home.updateYourProfile' | translate }}</p>
         <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="redirectToCustomProfile()"
             role="button">{{

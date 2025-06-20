@@ -41,6 +41,7 @@ const API_ENDPOINTS = {
   ORG_CUSTOM_FIELDS: `apis/proxies/v8/customFields/v1/search`,
   UPDATE_CUSTOM_FIELDS: `apis/proxies/v8/user/profile/v1/update/additionalFields`,
   READ_CUSTOM_FIELDS_VALUES: `apis/proxies/v8/user/profile/v1/getAdditionalFields`,
+  READ_ORG_DETAILS: 'api/org/v1/read',
 }
 
 @Injectable()
@@ -103,6 +104,10 @@ export class UserProfileService {
 
   getOrganizationData(request: any) {
     return this.http.post<any>(API_ENDPOINTS.GET_ORGANIZATION_V1, request)
+  }
+
+  readOrgData(request: any) {
+    return this.http.post<any>(API_ENDPOINTS.READ_ORG_DETAILS, request)
   }
 
   getAllDepartments() {

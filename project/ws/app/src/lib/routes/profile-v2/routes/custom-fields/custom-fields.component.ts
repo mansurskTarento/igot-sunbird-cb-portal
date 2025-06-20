@@ -16,6 +16,7 @@ export class CustomFieldsComponent {
   customAttrList: any = []
   customAttrForm: any = {}
   customFieldValues: any = []
+  customAttrListIds: any = []
 
   hierarchyFields: { [key: string]: string[] } = {}
   fieldOptions: { [key: string]: { [field: string]: any[] } } = {}
@@ -47,7 +48,22 @@ export class CustomFieldsComponent {
 
       }
     })
-    this.getCustomAttributes()
+    this.getOrgDetails()
+
+  }
+
+  getOrgDetails() {
+    const request = {
+      request: { organisationId: this.orgId },
+    }
+    this.userProfileService.readOrgData(request).subscribe((res: any) => {
+      this.customAttrListIds = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
+      if (this.customAttrListIds && this.customAttrListIds.length) {
+        this.getCustomAttributes()
+      }
+    }, error => {
+      console.error('Error fetching organization details', error)
+    })
   }
 
   getCustomAttributes(): void {
@@ -55,9 +71,10 @@ export class CustomFieldsComponent {
       filterCriteriaMap: {
         organisationId: this.orgId,
         //organisationId: "0140788510336040962",
-        isEnabled: true
+        isEnabled: true,
+        customFieldId: this.customAttrListIds,
       },
-      requestedFields: [],
+
       pageNumber: 0,
       pageSize: 50,
       orderDirection: "DESC",
@@ -69,7 +86,6 @@ export class CustomFieldsComponent {
       if (this.customAttrList && this.customAttrList.length > 0) {
         this.readCustomattributeDetails()
       }
-      console.log('Custom Attributes', this.customAttrList)
     }, error => {
       console.log('Error', error)
     })
@@ -88,6 +104,15 @@ export class CustomFieldsComponent {
   getValue(attributeName: string) {
     const customField = this.customFieldValues.find((item: any) => item.attributeName === attributeName);
     return customField ? customField.value : '';
+  }
+
+  getListItemName(arryListItem: any, listItem: any) {
+    const customField = this.customFieldValues.find((_filed: any) => _filed.attributeName === arryListItem.attributeName)
+    if (customField && customField.values && customField.values.length) {
+      const _item = customField.values.find((_filed: any) => _filed.attributeName === listItem.attributeName)
+      return _item ? _item.value : ''
+    }
+    return ''
   }
 
   getName(attributeName: string) {
