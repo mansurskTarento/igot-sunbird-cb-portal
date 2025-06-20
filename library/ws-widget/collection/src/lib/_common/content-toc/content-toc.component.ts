@@ -413,7 +413,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   async renderSelectedLanguageTranscription()  {
-    console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
     this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
     let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
     const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
