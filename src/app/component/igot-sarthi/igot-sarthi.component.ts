@@ -606,6 +606,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         this.aiSearchResultArr.splice(index,1)
       }
      })
+    // console.log('this.aiSearchResultArr', JSON.stringify(this.aiSearchResultArr))
     setTimeout(()=>{
       this.scrollToBottomEvent.emit() 
     },0)

@@ -67,6 +67,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   vttLangArr:any = []
   transcriptionActiveLanguage = 'en'
   transriptionLanguageSub:Subscription | null = null
+  selectedTranscriptionStyle :any
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -109,7 +110,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       .subscribe((langvalue: any) => {
         // console.log('langValue', langvalue);
         if(langvalue) {
-          this.renderSelectedLanguageTranscription({ target: { value: langvalue } });
+          this.renderSelectedLanguageTranscription();
         }
 
       });
@@ -377,8 +378,21 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
+      
+      
        // let url =  data[0]['transcription_urls'][0]['uri']
+      //  console.log('this.vttLangArr--',this.vttLangArr)
        this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
+      //  console.log('this.transcriptionActiveLanguage--', this.transcriptionActiveLanguage)
+      let selectedTranscriptionStyle = this.vttLangArr.filter((item: any) => {
+        return item?.label === this.transcriptionActiveLanguage;
+      });
+      if(selectedTranscriptionStyle && selectedTranscriptionStyle.length) {
+        this.selectedTranscriptionStyle = selectedTranscriptionStyle[0]
+      } else {
+        this.selectedTranscriptionStyle =  this.vttLangArr[0]
+      }
+       console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
        let url = this.vttLangArr.filter((item:any)=>item.label === this.transcriptionActiveLanguage)[0]['uri']
         // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
@@ -398,9 +412,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
 
-  async renderSelectedLanguageTranscription(event:any)  {
-    this.transcriptionActiveLanguage = event.target.value
-    let currentPath = this.vttLangArr.filter((item:any)=> item?.language === this.transcriptionActiveLanguage)
+  async renderSelectedLanguageTranscription()  {
+    console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
+    this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+    let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
     const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
        let blocks:any = file.getBlocks();
     this.subTitles = blocks

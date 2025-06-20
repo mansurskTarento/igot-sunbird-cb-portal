@@ -88,11 +88,11 @@
                     <img class="vertical-middle h-w-34" src="/assets/ai-tutor/video.svg">
                   </a>
                 </div>
-                <div class="ml-1">
+                <div class="ml-1 pt-1">
                   <span>{{item?.title}} </span>
                 </div>
-                <div>
-                  <span class="content-duration flex ml-1" *ngIf="item?.contentStart > -1 && item?.contentEnd > -1 && !(item?.fromInternet)">
+                <div class="pt-1">
+                  <span class="content-duration flex ml-1"  *ngIf="item?.contentStart > -1 && item?.contentEnd > -1 && !(item?.fromInternet)">
                     <span><mat-icon>access_time</mat-icon>&nbsp;&nbsp;</span>
                     <span *ngIf="item?.contentStart > -1">
                       <span *ngIf="item?.contentStart > 0">{{item?.contentStart | pipeDurationTransform: 'hms'}}</span>
@@ -101,7 +101,7 @@
                     <span *ngIf="item?.contentEnd > -1">&nbsp;-&nbsp;{{item?.contentEnd | pipeDurationTransform: 'hms'}}</span>
                   </span>                  
                 </div>
-                <div>
+                <div class="pt-1">
                   <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                 </div>
               </div>

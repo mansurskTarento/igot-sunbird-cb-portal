@@ -347,7 +347,7 @@
                 </div>
               
             </div>
-            <div class="recommended-question" [ngClass]="{'ml-5': item?.message }">
+            <div class="recommended-question" [ngClass]="{'ml-10': item?.message }">
               <div class="my-5px mr-2 w-92">
                 <ng-container *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
                   <div class="btn-default" (click)="redirectToToc(item)">{{item?.title}}

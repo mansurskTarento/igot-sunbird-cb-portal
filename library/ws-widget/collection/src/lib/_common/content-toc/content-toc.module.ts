@@ -43,6 +43,7 @@ import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-t
 import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component';
 import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
 import { HighlightPipe } from '../../_pipes/highlight.pipe'
+import {MatSelectModule} from '@angular/material/select';
 @NgModule({
   declarations: [
     ContentTocComponent,
@@ -97,6 +98,7 @@ import { HighlightPipe } from '../../_pipes/highlight.pipe'
     }),
     PipeSafeSanitizerModule,
     WidgetCommentModule,
+    MatSelectModule
   ],
   exports: [
     ContentTocComponent,
