@@ -711,7 +711,9 @@
       </div>
     </div>
     <ng-container *ngIf="isCurrentUser">
-      <ws-app-custom-fields></ws-app-custom-fields>
+      <div #scrollContainer>
+        <ws-app-custom-fields></ws-app-custom-fields>
+      </div>
     </ng-container>
   </div>
 </ng-template>
