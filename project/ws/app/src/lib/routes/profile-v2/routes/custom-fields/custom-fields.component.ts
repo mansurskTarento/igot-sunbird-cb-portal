@@ -1,4 +1,4 @@
-import { Component, } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { UserProfileService } from '../../../user-profile/services/user-profile.service';
 import _ from 'lodash'
