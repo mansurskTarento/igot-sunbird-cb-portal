@@ -101,6 +101,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   ]
   selectedLearningStyle :any
   resultFetch = false
+  authTokenHost = ''
+  NoneSocketHost = ''
+  SocraticeStyleHost = ''
+  StorytellingHost = ''
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -115,12 +119,23 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
   ngOnInit() {
+    if (environment.production) {
+      this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
+      this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
+      this.SocraticeStyleHost = 'learning-ai.prod.karmayogibharat.net'
+      this.StorytellingHost = 'learning-ai.prod.karmayogibharat.net'
+    } else {
+      this.authTokenHost = 'learning-ai.uat.karmayogibharat.net'
+      this.NoneSocketHost = 'learning-ai.uat.karmayogibharat.net'
+      this.SocraticeStyleHost = 'learning-ai.uat.karmayogibharat.net'
+      this.StorytellingHost = 'learning-ai.uat.karmayogibharat.net'
+    }
     this.userInfo = this.configSvc && this.configSvc.userProfile
     this.websocketService.getJWTToken().subscribe((data:any)=>{
       if(data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
         //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
-        this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
+        this.websocketService.connect(`wss://${this.authTokenHost}/ws?token=${this.jwtToken}`);
       }
       
     })
@@ -550,7 +565,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   submitSearchQuery() {
     this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.answer === '' || item.newMessage === '')) {
+      if(item && (item.newMessage === '')) {
         // delete this.aiTutorResultArr[index]
         this.aiTutorResultArr.splice(index,1)
       }
@@ -629,7 +644,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
    // let arr:any = []
-   if(this.aiTutorResult && !this.aiTutorResult.answer) {
+   if(this.aiTutorResult && !this.aiTutorResult.answer && !this.aiTutorResult.retrievedChunks) {
     this.aiTutorResult.retrievedChunks = []
    }
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
@@ -673,13 +688,13 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
  
     let shortAnswer =  this.splitParagraphByWords(answer)
    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
-    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.answer ? true : false)})
+    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet: (!(this.aiTutorResult.answer) && !(this.aiTutorResult.retrievedChunks)) ? true : false})
     this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.answer === '' || item.newMessage === '')) {
+      if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
         this.aiTutorResultArr.splice(index,1)
       }
-     })
+     })     
     // console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
      setTimeout(()=>{
       this.scrollToBottom()
@@ -700,6 +715,14 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  redirectToResource(item:any) {
+    const queryString = Object.entries(this.route.snapshot.queryParams)
+        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+        .join('&');
+    let path = (item.mimeType === 'application/pdf')? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    window.open(path, '_blank')
   }
 
   copyPath(item:any, cindex:any) {
@@ -804,17 +827,17 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/socratic/v1/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.SocraticeStyleHost}/socratic/v1/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.NoneSocketHost}/ws?token=${this.jwtToken}`);
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://teaching-styles.uat.karmayogibharat.net/storytelling/v1/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.StorytellingHost}/storytelling/v1/ws?token=${this.jwtToken}`);
     }
    // console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
@@ -937,7 +960,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, '', this.userInfo?.userId).subscribe((idata:any)=>{
         this.resultFetch = true
         this.aiTutorResultArr.map((item:any, index:any)=>{
-          if(item && (item.answer === '' || item.newMessage === '')) {
+          if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiTutorResultArr.splice(index,1)
           }
@@ -968,7 +991,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
         let shortAnswer =  this.splitParagraphByWords(answer)
         this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false})
         this.aiTutorResultArr.map((item:any, index:any)=>{
-          if(item && (item.answer === '' || item.newMessage === '')) {
+          if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiTutorResultArr.splice(index,1)
           }
@@ -983,7 +1006,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.resultFetch = true
     this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.answer === '' || item.newMessage === '')) {
+      if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
         this.aiTutorResultArr.splice(index,1)
       }

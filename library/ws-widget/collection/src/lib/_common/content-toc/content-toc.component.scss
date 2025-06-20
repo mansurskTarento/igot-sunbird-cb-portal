@@ -180,13 +180,70 @@
   .disclaimer {
     background-color: rgba(243, 150, 47, 0.2);
     color: rgba(0, 0, 0, 0.87);
-    font-family: Montserrat;
+    font-family: Lato;
     font-size: 16px;
     font-weight: 500;
+    border-radius: 8px;
   }
 
   .blue-underline {
     color:#1b4ca1;
     text-decoration: underline;
     font-weight: 700;
+  }
+
+  .transcript-control {
+    /* height: 60px; */
+    /* background-color: #333; */
+    color: white;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  :host {
+    ::ng-deep .multiline-select {
+      .mat-mdc-select-value-text {
+        white-space: pre-wrap !important;
+      }
+    }
+  
+    ::ng-deep .mat-pseudo-checkbox {
+      display: none !important;
+    }
+  
+    ::ng-deep .mat-pseudo-checkbox-checked {
+      display: none !important;
+    }
+  
+    // ::ng-deep .multiline-select-option {
+    //   background-color: white !important;
+    // } 
+
+    
+  }
+
+
+  ::ng-deep .multiline-select.mat-form-field {
+    border-bottom: 1px solid #1b4ca1 !important; /* Blue border */
+  }
+
+  
+    ::ng-deep .multiline-select-option .mat-mdc-option:focus.mdc-list-item, .mat-mdc-option.mat-mdc-option-active.mdc-list-item {
+      
+        background-color: #e3eeff !important;
+        color: #1b4ca1 !important;
+        font-weight: 700 !important;
+      
+    
+  }
+
+  .transcript-flex-container {
+      display: flex;
+      justify-content: flex-end; /* Align to the right */
+      width: 100%; /* Ensure it takes up the full width of the parent */
+  }
+
+  .selected-option-content {
+    color: #1b4ca1;
   }
