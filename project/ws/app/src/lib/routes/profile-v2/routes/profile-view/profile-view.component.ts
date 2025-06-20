@@ -214,6 +214,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   editCustomDetails = false
   customAttrList: any = []
   customAttrForm: any = {}
+  //@ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -547,6 +548,21 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
     }
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'customAttr') {
+        this.scrollToBottom()
+      }
+    })
+  }
+
+  scrollToBottom(): void {
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 0)
   }
 
   getInsightsData() {

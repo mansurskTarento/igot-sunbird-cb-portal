@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { UserProfileService } from '../../../user-profile/services/user-profile.service';
 import _ from 'lodash'
-import { ActivatedRoute } from '@angular/router';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
@@ -29,9 +28,9 @@ export class CustomFieldsComponent {
   orgId: string = ''
   currentUser: any = {}
 
+
   constructor(private fb: FormBuilder,
     private userProfileService: UserProfileService,
-    private route: ActivatedRoute,
     private configService: ConfigurationsService,
     private matSnackBar: MatSnackBar,
   ) { }
@@ -42,11 +41,7 @@ export class CustomFieldsComponent {
     this.userId = this.currentUser.userId || ''
     this.orgId = this.currentUser.rootOrgId || ''
     //this.orgId = "0140788510336040962"
-    this.route.fragment.subscribe(fragment => {
-      if (fragment === 'customAttr') {
-        this.editCustomDetails = false
-      }
-    })
+
     this.getOrgDetails()
 
   }
@@ -675,6 +670,9 @@ export class CustomFieldsComponent {
         this.customAttrForm.reset()
         this.getCustomAttributes()
         this.matSnackBar.open("Custom fields saved successfully")
+        if (localStorage.getItem('canShowCustomAttrPopup')) {
+          localStorage.setItem('canShowCustomAttrPopup', 'false')
+        }
       }
     }, error => {
       this.matSnackBar.open(error.error.params.errMsg)
