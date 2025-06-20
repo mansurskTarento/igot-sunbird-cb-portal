@@ -25,7 +25,7 @@
         <ng-template mat-tab-label>
             <div class="flex flex-row">
               <div class="flex">
-                <span>Transcription</span>
+                <span>Transcript</span>
               </div>        
               <div class="red-circle ml-5">
                 New
@@ -35,14 +35,33 @@
           </ng-template>
         <ng-template matTabContent>
             <div class="disclaimer my-2">
-                <p class="py-2 px-2">Disclaimer: These subtitles are generated using AI technology. Please note that they may contain inaccuracies.</p>
+                <p class="py-2 px-2">Disclaimer : These transcripts and subtitles are AI-generated and may contain errors.</p>
             </div>
-            <div class="ml-4 flex flex-row justify-end">
-                <mat-form-field appearance="none">
+            <div class="ml-4 flex flex-row justify-end transcript-control">
+                <!-- <mat-form-field appearance="none">
                     <select matNativeControl required class="section-dd" (change)="renderSelectedLanguageTranscription($event)">
-                        <option [value]="lang?.language" *ngFor="let lang of vttLangArr" [selected]="lang?.label === transcriptionActiveLanguage">Transcription Language: {{lang?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === lang?.language">(Auto)</span></option>
+                        <option [value]="lang?.language" *ngFor="let lang of vttLangArr" [selected]="lang?.label === transcriptionActiveLanguage">
+                           <span *ngIf="transcriptionActiveLanguage === lang?.label"> Transcript Language: </span> {{lang?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === lang?.language">(Auto)</span>
+                        </option>
                     </select>
-                </mat-form-field>
+                </mat-form-field> -->
+                <div class="transcript-flex-container">
+                <mat-form-field class="multiline-select" appearance="fill" style="height: 65px; width: 25%;" floatLabel="never">
+                    <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
+                      <mat-select-trigger class="multiline-select-box-trigger">
+                        <div class="selected-option-content">
+                          <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
+                        </div>
+                      </mat-select-trigger>
+                      <mat-option class="multiline-select-option" value="" *ngFor="let lang of vttLangArr" [value]="lang"
+                      [ngClass]="{'active-option': selectedTranscriptionStyle?.label === lang?.label}">
+                        <div class="option-content">
+                          <div class="title">{{lang?.language | titlecase}}</div>
+                        </div>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
             </div>
             <!-- <div class="flex flex-row align-items-center my-2">
                 <div>
