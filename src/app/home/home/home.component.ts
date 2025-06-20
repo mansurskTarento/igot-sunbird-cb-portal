@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core'
-import {  HttpErrorResponse } from '@angular/common/http'
+import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
@@ -9,7 +9,7 @@ import _ from 'lodash'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
-import { ConfigurationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 // import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
@@ -72,6 +72,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     horizontalPosition: 'center',
     verticalPosition: 'bottom',
   }
+  canShowCustomAttrOpen: boolean = true
 
   ngOnInit() {
     let isNotMyUser = false
@@ -85,7 +86,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -128,11 +129,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.contentStripData[i]['strips'] &&
           this.contentStripData[i]['strips'][0] &&
           this.contentStripData[i]['strips'][0]['active']) {
-            const obj: any = {}
-            // tslint:disable-next-line: prefer-template
-            obj['section'] = 'section_' + i
-            obj['isVisible'] = false
-            this.sectionList.push(obj)
+          const obj: any = {}
+          // tslint:disable-next-line: prefer-template
+          obj['section'] = 'section_' + i
+          obj['isVisible'] = false
+          this.sectionList.push(obj)
         }
       }
     }
@@ -246,7 +247,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     this.enrollInterval = setInterval(() => {
       this.getEnrollmentData()
-    },                                1000)
+    }, 1000)
 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -257,13 +258,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     // tslint:disable-next-line
-    for(let i = 0; i < this.sectionList.length; i++) {
+    for (let i = 0; i < this.sectionList.length; i++) {
       // tslint:disable-next-line
       if (this.sectionList[i]['section'] === 'section_0'
-      || this.sectionList[i]['section'] === 'section_1'
-      || this.sectionList[i]['section'] === 'section_2'
-      || this.sectionList[i]['section'] === 'section_3'
-      || this.sectionList[i]['section'] === 'section_4') {
+        || this.sectionList[i]['section'] === 'section_1'
+        || this.sectionList[i]['section'] === 'section_2'
+        || this.sectionList[i]['section'] === 'section_3'
+        || this.sectionList[i]['section'] === 'section_4') {
         this.sectionList[i]['isVisible'] = true
       }
     }
@@ -287,29 +288,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   translateHub(hubName: string): string {
-    const translationKey =  hubName
+    const translationKey = hubName
     return this.translate.instant(translationKey)
   }
 
   getListPendingApproval(): void {
     this.userProfileService.listApprovalPendingFields()
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((res: any) => {
-      this.pendingApprovalList = res.result.data
-      // TODO...
-      // this.matSnackBar.openFromComponent(NotificationComponent, {
-      //   data: { type: 'pending' },
-      // ...this.configSuccess,
-      // })
-      if (!(this.pendingApprovalList && this.pendingApprovalList.length)) {
-        this.handleUpdateMobileNudge()
-      }
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        this.pendingApprovalList = res.result.data
+        // TODO...
+        // this.matSnackBar.openFromComponent(NotificationComponent, {
+        //   data: { type: 'pending' },
+        // ...this.configSuccess,
+        // })
+        if (!(this.pendingApprovalList && this.pendingApprovalList.length)) {
+          this.handleUpdateMobileNudge()
+        }
 
-    },         (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.matSnackBar.open('Unable to fetch pending approval list')
-      }
-    })
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackBar.open('Unable to fetch pending approval list')
+        }
+      })
   }
 
   handleUpdateMobileNudge() {
@@ -357,14 +358,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @HostListener('window:scroll', ['$event'])
   scrollHandler() {
     // tslint:disable-next-line
-    for(let i = 0; i < this.sectionList.length; i++) {
+    for (let i = 0; i < this.sectionList.length; i++) {
       // tslint:disable-next-line
-      if(this.sectionList[i]['section'] !== 'section_0' &&
-       this.sectionList[i]['section'] !== 'section_1' &&
-       this.sectionList[i]['section'] !== 'section_2' &&
-       this.sectionList[i]['section'] !== 'section_3' &&
-       this.sectionList[i]['section'] !== 'section_4') {
-       this.checkSectionVisibility(this.sectionList[i]['section'])
+      if (this.sectionList[i]['section'] !== 'section_0' &&
+        this.sectionList[i]['section'] !== 'section_1' &&
+        this.sectionList[i]['section'] !== 'section_2' &&
+        this.sectionList[i]['section'] !== 'section_3' &&
+        this.sectionList[i]['section'] !== 'section_4') {
+        this.checkSectionVisibility(this.sectionList[i]['section'])
       }
     }
   }
@@ -373,23 +374,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     let isVisible = false
     // tslint:disable-next-line
     if (className === 'section_0' ||
-    className === 'section_1' ||
-    className === 'section_2' ||
-    className === 'section_3' ||
-    className === 'section_4') {
+      className === 'section_1' ||
+      className === 'section_2' ||
+      className === 'section_3' ||
+      className === 'section_4') {
       isVisible = true
     } else {
       if (className !== 'section_0' &&
-       className !== 'section_1' &&
-       className !== 'section_2' &&
-       className !== 'section_3' &&
-       className !== 'section_4') {
-      // tslint:disable-next-line
-        for(let i = 0; i < this.sectionList.length; i++) {
+        className !== 'section_1' &&
+        className !== 'section_2' &&
+        className !== 'section_3' &&
+        className !== 'section_4') {
+        // tslint:disable-next-line
+        for (let i = 0; i < this.sectionList.length; i++) {
           if (this.sectionList[i]['section'] === className) {
             if (document.getElementsByClassName(this.sectionList[i]['section'])
-            && document.getElementsByClassName(this.sectionList[i]['section'])[0]
-            && !this.sectionList[i]['isVisible']) {
+              && document.getElementsByClassName(this.sectionList[i]['section'])[0]
+              && !this.sectionList[i]['isVisible']) {
               const tect = document.getElementsByClassName(this.sectionList[i]['section'])[0].getBoundingClientRect()
               const eleTop = tect.top
               const eleBottom = tect.bottom
@@ -425,16 +426,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
         userId: this.configSvc.unMappedUser.id,
         profileDetails: {
           additionalProperties: {
-            isProfileUpdatedMsgViewed:  true,
+            isProfileUpdatedMsgViewed: true,
           },
-         },
+        },
       },
     }
     this.userProfileService.editProfileDetails(reqUpdates).subscribe((res: any) => {
       if (res) {
         this.isMDOMsgOpen = true
       }
-    },                                                               (error: HttpErrorResponse) => {
+    }, (error: HttpErrorResponse) => {
       if (!error.ok) {
         this.matSnackBar.open(error.error.text)
       }
@@ -442,7 +443,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getApprovedStatus(): void {
-      this.userProfileService.fetchApprovedFields()
+    this.userProfileService.fetchApprovedFields()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res) {
@@ -462,16 +463,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
           } else {
             this.approvedStatus = false
           }
-         }
-      },         (error: HttpErrorResponse) => {
+        }
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
       })
-    }
+  }
 
   getRejectedStatus(): void {
-      this.userProfileService.listRejectedFields()
+    this.userProfileService.listRejectedFields()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res) {
@@ -492,89 +493,93 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.rejectedStatus = false
           }
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
       })
-    }
+  }
 
-    raiseTelemetryInteratEvent(event: any) {
-        if (event && event.viewMoreUrl) {
-          this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
-        }
-        if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
-          if (event.contentId && event.contentId.includes("ext")) {
-            this.events.raiseInteractTelemetry(
-              {
-                type: 'click',
-                subType: event.typeOfTelemetry,
-                id: 'card-content',
-              },
-              {
-                id: event.contentId || event.identifier,
-                type: 'External content'
-              },
-              {
-                module: WsEvents.EnumTelemetrymodules.HOME
-              }
-            )
-          } else {
-            let id = event.typeOfTelemetry === 'mdoChannel' ? event.identifier : event.orgId
-            let type = event.typeOfTelemetry === 'mdoChannel' ? 'org/ministry' : event.title
-            let _subType = event.typeOfTelemetry === 'mdoChannel' ? 'mdo-channel' :
-             event.typeOfTelemetry === 'karmaProgram' ? 'karma-programs' : event.typeOfTelemetry
-            if ((event.typeOfTelemetry === 'cbpPlan' && !event?.sakshamAIGenerated
-              || event.typeOfTelemetry === 'forYou' 
-              || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
-            ) {
-              id = event.identifier
-              type = event.primaryCategory
-              _subType = `${event.selectedTab}-${event.selectedPill}`
-            }
-            else if(event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
-              id = event.identifier
-              type = event.primaryCategory
-              _subType = 'igot-ai'
-            } 
-            else if(event.typeOfTelemetry === 'providers') {
-              id = event.orgId
-              type = 'org'
-              _subType = `training-institutions`
-            }
-    
-            this.events.raiseInteractTelemetry(
-              {
-                type: 'click',
-                subType: _subType,
-                id: 'card-content',
-                pageid: "/page/home"
-              },
-              {
-                id,
-                type,
-              },
-              {
-                module: WsEvents.EnumTelemetrymodules.HOME,
-              }
-            )
-          }
-        }
-        this.isTelemetryRaised = true
-        
-      }
-    
-      raiseTelemetry(name: string, subtype: string) {
+  raiseTelemetryInteratEvent(event: any) {
+    if (event && event.viewMoreUrl) {
+      this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
+    }
+    if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
+      if (event.contentId && event.contentId.includes("ext")) {
         this.events.raiseInteractTelemetry(
           {
             type: 'click',
-            subType: subtype,
-            id: `${_.kebabCase(name).toLocaleLowerCase()}`,
+            subType: event.typeOfTelemetry,
+            id: 'card-content',
           },
-          {},
+          {
+            id: event.contentId || event.identifier,
+            type: 'External content'
+          },
+          {
+            module: WsEvents.EnumTelemetrymodules.HOME
+          }
+        )
+      } else {
+        let id = event.typeOfTelemetry === 'mdoChannel' ? event.identifier : event.orgId
+        let type = event.typeOfTelemetry === 'mdoChannel' ? 'org/ministry' : event.title
+        let _subType = event.typeOfTelemetry === 'mdoChannel' ? 'mdo-channel' :
+          event.typeOfTelemetry === 'karmaProgram' ? 'karma-programs' : event.typeOfTelemetry
+        if ((event.typeOfTelemetry === 'cbpPlan' && !event?.sakshamAIGenerated
+          || event.typeOfTelemetry === 'forYou'
+          || event.typeOfTelemetry === 'continueLearning') && event.selectedTab && event.selectedPill
+        ) {
+          id = event.identifier
+          type = event.primaryCategory
+          _subType = `${event.selectedTab}-${event.selectedPill}`
+        }
+        else if (event.typeOfTelemetry === 'cbpPlan' && event?.sakshamAIGenerated) {
+          id = event.identifier
+          type = event.primaryCategory
+          _subType = 'igot-ai'
+        }
+        else if (event.typeOfTelemetry === 'providers') {
+          id = event.orgId
+          type = 'org'
+          _subType = `training-institutions`
+        }
+
+        this.events.raiseInteractTelemetry(
+          {
+            type: 'click',
+            subType: _subType,
+            id: 'card-content',
+            pageid: "/page/home"
+          },
+          {
+            id,
+            type,
+          },
           {
             module: WsEvents.EnumTelemetrymodules.HOME,
           }
         )
       }
+    }
+    this.isTelemetryRaised = true
+
+  }
+
+  raiseTelemetry(name: string, subtype: string) {
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: subtype,
+        id: `${_.kebabCase(name).toLocaleLowerCase()}`,
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+  }
+
+  redirectToCustomProfile() {
+    this.router.navigate(['/app/person-profile/me'], { fragment: 'customAttr' })
+  }
 }
