@@ -477,7 +477,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             {
               default: index === 0,
               kind: 'subtitles',
-              label: u.label,
+              label: this.titleCase(u.label),
               srclang: u.srclang,
               src: u.url,
             },
@@ -656,5 +656,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     if (this.player) {
       this.player.play()
     }
+  }
+
+  titleCase(str: string): string {
+    return str && str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }
