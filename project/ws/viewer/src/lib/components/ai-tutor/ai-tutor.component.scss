@@ -519,7 +519,7 @@
   .feefback-section {
     // width: 65%;
     // justify-content: end;
-    margin-left: 5%;
+    margin-left: 10px;
   }
 
   .vertical-middle {
@@ -658,6 +658,7 @@ width: 262px;
   opacity: 1;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  z-index: 999;
 }
 
 .loading-bar-icon img{
@@ -671,27 +672,27 @@ width: 262px;
 }
 
 .content-duration {
-  position: absolute;
-    background: black;
+  position: relative;
+    background: #F3962F;
     color: white;
     width: 100px;
     border-radius: 8px;
     text-align: center;
     bottom: 11px;
-    left: 13px;
+    left: 0px;
     padding: 0 5px;
     font-size: 12px;
     display: flex;
-    align-items: end;
+    align-items: center;
     justify-content: center;
-
+    margin-top: 12px;
     .mat-icon {
       vertical-align: middle;
       color: #fff !important;
       height: 14px !important;
       width: 14px !important;
       font-size: 14px;
-      margin-top: -4px;
+      // margin-top: -4px;
     }
 }
 
@@ -875,4 +876,43 @@ width: 262px;
 .feedback-icon {
   height: 18px;
   width: 18px;
+}
+
+.recommended-question-for-resource {
+  display: flex;
+  flex-wrap: wrap;
+  height: fit-content;
+  .rec-item {
+    height: fit-content;
+  }
+  .my-5px {
+    margin-top: 5px;
+    margin-bottom: 5px
+  }
+  .mr-5px {
+    margin-right: 5px
+  }
+  .btn-default {
+    background: rgb(213 199 199 / 4%);
+    border: 1px solid #F3962F;
+    color: #1B4CA1;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .showmore-icon {
+    align-items: flex-start;
+  }
+  .btn-active{
+    background: #000000;
+    border: 1px solid rgba(0,0,0, 0.16);
+    color: white;
+  }
+}
+
+.h-w-34 {
+  height: 34px;
+  width: 34px;
 }
