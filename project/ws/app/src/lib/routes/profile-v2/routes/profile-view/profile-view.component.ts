@@ -67,7 +67,7 @@ const EMP_ID_PATTERN = /^[a-z0-9]+$/i
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
- 
+
 export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentUsername: any
@@ -159,7 +159,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   primaryDetailsForm = new UntypedFormGroup({
     group: new UntypedFormControl('', [Validators.required]),
     designation: new UntypedFormControl('', [Validators.required]),
-    searchDesignation:  new UntypedFormControl(''),
+    searchDesignation: new UntypedFormControl(''),
   })
   approvalPendingFields = []
   rejectedByMDOData = []
@@ -208,9 +208,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   userDate: any
   isMatcompleteOpened = false
   designationListLoadCount = 50
-  designationDefaultLoadCount =  50
+  designationDefaultLoadCount = 50
   isLoadingMoreDesignations = false;
   desigantionFilterEnable = false
+  editCustomDetails = false
+  customAttrList: any = []
+  customAttrForm: any = {}
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -226,7 +229,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private profileService: ProfileV2Service,
     private netCoreService: NetCoreService,
     private signupService: SignupService,
-    private events: EventService
+    private events: EventService,
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -301,7 +304,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (data.profile.data.profileDetails) {
         this.portalProfile = data.profile.data.profileDetails
-        this.userDate = _.get(this.portalProfile, 'personalDetails.dob', '') 
+        this.userDate = _.get(this.portalProfile, 'personalDetails.dob', '')
       }
 
       const user = this.portalProfile.userId || this.portalProfile.id || _.get(data, 'profile.data.id') || ''
@@ -326,7 +329,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     // if (this.currentUser.lastName) {
     //   this.nameInitials = this.currentUser.firstName.charAt(0) + this.currentUser.lastName.charAt(0)}
-   
+
     this.getInitials()
     this.profileName = this.portalProfile.personalDetails && this.portalProfile.personalDetails.firstname
     this.prefillForm()
@@ -370,7 +373,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
             val && val.name.trim().toLowerCase().includes(searchText && searchText.toLowerCase())
           )
         } else {
-          this.filterDesignationsMeta = this.designationsMeta.slice(0,this.designationDefaultLoadCount)
+          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
           this.desigantionFilterEnable = false
           this.designationListLoadCount = this.designationDefaultLoadCount;
           this.checkCurrentDesignationPresent()
@@ -395,6 +398,14 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         })
     }
+  }
+
+  cancelCustomFormRequest() {
+    this.editCustomDetails = false
+  }
+
+  handleSaveCustomForm() {
+    console.log('save', this.customAttrForm)
   }
 
   // Sujith
@@ -721,7 +732,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Sujith
   prefillForm(data?: any): void {
-    
+
     this.isCadreStatus = this.portalProfile.personalDetails && this.portalProfile.personalDetails.isCadre ? true : false
     if (data) {
       this.portalProfile.personalDetails.gender = data.dataToSubmit.gender
@@ -785,7 +796,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       isCadre: _.get(this.portalProfile, 'personalDetails.isCadre', '')
     });
 
-    
+
 
     // ...(this.portalProfile.cadreDetails ? {
     //   typeOfCivilService: this.portalProfile.cadreDetails.civilServiceType,
@@ -1108,18 +1119,18 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userProfileService.getDesignations({}).subscribe(
       (data: any) => {
         this.designationsMeta = data.responseData
-      
-      // Initialize filtered list
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-      this.checkCurrentDesignationPresent();
-      
+
+        // Initialize filtered list
+        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
+        this.checkCurrentDesignationPresent();
+
       },
       (_err: any) => {
       })
   }
 
   checkCurrentDesignationPresent() {
-       
+
     // Get the current designation value
     const currentDesignation = this.primaryDetailsForm.get('designation')!.value;
     // Check if current designation exists in the list
@@ -1127,11 +1138,11 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       const designationExists = this.filterDesignationsMeta.some(
         (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
       );
-      
+
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
         // Create a new designation object to match the structure of other items
-        const newDesignation = { 
+        const newDesignation = {
           name: currentDesignation,
           // Add any other required properties matching your data structure
           id: 'custom-' + Date.now(),
@@ -1150,32 +1161,32 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   loadDesignationsData(searchText?: string) {
     let request: any = {
       "filterCriteriaMap": {
-          "status": "Active"
+        "status": "Active"
       },
       "requestedFields": [],
-      "pageNumber":0,
-      "pageSize":20
+      "pageNumber": 0,
+      "pageSize": 20
     }
-    if(searchText){
+    if (searchText) {
       request['searchString'] = searchText
     }
     this.userProfileService.getDesignationV2(request).subscribe(
       (data: any) => {
         console.log(data, "data")
-        if(data && data.result && data.result.result && data.result.result.data && data.result.result.data.length ){
-          if(!searchText) {
+        if (data && data.result && data.result.result && data.result.result.data && data.result.result.data.length) {
+          if (!searchText) {
             this.designationsMeta = data.result.result.data
             this.filterDesignationsMeta = this.designationsMeta
           } else {
             this.filterDesignationsMeta = data.result.result.data
           }
-          
+
         }
         // this.designationsMeta = data.responseData
       },
       (_err: any) => {
       })
-  } 
+  }
 
   async getMasterDesignation() {
     this.signupService.getOrgReadData(this.orgId).subscribe((result: any) => {
@@ -1581,7 +1592,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       (_res: any) => {
         this.matSnackBar.open(this.handleTranslateTo('profileImageUpdated'))
         this.portalProfile.profileImageUrl = (this.photoUrl as any)
-       // this.netCoreUserProfilePhotoUpdateEvent()
+        // this.netCoreUserProfilePhotoUpdateEvent()
 
       },
       (err: HttpErrorResponse) => {
@@ -1667,7 +1678,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
-    
+
     // Clean up any panel event listeners
     const panel = document.querySelector('.mat-select-panel');
     if (panel) {
@@ -1884,10 +1895,10 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         //profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
       }
 
-     
 
 
-      
+
+
       // if (this.profileName) {
       //   profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
       //  // profileUpdateEventObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
@@ -1900,27 +1911,27 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.portalProfile &&
         this.portalProfile.personalDetails) {
 
-          const EMPLOYEE_ID = this.otherDetailsForm.get('employeeCode');
-          const EMAIL = this.otherDetailsForm.get('primaryEmail')
-          const MOBILE = this.otherDetailsForm.get('mobile')
-          const MOTHER_TONGUE = this.otherDetailsForm.get('domicileMedium')
-          const IS_CADRE = this.otherDetailsForm.get('isCadre')
+        const EMPLOYEE_ID = this.otherDetailsForm.get('employeeCode');
+        const EMAIL = this.otherDetailsForm.get('primaryEmail')
+        const MOBILE = this.otherDetailsForm.get('mobile')
+        const MOTHER_TONGUE = this.otherDetailsForm.get('domicileMedium')
+        const IS_CADRE = this.otherDetailsForm.get('isCadre')
 
-          if (EMPLOYEE_ID?.dirty) {
-            profileUpdateEventObj.push('EMPLOYEE_ID')
-          } 
-          if (EMAIL?.dirty) {
-            profileUpdateEventObj.push('EMAIL')
-          } 
-          if (MOBILE?.dirty) {
-            profileUpdateEventObj.push('MOBILE')
-          } 
-          if (MOTHER_TONGUE?.dirty) {
-            profileUpdateEventObj.push('MOTHER_TONGUE')
-          } 
-          if (IS_CADRE?.dirty) {
-            profileUpdateEventObj.push('IS_CADRE')
-          } 
+        if (EMPLOYEE_ID?.dirty) {
+          profileUpdateEventObj.push('EMPLOYEE_ID')
+        }
+        if (EMAIL?.dirty) {
+          profileUpdateEventObj.push('EMAIL')
+        }
+        if (MOBILE?.dirty) {
+          profileUpdateEventObj.push('MOBILE')
+        }
+        if (MOTHER_TONGUE?.dirty) {
+          profileUpdateEventObj.push('MOTHER_TONGUE')
+        }
+        if (IS_CADRE?.dirty) {
+          profileUpdateEventObj.push('IS_CADRE')
+        }
 
         // if (this.portalProfile.personalDetails.gender) {
         //   profileUpdateObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
@@ -1951,14 +1962,14 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         //   profileUpdateEventObj['PIN_CODE'] = this.portalProfile.personalDetails.pincode.trim()
         // }
 
-        
-        
-        
-        
+
+
+
+
 
         // if (this.portalProfile.id) {
         //   // profileUpdateEventObj['EMPLOYEE_ID'] = this.portalProfile.employmentDetails?.employeeCode.trim()
-          
+
         // }
         // if (this.portalProfile.personalDetails.hasOwnProperty('isCadre')) {
         //   profileUpdateEventObj['IS_CADRE'] = this.portalProfile.personalDetails.hasOwnProperty('isCadre')
@@ -1972,21 +1983,21 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (PROFILE_GROUP?.dirty) {
         profileUpdateEventObj.push('PROFILE_GROUP')
-      } 
+      }
       if (PROFILE_DESIGNATION?.dirty) {
         profileUpdateEventObj.push('PROFILE_DESIGNATION')
-      } 
-
-      if (this.portalProfile && this.portalProfile.profileDetails ) {
-        profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
-        //profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
-       // profileUpdateEventObj.push('PROFILE_GROUP')
       }
 
-      if (this.portalProfile && this.portalProfile.profileDetails ) {
+      if (this.portalProfile && this.portalProfile.profileDetails) {
+        profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+        //profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+        // profileUpdateEventObj.push('PROFILE_GROUP')
+      }
+
+      if (this.portalProfile && this.portalProfile.profileDetails) {
         profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
         //profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
-       // profileUpdateEventObj.push('PROFILE_DESIGNATION')
+        // profileUpdateEventObj.push('PROFILE_DESIGNATION')
       }
 
 
@@ -2043,7 +2054,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupScrollListener(opened: boolean): void {
-    
+
     if (opened) {
       if (this.primaryDetailsForm.get('searchDesignation')) {
         this.primaryDetailsForm.get('searchDesignation')!.setValue('');
@@ -2061,29 +2072,29 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
-          const panel = document.querySelector('.mat-select-panel');
-          if (panel) {
-            // Add scroll event listener to the panel
-            panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
-          }
-        
+        const panel = document.querySelector('.mat-select-panel');
+        if (panel) {
+          // Add scroll event listener to the panel
+          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        }
+
       }, 100);
     }
   }
 
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
-    
-    if(!this.desigantionFilterEnable){
+
+    if (!this.desigantionFilterEnable) {
       // Check if user has scrolled to the bottom (with a small threshold)
       if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
         // Only load more if not already loading and if there are potentially more items
         if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
           this.isLoadingMoreDesignations = true;
-          
+
           // Increase the load count by designationDefaultLoadCount
           this.designationListLoadCount += this.designationDefaultLoadCount;
-          
+
           // Update the filtered list with more items
           setTimeout(() => {
             this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);

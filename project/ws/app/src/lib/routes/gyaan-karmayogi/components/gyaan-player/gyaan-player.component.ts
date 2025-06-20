@@ -22,7 +22,10 @@ export class GyaanPlayerComponent implements OnInit {
   relatedContentStrip: any
   displayContents = true
   collectionId: any = ''
-  from:any = ''
+  from: any = ''
+  isInstructionsExpanded = false
+  hasLongInstructions = false
+
   constructor(private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
               private route: ActivatedRoute,
@@ -88,7 +91,13 @@ export class GyaanPlayerComponent implements OnInit {
       this.from = params['from']; // Access a specific query param
       console.log('this.from', this.from);
     });
+
+    // Set up observer to check if instructions are long enough to require "View More"
+    setTimeout(() => {
+      this.checkInstructionsLength();
+    }, 100);
   }
+
   // this method is used to close the share popup
   resetEnableShare() {
     this.enableShare = false
@@ -166,5 +175,22 @@ export class GyaanPlayerComponent implements OnInit {
         )
       }
     }
+  }
+
+  checkInstructionsLength() {
+    if (!this.resourceData?.instructions) {
+      return;
+    }
+    
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = this.resourceData.instructions;
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Rough estimate: 200 characters would typically require more than 4 lines
+    this.hasLongInstructions = textContent.length > 200;
+  }
+
+  toggleInstructions() {
+    this.isInstructionsExpanded = !this.isInstructionsExpanded;
   }
 }

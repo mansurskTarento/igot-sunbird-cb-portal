@@ -1,14 +1,14 @@
 <div class="mat-body-2 karmapoints-panel" *ngIf="isKPPanelenabled">
     <p class="margin-remove"> {{'appKarmapointsPanel.earn' |translate}}
         <img src="/assets/icons/home/karma-badge.svg" alt="KarmaPoints">
-        <span class="font-bold"> {{'appKarmapointsPanel.fKarmaPoints' |translate}} </span> 
+        <span class="font-bold"> {{'appKarmapointsPanel.fKarmaPoints' |translate}} </span>
         {{'appKarmapointsPanel.courseEnrollement' |translate}}
     </p>
     <!-- //NOSONAR --><mat-icon (click)="closeKarmaPointsPanel()" class="cursor-pointer">close</mat-icon>
 </div>
 <div class="home-container m-auto flex flex-row gap-6"
     [ngClass]="mobileTopHeaderVisibilityStatus ? 'home-container':'home-container-without-mobile-header'">
-    
+
     <ng-container *ngIf="!homeConfig?.insightOnRight?.active">
         <div class="bg-info mt-2" [ngClass]="
         homeConfig?.leftSection?.active &&  homeConfig?.rightSection?.active ? 'left' :
@@ -35,12 +35,13 @@
                             <div class="section_{{i}}" *ngIf="i==j && vitem && vitem['section'] == 'section_'+i">
                                 <ng-container
                                     *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
+                                    <ws-feed-list [widgetData]="item"
+                                        (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                                 </ng-container>
                             </div>
                         </ng-container>
                     </ng-container>
-                    
+
                     <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
                         <ng-container *ngFor="let vitem of sectionList">
                             <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'slider' )">
@@ -73,7 +74,8 @@
                 <ng-container *ngIf="!enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
+                            <ws-feed-list [widgetData]="item"
+                                (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
                     </ng-container>
 
@@ -103,14 +105,15 @@
         (!homeConfig?.rightSection?.active && !homeConfig?.leftSection?.active) ? 'full' : ''"
             *ngIf="homeConfig?.rightSection?.active">
             <div class="flex flex-col gap-3 mt-8">
-                
+
                 <ng-container *ngIf="enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngFor="let vitem of sectionList;let j=index; trackBy j">
                             <span class="section_{{i}}" *ngIf="i==j">
                                 <ng-container
                                     *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
+                                    <ws-feed-list [widgetData]="item"
+                                        (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                                 </ng-container>
                             </span>
                         </ng-container>
@@ -148,7 +151,8 @@
                 <ng-container *ngIf="!enableLazyLoadingFlag">
                     <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
                         <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item" (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
+                            <ws-feed-list [widgetData]="item"
+                                (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
                     </ng-container>
 
@@ -185,26 +189,48 @@
     <ws-download-app></ws-download-app>
 </div>
 
-<div class="footer footer-update-mobile-number customindex" *ngIf="!isMDOMsgOpen">
-    <!-- //NOSONAR --><div (click)="handleMDOMsgstatus()" class="desktop-cross">X</div>
+<div class="footer footer-update-mobile-number customindex" *ngIf="!isMDOMsgOpen && !canShowCustomAttrOpen">
+    <!-- //NOSONAR -->
+    <div (click)="handleMDOMsgstatus()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
         <!-- //NOSONAR --><span (click)="handleMDOMsgstatus()" class="mobile-cross">X</span>
-        <img class="hand-icon" src="assets/icons/footer-nav/update-mobile-number.svg" alt=""/>
-        <p class="updatetitle" *ngIf="rejectedStatus && !approvedStatus">MDO has rejected your request. 
-            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a> to see the changes.</p>
-        <p class="updatetitle" *ngIf="!rejectedStatus && approvedStatus">MDO has approved your request. 
-            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a> to see the changes.</p>
-        <p class="updatetitle" *ngIf="(!rejectedStatus && !approvedStatus) || (rejectedStatus && approvedStatus)">MDO has updated your details. 
-            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a> to see the changes.</p>
+        <img class="hand-icon" src="assets/icons/footer-nav/update-mobile-number.svg" alt="" />
+        <p class="updatetitle" *ngIf="rejectedStatus && !approvedStatus">MDO has rejected your request.
+            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a>
+            to see the changes.
+        </p>
+        <p class="updatetitle" *ngIf="!rejectedStatus && approvedStatus">MDO has approved your request.
+            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a>
+            to see the changes.
+        </p>
+        <p class="updatetitle" *ngIf="(!rejectedStatus && !approvedStatus) || (rejectedStatus && approvedStatus)">MDO
+            has updated your details.
+            <!-- //NOSONAR --><a class="linktext cursor-pointer" (click)="fetchProfile()" role="button">Click here</a>
+            to see the changes.
+        </p>
     </div>
 </div>
 
-<div class="footer footer-update-mobile-number" *ngIf="isNudgeOpen">
-    <!-- //NOSONAR --><div (click)="handleRemindLater()" class="desktop-cross">X</div>
+<div class="footer footer-update-mobile-number" *ngIf="isNudgeOpen && !canShowCustomAttrOpen">
+    <!-- //NOSONAR -->
+    <div (click)="handleRemindLater()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
         <!-- //NOSONAR --><span (click)="handleRemindLater()" class="mobile-cross">X</span>
-        <img class="hand-icon" src="assets/icons/footer-nav/update-mobile-number.svg" alt=""/>
+        <img class="hand-icon" src="assets/icons/footer-nav/update-mobile-number.svg" alt="" />
         <p class="updatetitle">{{ 'home.updateYourProfile' | translate }}</p>
-        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="fetchProfile()" role="button">{{ 'home.updateNow' | translate }}</button>
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="fetchProfile()" role="button">{{
+            'home.updateNow' | translate }}</button>
+    </div>
+</div>
+
+<div class="footer footer-update-mobile-number" *ngIf="canShowCustomAttrOpen">
+    <!-- //NOSONAR -->
+    <div (click)="remaindCustomAttPopup()" class="desktop-cross">X</div>
+    <div class="update-mobile-number-flex">
+        <!-- //NOSONAR --><span (click)="remaindCustomAttPopup()" class="mobile-cross">X</span>
+        <p class="updatetitle">{{ 'home.updateYourProfile' | translate }}</p>
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="redirectToCustomProfile()"
+            role="button">{{
+            'home.updateNow' | translate }}</button>
     </div>
 </div>

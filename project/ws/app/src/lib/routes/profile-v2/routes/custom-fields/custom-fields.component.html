@@ -1,0 +1,125 @@
+<div class="common-card-css" *ngIf="customAttrListIds && customAttrListIds.length">
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-row gap-4 items-center justify-between">
+      <div class="flex flex-row gap-2 title-div items-center mb-4">
+        <div class="title">{{ 'profileInfo.customFields' | translate }}</div>
+      </div>
+      <ng-container *ngIf="customFieldValues && customFieldValues.length">
+        <div class="flex flex-row info-value">
+          <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
+            (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
+            <mat-icon>edit</mat-icon>
+            {{ 'profileInfo.edit' | translate }}
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="customFieldValues && customFieldValues.length === 0">
+        <div class="flex flex-row info-value">
+          <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
+            (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
+            <mat-icon>add</mat-icon>
+            {{ 'profileInfo.add' | translate }}
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="!editCustomDetails">
+    <div class="grid-container mt-2" *ngIf="customFieldValues && customFieldValues.length">
+      <!-- Text fields - Each in its own grid cell -->
+      <ng-container *ngFor="let item of customAttrList">
+        <div *ngIf="item?.type === 'text'" class="grid-item">
+          <div class="flex flex-col gap-2 pr-3 info-div">
+            <span class="label">{{item?.name}}</span>
+            <span class="value">{{getValue(item?.attributeName) || '-'}}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- MasterList fields - Each level gets its own grid cell -->
+      <ng-container *ngFor="let item of customAttrList">
+        <ng-container *ngIf="item?.type === 'masterList' && item?.originalCustomFieldData">
+          <ng-container *ngFor="let filed of item?.originalCustomFieldData">
+            <div class="grid-item">
+              <div class="flex flex-col gap-2 pr-3 info-div">
+                <span class="label">
+                  <!-- Show parent field name only for the first item -->
+                  {{filed?.name | titlecase}}
+                </span>
+                <span class="value">{{getListItemName(item, filed) || ''}}</span>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+    <div class="font-medium" *ngIf="customFieldValues && customFieldValues.length === 0">
+      {{ 'profileInfo.noCustomFields' | translate }}
+    </div>
+  </div>
+  <div class="custom-attr-edit" *ngIf="editCustomDetails">
+    <form [formGroup]="customAttrForm">
+      <div class="grid-container">
+        <!-- Text fields remain in their own grid cells -->
+        <ng-container *ngFor="let field of customAttrList">
+          <div class="flex flex-col gap-2 pr-3" *ngIf="field.type === 'text'">
+            <div class="info-div">
+              <div class="label">{{field.name}}</div>
+              <mat-form-field class="profile-form-field w-full">
+                <input type="text" class="input-text w-full" matInput [formControlName]="field.attributeName"
+                  [value]="getValue(field.attributeName)" [maxlength]="field?.attributeMaxLength" />
+                <mat-error class="text-xs mt-3"
+                  *ngIf="customAttrForm.get(field.attributeName)?.touched && customAttrForm.get(field.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
+                  {{field.name }} is required
+                </mat-error>
+                <mat-error class="text-xs mt-3"
+                  *ngIf="customAttrForm.get(field.attributeName)?.touched && !customAttrForm.get(field.attributeName)?.hasError('required') && customAttrForm.get(field.attributeName)?.hasError('pattern')">
+                  Invalid input.
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- MasterList fields - Each dropdown gets its own grid cell -->
+        <ng-container *ngFor="let field of customAttrList">
+          <ng-container *ngIf="field.type === 'masterList' && hierarchyFields[field.attributeName]">
+            <ng-container [formGroupName]="field.attributeName + '_group'">
+              <ng-container *ngFor="let hierarchyField of hierarchyFields[field.attributeName]; index as i">
+                <!-- Each dropdown is in its own grid cell -->
+                <div class="flex flex-col gap-2 pr-3 hierarchy-dropdown">
+                  <div class="info-div">
+                    <div class="label">{{hierarchyField | titlecase}}</div>
+                    <mat-form-field class="profile-form-field w-full">
+                      <mat-select [formControlName]="hierarchyField"
+                        (selectionChange)="onDropdownChange(field.attributeName, hierarchyField, $event.value, i)">
+                        <mat-option *ngFor="let option of fieldOptions[field.attributeName][hierarchyField] || []"
+                          [value]="option.value">
+                          {{ option.label }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error class="text-xs mt-3" *ngIf="masterListFormGroups[field.attributeName].get(hierarchyField)?.touched && 
+                              masterListFormGroups[field.attributeName].get(hierarchyField)?.hasError('required')">
+                        {{ hierarchyField | titlecase }} is required
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <div class="flex flex-row gap-4 justify-end mt-5">
+        <button class="outline-button" (click)="cancelCustomFormRequest()">
+          {{ 'profileInfo.cancel' | translate }}
+        </button>
+        <button [disabled]="!customAttrForm.valid" [ngClass]="{'disable-button': !customAttrForm.valid}"
+          class="save-button" (click)="handleSaveCustomForm()">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

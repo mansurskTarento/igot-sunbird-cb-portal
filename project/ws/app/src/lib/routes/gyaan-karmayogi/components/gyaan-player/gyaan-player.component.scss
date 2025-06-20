@@ -127,3 +127,33 @@
 .color-white {
     background: white !important;
 }
+
+.instruction-container {
+  position: relative;
+}
+
+.truncate-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 6em; /* Adjust based on your line height */
+}
+
+.view-toggle-btn {
+  color: white;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 100%;
+  font-weight: 700 !important;
+}
+
+.view-toggle-btn:hover {
+  text-decoration: underline;
+}
