@@ -271,7 +271,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       request: { organisationId: this.rootOrgId },
     }
     this.userProfileService.readOrgData(request).subscribe((res: any) => {
-      this.canShowCustomAttrOpen = _.get(res, 'result.response.customfieldsdata.customFieldsCount') ? true : false
+      this.canShowCustomAttrOpen = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
       localStorage.setItem('canShowCustomAttrPopup', JSON.stringify(this.canShowCustomAttrOpen))
     }, error => {
       this.canShowCustomAttrOpen = false

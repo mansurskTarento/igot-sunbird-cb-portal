@@ -404,10 +404,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editCustomDetails = false
   }
 
-  handleSaveCustomForm() {
-    console.log('save', this.customAttrForm)
-  }
-
   // Sujith
   getService(event: any) {
     const serviceTypeControl = this.otherDetailsForm.get('serviceType')
