@@ -72,11 +72,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     horizontalPosition: 'center',
     verticalPosition: 'bottom',
   }
-  canShowCustomAttrOpen: boolean = true
+  canShowCustomAttrOpen: boolean = false
+  rootOrgId: string = ''
 
   ngOnInit() {
     let isNotMyUser = false
     let isIgotOrg = false
+    if (this.configSvc && this.configSvc.unMappedUser) {
+      this.rootOrgId = this.configSvc.unMappedUser.rootOrgId || ''
+    }
     if (this.configSvc && this.configSvc.unMappedUser
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.profileStatus) {
@@ -254,6 +258,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
+    if (localStorage.getItem('canShowCustomAttrPopup')) {
+      this.canShowCustomAttrOpen = JSON.parse(localStorage.getItem('canShowCustomAttrPopup') || 'false')
+    } else {
+      this.getOrgDetails()
+    }
+  }
+
+
+  getOrgDetails() {
+    const request = {
+      request: { organisationId: this.rootOrgId },
+    }
+    this.userProfileService.readOrgData(request).subscribe((res: any) => {
+      this.canShowCustomAttrOpen = _.get(res, 'result.response.customfieldsdata.customFieldsCount') ? true : false
+      localStorage.setItem('canShowCustomAttrPopup', JSON.stringify(this.canShowCustomAttrOpen))
+    }, error => {
+      this.canShowCustomAttrOpen = false
+      console.error('Error fetching organization details', error)
+    })
+  }
+
+  remaindCustomAttPopup() {
+    this.canShowCustomAttrOpen = false
+    localStorage.setItem('canShowCustomAttrPopup', 'false')
   }
 
   ngAfterViewInit() {
