@@ -392,7 +392,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       } else {
         this.selectedTranscriptionStyle =  this.vttLangArr[0]
       }
-       console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
+      // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
        let url = this.vttLangArr.filter((item:any)=>item.label === this.transcriptionActiveLanguage)[0]['uri']
         // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
