@@ -101,6 +101,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   ]
   selectedLearningStyle :any
   resultFetch = false
+  authTokenHost = ''
+  NoneSocketHost = ''
+  SocraticeStyleHost = ''
+  StorytellingHost = ''
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -115,12 +119,23 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
   ngOnInit() {
+    if (environment.production) {
+      this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
+      this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
+      this.SocraticeStyleHost = 'learning-ai.prod.karmayogibharat.net'
+      this.StorytellingHost = 'learning-ai.prod.karmayogibharat.net'
+    } else {
+      this.authTokenHost = 'learning-ai.uat.karmayogibharat.net'
+      this.NoneSocketHost = 'learning-ai.uat.karmayogibharat.net'
+      this.SocraticeStyleHost = 'learning-ai.uat.karmayogibharat.net'
+      this.StorytellingHost = 'learning-ai.uat.karmayogibharat.net'
+    }
     this.userInfo = this.configSvc && this.configSvc.userProfile
     this.websocketService.getJWTToken().subscribe((data:any)=>{
       if(data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
         //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
-        this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
+        this.websocketService.connect(`wss://${this.authTokenHost}/ws?token=${this.jwtToken}`);
       }
       
     })
@@ -804,17 +819,17 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/socratic/v1/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.SocraticeStyleHost}/socratic/v1/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://learning-ai.uat.karmayogibharat.net/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.NoneSocketHost}/ws?token=${this.jwtToken}`);
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       
-      this.websocketService.connect(`wss://teaching-styles.uat.karmayogibharat.net/storytelling/v1/ws?token=${this.jwtToken}`);
+      this.websocketService.connect(`wss://${this.StorytellingHost}/storytelling/v1/ws?token=${this.jwtToken}`);
     }
    // console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
