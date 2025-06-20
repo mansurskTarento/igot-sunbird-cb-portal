@@ -41,7 +41,7 @@
                 <mat-form-field appearance="none">
                     <select matNativeControl required class="section-dd" (change)="renderSelectedLanguageTranscription($event)">
                         <option [value]="lang?.language" *ngFor="let lang of vttLangArr" [selected]="lang?.label === transcriptionActiveLanguage">
-                           <span *ngIf="lang?.label === transcriptionActiveLanguage"> Transcription Language: </span> {{lang?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === lang?.language">(Auto)</span>
+                           <span *ngIf="transcriptionActiveLanguage === lang?.language"> Transcription Language: </span> {{lang?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === lang?.language">(Auto)</span>
                         </option>
                     </select>
                 </mat-form-field>
