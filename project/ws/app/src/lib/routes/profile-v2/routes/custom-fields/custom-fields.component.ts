@@ -119,6 +119,14 @@ export class CustomFieldsComponent {
   }
 
   buildDynamicForm() {
+    // Clear previous form state
+    if (this.customAttrForm) {
+      // Remove all controls from previous form
+      Object.keys(this.masterListFormGroups).forEach(fieldName => {
+        this.customAttrForm.removeControl(`${fieldName}_group`);
+      });
+    }
+
     const formControls: { [key: string]: any } = {};
     const activeFields = this.customAttrList.filter((field: any) => field.isActive);
 
@@ -151,7 +159,16 @@ export class CustomFieldsComponent {
         if (dataSource && dataSource.length > 0) {
           // Extract hierarchy fields (e.g., country, state, city)
           const hierarchy = this.extractHierarchyFields(dataSource, this.useReversedData[field.attributeName]);
-          this.hierarchyFields[field.attributeName] = hierarchy;
+
+          // Check for duplicates
+          const uniqueItems = new Set(hierarchy);
+          if (uniqueItems.size !== hierarchy.length) {
+            console.warn(`Duplicate fields detected in hierarchy for ${field.attributeName}:`, hierarchy);
+            // Remove duplicates
+            this.hierarchyFields[field.attributeName] = Array.from(uniqueItems);
+          } else {
+            this.hierarchyFields[field.attributeName] = hierarchy;
+          }
 
           // Initialize options map for this field
           this.fieldOptions[field.attributeName] = {};
@@ -192,12 +209,19 @@ export class CustomFieldsComponent {
       this.setupCascadingDropdownListeners(fieldName);
     });
 
-    // After setting up the form and listeners, load all options for all fields
+    // After setting up the form and listeners
     Object.keys(this.hierarchyFields).forEach(fieldName => {
+      // Load all options
       this.loadAllOptions(fieldName);
     });
 
-    console.log('Custom Attribute Form', this.customAttrForm);
+    // Debug form structure
+    console.log("Form controls:", Object.keys(this.customAttrForm.controls));
+    Object.keys(this.hierarchyFields).forEach(fieldName => {
+      console.log(`Hierarchy for ${fieldName}:`, this.hierarchyFields[fieldName]);
+      console.log(`Form group controls for ${fieldName}:`,
+        Object.keys(this.customAttrForm.get(`${fieldName}_group`).controls));
+    });
   }
 
   // Determine whether to use reversed data
@@ -224,59 +248,54 @@ export class CustomFieldsComponent {
     }
   }
 
-  // Extract the hierarchy fields from the data structure
+  // Extract the hierarchy fields from the data structure to support 5 levels
   extractHierarchyFields(data: any[], isReversed: boolean): string[] {
     if (!data || data.length === 0) return [];
 
+    // Use a Set to ensure uniqueness
+    const hierarchySet = new Set<string>();
     const firstItem = data[0];
-    const hierarchy: string[] = [];
 
     if (isReversed) {
-      // For reversed data, extract in bottom-up order (city -> state -> country)
-      if (firstItem.fieldName) {
-        hierarchy.push(firstItem.fieldName);
-      }
+      // For reversed data (bottom-up), extract recursively
+      const extractReversedFields = (item: any, currentDepth: number) => {
+        if (!item || currentDepth > 5) return;
 
-      // Traverse up through parent fields
-      if (firstItem.fieldValues && firstItem.fieldValues.length > 0) {
-        const parentLevel = firstItem.fieldValues[0];
-        if (parentLevel.fieldName) {
-          hierarchy.push(parentLevel.fieldName);
+        if (item.fieldName) {
+          hierarchySet.add(item.fieldName);
         }
 
-        // Go one level higher if available
-        if (parentLevel.fieldValues && parentLevel.fieldValues.length > 0) {
-          const grandparentLevel = parentLevel.fieldValues[0];
-          if (grandparentLevel.fieldName) {
-            hierarchy.push(grandparentLevel.fieldName);
+        if (item.fieldValues && item.fieldValues.length > 0) {
+          extractReversedFields(item.fieldValues[0], currentDepth + 1);
+
+          // Also check second level of parents if it exists
+          if (item.fieldValues[0].fieldValues && item.fieldValues[0].fieldValues.length > 0) {
+            extractReversedFields(item.fieldValues[0].fieldValues[0], currentDepth + 2);
           }
         }
-      }
+      };
+
+      extractReversedFields(firstItem, 1);
+      // Convert set to array and reverse to get correct order
+      const hierarchy = Array.from(hierarchySet);
+      return hierarchy.reverse();
     } else {
-      // For regular data, extract in top-down order (country -> state -> city)
-      if (firstItem.fieldName) {
-        hierarchy.push(firstItem.fieldName);
-      }
+      // For regular data (top-down)
+      const extractForwardFields = (item: any, currentDepth: number) => {
+        if (!item || currentDepth > 5) return;
 
-      // Add second level if it exists
-      if (firstItem.fieldValues && firstItem.fieldValues.length > 0) {
-        const secondLevel = firstItem.fieldValues[0];
-        if (secondLevel.fieldName) {
-          hierarchy.push(secondLevel.fieldName);
+        if (item.fieldName) {
+          hierarchySet.add(item.fieldName);
         }
 
-        // Add third level if it exists
-        if (secondLevel.fieldValues && secondLevel.fieldValues.length > 0) {
-          const thirdLevel = secondLevel.fieldValues[0];
-          if (thirdLevel.fieldName) {
-            hierarchy.push(thirdLevel.fieldName);
-          }
+        if (item.fieldValues && item.fieldValues.length > 0) {
+          extractForwardFields(item.fieldValues[0], currentDepth + 1);
         }
-      }
+      };
+
+      extractForwardFields(firstItem, 1);
+      return Array.from(hierarchySet);
     }
-
-    // If we're using reversed data, we need to reverse the hierarchy for display order
-    return isReversed ? hierarchy.reverse() : hierarchy;
   }
 
   // Extract unique options for a specific field
@@ -332,13 +351,15 @@ export class CustomFieldsComponent {
     }
   }
 
-  // Set up listeners for cascading dropdowns
+  // Set up listeners for cascading dropdowns (up to 5 levels)
   setupCascadingDropdownListeners(fieldName: string) {
     const hierarchy = this.hierarchyFields[fieldName];
     const formGroup = this.masterListFormGroups[fieldName];
     const isReversed = this.useReversedData[fieldName];
 
     if (!hierarchy || !formGroup || hierarchy.length <= 1) return;
+
+    console.log(`Setting up cascade listeners for ${fieldName}, levels: ${hierarchy.length}`);
 
     // For each level except the last one
     for (let i = 0; i < hierarchy.length - 1; i++) {
@@ -348,25 +369,40 @@ export class CustomFieldsComponent {
       // Listen to changes on the parent field to update child options
       formGroup.get(parentField)?.valueChanges.subscribe(value => {
         if (value) {
+          console.log(`${parentField} changed to ${value}, updating ${childField} options`);
           // Update options for the child field
           this.updateChildOptions(fieldName, parentField, value, childField, isReversed);
+
+          // Important: Clear all fields below this one
+          for (let j = i + 2; j < hierarchy.length; j++) {
+            const grandchildField = hierarchy[j];
+            console.log(`Clearing ${grandchildField} due to ${parentField} change`);
+            formGroup.get(grandchildField)?.setValue('');
+            this.fieldOptions[fieldName][grandchildField] = [];
+          }
         } else {
           // Reset child field and its options
           formGroup.get(childField)?.setValue('');
           this.fieldOptions[fieldName][childField] = [];
+
+          // Also reset all fields below this one
+          for (let j = i + 2; j < hierarchy.length; j++) {
+            const grandchildField = hierarchy[j];
+            formGroup.get(grandchildField)?.setValue('');
+            this.fieldOptions[fieldName][grandchildField] = [];
+          }
         }
 
         // Update the combined value
         this.updateCombinedValue(fieldName);
       });
-
-      // For the last field, just update combined value when it changes
-      if (i === hierarchy.length - 2) {
-        formGroup.get(childField)?.valueChanges.subscribe(() => {
-          this.updateCombinedValue(fieldName);
-        });
-      }
     }
+
+    // For the last field, just update combined value when it changes
+    const lastField = hierarchy[hierarchy.length - 1];
+    formGroup.get(lastField)?.valueChanges.subscribe(() => {
+      this.updateCombinedValue(fieldName);
+    });
   }
 
   // Update options for a child field based on parent selection
@@ -556,67 +592,76 @@ export class CustomFieldsComponent {
     });
   }
 
-  // Update this method to handle reverse selection when populating values
+  // Enhanced to handle up to 5 levels when populating values
   populateHierarchicalValues(field: any) {
     const hierarchy = this.hierarchyFields[field.attributeName];
     const formGroup = this.masterListFormGroups[field.attributeName];
     const isReversed = this.useReversedData[field.attributeName];
 
-    if (!hierarchy || !formGroup || !field.selectedValues) return;
+    if (!hierarchy || !formGroup || !field.selectedValues) {
+      console.log(`Cannot populate values for ${field.attributeName}: missing data`);
+      return;
+    }
 
-    // Check if we have the last field value (e.g., city)
-    const lastField = hierarchy[hierarchy.length - 1];
-    const lastFieldValue = field.selectedValues[lastField];
+    // Temporarily disable ALL listeners to prevent cascade effects
+    const subscriptions = this.disableValueChangeListeners(field.attributeName);
 
-    if (lastFieldValue) {
-      // If we have the last field value, try to set all values at once
-      formGroup.get(lastField)?.setValue(lastFieldValue);
+    try {
+      // STEP 1: Pre-load all options for all levels first
+      for (let i = 0; i < hierarchy.length; i++) {
+        const currentField = hierarchy[i];
 
-      // Pass the actual child item or at least ensure it has attributeName
-      const childItem = {
-        fieldName: lastField,
-        fieldValue: lastFieldValue,
-        attributeName: field.attributeName
-      };
-      console.log(childItem)
-
-      this.setParentValuesFromChild(field.attributeName, lastField, lastFieldValue);
-    } else {
-      // Otherwise, populate in sequence as before
-      let currentIndex = 0;
-
-      const setNextLevel = () => {
-        if (currentIndex >= hierarchy.length) return;
-
-        const hierarchyField = hierarchy[currentIndex];
-        const value = field.selectedValues[hierarchyField];
-
-        if (value) {
-          // Set the value for this field
-          formGroup.get(hierarchyField)?.setValue(value);
-
-          // If this is not the last field, we need to manually update child options
-          if (currentIndex < hierarchy.length - 1) {
-            this.updateChildOptions(
-              field.attributeName,
-              hierarchyField,
-              value,
-              hierarchy[currentIndex + 1],
-              isReversed
-            );
-          }
-
-          // Move to the next field after a small delay
-          currentIndex++;
-          setTimeout(setNextLevel, 100);
-        } else {
-          currentIndex++;
-          setNextLevel();
+        if (i === 0) {
+          // Top level already has options loaded
+          continue;
         }
-      };
 
-      // Start the sequence
-      setNextLevel();
+        // For each level, we need the parent level's selected value to load options
+        const parentField = hierarchy[i - 1];
+        const parentValue = field.selectedValues[parentField];
+
+        if (parentValue) {
+
+          // Load options for this level based on parent
+          this.fieldOptions[field.attributeName][currentField] = isReversed
+            ? this.findChildOptionsFromReversedData(this.getDataSource(field), parentField, parentValue, currentField)
+            : this.findChildOptions(this.getDataSource(field), parentField, parentValue, currentField);
+        } else {
+          // If no parent value, load all possible options
+          console.log(`Loading all options for ${currentField} (no parent value)`);
+          this.fieldOptions[field.attributeName][currentField] =
+            this.extractAllOptionsForField(this.getDataSource(field), currentField, isReversed);
+        }
+      }
+
+      // STEP 2: Now set values in order from parent to child
+      for (let i = 0; i < hierarchy.length; i++) {
+        const currentField = hierarchy[i];
+        const currentValue = field.selectedValues[currentField];
+
+        if (currentValue) {
+          formGroup.get(currentField)?.setValue(currentValue, { emitEvent: false });
+
+          // After setting value, load options for next level if needed
+          if (i < hierarchy.length - 1) {
+            const nextField = hierarchy[i + 1];
+            this.fieldOptions[field.attributeName][nextField] = isReversed
+              ? this.findChildOptionsFromReversedData(this.getDataSource(field), currentField, currentValue, nextField)
+              : this.findChildOptions(this.getDataSource(field), currentField, currentValue, nextField);
+          }
+        }
+      }
+
+      // STEP 3: Update combined value
+      this.updateCombinedValue(field.attributeName);
+
+    } catch (error) {
+      console.error('Error populating hierarchical values:', error);
+    } finally {
+      // Re-enable listeners
+      setTimeout(() => {
+        this.restoreValueChangeListeners(field.attributeName, subscriptions);
+      }, 200);
     }
   }
 
@@ -838,68 +883,69 @@ export class CustomFieldsComponent {
     return null;
   }
 
-  // Find parent values from a child item
+  // Find parent values from a child item (up to 5 levels)
   findParentValues(item: any, hierarchy: string[], childField: string, isReversed: boolean, field: any): any {
     const parentValues: { [key: string]: string } = {};
 
-    console.log('Finding parent values for item:', item);
-    console.log('Child field:', childField, 'Is reversed:', isReversed);
+    console.log('Finding parent values for item:', item, childField);
 
-    // For reversed data structure
     if (isReversed) {
-      // Extract directly from parent references in the item
-      if (item.parentFieldName && item.parentFieldValue) {
-        console.log(`Found direct parent: ${item.parentFieldName} = ${item.parentFieldValue}`);
-        parentValues[item.parentFieldName] = item.parentFieldValue;
+      // For reversed data structure
+      const traverseParents = (currentItem: any) => {
+        if (!currentItem || Object.keys(parentValues).length >= 4) return; // Max 4 parents for 5 levels
 
-        // Look for the parent item to find grandparent
-        // Use the field that was passed in instead of looking it up
-        const dataSource = this.getDataSource(field);
-        const parentItem = this.findItemByNameAndValueInData(
-          item.parentFieldName,
-          item.parentFieldValue,
-          dataSource
-        );
+        if (currentItem.parentFieldName && currentItem.parentFieldValue) {
+          // Only add if it's in our hierarchy
+          if (hierarchy.includes(currentItem.parentFieldName)) {
+            console.log(`Found parent: ${currentItem.parentFieldName} = ${currentItem.parentFieldValue}`);
+            parentValues[currentItem.parentFieldName] = currentItem.parentFieldValue;
 
-        if (parentItem && parentItem.parentFieldName && parentItem.parentFieldValue) {
-          console.log(`Found grandparent: ${parentItem.parentFieldName} = ${parentItem.parentFieldValue}`);
-          parentValues[parentItem.parentFieldName] = parentItem.parentFieldValue;
-        }
-      }
+            // Look for this parent to find its parent
+            const dataSource = this.getDataSource(field);
+            const parentItem = this.findItemByNameAndValueInData(
+              currentItem.parentFieldName,
+              currentItem.parentFieldValue,
+              dataSource
+            );
 
-      // Also check fieldValues for any parent references
-      if (item.fieldValues && item.fieldValues.length > 0) {
-        item.fieldValues.forEach((parent: any) => {
-          if (hierarchy.includes(parent.fieldName)) {
-            console.log(`Found parent in fieldValues: ${parent.fieldName} = ${parent.fieldValue}`);
-            parentValues[parent.fieldName] = parent.fieldValue;
-          }
-        });
-      }
-    } else {
-      // For regular data structure, extract from parentFieldName/Value
-      if (item.parentFieldName && item.parentFieldValue) {
-        // Only add if parent is in our hierarchy
-        if (hierarchy.includes(item.parentFieldName)) {
-          console.log(`Found direct parent: ${item.parentFieldName} = ${item.parentFieldValue}`);
-          parentValues[item.parentFieldName] = item.parentFieldValue;
-
-          // Use the field that was passed in instead of looking it up
-          const dataSource = this.getDataSource(field);
-          const parentItem = this.findItemByNameAndValueInData(
-            item.parentFieldName,
-            item.parentFieldValue,
-            dataSource
-          );
-
-          if (parentItem && parentItem.parentFieldName && parentItem.parentFieldValue) {
-            if (hierarchy.includes(parentItem.parentFieldName)) {
-              console.log(`Found grandparent: ${parentItem.parentFieldName} = ${parentItem.parentFieldValue}`);
-              parentValues[parentItem.parentFieldName] = parentItem.parentFieldValue;
+            // Continue traversing up
+            if (parentItem) {
+              traverseParents(parentItem);
             }
           }
         }
-      }
+      };
+
+      traverseParents(item);
+
+    } else {
+      // For regular data structure
+      const traverseUp = (currentItem: any, depth: number = 0) => {
+        if (!currentItem || depth > 4) return; // Max 4 parents for 5 levels
+
+        if (currentItem.parentFieldName && currentItem.parentFieldValue) {
+          // Only add if it's in our hierarchy
+          if (hierarchy.includes(currentItem.parentFieldName)) {
+            console.log(`Found parent: ${currentItem.parentFieldName} = ${currentItem.parentFieldValue}`);
+            parentValues[currentItem.parentFieldName] = currentItem.parentFieldValue;
+
+            // Find this parent to find grandparent
+            const dataSource = this.getDataSource(field);
+            const parentItem = this.findItemByNameAndValueInData(
+              currentItem.parentFieldName,
+              currentItem.parentFieldValue,
+              dataSource
+            );
+
+            // Continue traversing up
+            if (parentItem) {
+              traverseUp(parentItem, depth + 1);
+            }
+          }
+        }
+      };
+
+      traverseUp(item);
     }
 
     return parentValues;
@@ -1016,5 +1062,67 @@ export class CustomFieldsComponent {
     setTimeout(() => {
       this.setupCascadingDropdownListeners(fieldName);
     }, 100);
+  }
+
+  // Helper to log nested data structure
+  logDataStructure(item: any, depth: number, isReversed: boolean) {
+    const indent = '  '.repeat(depth);
+    console.log(`${indent}Field: ${item.fieldName}, Value: ${item.fieldValue}`);
+
+    if (item.parentFieldName) {
+      console.log(`${indent}Parent: ${item.parentFieldName} = ${item.parentFieldValue}`);
+    }
+
+    if (item.fieldValues && item.fieldValues.length > 0) {
+      console.log(`${indent}Children:`);
+      item.fieldValues.forEach((child: any) => {
+        this.logDataStructure(child, depth + 1, isReversed);
+      });
+    }
+  }
+
+  // Debug helper to log the current state of the form
+  logFormValues(fieldName: string) {
+    const hierarchy = this.hierarchyFields[fieldName];
+    const formGroup = this.masterListFormGroups[fieldName];
+
+    if (!hierarchy || !formGroup) return;
+
+    console.log(`==== Form Values for ${fieldName} ====`);
+    hierarchy.forEach(field => {
+      const value = formGroup.get(field)?.value;
+      console.log(`${field}: ${value || 'not set'}`);
+
+      // Log available options
+      const options = this.fieldOptions[fieldName][field];
+      console.log(`  Options (${options?.length || 0}): ${options?.map(o => o.value).join(', ') || 'none'}`);
+    });
+    console.log('============================');
+  }
+
+  // Pre-load all possible options for all levels before setting values
+  preloadAllLevelOptions(fieldName: string) {
+    const field = this.customAttrList.find((f: any) => f.attributeName === fieldName);
+    if (!field) return;
+
+    const dataSource = this.getDataSource(field);
+    if (!dataSource || !dataSource.length) return;
+
+    const hierarchy = this.hierarchyFields[fieldName];
+    const isReversed = this.useReversedData[fieldName];
+
+    // For each level in the hierarchy
+    hierarchy.forEach((hierarchyField, index) => {
+      if (index === 0) {
+        // First level already has options loaded in buildDynamicForm
+        return;
+      }
+
+      console.log(`Pre-loading all options for ${fieldName} > ${hierarchyField}`);
+
+      // Extract all possible options for this field
+      this.fieldOptions[fieldName][hierarchyField] =
+        this.extractAllOptionsForField(dataSource, hierarchyField, isReversed);
+    });
   }
 }
