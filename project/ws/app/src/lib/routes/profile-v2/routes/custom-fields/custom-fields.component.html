@@ -80,29 +80,31 @@
             </div>
           </div>
         </ng-container>
-
         <!-- MasterList fields - Each dropdown gets its own grid cell -->
         <ng-container *ngFor="let field of customAttrList">
           <ng-container *ngIf="field.type === 'masterList' && hierarchyFields[field.attributeName]">
             <ng-container [formGroupName]="field.attributeName + '_group'">
-              <ng-container *ngFor="let hierarchyField of hierarchyFields[field.attributeName]; index as i">
+              <!-- Use trackBy to help Angular identify unique items -->
+              <ng-container *ngFor="let hierarchyField of hierarchyFields[field.attributeName];
+                           index as i">
                 <!-- Each dropdown is in its own grid cell -->
-                <div class="flex flex-col gap-2 pr-3 hierarchy-dropdown">
-                  <div class="info-div">
-                    <div class="label">{{hierarchyField | titlecase}}</div>
-                    <mat-form-field class="profile-form-field w-full">
-                      <mat-select [formControlName]="hierarchyField"
-                        (selectionChange)="onDropdownChange(field.attributeName, hierarchyField, $event.value, i)">
-                        <mat-option *ngFor="let option of fieldOptions[field.attributeName][hierarchyField] || []"
-                          [value]="option.value">
-                          {{ option.label }}
-                        </mat-option>
-                      </mat-select>
-                      <mat-error class="text-xs mt-3" *ngIf="masterListFormGroups[field.attributeName].get(hierarchyField)?.touched && 
-                              masterListFormGroups[field.attributeName].get(hierarchyField)?.hasError('required')">
-                        {{ hierarchyField | titlecase }} is required
-                      </mat-error>
-                    </mat-form-field>
+                <div class="grid-item">
+                  <div class="flex flex-col gap-2 pr-3 hierarchy-dropdown">
+                    <div class="info-div">
+                      <div class="label">
+                        <!-- Show parent field name only for the first item -->
+                        {{hierarchyField | titlecase}}
+                      </div>
+                      <mat-form-field class="profile-form-field w-full">
+                        <mat-select [formControlName]="hierarchyField"
+                          (selectionChange)="onDropdownChange(field.attributeName, hierarchyField, $event.value, i)">
+                          <mat-option *ngFor="let option of fieldOptions[field.attributeName][hierarchyField] || []"
+                            [value]="option.value">
+                            {{ option.label }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
                   </div>
                 </div>
               </ng-container>
