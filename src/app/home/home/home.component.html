@@ -228,13 +228,8 @@
     <div (click)="remaindCustomAttPopup()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
         <!-- //NOSONAR --><span (click)="remaindCustomAttPopup()" class="mobile-cross">X</span>
-        <p class="updatetitle">
-            <span>{{ 'home.updateCustomeFiledPlease' | translate }}</span>
-            <span class="click-btn cursor-pointer" (click)=redirectToCustomProfile()>{{
-                'home.updateCustomeFiledClick' |
-                translate
-                }}</span>
-            <span>{{ 'home.updateCustomeFiledText' | translate }}</span>
-        </p>
+        <p class="updatetitle">{{ 'home.updateCustomeFiledTitle' | translate }}</p>
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="fetchProfile()" role="button">{{
+            'home.updateCustomeFiledClick' | translate }}</button>
     </div>
 </div>
