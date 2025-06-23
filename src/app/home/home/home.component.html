@@ -222,14 +222,12 @@
             'home.updateNow' | translate }}</button>
     </div>
 </div>
-
 <div class="footer footer-update-mobile-number" *ngIf="canShowCustomAttrOpen">
     <!-- //NOSONAR -->
-    <div (click)="remaindCustomAttPopup()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
-        <!-- //NOSONAR --><span (click)="remaindCustomAttPopup()" class="mobile-cross">X</span>
         <p class="updatetitle">{{ 'home.updateCustomeFiledTitle' | translate }}</p>
-        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="fetchProfile()" role="button">{{
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="redirectToCustomProfile()"
+            role="button">{{
             'home.updateCustomeFiledClick' | translate }}</button>
     </div>
 </div>
