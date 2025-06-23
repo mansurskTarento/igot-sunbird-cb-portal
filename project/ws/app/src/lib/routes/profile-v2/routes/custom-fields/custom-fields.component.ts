@@ -715,9 +715,6 @@ export class CustomFieldsComponent {
         this.customAttrForm.reset()
         this.getCustomAttributes()
         this.matSnackBar.open("Custom fields saved successfully")
-        if (localStorage.getItem('canShowCustomAttrPopup')) {
-          localStorage.setItem('canShowCustomAttrPopup', 'false')
-        }
       }
     }, error => {
       this.matSnackBar.open(error.error.params.errMsg)

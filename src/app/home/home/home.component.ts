@@ -258,11 +258,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
-    if (localStorage.getItem('canShowCustomAttrPopup')) {
-      this.canShowCustomAttrOpen = JSON.parse(localStorage.getItem('canShowCustomAttrPopup') || 'false')
-    } else {
-      this.getOrgDetails()
-    }
+    this.getOrgDetails()
   }
 
 
@@ -271,17 +267,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
       request: { organisationId: this.rootOrgId },
     }
     this.userProfileService.readOrgData(request).subscribe((res: any) => {
-      this.canShowCustomAttrOpen = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
-      localStorage.setItem('canShowCustomAttrPopup', JSON.stringify(this.canShowCustomAttrOpen))
+      const isPopupEnabled = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
+      const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount') > 0 ? true : false
+      if (isPopupEnabled && customFieldsCount) {
+        this.readCustomattributeDetails()
+      } else {
+        this.canShowCustomAttrOpen = false
+      }
     }, error => {
       this.canShowCustomAttrOpen = false
       console.error('Error fetching organization details', error)
     })
   }
 
-  remaindCustomAttPopup() {
-    this.canShowCustomAttrOpen = false
-    localStorage.setItem('canShowCustomAttrPopup', 'false')
+  readCustomattributeDetails() {
+    this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
+      let customFieldValues = _.get(res, 'result.response.customFieldValues', [])
+      if (customFieldValues.length === 0) {
+        this.canShowCustomAttrOpen = true
+      } else {
+        this.canShowCustomAttrOpen = false
+      }
+    }, error => {
+      this.canShowCustomAttrOpen = false
+      console.log('Error', error)
+    })
   }
 
   ngAfterViewInit() {
