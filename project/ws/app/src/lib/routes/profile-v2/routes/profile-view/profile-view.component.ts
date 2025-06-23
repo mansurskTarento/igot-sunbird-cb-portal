@@ -549,7 +549,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.route.fragment.subscribe(fragment => {
-      if (fragment === 'customAttr') {
+      if (fragment === 'orgDetails') {
         this.scrollToBottom()
       }
     })

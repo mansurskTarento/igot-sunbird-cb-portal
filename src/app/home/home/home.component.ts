@@ -608,6 +608,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   redirectToCustomProfile() {
-    this.router.navigate(['/app/person-profile/me'], { fragment: 'customAttr' })
+    this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
   }
 }
