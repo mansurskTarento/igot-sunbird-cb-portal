@@ -103,7 +103,7 @@ export class CustomFieldsComponent {
   getListItemName(arryListItem: any, listItem: any) {
     const customField = this.customFieldValues.find((_filed: any) => _filed.attributeName === arryListItem.attributeName)
     if (customField && customField.values && customField.values.length) {
-      const _item = customField.values.find((_filed: any) => _filed.attributeName.toLocaleLowerCase() === listItem.attributeName.toLocaleLowerCase())
+      const _item = customField.values.find((_filed: any) => _filed.attributeName.toLocaleLowerCase() === listItem.name.toLocaleLowerCase())
       return _item ? _item.value : ''
     }
     return ''
