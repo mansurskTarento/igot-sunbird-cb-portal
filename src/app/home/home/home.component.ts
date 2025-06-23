@@ -20,6 +20,20 @@ import { BtnSettingsService } from '@sunbird-cb/collection'
 // const API_END_POINTS = {
 //   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
 // }
+
+// Add this helper function before your component class
+function isStripActive(strip: any): boolean {
+  return !!(strip && 
+            strip.strips && 
+            Array.isArray(strip.strips) && 
+            strip.strips.length > 0 &&
+            strip.strips[0] && 
+            strip.strips[0].active === true);
+}
+
+// Add this constant at the top of your file (near other constants)
+const INITIAL_VISIBLE_STRIPS = 5;
+
 @Component({
   selector: 'ws-home',
   templateUrl: './home.component.html',
@@ -74,6 +88,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
   canShowCustomAttrOpen: boolean = false
   rootOrgId: string = ''
+
+  // You could also add it as a class property for better encapsulation
+  private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS;
 
   ngOnInit() {
     let isNotMyUser = false
@@ -137,7 +154,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         obj['section'] = 'section_' + index;
         obj['isVisible'] = false;
         obj['stripData'] = strip;
-        obj['isActive'] = strip && strip.strips && strip.strips[0] && strip.strips[0].active ? true : false;
+        obj['isActive'] = isStripActive(strip);
         this.sectionList.push(obj);
       });
     }
@@ -285,8 +302,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Make the first 5 content strips visible initially
-    for (let i = 0; i < this.sectionList.length && i < 5; i++) {
+    // Make the first few content strips visible initially
+    for (let i = 0; i < this.sectionList.length && i < this.initialVisibleStrips; i++) {
       if (this.sectionList[i]['section'].startsWith('section_')) {
         this.sectionList[i]['isVisible'] = true;
       }
@@ -382,7 +399,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   scrollHandler() {
     // Check visibility for sections that aren't already visible
     for (let i = 0; i < this.sectionList.length; i++) {
-      if (!this.sectionList[i]['isVisible'] && !this.sectionList[i]['section'].match(/^section_[0-4]$/)) {
+      if (!this.sectionList[i]['isVisible'] && 
+          !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
         this.checkSectionVisibility(this.sectionList[i]['section']);
       }
     }
@@ -390,7 +408,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   checkSectionVisibility(className: string) {
     // Skip already visible sections
-    if (className.match(/^section_[0-4]$/)) {
+    if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
       return;
     }
     
