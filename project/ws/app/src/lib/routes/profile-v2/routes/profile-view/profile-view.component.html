@@ -691,7 +691,7 @@
       </div>
     </div>
 
-    <div class="common-card-css" *ngIf="isCurrentUser">
+    <!-- <div class="common-card-css" *ngIf="isCurrentUser">
       <div class="flex flex-col gap-5">
         <div class="flex flex-row gap-4 items-center justify-between">
           <div class="flex flex-row gap-2 title-div items-center">
@@ -709,7 +709,7 @@
           {{ 'profileInfo.tagsNotFound' | translate }}
         </div>
       </div>
-    </div>
+    </div> -->
     <ng-container *ngIf="isCurrentUser">
       <div #scrollContainer>
         <ws-app-custom-fields></ws-app-custom-fields>
