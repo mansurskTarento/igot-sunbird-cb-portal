@@ -20,6 +20,20 @@ import { BtnSettingsService } from '@sunbird-cb/collection'
 // const API_END_POINTS = {
 //   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
 // }
+
+// Add this helper function before your component class
+function isStripActive(strip: any): boolean {
+  return !!(strip && 
+            strip.strips && 
+            Array.isArray(strip.strips) && 
+            strip.strips.length > 0 &&
+            strip.strips[0] && 
+            strip.strips[0].active === true);
+}
+
+// Add this constant at the top of your file (near other constants)
+const INITIAL_VISIBLE_STRIPS = 5;
+
 @Component({
   selector: 'ws-home',
   templateUrl: './home.component.html',
@@ -75,6 +89,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   canShowCustomAttrOpen: boolean = false
   rootOrgId: string = ''
 
+  // You could also add it as a class property for better encapsulation
+  private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS;
+
   ngOnInit() {
     let isNotMyUser = false
     let isIgotOrg = false
@@ -127,19 +144,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.contentStripData = this.activatedRoute.snapshot.data.pageData.data || []
       // tslint:disable-next-line: prefer-template
       this.contentStripData = (this.contentStripData.newHomeStrip || []).sort((a: any, b: any) => a.order - b.order)
-      // tslint:disable-next-line
-      for (let i = 0; i < this.contentStripData.length; i++) {
-        if (this.contentStripData[i] &&
-          this.contentStripData[i]['strips'] &&
-          this.contentStripData[i]['strips'][0] &&
-          this.contentStripData[i]['strips'][0]['active']) {
-          const obj: any = {}
-          // tslint:disable-next-line: prefer-template
-          obj['section'] = 'section_' + i
-          obj['isVisible'] = false
-          this.sectionList.push(obj)
-        }
-      }
+      
+      // Clear sectionList before adding new entries
+      this.sectionList = [];
+      
+      // Add all content strips to sectionList with correct indices
+      this.contentStripData.forEach((strip: any, index: number) => {
+        const obj: any = {};
+        obj['section'] = 'section_' + index;
+        obj['isVisible'] = false;
+        obj['stripData'] = strip;
+        obj['isActive'] = isStripActive(strip);
+        this.sectionList.push(obj);
+      });
     }
 
     this.clientList = this.activatedRoute.snapshot.data.pageData.data.clientList
@@ -295,15 +312,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // tslint:disable-next-line
-    for (let i = 0; i < this.sectionList.length; i++) {
-      // tslint:disable-next-line
-      if (this.sectionList[i]['section'] === 'section_0'
-        || this.sectionList[i]['section'] === 'section_1'
-        || this.sectionList[i]['section'] === 'section_2'
-        || this.sectionList[i]['section'] === 'section_3'
-        || this.sectionList[i]['section'] === 'section_4') {
-        this.sectionList[i]['isVisible'] = true
+    // Make the first few content strips visible initially
+    for (let i = 0; i < this.sectionList.length && i < this.initialVisibleStrips; i++) {
+      if (this.sectionList[i]['section'].startsWith('section_')) {
+        this.sectionList[i]['isVisible'] = true;
       }
     }
   }
@@ -395,50 +407,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:scroll', ['$event'])
   scrollHandler() {
-    // tslint:disable-next-line
+    // Check visibility for sections that aren't already visible
     for (let i = 0; i < this.sectionList.length; i++) {
-      // tslint:disable-next-line
-      if (this.sectionList[i]['section'] !== 'section_0' &&
-        this.sectionList[i]['section'] !== 'section_1' &&
-        this.sectionList[i]['section'] !== 'section_2' &&
-        this.sectionList[i]['section'] !== 'section_3' &&
-        this.sectionList[i]['section'] !== 'section_4') {
-        this.checkSectionVisibility(this.sectionList[i]['section'])
+      if (!this.sectionList[i]['isVisible'] && 
+          !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
+        this.checkSectionVisibility(this.sectionList[i]['section']);
       }
     }
   }
 
   checkSectionVisibility(className: string) {
-    let isVisible = false
-    // tslint:disable-next-line
-    if (className === 'section_0' ||
-      className === 'section_1' ||
-      className === 'section_2' ||
-      className === 'section_3' ||
-      className === 'section_4') {
-      isVisible = true
-    } else {
-      if (className !== 'section_0' &&
-        className !== 'section_1' &&
-        className !== 'section_2' &&
-        className !== 'section_3' &&
-        className !== 'section_4') {
-        // tslint:disable-next-line
-        for (let i = 0; i < this.sectionList.length; i++) {
-          if (this.sectionList[i]['section'] === className) {
-            if (document.getElementsByClassName(this.sectionList[i]['section'])
-              && document.getElementsByClassName(this.sectionList[i]['section'])[0]
-              && !this.sectionList[i]['isVisible']) {
-              const tect = document.getElementsByClassName(this.sectionList[i]['section'])[0].getBoundingClientRect()
-              const eleTop = tect.top
-              const eleBottom = tect.bottom
-              isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight)
-              this.sectionList[i]['isVisible'] = isVisible
-              break
-              // tslint:disable-next-line: prefer-template
-            }
-          }
-        }
+    // Skip already visible sections
+    if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
+      return;
+    }
+    
+    // Find the section in our list
+    const sectionIndex = this.sectionList.findIndex((item:any) => item.section === className);
+    if (sectionIndex === -1) return;
+    
+    // Check if the element is in viewport
+    const elements = document.getElementsByClassName(className);
+    if (elements && elements.length > 0) {
+      const rect = elements[0].getBoundingClientRect();
+      const eleTop = rect.top;
+      const eleBottom = rect.bottom;
+      const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight);
+      
+      // Update visibility
+      if (isVisible) {
+        this.sectionList[sectionIndex]['isVisible'] = true;
       }
     }
   }
