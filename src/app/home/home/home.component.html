@@ -30,21 +30,19 @@
             *ngIf="homeConfig?.rightSection?.active">
             <div class="flex flex-col gap-1 mt-3">
                 <ng-container *ngIf="enableLazyLoadingFlag">
-                    <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
-                        <ng-container *ngFor="let vitem of sectionList;let j=index; trackBy j">
-                            <div class="section_{{i}}" *ngIf="i==j && vitem && vitem['section'] == 'section_'+i">
-                                <ng-container
-                                    *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item"
-                                        (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
-                                </ng-container>
-                            </div>
-                        </ng-container>
+                    <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
+                        <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
+                            <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
+                                <ws-feed-list [widgetData]="sectionItem.stripData" 
+                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                </ws-feed-list>
+                            </ng-container>
+                        </div>
                     </ng-container>
-
+                    
                     <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'slider' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                             </ng-container>
                         </ng-container>
@@ -52,8 +50,8 @@
 
                     <!-- Discussion section starts here -->
                     <div class="discuss" *ngIf="homeConfig?.discussHub?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'discuss' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'discuss' && sectionItem.isVisible">
                                 <ws-discuss-hub [discussConfig]="homeConfig?.discussHub"></ws-discuss-hub>
                             </ng-container>
                         </ng-container>
@@ -62,8 +60,8 @@
 
                     <!-- Go to Network hub starts here -->
                     <div class="network" *ngIf="homeConfig?.networkHub?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'network' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'network' && sectionItem.isVisible">
                                 <ws-network-hub [networkConfig]="homeConfig?.networkHub"></ws-network-hub>
                             </ng-container>
                         </ng-container>
@@ -107,21 +105,19 @@
             <div class="flex flex-col gap-3 mt-8">
 
                 <ng-container *ngIf="enableLazyLoadingFlag">
-                    <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
-                        <ng-container *ngFor="let vitem of sectionList;let j=index; trackBy j">
-                            <span class="section_{{i}}" *ngIf="i==j">
-                                <ng-container
-                                    *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'section_'+i ) && item?.strips[0]?.active">
-                                    <ws-feed-list [widgetData]="item"
-                                        (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
-                                </ng-container>
-                            </span>
-                        </ng-container>
+                    <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
+                        <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
+                            <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
+                                <ws-feed-list [widgetData]="sectionItem.stripData" 
+                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                </ws-feed-list>
+                            </ng-container>
+                        </div>
                     </ng-container>
-
+                    
                     <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'slider' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                             </ng-container>
                         </ng-container>
@@ -129,8 +125,8 @@
 
                     <!-- Discussion section starts here -->
                     <div class="discuss" *ngIf="homeConfig?.discussHub?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'discuss' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'discuss' && sectionItem.isVisible">
                                 <ws-discuss-hub [discussConfig]="homeConfig?.discussHub"></ws-discuss-hub>
                             </ng-container>
                         </ng-container>
@@ -139,8 +135,8 @@
 
                     <!-- Go to Network hub starts here -->
                     <div class="network" *ngIf="homeConfig?.networkHub?.active">
-                        <ng-container *ngFor="let vitem of sectionList">
-                            <ng-container *ngIf="vitem && vitem['isVisible'] && (vitem['section'] == 'network' )">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'network' && sectionItem.isVisible">
                                 <ws-network-hub [networkConfig]="homeConfig?.networkHub"></ws-network-hub>
                             </ng-container>
                         </ng-container>
