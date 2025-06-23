@@ -229,7 +229,7 @@
 }
 
 
-  ::ng-deep .multiline-select-option .mat-mdc-option:focus.mdc-list-item, .mat-mdc-option.mat-mdc-option-active.mdc-list-item {
+::ng-deep .multiline-select-option .mat-mdc-option:focus.mdc-list-item, .mat-mdc-option.mat-mdc-option-active.mdc-list-item {
     
       background-color: #e3eeff !important;
       color: #1b4ca1 !important;
@@ -246,4 +246,19 @@
 
 .selected-option-content {
   color: #1b4ca1;
+}
+
+.ml-5-per {
+  margin-left: 5%;
+}
+
+.black-text {
+  color: black;
+  word-wrap: break-word;
+  text-align: justify;
+}
+
+.w-15 {
+  width: 15%;
+  word-wrap: break-word;
 }

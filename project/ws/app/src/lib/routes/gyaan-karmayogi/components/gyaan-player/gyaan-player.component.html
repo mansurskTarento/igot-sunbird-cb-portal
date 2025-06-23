@@ -26,7 +26,12 @@
                     </div> -->
                     <div class="mb-8">
                         <p class="title">{{resourceData?.name}}</p>
-                        <p class="description mb-4" [innerHTML]="resourceData?.instructions | replaceNbspText"></p>
+                        <div class="instruction-container mb-4">
+                          <p class="description" [ngClass]="{'truncate-text': !isInstructionsExpanded}" [innerHTML]="resourceData?.instructions | replaceNbspText"></p>
+                          <button *ngIf="hasLongInstructions" class="view-toggle-btn mat-body-2" (click)="toggleInstructions()">
+                            {{ isInstructionsExpanded ? 'View less' : 'View more' }}
+                          </button>
+                        </div>
                         <p class="published-date mb-4">Published on {{resourceData?.lastPublishedOn |date:'MMM d, y'}}</p>
                     </div>
                     <div class="flex gap-6 flex-wrap">
