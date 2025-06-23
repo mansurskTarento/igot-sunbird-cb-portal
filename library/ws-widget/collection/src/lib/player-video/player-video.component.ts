@@ -132,7 +132,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     this.widgetData = {
       ...this.widgetData,
     }
-    this.appTocService.transriptionIdentifier.next(this.widgetData)
+   // this.appTocService.transriptionIdentifier.next(this.widgetData)
     if (this.widgetData && this.widgetData.identifier && !this.widgetData.url) {
       
       await this.fetchContent()

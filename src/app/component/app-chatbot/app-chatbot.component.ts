@@ -61,6 +61,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
+  enableSupportAI = true
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -537,7 +538,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   //  this.scrollToBottom()
   }
   clickOutside() {
-    if(this.currentFilter !== 'sarthi') {
+    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
       this.iconClick('end')
     }
   }

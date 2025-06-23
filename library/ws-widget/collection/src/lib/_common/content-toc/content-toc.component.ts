@@ -13,6 +13,7 @@ import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.s
 import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
 import { VttFile } from '@polyflix/vtt-parser';
 import { tap } from 'rxjs/operators'
+import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -78,10 +79,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private actionSVC: ActionService,
     private router: Router,
     private eventSvc: EventService,
+    private viewerDataSvc: ViewerDataService,
   ) { }
 
-  ngOnInit() {
-    
+  ngOnInit() {    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -89,14 +90,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
       // console.log('in')
-      this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
-        //  console.log('resource identifier', value)
-        if(value &&  value?.identifier) {
-          this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
-          this.parseVTT()
-        }
+      // this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
+      //   if(value &&  value?.identifier) {
+      //     this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
+      //     this.parseVTT()
+      //   }
         
-      })
+      // })
 
       this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value:any)=>{
         // console.log('value', value)
@@ -110,7 +110,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       .subscribe((langvalue: any) => {
         // console.log('langValue', langvalue);
         if(langvalue) {
-          this.renderSelectedLanguageTranscription();
+         // this.renderSelectedLanguageTranscription(langvalue);
         }
 
       });
@@ -173,12 +173,18 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // console.log(this.viewerDataSvc.resourceId)
+    this.resourceIdentifier = this.viewerDataSvc.resourceId
+    this.parseVTT()
+    // this.enableTranscriptionFlag = false
+    
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.content && this.content.identifier) {
+        // console.log('this.content.identifier', this.content.identifier)
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
@@ -378,8 +384,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
-      
-      
+       this.enableTranscriptionFlag = true
+      // console.log('this.vttLangArr-', this.vttLangArr)
        // let url =  data[0]['transcription_urls'][0]['uri']
       //  console.log('this.vttLangArr--',this.vttLangArr)
        this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
@@ -406,19 +412,31 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           // }
           
           this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
+      } else {
+        this.vttLangArr =  []
+        this.enableTranscriptionFlag = false
       }
 
     })
 
   }
 
-  async renderSelectedLanguageTranscription()  {
-    this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+  async renderSelectedLanguageTranscription(_langvalue:any)  {
+    if(typeof _langvalue === 'string' && _langvalue) {
+      this.transcriptionActiveLanguage = _langvalue
+    } else {
+      this.selectedTranscriptionStyle = _langvalue?.value
+      this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+    }
+    
     let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
+    if(currentPath && currentPath.length) {
+      this.selectedTranscriptionStyle = currentPath[0]
+    }
     const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
        let blocks:any = file.getBlocks();
     this.subTitles = blocks
-    this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
+   // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
 
   }
 
