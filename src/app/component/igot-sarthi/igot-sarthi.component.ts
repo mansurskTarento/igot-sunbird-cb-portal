@@ -916,4 +916,5 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   ngOnDestroy(): void {
    
   }
+  
 }
