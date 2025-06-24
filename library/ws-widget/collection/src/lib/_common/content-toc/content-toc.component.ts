@@ -11,6 +11,9 @@ import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig 
 import { viewerRouteGenerator } from '@sunbird-cb/collection'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
+import { VttFile } from '@polyflix/vtt-parser';
+import { tap } from 'rxjs/operators'
+import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -56,6 +59,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   enableAITutorFlag = false
   enableTranscriptionFlag = false
   courseCategory = NsContent.ECourseCategory
+  subTitles$:Subscription | null = null
+  resourceIdentifier:any
+  resourceIdentifier$:Subscription | null = null
+  subTitles:any = []
+  keywordToHighlight:any= ''
+  highlightCondition  = false
+  vttLangArr:any = []
+  transcriptionActiveLanguage = 'en'
+  transriptionLanguageSub:Subscription | null = null
+  selectedTranscriptionStyle :any
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -66,15 +79,43 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private actionSVC: ActionService,
     private router: Router,
     private eventSvc: EventService,
+    private viewerDataSvc: ViewerDataService
   ) { }
 
   ngOnInit() {
+    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
     }
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      // console.log('in')
+      // this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
+      //   //  console.log('resource identifier', value)
+      //   if(value &&  value?.identifier) {
+      //     this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
+      //     this.parseVTT()
+      //   }
+        
+      // })
+
+      this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value:any)=>{
+        // console.log('value', value)
+        this.keywordToHighlight = value
+      })
+
+      this.transriptionLanguageSub = this.tocSvc.transriptionActiveLanguageDataObject$
+      .pipe(
+        tap((langvalue:any) => console.log('tap langvalue:', langvalue))
+      )
+      .subscribe((langvalue: any) => {
+        // console.log('langValue', langvalue);
+        if(langvalue) {
+         // this.renderSelectedLanguageTranscription();
+        }
+
+      });
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
@@ -124,6 +165,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
+
+    
   }
 
   ngAfterViewInit() {
@@ -132,6 +175,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.resourceIdentifier = this.viewerDataSvc.resourceId
+    this.parseVTT()
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
@@ -225,8 +270,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.content.name,
       )
       this.actionSVC.setUpdateCompGroupO = this.resumeDataLink
-      console.log('this.resumeDataLink',this.resumeDataLink)
-      console.log('this.actionSVC', this.actionSVC)
+      // console.log('this.resumeDataLink',this.resumeDataLink)
+      // console.log('this.actionSVC', this.actionSVC)
       this.router.navigate([this.resumeDataLink.url], {
         queryParams: this.resumeDataLink.queryParams
       });
@@ -328,5 +373,90 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   enrollUserForAITutor() {
     this.enrollUserToAI.emit()
+  }
+
+  async parseVTT() {
+    let identifier = this.resourceIdentifier 
+    // console.log('identifier--', identifier)
+    await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
+      let data:any = datas.data
+      if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
+       this.vttLangArr = data[0]['transcription_urls']
+      
+       this.enableTranscriptionFlag = true
+       // let url =  data[0]['transcription_urls'][0]['uri']
+      //  console.log('this.vttLangArr--',this.vttLangArr)
+       this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
+      //  console.log('this.transcriptionActiveLanguage--', this.transcriptionActiveLanguage)
+      let selectedTranscriptionStyle = this.vttLangArr.filter((item: any) => {
+        return item?.label === this.transcriptionActiveLanguage;
+      });
+      if(selectedTranscriptionStyle && selectedTranscriptionStyle.length) {
+        this.selectedTranscriptionStyle = selectedTranscriptionStyle[0]
+      } else {
+        this.selectedTranscriptionStyle =  this.vttLangArr[0]
+      }
+      // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
+       let url = this.vttLangArr.filter((item:any)=>item.label === this.transcriptionActiveLanguage)[0]['uri']
+        // console.log('url--', url)
+        const file = await VttFile.fromUrl(url);
+       let blocks:any = file.getBlocks();
+          this.subTitles = blocks
+          // console.log('this.vttLangArr--',this.vttLangArr)
+          // if(this.vttLangArr && this.vttLangArr.length) {
+          //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
+          // } else {
+          //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
+          // }
+          
+          this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
+      } else {
+        this.vttLangArr =  []
+        this.enableTranscriptionFlag = false
+      }
+
+    })
+
+  }
+
+  async renderSelectedLanguageTranscription(_langvalue:any)  {
+    // this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+    if(typeof _langvalue === 'string' && _langvalue) {
+      this.transcriptionActiveLanguage = _langvalue
+    } else {
+      this.selectedTranscriptionStyle = _langvalue?.value
+      this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+    }
+    let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
+    if(currentPath && currentPath.length) {
+      this.selectedTranscriptionStyle = currentPath[0]
+    }
+    const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
+       let blocks:any = file.getBlocks();
+    this.subTitles = blocks
+    // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
+
+  }
+
+  playFromSlot(subtitle:any) {
+    if(subtitle) {
+      let startTime = subtitle.startTime/1000
+      let endTime = subtitle.endTime/1000
+      this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
+    }    
+  }
+
+  ngOnDestroy() {
+    if(this.resourceIdentifier$) {
+      this.resourceIdentifier$.unsubscribe()
+    }
+
+    if(this.subTitles$) {
+      this.subTitles$.unsubscribe()
+    }
+
+    if(this.transriptionLanguageSub) {
+      this.transriptionLanguageSub.unsubscribe()
+    }
   }
 }

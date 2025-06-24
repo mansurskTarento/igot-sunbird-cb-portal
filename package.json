@@ -126,7 +126,8 @@
     "vis-util": "^5.0.2",
     "worker-loader": "^3.0.8",
     "xlsx": "^0.16.1",
-    "zone.js": "~0.13.3"
+    "zone.js": "~0.13.3",
+    "@polyflix/vtt-parser": "^1.4.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.16",

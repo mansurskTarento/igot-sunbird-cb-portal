@@ -7,8 +7,8 @@
   <!-- <track kind="captions"
     src="/apis/authContent/content-store/igot/dopt/Public/lex_auth_013114377081208832249/assets/sample1600885058308.vtt"
     srclang="en" label="English" default> -->
-  <track kind="captions" *ngIf="widgetData.subtitles" [src]="widgetData?.subtitles[0]?.url" srclang="en" label="English"
-    default>
+  <!-- <track kind="captions" *ngIf="widgetData.subtitles" [src]="widgetData?.subtitles[0]?.url" srclang="en" label="English"
+    default> -->
 </video>
 
 <video autoplay="true" muted="muted" crossorigin="Anonymous" id="realvideoTag"  [poster]="widgetData?.posterImage | pipePublicURL" #realvideoTag class="video-js"
@@ -18,8 +18,8 @@
   <!-- <track kind="captions"
     src="/apis/authContent/content-store/igot/dopt/Public/lex_auth_013114377081208832249/assets/sample1600885058308.vtt"
     srclang="en" label="English" default> -->
-  <track kind="captions" *ngIf="widgetData.subtitles" [src]="widgetData?.subtitles[0]?.url" srclang="en" label="English"
-    default>
+  <!-- <track kind="captions" *ngIf="widgetData.subtitles" [src]="widgetData?.subtitles[0]?.url" srclang="en" label="English"
+    default> -->
 </video>
 
 <ng-container *ngIf="!widgetData?.hideUpNext">

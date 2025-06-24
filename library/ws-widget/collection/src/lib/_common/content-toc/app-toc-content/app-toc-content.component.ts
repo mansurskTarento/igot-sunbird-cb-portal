@@ -59,12 +59,16 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
       const batchId = qParamsMap.get('batchId')
+      const primaryCategory = qParamsMap.get('primaryCategory')
       if (contextId && contextPath) {
         this.contextId = contextId
         this.contextPath = contextPath
       }
       if (batchId) {
         this.batchId = batchId
+      }
+      if(primaryCategory ) {
+        this.selectedTabType = primaryCategory === this.nsContent.EPrimaryCategory.OFFLINE_SESSION ? 'session' : 'content'
       }
     })
     if (this.route && this.route.parent) {
