@@ -76,7 +76,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
           })
         }, (error: HttpErrorResponse) => {
           if (!error.ok) {
-            this.openSnackbar(this.handleTranslateTo('approvedStatusFailed'))
+            this.openSnackbar(this.handleTranslateTo('somethingWentWrongPleaseTryAgain'))
           }
         })
     }
