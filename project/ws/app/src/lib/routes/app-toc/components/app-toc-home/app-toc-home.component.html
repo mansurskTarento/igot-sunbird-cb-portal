@@ -59,6 +59,20 @@
             <ws-app-karmapoints-panel [btntype]="'Take Assessment'" [data]="kparray"></ws-app-karmapoints-panel>
           </div> -->
         </ng-container>
+      <ng-container>
+         <a class="flex action-button enroll-btn justify-center resume">
+              <ng-container >
+                {{ 'apptochome.preEnroll' | translate }}
+              </ng-container>
+            </a>
+      </ng-container>
+       <ng-container>
+         <a class="flex preenrolldone-btn justify-center resume">
+              <ng-container >
+                {{ 'apptochome.preEnrollDone' | translate }}<img src="/assets/icons/Accept_icon.png" alt="tick" class="tick-icon">
+              </ng-container>
+            </a>
+      </ng-container>
         <ng-container *ngIf=" (actionBtnStatus === 'grant' && !(isMobile && content?.isInIntranet) && 
                       !( content?.primaryCategory === primaryCategory.COURSE && content?.children.length === 0 && !content?.artifactUrl?.length ) &&
                       !( content?.primaryCategory === primaryCategory.COURSE && batchData?.enrolled ) &&

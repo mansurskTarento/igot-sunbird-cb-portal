@@ -6,6 +6,41 @@
 .source-text {
   color: rgba($color: #FFF, $alpha: 0.7);
 }
+// .enroll-btn {
+//   box-sizing: border-box;
+//   height: 40px;
+// }
+
+.preenrolldone-btn {
+    opacity: 1;
+    color: #1D8923;
+    font-family: Lato-Bold, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 20px;
+    background: #fff;
+    border-radius: 64px;
+    padding: 8px 16px;
+    border: 2px solid #1D8923;
+    // border: none;
+    // width: 100%;
+    cursor: pointer;
+    height: 40px;
+    box-sizing: border-box;
+
+  // &:hover {
+  //   background-color: darken(#0074B6, 10%);
+  //   color: #FFF;
+  // }'
+
+  img {
+    margin-left: 8px;
+    margin-top: -2px;
+  }
+}
 
 
 .toc-banner {
@@ -369,6 +404,9 @@
 a.action-button {
   color: #FFF !important;
   width: auto;
+  box-sizing: border-box;
+  height: 40px;
+  line-height: 24px !important;
 }
 
 .rate-button {
@@ -391,7 +429,7 @@ a.action-button {
   bottom: 0px;
   width: calc(100% - 32px);
 
-  .action-button {
+  .action-button, .preenrolldone-btn {
     min-width: 320px;
     max-width: 400px;
     margin: auto;
