@@ -28,8 +28,8 @@
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter !== 'sarthi' &&  currentFilter !== 'support-ai'">
               <div class="user-name">{{greetings()}} {{this.userInfo && this.userInfo.firstName || ''}}!</div>
               <div class="">
-                  <select class="lang-select" [(ngModel)]="selectedLaguage" name="language" id="language" (change)="selectLaguage($event)">
-                      <option [value]="lang.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
+                  <select class="lang-select" name="language" id="language" (change)="selectLaguage($event)">
+                      <option [value]="lang.value" selected]="selectedLaguage === lang?.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
                   </select>
               </div>
             </div>
@@ -37,7 +37,12 @@
               <div class="user-name"><img class="vertical-middle" src="assets/icons/bot-chat-small.svg">
                 <span class="ml-2" *ngIf="currentFilter === 'sarthi'">iGOT AI</span>
                 <span class="ml-2" *ngIf="currentFilter === 'support-ai'">Support AI</span>
-              </div>             
+              </div> 
+              <div class="" *ngIf="currentFilter === 'support-ai'">
+                <select class="lang-select"  name="language" id="language" (change)="selectLaguage($event)">
+                    <option [value]="lang.value" [selected]="selectedLaguage === lang?.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
+                </select>
+            </div>            
             </div>
             <div class="">
                 <!-- //NOSONAR --> <mat-icon class="cb-close" (click)="iconClick('end')">close</mat-icon>
@@ -113,7 +118,7 @@
              <ws-app-igot-sarthi [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'support-ai'" #scroll>
-             <ws-app-support-ai [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
+             <ws-app-support-ai [activeLaguage]="selectedLaguage" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
           </ng-container>
           <ng-container *ngIf="displayLoader">
             <div  class="loader">

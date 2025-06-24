@@ -438,6 +438,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   checkForApiCalls() {
+    
     this.selectedLaguage = localStorage.getItem('selectedLanguage') || 'en'
     let localStg: any = JSON.parse(localStorage.getItem('faq') || '{}')
     let languageStg: any = JSON.parse(localStorage.getItem('faq-languages') || '{}')

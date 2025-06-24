@@ -19,6 +19,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
   @Input() userJourney = []
   @Input() chatId = ''
   @Input() userId = ''
+  @Input() activeLaguage= 'en'
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -565,7 +566,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
       "session_id": this.chatId,
       "text": this.cloneSearchQuery,
       "audio": "",
-      "language": this.language && this.language.length ? this.language[0]['value']  : 'en'
+      "language": this.activeLaguage
     }
     console.log('requestBody--', requestBody)
     if(this.startNewChat) {
@@ -611,7 +612,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
         "session_id": this.chatId,
         "text": this.cloneSearchQuery,
         "audio": "",
-        "language": this.language && this.language.length ? this.language[0]['value']  : 'en'
+        "language": this.activeLaguage
       }
         this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
           console.log('data---', data)

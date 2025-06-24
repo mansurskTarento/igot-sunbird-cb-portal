@@ -736,7 +736,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()

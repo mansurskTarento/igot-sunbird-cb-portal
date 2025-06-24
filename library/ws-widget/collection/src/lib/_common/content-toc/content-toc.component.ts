@@ -44,6 +44,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Input() playResourceId = ''
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   sticky = false
@@ -79,7 +80,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private actionSVC: ActionService,
     private router: Router,
     private eventSvc: EventService,
-    private viewerDataSvc: ViewerDataService,
+    private viewerDataSvc: ViewerDataService
   ) { }
 
   ngOnInit() {    
@@ -91,6 +92,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
       // console.log('in')
       // this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
+      //   //  console.log('resource identifier', value)
       //   if(value &&  value?.identifier) {
       //     this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
       //     this.parseVTT()
@@ -110,7 +112,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       .subscribe((langvalue: any) => {
         // console.log('langValue', langvalue);
         if(langvalue) {
-         // this.renderSelectedLanguageTranscription(langvalue);
+         // this.renderSelectedLanguageTranscription();
         }
 
       });
@@ -173,11 +175,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.viewerDataSvc.resourceId)
     this.resourceIdentifier = this.viewerDataSvc.resourceId
-    this.parseVTT()
-    // this.enableTranscriptionFlag = false
-    
+    if ( changes && changes['playResourceId']) {
+      if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
+        if(this.viewerPage && this.viewerDataSvc?.resourceId) {
+          this.parseVTT()
+        }
+      }
+    }
+  
+      
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
@@ -384,8 +391,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let data:any = datas.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
+      
        this.enableTranscriptionFlag = true
-      // console.log('this.vttLangArr-', this.vttLangArr)
        // let url =  data[0]['transcription_urls'][0]['uri']
       //  console.log('this.vttLangArr--',this.vttLangArr)
        this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
@@ -422,13 +429,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   async renderSelectedLanguageTranscription(_langvalue:any)  {
+    // this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
     if(typeof _langvalue === 'string' && _langvalue) {
       this.transcriptionActiveLanguage = _langvalue
     } else {
       this.selectedTranscriptionStyle = _langvalue?.value
       this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
     }
-    
     let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
     if(currentPath && currentPath.length) {
       this.selectedTranscriptionStyle = currentPath[0]
@@ -436,7 +443,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
        let blocks:any = file.getBlocks();
     this.subTitles = blocks
-   // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
+    // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
 
   }
 
