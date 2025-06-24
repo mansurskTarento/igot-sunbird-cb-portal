@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'ws-app-recommendations',
-  templateUrl: './recommendations.component.html',
-  styleUrls: ['./recommendations.component.scss']
+  selector: 'ws-app-all-recommendations',
+  templateUrl: './all-recommendations.component.html',
+  styleUrls: ['./all-recommendations.component.scss']
 })
-export class RecommendationsComponent {
+export class AllRecommendationsComponent implements OnInit{
 
-  constructor(
-    private router: Router
-  ) { }
-
+  recommendationType = 'peopleNearYou'
+  title = 'People near you'
+  recommendationList: any[] = []
   peopleYouMayKnowList: any[] = [
     {
       professionalDetails: [
@@ -414,11 +413,28 @@ export class RecommendationsComponent {
     }
   ]
 
-  showAll(type: string = 'peopleYouMayKnow') {
-    const queryParams = {
-      type
-    }
-    this.router.navigate(['/app/network-v2/recommendations/all'], { queryParams })
-  }    
+  constructor(
+    private activatedRoute: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      this.recommendationType = params.get('type') || this.recommendationType
+      switch (this.recommendationType) {
+        case 'peopleYouMayKnow':
+          this.title = 'People you may know'
+          this.recommendationList = this.peopleYouMayKnowList
+          break
+        case 'peopleNearYou':
+          this.title = 'People near you'
+          this.recommendationList = this.peopleNearYou
+          break
+        case 'peopelSharingSameIntrest':
+          this.title = 'People sharing same intrest'
+          this.recommendationList = this.peopleSharingSameIntrest
+          break
+      }
+    })
+  }
 
 }

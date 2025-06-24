@@ -1,1 +1,95 @@
-<p>connections works!</p>
+<div class="w-full flex flex-col gap-4">
+  <div class="header">Connections</div>
+
+  <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <div class="flex tabLable">
+          My connections
+          <ng-container *ngIf="selectedTabIndex === 0; else notSelectedCount">
+            <div class="selected-count">{{connectionsCount}}</div>
+          </ng-container>
+          <ng-template #notSelectedCount>
+            ({{connectionsCount}})
+          </ng-template>
+        </div>
+      </ng-template>
+      <ng-template matTabContent>
+        <div>
+          <ng-container *ngFor="let connection of connectionsList">
+            <ws-app-connections-card [otherUserProfile]="connection"
+              [currentTab]="'connections'"></ws-app-connections-card>
+          </ng-container>
+        </div>
+      </ng-template>
+    </mat-tab>
+  
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <div class="flex tabLable">
+          Requests
+          <ng-container *ngIf="selectedTabIndex === 1; else notSelectedCount">
+            <div class="selected-count">{{requestsCount}}</div>
+          </ng-container>
+          <ng-template #notSelectedCount>
+            ({{requestsCount}})
+          </ng-template>
+        </div>
+      </ng-template>
+      <ng-template matTabContent>
+        <div>
+          <ng-container *ngFor="let connection of requestsList">
+            <ws-app-connections-card [otherUserProfile]="connection"
+              [currentTab]="'request'"></ws-app-connections-card>
+          </ng-container>
+        </div>
+      </ng-template>
+    </mat-tab>
+  
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <div class="flex tabLable">
+          Sent
+          <ng-container *ngIf="selectedTabIndex === 2; else notSelectedCount">
+            <div class="selected-count">{{sentRequestsCount}}</div>
+          </ng-container>
+          <ng-template #notSelectedCount>
+            ({{sentRequestsCount}})
+          </ng-template>
+        </div>
+      </ng-template>
+      <ng-template matTabContent>
+        <div>
+          <ng-container *ngFor="let connection of sentRequestsList">
+            <ws-app-connections-card [otherUserProfile]="connection"
+              [currentTab]="'sent'"></ws-app-connections-card>
+          </ng-container>
+        </div>
+      </ng-template>
+    </mat-tab>
+  
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <div class="flex tabLable">
+          Blocked
+          <ng-container *ngIf="selectedTabIndex === 3; else notSelectedCount">
+            <div class="selected-count">{{blockedCount}}</div>
+          </ng-container>
+          <ng-template #notSelectedCount>
+            ({{blockedCount}})
+          </ng-template>
+        </div>
+      </ng-template>
+      <ng-template matTabContent>
+        <div>
+          <ng-container *ngFor="let connection of blockedList">
+            <ws-app-connections-card [otherUserProfile]="connection"
+              [currentTab]="'blocked'"></ws-app-connections-card>
+          </ng-container>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+
+    

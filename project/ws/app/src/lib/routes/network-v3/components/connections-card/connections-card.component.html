@@ -1,1 +1,70 @@
-<p>connections-card works!</p>
+<div class="w-full flex justify-between py-3">
+  <!-- #region (user details) -->
+   <div class="flex gap-2">
+    <div class="profile-iamge">
+      <ws-widget-avatar-photo 
+        [photoUrl]="otherUserProfile?.profileIamge"
+        [initials]="nameInitials"
+        [name]="otherUserProfile?.firstName"
+        [size]="'round-m'"
+      ></ws-widget-avatar-photo>
+    </div>
+
+    <div class="user-details flex flex-col gap-1">
+      <div class="user-name">{{ otherUserProfile?.firstName }}"></div>
+      <div class="user-designation">{{ otherUserProfile?.currentRole }}</div>
+      <div class="description">{{ otherUserProfile?.description }}</div>
+      <div class="location">{{ otherUserProfile?.location }} </div>
+    </div>
+  </div>
+   <!-- #endregion (user details) -->
+
+   <!-- #region (status and actions) -->
+    <div class="flex justify-center items-center action-buttons h-full" [ngSwitch]="currentTab">
+      <ng-container *ngSwitchCase="'connections'">
+        <div class="flex w-full justify-between items-center">
+           <a class="flex gap-1 items-center action-link">
+              View Profile
+            </a>
+
+          <!-- <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
+            <mat-icon class="cover-photo-menu-icon">more_vert</mat-icon>
+          </div>
+          <mat-menu #coverPhotoMenu="matMenu">
+            <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
+              <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
+            </button>
+          </mat-menu> -->
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'request'">
+        <div class="w-full flex flex-col gap-4">
+          <div class="flex h-full flex-col w-full">
+            <div class="flex justify-end timing">{{otherUserProfile?.time}}</div>
+          </div>
+          <div class="request-btns flex justify-between w-full items-center">
+            <div class="ignore flex justify-center items-center">Ignore</div>
+            <button mat-button class="accept-btn" (click)="acceptRequest()">Accept</button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'sent'">
+        <div class="flex w-full justify-center items-center">
+           <a class="flex gap-1 items-center action-link">
+              Withdraw
+            </a>
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'blocked'">
+        <div class="flex w-full justify-center items-center">
+           <a class="flex gap-1 items-center action-link">
+              Unblock
+            </a>
+        </div>
+      </ng-container>
+    </div>
+    <!-- #endregion (status and actions) -->
+</div>

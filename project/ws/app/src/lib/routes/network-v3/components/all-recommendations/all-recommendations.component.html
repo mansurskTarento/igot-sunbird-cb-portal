@@ -1,0 +1,13 @@
+<div class="w-full flex flex-col">
+  <div class="header flex pl-2 items-center gap-2">
+    <mat-icon class="arrow-icon">arrow_back</mat-icon> {{title}}
+  </div>
+
+  <div class="section p-4 flex flex-col justify-between items-center">
+    <div class="flex gap-2 w-full flex-wrap">
+      <ng-container *ngFor="let otherUserProfile of peopleYouMayKnowList">
+        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+      </ng-container>
+    </div>
+  </div>
+</div>

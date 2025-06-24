@@ -1,1 +1,22 @@
-<p>mentors works!</p>
+<div class="w-full flex flex-col p-4">
+  <div class="mentor-note-card flex justify-between items-center p-6 mb-4 gap-2">
+    <div class="mentor-note-text">
+      Connect with mentors who will guide your learning journey
+    </div>
+    <button class="discover-mentor-btn">
+      Discover Mentor
+    </button>
+  </div>
+
+  <div class="header flex items-center gap-2">
+    Find your Mentor
+  </div>
+
+  <div class="section flex flex-col justify-between items-center">
+    <div class="flex gap-2 w-full flex-wrap">
+      <ng-container *ngFor="let otherUserProfile of mentorsList">
+        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+      </ng-container>
+    </div>
+  </div>
+</div>

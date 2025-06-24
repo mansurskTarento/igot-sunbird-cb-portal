@@ -6,6 +6,7 @@ import { UpdatesComponent } from "./routes/updates/updates.component";
 import { ConnectionsComponent } from "./routes/connections/connections.component";
 import { RecommendationsComponent } from "./routes/recommendations/recommendations.component";
 import { MentorsComponent } from "./routes/mentors/mentors.component";
+import { AllRecommendationsComponent } from "./components/all-recommendations/all-recommendations.component";
 
 const routes: Routes = [
   {
@@ -51,6 +52,15 @@ const routes: Routes = [
         data: {
           pageId: 'recommendations',
           module: 'Network',
+        }
+      },
+      {
+        path: 'recommendations/all',
+        component: AllRecommendationsComponent,
+        data: {
+          pageId: 'recommendations',
+          module: 'Network',
+          recommendationType: 'peopleYouMayKnow'
         }
       },
       {

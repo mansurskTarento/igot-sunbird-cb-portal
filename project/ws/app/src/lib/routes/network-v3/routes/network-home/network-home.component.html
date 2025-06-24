@@ -1,1 +1,73 @@
-<p>network-home works!</p>
+<div class="w-full flex flex-col gap-4">
+  <div class="home-header">Explore Network</div>
+
+  <!-- #region (connections) -->
+  <div class="section p-4 flex flex-col justify-center items-center">
+    <div class="flex w-full justify-between items-center mb-5">
+      <div class="flex gap-2 items-center">
+        <div class="section-header">
+          Connection Requests
+        </div>
+        <div class="records-count flex justify-center items-center">
+          {{ 32 }}
+        </div>
+      </div>
+      <a (click)="showAll('connectionRequests')" class="flex gap-1 items-center show-all">
+        show all
+        <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
+      </a>
+    </div>
+    <div class="flex flex-col w-full">
+      <ng-container *ngFor="let otherUserProfile of connectionRequestsList; index as i">
+        <ws-app-connections-card [otherUserProfile]="otherUserProfile"></ws-app-connections-card>
+        <ng-container *ngIf="i < connectionRequestsList.length -1 ">
+          <div class="w-full saparater"></div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <!-- #endregion (connections) -->
+
+  <!-- #region (people you may know) -->
+  <div class="section p-4 flex flex-col justify-between items-center">
+    <div class="flex w-full justify-between items-center mb-5">
+      <div class="flex gap-2 items-center">
+        <div class="section-header">
+          people you may know
+        </div>
+      </div>
+      <a (click)="showAll('peopleYouMayKnow')"
+      class="flex gap-1 items-center show-all">
+        show all
+          <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
+      </a>
+    </div>
+    <div class="flex gap-2 w-full flex-wrap">
+      <ng-container *ngFor="let otherUserProfile of peopleYouMayKnowList">
+        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+      </ng-container>
+    </div>
+  </div>
+  <!-- #endregion (people you may know) -->
+
+  <!-- #region (find your mentor) -->
+  <div class="section p-4 flex flex-col justify-between items-center">
+    <div class="flex w-full justify-between items-center mb-5">
+      <div class="flex gap-2 items-center">
+        <div class="section-header">
+          Find your Mentor
+        </div>
+      </div>
+      <a (click)="showAll('showAllMentors')" class="flex gap-1 items-center show-all">
+        show all
+        <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
+      </a>
+    </div>
+    <div class="flex gap-2 w-full flex-wrap">
+      <ng-container *ngFor="let otherUserProfile of peopleYouMayKnowList">
+        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+      </ng-container>
+    </div>
+  </div>
+  <!-- #endregion (find your mentor) -->
+</div>

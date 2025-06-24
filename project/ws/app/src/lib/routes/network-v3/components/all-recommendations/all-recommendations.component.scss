@@ -5,11 +5,8 @@
   color: #000000
 }
 
-.updates-note {
+.arrow-icon {
   color: #00000099;
-  /* stylelint-disable */
-  font: 400 12px Lato;
-  /* stylelint-enable */
+  pointer-events: all;
+  cursor: pointer
 }
-
-

@@ -13,6 +13,12 @@ import { ProfileCardComponent } from './components/profile-card/profile-card.com
 import { ConnectionsCardComponent } from './components/connections-card/connections-card.component';
 import { UpdatesCardComponent } from './components/updates-card/updates-card.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
+import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module';
+import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component';
+import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
+import { TranslateModule } from '@ngx-translate/core';
+import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
 
 
 @NgModule({
@@ -27,12 +33,18 @@ import { MatIconModule } from '@angular/material/icon';
     MentorsComponent,
     ProfileCardComponent,
     ConnectionsCardComponent,
-    UpdatesCardComponent
+    UpdatesCardComponent,
+    ConnectionPeopleCardComponent,
+    AllRecommendationsComponent
   ],
   imports: [
     CommonModule,
     NetworkV3RoutingModule,
-    MatIconModule
+    MatIconModule,
+    AvatarPhotoModule,
+    ConnectionNameModule,
+    TranslateModule,
+    MatLegacyTabsModule
   ]
 })
 export class NetworkV3Module { }
