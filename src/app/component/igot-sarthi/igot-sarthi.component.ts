@@ -3,6 +3,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
 import { environment } from '../../../environments/environment';  
+import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
+import cloneDeep from 'lodash/cloneDeep';
+
 
 @Component({
   selector: 'ws-app-igot-sarthi',
@@ -38,9 +43,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   copiedIndex = -1
   public circleColor!: string
   random = Math.random().toString(36).slice(2)
-
+  iGOTAISearchResultArr:any = []
   // public initials!: string
-
+  resultFetch = false
   private colors = [
     '#EB7181', // red
     '#306933', // green
@@ -79,8 +84,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   aiSearchResult:any = {}
-
+  
   aiSearchResultArr:any = []
+  cloneSearchQuery = ''
   displayedText = '';
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
@@ -91,6 +97,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
+    private dialog: MatDialog,
+    private matSnackBarNew: MatSnackbarNew,
     private router: Router) { }
 
   ngOnInit() {
@@ -106,7 +114,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
     this.userIcon = this.userInfo && this.userInfo.profileImageUrl ? this.userInfo.profileImageUrl : ''
-    console.log('this.userInfo', this.userInfo)
     if(!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
       this.createInititals(this.userInfo.firstName)
     } 
@@ -500,25 +507,36 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   submitSearchQuery() {
-   console.log(this.searchQuery)
+    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    this.aiSearchResultArr.map((item:any, index:any)=>{
+      if(item && (item.newMessage === '')) {
+        // delete this.aiSearchResultArr[index]
+        this.aiSearchResultArr.splice(index,1)
+      }
+     })
+     this.resultFetch = false 
+  //  console.log(this.searchQuery)
+   this.cloneSearchQuery = ''
     // this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
      tab: 'sarthi',
      question: this.searchQuery
    }
+   this.cloneSearchQuery = cloneDeep(this.searchQuery);
    this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
    
    if(this.aiSearchResultArr.length > 2) {
     setTimeout(()=>{
       this.scrollToBottomEvent.emit() 
     },0)
-   }   
+   }  
+    this.searchQuery = ''
     this.aiGlobalSearch()
-    setTimeout(()=>{
-      this.searchQuery = ''
-    },1000)
+    // setTimeout(()=>{
+    //   this.searchQuery = ''
+    // },1000)
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
@@ -528,13 +546,19 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   
 
   aiGlobalSearch() {
+    this.iGOTAISearchResultArr = []
     let requestBody:any = {
-      "query":this.searchQuery
+      "query":this.cloneSearchQuery
    }
-   console.log('requestBody', requestBody)
     this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
+      this.resultFetch = true
     this.aiSearchResult = data 
-    let arr:any = []
+
+   if(this.aiSearchResult && !this.aiSearchResult.answer && !this.aiSearchResult.RetrievedChunks) {
+    this.aiSearchResult.RetrievedChunks = []
+   }
+    
+    //let arr:any = []
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
       let startTime = 0
       let endTime = 0
@@ -563,17 +587,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         contentStart: startTime,
         contentEnd: endTime, 
         pageNumber:   pageNumber,
+        query: this.aiSearchResult.query,
+        query_id: this.aiSearchResult.query_id,
+        feedback: '',
         resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
-      arr.push(resultObj)
+      // arr.push(resultObj)
+      this.iGOTAISearchResultArr.push(resultObj)
       
     })
-    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : "Apologies! I wasn't able to find a relevant solution for your current query. However, I specialize in resolving queries and creating personalized learning guidance tailored to your needs. Kindly rephrase or clarify your query so I can assist you more effectively."
+    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
     let shortAnswer =  this.splitParagraphByWords(answer)
-    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: arr, type: 'incoming',  tab: 'sarthi'})
+    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
     this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && item.answer === '') {
+      if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
         this.aiSearchResultArr.splice(index,1)
       }
@@ -602,9 +630,175 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     
   }
 
-  copyPath(item:any, cindex:any) {
+  sharePositiveContentRating(item:any, index:any, cindex:any) {
+    let requestBody:any = {
+      "query_id": item?.query_id,
+      // "response": item?.description,
+      "comments": "accurate",
+      "is_liked":true,
+      "rating": "5"
+
+   }
+   
+   //this.matSnackBar.open('Unable to fetch content data, due to some error!')
+   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
+    if(data && data.status === 'success') {
+      // this.matSnackBar.openFromComponent(SnackbarComponent, {
+      //   data: {
+      //     message: 'Thank you for your feedback.', type: 'success',
+      //   }, duration: 5000, panelClass: 'course-success-snackbar',
+      // })
+      // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
+      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
+      }
+      this.matSnackBarNew.open(
+        'Thank you for your feedback.', 'X',
+        { duration: 5000, panelClass: ['success'] }
+      );
+      
+    } else {
+      this.matSnackBarNew.open(
+        'Something is wrong. Please try again later.', 'X',
+        { duration: 5000, panelClass: ['error'] }
+      );
+    }
+
+  })
+  }
+
+  openAIFeedbackPopup(item:any, index:any, cindex:any) {
+    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index] && this.aiSearchResultArr[index]) {
+      if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex] && this.aiSearchResultArr[index].result[cindex]['feedback'] !== 'down') {
+        const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
+          disableClose: true,
+          width: '502px',
+          panelClass: ['relevent-feedback-dialog'],
+        })
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result) {
+            this.shareAIFeedback(item, result, index, cindex);
+            dialogRef.close();
+          } else {
+            dialogRef.close();
+          }
+        })
+      } else {
+        this.matSnackBarNew.open(
+          'You have already submitted feedback', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
+      
+    }
+   
+ 
+  }
+
+  shareAIFeedback(item:any, result:any, index:any, cindex:any) {
+
+    let requestBody:any = {
+      "query_id": item?.query_id,
+      // "response": item?.description,
+      "comments": result,
+      "is_liked":false,
+      "rating": "0"
+
+   }
+     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
+      if(data  && data.status === 'success') {
+        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+            this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
+        }
+        this.matSnackBarNew.open(
+          'Thank you for your feedback.', 'X',
+          { duration: 5000, panelClass: ['success'] }
+        );
+      } else {
+        this.matSnackBarNew.open(
+          'Something is wrong. Please try again later.', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
+     })
+  }
+
+  callFromInternet(item:any, index:any) {
+    this.resultFetch = false
+    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
+    if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
+      this.aiSearchResultArr[index]['showFromInternet'] = false
+    }
     
-    console.log('chat',item)
+    if(item && !item.answer) {
+
+      let internetGlobalSearchRequest = {
+        "query": this.cloneSearchQuery,
+        "designation":  this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
+        "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
+      }
+      this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata:any)=>{
+        this.resultFetch = true
+        this.aiSearchResultArr.map((item:any, index:any)=>{
+          if(item && (item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiSearchResultArr.splice(index,1)
+          }
+         })
+        let resultObj = {        
+          message: idata.answer,
+          recommendedQues: '',
+          selectedValue: '',       
+          title: idata.answer,
+          content: idata,
+          mimeType: idata,
+          contentType: idata,
+          artifactUrl: idata,
+          description: idata.answer,
+          identifier: idata,    
+          contentStart: idata,
+          contentEnd: idata, 
+          pageNumber:   idata,
+          query: this.cloneSearchQuery,
+          query_id: idata.query_id,
+          resourceLink : '', 
+          fromInternet: true,
+          feedback: ''
+        }
+
+        this.iGOTAISearchResultArr.push(resultObj)
+        let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
+        let shortAnswer =  this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.map((item:any, index:any)=>{
+          if(item && (item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiSearchResultArr.splice(index,1)
+          }
+         })
+        setTimeout(()=>{
+          this.scrollToBottomEvent.emit() 
+        },0)
+      })
+    }
+  }
+
+  rejectFromInternet(index:any) {
+    if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
+      this.aiSearchResultArr[index]['showFromInternet'] = false
+    }
+    this.resultFetch = true
+    this.aiSearchResultArr.map((item:any, index:any)=>{
+      if(item && (item.newMessage === '')) {
+        // delete this.aiSearchResultArr[index]
+        this.aiSearchResultArr.splice(index,1)
+      }
+     })
+  }
+
+  copyPath(item:any, cindex:any) {
     const selBox = document.createElement('textarea')
     selBox.style.position = 'fixed'
     selBox.style.left = '0'
@@ -621,6 +815,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       this.copiedIndex = -1
     },1000)
     
+  }
+
+  redirectToResource(item:any) {   
+    let path = (item.mimeType) === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    window.open(path, '_blank')
   }
 
   redirectToToc(chat:any) {
@@ -694,7 +893,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
     }
     this.initials = initials.toUpperCase()
-    console.log('this.initials', this.initials)
   }
 
   raiseTelemetryForResource(item:any) {
@@ -718,4 +916,5 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   ngOnDestroy(): void {
    
   }
+  
 }
