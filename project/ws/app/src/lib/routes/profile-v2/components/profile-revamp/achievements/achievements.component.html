@@ -18,10 +18,15 @@
         <div class="achievement-details"> {{achievement?.issuedOrganisation}}</div>
         <div class="achievement-details"> {{achievement?.issuedDate | date:'dd MMM, yyyy'}}</div>
         <ng-container *ngIf="achievement?.description">
-          <div class="description my-2" [ngClass]="{'extend-description': achievement?.showMore}" >{{achievement?.description}}</div>
-          <div class="view-more" (click)="viewMore(achievement)">
-            {{(achievement?.showMore ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+          <div [ngClass]="{'extend-description': achievement?.showMore}" class="description">
+            <ws-app-description [description]="achievement?.description" [minHeight]="30"
+              (showViewMoreBtn)="achievement['showViewMoreBtn'] = $event"></ws-app-description>
           </div>
+           <ng-container *ngIf="achievement.showViewMoreBtn">
+            <div class="view-more" (click)="viewMore(achievement)">
+              {{(achievement?.showMore ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+            </div>
+          </ng-container>
         </ng-container>
         <ng-container *ngIf="achievement?.uploadedDocumentUrl">
           <div class="document-card flex justify-between items-center">

@@ -35,7 +35,8 @@ const API_END_POINTS = {
   SERVER_DATE: 'apis/public/v8/systemDate',
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
   GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
-  SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`
+  SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
+  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`
 }
 
 @Injectable()
@@ -60,6 +61,13 @@ export class AppTocService {
   public getPageScroll = new BehaviorSubject(true)
   updatePageScroll = this.getPageScroll.asObservable()
   public hashmap: any = {}
+  private transriptionDataSubject = new BehaviorSubject<any>(null); // Start with null
+  transcriptionData$ = this.transriptionDataSubject.asObservable(); 
+  public transriptionActiveLanguageDataObject = new BehaviorSubject<any>(null);
+  public transriptionActiveLanguageDataObject$ = this.transriptionActiveLanguageDataObject.asObservable();
+  public transriptionIdentifier = new Subject(); // Start with null
+  changeTranscriptionLanguageEvent = new Subject()
+  playTranscriptionVideo = new Subject()
   constructor(private http: HttpClient, private configSvc: ConfigurationsService, private widgetSvc: WidgetContentService) {
     // this resume data subscription is for on load
     this.resumeDataSubscription = this.resumeData.subscribe(
@@ -561,7 +569,7 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
-      if (content.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
+      if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
         for (let i = 0; i < content.children.length; i += 1) {
           // content.children.forEach(async (parentChild,index) => {
             const parentChild = content.children[i]
@@ -626,39 +634,40 @@ export class AppTocService {
                   this.contentLoader.next(false)
                 }
               }
-            } else {
-              if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-                this.contentLoader.next(true)
-                const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
-                if (foundContent) {
-                  const req = {
-                    request: {
-                      batchId: foundContent.batch.batchId,
-                      userId: foundContent.userId,
-                      courseId: foundContent.collectionId,
-                      contentIds: [],
-                      fields: [
-                        'progressdetails',
-                      ],
-                    },
-                  }
-                  await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-                    const data: any  = progressdata
-                    if (data.result && data.result.contentList.length > 0) {
-                      const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-                      this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-                      totalCount = completedLeafNodes.length
-                      inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-                      this.updateResumaData(inprogressDataCheck)
-                      this.mapCompletionPercentage(content, data.result.contentList)
-                    }
-                    this.contentLoader.next(false)
-                    return progressdata
-                  })
-                }
-                this.contentLoader.next(false)
-              }
             }
+            //  else {
+            //   if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+            //     this.contentLoader.next(true)
+            //     const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
+            //     if (foundContent) {
+            //       const req = {
+            //         request: {
+            //           batchId: foundContent.batch.batchId,
+            //           userId: foundContent.userId,
+            //           courseId: foundContent.collectionId,
+            //           contentIds: [],
+            //           fields: [
+            //             'progressdetails',
+            //           ],
+            //         },
+            //       }
+            //       await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+            //         const data: any  = progressdata
+            //         if (data.result && data.result.contentList.length > 0) {
+            //           const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+            //           this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+            //           totalCount = completedLeafNodes.length
+            //           inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+            //           this.updateResumaData(inprogressDataCheck)
+            //           this.mapCompletionPercentage(content, data.result.contentList)
+            //         }
+            //         this.contentLoader.next(false)
+            //         return progressdata
+            //       })
+            //     }
+            //     this.contentLoader.next(false)
+            //   }
+            // }
             this.contentLoader.next(false)
           }
       }
@@ -922,5 +931,21 @@ export class AppTocService {
         }
       }
     }
+  }
+
+  setTranscriptionData(data: any) {
+  //  console.log('data--', data)
+    this.transriptionDataSubject.next(data);
+  }
+
+  setActiveSubtitleLanguage(activeLang:any) {
+    console.log('activeLang--', activeLang)
+    this.transriptionActiveLanguageDataObject.next(activeLang)
+  }
+
+  
+
+  aiGetResourceVttFile(resourceID:any) {
+    return this.http.get<any>(`${API_END_POINTS.AI_RESOURCE_VTT_FILE}?resource_id=${resourceID}`)
   }
 }

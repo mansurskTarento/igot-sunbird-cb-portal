@@ -215,7 +215,7 @@ export class ProfileV2RevampService {
 
   handleTranslateTo(menuName: string): string {
     // tslint:disable-next-line: prefer-template
-    const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
+    const translationKey = 'NetworkV2Profile.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
 

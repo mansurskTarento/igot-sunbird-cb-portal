@@ -19,6 +19,7 @@ import { NotificationComponent } from '@ws/author/src/lib/modules/shared/compone
 import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
+import { UserProfileService } from '../../../user-profile/services/user-profile.service';
 
 
 @Component({
@@ -94,6 +95,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     private dialog: MatLegacyDialog,
     private datePipe: DatePipe,
     private pipeImgUrl: PipeCertificateImageURL,
+    private userProfileService: UserProfileService
   ) {
     this.header = _.get(this.data, 'header', '');
     this.profileDetails = _.get(this.data, 'profileDetails', {});
@@ -237,12 +239,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       }
   
       if (file.size > IMAGE_SIZE_1MB * 2) {
-        this.snackBar.openFromComponent(NotificationComponent, {
-          data: {
-            type: 'Maximum upload file size: 2MB',
-          },
-          duration: NOTIFICATION_TIME * 1500,
-        })
+        this.openSnackbar(this.handleTranslateTo('profileImageSizeLimit'))
         return
       }
   
@@ -1028,6 +1025,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   handleTranslateTo(menuName: string): string {
     return this.profileV2RevampService.handleTranslateTo(menuName)
+  }
+
+  handleTranslateToProfile(menuName: string): string {
+    return this.userProfileService.handleTranslateTo(menuName)
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {

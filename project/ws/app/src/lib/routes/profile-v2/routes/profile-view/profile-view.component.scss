@@ -7,7 +7,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 @mixin custom-mat-icon($font-size: 20px, $width: 20px, $height: 20px) {
   font-size: $font-size;
   width: $width;
-  height: $height; 
+  height: $height;
 }
 
 .profile-pic {
@@ -79,6 +79,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     font-weight: 400;
     line-height: 14px;
     color: rgba($color: #000000, $alpha: 0.6);
+
     .font-bold700 {
       font-weight: 700;
       color: rgba(0, 0, 0, 0.87);
@@ -92,16 +93,16 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
   .info-value-c {
     display: flex;
-  flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.2); 
-  padding: 3px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1); 
-  font-size: 15px  !important;
-  height: 20 px;
-  margin-top: 0.5rem;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    font-size: 15px !important;
+    height: 20 px;
+    margin-top: 0.5rem;
   }
 
-  .note-value{
+  .note-value {
     margin-left: 0.5rem;
   }
 }
@@ -208,7 +209,8 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
-.withdraw-text, .primary-text {
+.withdraw-text,
+.primary-text {
   font-size: 14px;
   color: $text-primary;
   font-weight: 700;
@@ -293,7 +295,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
   .certificate-button {
     @extend .common-button-css;
-    background-color: rgba($color: #000000, $alpha: 0.14) ;
+    background-color: rgba($color: #000000, $alpha: 0.14);
   }
 }
 
@@ -371,11 +373,11 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 }
 
 ::ng-deep.mat-calendar-body-active {
-  background: #1b4ca1!important;
-  border-radius: 100%!important;
+  background: #1b4ca1 !important;
+  border-radius: 100% !important;
 }
 
-.profile-circle-container { 
+.profile-circle-container {
   .camera-icon {
     background-color: #0074b6;
     padding: 4px;
@@ -389,7 +391,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     position: relative;
     right: -42px;
     top: -24px;
-  
+
     .mat-icon {
       @include custom-mat-icon(12px, 12px, 12px);
       color: #FFF;
@@ -413,8 +415,8 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
 :host ::ng-deep .designation-note {
   .note-email {
-    color: #1b4ca1!important;
-    text-decoration: underline!important;
+    color: #1b4ca1 !important;
+    text-decoration: underline !important;
   }
 }
 
@@ -483,6 +485,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 .employee-value {
   word-wrap: break-word;
 }
+
 // Insights SCSS...
 
 @media screen and (max-width: 641px) {
@@ -547,6 +550,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     display: none !important;
   }
 }
+
 .profile-approval-status {
 
   .separator {
@@ -611,7 +615,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   .mat-expansion-panel {
     box-shadow: none !important;
   }
-  
+
   .mat-expansion-panel-header {
     padding: 0px !important;
     background: unset !important;
@@ -625,7 +629,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 }
 
 .small-border-radius {
-  border-radius: 4px; 
+  border-radius: 4px;
 }
 
 .blue-bg-mentor {
@@ -641,7 +645,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
 @media screen and (max-width: 767px) {
   .view-mentor-profile {
-   visibility: hidden;
+    visibility: hidden;
   }
 
   .view-mentor-profile-mob {
@@ -653,7 +657,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {
   .view-mentor-profile {
-   visibility: visible;
+    visibility: visible;
   }
 
   .view-mentor-profile-mob {
@@ -661,7 +665,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
-@media screen and (min-width: 240px) and (max-width: 344px){ 
+@media screen and (min-width: 240px) and (max-width: 344px) {
   .profile-header {
     .name {
       font-size: 24px;
@@ -672,7 +676,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
-@media screen and (min-width: 345px) and (max-width: 390px){ 
+@media screen and (min-width: 345px) and (max-width: 390px) {
   .profile-header {
     .name {
       font-size: 24px;
@@ -682,7 +686,8 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     }
   }
 }
-@media screen and (min-width: 391px) and (max-width: 430px){ 
+
+@media screen and (min-width: 391px) and (max-width: 430px) {
   .profile-header {
     .name {
       font-size: 24px;
@@ -693,7 +698,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
-@media screen and (min-width: 412px) and (max-width: 412px){ 
+@media screen and (min-width: 412px) and (max-width: 412px) {
   .profile-header {
     .name {
       font-size: 24px;
@@ -704,7 +709,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   }
 }
 
-@media screen and (min-width: 540px) and (max-width: 540px){ 
+@media screen and (min-width: 540px) and (max-width: 540px) {
   .profile-header {
     .name {
       font-size: 24px;
@@ -801,9 +806,10 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   height: 42px;
   border-radius: 5px;
   text-align: center;
-}  
+}
+
 .margin-bottom-none {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
 
 .warning-icon {
@@ -818,16 +824,18 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 .custom-select-container {
   width: 100%;
 }
- 
+
 // Fixed height select styling
 .fixed-height-select {
   width: 100%;
+
   // Make the form field exactly 45px high
   ::ng-deep .mat-form-field-flex {
     height: 48px !important;
     min-height: 45px !important;
     align-items: center;
   }
+
   ::ng-deep .mat-form-field-infix {
     padding: 0 !important;
     border-top: 0 !important;
@@ -835,23 +843,27 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     display: flex;
     align-items: center;
   }
+
   ::ng-deep .mat-form-field-wrapper {
     padding-bottom: 0 !important;
   }
+
   // Fix arrow alignment
   ::ng-deep .mat-select-arrow-wrapper {
     transform: translateY(0) !important;
   }
+
   // Fix label positioning
   ::ng-deep .mat-form-field-label-wrapper {
     top: -1.1em;
   }
 }
- 
+
 // Styles for the search panel
 ::ng-deep .search-panel {
   // Add max-height to enable scrolling for many options
   max-height: 350px;
+
   // Search container styling
   .sticky-search-container {
     position: sticky;
@@ -862,11 +874,13 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   }
+
   // Search input wrapper
   .search-input-wrapper {
     position: relative;
     width: 100%;
   }
+
   // Search input styling
   .search-input {
     width: 100%;
@@ -876,12 +890,14 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
-&:focus {
+
+    &:focus {
       outline: none;
       border-color: #F3962F;
       box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
     }
   }
+
   // Clear button styling
   .clear-button {
     position: absolute;
@@ -897,26 +913,30 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     display: flex;
     align-items: center;
     justify-content: center;
-&:hover {
+
+    &:hover {
       color: rgba(0, 0, 0, 0.8);
     }
   }
+
   // Style for the no results message
   .mat-option.mat-option-disabled {
     color: rgba(0, 0, 0, 0.38);
     font-style: italic;
   }
 }
- 
+
 // MDC-specific overrides (Angular Material 15+)
 ::ng-deep .mat-mdc-form-field.fixed-height-select {
   .mat-mdc-text-field-wrapper {
     height: 45px !important;
   }
+
   .mat-mdc-form-field-flex {
     min-height: 45px !important;
     height: 45px !important;
   }
+
   .mat-mdc-form-field-infix {
     min-height: 45px !important;
     height: 45px !important;
@@ -934,15 +954,15 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
 .fixed-height-select {
   height: 45px !important;
-  
+
   .mat-form-field-wrapper {
     height: 45px !important;
   }
-  
+
   .mat-form-field-flex {
     height: 45px !important;
   }
-  
+
   .mat-form-field-infix {
     padding: 0.5em 0;
   }

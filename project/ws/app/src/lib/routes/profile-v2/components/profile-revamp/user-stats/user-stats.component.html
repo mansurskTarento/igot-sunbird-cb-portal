@@ -8,8 +8,8 @@
           <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>
           </div>
         </ng-container>
-        <div class="block md:hidden rightArrowDiv">
-          <mat-icon class="right-arrow">chevron_right</mat-icon>
+        <div class="block md:hidden rightArrowDiv"  (click)="viewAll(stat)">
+          <mat-icon class="right-arrow" >chevron_right</mat-icon>
         </div>
       </div>
       

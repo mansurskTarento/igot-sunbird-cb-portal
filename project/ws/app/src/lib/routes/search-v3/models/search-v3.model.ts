@@ -77,7 +77,7 @@ export class SortBy {
 }
 
 export enum SearchCategory {
-  All = 'all',
+  All = '',
   Courses = 'courses',
   Programs = 'programs',
   Events = 'events',
