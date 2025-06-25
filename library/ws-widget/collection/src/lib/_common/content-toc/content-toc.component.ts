@@ -44,6 +44,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Input() playResourceId = ''
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   sticky = false
@@ -82,8 +83,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private viewerDataSvc: ViewerDataService
   ) { }
 
-  ngOnInit() {
-    
+  ngOnInit() {    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -176,13 +176,22 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.resourceIdentifier = this.viewerDataSvc.resourceId
-    this.parseVTT()
+    if ( changes && changes['playResourceId']) {
+      if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
+        if(this.viewerPage && this.viewerDataSvc?.resourceId) {
+          this.parseVTT()
+        }
+      }
+    }
+  
+      
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.content && this.content.identifier) {
+        // console.log('this.content.identifier', this.content.identifier)
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
