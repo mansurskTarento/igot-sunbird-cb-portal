@@ -13,12 +13,13 @@ import { MarkdownModule } from 'ngx-markdown';
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
-
+import { SupportAIComponent } from './../support-ai/support-ai.component'
 @NgModule({
   declarations: [
     ClickOutsideDirective,
     AppChatbotComponent,
-    IGotSarthiComponent
+    IGotSarthiComponent,
+    SupportAIComponent
   ],
   imports: [
     FormsModule,

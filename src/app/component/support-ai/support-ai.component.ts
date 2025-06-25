@@ -1,24 +1,25 @@
-import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
-import { RootService } from '../../component/root/root.service';
+import { RootService } from '../root/root.service';
 import { environment } from '../../../environments/environment';  
 import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import cloneDeep from 'lodash/cloneDeep';
-// import { timeout, catchError } from 'rxjs/operators';
-// import { throwError } from 'rxjs';
+
+
 @Component({
-  selector: 'ws-app-igot-sarthi',
-  templateUrl: './igot-sarthi.component.html',
-  styleUrls: ['./igot-sarthi.component.scss']
+  selector: 'ws-app-support-ai',
+  templateUrl: './support-ai.component.html',
+  styleUrls: ['./support-ai.component.scss']
 })
-export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
   @Input() chatId = ''
   @Input() userId = ''
+  @Input() activeLaguage= 'en'
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -46,7 +47,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   iGOTAISearchResultArr:any = []
   // public initials!: string
   resultFetch = false
-  searchAPIResponseInProgress = false
   private colors = [
     '#EB7181', // red
     '#306933', // green
@@ -89,9 +89,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   aiSearchResultArr:any = []
   cloneSearchQuery = ''
   displayedText = '';
+  startNewChat = false
+  initiateSupportNewChat = false
   // tslint: enable
-  isLoading = false;
-  hasError = false;
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
 
@@ -124,6 +124,20 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chatId']) {
+      const prev = changes['chatId'].previousValue;
+      const current = changes['chatId'].currentValue;
+
+      if (prev !== current) {
+        console.log(`'chatId' changed from '${prev}' to '${current}'`);
+        this.startNewChat = true
+        this.startNewSupportAISearch()
+      }
+    }
+
   }
 
   greetings() {
@@ -510,8 +524,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   submitSearchQuery() {
-    if(this.searchQuery&& !this.searchAPIResponseInProgress) {
-       // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
@@ -524,12 +537,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     // this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
-     tab: 'sarthi',
+     tab: 'support-ai',
      question: this.searchQuery
    }
    this.cloneSearchQuery = cloneDeep(this.searchQuery);
    this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
    
    if(this.aiSearchResultArr.length > 2) {
     setTimeout(()=>{
@@ -537,179 +550,148 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     },0)
    }  
     this.searchQuery = ''
-    this.aiGlobalSearch()
+    this.supportAISearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
     // },1000)
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
+  }
+
+  startNewSupportAISearch() {
+    this.iGOTAISearchResultArr = []
+    let requestBody:any = {
+      "channel_id": "web",
+      "session_id": this.chatId,
+      "text": this.cloneSearchQuery,
+      "audio": "",
+      "language": this.activeLaguage
     }
-   
+    console.log('requestBody--', requestBody)
+    if(this.startNewChat) {
+      this.chatbotService.aiStartChathForSupport(requestBody,  this.userId).subscribe((data)=>{
+        console.log('data---', data)
+        this.resultFetch = true
+        if(data && data.message) {
+          this.initiateSupportNewChat = true
+        } else {
+          this.initiateSupportNewChat = false
+        }
+        
+        
+      
+      })
+      
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
+          object: { },
+          state: WsEvents.EnumTelemetrySubType.Interact,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          mode: 'view',
+        },
+        pageContext: {pageId: '/page/home', module: 'Home'},
+        from: '',
+        to: 'Telemetry',
+      }
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+    }
   }
 
 
   
 
-  aiGlobalSearch() {
-    this.searchAPIResponseInProgress = true
-    this.iGOTAISearchResultArr = []
-    let requestBody:any = {
-      "query":this.cloneSearchQuery
-   }
-
-   this.isLoading = true;
-    this.hasError = false;
-    this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe({
-      next: (data:any) => {
-        this.searchAPIResponseInProgress = false
-      this.resultFetch = true
-    this.aiSearchResult = data 
-
-   if(this.aiSearchResult && !this.aiSearchResult.answer && !this.aiSearchResult.RetrievedChunks) {
-    this.aiSearchResult.RetrievedChunks = []
-   }
+  supportAISearch() {
+    console.log('this.initiateSupportNewChat--',this.initiateSupportNewChat)
+    if(this.initiateSupportNewChat) {
+      let requestBody:any = {
+        "channel_id": "web",
+        "session_id": this.chatId,
+        "text": this.cloneSearchQuery,
+        "audio": "",
+        "language": this.activeLaguage
+      }
+        this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
+          console.log('data---', data)
+          this.resultFetch = true
+        this.aiSearchResult = data 
+        
+        //let arr:any = []
+        // this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+        //   let startTime = 0
+        //   let endTime = 0
+        //   let pageNumber:any = 1
+        //   if(item && item?.contentStart) {
+        //     startTime = item?.contentStart
+        //     pageNumber= item?.contentStart
+        //   }
+        //   if(item && item?.ContentEnd) {
+        //     endTime = item?.ContentEnd
+        //     pageNumber= item?.ContentEnd
+        //   }
+        //   pageNumber = pageNumber !== " " ? pageNumber : 1
+          
+        //   let resultObj = {        
+        //     message: item.Name,
+        //     recommendedQues: '',
+        //     selectedValue: '',       
+        //     title: item.Name,
+        //     content: item,
+        //     mimeType: item.mimeType,
+        //     contentType: item.ContentType,
+        //     artifactUrl: item.ArtifactURL,
+        //     description: item.Description,
+        //     identifier: item.Identifier,    
+        //     contentStart: startTime,
+        //     contentEnd: endTime, 
+        //     pageNumber:   pageNumber,
+        //     query: this.aiSearchResult.query,
+        //     query_id: this.aiSearchResult.query_id,
+        //     feedback: '',
+        //     resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        //   }
     
-    //let arr:any = []
-    this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
-      let pageNumber:any = 1
-      if(item && item?.contentStart) {
-        startTime = item?.contentStart
-        pageNumber= item?.contentStart
-      }
-      if(item && item?.ContentEnd) {
-        endTime = item?.ContentEnd
-        pageNumber= item?.ContentEnd
-      }
-      pageNumber = pageNumber !== " " ? pageNumber : 1
-      
-      let resultObj = {        
-        message: item.Name,
-        recommendedQues: '',
-        selectedValue: '',       
-        title: item.Name,
-        content: item,
-        mimeType: item.mimeType,
-        contentType: item.ContentType,
-        artifactUrl: item.ArtifactURL,
-        description: item.Description,
-        identifier: item.Identifier,    
-        contentStart: startTime,
-        contentEnd: endTime, 
-        pageNumber:   pageNumber,
-        query: this.aiSearchResult.query,
-        query_id: this.aiSearchResult.query_id,
-        feedback: '',
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
-      }
-
-      // arr.push(resultObj)
-      this.iGOTAISearchResultArr.push(resultObj)
-      
-    })
-    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
-    let shortAnswer =  this.splitParagraphByWords(answer)
-    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
-    this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
-        // delete this.aiSearchResultArr[index]
-        this.aiSearchResultArr.splice(index,1)
-      }
-     })
-    setTimeout(()=>{
-      this.scrollToBottomEvent.emit() 
-    },0)
-      },
-      error: (err:any) => {
-        console.error('API failed:', err);
-        this.searchAPIResponseInProgress = false
-        this.hasError = true;
-        this.isLoading = false;
-      }
-    });
-
-  //   this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
-  //     this.searchAPIResponseInProgress = false
-  //     this.resultFetch = true
-  //   this.aiSearchResult = data 
-
-  //  if(this.aiSearchResult && !this.aiSearchResult.answer && !this.aiSearchResult.RetrievedChunks) {
-  //   this.aiSearchResult.RetrievedChunks = []
-  //  }
-    
-  //   //let arr:any = []
-  //   this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-  //     let startTime = 0
-  //     let endTime = 0
-  //     let pageNumber:any = 1
-  //     if(item && item?.contentStart) {
-  //       startTime = item?.contentStart
-  //       pageNumber= item?.contentStart
-  //     }
-  //     if(item && item?.ContentEnd) {
-  //       endTime = item?.ContentEnd
-  //       pageNumber= item?.ContentEnd
-  //     }
-  //     pageNumber = pageNumber !== " " ? pageNumber : 1
-      
-  //     let resultObj = {        
-  //       message: item.Name,
-  //       recommendedQues: '',
-  //       selectedValue: '',       
-  //       title: item.Name,
-  //       content: item,
-  //       mimeType: item.mimeType,
-  //       contentType: item.ContentType,
-  //       artifactUrl: item.ArtifactURL,
-  //       description: item.Description,
-  //       identifier: item.Identifier,    
-  //       contentStart: startTime,
-  //       contentEnd: endTime, 
-  //       pageNumber:   pageNumber,
-  //       query: this.aiSearchResult.query,
-  //       query_id: this.aiSearchResult.query_id,
-  //       feedback: '',
-  //       resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
-  //     }
-
-  //     // arr.push(resultObj)
-  //     this.iGOTAISearchResultArr.push(resultObj)
-      
-  //   })
-  //   let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
-  //   let shortAnswer =  this.splitParagraphByWords(answer)
-  //   this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
-  //   this.aiSearchResultArr.map((item:any, index:any)=>{
-  //     if(item && (item.newMessage === '')) {
-  //       // delete this.aiSearchResultArr[index]
-  //       this.aiSearchResultArr.splice(index,1)
-  //     }
-  //    })
-  //   setTimeout(()=>{
-  //     this.scrollToBottomEvent.emit() 
-  //   },0)
-    
-  //   }, (error:any)=>{
-  //     console.log('error', error)
-  //   })
-    
-    const event = {
-      eventType: WsEvents.WsEventType.Telemetry,
-      eventLogLevel: WsEvents.WsEventLogLevel.Info,
-      data: {
-        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
-        object: { },
-        state: WsEvents.EnumTelemetrySubType.Interact,
-        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-        mode: 'view',
-      },
-      pageContext: {pageId: '/page/home', module: 'Home'},
-      from: '',
-      to: 'Telemetry',
+        //   // arr.push(resultObj)
+        //   this.iGOTAISearchResultArr.push(resultObj)
+          
+        // })
+        let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
+        let shortAnswer =  this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
+        this.aiSearchResultArr.map((item:any, index:any)=>{
+          if(item && (item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiSearchResultArr.splice(index,1)
+          }
+         })
+        setTimeout(()=>{
+          this.scrollToBottomEvent.emit() 
+        },0)
+        
+        })
+        
+        const event = {
+          eventType: WsEvents.WsEventType.Telemetry,
+          eventLogLevel: WsEvents.WsEventLogLevel.Info,
+          data: {
+            edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
+            object: { },
+            state: WsEvents.EnumTelemetrySubType.Interact,
+            eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+            mode: 'view',
+          },
+          pageContext: {pageId: '/page/home', module: 'Home'},
+          from: '',
+          to: 'Telemetry',
+        }
+        this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     }
-    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+   
+    
+   
     
   }
 
@@ -808,28 +790,21 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
      })
   }
 
-  loadFailedData( ) {
-   // this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
-    this.aiGlobalSearch()
-  }
-
   callFromInternet(item:any, index:any) {
     this.resultFetch = false
-    
-    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
+    this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
     if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
     
     if(item && !item.answer) {
-      this.searchAPIResponseInProgress = true
+
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,
         "designation":  this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
       this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata:any)=>{
-        this.searchAPIResponseInProgress = false
         this.resultFetch = true
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
@@ -861,7 +836,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
@@ -1006,5 +981,4 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   ngOnDestroy(): void {
    
   }
-  
 }
