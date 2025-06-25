@@ -57,7 +57,7 @@
         </div>
 
         <!-- Designation -->
-        <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentOrgDetails}">
+        <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentOrgDetails || !selctedOrgDetails?.orgId}">
           <div class="lable required">{{'NetworkV2Profile.designation' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="designation" placeholder="{{'NetworkV2Profile.selectDesignation' | translate}}" panelClass="profile-control"
@@ -69,13 +69,13 @@
                   autocomplete="off">
               </div>
             </div>
-            <mat-option *ngFor="let option of designationsMeta" [value]="option?.designation">
-              {{ option?.designation }}
+            <mat-option *ngFor="let option of designationsMeta" [value]="option?.name">
+              {{ option?.name }}
             </mat-option>
             <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
               {{'NetworkV2Profile.loadingMore' | translate}}
             </div>
-            <mat-option *ngIf="(designationsMeta )?.length === 0" disabled>
+            <mat-option *ngIf="(designationsMeta )?.length === 0 && !isLoadingMoreDesignations" disabled>
               {{'NetworkV2Profile.noMatchesFound' | translate}}
             </mat-option>
           </mat-select>
