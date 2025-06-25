@@ -36,6 +36,9 @@
     }
 
     .profile-details {
+      .profile-info {
+        width: calc(100% - 140px);
+      }
       .profile-picture {
         height: 100px;
         width: 100px;
@@ -47,6 +50,9 @@
         /* stylelint-disable */
         font: 600 16px Montserrat;
         /* stylelint-enable */
+        word-break: break-word; // prefer breaking at spaces
+        overflow-wrap: break-word; // ensures breaking at spaces in all browsers
+        min-width: 60px;
       }
 
       .staus-icon {
@@ -60,6 +66,8 @@
         /* stylelint-disable */
         font: 700 12px Lato;
         /* stylelint-enable */
+        min-width: 50px;
+        word-break: break-all;
       }
 
       .profile-details {
@@ -68,6 +76,7 @@
         font: 400 12px Lato;
         /* stylelint-enable */
         gap: 2px;
+        width: calc(100% - 110px);
       }
 
       .view-mentor-profile {
@@ -343,6 +352,14 @@
 @media (max-width: 768px) {
   .user-details {
     border-radius: 0px;
+  }
+
+  .connectButton {
+    width: 100% !important;
+  }
+
+  .profile-info {
+    width: 100% !important;
   }
 }
 
