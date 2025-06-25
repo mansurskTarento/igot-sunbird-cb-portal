@@ -215,7 +215,6 @@ export class ProfileEntryEditComponent implements OnInit {
     }
 
     if(orgNameControl) {
-      let settingValueChange = true
       orgNameControl.valueChanges.subscribe((value: string) => {
         if(value) {
           const selectedOrgDetails = this.orgList.find(org => org.channel === value)
@@ -229,12 +228,10 @@ export class ProfileEntryEditComponent implements OnInit {
             if( searchDesignationControl) {
               searchDesignationControl.patchValue('');
             }
-            if(designationControl && !settingValueChange) {
+            if( designationControl) {
               designationControl.reset();
-            } else {
-              this.getdesignationsMeta()
             }
-            settingValueChange = false;
+            this.getdesignationsMeta()
           }
         }
       })
