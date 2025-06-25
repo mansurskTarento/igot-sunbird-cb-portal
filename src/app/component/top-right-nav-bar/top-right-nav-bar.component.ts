@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { NotificationsService } from 'src/app/services/notifications.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from '../../../environments/environment'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -54,7 +56,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService,
+    private events: EventService, private snackBar: MatSnackBar,
     private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -210,6 +212,31 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
+      } else if (event.sub_category === 'CONTENT_PUBLISHED' || event.sub_category === 'CONTENT_EDITED') {
+        if (event.message.data && event.message.data.id) {
+          this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+            if (res) {
+              if (res.primaryCategory === 'Learning Resource' &&
+                res.resourceCategory !== 'Learning Resource') {
+                localStorage.setItem('isStandaloneResource', 'true')
+              } else {
+                localStorage.setItem('isStandaloneResource', 'false')
+              }
+              let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
+              window.open(url, '_blank')
+            }
+          })
+        } else {
+          this.snackBar.open('Something went wrong')
+        }
+      } else if (event.sub_category === 'CONTENT_REVIEW_REQUEST' || event.sub_category === 'CONTENT_REJECTED') {
+        let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}`
+        window.open(url, '_blank')
+        //this.router.navigate([`author/editor/${event.message.data.id}`])
+      } else if (event.category === 'PROFILE') {
+        let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+        window.open(url, '_blank')
+        //this.router.navigate([`app/home/approvals/approval`])
       } else {
         this.router.navigate(['/app/notifications'])
       }
