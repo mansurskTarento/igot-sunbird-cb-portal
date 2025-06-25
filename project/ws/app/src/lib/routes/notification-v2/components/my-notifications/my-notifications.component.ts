@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-
+import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service'; // Adjust the path if needed
+import { environment } from 'src/environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'ws-app-my-notifications',
   templateUrl: './my-notifications.component.html',
@@ -12,6 +14,8 @@ export class MyNotificationsComponent {
   selectedLanguage = 'en'
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
+    private notificationsService: NotificationsService,
+    private snackBar: MatSnackBar,
     private router: Router, private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -46,6 +50,29 @@ export class MyNotificationsComponent {
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
+    } else if (notification.sub_category === 'CONTENT_PUBLISHED' || notification.sub_category === 'CONTENT_EDITED') {
+      if (notification.message.data && notification.message.data.id) {
+        this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
+          if (res) {
+            if (res.primaryCategory === 'Learning Resource' &&
+              res.resourceCategory !== 'Learning Resource') {
+              localStorage.setItem('isStandaloneResource', 'true')
+            } else {
+              localStorage.setItem('isStandaloneResource', 'false')
+            }
+            let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2`
+            window.open(url, '_blank')
+          }
+        })
+      } else {
+        this.snackBar.open('Something went wrong')
+      }
+    } else if (notification.sub_category === 'CONTENT_REVIEW_REQUEST' || notification.sub_category === 'CONTENT_REJECTED') {
+      let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}`
+      window.open(url, '_blank')
+    } else if (notification.category === 'PROFILE') {
+      let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+      window.open(url, '_blank')
     }
   }
 
