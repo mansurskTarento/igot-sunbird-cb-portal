@@ -27,8 +27,9 @@
       <div class="profile-details p-4 flex justify-between">
         <div class="flex gap-3">
           <div class="progress-wrapper">
-            <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-              viewBox="37 -5 110 120" width="100" height="100">
+            <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100"
+              height="100">
               <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
               <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
             </svg>
@@ -131,7 +132,7 @@
 
     <ng-container *ngIf="isCurrentUser && !isMobile">
       <div>
-        <ws-app-user-stats [userStats]="userStats" ></ws-app-user-stats>
+        <ws-app-user-stats [userStats]="userStats"></ws-app-user-stats>
       </div>
     </ng-container>
 
@@ -181,7 +182,8 @@
           <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
             <div id="about-me" class="user-details">
               <div class="flex justify-between items-center mb-2">
-                <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' : 'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
+                <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' :
+                  'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
                 <ng-container *ngIf="isCurrentUser">
                   <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
                 </ng-container>
@@ -205,11 +207,16 @@
             <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
               [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
               [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
-              (openProfileEditDialog)="openProfileEditDialog($event)"
-              (getApprovalStatus)="getSendApprovalStatus()" (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
+              (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
+              (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
           </div>
+          <ng-container *ngIf="isCurrentUser">
+            <ws-app-view-custom-fields></ws-app-view-custom-fields>
+          </ng-container>
 
-          <ng-container *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
+
+          <ng-container
+            *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
             <div id="service-history" class="user-details">
               <div class="flex justify-between items-center mb-2">
                 <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
@@ -217,15 +224,16 @@
                   <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                 </ng-container>
               </div>
-                <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails"
-                  [isCurrentUser]="isCurrentUser" [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
-                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
-                <ng-container *ngIf="serviceHistoryDetails?.count > 2">
-                  <div class="flex flex-col justify-between items-center">
-                    <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">{{'NetworkV2Profile.showAll' | translate}}</div>
-                  </div>
-                </ng-container>
+              <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
+                [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
+                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
+              <ng-container *ngIf="serviceHistoryDetails?.count > 2">
+                <div class="flex flex-col justify-between items-center">
+                  <div class="dividing-line"></div>
+                  <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">
+                    {{'NetworkV2Profile.showAll' | translate}}</div>
+                </div>
+              </ng-container>
             </div>
           </ng-container>
 
@@ -235,7 +243,8 @@
             </div>
           </ng-container> -->
 
-          <ng-container *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
+          <ng-container
+            *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
             <div id="educational-qualifications" class="user-details">
               <div class="flex justify-between items-center mb-2">
                 <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
@@ -253,7 +262,8 @@
                 <ng-container *ngIf="educationalQualificationDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">{{'NetworkV2Profile.showAll' | translate}}
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">
+                      {{'NetworkV2Profile.showAll' | translate}}
                     </div>
                   </div>
                 </ng-container>
@@ -261,7 +271,8 @@
             </div>
           </ng-container>
 
-          <ng-container *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
+          <ng-container
+            *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
             <div id="achievements" class="user-details">
               <div class="flex justify-between items-center mb-2">
                 <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
@@ -277,7 +288,8 @@
                 <ng-container *ngIf="achievementsDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">{{'NetworkV2Profile.showAll' | translate}}</div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">
+                      {{'NetworkV2Profile.showAll' | translate}}</div>
                   </div>
                 </ng-container>
               </ng-container>
