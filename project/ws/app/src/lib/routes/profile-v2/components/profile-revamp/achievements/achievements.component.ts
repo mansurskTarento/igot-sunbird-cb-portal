@@ -64,7 +64,11 @@ export class AchievementsComponent implements OnInit {
   }
 
   openEditDialog(entry: any = {}): void {
-    this.openProfileEntryEditDialog.emit(entry);
+    if(this.isPopup) { 
+      this.dialogRef.close(entry);
+    } else {
+      this.openProfileEntryEditDialog.emit(entry);
+    }
   }
 
   viewMore(achievement: any): void {

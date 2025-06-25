@@ -19,6 +19,8 @@ import { AllNotificationsModule } from '@sunbird-cb/notification'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { NotificationsService } from '../../../../../../../src/app/services/notifications.service'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
@@ -35,6 +37,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatIconModule,
     BtnPageBackModule,
     MatTabsModule,
+    MatSnackBarModule,
     AllNotificationsModule,
     TranslateModule.forRoot({
       loader: {
@@ -44,6 +47,6 @@ export function HttpLoaderFactory(http: HttpClient) {
       },
     }),
   ],
-  providers: [NotificationApiService, NotificationService],
+  providers: [NotificationApiService, NotificationService, NotificationsService],
 })
 export class NotificationV2Module { }
