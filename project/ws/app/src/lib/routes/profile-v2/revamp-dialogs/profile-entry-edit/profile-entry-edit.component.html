@@ -339,7 +339,7 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable">{{'NetworkV2Profile.issueDate' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="{{'NetworkV2Profile.selectDate | translate'}}" [max]="todayDate">
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate">
             <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #issueDatePicker></mat-datepicker>
             <mat-error *ngIf="hasError('issuedDate', 'required')">{{'NetworkV2Profile.pleaseSelectIssueDate' | translate}}</mat-error>
