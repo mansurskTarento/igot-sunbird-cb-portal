@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service'; // Adjust the path if needed
+import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
