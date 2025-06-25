@@ -2,23 +2,23 @@
   <div class="message-container" id="message-container">
     <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
       <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
-      <p>Welcome to IGOT AI, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
+      <p>Welcome to Support AI, Your dedicated support assistant for instant help, step-by-step guidance, and personalized support tailored to your needs.</p>
     </div>
     <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
 
       <ng-container *ngIf="chat.type === 'incoming'">
-        <ng-container *ngIf="chat?.answer || chat?.reterivedChunks?.length || chat?.showFromInternet">
+        <ng-container *ngIf="chat?.answer || chat?.reterivedChunks?.length">
           <div class="flex row-start incoming-msg margin-bottom-s">
-            <div *ngIf="chat?.answer || chat?.reterivedChunks?.length || chat?.showFromInternet" class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+            <div *ngIf="chat?.answer || chat?.reterivedChunks?.length" class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
           
             <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
             </div> -->
-            <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
+            <!-- <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.showFromInternet">
               <div class="system-msg padding-xs">
                 I couldn’t find any relevant results for your query. Would you like me to search outside the iGOT platform for more information?
               </div>
   
-            </div>
+            </div> -->
             <ng-container *ngIf="chat?.answer">
             <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
               <markdown [data]="chat?.answer"></markdown>
@@ -35,7 +35,7 @@
              
 
           </div>
-          
+<!--           
           <div *ngIf="chat?.showFromInternet">
             <div class="flex row my-2 justify-start mx-10 my-5">
               <div (click)="callFromInternet(chat, i)">
@@ -49,7 +49,7 @@
                 </button>
               </div>
           </div>
-          </div>
+          </div> -->
           <!-- <div class="flex row-start incoming-msg margin-bottom-s">
             <div class="system-icon"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
             <div *ngIf="chat?.contentType === 'Resource'" class="system-msg padding-xs" [innerHTML]="chat.message">
@@ -216,41 +216,13 @@
           
         </ng-container>
         <ng-container>
-          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.newMessage === '' && !resultFetch && !hasError">
+          <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.newMessage === '' && !resultFetch ">
             <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
             <div class="loading-bar-icon flex flex-row vertical-middle">
               <div class="mt-2"><span class="blue-color">Retrieving Results</span></div>
               <div><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
             </div>
           </div>
-          <div class="flex flex-col incoming-msg margin-bottom-s" *ngIf="hasError">
-            <!-- Row 1: Icon + Error Message -->
-            <div class="flex flex-row items-start">
-              <div class="system-icon mr-2">
-                <img alt="ai-icon" src="/assets/icons/bot-chat-small.svg" />
-              </div>
-              <div class="timeout-error-block h-36 flex items-center">
-                <span class="failed-error font-16">Failed to load data. Please try again.</span>
-              </div>
-            </div>
-          
-            <!-- Row 2: Buttons -->
-            <div class="flex flex-row justify-start mt-4 ml-10">
-              <div (click)="loadFailedData()">
-                <button type="button" class="error-for-failed-btn px-4 cursor-pointer">
-                  <mat-icon class="error-retry-icon">autorenew</mat-icon>
-                  <span class="white">Retry</span>
-                </button>
-              </div>
-              <!-- <div (click)="rejectFromInternet(i)" class="ml-2">
-                <button type="button" class="error-for-failed-btn py-2 px-4 cursor-pointer">
-                  <mat-icon class="error-close-icon">close</mat-icon>
-                  <span class="white">No</span>
-                </button>
-              </div> -->
-            </div>
-          </div>
-          
 
         </ng-container>
         
@@ -282,7 +254,7 @@
         </div>
 
         <div>
-          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()"  [disabled]="!searchQuery || searchAPIResponseInProgress">
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()"  [disabled]="!searchQuery && !initiateSupportNewChat">
             <mat-icon class="send-btn-icon">send</mat-icon>
           </button>
         </div>

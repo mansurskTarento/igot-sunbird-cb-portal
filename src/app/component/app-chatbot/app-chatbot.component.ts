@@ -61,6 +61,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
+  enableSupportAI = true
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -437,6 +438,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   checkForApiCalls() {
+    
     this.selectedLaguage = localStorage.getItem('selectedLanguage') || 'en'
     let localStg: any = JSON.parse(localStorage.getItem('faq') || '{}')
     let languageStg: any = JSON.parse(localStorage.getItem('faq-languages') || '{}')
@@ -537,7 +539,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   //  this.scrollToBottom()
   }
   clickOutside() {
-    if(this.currentFilter !== 'sarthi') {
+    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
       this.iconClick('end')
     }
   }
