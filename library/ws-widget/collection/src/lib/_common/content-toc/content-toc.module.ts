@@ -108,5 +108,4 @@ import {MatSelectModule} from '@angular/material/select';
     ReviewsContentComponent,
   ]
 })
-
 export class ContentTocModule { }

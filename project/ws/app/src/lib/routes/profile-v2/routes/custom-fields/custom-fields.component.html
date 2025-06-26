@@ -4,21 +4,12 @@
       <div class="flex flex-row gap-2 title-div items-center mb-4">
         <div class="title">{{ 'profileInfo.customFields' | translate }}</div>
       </div>
-      <ng-container *ngIf="customFieldValues && customFieldValues.length">
+      <ng-container *ngIf="customFieldValues">
         <div class="flex flex-row info-value">
           <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
             (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
             <mat-icon>edit</mat-icon>
             {{ 'profileInfo.edit' | translate }}
-          </div>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="customFieldValues && customFieldValues.length === 0">
-        <div class="flex flex-row info-value">
-          <div class="flex flex-row gap-2 items-center edit-button" *ngIf="!editCustomDetails"
-            (click)="editCustomDetails = !editCustomDetails; handleEditCustomDetails()">
-            <mat-icon>add</mat-icon>
-            {{ 'profileInfo.add' | translate }}
           </div>
         </div>
       </ng-container>
