@@ -45,6 +45,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
+import { ReplaceNbspPipe } from '@sunbird-cb/collection/src/lib/_common/content-toc/pipes/replace-nbsp.pipe'
 @NgModule({
     declarations: [
         FillInTheBlankComponent,
@@ -65,6 +66,7 @@ import { ReactiveFormsModule } from '@angular/forms'
         AssessmentPerformanceInsightSummaryComponent,
         FinalAssessmentPopupComponent,
         QuestionSafeUrlPipe,
+        ReplaceNbspPipe,
     ],
     imports: [
         CommonModule,
