@@ -61,6 +61,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
+  maximizeChatFlag = true
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -581,6 +582,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     } else {
       this.chatIconOutside = false
     }
+  }
+
+  minimizeChat() {
+    this.maximizeChatFlag = false
+  }
+
+  maximizeChat() {
+    this.maximizeChatFlag = true
   }
 
   

@@ -72,6 +72,18 @@
   height: calc(100vh - 20%);
 }
 
+.chatbot-with-ai-min {
+  width: 610px;
+  position: fixed;
+  bottom: 20px;
+  right: 50px;
+  z-index: 999;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0 6px 16px #0000003d;
+  height: 50px;
+}
+
 .cb-close {
   cursor: pointer;
 }
