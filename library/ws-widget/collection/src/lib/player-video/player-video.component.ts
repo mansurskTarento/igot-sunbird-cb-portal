@@ -539,7 +539,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             default: track.default_lang
           }, false);
         });
-        console.log('initObj.player-==',initObj.player)
         initObj.player.on('texttrackchange', () => {
           const tracks = initObj.player.textTracks();
           for (let i = 0; i < tracks.length; i++) {
