@@ -77,6 +77,7 @@ import { SearchV3Module } from '../search-v3/search-v3.module'
 import { DescriptionComponent } from './components/profile-revamp/description/description.component'
 
 import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component';
+import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-custom-fields.component'
 @NgModule({
     declarations: [
         ProfileComponent,
@@ -104,6 +105,7 @@ import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.comp
         CertificateViewPopupComponent,
         DescriptionComponent,
         CustomFieldsComponent,
+        ViewCustomFieldsComponent
     ],
     imports: [
         CommonModule,

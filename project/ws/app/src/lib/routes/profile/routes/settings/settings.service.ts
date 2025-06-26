@@ -7,6 +7,8 @@ const API_END_POINTS = {
   NOTIFICATIONS: `/apis/protected/v8/user/notifications/settings`,
   NOTIFICATION_PREFERENCE: '/apis/proxies/v8/data/v1/system/settings/get/notificationPreference',
   USER_NOTIFICATION_PREF: '/apis/proxies/v8/user/v1/notificationPreference',
+  GET_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/read`,
+  UPDATE_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/upsert`,
 }
 
 @Injectable()
@@ -31,5 +33,13 @@ export class SettingsService {
   }
   updateUserNotificationPreference(req: any) {
     return this.http.post<NsSettings.INotificationGroup[]>(API_END_POINTS.USER_NOTIFICATION_PREF, req)
+  }
+
+  getSettings() {
+    return this.http.get<any>(API_END_POINTS.GET_NOTIFICATIONS)
+  }
+
+  enableNotification(request: any) {
+    return this.http.post<any>(`${API_END_POINTS.UPDATE_NOTIFICATIONS}`, request)
   }
 }

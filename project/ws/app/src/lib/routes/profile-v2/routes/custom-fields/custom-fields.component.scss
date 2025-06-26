@@ -1,7 +1,7 @@
 @import 'ws-common';
 @import 'ws-vars';
 @import 'ws-mixins';
-$border-color: rgba($color: #000000, $alpha: 0.16);
+$border-color: rgba(0, 0, 0, 0.0784313725);
 
 @mixin custom-mat-icon($font-size: 20px, $width: 20px, $height: 20px) {
   font-size: $font-size;
@@ -9,47 +9,116 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
   height: $height;
 }
 
+.profile-editor-container {
+  padding: 24px;
+  max-width: 600px;
+  width: 600px;
+}
+
+.profile-editor-header {
+
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
+
+  .mat-form-field-appearance-legacy {
+    border-color: rgb(27, 76, 161) !important;
+  }
+}
+
+
+.solid {
+  width: calc(100% + 46px);
+  margin-left: -24px;
+  border-top: 2px solid #00000014;
+}
+
+
+.form-actions {
+
+  .cancel-btn {
+    border: 1px solid #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .save-btn {
+    background-color: #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: white;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .save-btn:disabled {
+    background-color: #B0C4DE;
+    color: #FFFFFF !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+
+}
+
+::ng-deep .profile-control {
+  .mat-input-element {
+    border-radius: 25px;
+    height: 12px;
+  }
+
+  .mat-select {
+    border-radius: 25px;
+    height: 12px;
+  }
+
+}
+
+
+@media screen and (max-width: 768px) {
+  .profile-editor-container {
+    width: calc(100% - 30px);
+    padding: 15px;
+  }
+
+  .cancel-btn {
+    display: none !important;
+  }
+
+  .save-btn {
+    width: 100% !important;
+  }
+
+}
+
 .input-text {
   width: calc(100% - 36px);
 }
 
-.info-div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  .label {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 14px;
-    color: rgba($color: #000000, $alpha: 0.6);
-
-    .font-bold700 {
-      font-weight: 700;
-      color: rgba(0, 0, 0, 0.87);
-    }
-  }
-
-  .info-value {
-    font-weight: 400;
-    color: #212529;
-  }
-
-  .info-value-c {
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 3px;
-    border: 0.5px solid rgba(0, 0, 0, 0.1);
-    font-size: 15px !important;
-    height: 20 px;
-    margin-top: 0.5rem;
-  }
-
-  .note-value {
-    margin-left: 0.5rem;
-  }
+.label {
+  color: #212529;
+  font: 700 14px Lato;
 }
+
 
 .blue-outline {
   border-radius: 20px;
@@ -60,18 +129,29 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 }
 
 .edit-button {
-  @extend .blue-outline;
-  font-size: 14px;
+  color: #1B4CA1;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  pointer-events: all;
+  cursor: pointer;
 
-  mat-icon {
-    @include custom-mat-icon(20px, 20px, 20px);
-  }
+
+}
+
+.add-button {
+  color: #1B4CA1;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  pointer-events: all;
+  cursor: pointer;
 }
 
 
 .common-card-css {
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   border: 1px solid $border-color;
   background-color: #FFF;
   color: rgba($color: #000000, $alpha: 0.85);
@@ -86,13 +166,13 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
 
 .title-div {
   .title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     font-family: $font-family-montserrat;
   }
 
   .mat-icon {
-    @include custom-mat-icon(20px, 20px, 20px);
+    @include custom-mat-icon(24px, 24px, 24px);
   }
 }
 

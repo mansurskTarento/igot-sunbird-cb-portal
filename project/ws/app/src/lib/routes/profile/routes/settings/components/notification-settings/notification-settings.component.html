@@ -1,16 +1,17 @@
 <h1>{{ 'notificationSettings.notificationHeader' | translate }}</h1>
 
 <div class="notification-settings-container">
-  <ng-container *ngIf="notificationSettings || notificationSettings.length">
+  <ng-container *ngIf="notificationSettings && notificationSettings?.length">
     <div class="notification-list-item" *ngFor="let item of notificationSettings">
       <div class="notification-item pb-2">
-        <div class="notification-list-item-header">{{ translateLabels(item.title, 'notificationV2Settings') }}</div>
-        <mat-slide-toggle [(ngModel)]="item.enabled"></mat-slide-toggle>
+        <div class="notification-list-item-header">{{getTitle(item?.notificationType) || item?.notificationType}}
+        </div>
+        <mat-slide-toggle [(ngModel)]="item.enabled" (change)="onToggleChange(item, $event)"></mat-slide-toggle>
       </div>
       <div class="notification-list-item-description">
-        <p>{{ translateLabels(item.description, 'notificationV2Settings') }}</p>
+        <p>{{getDescription(item?.notificationType) || item?.notificationType}}</p>
       </div>
     </div>
   </ng-container>
-  <h4 *ngIf="notificationSettings.length === 0">{{ 'notificationSettings.comingSoon' | translate }}</h4>
+  <h4 *ngIf="notificationSettings.length === 0">{{ 'notificationV2Settings.noNotifications' | translate }}</h4>
 </div>
