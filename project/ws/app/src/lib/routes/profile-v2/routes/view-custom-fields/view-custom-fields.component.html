@@ -1,4 +1,4 @@
-<div class="common-card-css" *ngIf="customAttrListIds && customAttrListIds.length">
+<div class="common-card-css" *ngIf="customAttrListIds && customAttrListIds.length" id="orgDetails">
   <div class="flex flex-col gap-5">
     <div class="flex flex-row gap-4 items-center justify-between  mb-4">
       <div class="flex flex-row gap-2 title-div items-center">
@@ -19,8 +19,8 @@
         </div>
       </ng-container>
     </div>
-    <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info">
-      <div class="grid-container mt-2" *ngIf="customFieldValues && customFieldValues.length">
+    <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info" *ngIf="customFieldValues && customFieldValues.length">
+      <div class="grid-container mt-2">
         <!-- Text fields - Each in its own grid cell -->
         <ng-container *ngFor="let item of customAttrList">
           <div *ngIf="item?.type === 'text'" class="grid-item">
@@ -50,7 +50,8 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info">
+  <div class="flex flex-col gap-6 sm:gap-8 custom-attr-info"
+    *ngIf="customFieldValues && customFieldValues.length === 0">
     <div class="flex justify-center items-center w-full">
       <img class="empty-gif" src="./assets/icons/empty.gif" alt="empty gif">
     </div>

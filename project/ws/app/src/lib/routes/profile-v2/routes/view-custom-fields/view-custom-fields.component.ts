@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { UserProfileService } from '../../../user-profile/services/user-profile.service';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import _ from 'lodash'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog';
+import { CustomFieldsComponent } from '../custom-fields/custom-fields.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'ws-app-view-custom-fields',
@@ -19,12 +23,38 @@ export class ViewCustomFieldsComponent {
   userId: string = ''
   orgId: string = ''
   currentUser: any = {}
+  isMobile: any
 
 
   constructor(
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
-  ) { }
+    private dialog: MatLegacyDialog,
+    private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute,
+  ) {
+    this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+      });
+
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'orgDetails') {
+        setTimeout(() => {
+          const element = document.getElementById(fragment);
+          if (element) {
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            })
+            setTimeout(() => {
+              this.handleEditCustomDetails()
+            }, 1000)
+          }
+        }, 500)
+      }
+    })
+  }
 
   ngOnInit() {
     this.currentUser = this.configService && this.configService.userProfile
@@ -101,4 +131,19 @@ export class ViewCustomFieldsComponent {
   getName(attributeName: string) {
     return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName;
   }
+
+  // Update handleEditCustomDetails to build the form and populate values
+  handleEditCustomDetails() {
+    const dialogRef = this.dialog.open(CustomFieldsComponent, {
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false,
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.getOrgDetails()
+      }
+    })
+  }
+
 }
