@@ -91,6 +91,7 @@
 
 ::ng-deep .mat-drawer-content{
   height: 100% !important;
+  background: #ffffff !important;
 }
 
 .viewer-player-container {
@@ -168,3 +169,6 @@
 }
 
 .display-none {display: none !important;}
+.full-screen-block {
+  width: 97%;
+}

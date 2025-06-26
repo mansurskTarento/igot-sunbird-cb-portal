@@ -282,12 +282,15 @@ export class MatchTheFollowingQuesComponent implements OnInit, OnChanges, AfterV
 
     }
     getSanitizeString(res: any) {
-        if (res && (typeof res === 'string')) {
-            const response = res.replace(/\&lt;/g, '<').replace(/\&gt;/g, '>')
-            return response
-        }
-        return res
+    if (res && (typeof res === 'string')) {
+        const response = res
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&nbsp;/g, ' ')
+        return response
     }
+    return res
+}
     ngOnDestroy(): void {
         this.resetMtf()
         this.practiceSvc.shCorrectAnswer(false)

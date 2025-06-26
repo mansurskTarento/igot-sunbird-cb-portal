@@ -10,6 +10,7 @@ import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/util
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import {
   BtnFullscreenModule,
+  ContentTocModule,
 } from '@sunbird-cb/collection'
 import { ResultComponent } from './components/result/result.component'
 import { FillInTheBlankComponent } from './components/question/fitb/fitb.component'
@@ -92,6 +93,7 @@ import { ReactiveFormsModule } from '@angular/forms'
         TranslateModule,
         MatMenuModule,
         MatSelectModule,
+        ContentTocModule,
     ],
     exports: [
         PracticeComponent,
