@@ -534,12 +534,12 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           initObj.player.addRemoteTextTrack({
             kind: 'subtitles',
             src: track.uri,
-            srclang: track.label,
-            label: track.language,
+            srclang: this.titleCase(track.label),
+            label: this.titleCase(track.language),
             default: track.default_lang
           }, false);
         });
-
+        console.log('initObj.player-==',initObj.player)
         initObj.player.on('texttrackchange', () => {
           const tracks = initObj.player.textTracks();
           for (let i = 0; i < tracks.length; i++) {

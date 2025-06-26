@@ -262,3 +262,9 @@
   width: 15%;
   word-wrap: break-word;
 }
+
+::ng-deep {
+  .mat-mdc-select-panel {
+    background:white !important;
+  }
+}

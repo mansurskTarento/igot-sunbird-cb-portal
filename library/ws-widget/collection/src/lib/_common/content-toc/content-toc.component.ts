@@ -44,8 +44,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Input() playResourceId = ''
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
+  
   sticky = false
   menuPosition: any
   isMobile = false
@@ -176,7 +178,14 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.resourceIdentifier = this.viewerDataSvc.resourceId
-    this.parseVTT()
+
+    if ( changes && changes['playResourceId']) {
+      if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
+        if(this.viewerPage && this.viewerDataSvc?.resourceId ) {
+          this.parseVTT()
+        }
+      }
+    }
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
