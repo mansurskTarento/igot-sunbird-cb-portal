@@ -231,6 +231,9 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
                 if (res.status === 'Draft') {
                   let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2`
                   window.open(url, '_blank')
+                } else if (res.status === 'Live') {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
+                  window.open(url, '_blank')
                 } else {
                   let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
                   window.open(url, '_blank')
