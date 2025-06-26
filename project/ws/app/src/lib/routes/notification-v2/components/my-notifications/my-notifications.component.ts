@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,10 +12,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class MyNotificationsComponent {
   selectedLanguage = 'en'
+  roles: string[] = []
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private notificationsService: NotificationsService,
     private snackBar: MatSnackBar,
+    private configService: ConfigurationsService,
     private router: Router, private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -33,6 +35,9 @@ export class MyNotificationsComponent {
         this.selectedLanguage = lang
       }
     })
+    if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.roles) {
+      this.roles = this.configService.unMappedUser.roles
+    }
   }
 
 
@@ -60,19 +65,51 @@ export class MyNotificationsComponent {
             } else {
               localStorage.setItem('isStandaloneResource', 'false')
             }
-            let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2`
-            window.open(url, '_blank')
+            if (this.roles.includes('CONTENT_CREATOR')) {
+              if (res.status === 'Draft') {
+                let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2`
+                window.open(url, '_blank')
+              } else {
+                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?mode=edit`
+                window.open(url, '_blank')
+              }
+            } else {
+              if (res.status === 'Draft') {
+                alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+                //${environment.portalsForNotifications.cbp}
+                window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+              } else {
+                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2`
+                window.open(url, '_blank')
+              }
+            }
           }
         })
       } else {
         this.snackBar.open('Something went wrong')
       }
     } else if (notification.sub_category === 'CONTENT_REVIEW_REQUEST' || notification.sub_category === 'CONTENT_REJECTED') {
-      let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}`
-      window.open(url, '_blank')
-    } else if (notification.category === 'PROFILE') {
-      let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
-      window.open(url, '_blank')
+      if (notification.message.data && notification.message.data.id) {
+        this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
+          if (res) {
+            if (res.status === 'Draft') {
+              alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+              window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+            } else {
+              if (this.roles.includes('CONTENT_REVIEWER')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?mode=edit`
+                window.open(url, '_blank')
+              } else if (this.roles.includes('CONTENT_CREATOR')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}`
+                window.open(url, '_blank')
+              }
+            }
+          }
+        })
+      } else if (notification.category === 'PROFILE') {
+        let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+        window.open(url, '_blank')
+      }
     }
   }
 

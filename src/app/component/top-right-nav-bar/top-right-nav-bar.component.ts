@@ -51,6 +51,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
+  roles: string[] = []
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
@@ -74,6 +75,10 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         this.selectedLanguage = lang
       }
     })
+
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
+      this.roles = this.configSvc.unMappedUser.roles
+    }
   }
 
   ngOnInit() {
@@ -222,17 +227,46 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
               } else {
                 localStorage.setItem('isStandaloneResource', 'false')
               }
-              let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
-              window.open(url, '_blank')
+              if (this.roles.includes('CONTENT_CREATOR')) {
+                if (res.status === 'Draft') {
+                  let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2`
+                  window.open(url, '_blank')
+                } else {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
+                  window.open(url, '_blank')
+                }
+              } else {
+                if (res.status === 'Draft') {
+                  alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+                  //${environment.portalsForNotifications.cbp}
+                  window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+                } else {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
+                  window.open(url, '_blank')
+                }
+              }
             }
           })
         } else {
           this.snackBar.open('Something went wrong')
         }
       } else if (event.sub_category === 'CONTENT_REVIEW_REQUEST' || event.sub_category === 'CONTENT_REJECTED') {
-        let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}`
-        window.open(url, '_blank')
-        //this.router.navigate([`author/editor/${event.message.data.id}`])
+        this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+          if (res) {
+            if (res.status === 'Draft') {
+              alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+              window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+            } else {
+              if (this.roles.includes('CONTENT_REVIEWER')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
+                window.open(url, '_blank')
+              } else if (this.roles.includes('CONTENT_CREATOR')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}`
+                window.open(url, '_blank')
+              }
+            }
+          }
+        })
       } else if (event.category === 'PROFILE') {
         let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
         window.open(url, '_blank')
