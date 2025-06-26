@@ -163,3 +163,7 @@
     letter-spacing: 0.25px;
   }
 }
+
+:host ::ng-deep .video-js .vjs-menu-item {
+  text-transform: capitalize !important;
+}
