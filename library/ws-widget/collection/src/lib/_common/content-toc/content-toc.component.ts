@@ -179,6 +179,12 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      this.enableTranscriptionFlag = true
+    } else {
+      this.enableTranscriptionFlag = false
+    }
+
     if ( changes && changes['playResourceId']) {
       if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
         if(this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {

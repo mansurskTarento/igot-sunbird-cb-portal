@@ -10,6 +10,7 @@ import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/util
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import {
   BtnFullscreenModule,
+  ContentTocModule
 } from '@sunbird-cb/collection'
 import { ResultComponent } from './components/result/result.component'
 import { FillInTheBlankComponent } from './components/question/fitb/fitb.component'
@@ -45,7 +46,6 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
-import { ReplaceNbspPipe } from '@sunbird-cb/collection/src/lib/_common/content-toc/pipes/replace-nbsp.pipe'
 @NgModule({
     declarations: [
         FillInTheBlankComponent,
@@ -66,7 +66,6 @@ import { ReplaceNbspPipe } from '@sunbird-cb/collection/src/lib/_common/content-
         AssessmentPerformanceInsightSummaryComponent,
         FinalAssessmentPopupComponent,
         QuestionSafeUrlPipe,
-        ReplaceNbspPipe,
     ],
     imports: [
         CommonModule,
@@ -94,6 +93,7 @@ import { ReplaceNbspPipe } from '@sunbird-cb/collection/src/lib/_common/content-
         TranslateModule,
         MatMenuModule,
         MatSelectModule,
+        ContentTocModule
     ],
     exports: [
         PracticeComponent,
