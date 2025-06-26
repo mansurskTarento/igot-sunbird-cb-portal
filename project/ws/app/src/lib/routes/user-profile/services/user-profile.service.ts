@@ -38,6 +38,10 @@ const API_ENDPOINTS = {
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains',
   GET_DESIGNATION_V2: '/apis/proxies/v8/designation/search',
   GET_ORGANIZATION_V1: '/apis/proxies/v8/org/v1/search',
+  ORG_CUSTOM_FIELDS: `apis/proxies/v8/customFields/v1/search`,
+  UPDATE_CUSTOM_FIELDS: `apis/proxies/v8/user/profile/v1/update/additionalFields`,
+  READ_CUSTOM_FIELDS_VALUES: `apis/proxies/v8/user/profile/v1/getAdditionalFields`,
+  READ_ORG_DETAILS: 'api/org/v1/read',
 }
 
 @Injectable()
@@ -100,6 +104,10 @@ export class UserProfileService {
 
   getOrganizationData(request: any) {
     return this.http.post<any>(API_ENDPOINTS.GET_ORGANIZATION_V1, request)
+  }
+
+  readOrgData(request: any) {
+    return this.http.post<any>(API_ENDPOINTS.READ_ORG_DETAILS, request)
   }
 
   getAllDepartments() {
@@ -184,5 +192,17 @@ export class UserProfileService {
   }
   getWhiteListDomain(): Observable<any> {
     return this.http.get<any>(API_ENDPOINTS.approvedDomains)
+  }
+
+  fetchCustomFields(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_ENDPOINTS.ORG_CUSTOM_FIELDS, requestBody)
+  }
+
+  updateCustomFields(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_ENDPOINTS.UPDATE_CUSTOM_FIELDS, requestBody)
+  }
+
+  readCustomattributeDetails(userId: string, orgId: string): Observable<any> {
+    return this.http.get<any>(`${API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES}/${userId}/${orgId}`)
   }
 }

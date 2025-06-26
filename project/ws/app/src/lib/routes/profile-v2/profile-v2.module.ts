@@ -56,7 +56,7 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-
+import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component';
 @NgModule({
     declarations: [
         ProfileComponent,
@@ -69,6 +69,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         WithdrawRequestComponent,
         DesignationRequestComponent,
         RejectionReasonPopupComponent,
+        CustomFieldsComponent,
     ],
     imports: [
         CommonModule,
