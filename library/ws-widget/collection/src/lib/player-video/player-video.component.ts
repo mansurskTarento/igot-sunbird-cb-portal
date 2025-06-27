@@ -471,20 +471,20 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
       this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
       // console.log('this.transcriptionLangArr----', this.transcriptionLangArr)
-      if (Array.isArray(this.widgetData.subtitles)) {
-        this.widgetData.subtitles.forEach((u, index) => {
-          initObj.player.addRemoteTextTrack(
-            {
-              default: index === 0,
-              kind: 'subtitles',
-              label: this.titleCase(u.label),
-              srclang: u.srclang,
-              src: u.url,
-            },
-            false,
-          )
-        })
-      }
+      // if (Array.isArray(this.widgetData.subtitles)) {
+      //   this.widgetData.subtitles.forEach((u, index) => {
+      //     initObj.player.addRemoteTextTrack(
+      //       {
+      //         default: index === 0,
+      //         kind: 'subtitles',
+      //         label: this.titleCase(u.label),
+      //         srclang: u.srclang,
+      //         src: u.url,
+      //       },
+      //       false,
+      //     )
+      //   })
+      // }
       if (this.widgetData.url) {
 
         // if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
@@ -528,12 +528,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        // console.log('in---')
+        const defaultTrack:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+        // console.log('defaultTrack--', defaultTrack)
         this.transcriptionLangArr.forEach((track:any) => {
+          // console.log(track?.label , defaultTrack?.label)
           // console.log('track--', track)
           initObj.player.addRemoteTextTrack({
             kind: 'subtitles',
-            src: track.uri,
+            src: (track?.label === defaultTrack?.label) ? defaultTrack?.uri : "",
             srclang: this.titleCase(track.label),
             label: this.titleCase(track.language),
             default: track.default_lang
@@ -541,23 +543,52 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         });
         initObj.player.on('texttrackchange', () => {
           const tracks = initObj.player.textTracks();
+          
           for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
+            
             if (track.mode === 'showing') {
               const currentLang = track.language;
-
               if (currentLang !== this.previousSubtitleLanguage) {
                 //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
 
                 this.previousSubtitleLanguage = currentLang; // Update for next comparison
                 this.activeTranscriptionLanguage = currentLang;
+                //const remoteTracks:any = initObj.player.remoteTextTracks();
+                // for (let j = remoteTracks.length - 1; j >= 0; j--) {
+                //   initObj.player.removeRemoteTextTrack(remoteTracks[j]);
+                // }
+                const newTrack:any = this.transcriptionLangArr.find((t: any) => { 
+                  // console.log(t)
+                  return t.label === currentLang.toLowerCase()
+
+                });
+                if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
+                  this.replaceSubtitleTrack(newTrack);
+                }
+                // if(newTrack) {
+                //   this.transcriptionLangArr.forEach((track:any) => {
+                //     // console.log(track?.label , defaultTrack?.label)
+                //     // console.log('track--', track)
+                //     initObj.player.addRemoteTextTrack({
+                //       kind: 'subtitles',
+                //       src: (track?.label === newTrack?.label) ? newTrack?.uri : "",
+                //       srclang: this.titleCase(track.label),
+                //       label: this.titleCase(track.language),
+                //       default: track.default_lang
+                //     }, false);
+                //   });
+      
+                // }
+
+                
 
                 // Optional: sync with a service or trigger UI update
                 // this.appTocService.setActiveSubtitleLanguage(currentLang);
                // console.log('About to call next with:', currentLang);
                 this.appTocService.setActiveSubtitleLanguage(currentLang);
                 //console.log('Called next');
-              }
+              } 
 
               break; // Only one track should be 'showing'
             }
@@ -663,5 +694,67 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  replaceSubtitleTrack(newTrack:any) {
+    // Remove existing <track> DOM elements
+    console.log('replace sub track')
+    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
+    const existingTracks = videoEl.querySelectorAll('track');
+    existingTracks.forEach((el:any) => el.remove());
+  
+    // Create and add new <track> element
+    const trackEl = document.createElement('track');
+    trackEl.kind = 'subtitles';
+    trackEl.src = newTrack.uri;
+    trackEl.srclang = newTrack.label.toLowerCase();
+    trackEl.label = newTrack.language;
+    trackEl.default = true;
+  
+    videoEl.appendChild(trackEl);
+    setTimeout(()=>{
+      let tracks = this.playerInitObj.player.textTracks()
+      //let allCues:any = []
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+        // console.log(tracks[i].label, tracks[i]);
+        if (track.kind === 'subtitles' || track.kind === 'metadata') {
+        //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+        if (track.language === this.activeTranscriptionLanguage) {
+          track.mode = 'showing';
+        } else {
+          track.mode = 'disabled'; // prevent multiple from showing
+        }
+          track.addEventListener('cuechange', () => {
+            const activeCues = track.activeCues;
+
+            if (activeCues && activeCues.length > 0) {
+              for (let j = 0; j < activeCues.length; j++) {
+                const cue:any = activeCues[j];
+
+                // Log or store cue
+                // allCues.push({
+                //   start: cue.startTime,
+                //   end: cue.endTime,
+                //   text: cue?.text
+                // });
+
+                this.appTocService.setTranscriptionData({
+                  start: cue.startTime,
+                  end: cue.endTime,
+                  text: cue?.text
+                })
+
+                // Show in browser
+                // const entry = document.createElement('div');
+                // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
+                // cueLog.appendChild(entry);
+              }
+              //console.log('cue', allCues)
+            }
+          });
+        }
+      }
+    },500)
   }
 }
