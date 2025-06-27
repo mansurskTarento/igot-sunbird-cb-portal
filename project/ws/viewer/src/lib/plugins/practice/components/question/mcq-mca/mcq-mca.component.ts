@@ -80,10 +80,7 @@ export class MultipleChoiseQuesComponent implements OnInit, OnChanges, AfterView
     }
 getSanitizeString(res: any) {
     if (res && (typeof res === 'string')) {
-        const response = res
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&nbsp;/g, ' ')
+        const response = res.replace(/\&lt;/g, '<').replace(/\&gt;/g, '>')
         return response
     }
     return res

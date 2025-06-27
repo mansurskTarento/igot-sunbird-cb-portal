@@ -93,7 +93,8 @@ import { ReactiveFormsModule } from '@angular/forms'
         TranslateModule,
         MatMenuModule,
         MatSelectModule,
-        ContentTocModule
+        ContentTocModule,
+        
     ],
     exports: [
         PracticeComponent,
