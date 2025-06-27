@@ -61,6 +61,7 @@
             </div>
         </div>
       </div>
+      <ng-container>
       <div class="cb-content-wrapper" #scrollMe [hidden]="!maximizeChatFlag">
         <div class="flex flex-wrap"  #scrollMe id="chatbot-content" [ngClass]="currentFilter === 'sarthi' ||  currentFilter === 'support-ai' ?'cb-content-sarthi padding-m':'padding-m cb-content'">
           <ng-container *ngIf="!displayLoader && currentFilter !== 'sarthi' && currentFilter !== 'support-ai'" #scroll>
