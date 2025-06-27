@@ -67,6 +67,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   enableSupportAI = false
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
+  maximizeChatFlag = true
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -646,5 +647,12 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     webFormxhr.send()
   }
 
+  minimizeChat() {
+    this.maximizeChatFlag = false
+  }
+
+  maximizeChat() {
+    this.maximizeChatFlag = true
+  }
   
 }

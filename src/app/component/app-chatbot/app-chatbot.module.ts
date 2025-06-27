@@ -14,6 +14,7 @@ import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
 import { SupportAIComponent } from './../support-ai/support-ai.component'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 @NgModule({
   declarations: [
     ClickOutsideDirective,
@@ -31,7 +32,8 @@ import { SupportAIComponent } from './../support-ai/support-ai.component'
     PipeDurationTransformModule,
     MarkdownModule.forRoot(),
     DragDropModule,
-    NonReleventFeedbackDialogModule
+    NonReleventFeedbackDialogModule,
+    MatTooltipModule
   ],
   exports: [AppChatbotComponent, MarkdownModule, NonReleventFeedbackDialogModule],
   providers: [ChatbotService],

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, Observable, throwError } from 'rxjs'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { timeout, catchError } from 'rxjs/operators'
+import { catchError } from 'rxjs/operators'
 
 const PROXY_CREATE_V8 = '/apis/proxies/v8'
 
@@ -71,8 +71,10 @@ export class RootService {
 
   aiGlobalSearch(requestBody:any, chatId:any, userID:any): Observable<any> {
     return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}?chatID=${chatId}&userID=${userID}`, requestBody).pipe(
-      timeout(30000), // 30 seconds
       catchError(error => {
+        if (error.status === 502) {
+          console.error('502 Bad Gateway from aiGlobalSearch');
+        }
         return throwError(() => error);
       })
     );

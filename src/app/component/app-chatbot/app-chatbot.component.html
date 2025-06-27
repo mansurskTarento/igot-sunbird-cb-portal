@@ -22,7 +22,7 @@
 
   
 
-  <div [ngClass]="enableIGOTAIFlag || enableSupportAI ? 'chatbot-with-ai' : 'chatbot'" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
+  <div [ngClass]="enableIGOTAIFlag || enableSupportAI ?  (maximizeChatFlag ? 'chatbot-with-ai' : 'chatbot-with-ai-min') : 'chatbot'" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
       <div class="chatbot-wrapper">
         <div class="flex flex-wrap padding-m" [ngClass]="currentFilter === 'sarthi' || currentFilter === 'support-ai' ? 'cb-header-sarthi':'cb-header'">
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter !== 'sarthi' &&  currentFilter !== 'support-ai'">
@@ -50,12 +50,18 @@
             </div>
             </div>
             </div>
+            <div class="" *ngIf="maximizeChatFlag">
+              <!-- //NOSONAR --><mat-icon  [matTooltip]="Minimize" class="cb-minimize cursor-pointer" (click)="minimizeChat()">minimize</mat-icon> 
+            </div>
+            <div class="" *ngIf="!maximizeChatFlag">
+              <!-- //NOSONAR --><mat-icon [matTooltip]="Maximize" class="cb-maximize cursor-pointer" (click)="maximizeChat()">fullscreen</mat-icon> 
+            </div>
             <div class="">
                 <!-- //NOSONAR --> <mat-icon class="cb-close" (click)="iconClick('end')">close</mat-icon>
             </div>
         </div>
       </div>
-      <div class="cb-content-wrapper" #scrollMe >
+      <div class="cb-content-wrapper" #scrollMe [hidden]="!maximizeChatFlag">
         <div class="flex flex-wrap"  #scrollMe id="chatbot-content" [ngClass]="currentFilter === 'sarthi' ||  currentFilter === 'support-ai' ?'cb-content-sarthi padding-m':'padding-m cb-content'">
           <ng-container *ngIf="!displayLoader && currentFilter !== 'sarthi' && currentFilter !== 'support-ai'" #scroll>
             <ng-container *ngFor="let chat of userJourney">
@@ -133,7 +139,7 @@
           </ng-container>
         </div>
       </div>
-      <div class="cb-footer-wrapper">
+      <div class="cb-footer-wrapper" [hidden]="!maximizeChatFlag">
         <div class="flex flex-wrap cb-topics" *ngIf="currentFilter !== 'sarthi' && currentFilter !== 'support-ai'">
             <div class="cat-list">
                 <ng-container *ngFor="let item of sortCategory()">
@@ -176,6 +182,7 @@
             </div>
         </div>
       </div>
+      </ng-container>
   </div>
 </div>
 
