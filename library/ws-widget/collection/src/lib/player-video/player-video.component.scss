@@ -167,3 +167,17 @@
 :host ::ng-deep .video-js .vjs-menu-item {
   text-transform: capitalize !important;
 }
+
+.vjs-subtitle-button {
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.vjs-subtitle-button:hover {
+  color: #fff;
+  background: #333;
+}
