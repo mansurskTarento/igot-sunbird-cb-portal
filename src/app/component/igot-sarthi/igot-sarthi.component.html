@@ -136,30 +136,21 @@
                   <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
-                <div class="feefback-section flex flex-row my-1" *ngIf="(item?.feedback)">
-                  <div *ngIf="item?.feedback !== 'down'"
-                  class="cursor-pointer feedback-icon" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
-                  <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
-                  <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
+                <div class="feefback-section flex flex-row my-1">
+                  <div  (click)="sharePositiveContentRating(item,i, ci)" class="cursor-pointer feedback-icon mt-1" 
+                  >
+                    <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                    <img *ngIf="item?.feedback === 'up'" src="/assets/ai-tutor/up.svg">
                   </div>
-                  <div *ngIf="item?.feedback !== 'up'"  class="ml-2 cursor-pointer feedback-icon">
-                    <img src="/assets/ai-tutor/fill-down.svg">
-                  </div>
+                  <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
+                    <img *ngIf="item?.feedback !== 'down'" src="/assets/ai-tutor/down.svg"> 
+                    <img *ngIf="item?.feedback === 'down'" src="/assets/ai-tutor/fill-down.svg"> 
+                  </div> 
                 </div>
-                <div class="feefback-section flex flex-row my-1" *ngIf="item?.feedback === ''">
-                  <div *ngIf="item?.feedback !== 'down'" (click)="sharePositiveContentRating(item,i, ci)"
-                  class="cursor-pointer feedback-icon mt-1" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
-                  <img *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
-                  <img *ngIf="item?.feedback == 'up'" src="/assets/ai-tutor/up.svg">
-                  </div>
-                  <div *ngIf="item?.feedback !== 'up'" (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
-                    <img src="/assets/ai-tutor/down.svg">
-                  </div>
-                </div>
-                <div class="flex flex-row font-12 mt-1">
+                <!-- <div class="flex flex-row font-12 mt-1">
                   <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
                   <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
-                </div>
+                </div> -->
               </div>
               
             </div>
@@ -185,7 +176,7 @@
                   <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
-                <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
+                <!-- <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
                   <div class="feefback-section flex flex-row" *ngIf="(item?.feedback)">
                     <div *ngIf="item?.feedback !== 'down'"
                     class="cursor-pointer feedback-icon mt-1" [ngClass]="item?.feedback !== 'up' ? 'rotate-180' : ''">
@@ -206,14 +197,31 @@
                       <img src="/assets/ai-tutor/down.svg">
                     </div>
                   </div>
-                </div>   
+                </div>    -->
+                <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
+                  <div  (click)="sharePositiveContentRating(item,i, ci)" class="cursor-pointer feedback-icon mt-1" 
+                  >
+                    <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
+                    <img *ngIf="item?.feedback === 'up'" src="/assets/ai-tutor/up.svg">
+                  </div>
+                  <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
+                    <img *ngIf="item?.feedback !== 'down'" src="/assets/ai-tutor/down.svg"> 
+                    <img *ngIf="item?.feedback === 'down'" src="/assets/ai-tutor/fill-down.svg"> 
+                  </div> 
+                </div>
               </div>
-              <div class="flex flex-row font-12 mt-1" *ngIf="item?.contentType !== 'Resource'">
+              <!-- <div class="flex flex-row font-12 mt-1" *ngIf="item?.contentType !== 'Resource'">
                 <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
                 <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
-              </div>
+              </div> -->
             </div>
+           
+            
           </ng-container>
+          <div class="flex flex-row font-12 mt-1 mb-1 ai-generated-content-container" *ngIf="chat?.result?.length">
+            <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+            <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
+          </div>
         </ng-container>
           
           
@@ -276,15 +284,22 @@
     </ng-container>
   </div>
   <div class="control-container">
-    <div class="border-gradient-rounded">
+    <div class="border-gradient-rounded" [style.height.px]="containerHeight">
       <div class="flex flex-row mx-5 justify-between">
 
         <div class="query-box">
-          <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery()"/>
+          <!-- <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery()"/> -->
+          <textarea #autoResizeTextarea class="width-500"
+          placeholder="Ask anything..."
+          (input)="resizeTextarea(autoResizeTextarea)"
+          [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery(autoResizeTextarea, $event)"
+          rows="1"
+          >
+          </textarea>
         </div>
 
         <div>
-          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()"  [disabled]="!searchQuery || searchAPIResponseInProgress">
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery('',$event)"  [disabled]="!searchQuery || searchAPIResponseInProgress">
             <mat-icon class="send-btn-icon">send</mat-icon>
           </button>
         </div>

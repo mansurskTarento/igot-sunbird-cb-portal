@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
@@ -14,7 +14,7 @@ import cloneDeep from 'lodash/cloneDeep';
   templateUrl: './igot-sarthi.component.html',
   styleUrls: ['./igot-sarthi.component.scss']
 })
-export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
   @Input() chatId = ''
@@ -93,8 +93,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   hasError = false;
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  // @ViewChild('autoResizeTextarea') textArea!: ElementRef;
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
   isHubEnable!: boolean
-
+  containerHeight = 36;
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -124,6 +126,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+  }
+
+  ngAfterViewInit(): void {
+    this.resizeTextarea(this.textArea.nativeElement);
   }
 
   greetings() {
@@ -509,8 +515,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery() {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    if (!this.searchQuery.trim()) {
+      event.preventDefault(); // Prevents Enter key from adding a new line
+    }
     // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    this.searchQuery = this.searchQuery.trim()
     if(this.searchQuery && !this.searchAPIResponseInProgress) {
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
@@ -537,6 +547,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     },0)
    }  
     this.searchQuery = ''
+    this.resetTextAreaHeight(textArea)
     this.aiGlobalSearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
@@ -544,6 +555,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
+      
     }
   }
 
@@ -695,7 +707,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
      })
     setTimeout(()=>{
-      this.scrollToBottomEvent.emit() 
+     // this.scrollToBottomEvent.emit() 
     },0)
       },
       error: (err:any) => {
@@ -1089,6 +1101,28 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     
   }
 
+  resizeTextarea(textArea: HTMLTextAreaElement): void {
+    textArea.style.height = 'auto';
+    const scrollHeight = textArea.scrollHeight;
+    textArea.style.height = scrollHeight + 'px';
+    if (textArea.value.trim()) {
+      this.containerHeight = scrollHeight + 36; // Adjust for padding/margin if needed
+    }
+    
+  }
+
+  resetTextAreaHeight(textArea:any) {
+    
+    if(textArea.style && textArea.style.height) {
+      setTimeout(()=>{
+        this.searchQuery = this.searchQuery.trim()
+        textArea.style.height = 'auto';
+        this.containerHeight = 36;
+      },0)     
+    }
+  
+    
+  }
 
 
   ngOnDestroy(): void {
