@@ -459,7 +459,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       enableTelemetry,
       this.widgetData,
       this.widgetData.mimeType,
-      this.widgetData.size
+      this.widgetData.size,
+      
     )
     this.playerInitObj = initObj
     this.player = initObj.player
@@ -468,6 +469,27 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     
 
     initObj.player.ready(() => {
+      setTimeout(() => {
+        const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any;
+        if (ccButton) {
+          const el = ccButton.el();
+          if (el) {
+            const span = el.querySelector('.vjs-icon-placeholder');
+            if (span) {
+              // Clear any default icon classes
+              span.classList.remove('vjs-icon-placeholder', 'vjs-icon-subtitles', 'vjs-icon-captions');
+      
+              // Add custom layout
+              span.innerHTML = `
+                <div class="custom-cc-wrapper">
+                  <img src="/assets/ai-tutor/subtitle.png" class="custom-cc-icon-img" alt="icon" />
+                  <span class="custom-cc-label">Subtitles</span>
+                </div>
+              `;
+            }
+          }
+        }
+      }, 100);
       this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
       this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
       // console.log('this.transcriptionLangArr----', this.transcriptionLangArr)
