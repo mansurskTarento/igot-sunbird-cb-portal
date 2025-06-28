@@ -718,64 +718,68 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       .join(' ');
   }
 
-  replaceSubtitleTrack(newTrack:any) {
-    // Remove existing <track> DOM elements
+  replaceSubtitleTrack(newTrack: any) {
     const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
     const existingTracks = videoEl.querySelectorAll('track');
-    existingTracks.forEach((el:any) => el.remove());
+    existingTracks.forEach((el: any) => el.remove());
   
-    // Create and add new <track> element
     const trackEl = document.createElement('track');
     trackEl.kind = 'subtitles';
     trackEl.src = newTrack.uri;
     trackEl.srclang = newTrack.label.toLowerCase();
     trackEl.label = newTrack.language;
     trackEl.default = true;
-  
     videoEl.appendChild(trackEl);
-    setTimeout(()=>{
-      let tracks = this.playerInitObj.player.textTracks()
-      //let allCues:any = []
+
+
+
+      setTimeout(() => {
+        const tracks = videoEl.textTracks;
+        console.log('👉 Number of textTracks:', tracks.length);
+
+        for (let i = 0; i < tracks.length; i++) {
+          const t = tracks[i];
+          console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+        }
+      }, 10000);
+  
+    // Wait for the TextTrack to load
+    const waitForTrack = () => {
+      const tracks = videoEl.textTracks;
       for (let i = 0; i < tracks.length; i++) {
         const track = tracks[i];
-        // console.log(tracks[i].label, tracks[i]);
-        if (track.kind === 'subtitles' || track.kind === 'metadata') {
-        //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
-        if (track.language === this.activeTranscriptionLanguage) {
+        if (
+          (track.kind === 'subtitles' || track.kind === 'metadata') &&
+          track.language.toLowerCase() === newTrack.label.toLowerCase() &&
+          track.cues && track.cues.length > 0
+        ) {
           track.mode = 'showing';
-        } else {
-          track.mode = 'disabled'; // prevent multiple from showing
-        }
+  
+          // Now attach cuechange
           track.addEventListener('cuechange', () => {
             const activeCues = track.activeCues;
-
             if (activeCues && activeCues.length > 0) {
               for (let j = 0; j < activeCues.length; j++) {
-                const cue:any = activeCues[j];
-
-                // Log or store cue
-                // allCues.push({
-                //   start: cue.startTime,
-                //   end: cue.endTime,
-                //   text: cue?.text
-                // });
-
+                const cue: any = activeCues[j];
                 this.appTocService.setTranscriptionData({
                   start: cue.startTime,
                   end: cue.endTime,
                   text: cue?.text
-                })
-
-                // Show in browser
-                // const entry = document.createElement('div');
-                // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
-                // cueLog.appendChild(entry);
+                });
               }
-              //console.log('cue', allCues)
             }
           });
+  
+          console.log('✅ Cuechange listener attached');
+          return; // Done
         }
       }
-    },500)
+  
+      // Retry after short delay
+      setTimeout(waitForTrack, 0);
+    };
+  
+    waitForTrack();
   }
+  
 }
