@@ -698,7 +698,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
   replaceSubtitleTrack(newTrack:any) {
     // Remove existing <track> DOM elements
-    console.log('replace sub track')
     const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
     const existingTracks = videoEl.querySelectorAll('track');
     existingTracks.forEach((el:any) => el.remove());

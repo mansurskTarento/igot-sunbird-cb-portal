@@ -42,6 +42,11 @@
     padding-top: 37.5%;
 }
 
+.query-box {
+  min-height: 38px;
+  transition: height 0.2s;
+  width: 100%;
+}
 
 .query-box input{
     border: 0;
@@ -58,8 +63,9 @@
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     width: 96%;
-    height: 32px;
+    height: auto;
     margin-left: 1%;
+    z-index: 3;
 }
 
 .send-btn {
@@ -915,4 +921,25 @@ width: 262px;
 .h-w-34 {
   height: 34px;
   width: 34px;
+}
+
+.border-gradient-rounded textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  overflow: hidden;
+  font-size: 14px;
+  font-family: Lato;
+  box-sizing: border-box;
+  height: 38px;
+  padding-top: 5px;
+}
+
+.border-gradient-rounded textarea:focus {
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.overflow-y-hidden  {
+  overflow-y: hidden;
 }
