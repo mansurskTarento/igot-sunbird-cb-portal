@@ -7,19 +7,11 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class HighlightPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
 
-  transform(text: string, keyword: string, shouldHighlight: boolean): SafeHtml {
-    // console.log('text',text)
-    // console.log('keyword',keyword)
-    if (!shouldHighlight || !keyword || !text) return text;
-   // const escapedKeyword = keyword.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
-
-    try {
-      const regex = new RegExp(keyword, 'gi');
-      const highlighted = text.replace(regex, (match) => `<span class="highlight">${match}</span>`);
-      return this.sanitizer.bypassSecurityTrustHtml(highlighted);
-    } catch (err) {
-      console.warn('Regex error:', err);
-      return text;
-    }
+  transform(text: string, _keyword: string, shouldHighlight: boolean): SafeHtml {    
+    if (!shouldHighlight || !text) return text;
+  
+    // Simply wrap the entire text in highlight span if condition matches
+    const highlighted = `<span class="highlight">${text}</span>`;
+    return this.sanitizer.bypassSecurityTrustHtml(highlighted);
   }
 }
