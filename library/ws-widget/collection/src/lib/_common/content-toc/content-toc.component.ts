@@ -416,7 +416,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
        let blocks:any = file.getBlocks();
+       console.log('blocks--', blocks)
           this.subTitles = blocks
+          console.log('this.subTitles--', this.subTitles)
           // console.log('this.vttLangArr--',this.vttLangArr)
           // if(this.vttLangArr && this.vttLangArr.length) {
           //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
@@ -459,6 +461,19 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let endTime = subtitle.endTime/1000
       this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
     }    
+  }
+
+  formatMsToVttTime(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+  //  const milliseconds = ms % 1000;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+  
+    const pad = (num: number, size: number) => num.toString().padStart(size, '0');
+  
+    // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
+    return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
   }
 
   ngOnDestroy() {

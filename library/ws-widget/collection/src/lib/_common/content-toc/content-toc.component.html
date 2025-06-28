@@ -47,17 +47,14 @@
                 </mat-form-field> -->
                 <div class="flex flex-row w-full">
                     <div class="w-80">
-                        <div class="ml-5-per" *ngIf="subTitles && subTitles.length">
+                        <div class="ml-5-per" *ngIf="subTitles && subTitles?.length">
                             <!-- Transcription content -->
                              <ng-container *ngFor="let subtitle of subTitles">
                                 <div class="flex flex-col  my-2">
                                     <div class="flex flex-row">
                             <div class="w-15">
                                 <p class="blue-underline cursor-pointer" (click)="playFromSlot(subtitle)">
-                                    <span *ngIf="subtitle?.startTime/1000 === 0">0s</span>
-                                    <span *ngIf="subtitle?.startTime/1000 !== 0">{{ (subtitle?.startTime/1000) | pipeDurationTransform: 'hms'  }}</span>
-                                    
-                                     -  {{ (subtitle?.endTime/1000) | pipeDurationTransform: 'hms'}}
+                                    {{ formatMsToVttTime(subtitle?.startTime) }}-{{ formatMsToVttTime(subtitle?.endTime) }}
                                 </p>
                             </div>
                             <div class="ml-4 w-80 mr-4">
