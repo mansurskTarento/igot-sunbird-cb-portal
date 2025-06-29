@@ -89,9 +89,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   this.playTranscriptionVideoSubscription = this.appTocService.playTranscriptionVideo.subscribe((playTime:any)=>{
     let startTime  = playTime.startTime
     let endTime  = playTime.endTime
+    // let lastPlayedTime = startTime;
     if(startTime && endTime) {
+      const player = this.playerInitObj.player;
+
+      player.currentTime(startTime); // Jump to star
       this.playerInitObj.player.currentTime(startTime); // jump to start  
-      setTimeout(()=>{
+      // setTimeout(()=>{
         // initObj.player.autoplay()
         if(this.videoTag && this.videoTag.nativeElement) {
           this.videoTag.nativeElement.muted = true
@@ -101,13 +105,26 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           this.realvideoTag.nativeElement.play();
         }
         
-      },0)      
+      // },1000)      
      // initObj.player.play();    
      this.playerInitObj.player.on('timeupdate',  ()=> {
-        if (endTime && this.playerInitObj.player.currentTime() >= endTime) {
+        // console.log('this.playerInitObj.player.currentTime()',this.playerInitObj.player.currentTime())
+        // console.log('endTime',endTime)
+        if (endTime && parseInt(this.playerInitObj.player.currentTime()) >= parseInt(endTime)) {          
           this.playerInitObj.player.pause();
+          setTimeout(()=>{
+            endTime = player.duration()
+          },0)
+         
         }
       });
+      // player.on('play', () => {
+      //   const current = player.currentTime();
+      //   if (current >= endTime && lastPlayedTime < endTime) {
+      //     player.currentTime(lastPlayedTime);
+      //   }
+    
+      // });
     }
 
 

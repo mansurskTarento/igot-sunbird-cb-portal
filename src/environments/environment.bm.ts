@@ -1,5 +1,5 @@
 export const environment = {
-    production: true,
+    production: false,
     name: (window as { [key: string]: any })['env']['name'],
     sitePath: (window as { [key: string]: any })['env']['sitePath'] || '',
     organisation: (window as { [key: string]: any })['env']['organisation'] || '',
