@@ -63,7 +63,7 @@
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     width: 96%;
-    height: auto;
+    min-height: 36px;
     margin-left: 1%;
     z-index: 3;
 }
@@ -931,7 +931,7 @@ width: 262px;
   font-size: 14px;
   font-family: Lato;
   box-sizing: border-box;
-  height: 38px;
+  min-height: 32px;
   padding-top: 5px;
 }
 
@@ -942,4 +942,25 @@ width: 262px;
 
 .overflow-y-hidden  {
   overflow-y: hidden;
+}
+
+
+.blue-loader-animation{
+  width: 18px;
+  height: 18px;
+  animation: spin 2s linear infinite; /* Duration, timing, and loop */
+  transform-origin: center center; /* Ensure rotation happens from the center */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.margin-top-2px {
+  margin-top: 2px;
 }

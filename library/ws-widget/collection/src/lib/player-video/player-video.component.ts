@@ -472,8 +472,39 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       setTimeout(() => {
         const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any;
         if (ccButton) {
+          if (ccButton?.menu && typeof ccButton.menu.children === 'function') {
+            // ✅ Rename menu items like "Captions Off" → "Subtitles Off"
+            ccButton.menu.children().forEach((item: any) => {
+              const label = item.options_?.label;
+                // console.log('Found menu item:', label);
+
+                if (!label) return;
+
+                let newLabel = label;
+
+                if (label.toLowerCase() === 'captions off') {
+                  newLabel = 'Subtitles Off';
+                } else if (label.toLowerCase().includes('captions')) {
+                  newLabel = label.replace(/captions/gi, 'Subtitles');
+                }
+
+                // 🔧 Update both label option & DOM element text
+                item.options_.label = newLabel;
+
+                // Find the actual DOM element and update its text
+                const itemEl = item.el();
+                const labelEl = itemEl?.querySelector('.vjs-menu-item-text');
+
+                if (labelEl) {
+                  labelEl.textContent = newLabel;
+                }
+
+            });
+          }
+      
           const el = ccButton.el();
           if (el) {
+            
             const span = el.querySelector('.vjs-icon-placeholder');
             if (span) {
               // Clear any default icon classes
@@ -483,7 +514,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               span.innerHTML = `
                 <div class="custom-cc-wrapper">
                   <img src="/assets/ai-tutor/subtitle.png" class="custom-cc-icon-img" alt="icon" />
-                  <span class="custom-cc-label">Subtitles</span>
+                  <span class="custom-cc-label">Subtitle</span>
                 </div>
               `;
             }

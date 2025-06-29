@@ -148,9 +148,7 @@
   width: 20%;
 }
 
-.w-80 {
-  width: 80%;
-}
+
 
 ::ng-deep .highlight {
   background-color: yellow !important;
@@ -258,9 +256,21 @@
   text-align: justify;
 }
 
-.w-15 {
-  width: 15%;
+.subtitle-time {
+  width: 20%;
   word-wrap: break-word;
+}
+
+.subtitle-text-slot {
+  width: 80%;
+}
+
+.w-subtitle-80 {
+  width: 80%;
+}
+
+.w-subtitle-20 {
+  width: 20%;
 }
 
 ::ng-deep {
@@ -268,3 +278,14 @@
     background:white !important;
   }
 }
+
+@media (min-width: 1056px) and (max-width: 1232px) {
+  .subtitle-time {
+    width: 40%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 60%;
+  }
+}
+

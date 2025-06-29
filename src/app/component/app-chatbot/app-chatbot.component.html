@@ -33,8 +33,8 @@
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter !== 'sarthi'">
               <div class="user-name">{{greetings()}} {{this.userInfo && this.userInfo.firstName || ''}}!</div>
               <div class="">
-                  <select class="lang-select" [(ngModel)]="selectedLaguage" name="language" id="language" (change)="selectLaguage($event)">
-                      <option [value]="lang.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
+                  <select class="lang-select" name="language" id="language" (change)="selectLaguage($event)">
+                      <option [value]="lang.value" [selected]="lang?.value === selectedLaguage" *ngFor="let lang of language">{{ lang.viewValue }}</option>
                   </select>
               </div>
             </div>

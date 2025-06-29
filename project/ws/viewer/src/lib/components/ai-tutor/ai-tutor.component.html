@@ -334,14 +334,16 @@
                   </div> -->
                   <div class="feefback-section flex flex-row my-1">
                     <div  (click)="sharePositiveContentRating(item,i, ci)" class="cursor-pointer feedback-icon mt-1" 
-                    >
-                      <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
-                      <img *ngIf="item?.feedback === 'up'" src="/assets/ai-tutor/up.svg">
-                    </div>
-                    <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
-                      <img *ngIf="item?.feedback !== 'down'" src="/assets/ai-tutor/down.svg"> 
-                      <img *ngIf="item?.feedback === 'down'" src="/assets/ai-tutor/fill-down.svg"> 
-                    </div> 
+                  >
+                    <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up' && !item?.showLoaderForUp" src="/assets/ai-tutor/down.svg">
+                    <img *ngIf="item?.feedback === 'up'  && !item?.showLoaderForUp" src="/assets/ai-tutor/up.svg">
+                    <img *ngIf="item?.showLoaderForUp" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
+                  </div>
+                  <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
+                    <img *ngIf="item?.feedback !== 'down' && !item?.showLoaderForDown" src="/assets/ai-tutor/down.svg"> 
+                    <img *ngIf="item?.feedback === 'down'  && !item?.showLoaderForDown" src="/assets/ai-tutor/fill-down.svg"> 
+                    <img *ngIf="item?.showLoaderForDown" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
+                  </div>
                   </div>
                   <!-- <div class="flex flex-row font-12 mt-1">
                     <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
@@ -388,13 +390,15 @@
                 <div class="feefback-section flex flex-row" *ngIf="item?.contentType !== 'Resource'">
                   <div  (click)="sharePositiveContentRating(item,i, ci)" class="cursor-pointer feedback-icon mt-1" 
                   >
-                    <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up'" src="/assets/ai-tutor/down.svg">
-                    <img *ngIf="item?.feedback === 'up'" src="/assets/ai-tutor/up.svg">
+                    <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up' && !item?.showLoaderForUp" src="/assets/ai-tutor/down.svg">
+                    <img *ngIf="item?.feedback === 'up'  && !item?.showLoaderForUp" src="/assets/ai-tutor/up.svg">
+                    <img *ngIf="item?.showLoaderForUp" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
                   </div>
                   <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
-                    <img *ngIf="item?.feedback !== 'down'" src="/assets/ai-tutor/down.svg"> 
-                    <img *ngIf="item?.feedback === 'down'" src="/assets/ai-tutor/fill-down.svg"> 
-                  </div> 
+                    <img *ngIf="item?.feedback !== 'down' && !item?.showLoaderForDown" src="/assets/ai-tutor/down.svg"> 
+                    <img *ngIf="item?.feedback === 'down'  && !item?.showLoaderForDown" src="/assets/ai-tutor/fill-down.svg"> 
+                    <img *ngIf="item?.showLoaderForDown" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
+                  </div>
                 </div> 
               </div>
               <!-- <div class="flex flex-row font-12 mt-1" *ngIf="item?.contentType !== 'Resource'">
@@ -404,7 +408,7 @@
             </div>
           </ng-container>
           <div class="flex flex-row font-12 mt-1 mb-1 ai-generated-content-container" *ngIf="chat?.result?.length">
-            <div class="ml-2 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+            <div class="ml-5 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
             <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
           </div>
             
@@ -443,13 +447,13 @@
 
 <div class="footer">
   <div class="border-gradient-rounded" [style.height.px]="containerHeight">
-    <div class="flex flex-row mx-5 justify-between">
+    <div class="flex flex-row ml-5 mr-2 justify-between">
 
       <div class="query-box">
         <!-- <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQueryAItutor" (keydown.enter)="submitSearchQuery()"/>  -->
         <textarea #autoResizeTextarea class="width-500"
         placeholder="Ask anything..."
-        (input)="resizeTextarea(autoResizeTextarea)"
+        (input)="resizeTextarea(autoResizeTextarea, 'fromInput')"
         [(ngModel)]="searchQueryAItutor" (keydown.enter)="submitSearchQuery(autoResizeTextarea, $event)"
         rows="1"
         >
@@ -457,7 +461,7 @@
         
       </div>
 
-      <div>
+      <div class="margin-top-2px">
         <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery('',$event)" [disabled]="!searchQueryAItutor">
           <mat-icon class="send-btn-icon">send</mat-icon>
         </button>
