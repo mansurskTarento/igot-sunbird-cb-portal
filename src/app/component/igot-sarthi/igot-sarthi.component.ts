@@ -129,7 +129,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngAfterViewInit(): void {
-    this.resizeTextarea(this.textArea.nativeElement);
+    this.resizeTextarea(this.textArea.nativeElement,'');
   }
 
   greetings() {
@@ -1131,37 +1131,34 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     
   }
 
-  resizeTextarea(textArea: HTMLTextAreaElement): void {
-    // textArea.style.height = 'auto';
-    // const scrollHeight = textArea.scrollHeight;
-    // textArea.style.height = scrollHeight + 'px';
-    // if (textArea.value.trim()) {
-    //   this.containerHeight = scrollHeight + 36; // Adjust for padding/margin if needed
-    // }
-    textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 'px';
-
-    if (textArea.value.trim()) {
-      // Do NOT blindly add 36. Use padding if needed
-      const computed = getComputedStyle(textArea);
-      const paddingTop = parseFloat(computed.paddingTop) || 0;
-      const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-      const marginExtra = 4;
-      this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra; 
+  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+    if (textArea) {
+      textArea.style.height = 'auto'; // Reset height first
+      requestAnimationFrame(() => {
+        textArea.style.height = textArea.scrollHeight + 'px';
+  
+        const computed = getComputedStyle(textArea);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
+      });
     }
-    
   }
 
-  resetTextAreaHeight(textArea:any) {
-    
-    if(textArea.style && textArea.style.height) {
+  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {    
+    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
       setTimeout(()=>{
-        this.searchQuery = this.searchQuery.trim()
-        textArea.style.height = 'auto';
-        this.containerHeight = 36;
-      },0)     
-    }
-  
+        this.searchQuery = this.searchQuery.trim()        
+        this.textArea.nativeElement.style.height = 'auto';
+        this.textArea.nativeElement.style.height = '30px';
+        const computed = getComputedStyle(this.textArea.nativeElement);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
+      })     
+    } 
     
   }
 

@@ -78,7 +78,7 @@
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     width: 100%;
-    height: auto;
+    min-height: 36px;
 }
 
 .send-btn {
@@ -706,7 +706,7 @@
   .control-container {
     position: fixed;
     bottom: 100px;
-    width: 92%;
+    width: 41%;
     z-index: 2;
   
   }
@@ -726,7 +726,12 @@
     background-origin: padding-box, border-box;
     width: 98%;
     height: 36px;
-}
+  }
+  
+  .start-chat {
+    text-align: center;
+    padding-top: 10%;
+  }
 }
 
 .w-92 {
@@ -856,7 +861,7 @@
   font-size: 14px;
   font-family: Lato;
   box-sizing: border-box;
-  height: 32px;
+  min-height: 32px;
   padding-top: 5px;
 }
 

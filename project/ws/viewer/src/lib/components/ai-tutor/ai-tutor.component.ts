@@ -181,7 +181,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   ngAfterViewInit(): void {
-    this.resizeTextarea(this.textArea?.nativeElement);
+    this.resizeTextarea(this.textArea?.nativeElement,'');
   }
 
   greetings() {
@@ -576,6 +576,11 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     if(!this.searchQueryAItutor.trim()) {
       return false
     }
+    this.cloneSearchQuery = ''
+    this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
+    this.searchQueryAItutor = this.searchQueryAItutor.trim()
+    this.searchQueryAItutor = ''
+    this.resetTextAreaHeight(textArea)
     this.aiTutorResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiTutorResultArr[index]
@@ -583,8 +588,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       }
      })
      this.resultFetch = false 
-     this.cloneSearchQuery = ''
-   this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
+    
   // this.searchQuery = 'Soil Erosion and Conservation'
    let sendMsgObj = {
      type: 'sendMsg',
@@ -597,13 +601,11 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   //  this.searchQuery = ''
   //  this.aiGlobalSearch()
   //  this.getAiTutorMessage()
-  this.searchQueryAItutor = this.searchQueryAItutor.trim()
-  this.searchQueryAItutor = ''
-  
+ 
   setTimeout(()=>{
     this.scrollToBottom()
   },0)
-  this.resetTextAreaHeight(textArea)
+  
    this.sendAITutorMessage()
    
   }
@@ -883,18 +885,30 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       "rating": "5"
 
    }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+      this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = true
+   }
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, 't', this.userInfo?.userId).subscribe((data:any)=>{
     if(data && data.status === 'success') {
       if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
         if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
           this.aiTutorResultArr[index].result[cindex]['feedback'] = 'up'
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
       }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
         { duration: 5000, panelClass: ['success'] }
       );
     } else {
+      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+        if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
+      }
       this.matSnackBarNew.open(
         'Something is wrong. Please try again later.', 'X',
         { duration: 5000, panelClass: ['error'] }
@@ -940,17 +954,31 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       "rating": "0"
 
    }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex]) {
+      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+      this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = true
+    }
+
+  }
      this.chatbotService.shareAIFeedback(requestBody, '', this.userInfo?.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
           if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
             this.aiTutorResultArr[index].result[cindex]['feedback'] = 'down'
+            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+            this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
         );
       } else {
+        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
+        }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
@@ -1050,32 +1078,33 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     // this.websocketService.closeConnection();
   }
 
-  resizeTextarea(textArea: HTMLTextAreaElement): void {
-    if(textArea) {
-      textArea.style.height = 'auto';
-      textArea.style.height = textArea.scrollHeight + 'px';
+  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+    if (textArea) {
+      textArea.style.height = 'auto'; // Reset height first
+      requestAnimationFrame(() => {
+        textArea.style.height = textArea.scrollHeight + 'px';
   
-      if (textArea.value.trim()) {
-        // Do NOT blindly add 36. Use padding if needed
         const computed = getComputedStyle(textArea);
         const paddingTop = parseFloat(computed.paddingTop) || 0;
         const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const marginExtra = 4;
-        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra; 
-      }
+        const marginExtra = 0;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
+      });
     }
-    
-
   }
 
-  resetTextAreaHeight(textArea:any) {
-
-    if(textArea && textArea.style && textArea.style.height) {
+  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {
+    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
       setTimeout(()=>{
-        this.searchQueryAItutor = this.searchQueryAItutor.trim()
-        textArea.style.height = 'auto';
-        this.containerHeight = 38;
-      },0)     
+        this.searchQueryAItutor = this.searchQueryAItutor.trim()        
+        this.textArea.nativeElement.style.height = 'auto';
+        this.textArea.nativeElement.style.height = '30px';
+        const computed = getComputedStyle(this.textArea.nativeElement);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
+      })     
     }
 
 
