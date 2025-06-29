@@ -121,7 +121,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     }
 
   ngOnInit() {
-    if (environment.sitePath?.includes('portal.igotkarmayogi.gov.in')) {
+    if (environment?.sitePath?.includes('portal.igotkarmayogi.gov.in')) {
       this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
       this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
       this.SocraticeStyleHost = 'learning-ai.prod.karmayogibharat.net'
