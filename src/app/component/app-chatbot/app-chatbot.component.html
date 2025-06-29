@@ -41,10 +41,10 @@
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter === 'sarthi'">
               <div class="user-name"><img class="vertical-middle" src="assets/icons/bot-chat-small.svg"><span class="ml-2">iGOT AI</span></div>             
             </div>
-            <div class="" *ngIf="maximizeChatFlag">
+            <div class="" *ngIf="maximizeChatFlag && enableIGOTAIFlag">
               <!-- //NOSONAR --><mat-icon  [matTooltip]="Minimize" class="cb-minimize cursor-pointer" (click)="minimizeChat()">minimize</mat-icon> 
             </div>
-            <div class="" *ngIf="!maximizeChatFlag">
+            <div class="" *ngIf="!maximizeChatFlag && enableIGOTAIFlag">
               <!-- //NOSONAR --><mat-icon [matTooltip]="Maximize" class="cb-maximize cursor-pointer" (click)="maximizeChat()">fullscreen</mat-icon> 
             </div>
             <div class="">
