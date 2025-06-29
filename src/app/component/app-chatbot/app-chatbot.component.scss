@@ -610,3 +610,115 @@
   background-position: center;
   text-align: center;
 }
+
+@media only screen and (max-width: 767px) {
+
+  .cb-header .user-info-div {
+    width: 84%;
+    justify-content: space-between;
+  }
+  .chatbot-with-ai {
+    width: 100%;
+    position: fixed; /* fixed might be better for mobile full-screen */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+    height: 100%;
+  }
+
+  .cb-header-sarthi .user-info-div {
+    width: 80%;
+    justify-content: space-between;
+  }
+
+  .cb-content-sarthi {
+    background: url('/assets/ai-tutor/background.svg');
+    background-color: #F0F3F4;
+    overflow-y : auto;
+    overflow-x: hidden;
+    position: relative;
+    height: 100%;
+  
+    // background: url('your-image.jpg');
+    // background-size: contain;
+    // background-position: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    background-blend-mode: overlay;
+    padding:0 !important
+  }
+
+  .chatbot-with-ai-min {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left:0;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2392156863);  
+    height: 70px;
+  }
+}
+
+@media only screen and (min-width:768px) and (max-width: 1023px) {
+  .chatbot-with-ai {
+    width: 100%;
+    position: fixed; /* fixed might be better for mobile full-screen */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+    height: 100%;
+  }
+
+  .cb-header-sarthi .user-info-div {
+    width: 80%;
+    justify-content: space-between;
+  }
+
+  .cb-content-sarthi {
+    background: url('/assets/ai-tutor/background.svg');
+    background-color: #F0F3F4;
+    overflow-y : auto;
+    overflow-x: hidden;
+    position: relative;
+    height: 100%;
+  
+    // background: url('your-image.jpg');
+    // background-size: contain;
+    // background-position: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    background-blend-mode: overlay;
+    padding:0 !important
+  }
+
+  .cb-footer-wrapper {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
+
+  .chatbot-with-ai-min[_ngcontent-ng-c438366657] {
+    width: 100%;
+    position: fixed;
+    bottom: 3px;
+    right: 0;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2392156863);
+    height: 70px;
+  }
+}
