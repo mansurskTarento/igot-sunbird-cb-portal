@@ -812,6 +812,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "rating": "5"
 
    }
+   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
+      this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = true
+  }
    
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
@@ -823,8 +828,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       // })
       // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
       if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
           this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
+          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
+        }
+          
       }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
@@ -832,6 +841,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       );
       
     } else {
+      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
+      }
       this.matSnackBarNew.open(
         'Something is wrong. Please try again later.', 'X',
         { duration: 5000, panelClass: ['error'] }
@@ -879,17 +893,33 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "rating": "0"
 
    }
+   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
+      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
+      this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = true
+    }
+      
+  }
      this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
             this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
+            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+            this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
+          }
+            
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
         );
       } else {
+        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
+        }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
@@ -1102,11 +1132,22 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   resizeTextarea(textArea: HTMLTextAreaElement): void {
+    // textArea.style.height = 'auto';
+    // const scrollHeight = textArea.scrollHeight;
+    // textArea.style.height = scrollHeight + 'px';
+    // if (textArea.value.trim()) {
+    //   this.containerHeight = scrollHeight + 36; // Adjust for padding/margin if needed
+    // }
     textArea.style.height = 'auto';
-    const scrollHeight = textArea.scrollHeight;
-    textArea.style.height = scrollHeight + 'px';
+    textArea.style.height = textArea.scrollHeight + 'px';
+
     if (textArea.value.trim()) {
-      this.containerHeight = scrollHeight + 36; // Adjust for padding/margin if needed
+      // Do NOT blindly add 36. Use padding if needed
+      const computed = getComputedStyle(textArea);
+      const paddingTop = parseFloat(computed.paddingTop) || 0;
+      const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+      const marginExtra = 4;
+      this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra; 
     }
     
   }

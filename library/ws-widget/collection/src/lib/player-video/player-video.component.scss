@@ -195,8 +195,8 @@
 
 /* Make the image visible and aligned properly */
 ::ng-deep .custom-cc-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 1.8em;
+  height: 1.8em;
   display: inline-block;
   object-fit: contain;
   margin-top: 0;
@@ -204,7 +204,7 @@
 
 /* Style text as needed */
 ::ng-deep .custom-cc-label {
-  font-size: 12px;
+  font-size: 14px;
   color: white;
   display: inline-block;
   margin-top: 0;

@@ -1053,10 +1053,15 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   resizeTextarea(textArea: HTMLTextAreaElement): void {
     if(textArea) {
       textArea.style.height = 'auto';
-      const scrollHeight = textArea.scrollHeight;
-      textArea.style.height = scrollHeight ? scrollHeight + 'px' : '32px';
+      textArea.style.height = textArea.scrollHeight + 'px';
+  
       if (textArea.value.trim()) {
-        this.containerHeight = scrollHeight + 38; // Adjust for padding/margin if needed
+        // Do NOT blindly add 36. Use padding if needed
+        const computed = getComputedStyle(textArea);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 4;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra; 
       }
     }
     
