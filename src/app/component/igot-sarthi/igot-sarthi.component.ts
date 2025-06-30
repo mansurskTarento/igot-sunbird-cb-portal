@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../../component/root/root.service';
@@ -14,7 +14,7 @@ import cloneDeep from 'lodash/cloneDeep';
   templateUrl: './igot-sarthi.component.html',
   styleUrls: ['./igot-sarthi.component.scss']
 })
-export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
   @Input() chatId = ''
@@ -92,8 +92,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
   isLoading = false;
   hasError = false;
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  // @ViewChild('autoResizeTextarea') textArea!: ElementRef;
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
   isHubEnable!: boolean
-
+  containerHeight = 36;
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -123,6 +125,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+  }
+
+  ngAfterViewInit(): void {
+    this.resizeTextarea(this.textArea.nativeElement,'');
   }
 
   greetings() {
@@ -508,8 +514,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery() {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    if (!this.searchQuery.trim()) {
+      event.preventDefault(); // Prevents Enter key from adding a new line
+    }
     // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
+    this.searchQuery = this.searchQuery.trim()
     if(this.searchQuery && !this.searchAPIResponseInProgress) {
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
@@ -536,6 +546,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     },0)
    }  
     this.searchQuery = ''
+    this.resetTextAreaHeight(textArea)
     this.aiGlobalSearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
@@ -543,6 +554,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
+      
     }
   }
 
@@ -694,7 +706,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       }
      })
     setTimeout(()=>{
-      this.scrollToBottomEvent.emit() 
+     // this.scrollToBottomEvent.emit() 
     },0)
       },
       error: (err:any) => {
@@ -799,6 +811,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "rating": "5"
 
    }
+   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
+      this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = true
+  }
    
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
@@ -810,8 +827,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       // })
       // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
       if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
           this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
+          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
+        }
+          
       }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
@@ -819,6 +840,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       );
       
     } else {
+      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
+      }
       this.matSnackBarNew.open(
         'Something is wrong. Please try again later.', 'X',
         { duration: 5000, panelClass: ['error'] }
@@ -866,17 +892,33 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
       "rating": "0"
 
    }
+   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
+      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
+      this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = true
+    }
+      
+  }
      this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
             this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
+            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+            this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
+          }
+            
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
         );
       } else {
+        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
+          this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
+        }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
@@ -1088,6 +1130,36 @@ export class IGotSarthiComponent implements OnInit, AfterViewChecked, OnDestroy 
     
   }
 
+  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+    if (textArea) {
+      textArea.style.height = 'auto'; // Reset height first
+      requestAnimationFrame(() => {
+        textArea.style.height = textArea.scrollHeight + 'px';
+  
+        const computed = getComputedStyle(textArea);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
+      });
+    }
+  }
+
+  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {    
+    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
+      setTimeout(()=>{
+        this.searchQuery = this.searchQuery.trim()        
+        this.textArea.nativeElement.style.height = 'auto';
+        this.textArea.nativeElement.style.height = '30px';
+        const computed = getComputedStyle(this.textArea.nativeElement);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
+      })     
+    } 
+    
+  }
 
 
   ngOnDestroy(): void {

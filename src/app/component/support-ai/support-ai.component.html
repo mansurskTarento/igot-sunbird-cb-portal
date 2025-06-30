@@ -246,15 +246,22 @@
     </ng-container>
   </div>
   <div class="control-container">
-    <div class="border-gradient-rounded">
-      <div class="flex flex-row mx-5 justify-between">
+    <div class="border-gradient-rounded" [style.height.px]="containerHeight">
+      <div class="flex flex-row ml-5 mr-1 justify-between">
 
         <div class="query-box">
-          <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery()"/>
+          <!-- <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery()"/> -->
+          <textarea #autoResizeTextarea class="width-500"
+          placeholder="Ask anything..."
+          (input)="resizeTextarea(autoResizeTextarea, 'fromInput')"
+          [(ngModel)]="searchQuery" (keydown.enter)="submitSearchQuery(autoResizeTextarea, $event)"
+          rows="1"
+          >
+          </textarea>
         </div>
 
-        <div>
-          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery()"  [disabled]="!searchQuery && !initiateSupportNewChat">
+        <div class="mt-1">
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery('',$event)"  [disabled]="!searchQuery || searchAPIResponseInProgress">
             <mat-icon class="send-btn-icon">send</mat-icon>
           </button>
         </div>
