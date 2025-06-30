@@ -25,6 +25,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { LibNotificationsService, NotificationDropdownModule } from '@sunbird-cb/notification'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
 @NgModule({
   declarations: [HeaderComponent, AppNavBarComponent, FontSettingComponent, TopRightNavBarComponent],
   imports: [
@@ -59,6 +60,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
       },
     }),
     SkeletonLoaderModule,
+    ConfirmDialogModule
   ],
   exports: [
     HeaderComponent,
