@@ -698,6 +698,7 @@ export class ProfileEntryEditComponent implements OnInit {
     this.ProfileV2RevampService.getDegreesList().subscribe({
       next: (res: any) => {
         this.degreesMeta = _.get(res, 'result.degreesList.degrees', []) as string[];
+        this.degreesMeta.push('Other');
         this.checkCurrentDegreePresent()
         // if (this.entryForm) {
         //   const degreeControl = this.entryForm.get('degree');
@@ -832,7 +833,7 @@ export class ProfileEntryEditComponent implements OnInit {
   onDegreeChange(selectedDegree: string): void {
     const otherDegreeControl = this.entryForm.get('otherDegree');
     if (otherDegreeControl) {
-      if (selectedDegree === 'other') {
+      if (selectedDegree && selectedDegree.toLocaleLowerCase() === 'other') {
         otherDegreeControl.setValidators([Validators.required, Validators.maxLength(80), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
       } else {
         otherDegreeControl.clearValidators();

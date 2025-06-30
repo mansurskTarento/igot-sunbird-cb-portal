@@ -160,7 +160,7 @@
           <div class="lable">{{'NetworkV2Profile.description' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput maxlength="1000" formControlName="description" rows="4" placeholder="{{'NetworkV2Profile.addYourDescription' | translate}}"></textarea>
-            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/1000
             </mat-hint>
@@ -202,13 +202,13 @@
         </div>
 
         <!-- Other Degree -->
-        <ng-container *ngIf="entryForm.get('degree')?.value === 'other'">
+        <ng-container *ngIf="entryForm.get('degree')?.value?.toLowerCase() === 'other'">
           <div class="flex flex-col profile-control w-full">
             <div class="lable">{{'NetworkV2Profile.degreeName' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput formControlName="otherDegree" placeholder="{{'NetworkV2Profile.pleaseEnterYourDegreeName' | translate'}}" maxlength="80">
+              <input matInput formControlName="otherDegree" placeholder="{{'NetworkV2Profile.pleaseEnterYourDegreeName' | translate}}" maxlength="80">
               <mat-error *ngIf="hasError('otherDegree', 'required')">{{'NetworkV2Profile.pleaseEnterDegreeName' | translate}}</mat-error>
-              <mat-error *ngIf="hasError('otherDegree', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('otherDegree', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
               <mat-hint align="end" *ngIf="entryForm.get('otherDegree')?.value">
                 {{ entryForm.get('otherDegree')?.value.length }}/80
               </mat-hint>
@@ -223,7 +223,7 @@
             <input matInput formControlName="fieldOfStudy" maxlength="250"
               placeholder="{{'NetworkV2Profile.enterYourSpecialization' | translate}}">
             <mat-error *ngIf="hasError('fieldOfStudy', 'required')">{{'NetworkV2Profile.pleaseEnterFieldOfStudy' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('fieldOfStudy')?.value">
               {{ entryForm.get('fieldOfStudy')?.value.length }}/250
             </mat-hint>
@@ -264,7 +264,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <input matInput formControlName="otherInstituteName" placeholder="{{'NetworkV2Profile.enterYourInstituteName' | translate}}" maxlength="125">
               <mat-error *ngIf="hasError('otherInstituteName', 'required')">{{'NetworkV2Profile.pleaseEnterInstituteName' | translate}}</mat-error>
-              <mat-error *ngIf="hasError('otherInstituteName', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('otherInstituteName', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
               <mat-hint align="end" *ngIf="entryForm.get('otherInstituteName')?.value">
                 {{ entryForm.get('otherInstituteName')?.value.length }}/125
               </mat-hint>
@@ -388,7 +388,7 @@
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning' | translate}}"></textarea>
-               <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+               <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/500
             </mat-hint>
