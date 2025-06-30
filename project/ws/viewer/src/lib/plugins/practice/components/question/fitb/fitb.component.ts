@@ -308,7 +308,8 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
                 // console.log(this.elementRef.nativeElement.querySelector(`#${this.question.questionId}${i}`))
             }
         }
-        this.safeQuestion = this.domSanitizer.bypassSecurityTrustHtml(this.localQuestion)
+        const replacedLocalQuestion = this.localQuestion?.replace(/&nbsp;/g, ' ')
+        this.safeQuestion = this.domSanitizer.bypassSecurityTrustHtml(replacedLocalQuestion)
         // }
     }
     functionChangeBlankBorder() {
@@ -351,8 +352,11 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
     }
     getSanitizeString(res: any) {
         if (res && (typeof res === 'string')) {
-            const response = res.replace(/\&lt;/g, '&lt;').replace('&gt;', '>')
-            return response
+            const response = res
+            .replace(/&lt;/g, '&lt;')
+            .replace(/&gt;/g, '>')
+            .replace(/&nbsp;/g, ' ')
+        return response
         }
         return res
 }

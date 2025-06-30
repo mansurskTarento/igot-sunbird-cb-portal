@@ -45,6 +45,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
+import { NbspModule } from '@sunbird-cb/consumption'
 @NgModule({
     declarations: [
         FillInTheBlankComponent,
@@ -91,7 +92,8 @@ import { ReactiveFormsModule } from '@angular/forms'
         SkeletonLoaderModule,
         TranslateModule,
         MatMenuModule,
-        MatSelectModule
+        MatSelectModule,
+        NbspModule
         
     ],
     exports: [
