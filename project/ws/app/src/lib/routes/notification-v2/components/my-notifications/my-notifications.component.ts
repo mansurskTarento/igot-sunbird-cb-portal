@@ -58,7 +58,7 @@ export class MyNotificationsComponent {
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
-    } else if(notification.sub_category.includes('CONTENT')) {
+    } else if(notification?.sub_category?.includes('CONTENT')) {
       let data = {
         data: {
           title: '',
@@ -67,7 +67,7 @@ export class MyNotificationsComponent {
           message: 'You will be redirected to the Content Portal to view content-related notifications.',
         },
       }
-      let url = `${environment.portalsForNotifications.cbp}/app/home`
+      let url = `${environment?.portalsForNotifications?.cbp}/app/home`
       this.showDialog(data, url)
     } else if (notification.sub_category === 'CONTENT_PUBLISHED' || notification.sub_category === 'CONTENT_EDITED') {
       if (notification.message.data && notification.message.data.id) {

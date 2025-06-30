@@ -218,7 +218,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
-      } else if(event.sub_category.includes('CONTENT')) {
+      } else if(event?.sub_category?.includes('CONTENT')) {
         let data = {
           data: {
             title: '',
@@ -227,7 +227,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
             message: 'You will be redirected to the Content Portal to view content-related notifications.',
           },
         }
-        let url = `${environment.portalsForNotifications.cbp}/app/home`
+        let url = `${environment?.portalsForNotifications?.cbp}/app/home`
         this.showDialog(data, url)
       } else if (event.sub_category === 'CONTENT_PUBLISHED' || event.sub_category === 'CONTENT_EDITED') {
         if (event.message.data && event.message.data.id) {
