@@ -4,7 +4,7 @@
   <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex">
     <mat-tab>
       <ng-template mat-tab-label>
-        <div class="flex tabLable">
+        <div class="flex tabLable justify-center items-center">
           My connections
           <ng-container *ngIf="selectedTabIndex === 0; else notSelectedCount">
             <div class="selected-count">{{connectionsCount}}</div>
@@ -26,7 +26,7 @@
   
     <mat-tab>
       <ng-template mat-tab-label>
-        <div class="flex tabLable">
+        <div class="flex tabLable justify-center items-center">
           Requests
           <ng-container *ngIf="selectedTabIndex === 1; else notSelectedCount">
             <div class="selected-count">{{requestsCount}}</div>
@@ -48,7 +48,7 @@
   
     <mat-tab>
       <ng-template mat-tab-label>
-        <div class="flex tabLable">
+        <div class="flex tabLable justify-center items-center">
           Sent
           <ng-container *ngIf="selectedTabIndex === 2; else notSelectedCount">
             <div class="selected-count">{{sentRequestsCount}}</div>
@@ -70,7 +70,7 @@
   
     <mat-tab>
       <ng-template mat-tab-label>
-        <div class="flex tabLable">
+        <div class="flex tabLable justify-center items-center">
           Blocked
           <ng-container *ngIf="selectedTabIndex === 3; else notSelectedCount">
             <div class="selected-count">{{blockedCount}}</div>

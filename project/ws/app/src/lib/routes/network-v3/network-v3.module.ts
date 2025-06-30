@@ -15,10 +15,13 @@ import { UpdatesCardComponent } from './components/updates-card/updates-card.com
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module';
+// import { NetworkProfileCardModule } from '@sunbird-cb/consumption'
 import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component';
 import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
 import { TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
+import { CommunitySuggestionsModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/community-suggestions/community-suggestions.module';
+import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
 
 
 @NgModule({
@@ -43,8 +46,11 @@ import { AllRecommendationsComponent } from './components/all-recommendations/al
     MatIconModule,
     AvatarPhotoModule,
     ConnectionNameModule,
+    PaginationModule,
     TranslateModule,
-    MatLegacyTabsModule
+    MatLegacyTabsModule,
+    // NetworkProfileCardModule,
+    CommunitySuggestionsModule
   ]
 })
 export class NetworkV3Module { }

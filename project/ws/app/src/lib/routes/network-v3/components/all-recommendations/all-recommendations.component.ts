@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PageChangeEmitter } from '../../models/network-v3.model';
 
 @Component({
   selector: 'ws-app-all-recommendations',
@@ -413,6 +414,11 @@ export class AllRecommendationsComponent implements OnInit{
     }
   ]
 
+  initialPaginationSize = 50;
+  initialPaginationSizeOptions = [50, 100, 150, 200];
+  initialPaginationPage = 1;
+  totalItemsCount = 1000; // This should be set based on the actual data count
+
   constructor(
     private activatedRoute: ActivatedRoute
   ) { }
@@ -435,6 +441,16 @@ export class AllRecommendationsComponent implements OnInit{
           break
       }
     })
+  }
+
+  async onPageChange(event: PageChangeEmitter) {
+    // this.searchContentLoader = true;
+    this.scrollToTop();
+    console.log('Page Change Event:', event);
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 }

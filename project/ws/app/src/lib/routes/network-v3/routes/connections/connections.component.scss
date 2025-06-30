@@ -13,12 +13,15 @@
 }
 
 .selected-count {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background-color: #FF0000;
   /*stylelint-disable */
   font: 700 10px 'Lato';
   /* stylelint-enable */
   color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

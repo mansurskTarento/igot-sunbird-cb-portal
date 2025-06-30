@@ -7,6 +7,8 @@ import { ConnectionsComponent } from "./routes/connections/connections.component
 import { RecommendationsComponent } from "./routes/recommendations/recommendations.component";
 import { MentorsComponent } from "./routes/mentors/mentors.component";
 import { AllRecommendationsComponent } from "./components/all-recommendations/all-recommendations.component";
+import { CommunityResolverService } from "./resolvers/community-resolver.service";
+import { profileResolver } from "./resolvers/profile.resolver";
 
 const routes: Routes = [
   {
@@ -15,6 +17,10 @@ const routes: Routes = [
     data: {
       pageId: '',
       module: 'Network',
+    },
+    resolve: {
+      recamendedCommunity: CommunityResolverService,
+      profileDetails: profileResolver,
     },
     children: [
       {
@@ -78,6 +84,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [],
+  providers: [
+    CommunityResolverService,
+    profileResolver
+  ],
 })
 export class NetworkV3RoutingModule { }

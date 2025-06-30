@@ -2,7 +2,7 @@
   <!-- #region (left nav content) -->
   <div class="hidden md:flex flex-col gap-4 left-nav-content">
     <div class="profile">
-      <ws-app-profile-card></ws-app-profile-card>
+      <ws-app-profile-card [userDetails]="userDetails"></ws-app-profile-card>
     </div>
     <div>
       <ws-app-network-navigation [navigationItems]="navigationItems"></ws-app-network-navigation>
@@ -18,7 +18,8 @@
 
   <!-- #region (right nav content) -->
   <div class="hidden md:flex flex-col gap-4 right-nav-content">
-    
+    <ws-app-community-suggestions
+          [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
   </div>
   <!-- #endregion (right nav content) -->
 </div>

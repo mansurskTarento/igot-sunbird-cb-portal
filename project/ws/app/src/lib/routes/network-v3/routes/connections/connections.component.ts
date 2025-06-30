@@ -39,7 +39,7 @@ export class ConnectionsComponent implements OnInit{
       userId: '',
     },
   ]
-  connectionsCount = 231;
+  connectionsCount = 21;
 
   requestsList: any = [
     {

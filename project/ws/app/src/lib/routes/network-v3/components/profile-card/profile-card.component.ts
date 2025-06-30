@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ws-app-profile-card',
   templateUrl: './profile-card.component.html',
   styleUrls: ['./profile-card.component.scss']
 })
-export class ProfileCardComponent implements OnInit {
-
-  bannerImageUrl = 'https://portal.qa.karmayogibharat.net/assets/public/profileBanner/1750246574180_MicrosoftTeamsimage1.png';
-  profileImageUrl = 'https://portal.qa.karmayogibharat.net/assets/public/profileImage/1750246661816_profile.png'
+export class ProfileCardComponent implements OnInit, OnChanges {
+  //#region (global variables)
+  @Input() userDetails: any;
+  bannerImageUrl = '';
+  profileImageUrl = '';
   userName = 'Astha Sharma'
   userId= ''
   nameInitials: string = '';
+  //#endregion (global variables)
 
   constructor(
     private router: Router
@@ -22,8 +25,13 @@ export class ProfileCardComponent implements OnInit {
     this.getInitials()
   }
 
-  viewProfile() { 
-    this.router.navigate(['/app/person-profile/me', (this.userId)], { fragment: 'profileInfo' })
+  ngOnChanges(): void {
+    const userDetails = _.get(this.userDetails, 'profileDetails', this.userDetails);
+    this.userName = _.get(userDetails, 'firstName', _.get(userDetails, 'personalDetails.firstname', ''));
+    this.userId = _.get(this.userDetails, 'id', _.get(this.userDetails, 'userId', ''));
+    this.bannerImageUrl = _.get(userDetails, 'profileBannerUrl', '');
+    this.profileImageUrl = _.get(userDetails, 'profileImageUrl', _.get(userDetails, 'profileImage', ''));
+    this.getInitials()
   }
 
   getInitials(): void {
@@ -36,6 +44,10 @@ export class ProfileCardComponent implements OnInit {
         this.nameInitials = userName.charAt(0)
       }
     }
+  }
+
+  viewProfile() { 
+    this.router.navigate(['/app/person-profile/me', (this.userId)], { fragment: 'profileInfo' })
   }
 
 }

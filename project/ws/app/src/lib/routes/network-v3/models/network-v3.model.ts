@@ -5,3 +5,9 @@ export interface routesData {
   icon?: string
   imageUrl?: string
 }
+
+export interface PageChangeEmitter {
+  currentPage: number;
+  previousPage: number;
+  limit: number;
+}

@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ws-app-network-home',
   templateUrl: './network-home.component.html',
   styleUrls: ['./network-home.component.scss']
 })
-export class NetworkHomeComponent {
-
+export class NetworkHomeComponent implements OnInit{
+  //#region (global variables)
   connectionRequestsList: any[] = [
     {
       profileIamge: 'https://portal.dev.karmayogibharat.net/assets/public/profileImage/1748236292880_profile.png',
@@ -171,7 +172,18 @@ export class NetworkHomeComponent {
     }
   ]
 
-  constructor(private router: Router) { }
+  //#endregion (global variables)
+
+  constructor(
+    private router: Router,
+  ) { }
+
+  //#region (initialization)
+
+  ngOnInit() {
+  }
+
+  //#endregion (initialization)
 
   showAll(type: string) {
     if (type) {
