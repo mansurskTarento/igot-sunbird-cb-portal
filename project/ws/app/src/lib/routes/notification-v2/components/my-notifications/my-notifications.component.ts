@@ -5,6 +5,8 @@ import { ConfigurationsService, EventService, MultilingualTranslationsService } 
 import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'ws-app-my-notifications',
   templateUrl: './my-notifications.component.html',
@@ -17,6 +19,7 @@ export class MyNotificationsComponent {
     private langtranslations: MultilingualTranslationsService,
     private notificationsService: NotificationsService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private configService: ConfigurationsService,
     private router: Router, private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
@@ -55,6 +58,17 @@ export class MyNotificationsComponent {
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
+    } else if(notification.sub_category.includes('CONTENT')) {
+      let data = {
+        data: {
+          title: '',
+          cancelButton: 'Cancel',
+          acceptButton: 'Confirm',
+          message: 'You will be redirected to the Content Portal to view content-related notifications.',
+        },
+      }
+      let url = `${environment.portalsForNotifications.cbp}/app/home`
+      this.showDialog(data, url)
     } else if (notification.sub_category === 'CONTENT_PUBLISHED' || notification.sub_category === 'CONTENT_EDITED') {
       if (notification.message.data && notification.message.data.id) {
         this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
@@ -114,6 +128,15 @@ export class MyNotificationsComponent {
         window.open(url, '_blank')
       }
     }
+  }
+
+  showDialog(data: any, url:string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

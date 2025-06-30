@@ -21,6 +21,7 @@ import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { NotificationsService } from '../../../../../../../src/app/services/notifications.service'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
@@ -46,6 +47,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
+    ConfirmDialogModule
   ],
   providers: [NotificationApiService, NotificationService, NotificationsService],
 })
