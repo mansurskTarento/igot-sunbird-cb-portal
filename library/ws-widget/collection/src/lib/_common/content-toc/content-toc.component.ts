@@ -461,6 +461,19 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }    
   }
 
+  formatMsToVttTime(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+  //  const milliseconds = ms % 1000;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+  
+    const pad = (num: number, size: number) => num.toString().padStart(size, '0');
+  
+    // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
+    return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
+  }
+
   ngOnDestroy() {
     if(this.resourceIdentifier$) {
       this.resourceIdentifier$.unsubscribe()

@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component,ElementRef,EventEmitter,Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from '../root/root.service';
@@ -14,7 +14,7 @@ import cloneDeep from 'lodash/cloneDeep';
   templateUrl: './support-ai.component.html',
   styleUrls: ['./support-ai.component.scss']
 })
-export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, OnDestroy {
+export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
   @Input() chatId = ''
@@ -94,7 +94,8 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
-
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  containerHeight = 36;
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -505,6 +506,12 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
   ngAfterViewChecked() {
     //this.scrollToBottom()
   }
+
+
+  ngAfterViewInit(): void {
+    this.resizeTextarea(this.textArea.nativeElement,'');
+  }
+
   scrollToBottom(): void {
     try {
       if (this.myScrollContainer) {
@@ -523,7 +530,11 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery() {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    if (!this.searchQuery.trim()) {
+      event.preventDefault(); // Prevents Enter key from adding a new line
+    }
+    this.searchQuery = this.searchQuery.trim()
     // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
@@ -550,6 +561,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
     },0)
    }  
     this.searchQuery = ''
+    this.resetTextAreaHeight(textArea)
     this.supportAISearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
@@ -667,9 +679,9 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
             this.aiSearchResultArr.splice(index,1)
           }
          })
-        setTimeout(()=>{
-          this.scrollToBottomEvent.emit() 
-        },0)
+        // setTimeout(()=>{
+        //   this.scrollToBottomEvent.emit() 
+        // },0)
         
         })
         
@@ -843,9 +855,9 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
             this.aiSearchResultArr.splice(index,1)
           }
          })
-        setTimeout(()=>{
-          this.scrollToBottomEvent.emit() 
-        },0)
+        // setTimeout(()=>{
+        //   this.scrollToBottomEvent.emit() 
+        // },0)
       })
     }
   }
@@ -976,6 +988,37 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewChecked, 
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+    if (textArea) {
+      textArea.style.height = 'auto'; // Reset height first
+      requestAnimationFrame(() => {
+        textArea.style.height = textArea.scrollHeight + 'px';
+  
+        const computed = getComputedStyle(textArea);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
+      });
+    }
+  }
+
+  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {    
+    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
+      setTimeout(()=>{
+        this.searchQuery = this.searchQuery.trim()        
+        this.textArea.nativeElement.style.height = 'auto';
+        this.textArea.nativeElement.style.height = '30px';
+        const computed = getComputedStyle(this.textArea.nativeElement);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
+      })     
+    } 
+    
   }
 
   ngOnDestroy(): void {

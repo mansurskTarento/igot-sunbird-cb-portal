@@ -74,6 +74,10 @@ export class RootService {
       catchError(error => {
         if (error.status === 502) {
           console.error('502 Bad Gateway from aiGlobalSearch');
+        } else if (error.status === 500) {
+          console.error('500 Internal Server Error from aiGlobalSearch');
+        } else {
+          console.error(`Unhandled error (${error.status}):`, error.message);
         }
         return throwError(() => error);
       })

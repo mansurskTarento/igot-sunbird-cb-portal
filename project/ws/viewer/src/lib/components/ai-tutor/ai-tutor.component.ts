@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component,Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from 'src/app/component/root/root.service';
@@ -16,7 +16,7 @@ import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
   templateUrl: './ai-tutor.component.html',
   styleUrls: ['./ai-tutor.component.scss']
 })
-export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() content:any
   @Input() userJourney = []
@@ -105,6 +105,8 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   NoneSocketHost = ''
   SocraticeStyleHost = ''
   StorytellingHost = ''
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  containerHeight = 38;
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -119,7 +121,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
   ngOnInit() {
-    if (environment.production) {
+    if (environment?.sitePath?.includes('portal.igotkarmayogi.gov.in')) {
       this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
       this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
       this.SocraticeStyleHost = 'learning-ai.prod.karmayogibharat.net'
@@ -176,6 +178,10 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  ngAfterViewInit(): void {
+    this.resizeTextarea(this.textArea?.nativeElement,'');
   }
 
   greetings() {
@@ -563,7 +569,18 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery() {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    if (!this.searchQueryAItutor.trim()) {
+      event.preventDefault(); // Prevents Enter key from adding a new line
+    }
+    if(!this.searchQueryAItutor.trim()) {
+      return false
+    }
+    this.cloneSearchQuery = ''
+    this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
+    this.searchQueryAItutor = this.searchQueryAItutor.trim()
+    this.searchQueryAItutor = ''
+    this.resetTextAreaHeight(textArea)
     this.aiTutorResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiTutorResultArr[index]
@@ -571,8 +588,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
      })
      this.resultFetch = false 
-     this.cloneSearchQuery = ''
-   this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
+    
   // this.searchQuery = 'Soil Erosion and Conservation'
    let sendMsgObj = {
      type: 'sendMsg',
@@ -585,11 +601,11 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
   //  this.searchQuery = ''
   //  this.aiGlobalSearch()
   //  this.getAiTutorMessage()
-  this.searchQueryAItutor = ''
+ 
   setTimeout(()=>{
     this.scrollToBottom()
   },0)
-    
+  
    this.sendAITutorMessage()
    
   }
@@ -697,7 +713,7 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
      })     
     // console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
      setTimeout(()=>{
-      this.scrollToBottom()
+     // this.scrollToBottom()
     },0)
 
     const event = {
@@ -869,18 +885,30 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       "rating": "5"
 
    }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+      this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = true
+   }
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, 't', this.userInfo?.userId).subscribe((data:any)=>{
     if(data && data.status === 'success') {
       if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
         if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
           this.aiTutorResultArr[index].result[cindex]['feedback'] = 'up'
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
       }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
         { duration: 5000, panelClass: ['success'] }
       );
     } else {
+      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+        if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
+      }
       this.matSnackBarNew.open(
         'Something is wrong. Please try again later.', 'X',
         { duration: 5000, panelClass: ['error'] }
@@ -926,17 +954,31 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
       "rating": "0"
 
    }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex]) {
+      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+      this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = true
+    }
+
+  }
      this.chatbotService.shareAIFeedback(requestBody, '', this.userInfo?.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
           if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
             this.aiTutorResultArr[index].result[cindex]['feedback'] = 'down'
+            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+            this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
         );
       } else {
+        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
+        }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
@@ -1034,5 +1076,37 @@ export class AiTutorComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     // this.websocketService.closeConnection();
+  }
+
+  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+    if (textArea) {
+      textArea.style.height = 'auto'; // Reset height first
+      requestAnimationFrame(() => {
+        textArea.style.height = textArea.scrollHeight + 'px';
+  
+        const computed = getComputedStyle(textArea);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
+      });
+    }
+  }
+
+  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {
+    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
+      setTimeout(()=>{
+        this.searchQueryAItutor = this.searchQueryAItutor.trim()        
+        this.textArea.nativeElement.style.height = 'auto';
+        this.textArea.nativeElement.style.height = '30px';
+        const computed = getComputedStyle(this.textArea.nativeElement);
+        const paddingTop = parseFloat(computed.paddingTop) || 0;
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+        const marginExtra = 0;
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
+      })     
+    }
+
+
   }
 }
