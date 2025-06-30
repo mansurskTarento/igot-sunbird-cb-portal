@@ -11,6 +11,7 @@ import { Router } from '@angular/router'
 import { NotificationsService } from 'src/app/services/notifications.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from '../../../environments/environment'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -217,6 +218,17 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
+      } else if(event.sub_category.includes('CONTENT')) {
+        let data = {
+          data: {
+            title: '',
+            cancelButton: 'Cancel',
+            acceptButton: 'Confirm',
+            message: 'You will be redirected to the Content Portal to view content-related notifications.',
+          },
+        }
+        let url = `${environment.portalsForNotifications.cbp}/app/home`
+        this.showDialog(data, url)
       } else if (event.sub_category === 'CONTENT_PUBLISHED' || event.sub_category === 'CONTENT_EDITED') {
         if (event.message.data && event.message.data.id) {
           this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
@@ -289,6 +301,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   calculateCount(event: any) {
     console.log("sds", event)
+  }
+
+  showDialog(data: any, url:string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {
