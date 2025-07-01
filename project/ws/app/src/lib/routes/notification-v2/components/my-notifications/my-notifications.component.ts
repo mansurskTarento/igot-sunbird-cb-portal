@@ -63,13 +63,16 @@ export class MyNotificationsComponent {
         let isStandaloneResource = false
         if (res.primaryCategory === 'Learning Resource' &&
           res.resourceCategory !== 'Learning Resource') {
+          localStorage.setItem('isStandaloneResource', 'true')
           isStandaloneResource = true
+        } else {
+          localStorage.setItem('isStandaloneResource', 'false')
         }
         if (res.status === 'Live') {
-          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?setLocalStorage=${isStandaloneResource}`, '_blank')
+          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
         } else if (res.status === 'Draft') {
           if (this.roles.includes('CONTENT_CREATOR')) {
-            window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}`, '_blank')
+            window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
           } else {
             this.snackBar.open('You are not authorized to view this content.')
           }
@@ -77,14 +80,14 @@ export class MyNotificationsComponent {
           switch (res.reviewStatus) {
             case 'InReview': {
               if (this.roles.includes('CONTENT_REVIEWER')) {
-                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
               } else {
                 this.snackBar.open("You are not authorized to view this content.")
               }
               break
             } case 'Reviewed': {
               if (this.roles.includes('CONTENT_PUBLISHER')) {
-                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}`, '_blank')
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
               } else {
                 this.snackBar.open("You are not authorized to view this content.")
               }
