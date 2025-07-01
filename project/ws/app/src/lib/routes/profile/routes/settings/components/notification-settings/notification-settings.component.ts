@@ -75,13 +75,13 @@ export class NotificationSettingsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.settingsSvc.getSettings().subscribe((settings: any) => {
-      this.notificationSettings = _.get(settings, 'result.settings', [])
-      console.log(this.notificationSettings)
-    }, error => {
-      this.notificationSettings = []
-      console.log(error)
-    })
+    // this.settingsSvc.getSettings().subscribe((settings: any) => {
+    //   this.notificationSettings = _.get(settings, 'result.settings', [])
+    //   console.log(this.notificationSettings)
+    // }, error => {
+    //   this.notificationSettings = []
+    //   console.log(error)
+    // })
   }
 
   onToggleChange(item: any, event: any) {
