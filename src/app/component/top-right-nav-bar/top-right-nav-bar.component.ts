@@ -218,76 +218,46 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
-      } else if(event?.sub_category?.includes('CONTENT')) {
-        let data = {
-          data: {
-            title: '',
-            cancelButton: 'Cancel',
-            acceptButton: 'Confirm',
-            message: 'You will be redirected to the Content Portal to view content-related notifications.',
-          },
-        }
-        let url = `${environment?.portalsForNotifications?.cbp}/app/home`
-        this.showDialog(data, url)
-      } else if (event.sub_category === 'CONTENT_PUBLISHED' || event.sub_category === 'CONTENT_EDITED') {
-        if (event.message.data && event.message.data.id) {
-          this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
-            if (res) {
-              if (res.primaryCategory === 'Learning Resource' &&
-                res.resourceCategory !== 'Learning Resource') {
-                localStorage.setItem('isStandaloneResource', 'true')
-              } else {
-                localStorage.setItem('isStandaloneResource', 'false')
-              }
-              if (this.roles.includes('CONTENT_CREATOR')) {
-                if (res.status === 'Draft') {
-                  let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2`
-                  window.open(url, '_blank')
-                } else if (res.status === 'Live') {
-                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
-                  window.open(url, '_blank')
-                } else {
-                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
-                  window.open(url, '_blank')
-                }
-              } else {
-                if (res.status === 'Draft') {
-                  alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
-                  //${environment.portalsForNotifications.cbp}
-                  window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
-                } else {
-                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
-                  window.open(url, '_blank')
-                }
-              }
-            }
-          })
-        } else {
-          this.snackBar.open('Something went wrong')
-        }
-      } else if (event.sub_category === 'CONTENT_REVIEW_REQUEST' || event.sub_category === 'CONTENT_REJECTED') {
-        this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
-          if (res) {
-            if (res.status === 'Draft') {
-              alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
-              window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
-            } else {
-              if (this.roles.includes('CONTENT_REVIEWER')) {
-                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
-                window.open(url, '_blank')
-              } else if (this.roles.includes('CONTENT_CREATOR')) {
-                let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}`
-                window.open(url, '_blank')
-              }
-            }
-          }
-        })
       } else if (event.category === 'PROFILE') {
         let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
         window.open(url, '_blank')
-        //this.router.navigate([`app/home/approvals/approval`])
-      } else {
-        this.router.navigate(['/app/notifications'])
+      } else if (event?.category?.includes('CONTENT')) {
+        this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+          let isStandaloneResource = false
+          if (res.primaryCategory === 'Learning Resource' &&
+            res.resourceCategory !== 'Learning Resource') {
+            isStandaloneResource = true
+          }
+          if (res.status === 'Live') {
+            window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?setLocalStorage=${isStandaloneResource}`, '_blank')
+          } else if (res.status === 'Draft') {
+            if (this.roles.includes('CONTENT_CREATOR')) {
+              window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}`, '_blank')
+            } else {
+              this.snackBar.open('You are not authorized to view this content.')
+            }
+          } else if (res.status === 'Review') {
+            switch (res.reviewStatus) {
+              case 'InReview': {
+                if (this.roles.includes('CONTENT_REVIEWER')) {
+                  window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+                } else {
+                  this.snackBar.open("You are not authorized to view this content.")
+                }
+                break
+              } case 'Reviewed': {
+                if (this.roles.includes('CONTENT_PUBLISHER')) {
+                  window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?setLocalStorage=${isStandaloneResource}`, '_blank')
+                } else {
+                  this.snackBar.open("You are not authorized to view this content.")
+                }
+                break
+              }
+            }
+          } else if (res.status === 'Retired') {
+            this.snackBar.open('This content is retired.')
+          }
+        })
       }
     } else {
       this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
@@ -303,7 +273,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     console.log("sds", event)
   }
 
-  showDialog(data: any, url:string) {
+  showDialog(data: any, url: string) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
