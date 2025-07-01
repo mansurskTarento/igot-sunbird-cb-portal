@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 @Component({
@@ -10,34 +10,67 @@ import * as _ from 'lodash';
 export class NetworkHomeComponent implements OnInit{
   //#region (global variables)
   connectionRequestsList: any[] = [
-    {
-      profileIamge: 'https://portal.dev.karmayogibharat.net/assets/public/profileImage/1748236292880_profile.png',
-      firstName: 'Jaydon Franci',
-      currentRole: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-      description: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      location: 'New Delhi',
-      time: '27s',
-      userId: '',
-    },
-    {
-      profileIamge: '',
-      firstName: 'Jaydon Franci',
-      currentRole: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-      description: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      location: 'New Delhi',
-      time: '27s',
-      userId: '',
-    },
-    {
-      profileIamge: '',
-      firstName: 'Jaydon Franci',
-      currentRole: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-      description: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      location: 'New Delhi',
-      time: '27s',
-      userId: '',
-    },
-  ]
+  {
+    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    updatedAt: null,
+    fullName: 'Jaydon Franci',
+    departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
+    professionalDetails: [
+      {
+        profileStatus: 'VERIFIED',
+        osid: 'c3153330-2fa0-42ae-bdc2-497f8c47a704',
+        designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
+        organisationType: 'Government',
+        group: 'Group A'
+      }
+    ],
+    roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
+    rootOrgId: '0132238763297177601',
+    profileImageUrl: 'https://portal.dev.karmayogibharat.net/assets/public/profileImage/1748236292880_profile.png',
+    recievedAt: Date.now() - 27 * 1000, // 27 seconds ago
+    timeAgo: '27s'
+  },
+  {
+    id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+    updatedAt: null,
+    fullName: 'Jaydon Franci',
+    departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
+    professionalDetails: [
+      {
+        profileStatus: 'VERIFIED',
+        osid: 'd4153330-2fa0-42ae-bdc2-497f8c47a705',
+        designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
+        organisationType: 'Government',
+        group: 'Group A'
+      }
+    ],
+    roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
+    rootOrgId: '0132238763297177601',
+    profileImageUrl: '',
+    recievedAt: Date.now() - 2 * 24 * 60 * 60 * 1000, // 2 days ago
+    timeAgo: '2 days'
+  },
+  {
+    id: 'c3d4e5f6-a7b8-9012-cdef-345678901234',
+    updatedAt: null,
+    fullName: 'Jaydon Franci',
+    departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
+    professionalDetails: [
+      {
+        profileStatus: 'VERIFIED',
+        osid: 'e5153330-2fa0-42ae-bdc2-497f8c47a706',
+        designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
+        organisationType: 'Government',
+        group: 'Group A'
+      }
+    ],
+    roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
+    rootOrgId: '0132238763297177601',
+    profileImageUrl: '',
+    recievedAt: Date.now() - 45 * 24 * 60 * 60 * 1000, // 1.5 months ago
+    timeAgo: '1 month'
+  }
+  ];
   peopleYouMayKnowList: any[] = [
     {
       professionalDetails: [
@@ -171,16 +204,28 @@ export class NetworkHomeComponent implements OnInit{
       "@id": "bff48d63-5dba-4376-abd3-00a4e4315b4c"
     }
   ]
+  mentorSuggestionsList: any[] = []
 
   //#endregion (global variables)
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   //#region (initialization)
 
   ngOnInit() {
+  }
+
+  getDetailsFromRoutes() {
+    this.activatedRoute.data.subscribe(data => {
+      if(data) {
+        this.connectionRequestsList = _.get(data, 'connectionRequests.data', []);
+        this.peopleYouMayKnowList = _.get(data, 'peopleSuggestions.data', []);
+        this.mentorSuggestionsList = _.get(data, 'mentorSuggestions.data', []);
+      }
+    })
   }
 
   //#endregion (initialization)
@@ -189,6 +234,7 @@ export class NetworkHomeComponent implements OnInit{
     if (type) {
       switch (type) {
         case 'connectionRequests':
+          this.router.navigate(['/app/network-v2/connections'])
           break
         case 'peopleYouMayKnow':
           const queryParams = {

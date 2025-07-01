@@ -20,4 +20,18 @@
   /*stylelint-disable */
   font: 700 14px 'Lato';
   /* stylelint-enable */
+
+  .route-icons {
+    color: #FFFFFF !important;
+    filter: brightness(0) invert(1);
+  }
+}
+
+.route-icons {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1B4CA1;
 }

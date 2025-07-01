@@ -10,6 +10,7 @@ export class ConnectionsCardComponent implements OnInit {
   
   @Input() otherUserProfile: any;
   @Input() currentTab = 'request'
+  @Input() showBorder = true;
   nameInitials = '';
 
   ngOnInit(): void {
@@ -17,7 +18,7 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   getInitials(): void {
-    const userName = _.get(this.otherUserProfile, 'firstName', '');
+    const userName = _.get(this.otherUserProfile, 'fullName', '');
     if (userName) {
       if (userName.split(' ').length > 1) {
         const nameArr = userName.split(' ')

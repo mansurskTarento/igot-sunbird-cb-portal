@@ -13,6 +13,7 @@ import { ProfileCardComponent } from './components/profile-card/profile-card.com
 import { ConnectionsCardComponent } from './components/connections-card/connections-card.component';
 import { UpdatesCardComponent } from './components/updates-card/updates-card.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyMenuModule } from '@angular/material/legacy-menu';
 import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module';
 // import { NetworkProfileCardModule } from '@sunbird-cb/consumption'
@@ -20,7 +21,7 @@ import { ConnectionPeopleCardComponent } from './components/connection-people-ca
 import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
 import { TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
-import { CommunitySuggestionsModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/community-suggestions/community-suggestions.module';
+import { CommunitySuggestionsModule } from '@sunbird-cb/consumption';
 import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
 
 
@@ -44,6 +45,7 @@ import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/paginat
     CommonModule,
     NetworkV3RoutingModule,
     MatIconModule,
+    MatLegacyMenuModule,
     AvatarPhotoModule,
     ConnectionNameModule,
     PaginationModule,

@@ -19,31 +19,33 @@ export class NetworkComponent implements OnInit {
       name: 'Explore Network',
       navigationUrl: '/app/network-v2/home',
       routeId: 'home',
-      icon: 'person_search'
+      imageUrl: './assets/icons/person_search.svg'
     },
     {
       name: 'Updates',
       navigationUrl: '/app/network-v2/updates',
       routeId: 'updates',
-      icon: 'mark_unread_chat_alt'
+      imageUrl: './assets/icons/update.svg'
     },
     {
       name: 'Connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      icon: 'groups'
+      icon: 'groups',
+      imageUrl: './assets/icons/connection.svg'
     },
     {
       name: 'Recommendations',
       navigationUrl: '/app/network-v2/recommendations',
       routeId: 'recommendations',
-      icon: 'star'
+       icon: 'groups',
+      // imageUrl: './assets/icons/.svg'
     },
     {
       name: 'Mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      icon: 'supervisor_account'
+      imageUrl: './assets/icons/FRAC_dictionaries.svg'
     }
   ]
   userDetails: any = {};

@@ -1,3 +1,7 @@
+.border-b {
+  border-bottom: 1px solid var(--borders-black-border-8-black, rgba(0, 0, 0, 0.08));
+}
+
 .profile-iamge {
   width: 48px;
   height: 48px;
@@ -16,7 +20,7 @@
 }
 
 .user-details {
-  width: 300px;
+  width: 280px;
 
   .user-name {
     /*stylelint-disable */
@@ -38,7 +42,7 @@
     text-overflow: ellipsis;
   }
 
-  .description {
+  .organisation {
     /*stylelint-disable */
     font: 400 12px Lato;
     /* stylelint-enable */
@@ -61,6 +65,7 @@
 
 .action-buttons {
   width: 156px;
+  min-height: 60px;
 
   .timing {
     /*stylelint-disable */
@@ -69,6 +74,13 @@
     color: #666666;
     line-height: 12px;
   }
+
+  .connectionsMenuIcon {
+    color: #1B4CA1;
+    font-size: 24px;
+    cursor: pointer;
+  }
+    
 
   .request-btns {
     height: calc(100% - 12px);

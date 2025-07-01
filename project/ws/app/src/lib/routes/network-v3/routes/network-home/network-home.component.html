@@ -19,10 +19,7 @@
     </div>
     <div class="flex flex-col w-full">
       <ng-container *ngFor="let otherUserProfile of connectionRequestsList; index as i">
-        <ws-app-connections-card [otherUserProfile]="otherUserProfile"></ws-app-connections-card>
-        <ng-container *ngIf="i < connectionRequestsList.length -1 ">
-          <div class="w-full saparater"></div>
-        </ng-container>
+        <ws-app-connections-card [otherUserProfile]="otherUserProfile" [showBorder]="i < connectionRequestsList.length -1"></ws-app-connections-card>
       </ng-container>
     </div>
   </div>

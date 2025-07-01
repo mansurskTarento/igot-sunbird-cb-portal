@@ -1,7 +1,11 @@
-<div class="w-full flex flex-col gap-4">
-  <div class="header">Connections</div>
+<div class="w-full flex flex-col gap-4 network-connections">
+  <div class="header">Connections {{selectedTabIndex}}</div>
 
-  <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex">
+  <mat-tab-group
+    class="w-full"
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
     <mat-tab>
       <ng-template mat-tab-label>
         <div class="flex tabLable justify-center items-center">
@@ -15,10 +19,10 @@
         </div>
       </ng-template>
       <ng-template matTabContent>
-        <div>
-          <ng-container *ngFor="let connection of connectionsList">
+        <div class="connections-list">
+          <ng-container *ngFor="let connection of connectionsList; let i = index">
             <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'connections'"></ws-app-connections-card>
+              [currentTab]="'connections'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
           </ng-container>
         </div>
       </ng-template>
@@ -37,10 +41,10 @@
         </div>
       </ng-template>
       <ng-template matTabContent>
-        <div>
-          <ng-container *ngFor="let connection of requestsList">
+        <div class="connections-list">
+          <ng-container *ngFor="let connection of requestsList; let i = index">
             <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'request'"></ws-app-connections-card>
+              [currentTab]="'request'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
           </ng-container>
         </div>
       </ng-template>
@@ -59,10 +63,10 @@
         </div>
       </ng-template>
       <ng-template matTabContent>
-        <div>
-          <ng-container *ngFor="let connection of sentRequestsList">
+        <div class="connections-list">
+          <ng-container *ngFor="let connection of sentRequestsList; let i = index">
             <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'sent'"></ws-app-connections-card>
+              [currentTab]="'sent'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
           </ng-container>
         </div>
       </ng-template>
@@ -81,10 +85,10 @@
         </div>
       </ng-template>
       <ng-template matTabContent>
-        <div>
-          <ng-container *ngFor="let connection of blockedList">
+        <div class="connections-list">
+          <ng-container *ngFor="let connection of blockedList; let i = index">
             <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'blocked'"></ws-app-connections-card>
+              [currentTab]="'blocked'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
           </ng-container>
         </div>
       </ng-template>
@@ -92,4 +96,3 @@
   </mat-tab-group>
 
 
-    

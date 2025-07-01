@@ -71,10 +71,9 @@ import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/prof
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
 import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-// import { CommunitySuggestionsComponent } from './components/profile-revamp/community-suggestions/community-suggestions.component'
 import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
 import { SearchV3Module } from '../search-v3/search-v3.module'
-import { CommunitySuggestionsModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/community-suggestions/community-suggestions.module'
+import { CommunitySuggestionsModule } from '@sunbird-cb/consumption';
 
 @NgModule({
     declarations: [
@@ -99,7 +98,6 @@ import { CommunitySuggestionsModule } from '../../../../../../../library/ws-widg
         PrfileEditV2Component,
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
-        // CommunitySuggestionsComponent,
         CertificateViewPopupComponent
     ],
     imports: [

@@ -1,19 +1,19 @@
-<div class="w-full flex justify-between py-3">
+<div class="w-full flex justify-between gap-4 py-3" [ngClass]="{'border-b': showBorder}">
   <!-- #region (user details) -->
    <div class="flex gap-2">
     <div class="profile-iamge">
       <ws-widget-avatar-photo 
-        [photoUrl]="otherUserProfile?.profileIamge"
+        [photoUrl]="otherUserProfile?.profileImageUrl"
         [initials]="nameInitials"
-        [name]="otherUserProfile?.firstName"
+        [name]="otherUserProfile?.fullName"
         [size]="'round-m'"
       ></ws-widget-avatar-photo>
     </div>
 
     <div class="user-details flex flex-col gap-1">
-      <div class="user-name">{{ otherUserProfile?.firstName }}"></div>
-      <div class="user-designation">{{ otherUserProfile?.currentRole }}</div>
-      <div class="description">{{ otherUserProfile?.description }}</div>
+      <div class="user-name">{{ otherUserProfile?.fullName }}"</div>
+      <div class="user-designation">{{ otherUserProfile?.professionalDetails?.[0]?.designation }}</div>
+      <div class="organisation">{{ otherUserProfile?.professionalDetails?.[0]?.organisationType }}</div>
       <div class="location">{{ otherUserProfile?.location }} </div>
     </div>
   </div>
@@ -22,26 +22,26 @@
    <!-- #region (status and actions) -->
     <div class="flex justify-center items-center action-buttons h-full" [ngSwitch]="currentTab">
       <ng-container *ngSwitchCase="'connections'">
-        <div class="flex w-full justify-between items-center">
+        <div class="flex w-full gap-8 justify-center items-center">
            <a class="flex gap-1 items-center action-link">
               View Profile
             </a>
 
-          <!-- <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
-            <mat-icon class="cover-photo-menu-icon">more_vert</mat-icon>
+          <div class="flex justify-center items-center" [matMenuTriggerFor]="connectionsMenu">
+            <mat-icon class="connectionsMenuIcon">more_vert</mat-icon>
           </div>
-          <mat-menu #coverPhotoMenu="matMenu">
+          <mat-menu #connectionsMenu="matMenu">
             <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
               <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
             </button>
-          </mat-menu> -->
+          </mat-menu>
         </div>
       </ng-container>
 
       <ng-container *ngSwitchCase="'request'">
         <div class="w-full flex flex-col gap-4">
           <div class="flex h-full flex-col w-full">
-            <div class="flex justify-end timing">{{otherUserProfile?.time}}</div>
+            <div class="flex justify-end timing">{{otherUserProfile?.timeAgo}}</div>
           </div>
           <div class="request-btns flex justify-between w-full items-center">
             <div class="ignore flex justify-center items-center">Ignore</div>

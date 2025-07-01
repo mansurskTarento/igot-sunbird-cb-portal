@@ -9,6 +9,9 @@ import { MentorsComponent } from "./routes/mentors/mentors.component";
 import { AllRecommendationsComponent } from "./components/all-recommendations/all-recommendations.component";
 import { CommunityResolverService } from "./resolvers/community-resolver.service";
 import { profileResolver } from "./resolvers/profile.resolver";
+import { connectionRequestsResolver } from "./resolvers/connection-requests.resolver";
+import { peopleSuggestionsResolver } from "./resolvers/people-suggestions.resolver";
+import { mentorSuggestionsResolver } from "./resolvers/mentor-suggestions.resolver";
 
 const routes: Routes = [
   {
@@ -34,6 +37,11 @@ const routes: Routes = [
         data: {
           pageId: 'home',
           module: 'Network',
+        },
+        resolve: {
+          connectionRequests: connectionRequestsResolver,
+          peopleSuggestions: peopleSuggestionsResolver,
+          mentorSuggestions: mentorSuggestionsResolver,
         }
       },
       {
@@ -86,7 +94,10 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [
     CommunityResolverService,
-    profileResolver
+    profileResolver,
+    connectionRequestsResolver,
+    peopleSuggestionsResolver,
+    mentorSuggestionsResolver
   ],
 })
 export class NetworkV3RoutingModule { }
