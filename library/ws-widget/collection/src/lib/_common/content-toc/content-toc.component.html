@@ -46,29 +46,33 @@
                     </select>
                 </mat-form-field> -->
                 <div class="flex flex-row w-full">
-                    <div class="w-80">
-                        <div class="ml-5-per" *ngIf="subTitles && subTitles.length">
+                    <div class="w-subtitle-80">
+                        <div class="ml-5-per" *ngIf="subTitles && subTitles?.length">
                             <!-- Transcription content -->
                              <ng-container *ngFor="let subtitle of subTitles">
                                 <div class="flex flex-col  my-2">
                                     <div class="flex flex-row">
-                            <div class="w-15">
-                                <p class="blue-underline cursor-pointer" (click)="playFromSlot(subtitle)">
-                                    <span *ngIf="subtitle?.startTime/1000 === 0">0s</span>
-                                    <span *ngIf="subtitle?.startTime/1000 !== 0">{{ (subtitle?.startTime/1000) | pipeDurationTransform: 'hms'  }}</span>
-                                    
-                                     -  {{ (subtitle?.endTime/1000) | pipeDurationTransform: 'hms'}}
+                            <div class="subtitle-time">
+                                <p class="cursor-pointer" (click)="playFromSlot(subtitle)">
+                                   <span class="pr-1 blue-underline"> {{ formatMsToVttTime(subtitle?.startTime) }} </span>
+                                   <span class="black-text" >-</span> 
+                                   <span class="pl-1 blue-underline">{{ formatMsToVttTime(subtitle?.endTime) }}</span>
                                 </p>
                             </div>
-                            <div class="ml-4 w-80 mr-4">
-                                <p class="black-text" [innerHtml]="subtitle?.text | highlight:keywordToHighlight?.text:((subtitle?.startTime/1000) === keywordToHighlight?.start)"></p>
+                            <div class="ml-4 subtitle-text-slot mr-4">
+                                <p class="black-text" 
+                                    [innerHtml]="subtitle?.text 
+                                    | highlight : keywordToHighlight?.text 
+                                                : ((subtitle?.startTime / 1000) >= keywordToHighlight?.start 
+                                                    && (subtitle?.endTime / 1000) <= keywordToHighlight?.end)">
+                                </p>
                             </div> 
                         </div>
                         </div>
                     </ng-container> 
                         </div>
                     </div>
-                    <div class="w-20">
+                    <div class="w-subtitle-20">
                         <div class="transcript-flex-container mt-2">
                             <mat-form-field class="multiline-select" appearance="fill" style="height: 75px; width: 100%;" floatLabel="never">
                                 <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">

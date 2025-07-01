@@ -162,7 +162,7 @@
         <div class="flex flex-column respo_inner">
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
-              <h2 [innerHTML]="question?.question | QuestionSafeUrl" class="m-auto quiz-question mat-h2">
+              <h2 [innerHTML]="question?.question | QuestionSafeUrl " class="m-auto quiz-question mat-h2">
               </h2>
               <span *ngIf="question?.instructions" class="mat-subheading-2" >
                 {{ question?.instructions}}

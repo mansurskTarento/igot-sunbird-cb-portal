@@ -107,7 +107,7 @@ export class SingleChoiseQuesComponent implements OnInit, OnDestroy {
             return response
         }
         return res
-    }
+}
     ngOnDestroy(): void {
         this.practiceSvc.shCorrectAnswer(false)
         if (this.shCorrectAnsSubscription) {

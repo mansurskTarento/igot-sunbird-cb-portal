@@ -202,3 +202,7 @@ app-content-icon {
   align-items: center;
   margin-left: 8px;
 }
+
+::ng-deep .player-content .mat-tab-label-active {
+  opacity: 1;
+}

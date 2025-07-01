@@ -355,7 +355,7 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
             return response
         }
         return res
-    }
+}
     ngOnDestroy(): void {
         this.practiceSvc.shCorrectAnswer(false)
         if (this.shCorrectAnsSubscription) {
