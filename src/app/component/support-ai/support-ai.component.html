@@ -1,9 +1,12 @@
 <div class="igot-ai-container" id="igot-ai-container">
   <div class="message-container" id="message-container">
-    <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
+    <div [ngClass]="fullScreenChatFlag ? 'message-container-full' : 'message-container'"  id="message-container">
+      <ng-container *ngIf="aiSearchResultArr?.length === 0">
+      <div [ngClass]="fullScreenChatFlag ? 'start-chat-full':'start-chat'">
       <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
       <p>Welcome to Support AI, Your dedicated support assistant for instant help, step-by-step guidance, and personalized support tailored to your needs.</p>
     </div>
+    </ng-container>
     <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
 
       <ng-container *ngIf="chat.type === 'incoming'">
@@ -245,7 +248,7 @@
       </ng-container>
     </ng-container>
   </div>
-  <div class="control-container">
+  <div [ngClass]="fullScreenChatFlag ? 'control-container-full':'control-container'">
     <div class="border-gradient-rounded" [style.height.px]="containerHeight">
       <div class="flex flex-row ml-5 mr-1 justify-between">
 
