@@ -98,6 +98,7 @@
   top: 60px;
   margin: 0 10px;
   padding: 0;
+  left:0;
 }
 
 .cb-close {
@@ -451,6 +452,17 @@
   position: absolute;
   width: 100%;
   top: 64px;
+  bottom: 192px;
+  max-height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  background-color: #F0F3F4;
+}
+
+.cb-content-wrapper-ai {
+  position: absolute;
+  width: 100%;
+  top: 64px;
   bottom: 170px;
   max-height: 100%;
   overflow: auto;
@@ -516,6 +528,9 @@
     bottom: 0px;
   }
   .cb-content-wrapper {
+    bottom: 152px;
+  }
+  .cb-content-wrapper-ai {
     bottom: 130px;
   }
   .chatbot-icon-container {
@@ -759,7 +774,7 @@
     bottom: 0;
   }
 
-  .chatbot-with-ai-min[_ngcontent-ng-c438366657] {
+  .chatbot-with-ai-min {
     width: 100%;
     position: fixed;
     bottom: 3px;
