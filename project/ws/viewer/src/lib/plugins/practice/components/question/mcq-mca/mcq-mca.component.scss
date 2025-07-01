@@ -15,15 +15,16 @@
 }
 
 
-.mat-list-base .mat-list-item, .mat-list-base .mat-list-option {
-  width:380px !important;
+.mat-list-base .mat-list-item, .mat-list-base .mat-list-option.mcq-options {
+  width:380px ;
   min-height: 48px;
   height: auto !important;
   word-wrap: break-word;
+  padding: 0;
 }
 
-.mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content {
-  padding:16px !important
+.mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option.mcq-options .mat-list-item-content {
+  padding:16px;
 }
 
 .ws-mat-accent-border-active {

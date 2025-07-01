@@ -164,7 +164,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   primaryDetails: any;
 
   groupsList: any[] = []
-  designationsList: any[] = []
   isMentor = false
   enableWTR = false; // to enable withdraw transfer request
   enableWR = false; // to enable withdraw request
@@ -241,8 +240,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getGroupData()
-    this.loadDesignations()
-
     this.getInsightsData()
     
   }
@@ -260,17 +257,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         }
       })
   }
-
-  loadDesignations() {
-    this.profileV2RevampSvc.getDesignations({}).subscribe(
-      (data: any) => {
-        this.designationsList = data.responseData
-      },
-      (_err: any) => {
-        this.openSnackbar('Failed to load designations')
-      })
-  }
-
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
@@ -618,7 +604,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       }
     } else if (header === 'Primary Details') {
       dialogDetails['groupsList'] = this.groupsList
-      dialogDetails['designationsMeta'] = this.designationsList
     }
     const dialogRef = this.dialog.open(PrfileEditV2Component, {
       data: dialogDetails,
@@ -955,7 +940,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   handleTransferRequest(): void {
     const portalProfile = _.get(this.profesionalDetails, 'profileDetails', this.profesionalDetails)
     const dialogRef = this.dialog.open(TransferRequestComponent, {
-      data: { portalProfile, groupData: this.groupsList, designationsMeta: this.designationsList },
+      data: { 
+        portalProfile, 
+        groupData: this.groupsList
+      },
       disableClose: true,
       panelClass: 'common-modal',
     })
@@ -1121,7 +1109,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   async generateEducationalQualificationsFormBody(educationalQualifications: any, oldDetails: any): Promise<any> {
-    const isOtherDegree = _.get(educationalQualifications, 'degree', '') === 'other' && _.get(educationalQualifications, 'otherDegree', '') ? true : false;
+    const isOtherDegree = _.get(educationalQualifications, 'degree', '').toLowerCase() === 'other' && _.get(educationalQualifications, 'otherDegree', '') ? true : false;
     const isOtherInstitute = _.get(educationalQualifications, 'institutionName', '').toLowerCase() === 'other' && _.get(educationalQualifications, 'otherInstituteName', '') ? true : false;
     const formBody: any = {
       request: {

@@ -672,14 +672,15 @@ export class AppTocService {
           }
       }
       if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM
-        || content.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+        || content.primaryCategory === NsContent.EPrimaryCategory.COURSE
+        || content.primaryCategory === NsContent.EPrimaryCategory.STANDALONE_ASSESSMENT) {
         // this.mapCompletionPercentage(content, this.resumeData)
         const foundParentContent = enrolmentList.find((el: any) => el.collectionId === content.identifier)
         const req = {
           request: {
-            batchId: foundParentContent.batch.batchId,
-            userId: foundParentContent.userId,
-            courseId: foundParentContent.collectionId,
+            batchId: foundParentContent?.batch.batchId,
+            userId: foundParentContent?.userId,
+            courseId: foundParentContent?.collectionId,
             contentIds: [],
             fields: [
               'progressdetails',

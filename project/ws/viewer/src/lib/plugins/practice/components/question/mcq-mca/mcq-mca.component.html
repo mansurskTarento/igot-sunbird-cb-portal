@@ -5,7 +5,7 @@
     (showAns && option?.isCorrect),
   'incorrect-answer': showAns && !option?.isCorrect && isSelected(option)
 }" *ngFor="let option of question?.options">
-      <mat-list-option #lo checkboxPosition="before" class="margin-top-s" [ngClass]="{
+      <mat-list-option #lo checkboxPosition="before" class="margin-top-s mcq-options" [ngClass]="{
         'ws-mat-accent-border': !(lo.selected),
         'ws-mat-accent-border-active ': (lo.selected)
       }" (click)="updateParent(option.optionId, lo.selected)"
