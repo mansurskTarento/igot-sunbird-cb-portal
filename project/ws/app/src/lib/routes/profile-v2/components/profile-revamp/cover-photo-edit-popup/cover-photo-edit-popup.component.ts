@@ -71,9 +71,9 @@ export class CoverPhotoEditPopupComponent implements OnInit {
       const file = input.files[0]
 
       // Validate file type
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        this.snackBar.open('Only png, jpg, jpeg, svg images types are supported', 'X', {
+        this.snackBar.open('Only png, jpg, jpeg, svg, webp image types are supported', 'X', {
           duration: 1500,
         })
         return

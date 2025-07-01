@@ -8,9 +8,11 @@
           <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>
           </div>
         </ng-container>
-        <div class="block md:hidden rightArrowDiv"  (click)="viewAll(stat)">
-          <mat-icon class="right-arrow" >chevron_right</mat-icon>
-        </div>
+        <ng-container *ngIf="stat?.totalPoints > 0">
+          <div class="block md:hidden rightArrowDiv"  (click)="viewAll(stat)">
+            <mat-icon class="right-arrow" >chevron_right</mat-icon>
+          </div>
+        </ng-container>
       </div>
       
       <div class="flex justify-between items-center mt-1 md:mt-3">
@@ -19,9 +21,11 @@
           <div class="statPoints">{{stat?.totalPoints}}</div>
         </div>
 
-        <div class="viewAll hidden md:block">
-          <a (click)="viewAll(stat)" >{{'NetworkV2Profile.viewAll' | translate}}</a>
-        </div>
+        <ng-container *ngIf="stat?.totalPoints > 0">
+          <div class="viewAll hidden md:block">
+            <a (click)="viewAll(stat)" >{{'NetworkV2Profile.viewAll' | translate}}</a>
+          </div>
+        </ng-container>
 
       </div>
     </div>

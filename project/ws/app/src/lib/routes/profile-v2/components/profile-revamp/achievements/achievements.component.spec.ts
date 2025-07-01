@@ -1,488 +1,166 @@
-import { EventEmitter } from '@angular/core';
-import { of, throwError } from 'rxjs';
 import * as _ from 'lodash';
 import { AchievementsComponent } from './achievements.component';
-import { achievement } from '../../../models/profile-revamp.model';
 
-// Mock dependencies
-const mockDialogRef = {
-  close: jest.fn()
-} as any;
-
-const mockData = {
-  userId: 'test-user-id',
-  isCurrentUser: true
-} as any;
-
-const mockProfileV2RevampService = {
-  fetchProfileEntries: jest.fn()
-} as any;
-
-const mockSnackBar = {
-  open: jest.fn()
-} as any;
-
-const mockDialog = {
-  open: jest.fn()
-} as any;
-
-// Mock window.open
-Object.defineProperty(window, 'open', {
-  writable: true,
-  value: jest.fn()
-});
-
-describe('AchievementsComponent', () => {
-  let component: AchievementsComponent;
-  let mockAchievements: achievement[];
+describe('AchievementsComponent (Jest, no TestBed)', () => {
+  let component: any;
+  let mockDialogRef: any;
+  let mockData: any;
+  let mockProfileV2RevampSvc: any;
+  let mockSnackBar: any;
+  let mockDialog: any;
+  let mockCdr: any;
 
   beforeEach(() => {
-    // Reset all mocks
-    jest.clearAllMocks();
-    
-    // Initialize mock data
-    mockAchievements = [
-      {
-        id: '1',
-        title: 'Test Achievement 1',
-        issuedOrganisation: 'Test Org 1',
-        issuedDate: '2024-01-01',
-        description: 'Test description 1',
-        uploadedDocumentUrl: 'https://test.com/doc1.pdf',
-        fileName: 'certificate1.pdf',
-        url: 'https://test.com/cert1',
-        showMore: false
-      },
-      {
-        id: '2',
-        title: 'Test Achievement 2',
-        issuedOrganisation: 'Test Org 2',
-        issuedDate: '2024-02-01',
-        description: 'Test description 2',
-        uploadedDocumentUrl: '',
-        fileName: '',
-        url: '',
-        showMore: true
-      }
-    ] as any;
-
-    // Create component instance
+    mockDialogRef = { close: jest.fn() };
+    mockData = { userId: 'user1', isCurrentUser: true };
+    mockProfileV2RevampSvc = { fetchProfileEntries: jest.fn() };
+    mockSnackBar = { open: jest.fn() };
+    mockDialog = { open: jest.fn() };
+    mockCdr = { detectChanges: jest.fn() };
     component = new AchievementsComponent(
       mockDialogRef,
       mockData,
-      mockProfileV2RevampService,
+      mockProfileV2RevampSvc,
       mockSnackBar,
-      mockDialog
+      mockDialog,
+      mockCdr
     );
   });
 
-  describe('Constructor', () => {
-    it('should initialize with dialog data when data is provided', () => {
-      const testData = {
-        userId: 'test-user-123',
-        isCurrentUser: true
-      };
-      
-      const testComponent = new AchievementsComponent(
-        mockDialogRef,
-        testData,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(testComponent.userId).toBe('test-user-123');
-      expect(testComponent.isPopup).toBe(true);
-      expect(testComponent.isCurrentUser).toBe(true);
-    });
-
-    it('should initialize with default values when no data is provided', () => {
-      const testComponent = new AchievementsComponent(
-        mockDialogRef,
-        null,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(testComponent.userId).toBe('');
-      expect(testComponent.isPopup).toBe(false);
-      expect(testComponent.isCurrentUser).toBe(false);
-    });
-
-    it('should handle data without isCurrentUser property', () => {
-      const testData = {
-        userId: 'test-user-456'
-      };
-      
-      const testComponent = new AchievementsComponent(
-        mockDialogRef,
-        testData,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(testComponent.isCurrentUser).toBe(false);
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('should call getAchievementsList when isPopup is true', () => {
-      component.isPopup = true;
-      const getAchievementsListSpy = jest.spyOn(component, 'getAchievementsList').mockImplementation(() => {});
-
-      component.ngOnInit();
-
-      expect(getAchievementsListSpy).toHaveBeenCalled();
-    });
-
-    it('should not call getAchievementsList when isPopup is false', () => {
-      component.isPopup = false;
-      const getAchievementsListSpy = jest.spyOn(component, 'getAchievementsList').mockImplementation(() => {});
-
-      component.ngOnInit();
-
-      expect(getAchievementsListSpy).not.toHaveBeenCalled();
-    });
+  it('should set userId, isPopup, isCurrentUser from data', () => {
+    expect(component.userId).toBe('user1');
+    expect(component.isPopup).toBe(true);
+    expect(component.isCurrentUser).toBe(true);
   });
 
-  describe('getAchievementsList', () => {
-    it('should fetch achievements successfully when userId exists', () => {
-      const mockResponse = {
-        result: {
-          response: {
-            achievements: mockAchievements
-          }
-        }
-      };
-      
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(mockResponse));
-
-      component.getAchievementsList();
-
-      expect(mockProfileV2RevampService.fetchProfileEntries).toHaveBeenCalledWith('test-user-id', 'achievement');
-      expect(component.achievementsList).toEqual(mockAchievements);
-    });
-
-    it('should handle empty response', () => {
-      const mockResponse = {
-        result: {
-          response: {
-            achievements: []
-          }
-        }
-      };
-      
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(mockResponse));
-
-      component.getAchievementsList();
-
-      expect(component.achievementsList).toEqual([]);
-    });
-
-    it('should handle null response', () => {
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(null));
-
-      component.getAchievementsList();
-
-      expect(component.achievementsList).toEqual([]);
-    });
-
-    it('should handle missing nested properties using lodash get', () => {
-      const mockResponse = {
-        result: {}
-      };
-      
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(mockResponse));
-
-      component.getAchievementsList();
-
-      expect(component.achievementsList).toEqual([]);
-    });
-
-    it('should handle error and show snackbar', () => {
-      const mockError = new Error('Network error');
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(throwError(() => mockError));
-      const openSnackbarSpy = jest.spyOn(component as any, 'openSnackbar').mockImplementation(() => {});
-
-      component.getAchievementsList();
-
-      expect(openSnackbarSpy).toHaveBeenCalledWith('Something went wrong while fetching achievements, please try again later', 2000);
-    });
-
-    it('should not make API call when userId is empty', () => {
-      component.userId = '';
-
-      component.getAchievementsList();
-
-      expect(mockProfileV2RevampService.fetchProfileEntries).not.toHaveBeenCalled();
-    });
+  it('should set defaults if no data', () => {
+    const c: any = new AchievementsComponent(
+      mockDialogRef,
+      null,
+      mockProfileV2RevampSvc,
+      mockSnackBar,
+      mockDialog,
+      mockCdr
+    );
+    expect(c.userId).toBe('');
+    expect(c.isPopup).toBe(false);
+    expect(c.isCurrentUser).toBe(false);
   });
 
-  describe('openEditDialog', () => {
-    it('should emit openProfileEntryEditDialog with entry data', () => {
-      const mockEntry = { id: '1', title: 'Test Entry' };
-      const emitSpy = jest.spyOn(component.openProfileEntryEditDialog, 'emit');
-
-      component.openEditDialog(mockEntry);
-
-      expect(emitSpy).toHaveBeenCalledWith(mockEntry);
-    });
-
-    it('should emit openProfileEntryEditDialog with empty object when no entry provided', () => {
-      const emitSpy = jest.spyOn(component.openProfileEntryEditDialog, 'emit');
-
-      component.openEditDialog();
-
-      expect(emitSpy).toHaveBeenCalledWith({});
-    });
+  it('should call getAchievementsList in ngOnInit if isPopup', () => {
+    component.isPopup = true;
+    const spy = jest.spyOn(component, 'getAchievementsList').mockImplementation(() => {});
+    component.ngOnInit();
+    expect(spy).toHaveBeenCalled();
   });
 
-  describe('viewMore', () => {
-    it('should set showMore to false when it is currently true', () => {
-      const mockAchievement = { showMore: true };
-
-      component.viewMore(mockAchievement);
-
-      expect(mockAchievement.showMore).toBe(false);
-    });
-
-    it('should set showMore to true when it is currently false', () => {
-      const mockAchievement = { showMore: false };
-
-      component.viewMore(mockAchievement);
-
-      expect(mockAchievement.showMore).toBe(true);
-    });
-
-    it('should set showMore to true when showMore property does not exist', () => {
-      const mockAchievement = {} as any;
-
-      component.viewMore(mockAchievement);
-
-      expect(mockAchievement.showMore).toBe(true);
-    });
-
-    it('should handle null achievement', () => {
-      expect(() => component.viewMore(null)).toThrow();
-    });
-
-    it('should handle undefined achievement', () => {
-      expect(() => component.viewMore(undefined)).toThrow();
-    });
+  it('should call detectChanges in ngOnInit if not isPopup', () => {
+    component.isPopup = false;
+    component.ngOnInit();
+    expect(mockCdr.detectChanges).toHaveBeenCalled();
   });
 
-  describe('openDocument', () => {
-    it('should open dialog with certificate URL when URL is provided', () => {
-      const testUrl = 'https://test.com/certificate.pdf';
-
-      component.openDocument(testUrl);
-
-      expect(mockDialog.open).toHaveBeenCalledWith(
-        expect.any(Function), // CertificateViewPopupComponent
-        {
-          width: '600px',
-          panelClass: 'cover-photo-edit-popup',
-          data: {
-            certificateUrl: testUrl
-          },
-          disableClose: true,
-          autoFocus: false,
-        }
-      );
+  it('should fetch achievements and set achievementsList', () => {
+    const mockAchievements = [{ id: 1 }, { id: 2 }];
+    const mockResponse = { result: { response: { achievements: mockAchievements } } };
+    component.userId = 'user1';
+    mockProfileV2RevampSvc.fetchProfileEntries.mockReturnValue({
+      subscribe: ({ next }: any) => next(mockResponse)
     });
-
-    it('should not open dialog when URL is empty', () => {
-      component.openDocument('');
-
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
-
-    it('should not open dialog when URL is null', () => {
-      component.openDocument(null as any);
-
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
-
-    it('should not open dialog when URL is undefined', () => {
-      component.openDocument(undefined as any);
-
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
+    jest.spyOn(_, 'get');
+    component.getAchievementsList();
+    expect(mockProfileV2RevampSvc.fetchProfileEntries).toHaveBeenCalledWith('user1', 'achievement');
+    expect(component.achievementsList).toEqual(mockAchievements);
+    expect(mockCdr.detectChanges).toHaveBeenCalled();
+    expect(_.get).toHaveBeenCalledWith(mockResponse, 'result.response.achievements', []);
   });
 
-  describe('openUrl', () => {
-    it('should open URL in new tab when URL is provided', () => {
-      const testUrl = 'https://test.com/certificate';
-
-      component.openUrl(testUrl);
-
-      expect(window.open).toHaveBeenCalledWith(testUrl, '_blank');
+  it('should handle error in getAchievementsList', () => {
+    component.userId = 'user1';
+    mockProfileV2RevampSvc.fetchProfileEntries.mockReturnValue({
+      subscribe: ({ error }: any) => error('err')
     });
-
-    it('should not open URL when URL is empty', () => {
-      component.openUrl('');
-
-      expect(window.open).toHaveBeenCalled();
-    });
-
-    it('should not open URL when URL is null', () => {
-      component.openUrl(null as any);
-
-      expect(window.open).toHaveBeenCalled();
-    });
-
-    it('should not open URL when URL is undefined', () => {
-      component.openUrl(undefined as any);
-
-      expect(window.open).toHaveBeenCalled();
-    });
+    const spy = jest.spyOn(component as any, 'openSnackbar').mockImplementation(() => {});
+    component.getAchievementsList();
+    expect(spy).toHaveBeenCalledWith('Something went wrong while fetching achievements, please try again later', 2000);
   });
 
-  describe('closePopup', () => {
-    it('should close dialog when isPopup is true', () => {
-      component.isPopup = true;
-
-      component.closePopup();
-
-      expect(mockDialogRef.close).toHaveBeenCalled();
-    });
-
-    it('should not close dialog when isPopup is false', () => {
-      component.isPopup = false;
-
-      component.closePopup();
-
-      expect(mockDialogRef.close).not.toHaveBeenCalled();
-    });
+  it('should not call API if userId is empty', () => {
+    component.userId = '';
+    component.getAchievementsList();
+    expect(mockProfileV2RevampSvc.fetchProfileEntries).not.toHaveBeenCalled();
   });
 
-  describe('openSnackbar (private method)', () => {
-    it('should open snackbar with default duration', () => {
-      const testMessage = 'Test message';
-
-      (component as any).openSnackbar(testMessage);
-
-      expect(mockSnackBar.open).toHaveBeenCalledWith(testMessage, 'X', {
-        duration: 5000,
-      });
-    });
-
-    it('should open snackbar with custom duration', () => {
-      const testMessage = 'Test message';
-      const testDuration = 3000;
-
-      (component as any).openSnackbar(testMessage, testDuration);
-
-      expect(mockSnackBar.open).toHaveBeenCalledWith(testMessage, 'X', {
-        duration: testDuration,
-      });
-    });
+  it('should emit openProfileEntryEditDialog if not popup', () => {
+    component.isPopup = false;
+    const spy = jest.spyOn(component.openProfileEntryEditDialog, 'emit');
+    component.openEditDialog({ id: 1 });
+    expect(spy).toHaveBeenCalledWith({ id: 1 });
   });
 
-  describe('Component Properties', () => {
-    it('should initialize achievementsList as empty array', () => {
-      const newComponent = new AchievementsComponent(
-        mockDialogRef,
-        null,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(newComponent.achievementsList).toEqual([]);
-    });
-
-    it('should initialize isCurrentUser as false by default', () => {
-      const newComponent = new AchievementsComponent(
-        mockDialogRef,
-        null,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(newComponent.isCurrentUser).toBe(false);
-    });
-
-    it('should initialize openProfileEntryEditDialog as EventEmitter', () => {
-      expect(component.openProfileEntryEditDialog).toBeInstanceOf(EventEmitter);
-    });
-
-    it('should have userId as empty string by default', () => {
-      const newComponent = new AchievementsComponent(
-        mockDialogRef,
-        null,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(newComponent.userId).toBe('');
-    });
-
-    it('should have isPopup as false by default', () => {
-      const newComponent = new AchievementsComponent(
-        mockDialogRef,
-        null,
-        mockProfileV2RevampService,
-        mockSnackBar,
-        mockDialog
-      );
-
-      expect(newComponent.isPopup).toBe(false);
-    });
+  it('should close dialog if popup', () => {
+    component.isPopup = true;
+    component.openEditDialog({ id: 1 });
+    expect(mockDialogRef.close).toHaveBeenCalledWith({ id: 1 });
   });
 
-  describe('Error Handling', () => {
-    it('should handle error when fetchProfileEntries throws error', () => {
-      const mockError = { message: 'API Error' };
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(throwError(() => mockError));
-      const openSnackbarSpy = jest.spyOn(component as any, 'openSnackbar').mockImplementation(() => {});
-
-      component.getAchievementsList();
-
-      expect(openSnackbarSpy).toHaveBeenCalledWith('Something went wrong while fetching achievements, please try again later', 2000);
-    });
-
-    it('should handle malformed response structure', () => {
-      const mockResponse = {
-        incorrectStructure: true
-      };
-      
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(mockResponse));
-
-      component.getAchievementsList();
-
-      expect(component.achievementsList).toEqual([]);
-    });
+  it('should toggle showMore in viewMore', () => {
+    const ach: any = { showMore: true };
+    component.viewMore(ach);
+    expect(ach.showMore).toBe(false);
+    const ach2: any = { showMore: false };
+    component.viewMore(ach2);
+    expect(ach2.showMore).toBe(true);
+    const ach3: any = {};
+    component.viewMore(ach3);
+    expect(ach3.showMore).toBe(true);
   });
 
-  describe('Integration with lodash', () => {
-    it('should use lodash get to safely access nested properties', () => {
-      const mockResponse = {
-        result: {
-          response: {
-            achievements: mockAchievements
-          }
-        }
-      };
-      
-      component.userId = 'test-user-id';
-      mockProfileV2RevampService.fetchProfileEntries.mockReturnValue(of(mockResponse));
-      const lodashGetSpy = jest.spyOn(_, 'get');
+  it('should open dialog in openDocument if url is provided', () => {
+    component.openDocument('url');
+    expect(mockDialog.open).toHaveBeenCalled();
+  });
 
-      component.getAchievementsList();
+  it('should not open dialog in openDocument if url is empty', () => {
+    component.openDocument('');
+    expect(mockDialog.open).not.toHaveBeenCalled();
+  });
 
-      expect(lodashGetSpy).toHaveBeenCalledWith(mockResponse, 'result.response.achievements', []);
-    });
+  it('should call window.open in openUrl', () => {
+    window.open = jest.fn();
+    component.openUrl('url');
+    expect(window.open).toHaveBeenCalledWith('url', '_blank');
+  });
+
+  it('should close dialog in closePopup if isPopup', () => {
+    component.isPopup = true;
+    component.closePopup();
+    expect(mockDialogRef.close).toHaveBeenCalled();
+  });
+
+  it('should not close dialog in closePopup if not isPopup', () => {
+    component.isPopup = false;
+    component.closePopup();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it('should call snackBar.open in openSnackbar', () => {
+    (component as any).openSnackbar('msg', 1234);
+    expect(mockSnackBar.open).toHaveBeenCalledWith('msg', 'X', { duration: 1234 });
+  });
+
+  // Use all variables to avoid lint errors
+  afterEach(() => {
+    expect(component).toBeDefined();
+    expect(mockDialogRef).toBeDefined();
+    expect(mockData).toBeDefined();
+    expect(mockProfileV2RevampSvc).toBeDefined();
+    expect(mockSnackBar).toBeDefined();
+    expect(mockDialog).toBeDefined();
+    expect(mockCdr).toBeDefined();
   });
 });

@@ -84,8 +84,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private viewerDataSvc: ViewerDataService
   ) { }
 
-  ngOnInit() {
-    
+  ngOnInit() {    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -198,6 +197,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.content && this.content.identifier) {
+        // console.log('this.content.identifier', this.content.identifier)
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier

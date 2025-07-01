@@ -5,7 +5,10 @@ import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
 import { CdkDragEnd } from '@angular/cdk/drag-drop'
-
+import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { HttpClient } from '@angular/common/http'
+import { DomSanitizer } from '@angular/platform-browser'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 @Component({
   selector: 'ws-app-chatbot',
   templateUrl: './app-chatbot.component.html',
@@ -61,12 +64,18 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
+  enableSupportAI = false
+  zohoHtml: any
+  zohoUrl: any = '/assets/static-data/zoho-code.html'
   maximizeChatFlag = true
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
+    public http: HttpClient,
+    private sanitizer: DomSanitizer,
+    public dialog: MatDialog,
     private router: Router) { }
 
   ngOnInit() {
@@ -98,6 +107,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+    this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe((res:any) => {
+      this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
+    })
   }
 
   ngOnChanges() {
@@ -105,9 +117,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
+        this.enableSupportAI = true
         this.currentFilter = 'sarthi'
       } else {
         this.enableIGOTAIFlag = false
+        this.enableSupportAI = false
         this.currentFilter = 'information'
       }
     }
@@ -438,6 +452,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   checkForApiCalls() {
+    
     this.selectedLaguage = localStorage.getItem('selectedLanguage') || 'en'
     let localStg: any = JSON.parse(localStorage.getItem('faq') || '{}')
     let languageStg: any = JSON.parse(localStorage.getItem('faq-languages') || '{}')
@@ -538,7 +553,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   //  this.scrollToBottom()
   }
   clickOutside() {
-    if(this.currentFilter !== 'sarthi') {
+    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
       this.iconClick('end')
     }
   }
@@ -584,6 +599,54 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
   }
 
+  getZohoForm() {
+    const dialogRef = this.dialog.open(ZohoDialogComponent, {
+      width: '45%',
+      data: {
+        view: 'zohoform',
+        value: this.zohoHtml,
+      },
+    })
+    dialogRef.afterClosed().subscribe(() => {
+    })
+    setTimeout(() => {
+      this.callXMLRequest()
+    }, 0)
+  }
+
+  callXMLRequest() {
+    let webFormxhr: any = {}
+    webFormxhr = new XMLHttpRequest()
+    // tslint:disable-next-line: prefer-template
+    webFormxhr.open('GET', 'https://desk.zoho.in/support/GenerateCaptcha?action=getNewCaptcha&_=' + new Date().getTime(), true)
+    webFormxhr.onreadystatechange = () => {
+      if (webFormxhr.readyState === 4 && webFormxhr.status === 200) {
+        try {
+          const response = (webFormxhr.responseText != null) ? JSON.parse(webFormxhr.responseText) : ''
+          const zsCaptchaUrl: any = document.getElementById('zsCaptchaUrl')
+          if (zsCaptchaUrl) {
+            zsCaptchaUrl.src = response.captchaUrl
+            zsCaptchaUrl.style.display = 'block'
+          }
+          const xJdfEaS: any = document.getElementsByName('xJdfEaS')[0]
+          xJdfEaS.value = response.captchaDigest
+          const zsCaptchaLoading: any = document.getElementById('zsCaptchaLoading')
+          zsCaptchaLoading.style.display = 'none'
+          const zsCaptcha: any = document.getElementById('zsCaptcha')
+          zsCaptcha.style.display = 'block'
+          const refreshCaptcha: any = document.getElementById('refreshCaptcha')
+          if (refreshCaptcha) {
+            refreshCaptcha.addEventListener('click', () => {
+              this.callXMLRequest()
+            })
+          }
+        } catch (e) {
+        }
+      }
+    }
+    webFormxhr.send()
+  }
+
   minimizeChat() {
     this.maximizeChatFlag = false
   }
@@ -591,6 +654,5 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   maximizeChat() {
     this.maximizeChatFlag = true
   }
-
   
 }
