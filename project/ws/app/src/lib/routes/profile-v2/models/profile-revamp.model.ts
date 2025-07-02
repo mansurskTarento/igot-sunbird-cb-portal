@@ -59,11 +59,12 @@ export interface organisation {
   channel: string;
   imgUrl: string;
   isRootOrg?: boolean | null;
+  rootOrgId?: string;
 }
 
 export interface designation {
   id?: string;
-  designation: string;
+  name: string;
 }
 
 export const generateYears = (startYear: number = 1900): string[] => {

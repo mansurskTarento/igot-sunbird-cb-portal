@@ -48,6 +48,7 @@ export const environment: IEnvironment = {
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
   cbcOrg: (window as { [key: string]: any })['env']['cbcOrg'] || '',
+  portalsForNotifications: (((window as { [key: string]: any })['env']['portalsForNotifications'] || {})) || {}
 }
 interface IEnvironment {
   name: string,
@@ -91,6 +92,7 @@ interface IEnvironment {
   providerDataKey: string,
   compentencyVersionKey: string,
   cbcOrg: string
+  portalsForNotifications: any
 }
 
 // import { AnyCnameRecord } from 'dns'

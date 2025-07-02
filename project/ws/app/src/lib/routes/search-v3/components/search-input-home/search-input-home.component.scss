@@ -152,8 +152,8 @@
 
 .search-home-icon {
   height: 15px;
-  margin-top: 14px;
-  margin-right: 8px;
+  // margin-top: 14px;
+  // margin-right: 8px;
 }
 
 mat-list-item .mat-icon-button mat-icon {
@@ -256,7 +256,14 @@ mat-list-item {
 .recent_link {
   height: 40px;
   line-height: 1;
-  span {
-    margin-top: 14px;
-  }
+  // span {
+  //   // margin-top: 14px;
+  // }
+}
+.recent-search-list {
+    width: 100% !important;
+
+    .mat-list-item-content {
+      padding: 0 16px !important;
+    }
 }

@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { NotificationsService } from 'src/app/services/notifications.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from '../../../environments/environment'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -49,12 +52,13 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
+  roles: string[] = []
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService,
+    private events: EventService, private snackBar: MatSnackBar,
     private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -72,6 +76,10 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         this.selectedLanguage = lang
       }
     })
+
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
+      this.roles = this.configSvc.unMappedUser.roles
+    }
   }
 
   ngOnInit() {
@@ -210,6 +218,74 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
+      } else if(event?.sub_category?.includes('CONTENT')) {
+        let data = {
+          data: {
+            title: '',
+            cancelButton: 'Cancel',
+            acceptButton: 'Confirm',
+            message: 'You will be redirected to the Content Portal to view content-related notifications.',
+          },
+        }
+        let url = `${environment?.portalsForNotifications?.cbp}/app/home`
+        this.showDialog(data, url)
+      } else if (event.sub_category === 'CONTENT_PUBLISHED' || event.sub_category === 'CONTENT_EDITED') {
+        if (event.message.data && event.message.data.id) {
+          this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+            if (res) {
+              if (res.primaryCategory === 'Learning Resource' &&
+                res.resourceCategory !== 'Learning Resource') {
+                localStorage.setItem('isStandaloneResource', 'true')
+              } else {
+                localStorage.setItem('isStandaloneResource', 'false')
+              }
+              if (this.roles.includes('CONTENT_CREATOR')) {
+                if (res.status === 'Draft') {
+                  let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2`
+                  window.open(url, '_blank')
+                } else if (res.status === 'Live') {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
+                  window.open(url, '_blank')
+                } else {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
+                  window.open(url, '_blank')
+                }
+              } else {
+                if (res.status === 'Draft') {
+                  alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+                  //${environment.portalsForNotifications.cbp}
+                  window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+                } else {
+                  let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2`
+                  window.open(url, '_blank')
+                }
+              }
+            }
+          })
+        } else {
+          this.snackBar.open('Something went wrong')
+        }
+      } else if (event.sub_category === 'CONTENT_REVIEW_REQUEST' || event.sub_category === 'CONTENT_REJECTED') {
+        this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+          if (res) {
+            if (res.status === 'Draft') {
+              alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
+              window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
+            } else {
+              if (this.roles.includes('CONTENT_REVIEWER')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?mode=edit`
+                window.open(url, '_blank')
+              } else if (this.roles.includes('CONTENT_CREATOR')) {
+                let url = `${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}`
+                window.open(url, '_blank')
+              }
+            }
+          }
+        })
+      } else if (event.category === 'PROFILE') {
+        let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+        window.open(url, '_blank')
+        //this.router.navigate([`app/home/approvals/approval`])
       } else {
         this.router.navigate(['/app/notifications'])
       }
@@ -225,6 +301,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   calculateCount(event: any) {
     console.log("sds", event)
+  }
+
+  showDialog(data: any, url:string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

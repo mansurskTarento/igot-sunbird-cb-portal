@@ -1,24 +1,25 @@
-import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
-import { RootService } from '../../component/root/root.service';
+import { RootService } from '../root/root.service';
 import { environment } from '../../../environments/environment';  
 import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import cloneDeep from 'lodash/cloneDeep';
-// import { timeout, catchError } from 'rxjs/operators';
-// import { throwError } from 'rxjs';
+
+
 @Component({
-  selector: 'ws-app-igot-sarthi',
-  templateUrl: './igot-sarthi.component.html',
-  styleUrls: ['./igot-sarthi.component.scss']
+  selector: 'ws-app-support-ai',
+  templateUrl: './support-ai.component.html',
+  styleUrls: ['./support-ai.component.scss']
 })
-export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
   @Input() userJourney = []
   @Input() chatId = ''
   @Input() userId = ''
+  @Input() activeLaguage= 'en'
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -46,7 +47,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   iGOTAISearchResultArr:any = []
   // public initials!: string
   resultFetch = false
-  searchAPIResponseInProgress = false
   private colors = [
     '#EB7181', // red
     '#306933', // green
@@ -89,12 +89,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   aiSearchResultArr:any = []
   cloneSearchQuery = ''
   displayedText = '';
-  isLoading = false;
-  hasError = false;
+  startNewChat = false
+  initiateSupportNewChat = false
+  // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
-  // @ViewChild('autoResizeTextarea') textArea!: ElementRef;
-  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
   isHubEnable!: boolean
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
   containerHeight = 36;
   constructor(
     private configSvc: ConfigurationsService,
@@ -127,8 +127,18 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
   }
 
-  ngAfterViewInit(): void {
-    this.resizeTextarea(this.textArea.nativeElement,'');
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chatId']) {
+      const prev = changes['chatId'].previousValue;
+      const current = changes['chatId'].currentValue;
+
+      if (prev !== current) {
+        console.log(`'chatId' changed from '${prev}' to '${current}'`);
+        this.startNewChat = true
+        this.startNewSupportAISearch()
+      }
+    }
+
   }
 
   greetings() {
@@ -496,6 +506,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   ngAfterViewChecked() {
     //this.scrollToBottom()
   }
+
+
+  ngAfterViewInit(): void {
+    this.resizeTextarea(this.textArea.nativeElement,'');
+  }
+
   scrollToBottom(): void {
     try {
       if (this.myScrollContainer) {
@@ -518,9 +534,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     if (!this.searchQuery.trim()) {
       event.preventDefault(); // Prevents Enter key from adding a new line
     }
-    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
     this.searchQuery = this.searchQuery.trim()
-    if(this.searchQuery && !this.searchAPIResponseInProgress) {
+    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
@@ -533,12 +548,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     // this.searchQuery = 'Basics of National Income Accounting'
    let sendMsgObj = {
      type: 'sendMsg',
-     tab: 'sarthi',
+     tab: 'support-ai',
      question: this.searchQuery
    }
    this.cloneSearchQuery = cloneDeep(this.searchQuery);
    this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
    
    if(this.aiSearchResultArr.length > 2) {
     setTimeout(()=>{
@@ -547,258 +562,148 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
    }  
     this.searchQuery = ''
     this.resetTextAreaHeight(textArea)
-    this.aiGlobalSearch()
+    this.supportAISearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
     // },1000)
    
   //  this.getAiTutorMessage()
   // this.sendAITutorMessage()
+  }
+
+  startNewSupportAISearch() {
+    this.iGOTAISearchResultArr = []
+    let requestBody:any = {
+      "channel_id": "web",
+      "session_id": this.chatId,
+      "text": this.cloneSearchQuery,
+      "audio": "",
+      "language": this.activeLaguage
+    }
+    console.log('requestBody--', requestBody)
+    if(this.startNewChat) {
+      this.chatbotService.aiStartChathForSupport(requestBody,  this.userId).subscribe((data)=>{
+        console.log('data---', data)
+        this.resultFetch = true
+        if(data && data.message) {
+          this.initiateSupportNewChat = true
+        } else {
+          this.initiateSupportNewChat = false
+        }
+        
+        
       
+      })
+      
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
+          object: { },
+          state: WsEvents.EnumTelemetrySubType.Interact,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          mode: 'view',
+        },
+        pageContext: {pageId: '/page/home', module: 'Home'},
+        from: '',
+        to: 'Telemetry',
+      }
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     }
   }
 
 
   
 
-  aiGlobalSearch() {
-    this.searchAPIResponseInProgress = true
-    this.iGOTAISearchResultArr = []
-    let requestBody:any = {
-      "query":this.cloneSearchQuery
-   }
-
-   this.isLoading = true;
-    this.hasError = false;
-    this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe({
-      next: (data:any) => {
-        this.searchAPIResponseInProgress = false
-      this.resultFetch = true
-    this.aiSearchResult = data 
-
-    // this.aiSearchResult = {
-
-    //   "answer": "",
-    //   "RetrievedChunks": [
-    //       {
-    //           "Identifier": "do_1136364937253437441916",
-    //           "Name": "Microsoft Excel for Beginners",
-    //           "Description": "Welcome to the Beginner's Guide course in Excel. This Excel Course enables you to Learn MS Excel in simple and easy steps. In this course we will learn how to Enter and edit Excel data, Format numbers, fonts, and alignment make simple pivot tables and charts, create simple Excel formulas, filters, formatting. Learn common Excel functions used in any Office.\n\nExpected Outcomes:\n\n· Understand how to start Excel documents and navigate through them,\n\n· One can pin documents and templates in MS Excel as per their requirement.\n\n· Every Ribbon menu comprises functions that help in using MS Excel easily.\n\n· Understand the different elements of Excel and how to use them.\n\n· Individuals can look into specific Sheet Views, zoom into the data, and even input the data.\n\n· Individuals can insert, store, wrap, and format data in worksheets.\n\n· The Page Layout tab provides commands for the user which help them in preparing the workbook.\n\n· Long sets of values or texts in the cells, to fit them all, the Merge function can be used to fit all the data.\n\n· Print View and Sorting are two basic and important functions of MS Excel which helps the user in printing exactly the required set of data and also sorting the data as per their requirement.\n\n· Change the orientation of the text and apply formatting changes with the help of the Format Painter tool in the cells.\n\n· Individuals can calculate data and numbers with the library of formulas available.\n\n· Learning how to calculate the average of numbers.\n\n· The subtraction formula does not exist in Excel, but yet individuals can calculate the subtraction value.\n\n· Learn how to calculate the product of numbers in different methods.\n\n· Learn how to use the Division formula in Excel.\n\n· Individuals can copy formulas and use them anywhere in the data sets without changing or relocating the values in the cell.\n\n· The function of the Freeze pane is to lock rows and columns.\n\n· Individuals can enter words and phrases of the function; they want to ",
-    //           "ContentType": "Course",
-    //           "ArtifactUrl": "unknown",
-    //           "mimeType": "application/vnd.ekstep.content-collection",
-    //           "contentStart": " ",
-    //           "ContentEnd": " ",
-    //           "similarity": 0.31391570667359525
-    //       },
-    //       {
-    //           "Identifier": "do_11363681497528729611020",
-    //           "Name": "Microsoft Excel Advanced",
-    //           "Description": "Microsoft Office 365 Productivity Suite Training for government Officials powered by the Ministry of Skill Development & Entrepreneurship and Capacity Building Commission in partnership with Microsoft.\nWe aim to enhance the functional computer literacy of nearly 2.5 million civil servants of the Government of India (GoI). This training program will digitally empower officials to provide efficient and effective citizen-centric services to the vulnerable and underprivileged sections of society. It will enable them to deliver last-mile social welfare services.",
-    //           "ContentType": "Course",
-    //           "ArtifactUrl": "unknown",
-    //           "mimeType": "application/vnd.ekstep.content-collection",
-    //           "contentStart": " ",
-    //           "ContentEnd": " ",
-    //           "similarity": 0.3113991646908274
-    //       },
-    //       {
-    //           "Identifier": "do_11363683220894515211071",
-    //           "Name": "Inserting Automatic Subtotal In Lists",
-    //           "Description": "Individuals can insert automatic subtotals in already sorted lists.",
-    //           "ContentType": "Resource",
-    //           "ArtifactUrl": "https://igotkarmayogi.gov.in/content-store/content/do_11363683220894515211071/artifact/do_11363683220894515211071_1664653065858_insertingautomaticsubtotalinlists1664653041080.mp4",
-    //           "mimeType": "video/mp4",
-    //           "contentStart": "480",
-    //           "ContentEnd": "510",
-    //           "similarity": 0.23258735082034232
-    //       },
-    //       {
-    //           "Identifier": "do_11363683198664704011066",
-    //           "Name": "Flash Fill",
-    //           "Description": "Flash Fill helps in automatically filling up data in the cells, once it recognizes the pattern.",
-    //           "ContentType": "Resource",
-    //           "ArtifactUrl": "https://igotkarmayogi.gov.in/content-store/content/do_11363683198664704011066/artifact/do_11363683198664704011066_1664652756044_flashfill1664652739081.mp4",
-    //           "mimeType": "video/mp4",
-    //           "contentStart": "480",
-    //           "ContentEnd": "502",
-    //           "similarity": 0.22146977289147618
-    //       },
-    //       {
-    //           "Identifier": "do_11363683440009216011090",
-    //           "Name": "Reference ",
-    //           "Description": "Reference ",
-    //           "ContentType": "Resource",
-    //           "ArtifactUrl": "https://igotkarmayogi.gov.in/content-store/content/do_11363683440009216011090/artifact/do_11363683440009216011090_1664787426206_microsoftexcelphase211664787425423.pdf",
-    //           "mimeType": "application/pdf",
-    //           "contentStart": "2",
-    //           "ContentEnd": "2",
-    //           "similarity": 0.21836847481351385
-    //       }
-    //   ],
-    //   "query_id": "e10f0b10-2bd5-42a7-803d-ecb845ff2dea",
-    //   "query": "i  want to learn excel"
-    // }
-
-  //  if(this.aiSearchResult && !this.aiSearchResult.answer && !this.aiSearchResult.RetrievedChunks) {
-  //   this.aiSearchResult.RetrievedChunks = []
-  //  }
+  supportAISearch() {
+    console.log('this.initiateSupportNewChat--',this.initiateSupportNewChat)
+    if(this.initiateSupportNewChat) {
+      let requestBody:any = {
+        "channel_id": "web",
+        "session_id": this.chatId,
+        "text": this.cloneSearchQuery,
+        "audio": "",
+        "language": this.activeLaguage
+      }
+        this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
+          console.log('data---', data)
+          this.resultFetch = true
+        this.aiSearchResult = data 
+        
+        //let arr:any = []
+        // this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+        //   let startTime = 0
+        //   let endTime = 0
+        //   let pageNumber:any = 1
+        //   if(item && item?.contentStart) {
+        //     startTime = item?.contentStart
+        //     pageNumber= item?.contentStart
+        //   }
+        //   if(item && item?.ContentEnd) {
+        //     endTime = item?.ContentEnd
+        //     pageNumber= item?.ContentEnd
+        //   }
+        //   pageNumber = pageNumber !== " " ? pageNumber : 1
+          
+        //   let resultObj = {        
+        //     message: item.Name,
+        //     recommendedQues: '',
+        //     selectedValue: '',       
+        //     title: item.Name,
+        //     content: item,
+        //     mimeType: item.mimeType,
+        //     contentType: item.ContentType,
+        //     artifactUrl: item.ArtifactURL,
+        //     description: item.Description,
+        //     identifier: item.Identifier,    
+        //     contentStart: startTime,
+        //     contentEnd: endTime, 
+        //     pageNumber:   pageNumber,
+        //     query: this.aiSearchResult.query,
+        //     query_id: this.aiSearchResult.query_id,
+        //     feedback: '',
+        //     resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        //   }
     
-    //let arr:any = []
-    let showSimiliarResultsFlag = false 
-    let showFromInternet = false
-    let showReterivedChunks = true
-    if(!this.aiSearchResult.answer  &&  this.aiSearchResult.RetrievedChunks?.length) {
-      showSimiliarResultsFlag = true
-      showFromInternet = true
-      showReterivedChunks = false
+        //   // arr.push(resultObj)
+        //   this.iGOTAISearchResultArr.push(resultObj)
+          
+        // })
+        let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
+        let shortAnswer =  this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
+        this.aiSearchResultArr.map((item:any, index:any)=>{
+          if(item && (item.newMessage === '')) {
+            // delete this.aiSearchResultArr[index]
+            this.aiSearchResultArr.splice(index,1)
+          }
+         })
+        // setTimeout(()=>{
+        //   this.scrollToBottomEvent.emit() 
+        // },0)
+        
+        })
+        
+        const event = {
+          eventType: WsEvents.WsEventType.Telemetry,
+          eventLogLevel: WsEvents.WsEventLogLevel.Info,
+          data: {
+            edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
+            object: { },
+            state: WsEvents.EnumTelemetrySubType.Interact,
+            eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+            mode: 'view',
+          },
+          pageContext: {pageId: '/page/home', module: 'Home'},
+          from: '',
+          to: 'Telemetry',
+        }
+        this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     }
-    if(!this.aiSearchResult.answer  &&  !this.aiSearchResult.RetrievedChunks?.length) {
-      showFromInternet = true
-    } 
-    this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
-      let pageNumber:any = 1
-      if(item && item?.contentStart) {
-        startTime = item?.contentStart
-        pageNumber= item?.contentStart
-      }
-      if(item && item?.ContentEnd) {
-        endTime = item?.ContentEnd
-        pageNumber= item?.ContentEnd
-      }
-      pageNumber = pageNumber !== " " ? pageNumber : 1
-      
-      let resultObj = {        
-        message: item.Name,
-        recommendedQues: '',
-        selectedValue: '',       
-        title: item.Name,
-        content: item,
-        mimeType: item.mimeType,
-        contentType: item.ContentType,
-        artifactUrl: item.ArtifactURL,
-        description: item.Description,
-        identifier: item.Identifier,    
-        contentStart: startTime,
-        contentEnd: endTime, 
-        pageNumber:   pageNumber,
-        query: this.aiSearchResult.query,
-        query_id: this.aiSearchResult.query_id,
-        feedback: '',
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
-      }
-
-      // arr.push(resultObj)
-      this.iGOTAISearchResultArr.push(resultObj)
-      
-    })
-    let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
-    let shortAnswer =  this.splitParagraphByWords(answer)
+   
     
-    
-    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
-    this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
-        // delete this.aiSearchResultArr[index]
-        this.aiSearchResultArr.splice(index,1)
-      }
-     })
-    setTimeout(()=>{
-     // this.scrollToBottomEvent.emit() 
-    },0)
-      },
-      error: (err:any) => {
-        console.error('API failed:', err);
-        this.searchAPIResponseInProgress = false
-        this.hasError = true;
-        this.isLoading = false;
-      }
-    });
-
-    
-
-  //   this.chatbotService.aiGlobalSearch(requestBody, this.chatId, this.userId).subscribe((data)=>{
-  //     this.searchAPIResponseInProgress = false
-  //     this.resultFetch = true
-  //   this.aiSearchResult = data 
-
-  //  if(this.aiSearchResult && !this.aiSearchResult.answer && !this.aiSearchResult.RetrievedChunks) {
-  //   this.aiSearchResult.RetrievedChunks = []
-  //  }
-    
-  //   //let arr:any = []
-  //   this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-  //     let startTime = 0
-  //     let endTime = 0
-  //     let pageNumber:any = 1
-  //     if(item && item?.contentStart) {
-  //       startTime = item?.contentStart
-  //       pageNumber= item?.contentStart
-  //     }
-  //     if(item && item?.ContentEnd) {
-  //       endTime = item?.ContentEnd
-  //       pageNumber= item?.ContentEnd
-  //     }
-  //     pageNumber = pageNumber !== " " ? pageNumber : 1
-      
-  //     let resultObj = {        
-  //       message: item.Name,
-  //       recommendedQues: '',
-  //       selectedValue: '',       
-  //       title: item.Name,
-  //       content: item,
-  //       mimeType: item.mimeType,
-  //       contentType: item.ContentType,
-  //       artifactUrl: item.ArtifactURL,
-  //       description: item.Description,
-  //       identifier: item.Identifier,    
-  //       contentStart: startTime,
-  //       contentEnd: endTime, 
-  //       pageNumber:   pageNumber,
-  //       query: this.aiSearchResult.query,
-  //       query_id: this.aiSearchResult.query_id,
-  //       feedback: '',
-  //       resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
-  //     }
-
-  //     // arr.push(resultObj)
-  //     this.iGOTAISearchResultArr.push(resultObj)
-      
-  //   })
-  //   let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
-  //   let shortAnswer =  this.splitParagraphByWords(answer)
-  //   this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
-  //   this.aiSearchResultArr.map((item:any, index:any)=>{
-  //     if(item && (item.newMessage === '')) {
-  //       // delete this.aiSearchResultArr[index]
-  //       this.aiSearchResultArr.splice(index,1)
-  //     }
-  //    })
-  //   setTimeout(()=>{
-  //     this.scrollToBottomEvent.emit() 
-  //   },0)
-    
-  //   }, (error:any)=>{
-  //     console.log('error', error)
-  //   })
-    
-    const event = {
-      eventType: WsEvents.WsEventType.Telemetry,
-      eventLogLevel: WsEvents.WsEventLogLevel.Info,
-      data: {
-        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
-        object: { },
-        state: WsEvents.EnumTelemetrySubType.Interact,
-        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-        mode: 'view',
-      },
-      pageContext: {pageId: '/page/home', module: 'Home'},
-      from: '',
-      to: 'Telemetry',
-    }
-    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+   
     
   }
 
@@ -811,11 +716,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "rating": "5"
 
    }
-   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
-      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
-      this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = true
-  }
    
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
@@ -827,12 +727,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       // })
       // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
       if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
+        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
           this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
-          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
-          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
-        }
-          
       }
       this.matSnackBarNew.open(
         'Thank you for your feedback.', 'X',
@@ -840,11 +736,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       );
       
     } else {
-      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
-          this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
-          this.aiSearchResultArr[index].result[cindex]['showLoaderForUp'] = false
-      }
       this.matSnackBarNew.open(
         'Something is wrong. Please try again later.', 'X',
         { duration: 5000, panelClass: ['error'] }
@@ -892,33 +783,17 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "rating": "0"
 
    }
-   if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-    if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
-      this.aiSearchResultArr[index].result[cindex]['showLoader'] = true
-      this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = true
-    }
-      
-  }
      this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex]) {
+          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
             this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
-            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
-            this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
-          }
-            
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
         );
       } else {
-        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
-            this.aiSearchResultArr[index].result[cindex]['showLoader'] = false
-          this.aiSearchResultArr[index].result[cindex]['showLoaderForDown'] = false
-        }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
@@ -929,22 +804,19 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
 
   callFromInternet(item:any, index:any) {
     this.resultFetch = false
-    
-    this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
+    this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
     if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
-      this.aiSearchResultArr[index]['showSimiliarResultsFlag'] = false
     }
     
     if(item && !item.answer) {
-      this.searchAPIResponseInProgress = true
+
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,
         "designation":  this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
       this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata:any)=>{
-        this.searchAPIResponseInProgress = false
         this.resultFetch = true
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
@@ -976,16 +848,16 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiSearchResultArr.splice(index,1)
           }
          })
-        setTimeout(()=>{
-          this.scrollToBottomEvent.emit() 
-        },0)
+        // setTimeout(()=>{
+        //   this.scrollToBottomEvent.emit() 
+        // },0)
       })
     }
   }
@@ -1118,18 +990,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  loadFailedData( ) {
-    // this.aiSearchResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '', newMessage: ''})
-     this.aiGlobalSearch()
-  }
-
-  viewSimiliarResults(index:any) {
-    this.aiSearchResultArr[index]['showReterivedChunks'] = true
-    this.aiSearchResultArr[index]['showSimiliarResultsFlag'] = false
-    this.aiSearchResultArr[index]['showFromInternet'] = false
-    
-  }
-
   resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
     if (textArea) {
       textArea.style.height = 'auto'; // Reset height first
@@ -1161,9 +1021,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     
   }
 
-
   ngOnDestroy(): void {
    
   }
-  
 }
