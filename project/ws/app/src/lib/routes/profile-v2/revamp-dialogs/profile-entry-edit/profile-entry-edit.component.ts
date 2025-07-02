@@ -884,7 +884,7 @@ export class ProfileEntryEditComponent implements OnInit {
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],
       url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500), Validators.pattern(/^[a-zA-Z0-9\s.,()&\-\/]*$/)]],
     });
     if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url;
