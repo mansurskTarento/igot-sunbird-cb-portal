@@ -72,6 +72,10 @@
     /* stylelint-disable */
     font: 400 12px Lato;
     /* stylelint-enable */
+    overflow: hidden;
+    width: calc(100% - 70px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .view-icon {

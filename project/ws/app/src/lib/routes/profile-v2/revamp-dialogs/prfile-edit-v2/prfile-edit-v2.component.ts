@@ -133,7 +133,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   private createProfileForm(): void {
     this.profileImage = _.get(this.profileDetails, 'profileImage', null);
     this.profileForm = this.fb.group({
-      firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^(?!.*\s{2,})(?!.*[-']{2,})[a-zA-Z\s'-]*$/), Validators.maxLength(200), Validators.minLength(2)]],
+      firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^(?! )[a-zA-Z]+(?: [a-zA-Z]+)*(?<! )$/), Validators.maxLength(200), Validators.minLength(2)]],
       state: [_.get(this.profileDetails, 'state', '')],
       district: [_.get(this.profileDetails, 'district', '')]
     });
@@ -200,12 +200,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         return 'NetworkV2Profile.invalidNameFormat';
       } else if (!userName.value.trim()) {
         return 'NetworkV2Profile.nameIsRequired';
-      } else if (/^\s|[-'\s]$/.test(userName.value)) {
+      } else if (/^\s|\s$/.test(userName.value)) {
         return 'NetworkV2Profile.nameCannotStartOrEndWithSpace';
+      } else if (/^[-']|[-']$/.test(userName.value) || /[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
+        return 'NetworkV2Profile.specialCharNotAllowedInName';
       } else if (/\d/.test(userName.value)) {
         return 'NetworkV2Profile.nameCannotContainNumbers';
-      } else if (/[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
-        return 'NetworkV2Profile.specialCharNotAllowedInName';
       } else if (/(\s{2,}|[-']{2,})/.test(userName.value)) {
         return 'NetworkV2Profile.pleaseAvoidMultipleSpaces';
       }

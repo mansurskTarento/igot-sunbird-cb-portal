@@ -301,7 +301,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
       let customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       if (customFieldValues.length === 0) {
-        //this.redirectToCustomProfile()
+        this.redirectToCustomProfile()
         this.canShowCustomAttrOpen = true
       } else {
         //this.redirectToCustomProfile()

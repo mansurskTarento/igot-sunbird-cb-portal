@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div  class="chatbot-icon flex" *ngIf="!(enableIGOTAIFlag && enableSupportAI) " [ngClass]="{'chatbot-icon-expanded': expanded}">
+      <div  class="chatbot-icon flex" *ngIf="!faqChatBotDisable" [ngClass]="{'chatbot-icon-expanded': expanded}">
         <img alt="chatbot-icon" src="/assets/icons/launch-icon.svg"/>
         <div class="expand-text">FAQ Chatbot</div>
       </div>
@@ -22,16 +22,16 @@
 
   
 
-  <div [ngClass]="enableIGOTAIFlag || enableSupportAI ?  (maximizeChatFlag ? 'chatbot-with-ai' : 'chatbot-with-ai-min') : 'chatbot'" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
+  <div [ngClass]="enableIGOTAIFlag || enableSupportAI ?  (fullScreenChatFlag ? 'chatbot-with-ai-full' : ( (maximizeChatFlag ? 'chatbot-with-ai' : 'chatbot-with-ai-min'))) : 'chatbot'" (clickOutside)="clickOutside()" *ngIf="!showIcon" >
       <div class="chatbot-wrapper">
         <div class="flex flex-wrap padding-m" [ngClass]="currentFilter === 'sarthi' || currentFilter === 'support-ai' ? 'cb-header-sarthi':'cb-header'">
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter !== 'sarthi' &&  currentFilter !== 'support-ai'">
               <div class="user-name">{{greetings()}} {{this.userInfo && this.userInfo.firstName || ''}}!</div>
               <div class="">
-                  <select class="lang-select" name="language" id="language" (change)="selectLaguage($event)">
-                      <option [value]="lang.value" [selected]="lang?.value === selectedLaguage" *ngFor="let lang of language">{{ lang.viewValue }}</option>
-                  </select>
-              </div>
+                <select class="lang-select" name="language" id="language" (change)="selectLaguage($event)">
+                    <option [value]="lang.value" [selected]="lang?.value === selectedLaguage" *ngFor="let lang of language">{{ lang.viewValue }}</option>
+                </select>
+            </div>
             </div>
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter === 'sarthi' ||  currentFilter === 'support-ai'">
               <div class="user-name"><img class="vertical-middle" src="assets/icons/bot-chat-small.svg">
@@ -43,26 +43,34 @@
                     <option [value]="lang.value" [selected]="selectedLaguage === lang?.value" *ngFor="let lang of language">{{ lang.viewValue }}</option>
                 </select>
             </div>             -->
+            </div>
+            <div class="user-info-controls flex flex-row">
             <div  *ngIf="currentFilter === 'support-ai'">
               <div class="cursor-pointer mt-2" matTooltipClass="right-nav-tooltip" matTooltip="Need Help"
                 (click)="getZohoForm()" class="help-icon" id="help-icon">
-                <img class="mt-2" src="/assets/icons/top-nav/help_icon.svg" alt="">
+                <img class="" src="/assets/icons/top-nav/help_icon.svg" alt="">
             </div>
             </div>
-            </div>
-            <div class="" *ngIf="maximizeChatFlag && enableIGOTAIFlag">
+            <div class="" *ngIf="maximizeChatFlag && (enableIGOTAIFlag || enableSupportAI)">
               <!-- //NOSONAR --><mat-icon  [matTooltip]="Minimize" class="cb-minimize cursor-pointer" (click)="minimizeChat()">minimize</mat-icon> 
             </div>
-            <div class="" *ngIf="!maximizeChatFlag && enableIGOTAIFlag">
-              <!-- //NOSONAR --><mat-icon [matTooltip]="Maximize" class="cb-maximize cursor-pointer" (click)="maximizeChat()">fullscreen</mat-icon> 
+            <div class="mt-1" *ngIf="!maximizeChatFlag && (enableIGOTAIFlag || enableSupportAI)">
+              <!-- //NOSONAR --><mat-icon [matTooltip]="Maximize" class="cb-maximize cursor-pointer" (click)="maximizeChat()">maximize</mat-icon> 
+            </div>
+            <div class="fullscreen" *ngIf="!fullScreenChatFlag && (enableIGOTAIFlag || enableSupportAI)">
+              <!-- //NOSONAR --><mat-icon   class="cb-minimize cursor-pointer" (click)="fullScreenChat()">fullscreen</mat-icon> 
+            </div>
+            <div class="fullscreen-chat-exit" *ngIf="fullScreenChatFlag && (enableIGOTAIFlag || enableSupportAI)">
+              <!-- //NOSONAR --><mat-icon   class="cb-minimize cursor-pointer" (click)="fullScreenExitChat()">fullscreen_exit</mat-icon> 
             </div>
             <div class="">
                 <!-- //NOSONAR --> <mat-icon class="cb-close" (click)="iconClick('end')">close</mat-icon>
             </div>
+          </div>
         </div>
       </div>
       <ng-container>
-      <div class="cb-content-wrapper" #scrollMe [hidden]="!maximizeChatFlag">
+      <div id="chatbot-wrapper" [ngClass]="currentFilter === 'sarthi' || currentFilter === 'support-ai' ? 'cb-content-wrapper-ai' : 'cb-content-wrapper'" #scrollMe [hidden]="!maximizeChatFlag  && !fullScreenChatFlag">
         <div class="flex flex-wrap"  #scrollMe id="chatbot-content" [ngClass]="currentFilter === 'sarthi' ||  currentFilter === 'support-ai' ?'cb-content-sarthi padding-m':'padding-m cb-content'">
           <ng-container *ngIf="!displayLoader && currentFilter !== 'sarthi' && currentFilter !== 'support-ai'" #scroll>
             <ng-container *ngFor="let chat of userJourney">
@@ -128,10 +136,10 @@
             </ng-container>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'sarthi'" #scroll>
-             <ws-app-igot-sarthi [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
+             <ws-app-igot-sarthi [fullScreenChatFlag]="fullScreenChatFlag" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'support-ai'" #scroll>
-             <ws-app-support-ai [activeLaguage]="selectedLaguage" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
+             <ws-app-support-ai [fullScreenChatFlag]="fullScreenChatFlag" [activeLaguage]="selectedLaguage" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
           </ng-container>
           <ng-container *ngIf="displayLoader">
             <div  class="loader">
@@ -148,7 +156,7 @@
                 </ng-container>
             </div>
         </div>
-        <div class="flex flex-wrap" [ngClass]="enableSupportAI  ? 'cb-footer-with-support-ai' : (enableIGOTAIFlag ? 'cb-footer-with-ai' : 'cb-footer')">
+        <div class="flex flex-wrap" [ngClass]="footerClassName">
             <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" *ngIf="enableIGOTAIFlag" [ngClass]="{active: currentFilter === 'sarthi'}" (click)="toggleFilter('sarthi')">
               <div class="info-icon">
                 <img src="assets/icons/bot-chat-mini.svg">
