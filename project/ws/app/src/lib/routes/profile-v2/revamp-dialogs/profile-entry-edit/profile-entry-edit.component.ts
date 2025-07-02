@@ -130,7 +130,7 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails, 'startDate', '')],
       endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,()]*$/)]]
     });
     this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
     const orgDistrictControl = this.entryForm.get('orgDistrict');

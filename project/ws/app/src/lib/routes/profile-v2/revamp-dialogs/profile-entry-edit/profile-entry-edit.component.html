@@ -160,7 +160,7 @@
           <div class="lable">{{'NetworkV2Profile.description' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput maxlength="1000" formControlName="description" rows="4" placeholder="{{'NetworkV2Profile.addYourDescription' | translate}}"></textarea>
-            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept(),.' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/1000
             </mat-hint>
