@@ -31,9 +31,14 @@
             <mat-icon class="connectionsMenuIcon">more_vert</mat-icon>
           </div>
           <mat-menu #connectionsMenu="matMenu">
-            <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
-              <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
+            <button mat-menu-item class="menu-item" (click)="copyProfile()">
+              <span>copy profile link</span>
             </button>
+            <ng-container *ngIf="!otherUserProfile?.connectionStatus">
+              <button mat-menu-item class="menu-item" (click)="updateConnection('Remove')">
+                <span>Remove connection</span>
+              </button>
+            </ng-container>
           </mat-menu>
         </div>
       </ng-container>
@@ -43,28 +48,55 @@
           <div class="flex h-full flex-col w-full">
             <div class="flex justify-end timing">{{otherUserProfile?.timeAgo}}</div>
           </div>
-          <div class="request-btns flex justify-between w-full items-center">
-            <div class="ignore flex justify-center items-center">Ignore</div>
-            <button mat-button class="accept-btn" (click)="acceptRequest()">Accept</button>
-          </div>
+          <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
+            <div class="request-btns flex justify-between w-full items-center">
+              <div class="ignore flex justify-center items-center">Ignore</div>
+              <button mat-button class="accept-btn" (click)="acceptRequest()">Accept</button>
+            </div>
+          </ng-container>
+          <ng-template #connectionUpdated>
+            <ng-container *ngIf="otherUserProfile?.connectionStatus === 'Accepted'; else ignoredTemplate"></ng-container>
+            <ng-template #ignoredTemplate>
+              <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Ignored' }"></ng-container>
+            </ng-template>
+          </ng-template>
+            
         </div>
       </ng-container>
 
       <ng-container *ngSwitchCase="'sent'">
-        <div class="flex w-full justify-center items-center">
-           <a class="flex gap-1 items-center action-link">
-              Withdraw
-            </a>
-        </div>
+        <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
+          <div class="flex w-full justify-center items-center">
+            <a class="flex gap-1 items-center action-link">
+                Withdraw
+              </a>
+          </div>
+        </ng-container>
+        <ng-template #withdrawnTemplate>
+          <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Withdrawn' }"></ng-container>
+        </ng-template>
       </ng-container>
 
       <ng-container *ngSwitchCase="'blocked'">
-        <div class="flex w-full justify-center items-center">
-           <a class="flex gap-1 items-center action-link">
-              Unblock
-            </a>
-        </div>
+        <ng-container *ngIf="!otherUserProfile?.connectionStatus; else blockedTemplate">
+          <div class="flex w-full justify-center items-center">
+            <a class="flex gap-1 items-center action-link">
+                Unblock
+              </a>
+          </div>
+        </ng-container>
+        <ng-template #blockedTemplate>
+          <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Blocked' }"></ng-container>
+        </ng-template>
       </ng-container>
     </div>
     <!-- #endregion (status and actions) -->
 </div>
+
+<ng-template #disableLink let-message="message">
+  <div class="flex w-full justify-center items-center">
+    <a class="flex gap-1 items-center action-link action-link-disabled">
+        {{message}}
+      </a>
+  </div>
+</ng-template>

@@ -94,7 +94,7 @@ export class ConnectionsComponent implements OnInit {
 
   onTabChange(index: number) {
     this.selectedTabIndex = index;
-    this.getTabData();
+    // this.getTabData();
   }
 
   getTabData() {
@@ -110,7 +110,7 @@ export class ConnectionsComponent implements OnInit {
         this.getRequestsList();
         break;
       case 'sent':
-        this.getSentRequsetsList
+        this.getSentRequsetsList();
         break;
       case 'blocked':
         this.getBlockedList();
