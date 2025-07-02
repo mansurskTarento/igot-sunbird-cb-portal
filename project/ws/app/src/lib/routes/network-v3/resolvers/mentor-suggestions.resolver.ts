@@ -14,9 +14,11 @@ export class mentorSuggestionsResolver {
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<any>> {
+   const pageSize = _route.queryParams['pageSize'] || 10;
+    const offset = _route.queryParams['offset'] || 0;
     const formBody = {
-      size: 12,
-      offset: 0,
+      size: pageSize,
+      offset: offset,
     }
 
     return this.networkingSvc.getRecommendedMentors(formBody).pipe(

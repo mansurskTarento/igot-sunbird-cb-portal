@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { PageChangeEmitter } from '../../models/network-v3.model';
+import { NetworkingService } from '../../services/networking.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ws-app-mentors',
@@ -6,6 +9,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./mentors.component.scss']
 })
 export class MentorsComponent {
+  paginationSize = 50;
+  paginationSizeOptions = [50, 100, 150, 200];
+  paginationPage = 1;
+  totalItemsCount = 1000;
   mentorsList: any[] = [
     {
       professionalDetails: [
@@ -139,4 +146,36 @@ export class MentorsComponent {
       "@id": "bff48d63-5dba-4376-abd3-00a4e4315b4c"
     }
   ]
+
+  constructor(
+    private networkingSvc: NetworkingService
+  ) { }
+
+  async onPageChange(event: PageChangeEmitter) {
+    // this.searchContentLoader = true;
+    this.scrollToTop();
+    this.paginationPage = event.currentPage
+    this.paginationSize = event.limit;
+    this.getMentorsList();
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  getMentorsList() {
+    const formBody = {
+      size: this.paginationSize,
+      offset: this.paginationPage - 1,
+    }
+    this.networkingSvc.getRecommendedMentors(formBody).subscribe({
+      next: (response) => {
+        this.mentorsList = _.get(response, 'result.data.results', []) ;
+        this.totalItemsCount = _.get(response, 'result.data.total', 0);
+      },
+      error: (error) => {
+        console.error('Error fetching mentors:', error);
+      }
+    });
+  }
 }

@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { NetworkingService } from '../../services/networking.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 
 @Component({
   selector: 'ws-app-connections-card',
@@ -12,6 +15,11 @@ export class ConnectionsCardComponent implements OnInit {
   @Input() currentTab = 'request'
   @Input() showBorder = true;
   nameInitials = '';
+
+  constructor(
+    private networkingSvc: NetworkingService,
+    private snackBar: MatLegacySnackBar
+  ) { }
 
   ngOnInit(): void {
     this.getInitials();
@@ -32,6 +40,24 @@ export class ConnectionsCardComponent implements OnInit {
   acceptRequest() {
     
   }
+
+  updateConnection(formBody: any) {
+    this.networkingSvc.updateConnectionRequest(formBody).subscribe({
+      next: (response) => {
+        if (response) {
+          
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.openSnackbar('Something went wrong please try again')
+      }
+    })
+  }
   
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
+  }
 
 }

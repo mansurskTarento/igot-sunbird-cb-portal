@@ -19,4 +19,14 @@
       </ng-container>
     </div>
   </div>
+
+  <div>
+    <ws-widget-pagination [defaultPaginationSize]="paginationSize"
+      [defaultPaginationSizeOptions]="paginationSizeOptions"
+      [totalItemsCount]="totalItemsCount"
+      [currentPage]="paginationPage"
+      [pageMessage]="'View designations per page'"
+      [numberOfPaginationVisable]="2"
+      (pageChange)="onPageChange($event)"></ws-widget-pagination>
+  </div>
 </div>

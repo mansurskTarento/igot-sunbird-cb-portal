@@ -1,98 +1,29 @@
 <div class="w-full flex flex-col gap-4 network-connections">
   <div class="header">Connections {{selectedTabIndex}}</div>
 
-  <mat-tab-group
-    class="w-full"
-    [selectedIndex]="selectedTabIndex"
-    (selectedIndexChange)="onTabChange($event)"
-  >
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div class="flex tabLable justify-center items-center">
-          My connections
-          <ng-container *ngIf="selectedTabIndex === 0; else notSelectedCount">
-            <div class="selected-count">{{connectionsCount}}</div>
-          </ng-container>
-          <ng-template #notSelectedCount>
-            ({{connectionsCount}})
-          </ng-template>
-        </div>
-      </ng-template>
-      <ng-template matTabContent>
-        <div class="connections-list">
-          <ng-container *ngFor="let connection of connectionsList; let i = index">
-            <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'connections'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
-          </ng-container>
-        </div>
-      </ng-template>
-    </mat-tab>
-  
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div class="flex tabLable justify-center items-center">
-          Requests
-          <ng-container *ngIf="selectedTabIndex === 1; else notSelectedCount">
-            <div class="selected-count">{{requestsCount}}</div>
-          </ng-container>
-          <ng-template #notSelectedCount>
-            ({{requestsCount}})
-          </ng-template>
-        </div>
-      </ng-template>
-      <ng-template matTabContent>
-        <div class="connections-list">
-          <ng-container *ngFor="let connection of requestsList; let i = index">
-            <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'request'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
-          </ng-container>
-        </div>
-      </ng-template>
-    </mat-tab>
-  
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div class="flex tabLable justify-center items-center">
-          Sent
-          <ng-container *ngIf="selectedTabIndex === 2; else notSelectedCount">
-            <div class="selected-count">{{sentRequestsCount}}</div>
-          </ng-container>
-          <ng-template #notSelectedCount>
-            ({{sentRequestsCount}})
-          </ng-template>
-        </div>
-      </ng-template>
-      <ng-template matTabContent>
-        <div class="connections-list">
-          <ng-container *ngFor="let connection of sentRequestsList; let i = index">
-            <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'sent'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
-          </ng-container>
-        </div>
-      </ng-template>
-    </mat-tab>
-  
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div class="flex tabLable justify-center items-center">
-          Blocked
-          <ng-container *ngIf="selectedTabIndex === 3; else notSelectedCount">
-            <div class="selected-count">{{blockedCount}}</div>
-          </ng-container>
-          <ng-template #notSelectedCount>
-            ({{blockedCount}})
-          </ng-template>
-        </div>
-      </ng-template>
-      <ng-template matTabContent>
-        <div class="connections-list">
-          <ng-container *ngFor="let connection of blockedList; let i = index">
-            <ws-app-connections-card [otherUserProfile]="connection"
-              [currentTab]="'blocked'" [showBorder]="i < blockedList.length -1"></ws-app-connections-card>
-          </ng-container>
-        </div>
-      </ng-template>
-    </mat-tab>
+  <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+    <ng-container *ngFor="let tabDetails of tabDetailsList; let i = index">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="flex tabLable justify-center items-center">
+            {{tabDetails?.lable}}
+            <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
+              <div class="selected-count">{{tabDetails?.recordsCount}}</div>
+            </ng-container>
+            <ng-template #notSelectedCount>
+              ({{tabDetails?.recordsCount}})
+            </ng-template>
+          </div>
+        </ng-template>
+        <ng-template matTabContent>
+          <div class="connections-list">
+            <ng-container *ngFor="let connection of connectionsList; let i = index">
+              <ws-app-connections-card [otherUserProfile]="connection" [currentTab]="tabDetails?.key"
+                [showBorder]="i < connectionsList?.length -1"></ws-app-connections-card>
+            </ng-container>
+          </div>
+        </ng-template>
+      </mat-tab>
+    </ng-container>
   </mat-tab-group>
-
-
+</div>

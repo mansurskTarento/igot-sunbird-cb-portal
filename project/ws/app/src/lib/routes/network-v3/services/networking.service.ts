@@ -12,6 +12,12 @@ const API_END_POINTS = {
   GET_CONNECTION_REQUESTS: '/apis/protected/v8/connections/v2/connections/requests/received',
   GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v3/connections/recommended',
   GET_RECOMMENDED_MENTORS: '/apis/protected/v8/connections/v3/connections/recommended/mentors',
+  GET_CONNECTIONS: '/apis/protected/v8/connections/v2/connections/established',
+  GET_REQUESTS_SENT: '/apis/protected/v8/connections/v2/connections/requested',
+  // GET_BLOCKED_USERS: '/apis/protected/v8/connections/v2/connections/blocked',
+  SENT_CONNECTION_REQUEST: 'apis/protected/v8/connections/v2/add/connection',
+  UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
+
 }
 
 @Injectable({
@@ -94,6 +100,25 @@ export class NetworkingService {
   getRecommendedMentors(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_RECOMMENDED_MENTORS, formBody)
   }
+
+  getConnections(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_CONNECTIONS, formBody)
+  }
+
+  getRequestSent(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_REQUESTS_SENT, formBody)
+  }
+
+  // getBlockedUsers(formBody: any): Observable<any> {
+
+  sendConnectionRequest(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.SENT_CONNECTION_REQUEST, formBody)
+  }
+
+  updateConnectionRequest(formBody: any): Observable<any> {
+    return this.http.put<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
+  }
+
 
   //#region (translation related methods)
   handleTranslateTo(menuName: string): string {
