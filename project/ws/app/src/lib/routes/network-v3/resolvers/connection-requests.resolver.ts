@@ -14,8 +14,7 @@ export class connectionRequestsResolver {
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<any>> {
-    // const formBody = {
-    // }
+    // const pageSize = _route.queryParams['pageSize'] || 10;
 
     return this.networkingSvc.getConnectionRequests().pipe(
       map(data => ({

@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { NetworkComponent } from "./routes/network/network.component";
 import { NetworkHomeComponent } from "./routes/network-home/network-home.component";
-import { UpdatesComponent } from "./routes/updates/updates.component";
+// import { UpdatesComponent } from "./routes/updates/updates.component";
 import { ConnectionsComponent } from "./routes/connections/connections.component";
 import { RecommendationsComponent } from "./routes/recommendations/recommendations.component";
 import { MentorsComponent } from "./routes/mentors/mentors.component";
@@ -44,14 +44,14 @@ const routes: Routes = [
           mentorSuggestions: mentorSuggestionsResolver,
         }
       },
-      {
-        path: 'updates',
-        component: UpdatesComponent,
-        data: {
-          pageId: 'connections',
-          module: 'Network',
-        }
-      },
+      // {
+      //   path: 'updates',
+      //   component: UpdatesComponent,
+      //   data: {
+      //     pageId: 'connections',
+      //     module: 'Network',
+      //   }
+      // },
       {
         path: 'connections',
         component: ConnectionsComponent,
@@ -75,6 +75,9 @@ const routes: Routes = [
           pageId: 'recommendations',
           module: 'Network',
           recommendationType: 'peopleYouMayKnow'
+        },
+        resolve: {
+          peopleSuggestions: peopleSuggestionsResolver,
         }
       },
       {
@@ -83,6 +86,9 @@ const routes: Routes = [
         data: {
           pageId: 'mentors',
           module: 'Network',
+        },
+        resolve: {
+          mentorSuggestions: mentorSuggestionsResolver,
         }
       }
     ]

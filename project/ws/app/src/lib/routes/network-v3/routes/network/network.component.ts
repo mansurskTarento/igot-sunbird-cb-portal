@@ -21,31 +21,41 @@ export class NetworkComponent implements OnInit {
       routeId: 'home',
       imageUrl: './assets/icons/person_search.svg'
     },
-    {
-      name: 'Updates',
-      navigationUrl: '/app/network-v2/updates',
-      routeId: 'updates',
-      imageUrl: './assets/icons/update.svg'
-    },
+    // {
+    //   name: 'Updates',
+    //   navigationUrl: '/app/network-v2/updates',
+    //   routeId: 'updates',
+    //   imageUrl: './assets/icons/update.svg'
+    // },
     {
       name: 'Connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      icon: 'groups',
       imageUrl: './assets/icons/connection.svg'
     },
+    // {
+    //   name: 'Recommendations',
+    //   navigationUrl: '/app/network-v2/recommendations',
+    //   routeId: 'recommendations',
+    //   icon: 'groups',
+    //   queryParams: { pageSize: 20 }
+    //   // imageUrl: './assets/icons/.svg'
+    // },
     {
+
       name: 'Recommendations',
-      navigationUrl: '/app/network-v2/recommendations',
+      navigationUrl: 'recommendations/all',
       routeId: 'recommendations',
-       icon: 'groups',
+      icon: 'groups',
+      queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
       // imageUrl: './assets/icons/.svg'
     },
     {
       name: 'Mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/FRAC_dictionaries.svg'
+      imageUrl: './assets/icons/FRAC_dictionaries.svg',
+      queryParams: { pageSize: 50, offset: 0 }
     }
   ]
   userDetails: any = {};
@@ -65,6 +75,8 @@ export class NetworkComponent implements OnInit {
     this.activatedRoute.data.subscribe(data => {
       if (_.get(data, 'recamendedCommunity.data')) {
         this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data'))
+      }
+      if (_.get(data, 'profileDetails.data')) {
         this.patchProfileDetails(_.get(data, 'profileDetails.data'))
       }
     })

@@ -2,6 +2,7 @@
   <ng-container *ngFor="let item of navigationItems">
     <a 
       [routerLink]="item.navigationUrl" 
+      [queryParams]="item.queryParams"
       routerLinkActive="active" 
       class="navigation-item flex items-center gap-2 px-2 rounded hover:bg-gray-200"
     >

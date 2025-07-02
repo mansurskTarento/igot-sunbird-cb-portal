@@ -73,7 +73,7 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
 import { SearchV3Module } from '../search-v3/search-v3.module'
-import { CommunitySuggestionsModule } from '@sunbird-cb/consumption';
+import { CommunitySuggestionsModule } from '@sunbird-cb/consumption'
 
 @NgModule({
     declarations: [
