@@ -19,6 +19,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   @Input() userJourney = []
   @Input() chatId = ''
   @Input() userId = ''
+  @Input() fullScreenChatFlag = false  
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
