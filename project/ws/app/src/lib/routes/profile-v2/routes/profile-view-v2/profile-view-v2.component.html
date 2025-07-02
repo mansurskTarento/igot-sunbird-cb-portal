@@ -124,6 +124,24 @@
           </div>
         </ng-template>
       </div>
+      <!-- #region (not my user warning) -->
+      <ng-container *ngIf="isNotMyUser && isIgotOrg">
+        <div class="px-5">
+          <div class="not-my-user-container mt-8">
+            <div class="not-my-user-content">
+              <div>
+                <mat-icon class="warning-icon" [ngStyle]="{'color':'red'}">warning</mat-icon>
+              </div>
+              <div class="not-my-user-data">
+                <p>
+                  {{ 'profileInfo.notMyUseAccessRevoke' | translate }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- #endregion (not my user warning) -->
       <!-- #endregion (profile details ) -->
     </div>
 
