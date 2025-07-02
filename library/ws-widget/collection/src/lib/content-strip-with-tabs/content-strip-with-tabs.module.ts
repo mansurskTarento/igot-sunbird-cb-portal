@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
-import { HorizontalScrollerV2Module } from '@sunbird-cb/utils-v2'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { ContentStripWithTabsComponent } from './content-strip-with-tabs.component'
 import { HttpClient } from '@angular/common/http'
@@ -30,6 +29,7 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { HorizontalScrollerV2Module } from '@sunbird-cb/consumption'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {

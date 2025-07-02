@@ -59,7 +59,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
   iconPosition = {x:0, y:0}
   // tslint: enable
-  @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  // @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   @ViewChild('dragItem') dragElement!: ElementRef;
   isHubEnable!: boolean
   chatIconOutside = false
@@ -68,6 +68,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   maximizeChatFlag = true
+  fullScreenChatFlag = false
+  faqChatBotDisable = true
+  footerClassName = 'cb-footer'
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -88,15 +91,26 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     this.userInfo = this.configSvc && this.configSvc.userProfile
     // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
     // console.log()
-    if(this.rootOrgId) {
+    if(this.rootOrgId && this.iGOTAIConfigLoaded) {
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      this.currentFilter = 'information'
+
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } 
+
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
+      } 
+
+      if(this.enableSupportAI || this.enableIGOTAIFlag) {
+        this.faqChatBotDisable = true
       } else {
-        this.enableIGOTAIFlag = false
-        this.currentFilter = 'information'
+        this.faqChatBotDisable = false
       }
+      this.getFooterClass()
     }
    
     
@@ -115,15 +129,24 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   ngOnChanges() {
     if(this.rootOrgId && this.iGOTAIConfigLoaded) {
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      this.currentFilter = 'information'
+
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } 
+
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
-        this.enableSupportAI = true
         this.currentFilter = 'sarthi'
+      } 
+
+      if(this.enableSupportAI || this.enableIGOTAIFlag) {
+        this.faqChatBotDisable = true
       } else {
-        this.enableIGOTAIFlag = false
-        this.enableSupportAI = false
-        this.currentFilter = 'information'
+        this.faqChatBotDisable = false
       }
+      this.getFooterClass()
     }
   }
 
@@ -213,6 +236,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   iconClick(type: string) {
+    this.fullScreenChatFlag = false
+    this.maximizeChatFlag = true
     if(!this.dragEnabled) {
       this.showIcon = !this.showIcon
       this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
@@ -264,6 +289,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
     this.pushData(sendMsg)
     this.pushData(incomingMsg)
+    setTimeout(()=>{
+      this.scrollToBottom()
+    },100)
     this.raiseTemeletyInterat(question.quesID)
   }
 
@@ -335,6 +363,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
     this.pushData(sendMsg)
     this.pushData(incomingMsg)
+    setTimeout(()=>{
+      this.scrollToBottom()
+    },100)
   }
 
   raiseCategotyTelemetry(catItem: string) {
@@ -533,27 +564,32 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   ngAfterViewChecked() {
-    if(this.currentFilter !== 'sarthi') {
-      this.scrollToBottom()
+    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
+      let chatbotContent = document.getElementById('chatbot-content')
+      if(chatbotContent) {
+      chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+      }
     }    
   }
   scrollToBottom(): void {
     try {
-      if (this.myScrollContainer) {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
+      let chatbotContent = document.getElementById('chatbot-wrapper')
+      if(chatbotContent) {
+      chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
       }
     } catch(err) { }
   }
 
   scrollToBottomEvent() {
-   let chatbotContent = document.getElementById('chatbot-content')
-   if(chatbotContent) {
-    chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
-   }
+    let chatbotContent = document.getElementById('chatbot-content')
+    if(chatbotContent) {
+     chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+    }
   //  this.scrollToBottom()
   }
   clickOutside() {
-    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
+    if(this.enableIGOTAIFlag || this.enableSupportAI) {
+    } else {
       this.iconClick('end')
     }
   }
@@ -649,10 +685,33 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
   minimizeChat() {
     this.maximizeChatFlag = false
+    this.fullScreenChatFlag = false
   }
 
   maximizeChat() {
     this.maximizeChatFlag = true
+    this.fullScreenChatFlag = false
+  }
+
+  fullScreenChat() {
+    this.fullScreenChatFlag = true
+  }
+
+  fullScreenExitChat() {
+    this.fullScreenChatFlag = false
+    this.maximizeChatFlag = true
+  }
+
+  getFooterClass() {
+    if(this.enableSupportAI && this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-support-ai'
+    } else if (!this.enableSupportAI && this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-ai'
+    } else if (this.enableSupportAI && !this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-ai'
+    } else if (!this.enableSupportAI && !this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer'
+    }
   }
   
 }

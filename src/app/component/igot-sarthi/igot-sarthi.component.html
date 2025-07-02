@@ -1,9 +1,11 @@
 <div class="igot-ai-container" id="igot-ai-container">
-  <div class="message-container" id="message-container">
-    <div class="start-chat" *ngIf="aiSearchResultArr?.length === 0">
+  <div [ngClass]="fullScreenChatFlag ? 'message-container-full' : 'message-container'"  id="message-container">
+    <ng-container *ngIf="aiSearchResultArr?.length === 0">
+    <div [ngClass]="fullScreenChatFlag ? 'start-chat-full':'start-chat'">
       <h2 class="hey">Hey<span *ngIf="userInfo?.firstName">, {{userInfo?.firstName}}</span> </h2>
       <p>Welcome to IGOT AI, Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</p>
     </div>
+    </ng-container>
     <ng-container *ngFor="let chat of aiSearchResultArr; let i =index">
 
       <ng-container *ngIf="chat.type === 'incoming'">
@@ -132,7 +134,7 @@
                 <!-- <div class="resource-link" *ngIf="!(item?.fromInternet)">
                   <a [href]="item?.resourceLink" target="_blank">Click to view</a>
                 </div> -->
-                <div class="cursor-pointer ml-10 mr-2 my-1" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource' && !(item?.fromInternet)">
+                <div class="cursor-pointer resource-copy-icon ml-10 mr-2 my-2" (click)="copyPath(item, ci)" *ngIf="item?.contentType === 'Resource' && !(item?.fromInternet)">
                   <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
@@ -160,7 +162,7 @@
               <div><img src="/assets/ai-tutor/up.svg"></div>
               <div class="ml-2"><img src="/assets/ai-tutor/down.svg"></div>
             </div> -->
-            <div class="recommended-question" [ngClass]="{'ml-5': item?.message }">
+            <div class="recommended-question flex-col" [ngClass]="{'ml-5': item?.message }">
               <div class="my-5px mr-2 w-92" *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
                 <ng-container>
                   <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
@@ -174,7 +176,7 @@
               </div>
               <div class="flex flex-row font-12 mb-2">
 
-                <div class="cursor-pointer" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
+                <div class="cursor-pointer resource-copy-icon mt-1" (click)="copyPath(item, ci)" *ngIf="item?.contentType !== 'Resource' && !(item?.fromInternet)">
                   <mat-icon matTooltip="Copy" aria-label="Copy">content_copy</mat-icon>
                   <span *ngIf="copiedIndex === ci" class="copied-tooltip">Link Copied!</span>
                 </div>
@@ -287,7 +289,7 @@
       </ng-container>
     </ng-container>
   </div>
-  <div class="control-container">
+  <div [ngClass]="fullScreenChatFlag ? 'control-container-full':'control-container'">
     <div class="border-gradient-rounded" [style.height.px]="containerHeight">
       <div class="flex flex-row ml-5 mr-1 justify-between">
 

@@ -48,6 +48,12 @@
     padding-top: 50%;
 }
 
+.start-chat-full{
+  text-align: center;
+  padding-top: 10%;
+  width: 100vw;
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -92,6 +98,16 @@
   height: 100%;
   // min-height: 520px;
   min-width: 400px;
+  width: 100%;
+  z-index: 2;
+  position: relative;
+}
+
+.message-container-full {
+  // background-image: url('/assets/ai-tutor/background.svg');
+  height: 100%;
+  // min-height: 520px;
+  min-width: 96vw;
   width: 100%;
   z-index: 2;
   position: relative;
@@ -692,6 +708,13 @@
   
 }
 
+.control-container-full {
+  position: fixed;
+  bottom: 80px;
+  width: 97%;
+  z-index: 2;
+}
+
 @media (min-width:768) and (max-width: 1200px) {
   .message-container {
     // background-image: url('/assets/ai-tutor/background.svg');
@@ -994,6 +1017,12 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.resource-copy-icon {
+  .material-icons {
+    font-size: 20px !important;
   }
 }
 

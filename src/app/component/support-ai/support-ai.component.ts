@@ -19,6 +19,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   @Input() userJourney = []
   @Input() chatId = ''
   @Input() userId = ''
+  @Input() fullScreenChatFlag = false
   @Input() activeLaguage= 'en'
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
