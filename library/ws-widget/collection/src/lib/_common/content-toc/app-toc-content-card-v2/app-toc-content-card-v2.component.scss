@@ -14,6 +14,84 @@ a.disabled {
   pointer-events: none;
   cursor: default;
 }
+a.lang-button {
+ color: #fff;
+ background-color: #1a4ca1;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600; 
+
+}
+.lang-icon {
+  vertical-align: bottom;
+}
+
+mat-form-field.lang-select-field  mat-select {
+  background-color: transparent; /* Keep transparent background */
+  color: white; /* White text for the select input */
+  border-radius: 12px; /* Rounded corners */
+}
+
+/* Change the text color inside the mat-option */
+mat-form-field.lang-select-field  mat-option {
+  color: black; /* Black text inside the options */
+  background: #fff;
+}
+
+.lang-select-field div.mat-mdc-select-panel  {
+  background-color: #fff !important; 
+  max-height: 325px !important;
+}
+
+mat-form-field.lang-select-field  .mat-select-panel {
+  background-color: white !important
+}
+.mat-mdc-option, .mat-mdc-select-panel-above div.mat-mdc-select-panel {
+  background: #fff !important;
+}
+::ng-deep .mat-pseudo-checkbox-checked {
+  display: none !important;
+} 
+
+::ng-deep .language-control {
+ .mat-form-field-appearance-outline .mat-form-field-flex {
+    height: 35px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 11px 0px 0px !important;
+  }
+
+  .mat-form-field-infix {
+    border-top: 0.7em !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0px !important;
+  }
+    .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 16px !important;
+    border-left-style: solid !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none !important;
+  }
+  .mdc-notched-outline__leading {
+    border: none !important;
+  }
+  }
+
+  ::ng-deep .lang-select-field .mat-mdc-text-field-wrapper {
+  background-color: #1B4CA1; 
+  border-radius: 20px; 
+  color: #fff; 
+  border:1px solid #fff;
+  padding:8px 16px;
+  height: 40px;
+}
+ 
 
 span.optional-span {
   margin-left: 8px;

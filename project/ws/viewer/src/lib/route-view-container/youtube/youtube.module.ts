@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatMenuModule } from '@angular/material/menu'
 
 import {
   BtnContentDownloadModule,
@@ -31,6 +33,9 @@ import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { FormsModule } from '@angular/forms'
+import { MatSelectModule } from '@angular/material/select'
+import { MatFormFieldModule } from '@angular/material/form-field'
 
 @NgModule({
   declarations: [YoutubeComponent],
@@ -58,6 +63,11 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
     UserContentRatingModule,
     BtnContentFeedbackV2Module,
     PlayerBriefModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatRadioModule,
+    MatMenuModule, 
+    MatSelectModule
   ],
   exports: [
     YoutubeComponent,

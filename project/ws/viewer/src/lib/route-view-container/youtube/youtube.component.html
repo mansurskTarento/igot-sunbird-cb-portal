@@ -64,12 +64,33 @@
             <ws-widget-btn-content-feedback [forPreview]="forPreview"></ws-widget-btn-content-feedback> -->
           </div>
         </mat-card>
+        <div class="player-overlay">
+          <p class="mat-subheading-2">Great job! You’ve completed course 1 (Overview of Administrative Law)</p>
+          <p class="mat-subheading-1">You can now move to Course 2 or switch the course language as needed.</p>
+
+          <div class="lang-chip-list text-left">
+
+            <mat-form-field appearance="outline" class="lang-select-field">
+              <mat-select [(value)]="selectedLanguage" panelClass="language-control">
+                <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                  <!-- {{ lang.name }} -->
+                     <mat-radio-group [value]="selectedLanguage">
+                <mat-radio-button [value]="lang.code" class="lang-radio">
+                  {{ lang?.localName }} ({{  lang?.name }})
+                </mat-radio-button>
+              </mat-radio-group>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+      
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <!-- <div *ngIf="discussionForumWidget && isRestricted"
+    <!-- <div *ngIf="discussionForumWidget && isRestricted"
     class="video-discussion-forum-in display-block padding-m margin-bottom-m">
     <h2 class="mat-toolbar discussion-head">Discussion Forum</h2>
     <ng-container [wsResolverWidget]="discussionForumWidget"></ng-container>
   </div> -->
-</div>
+  </div>

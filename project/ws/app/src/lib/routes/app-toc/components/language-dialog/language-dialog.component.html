@@ -1,0 +1,41 @@
+<mat-dialog-content *ngIf="data && data?.from === 'openLanguageDialog'">
+  <div class="flex">
+    <a (click)="dialogRef.close()" class="ml-auto cursor-pointer"><mat-icon class="close-icon">close</mat-icon></a>
+  </div>
+
+  <mat-radio-group >
+    <mat-radio-button *ngFor="let lang of data?.content" class="lang-radio-btn" [value]="lang.code">
+      {{ lang?.localName }} ({{ lang?.name }})
+    </mat-radio-button>
+  </mat-radio-group>
+  <!-- </mat-option>
+    </mat-select> -->
+  <!-- </mat-form-field> -->
+
+</mat-dialog-content>
+
+<mat-dialog-content *ngIf="data && data?.from === 'appTocHomeLanguageDialog'">
+  <div class="dialog-header text-left flex flex-col justify-between align-items-center">
+    <p class="mat-subheading-1">Choose Your Preferred Language</p>
+    <!-- <a (click)="dialogRef.close()"><mat-icon class="close-icon">close</mat-icon></a> -->
+     <p class="mat-body-2">This course is available in multiple languages. You can select one to begin.</p>
+  </div>
+  <div class="lang-msg-wrapper">
+    <!-- <p class="language-item" *ngFor="let lang of data?.content">
+      <span class="language-name">{{ lang.localName }} ({{ lang.name }})</span>
+    </p> -->
+    <mat-form-field appearance="outline" class="lang-select-field">
+              <mat-select [(value)]="data.selectLang" panelClass="language-control">
+                <mat-option *ngFor="let lang of data?.content" [value]="lang?.code">
+                  <!-- {{ lang.name }} -->
+                     <mat-radio-group [value]="selectedLanguage">
+                <mat-radio-button [value]="lang?.code" class="lang-radio">
+                  {{ lang?.localName }} ({{  lang?.name }})
+                </mat-radio-button>
+              </mat-radio-group>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  </div>
+
+</mat-dialog-content>

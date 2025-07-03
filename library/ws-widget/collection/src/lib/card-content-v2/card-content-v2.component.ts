@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
 // import { Router } from '@angular/router'
 
 @Component({
@@ -45,6 +46,23 @@ export class CardContentV2Component extends WidgetBaseComponent
   btnGoalsConfig: NsGoal.IBtnGoal | null = null
   prefChangeSubscription: Subscription | null = null
   sourceLogos: NsInstanceConfig.ISourceLogo[] | undefined
+  languages = [
+     { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
+    { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
+    { name: 'Telugu', localName: 'తెలుగు', code: 'te' },
+    { name: 'Bengali', localName: 'বাংলা', code: 'bn' },
+    { name: 'Marathi', localName: 'मराठी', code: 'mr' },
+    { name: 'Gujarati', localName: 'ગુજરાતી', code: 'gu' },
+    { name: 'Kannada', localName: 'ಕನ್ನಡ', code: 'kn' },
+    { name: 'Malayalam', localName: 'മലയാളം', code: 'ml' },
+    { name: 'Punjabi', localName: 'ਪੰਜਾਬੀ', code: 'pa' },
+    { name: 'English', localName: 'English', code: 'en' },
+    { name: 'Odia', localName: 'ଓଡ଼ିଆ', code: 'or' },
+    { name: 'Assamese', localName: 'অসমীয়া', code: 'as' },
+    { name: 'Konkani', localName: 'कोंकणी', code: 'kok' },
+    { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
+    { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
+  ];
   
   isIntranetAllowedSettings = false
   constructor(
@@ -123,6 +141,20 @@ export class CardContentV2Component extends WidgetBaseComponent
     this.cbPlanInterval = setInterval(() => {
       this.getCbPlanData()
     },                                1000)
+  }
+
+  openLanguageDialog(event:any): void {
+    event.stopPropagation()
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '470px',
+      data: {
+        title: ' ',
+        from: 'openLanguageDialog',
+        acceptButton: '',
+        content: this.languages
+       
+      } // optional, if you need to pass data
+    });
   }
 
   checkContentTypeCriteria() {

@@ -37,6 +37,29 @@
             </ng-container>
           </mat-card-content>
         </mat-card>
+         <div class="player-overlay">
+          <p class="mat-subheading-2">Great job! You’ve completed course 1 (Overview of Administrative Law)</p>
+          <p class="mat-subheading-1">You can now move to Course 2 or switch the course language as needed.</p>
+
+          <div class="lang-chip-list text-left">
+
+            <mat-form-field appearance="outline" class="lang-select-field">
+              <mat-select [(value)]="selectedLanguage" panelClass="language-control">
+                <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                  <!-- {{ lang.name }} -->
+                     <mat-radio-group [value]="selectedLanguage">
+                <mat-radio-button [value]="lang.code" class="lang-radio">
+                  {{ lang?.localName }} ({{  lang?.name }})
+                </mat-radio-button>
+              </mat-radio-group>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+      
+          </div>
+        </div>
+        
       </div>
       <div class="vidoe-title margin-top-m" *ngIf="videoData && !isMobile">
         <mat-card *ngIf="isScreenSizeSmall" class="unit-meta-item">
@@ -65,6 +88,28 @@
             </div>
           </div>
         </mat-card>
+         <div class="player-overlay">
+          <p class="mat-subheading-2">Great job! You’ve completed course 1 (Overview of Administrative Law)</p>
+          <p class="mat-subheading-1">You can now move to Course 2 or switch the course language as needed.</p>
+
+          <div class="lang-chip-list text-left">
+
+            <mat-form-field appearance="outline" class="lang-select-field">
+              <mat-select [(value)]="selectedLanguage" panelClass="language-control">
+                <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                  <!-- {{ lang.name }} -->
+                     <mat-radio-group [value]="selectedLanguage">
+                <mat-radio-button [value]="lang.code" class="lang-radio">
+                  {{ lang?.localName }} ({{  lang?.name }})
+                </mat-radio-button>
+              </mat-radio-group>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+      
+          </div>
+        </div>
       </div>
     </div>
   </div>

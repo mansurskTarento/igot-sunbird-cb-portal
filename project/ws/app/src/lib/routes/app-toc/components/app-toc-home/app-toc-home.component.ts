@@ -50,6 +50,7 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { LanguageDialogComponent } from '../language-dialog/language-dialog.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -116,6 +117,28 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       type: 'mat-button',
     },
   }
+
+  // todo hard coded data ===
+   languages = [
+     { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
+    { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
+    { name: 'Telugu', localName: 'తెలుగు', code: 'te' },
+    { name: 'Bengali', localName: 'বাংলা', code: 'bn' },
+    { name: 'Marathi', localName: 'मराठी', code: 'mr' },
+    { name: 'Gujarati', localName: 'ગુજરાતી', code: 'gu' },
+    { name: 'Kannada', localName: 'ಕನ್ನಡ', code: 'kn' },
+    { name: 'Malayalam', localName: 'മലയാളം', code: 'ml' },
+    { name: 'Punjabi', localName: 'ਪੰਜਾਬੀ', code: 'pa' },
+    { name: 'English', localName: 'English', code: 'en' },
+    { name: 'Odia', localName: 'ଓଡ଼ିଆ', code: 'or' },
+    { name: 'Assamese', localName: 'অসমীয়া', code: 'as' },
+    { name: 'Konkani', localName: 'कोंकणी', code: 'kok' },
+    { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
+    { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
+  ];
+  showAllLang = false;
+  firstSixLang:any
+  remainingLang:any
   tocConfig: any = null
   primaryCategory = NsContent.EPrimaryCategory
   courseCategory = NsContent.ECourseCategory
@@ -317,6 +340,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   ngOnInit() {
+    this.firstSixLang = this.languages.slice(0, 5);
+   this.remainingLang = this.languages.slice(5);
+   console.log(this.remainingLang, "this.remainingLang===")
+
     this.dataTransferSvc.setEnrollData(null)
     this.mobile1200 = window.innerWidth < 1201
     this.configSvc.languageTranslationFlag.subscribe((data: any) => {
@@ -517,6 +544,41 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
 
   }
 
+  // toggleShowAll() {
+  //   this.showAllLang = !this.showAllLang;
+  // }
+  // get visibleLanguages() {
+  //   return this.showAllLang ? this.languages : this.languages.slice(0, 6);
+  // }
+
+  openLangDialog(event:any) {
+    event?.stopPropagation()
+    this.dialog.open(LanguageDialogComponent, {
+      width: '400px',
+      height: 'auto',
+      data:  {
+        from : 'appTocHomeLanguageDialog',
+        content: this.languages,
+        selectLang:'hi'
+      }
+    });
+  }
+
+  openLanguageDialog(event:any) {
+    event?.stopPropagation()
+    this.dialog.open(LanguageDialogComponent, {
+      width: '400px',
+      height: 'auto',
+      data:  {
+        from : 'openLanguageDialog',
+        content: this.languages,
+        selectLang:'hi'
+      }
+    });
+  }
+
+    
+
   // displayRandomlearnAdvisoryData(): void {
   //   const randomIndex = Math.floor(Math.random() * this.learnAdvisoryData.length)
   //   this.randomlearnAdvisoryObj = this.learnAdvisoryData[randomIndex]
@@ -534,6 +596,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       })
     }
   }
+
+ 
 
   isCourseCompletedOnThisMonth() {
     const now = moment(this.serverDate).format('YYYY-MM-DD')

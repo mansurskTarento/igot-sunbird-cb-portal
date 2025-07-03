@@ -142,7 +142,8 @@ import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dyn
 import { EnrollProfileFormComponent } from './components/enroll-profile-form/enroll-profile-form.component';
 import { SurveyFormQuestionComponent } from './components/survey-form-question/survey-form-question.component';
 import { SurveyFormSectionComponent } from './components/survey-form-section/survey-form-section.component'
-import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
+import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module';
+import { LanguageDialogComponent } from './components/language-dialog/language-dialog.component'
 
 @NgModule({
   declarations: [
@@ -174,6 +175,7 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     EnrollQuestionnaireComponent,
     EnrollProfileFormComponent,
     AppTocCiosHomeComponent,
+    LanguageDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -269,6 +271,7 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     NonReleventFeedbackDialogModule,
     SurveyFormQuestionComponent,
     SurveyFormSectionComponent,
+    MatRadioModule
   ],
   providers: [
     AppTocResolverService,

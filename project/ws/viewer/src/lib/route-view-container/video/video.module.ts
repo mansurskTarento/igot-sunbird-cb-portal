@@ -31,6 +31,9 @@ import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatSelectModule } from '@angular/material/select'
 
 @NgModule({
   declarations: [VideoComponent],
@@ -58,6 +61,9 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
     UserContentRatingModule,
     BtnContentFeedbackV2Module,
     PlayerBriefModule,
+     MatRadioModule,
+        MatMenuModule, 
+        MatSelectModule
   ],
   exports: [
     VideoComponent,

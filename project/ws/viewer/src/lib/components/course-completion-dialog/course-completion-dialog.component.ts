@@ -4,6 +4,7 @@ import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.s
 import { LoggerService, MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
+
 import { RatingService } from '@sunbird-cb/collection/src/public-api'
 @Component({
   selector: 'viewer-course-completion-dialog',
@@ -32,6 +33,7 @@ export class CourseCompletionDialogComponent implements OnInit {
     }
 
   ngOnInit() {
+    console.log(this.data, "data==========")
     const app: any = document.getElementById('viewer-conatiner-backdrop')
     if (app) {
       app.style.filter = 'blur(5px)'

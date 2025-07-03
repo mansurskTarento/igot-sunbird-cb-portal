@@ -11,6 +11,7 @@ import moment from 'moment'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { Subscription } from 'rxjs'
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component'
 
 @Component({
   selector: 'ws-widget-app-toc-content-card-v2',
@@ -64,6 +65,26 @@ export class AppTocContentCardV2Component implements OnInit {
     interactivecontent: 0,
     offlineSession: 0,
   }
+   languages = [
+     { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
+    { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
+    { name: 'Telugu', localName: 'తెలుగు', code: 'te' },
+    { name: 'Bengali', localName: 'বাংলা', code: 'bn' },
+    { name: 'Marathi', localName: 'मराठी', code: 'mr' },
+    { name: 'Gujarati', localName: 'ગુજરાતી', code: 'gu' },
+    { name: 'Kannada', localName: 'ಕನ್ನಡ', code: 'kn' },
+    { name: 'Malayalam', localName: 'മലയാളം', code: 'ml' },
+    { name: 'Punjabi', localName: 'ਪੰਜਾਬੀ', code: 'pa' },
+    { name: 'English', localName: 'English', code: 'en' },
+    { name: 'Odia', localName: 'ଓଡ଼ିଆ', code: 'or' },
+    { name: 'Assamese', localName: 'অসমীয়া', code: 'as' },
+    { name: 'Konkani', localName: 'कोंकणी', code: 'kok' },
+    { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
+    { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
+  ]
+   selectedLanguage = 'en'
+   selectedValue: string | null = null
+  openDialogOnClose: boolean = false
   defaultThumbnail = ''
   viewChildren = false
   primaryCategory = NsContent.EPrimaryCategory
@@ -505,5 +526,54 @@ export class AppTocContentCardV2Component implements OnInit {
       return true
     }
   }
+
+  openConfirmDialoge() {
+     this.dialog.open(ConfirmDialogComponent, {
+            width: '500px',
+            data: {
+              title: ' ',
+              from: 'openConfirmDialoge',
+              cancelButton: 'Cancel',
+              acceptButton: 'Change language',
+              header: 'Are you sure you want to change the language?',
+              message: 'Switching the language will reset your progress. the course will restart from the beginning in the selected language.',
+             
+            } // optional, if you need to pass data
+          });
+
+  }
+
+   openLangDialog() {
+     this.dialog.open(ConfirmDialogComponent, {
+            width: '500px',
+            data: {
+              title: ' ',
+              from: 'openLangDialog',
+              cancelButton: 'Cancel',
+              acceptButton: 'Resume Progress',
+              header: 'Continue where you left off in Hindi?',
+              message: "You’ve already made some progress in this language? Would you like to resume from where you left off or start over",
+             
+            } // optional, if you need to pass data
+          });
+
+  }
+
+
+    onRadioChange(value: string) {
+    console.log('onRadioChange called with value:', value)
+    this.selectedValue = value
+    this.openDialogOnClose = true
+  }
+
+  onSelectClosed() {
+    console.log('onSelectClosed called')
+    if (this.openDialogOnClose) {
+      this.openConfirmDialoge() 
+      this.openDialogOnClose = false
+    }
+  }
+
+  
 
 }
