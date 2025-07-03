@@ -58,79 +58,53 @@ export class MyNotificationsComponent {
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
-    } else if(notification?.sub_category?.includes('CONTENT')) {
-      let data = {
-        data: {
-          title: '',
-          cancelButton: 'Cancel',
-          acceptButton: 'Confirm',
-          message: 'You will be redirected to the Content Portal to view content-related notifications.',
-        },
-      }
-      let url = `${environment?.portalsForNotifications?.cbp}/app/home`
-      this.showDialog(data, url)
-    } else if (notification.sub_category === 'CONTENT_PUBLISHED' || notification.sub_category === 'CONTENT_EDITED') {
-      if (notification.message.data && notification.message.data.id) {
-        this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
-          if (res) {
-            if (res.primaryCategory === 'Learning Resource' &&
-              res.resourceCategory !== 'Learning Resource') {
-              localStorage.setItem('isStandaloneResource', 'true')
-            } else {
-              localStorage.setItem('isStandaloneResource', 'false')
-            }
-            if (this.roles.includes('CONTENT_CREATOR')) {
-              if (res.status === 'Draft') {
-                let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2`
-                window.open(url, '_blank')
-              } else if (res.status === 'Live') {
-                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2`
-                window.open(url, '_blank')
-              } else {
-                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?mode=edit`
-                window.open(url, '_blank')
-              }
-            } else {
-              if (res.status === 'Draft') {
-                alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
-                //${environment.portalsForNotifications.cbp}
-                window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
-              } else {
-                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2`
-                window.open(url, '_blank')
-              }
-            }
+    } else if (notification?.category?.includes('CONTENT')) {
+      this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
+        let isStandaloneResource = false
+        if (res.primaryCategory === 'Learning Resource' &&
+          res.resourceCategory !== 'Learning Resource') {
+          localStorage.setItem('isStandaloneResource', 'true')
+          isStandaloneResource = true
+        } else {
+          localStorage.setItem('isStandaloneResource', 'false')
+        }
+        if (res.status === 'Live') {
+          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+        } else if (res.status === 'Draft') {
+          if (this.roles.includes('CONTENT_CREATOR')) {
+            window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          } else {
+            this.snackBar.open('You are not authorized to view this content.')
           }
-        })
-      } else {
-        this.snackBar.open('Something went wrong')
-      }
-    } else if (notification.sub_category === 'CONTENT_REVIEW_REQUEST' || notification.sub_category === 'CONTENT_REJECTED') {
-      if (notification.message.data && notification.message.data.id) {
-        this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
-          if (res) {
-            if (res.status === 'Draft') {
-              alert('You are not authorized to view this content, the content might be recalled to draft by the creator.')
-              window.open(`${environment.portalsForNotifications.cbp}`, '_blank')
-            } else {
+        } else if (res.status === 'Review') {
+          switch (res.reviewStatus) {
+            case 'InReview': {
               if (this.roles.includes('CONTENT_REVIEWER')) {
-                let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?mode=edit`
-                window.open(url, '_blank')
-              } else if (this.roles.includes('CONTENT_CREATOR')) {
-                let url = `${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}`
-                window.open(url, '_blank')
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+              } else {
+                this.snackBar.open("You are not authorized to view this content.")
               }
+              break
+            } case 'Reviewed': {
+              if (this.roles.includes('CONTENT_PUBLISHER')) {
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+              } else {
+                this.snackBar.open("You are not authorized to view this content.")
+              }
+              break
             }
           }
-        })
-      } else if (notification.category === 'PROFILE') {
-        let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
-        window.open(url, '_blank')
-      }
+        } else if (res.status === 'Retired') {
+          this.snackBar.open('This content is retired.')
+        }
+      })
+    } else if (notification.category === 'PROFILE') {
+      let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+      window.open(url, '_blank')
     }
   }
 
-  showDialog(data: any, url:string) {
+  showDialog(data: any, url: string) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
