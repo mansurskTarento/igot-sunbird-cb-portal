@@ -227,7 +227,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       const url = this.findUrl()
       if (url.includes('youtube.com')) {
         const videoId = url.split('/').pop()
-        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${videoId}`])
+        const youtubeId = videoId?.split('?')[0] || videoId
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
       } else {
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
       }
