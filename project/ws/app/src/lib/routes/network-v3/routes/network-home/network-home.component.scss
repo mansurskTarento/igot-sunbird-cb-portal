@@ -10,13 +10,6 @@
   border-radius: 12px;
   border: 1px solid #00000014;
 
-  .section-header {
-    /*stylelint-disable */
-    font: 600 14px 'Montserrat';
-    /* stylelint-enable */
-    color: #000000
-  }
-
   .records-count {
     background-color: #D13924;
     width: 24px;
@@ -28,25 +21,36 @@
     /* stylelint-enable */
   }
 
-  .show-all {
-    color: #1B4CA1;
-    /*stylelint-disable */
-    font: 400 14px 'Lato';
-    /* stylelint-enable */
-    pointer-events: all;
-    cursor: pointer;
-
-    .arrow-icon {
-      color: #1B4CA1;
-      width: 20px;
-      height: 20px;
-      font-size: 20px;
-      margin-top: 2px;
-    }
-  }
-
   .saparater {
     height: 0px;
     border-top: 1px solid #00000014;
   }
+}
+
+.section-header {
+    /*stylelint-disable */
+    font: 600 14px 'Montserrat';
+    /* stylelint-enable */
+    color: #000000
+  }
+
+.show-all {
+  color: #1B4CA1;
+  /*stylelint-disable */
+  font: 400 14px 'Lato';
+  /* stylelint-enable */
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.arrow-icon {
+  color: #1B4CA1;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.mentors-container {
+  width: 540px;
 }

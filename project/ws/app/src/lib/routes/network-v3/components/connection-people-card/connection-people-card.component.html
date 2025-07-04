@@ -1,7 +1,7 @@
-<div class="flex flex-col item-center mt-11 peoples-card">
+<div class="flex flex-col item-center mt-11 peoples-card" [ngClass]="{'mx-1': addMargin}">
     <div class="flex flex-col card-container">
         <div class="photo-container flex items-center justify-center cursor-pointer" (click)="goToUserProfile(user)">
-            <ws-widget-avatar-photo i18n-aria-label role="link" tabindex="0" [name]="getUseravatarName()" [photoUrl]="user?.photo"
+            <ws-widget-avatar-photo i18n-aria-label role="link" tabindex="0" [name]="userAvatarName" [photoUrl]="user?.photo"
                 size="m">
             </ws-widget-avatar-photo>
         </div>
@@ -19,11 +19,11 @@
             </div>
         </div>
         <div class="action-container flex items-center justify-center">
-            <button mat-stroked-button color="accent" type="button" class="connect_btn mat-accent-border flex-auto-display focus-btn"
+            <button mat-stroked-button color="accent" type="button" class="connect_btn flex justify-center item-center"
                 (click)="connetToUser()" *ngIf="!user?.requestSent">
-                <span class="ws-mat-default-text" ><img class="connect-icon" src="assets/icons/Connect_icon.svg"/>{{'connectionPeopleCard.connect' | translate}}</span>
+                <span class="ws-mat-default-text" ><img class="connect-icon mr-1" src="assets/icons/Connect_icon.svg" alt="add"/>{{'connectionPeopleCard.connect' | translate}}</span>
             </button>
-            <button mat-stroked-button color="accent" type="button" class=" mat-accent-border flex-auto-display minwid focus-btn"
+            <button mat-stroked-button color="accent" type="button" class="disabled-btn mat-accent-border flex-auto-display minwid"
                 disabled *ngIf="user?.requestSent">
                 <span class="" >{{'connectionPeopleCard.connectionSent' | translate}}</span>
             </button>

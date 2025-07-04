@@ -14,8 +14,8 @@ export class mentorSuggestionsResolver {
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<any>> {
-   const pageSize = _route.queryParams['pageSize'] || 10;
-    const offset = _route.queryParams['offset'] || 0;
+    const pageSize: number = parseInt(_route.queryParams['pageSize'], 15);
+    const offset: number = parseInt(_route.queryParams['offset'], 0);
     const formBody = {
       size: pageSize,
       offset: offset,

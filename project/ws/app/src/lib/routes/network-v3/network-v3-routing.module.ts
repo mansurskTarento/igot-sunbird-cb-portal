@@ -10,7 +10,6 @@ import { AllRecommendationsComponent } from "./components/all-recommendations/al
 import { CommunityResolverService } from "./resolvers/community-resolver.service";
 import { profileResolver } from "./resolvers/profile.resolver";
 import { connectionRequestsResolver } from "./resolvers/connection-requests.resolver";
-import { peopleSuggestionsResolver } from "./resolvers/people-suggestions.resolver";
 import { mentorSuggestionsResolver } from "./resolvers/mentor-suggestions.resolver";
 
 const routes: Routes = [
@@ -40,7 +39,6 @@ const routes: Routes = [
         },
         resolve: {
           connectionRequests: connectionRequestsResolver,
-          peopleSuggestions: peopleSuggestionsResolver,
           mentorSuggestions: mentorSuggestionsResolver,
         }
       },
@@ -75,9 +73,6 @@ const routes: Routes = [
           pageId: 'recommendations',
           module: 'Network',
           recommendationType: 'peopleYouMayKnow'
-        },
-        resolve: {
-          peopleSuggestions: peopleSuggestionsResolver,
         }
       },
       {
@@ -102,7 +97,6 @@ const routes: Routes = [
     CommunityResolverService,
     profileResolver,
     connectionRequestsResolver,
-    peopleSuggestionsResolver,
     mentorSuggestionsResolver
   ],
 })

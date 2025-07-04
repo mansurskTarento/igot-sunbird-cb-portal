@@ -3,7 +3,7 @@
   height: fit-content;
 }
 
-.center-content {
+:host ::ng-deep .center-content {
   width: 566px;
 }
 

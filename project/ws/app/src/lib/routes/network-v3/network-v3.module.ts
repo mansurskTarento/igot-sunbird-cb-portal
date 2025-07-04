@@ -21,8 +21,9 @@ import { ConnectionPeopleCardComponent } from './components/connection-people-ca
 import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
 import { TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
-import { CommunitySuggestionsModule } from '@sunbird-cb/consumption';
+import { CommunitySuggestionsModule, HorizontalScrollerV2Module } from '@sunbird-cb/consumption';
 import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
+import { MatLegacyButtonModule } from '@angular/material/legacy-button';
 
 
 @NgModule({
@@ -50,7 +51,9 @@ import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/paginat
     ConnectionNameModule,
     PaginationModule,
     TranslateModule,
+    HorizontalScrollerV2Module,
     MatLegacyTabsModule,
+    MatLegacyButtonModule,
     // NetworkProfileCardModule,
     CommunitySuggestionsModule
   ]

@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageChangeEmitter } from '../../models/network-v3.model';
 import { NetworkingService } from '../../services/networking.service';
 import * as _ from 'lodash';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 
 @Component({
   selector: 'ws-app-mentors',
   templateUrl: './mentors.component.html',
   styleUrls: ['./mentors.component.scss']
 })
-export class MentorsComponent {
+export class MentorsComponent implements OnInit {
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
-  paginationPage = 1;
+  paginationPage = 0;
   totalItemsCount = 1000;
   mentorsList: any[] = [
     {
@@ -146,10 +147,17 @@ export class MentorsComponent {
       "@id": "bff48d63-5dba-4376-abd3-00a4e4315b4c"
     }
   ]
+  mentorsListLoading = false;
+  mentorsGetSubscription: any
 
   constructor(
+    private snackBar: MatLegacySnackBar,
     private networkingSvc: NetworkingService
   ) { }
+
+  ngOnInit(): void {
+    this.getMentorsList();
+  }
 
   async onPageChange(event: PageChangeEmitter) {
     // this.searchContentLoader = true;
@@ -168,14 +176,28 @@ export class MentorsComponent {
       size: this.paginationSize,
       offset: this.paginationPage - 1,
     }
-    this.networkingSvc.getRecommendedMentors(formBody).subscribe({
+    if(this.mentorsGetSubscription) {
+      this.mentorsGetSubscription.unsubscribe();
+    }
+    this.mentorsListLoading = true;
+    this.mentorsGetSubscription =this.networkingSvc.getRecommendedMentors(formBody).subscribe({
       next: (response) => {
+        this.mentorsListLoading = false;
         this.mentorsList = _.get(response, 'result.data.results', []) ;
         this.totalItemsCount = _.get(response, 'result.data.total', 0);
       },
       error: (error) => {
-        console.error('Error fetching mentors:', error);
+        this.mentorsListLoading = false;
+        if(error) {
+          this.openSnackbar('Error fetching mentors. Please try again later.');
+        }
       }
     });
+  }
+
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
   }
 }

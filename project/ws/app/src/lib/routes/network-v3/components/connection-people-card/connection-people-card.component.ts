@@ -1,10 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { NsUser } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService} from '@sunbird-cb/utils-v2';
 import { NSNetworkDataV2 } from '../../../network-v2/models/network-v2.model';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ws-app-connection-people-card',
@@ -13,23 +14,21 @@ import { NetworkV2Service } from '../../../network-v2/services/network-v2.servic
 })
 export class ConnectionPeopleCardComponent implements OnInit {
   @Input() user!: NSNetworkDataV2.INetworkUser
-  @Output() connection = new EventEmitter<string>()
+  @Input() addMargin = false
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>
   @ViewChild('toastError', { static: true }) toastError!: ElementRef<any>
-  me!: NsUser.IUserProfile
+  cirrentUser: any
   howerUser!: any
   unmappedUser!: any
+  userAvatarName = ''
 
   constructor(
     private networkV2Service: NetworkV2Service,
     private snackBar: MatSnackBar,
     private router: Router,
-    private activeRoute: ActivatedRoute,
     private translate: TranslateService,
+    private configurationsService: ConfigurationsService
   ) {
-    if (this.activeRoute.parent) {
-      this.me = this.activeRoute.parent.snapshot.data.me
-    }
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
@@ -40,8 +39,15 @@ export class ConnectionPeopleCardComponent implements OnInit {
   ngOnInit() {
     this.howerUser = this.user
     this.unmappedUser = this.user
+    this.getCurrentUser()
+    this.userAvatarName = this.getUseravatarName
+
   }
-  getUseravatarName() {
+
+  getCurrentUser() {
+    this.cirrentUser = this.configurationsService.userProfileV2
+  }
+  get getUseravatarName(): string {
     let name = ''
     if (this.user && !this.user.personalDetails) {
       if (this.user.firstName) {
@@ -81,17 +87,17 @@ export class ConnectionPeopleCardComponent implements OnInit {
   connetToUser() {
     const req = {
       connectionId: this.user.id || this.user.identifier || this.user.wid,
-      userIdFrom: this.me ? this.me.userId : '',
-      userNameFrom: this.me ? this.me.userId : '',
-      userDepartmentFrom: this.me && this.me.departmentName ? this.me.departmentName : '',
+      userIdFrom: _.get(this.cirrentUser, 'userId', ''),
+      userNameFrom: _.get(this.cirrentUser, 'firstName', ''),
+      userDepartmentFrom: _.get(this.cirrentUser, 'departmentName', ''),
       userIdTo: this.unmappedUser.userId,
-      userNameTo: this.user.id || this.user.identifier || this.user.wid,
-      userDepartmentTo: this.unmappedUser.employmentDetails.departmentName,
+      userNameTo: _.get(this.unmappedUser, 'personalDetails.firstname', ''),
+      userDepartmentTo: _.get(this.unmappedUser, 'employmentDetails.departmentName', ''),
     }
     this.networkV2Service.createConnection(req).subscribe(
       () => {
         this.openSnackbar(this.toastSuccess.nativeElement.value)
-        this.connection.emit('connection-updated')
+        this.user['requestSent'] = true
       },
       () => {
         this.openSnackbar(this.toastError.nativeElement.value)

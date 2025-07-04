@@ -52,7 +52,7 @@ export class ConnectionsCardComponent implements OnInit {
     
   }
 
-  updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Blocked' | 'Unblocked' | 'Remove') {
+  updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
     if(this.otherUserProfile && this.currentUserDetails) {
       const formBody = {
         connectionId: this.otherUserProfile.id || this.otherUserProfile.identifier || this.otherUserProfile.wid,
@@ -64,6 +64,7 @@ export class ConnectionsCardComponent implements OnInit {
         userDepartmentTo: this.otherUserProfile.departmentName,
         status: action
       }
+      this.otherUserProfile['connectionStatus'] = action // need to remove when apis working
       this.networkingSvc.updateConnectionRequest(formBody).subscribe({
         next: (response) => {
           if (response) {

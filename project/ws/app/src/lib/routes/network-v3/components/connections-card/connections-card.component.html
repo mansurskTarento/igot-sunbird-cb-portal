@@ -35,7 +35,7 @@
               <span>copy profile link</span>
             </button>
             <ng-container *ngIf="!otherUserProfile?.connectionStatus">
-              <button mat-menu-item class="menu-item" (click)="updateConnection('Remove')">
+              <button mat-menu-item class="menu-item" (click)="updateConnection('Removed')">
                 <span>Remove connection</span>
               </button>
             </ng-container>
@@ -48,17 +48,21 @@
           <div class="flex h-full flex-col w-full">
             <div class="flex justify-end timing">{{otherUserProfile?.timeAgo}}</div>
           </div>
-          <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
+          <ng-container *ngIf="!otherUserProfile?.connectionStatus; else connectionUpdated">
             <div class="request-btns flex justify-between w-full items-center">
-              <div class="ignore flex justify-center items-center">Ignore</div>
-              <button mat-button class="accept-btn" (click)="acceptRequest()">Accept</button>
+              <a class="ignore flex justify-center items-center" (click)="updateConnection('Rejected')">Ignore</a>
+              <button mat-button class="accept-btn" (click)="updateConnection('Approved')">Accept</button>
             </div>
           </ng-container>
           <ng-template #connectionUpdated>
-            <ng-container *ngIf="otherUserProfile?.connectionStatus === 'Accepted'; else ignoredTemplate"></ng-container>
-            <ng-template #ignoredTemplate>
-              <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Ignored' }"></ng-container>
-            </ng-template>
+            <div class="request-btns flex justify-end w-full items-center">
+              <ng-container *ngIf="otherUserProfile?.connectionStatus === 'Approved'; else ignoredTemplate">
+                <button mat-button class="request-btns accept-btn action-link-disabled">Accepted</button>
+              </ng-container>
+              <ng-template #ignoredTemplate>
+                <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Ignored' }"></ng-container>
+              </ng-template>
+            </div>
           </ng-template>
             
         </div>
@@ -67,7 +71,7 @@
       <ng-container *ngSwitchCase="'sent'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link">
+            <a class="flex gap-1 items-center action-link" (click)="updateConnection('Withdrawn')">
                 Withdraw
               </a>
           </div>
@@ -80,13 +84,13 @@
       <ng-container *ngSwitchCase="'blocked'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus; else blockedTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link">
+            <a class="flex gap-1 items-center action-link" (click)="updateConnection('Unblocked')">
                 Unblock
               </a>
           </div>
         </ng-container>
         <ng-template #blockedTemplate>
-          <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Blocked' }"></ng-container>
+          <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Unblocked' }"></ng-container>
         </ng-template>
       </ng-container>
     </div>
@@ -94,9 +98,7 @@
 </div>
 
 <ng-template #disableLink let-message="message">
-  <div class="flex w-full justify-center items-center">
-    <a class="flex gap-1 items-center action-link action-link-disabled">
-        {{message}}
-      </a>
-  </div>
+  <a class="flex gap-1 items-center action-link action-link-disabled">
+    {{message}}
+  </a>
 </ng-template>

@@ -10,12 +10,12 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   GET_CONNECTION_REQUESTS: '/apis/protected/v8/connections/v2/connections/requests/received',
-  GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v3/connections/recommended',
-  GET_RECOMMENDED_MENTORS: '/apis/protected/v8/connections/v3/connections/recommended/mentors',
+  GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
+  GET_RECOMMENDED_MENTORS: '/apis/proxies/v8/connections/v3/connections/recommended/mentors',
   GET_CONNECTIONS: '/apis/protected/v8/connections/v2/connections/established',
   GET_REQUESTS_SENT: '/apis/protected/v8/connections/v2/connections/requested',
-  // GET_BLOCKED_USERS: '/apis/protected/v8/connections/v2/connections/blocked',
-  SENT_CONNECTION_REQUEST: 'apis/protected/v8/connections/v2/add/connection',
+  GET_BLOCKED_USERS: '/apis/proxies/v8/connections/v2/connections/requests/blocked',
+  SENT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/add/connection',
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
 
 }
@@ -49,11 +49,26 @@ export class NetworkingService {
     return this.http.post<any>(API_END_POINTS.GET_COMMUNITIES, formBody)
   }
 
+  getQueryString(pageNo?: number, pageSize?: number): string {
+    let params = [];
+    if (pageNo !== undefined && pageNo !== null) {
+      params.push(`pageNo=${pageNo}`);
+    }
+    if (pageSize !== undefined && pageSize !== null) {
+      params.push(`pageSize=${pageSize}`);
+    }
+    return params.length ? `?${params.join('&')}` : '';
+  }
 
-  getConnectionRequests(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.GET_CONNECTION_REQUESTS).pipe(
+  getConnectionRequests(pageNo?: number, pageSize?: number): Observable<any> {
+    const queryString = this.getQueryString(pageNo, pageSize);
+    return this.http.get<any>(`${API_END_POINTS.GET_CONNECTION_REQUESTS}${queryString}`).pipe(
       map(response => {
-        const modifiedResponse = this.formatedConnectionRequests(_.get(response, 'result.data'));
+
+        const modifiedResponse =  {
+          data: this.formatedConnectionRequests(_.get(response, 'result.data')),
+          count: _.get(response, 'result.count', 0)
+        };
         return modifiedResponse;
       })
     )
@@ -62,35 +77,38 @@ export class NetworkingService {
   formatedConnectionRequests(requests: any[]): any[] {
     if(requests) {
       requests.forEach((request: any) => {
-        if(request.recievedAt) {
-          request['timeAgo'] = this.getTimeAgo(request.recievedAt);
+        if(request.createdAt) {
+          request['timeAgo'] = this.getTimeAgo(request.createdAt);
         }
       })
     }
     return requests
   }
 
-  getTimeAgo(recievedAt: number): string {
+  getTimeAgo(recievedAt: string): string {
+    const recievedDate = new Date(recievedAt);
+    if (isNaN(recievedDate.getTime())) return '';
+
     const now = Date.now();
-    const diff = Math.max(0, now - recievedAt);
+    const diff = Math.max(0, now - recievedDate.getTime());
 
     const seconds = Math.floor(diff / 1000);
     if (seconds < 60) return `${seconds}s`;
 
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes} min`;
+    if (minutes < 60) return `${minutes}m`;
 
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} hr${hours === 1 ? '' : 's'}`;
+    if (hours < 24) return `${hours}h`;
 
     const days = Math.floor(hours / 24);
-    if (days < 30) return `${days} day${days === 1 ? '' : 's'}`;
+    if (days < 30) return `${days}d`;
 
     const months = Math.floor(days / 30);
-    if (months < 12) return `${months} month${months === 1 ? '' : 's'}`;
+    if (months < 12) return `${months}m`;
 
     const years = Math.floor(months / 12);
-    return `${years} year${years === 1 ? '' : 's'}`;
+    return `${years}y`;
   }
 
   getRecommendedUsers(formBody: any): Observable<any> {
@@ -101,15 +119,19 @@ export class NetworkingService {
     return this.http.post<any>(API_END_POINTS.GET_RECOMMENDED_MENTORS, formBody)
   }
 
-  getConnections(formBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.GET_CONNECTIONS, formBody)
+  getConnections(pageNo?: number, pageSize?: number): Observable<any> {
+    const queryString = this.getQueryString(pageNo, pageSize);
+    return this.http.get<any>(`${API_END_POINTS.GET_CONNECTIONS}${queryString}`)
   }
 
-  getRequestSent(formBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.GET_REQUESTS_SENT, formBody)
+  getRequestSent(pageNo?: number, pageSize?: number): Observable<any> {
+    const queryString = this.getQueryString(pageNo, pageSize);
+    return this.http.get<any>(`${API_END_POINTS.GET_REQUESTS_SENT}${queryString}`)
   }
 
-  // getBlockedUsers(formBody: any): Observable<any> {
+  getBlockedUsers(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_BLOCKED_USERS, formBody)
+  }
 
   sendConnectionRequest(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SENT_CONNECTION_REQUEST, formBody)
@@ -118,7 +140,6 @@ export class NetworkingService {
   updateConnectionRequest(formBody: any): Observable<any> {
     return this.http.put<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
   }
-
 
   //#region (translation related methods)
   handleTranslateTo(menuName: string): string {

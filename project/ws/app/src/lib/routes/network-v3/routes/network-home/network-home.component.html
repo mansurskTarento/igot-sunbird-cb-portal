@@ -1,4 +1,4 @@
-<div class="w-full flex flex-col gap-4">
+<div class="w-full flex flex-col gap-4 center-content">
   <div class="home-header">Explore Network</div>
 
   <!-- #region (connections) -->
@@ -9,7 +9,7 @@
           Connection Requests
         </div>
         <div class="records-count flex justify-center items-center">
-          {{ 32 }}
+          {{ connectionRequestsCount }}
         </div>
       </div>
       <a (click)="showAll('connectionRequests')" class="flex gap-1 items-center show-all">
@@ -18,9 +18,16 @@
       </a>
     </div>
     <div class="flex flex-col w-full">
-      <ng-container *ngFor="let otherUserProfile of connectionRequestsList; index as i">
-        <ws-app-connections-card [otherUserProfile]="otherUserProfile" [showBorder]="i < connectionRequestsList.length -1"></ws-app-connections-card>
+      <ng-container *ngIf="connectionRequestsCount > 0; else noConnectionRequests">
+        <ng-container *ngFor="let otherUserProfile of connectionRequestsList; index as i">
+          <ws-app-connections-card [otherUserProfile]="otherUserProfile" [showBorder]="i < connectionRequestsList.length -1"></ws-app-connections-card>
+        </ng-container>
       </ng-container>
+      <ng-template #noConnectionRequests>
+        <div class="no-records-found">
+          No connection requests found.
+        </div>
+      </ng-template>
     </div>
   </div>
   <!-- #endregion (connections) -->
@@ -48,8 +55,8 @@
   <!-- #endregion (people you may know) -->
 
   <!-- #region (find your mentor) -->
-  <div class="section p-4 flex flex-col justify-between items-center">
-    <div class="flex w-full justify-between items-center mb-5">
+  <div class="flex flex-col justify-start my-4">
+    <div class="flex w-full justify-between items-center mb-2">
       <div class="flex gap-2 items-center">
         <div class="section-header">
           Find your Mentor
@@ -60,11 +67,12 @@
         <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
       </a>
     </div>
-    <div class="flex gap-2 w-full flex-wrap">
-      <ng-container *ngFor="let otherUserProfile of peopleYouMayKnowList">
-        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
-      </ng-container>
-    </div>
+       <sb-uic-horizontal-scroller-v2 class="mentors-container" [id] ="'find-your-mentor-scroller'" [widgetsLength]="mentorSuggestionsList?.length"
+      [loadStatus]="'done'" [defaultMaxWidgets]="15" [sliderConfig]="sliderConfig">
+        <ng-container *ngFor="let otherUserProfile of mentorSuggestionsList">
+          <ws-app-connection-people-card [user]="otherUserProfile" [addMargin]="true"></ws-app-connection-people-card>
+        </ng-container>
+      </sb-uic-horizontal-scroller-v2>
   </div>
   <!-- #endregion (find your mentor) -->
 </div>

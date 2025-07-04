@@ -13,12 +13,11 @@ export class ConnectionsComponent implements OnInit {
   // selectedTabKey = 'connections';
   selectedTabIndex = 0;
   tabDetailsList: tabDetails[] = [
-    { lable: 'Connections', key: 'connections', recordsCount: 21 },
-    { lable: 'Requests', key: 'request', recordsCount: 32 },
-    { lable: 'Sent', key: 'sent', recordsCount: 21 },
-    { lable: 'Blocked', key: 'blocked', recordsCount: 2 }
+    { lable: 'Connections', key: 'connections', recordsCount: 0 },
+    { lable: 'Requests', key: 'request', recordsCount: 0 },
+    { lable: 'Sent', key: 'sent', recordsCount: 0 },
+    { lable: 'Blocked', key: 'blocked', recordsCount: 0 }
   ]
-
   connectionsList: any = [
     {
       id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -81,20 +80,38 @@ export class ConnectionsComponent implements OnInit {
       timeAgo: '1 month'
     }
   ];
-
   apiSubscription: any;
+  paginationSize = 50;
+  paginationSizeOptions = [50, 100, 150, 200];
+  paginationPage = 0;
+  totalItemsCount = 500;
 
   constructor(
     private networkingSvc: NetworkingService
   ) { }
 
   ngOnInit() {
-    // Initialization logic here
+    this.initialization();
+  }
+
+  initialization() {
+    const getCount = true;
+    this.getConnectionsList(getCount);
+    this.getRequestsList(getCount);
+    this.getSentRequsetsList(getCount);
+    this.getBlockedList(getCount);
   }
 
   onTabChange(index: number) {
     this.selectedTabIndex = index;
-    // this.getTabData();
+    this.resetPagination();
+  }
+
+  resetPagination() {
+    this.paginationPage = 0;
+    this.paginationSize = 50;
+    this.totalItemsCount = 0;
+    this.getTabData();
   }
 
   getTabData() {
@@ -118,39 +135,69 @@ export class ConnectionsComponent implements OnInit {
     }
   }
 
-  getConnectionsList() {
-    const formBody = {}
-    this.apiSubscription = this.networkingSvc.getConnections(formBody).subscribe({
+  getConnectionsList(getCount = false) {
+    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageSize = getCount ? 1 : this.paginationSize;
+    this.apiSubscription = this.networkingSvc.getConnections(pageNo, pageSize).subscribe({
       next: (response) => {
         this.connectionsList = _.get(response, 'result.data', []);
+        this.setCountOfTab('connections', _.get(response, 'result.count', 0));
+        if(!getCount) {
+          this.totalItemsCount = _.get(response, 'result.count', 0) 
+        }
       }
     })
   }
 
-  getRequestsList() {
-    this.apiSubscription = this.networkingSvc.getConnectionRequests().subscribe({
+  getRequestsList(getCount = false) {
+    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageSize = getCount ? 1 : this.paginationSize;
+    this.apiSubscription = this.networkingSvc.getConnectionRequests(pageNo, pageSize).subscribe({
       next: (response) => {
-        this.connectionsList = _.get(response, 'result.data', []);
+        this.connectionsList = _.get(response, 'data', []);
+        this.setCountOfTab('request', _.get(response, 'count', 0));
+        if(!getCount) {
+          this.totalItemsCount = _.get(response, 'result.count', 0) 
+        }
       }
     })
   }
 
-  getSentRequsetsList() {
-    const formBody = {}
-    this.apiSubscription = this.networkingSvc.getRequestSent(formBody).subscribe({
+  getSentRequsetsList(getCount = false) {
+    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageSize = getCount ? 1 : this.paginationSize;
+    this.apiSubscription = this.networkingSvc.getRequestSent(pageNo, pageSize).subscribe({
       next: (response) => {
         this.connectionsList = _.get(response, 'result.data', []);
+        this.setCountOfTab('sent', _.get(response, 'result.count', 0));
+        if(!getCount) {
+          this.totalItemsCount = _.get(response, 'result.count', 0) 
+        }
       }
     })
   }
 
-  getBlockedList() {
-    const formBody = {}
-    this.apiSubscription = this.networkingSvc.sendConnectionRequest(formBody).subscribe({
+  getBlockedList(getCount = false) {
+    const formBody = {
+      offset: getCount ? 0 : this.paginationPage,
+      size: getCount ? 1 : this.paginationSize
+    }
+    this.apiSubscription = this.networkingSvc.getBlockedUsers(formBody).subscribe({
       next: (response) => {
-        this.connectionsList = _.get(response, 'result.data', []);
+        this.connectionsList = _.get(response, 'result.response', []);
+        this.setCountOfTab('blocked', _.get(response, 'result.count', 0));
+        if(!getCount) {
+          this.totalItemsCount = _.get(response, 'result.count', 0) 
+        }
       }
     })
+  }
+
+  setCountOfTab(tabKey: string, count: number) {
+    const tabIndex = this.tabDetailsList.findIndex(tab => tab.key === tabKey);
+    if (tabIndex !== -1) {
+      this.tabDetailsList[tabIndex]['recordsCount'] = count;
+    }
   }
 
 }
