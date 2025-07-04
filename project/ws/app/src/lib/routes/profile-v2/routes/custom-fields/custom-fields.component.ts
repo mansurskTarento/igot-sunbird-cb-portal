@@ -184,21 +184,32 @@ export class CustomFieldsComponent {
             this.fieldOptions[field.attributeName][topField] =
               this.extractOptionsForField(dataSource, topField, this.useReversedData[field.attributeName]);
           }
+
           let parentValues = ''
           // Create form controls for each level in the hierarchy
           hierarchy.forEach(hierarchyField => {
             const value = this.getListItemName(field.attributeName, hierarchyField)
             parentValues = parentValues ? parentValues + ',' + value : value
+
+            // Add required validator if the field is mandatory, regardless of hierarchy level
             nestedFormControls[hierarchyField] = [value, field.isMandatory ? [Validators.required] : []];
           });
 
           // Create the nested form group
           const nestedGroup = this.fb.group(nestedFormControls);
           this.masterListFormGroups[field.attributeName] = nestedGroup;
+
           // Add a control for the main field to store combined value
           formControls[field.attributeName] = [parentValues, validators];
         } else {
-          // Fallback if no custom data is available
+          // Even for empty data, create hierarchy with at least one level
+          this.hierarchyFields[field.attributeName] = ['item'];
+          this.fieldOptions[field.attributeName] = { 'item': [] };
+
+          const nestedFormControls = { 'item': ['', field.isMandatory ? [Validators.required] : []] };
+          const nestedGroup = this.fb.group(nestedFormControls);
+          this.masterListFormGroups[field.attributeName] = nestedGroup;
+
           formControls[field.attributeName] = ['', validators];
         }
       }
@@ -227,6 +238,13 @@ export class CustomFieldsComponent {
       console.log(`Hierarchy for ${fieldName}:`, this.hierarchyFields[fieldName]);
       console.log(`Form group controls for ${fieldName}:`,
         Object.keys(this.customAttrForm.get(`${fieldName}_group`).controls));
+    });
+
+    // Add to buildDynamicForm after setting up the form
+    Object.keys(this.hierarchyFields).forEach(fieldName => {
+      if (this.hierarchyFields[fieldName].length === 1) {
+        console.log(`- ${fieldName}: ${this.hierarchyFields[fieldName][0]}`);
+      }
     });
   }
 
@@ -363,9 +381,18 @@ export class CustomFieldsComponent {
     const formGroup = this.masterListFormGroups[fieldName];
     const isReversed = this.useReversedData[fieldName];
 
-    if (!hierarchy || !formGroup || hierarchy.length <= 1) return;
+    if (!hierarchy || !formGroup) return;
 
     console.log(`Setting up cascade listeners for ${fieldName}, levels: ${hierarchy.length}`);
+
+    // Special case for single-level dropdown
+    if (hierarchy.length === 1) {
+      const singleField = hierarchy[0];
+      formGroup.get(singleField)?.valueChanges.subscribe(() => {
+        this.updateCombinedValue(fieldName);
+      });
+      return;
+    }
 
     // For each level except the last one
     for (let i = 0; i < hierarchy.length - 1; i++) {
@@ -598,7 +625,6 @@ export class CustomFieldsComponent {
     });
   }
 
-  // Enhanced to handle up to 5 levels when populating values
   populateHierarchicalValues(field: any) {
     const hierarchy = this.hierarchyFields[field.attributeName];
     const formGroup = this.masterListFormGroups[field.attributeName];
@@ -613,7 +639,18 @@ export class CustomFieldsComponent {
     const subscriptions = this.disableValueChangeListeners(field.attributeName);
 
     try {
-      // STEP 1: Pre-load all options for all levels first
+      if (hierarchy.length === 1) {
+        const singleField = hierarchy[0];
+        const fieldValue = field.selectedValues[singleField];
+
+        if (fieldValue) {
+          console.log(`Setting single field ${singleField} = ${fieldValue}`);
+          formGroup.get(singleField)?.setValue(fieldValue, { emitEvent: false });
+          this.updateCombinedValue(field.attributeName);
+        }
+        return;
+      }
+
       for (let i = 0; i < hierarchy.length; i++) {
         const currentField = hierarchy[i];
 
