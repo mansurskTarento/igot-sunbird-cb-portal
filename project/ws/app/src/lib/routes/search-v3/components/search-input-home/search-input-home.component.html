@@ -51,12 +51,14 @@
             <a class="text-sm clear-all font-normal cursor-pointer" (click)="recentDeleteByUserId()">Clear All</a>
           </div> 
           <ng-container *ngFor="let query of recentSearches">
-            <mat-list-item class="w-full">
+            <mat-list-item class="recent-search-list">
              <!-- {{ query.nlp_search_query | json }} ////
              {{ query.search_category | json }} ---- -->
             
-              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link" (click)="goToSearchItem(query)">
-                <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">{{ query?.search_query }}</a>
+              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center" (click)="goToSearchItem(query)">
+                <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">
+                  <span> {{ query?.search_query }} </span>
+              </a>
               <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
               </button>

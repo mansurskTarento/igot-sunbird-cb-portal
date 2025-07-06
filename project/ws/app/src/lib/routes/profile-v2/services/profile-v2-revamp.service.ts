@@ -23,8 +23,8 @@ const API_END_POINTS = {
   COURSE_BATCH_LIST: `/apis/proxies/v8/learner/course/v1/batch/list`,
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
-  GET_DESIGNATIONS: '/apis/proxies/v8/user/v1/positions', // old
   GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', //OLD
+  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search', //OLD
   GET_GROUPS: '/api/user/v1/groups', //OLD
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
@@ -33,9 +33,6 @@ const API_END_POINTS = {
   UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree',
   UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution',
   GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
-  // ORG_READ: '/api/org/v1/read', //OLD
-  // ORGANISATION_FW: (frameworkName: string) =>
-  //   `/api/framework/v1/read/${frameworkName}`, //OLD
 
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
@@ -156,12 +153,12 @@ export class ProfileV2RevampService {
   //     })
   // }
 
-  getDesignations(_req: any): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.GET_DESIGNATIONS)
-  }
-
   searchDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_SEARCH_DESIGNATIONS, _req)
+  }
+
+  searchIgotDesignation(_req: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_SUNBIRD_IGOT_SEARCH, _req)
   }
 
   getGroups(): Observable<any> {
@@ -225,7 +222,7 @@ export class ProfileV2RevampService {
 
   handleTranslateTo(menuName: string): string {
     // tslint:disable-next-line: prefer-template
-    const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
+    const translationKey = 'NetworkV2Profile.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
 

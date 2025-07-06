@@ -85,7 +85,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
       customizedHeader: {},
     }
     this.widgetData.disableTelemetry = false
-    this.updateProgress(1)
+    // this.updateProgress(1)
 
     if (!this.widgetData.disableTelemetry) {
       this.runnerSubs = interval(30000).subscribe(_ => {
@@ -308,7 +308,9 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
           const formattedDay = String(value.getDate()).padStart(2, '0')
           value = `${formattedYear}-${formattedMonth}-${formattedDay}`
         }
-        dataObject[field.question] = value
+        if(!field.isNA) {
+          dataObject[field.question] = value
+        }
       })
     }
     return dataObject

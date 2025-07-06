@@ -408,9 +408,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     (nextUrl.includes('online-session'))
     ) {
       this.router.navigate([this.nextResourceUrl], { queryParams: this.nextResourceUrlParams.queryParams })
-      setTimeout(() => {
-        this.router.navigate([this.nextResourceUrl], { queryParams: this.nextResourceUrlParams.queryParams })
-      },         0)
+      // setTimeout(() => {
+      //   this.router.navigate([this.nextResourceUrl], { queryParams: this.nextResourceUrlParams.queryParams })
+      // },         0)
     }
     this.changeResource()
   }
@@ -422,9 +422,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
     ) {
       this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
-      setTimeout(() => {
-        this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
-      },         0)
+      // setTimeout(() => {
+      //   this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
+      // },         0)
     }
     this.changeResource()
   }

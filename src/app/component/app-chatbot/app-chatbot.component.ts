@@ -5,7 +5,10 @@ import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
 import { CdkDragEnd } from '@angular/cdk/drag-drop'
-
+import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { HttpClient } from '@angular/common/http'
+import { DomSanitizer } from '@angular/platform-browser'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 @Component({
   selector: 'ws-app-chatbot',
   templateUrl: './app-chatbot.component.html',
@@ -56,16 +59,26 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
   iconPosition = {x:0, y:0}
   // tslint: enable
-  @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  // @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   @ViewChild('dragItem') dragElement!: ElementRef;
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
+  enableSupportAI = false
+  zohoHtml: any
+  zohoUrl: any = '/assets/static-data/zoho-code.html'
+  maximizeChatFlag = true
+  fullScreenChatFlag = false
+  faqChatBotDisable = true
+  footerClassName = 'cb-footer'
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
+    public http: HttpClient,
+    private sanitizer: DomSanitizer,
+    public dialog: MatDialog,
     private router: Router) { }
 
   ngOnInit() {
@@ -78,15 +91,26 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     this.userInfo = this.configSvc && this.configSvc.userProfile
     // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
     // console.log()
-    if(this.rootOrgId) {
+    if(this.rootOrgId && this.iGOTAIConfigLoaded) {
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      this.currentFilter = 'information'
+
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } 
+
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
+      } 
+
+      if(this.enableSupportAI || this.enableIGOTAIFlag) {
+        this.faqChatBotDisable = true
       } else {
-        this.enableIGOTAIFlag = false
-        this.currentFilter = 'information'
+        this.faqChatBotDisable = false
       }
+      this.getFooterClass()
     }
    
     
@@ -97,18 +121,32 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+    this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe((res:any) => {
+      this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
+    })
   }
 
   ngOnChanges() {
     if(this.rootOrgId && this.iGOTAIConfigLoaded) {
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
+      this.currentFilter = 'information'
+
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } 
+
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
+      } 
+
+      if(this.enableSupportAI || this.enableIGOTAIFlag) {
+        this.faqChatBotDisable = true
       } else {
-        this.enableIGOTAIFlag = false
-        this.currentFilter = 'information'
+        this.faqChatBotDisable = false
       }
+      this.getFooterClass()
     }
   }
 
@@ -198,6 +236,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   iconClick(type: string) {
+    this.fullScreenChatFlag = false
+    this.maximizeChatFlag = true
     if(!this.dragEnabled) {
       this.showIcon = !this.showIcon
       this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
@@ -249,6 +289,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
     this.pushData(sendMsg)
     this.pushData(incomingMsg)
+    setTimeout(()=>{
+      this.scrollToBottom()
+    },100)
     this.raiseTemeletyInterat(question.quesID)
   }
 
@@ -320,6 +363,9 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
     this.pushData(sendMsg)
     this.pushData(incomingMsg)
+    setTimeout(()=>{
+      this.scrollToBottom()
+    },100)
   }
 
   raiseCategotyTelemetry(catItem: string) {
@@ -437,6 +483,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   checkForApiCalls() {
+    
     this.selectedLaguage = localStorage.getItem('selectedLanguage') || 'en'
     let localStg: any = JSON.parse(localStorage.getItem('faq') || '{}')
     let languageStg: any = JSON.parse(localStorage.getItem('faq-languages') || '{}')
@@ -517,27 +564,32 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   ngAfterViewChecked() {
-    if(this.currentFilter !== 'sarthi') {
-      this.scrollToBottom()
+    if(this.currentFilter !== 'sarthi' && this.currentFilter !== 'support-ai') {
+      let chatbotContent = document.getElementById('chatbot-content')
+      if(chatbotContent) {
+      chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+      }
     }    
   }
   scrollToBottom(): void {
     try {
-      if (this.myScrollContainer) {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
+      let chatbotContent = document.getElementById('chatbot-wrapper')
+      if(chatbotContent) {
+      chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
       }
     } catch(err) { }
   }
 
   scrollToBottomEvent() {
-   let chatbotContent = document.getElementById('chatbot-content')
-   if(chatbotContent) {
-    chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
-   }
+    let chatbotContent = document.getElementById('chatbot-content')
+    if(chatbotContent) {
+     chatbotContent.scrollTo({top: chatbotContent.scrollHeight, behavior: 'smooth'})
+    }
   //  this.scrollToBottom()
   }
   clickOutside() {
-    if(this.currentFilter !== 'sarthi') {
+    if(this.enableIGOTAIFlag || this.enableSupportAI) {
+    } else {
       this.iconClick('end')
     }
   }
@@ -583,5 +635,83 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     }
   }
 
+  getZohoForm() {
+    const dialogRef = this.dialog.open(ZohoDialogComponent, {
+      width: '45%',
+      data: {
+        view: 'zohoform',
+        value: this.zohoHtml,
+      },
+    })
+    dialogRef.afterClosed().subscribe(() => {
+    })
+    setTimeout(() => {
+      this.callXMLRequest()
+    }, 0)
+  }
+
+  callXMLRequest() {
+    let webFormxhr: any = {}
+    webFormxhr = new XMLHttpRequest()
+    // tslint:disable-next-line: prefer-template
+    webFormxhr.open('GET', 'https://desk.zoho.in/support/GenerateCaptcha?action=getNewCaptcha&_=' + new Date().getTime(), true)
+    webFormxhr.onreadystatechange = () => {
+      if (webFormxhr.readyState === 4 && webFormxhr.status === 200) {
+        try {
+          const response = (webFormxhr.responseText != null) ? JSON.parse(webFormxhr.responseText) : ''
+          const zsCaptchaUrl: any = document.getElementById('zsCaptchaUrl')
+          if (zsCaptchaUrl) {
+            zsCaptchaUrl.src = response.captchaUrl
+            zsCaptchaUrl.style.display = 'block'
+          }
+          const xJdfEaS: any = document.getElementsByName('xJdfEaS')[0]
+          xJdfEaS.value = response.captchaDigest
+          const zsCaptchaLoading: any = document.getElementById('zsCaptchaLoading')
+          zsCaptchaLoading.style.display = 'none'
+          const zsCaptcha: any = document.getElementById('zsCaptcha')
+          zsCaptcha.style.display = 'block'
+          const refreshCaptcha: any = document.getElementById('refreshCaptcha')
+          if (refreshCaptcha) {
+            refreshCaptcha.addEventListener('click', () => {
+              this.callXMLRequest()
+            })
+          }
+        } catch (e) {
+        }
+      }
+    }
+    webFormxhr.send()
+  }
+
+  minimizeChat() {
+    this.maximizeChatFlag = false
+    this.fullScreenChatFlag = false
+  }
+
+  maximizeChat() {
+    this.maximizeChatFlag = true
+    this.fullScreenChatFlag = false
+  }
+
+  fullScreenChat() {
+    this.fullScreenChatFlag = true
+  }
+
+  fullScreenExitChat() {
+    this.fullScreenChatFlag = false
+    this.maximizeChatFlag = true
+  }
+
+  getFooterClass() {
+    if(this.enableSupportAI && this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-support-ai'
+    } else if (!this.enableSupportAI && this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-ai'
+    } else if (this.enableSupportAI && !this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer-with-ai'
+    } else if (!this.enableSupportAI && !this.enableIGOTAIFlag) {
+      this.footerClassName = 'cb-footer'
+    }
+  }
   
 }

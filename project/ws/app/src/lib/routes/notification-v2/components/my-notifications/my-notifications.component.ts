@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-
+import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service';
+import { environment } from 'src/environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'ws-app-my-notifications',
   templateUrl: './my-notifications.component.html',
@@ -10,8 +14,13 @@ import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils
 })
 export class MyNotificationsComponent {
   selectedLanguage = 'en'
+  roles: string[] = []
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
+    private notificationsService: NotificationsService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private configService: ConfigurationsService,
     private router: Router, private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -29,6 +38,9 @@ export class MyNotificationsComponent {
         this.selectedLanguage = lang
       }
     })
+    if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.roles) {
+      this.roles = this.configService.unMappedUser.roles
+    }
   }
 
 
@@ -46,7 +58,59 @@ export class MyNotificationsComponent {
       } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
         this.router.navigate([`/app/network-v2/connection-requests`])
       }
+    } else if (notification?.category?.includes('CONTENT')) {
+      this.notificationsService.getContentData(notification.message.data.id).subscribe((res: any) => {
+        let isStandaloneResource = false
+        if (res.primaryCategory === 'Learning Resource' &&
+          res.resourceCategory !== 'Learning Resource') {
+          localStorage.setItem('isStandaloneResource', 'true')
+          isStandaloneResource = true
+        } else {
+          localStorage.setItem('isStandaloneResource', 'false')
+        }
+        if (res.status === 'Live') {
+          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+        } else if (res.status === 'Draft') {
+          if (this.roles.includes('CONTENT_CREATOR')) {
+            window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          } else {
+            this.snackBar.open('You are not authorized to view this content.')
+          }
+        } else if (res.status === 'Review') {
+          switch (res.reviewStatus) {
+            case 'InReview': {
+              if (this.roles.includes('CONTENT_REVIEWER')) {
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+              } else {
+                this.snackBar.open("You are not authorized to view this content.")
+              }
+              break
+            } case 'Reviewed': {
+              if (this.roles.includes('CONTENT_PUBLISHER')) {
+                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+              } else {
+                this.snackBar.open("You are not authorized to view this content.")
+              }
+              break
+            }
+          }
+        } else if (res.status === 'Retired') {
+          this.snackBar.open('This content is retired.')
+        }
+      })
+    } else if (notification.category === 'PROFILE') {
+      let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+      window.open(url, '_blank')
     }
+  }
+
+  showDialog(data: any, url: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

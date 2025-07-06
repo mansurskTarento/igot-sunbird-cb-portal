@@ -42,6 +42,8 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-teachers-notes.component'
 import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component';
 import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
+import { HighlightPipe } from '../../_pipes/highlight.pipe'
+import {MatSelectModule} from '@angular/material/select';
 @NgModule({
   declarations: [
     ContentTocComponent,
@@ -57,6 +59,7 @@ import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-
     TruncatePipe,
     ReplaceNbspPipe,
     AiTutorConfirmPopupComponent,
+    HighlightPipe
   ],
   imports: [
     CommonModule,
@@ -95,6 +98,7 @@ import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-
     }),
     PipeSafeSanitizerModule,
     WidgetCommentModule,
+    MatSelectModule
   ],
   exports: [
     ContentTocComponent,
@@ -104,5 +108,4 @@ import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-
     ReviewsContentComponent,
   ]
 })
-
 export class ContentTocModule { }

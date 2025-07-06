@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { NotificationsService } from 'src/app/services/notifications.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from '../../../environments/environment'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -49,12 +52,13 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
+  roles: string[] = []
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService,
+    private events: EventService, private snackBar: MatSnackBar,
     private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -72,6 +76,10 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         this.selectedLanguage = lang
       }
     })
+
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
+      this.roles = this.configSvc.unMappedUser.roles
+    }
   }
 
   ngOnInit() {
@@ -210,8 +218,49 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
           this.router.navigate([`/app/network-v2/connection-requests`])
         }
-      } else {
-        this.router.navigate(['/app/notifications'])
+      } else if (event.category === 'PROFILE') {
+        let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
+        window.open(url, '_blank')
+      } else if (event?.category?.includes('CONTENT')) {
+        this.notificationsService.getContentData(event.message.data.id).subscribe((res: any) => {
+          let isStandaloneResource = false
+          if (res.primaryCategory === 'Learning Resource' &&
+            res.resourceCategory !== 'Learning Resource') {
+            localStorage.setItem('isStandaloneResource', 'true')
+            isStandaloneResource = true
+          } else {
+            localStorage.setItem('isStandaloneResource', 'false')
+          }
+          if (res.status === 'Live') {
+            window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${event.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          } else if (res.status === 'Draft') {
+            if (this.roles.includes('CONTENT_CREATOR')) {
+              window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+            } else {
+              this.snackBar.open('You are not authorized to view this content.')
+            }
+          } else if (res.status === 'Review') {
+            switch (res.reviewStatus) {
+              case 'InReview': {
+                if (this.roles.includes('CONTENT_REVIEWER')) {
+                  window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+                } else {
+                  this.snackBar.open("You are not authorized to view this content.")
+                }
+                break
+              } case 'Reviewed': {
+                if (this.roles.includes('CONTENT_PUBLISHER')) {
+                  window.open(`${environment.portalsForNotifications.cbp}/author/editor/${event.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+                } else {
+                  this.snackBar.open("You are not authorized to view this content.")
+                }
+                break
+              }
+            }
+          } else if (res.status === 'Retired') {
+            this.snackBar.open('This content is retired.')
+          }
+        })
       }
     } else {
       this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
@@ -225,6 +274,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   calculateCount(event: any) {
     console.log("sds", event)
+  }
+
+  showDialog(data: any, url: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

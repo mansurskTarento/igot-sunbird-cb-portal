@@ -1,3 +1,7 @@
+.video-js .vjs-control {
+  display: block !important;
+}
+
 :host.video-full {
   .video-js {
     height: 100%;
@@ -158,4 +162,56 @@
     line-height: 16px;
     letter-spacing: 0.25px;
   }
+}
+
+:host ::ng-deep .video-js .vjs-menu-item {
+  text-transform: capitalize !important;
+}
+
+.vjs-subtitle-button {
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.vjs-subtitle-button:hover {
+  color: #fff;
+  background: #333;
+}
+
+// ::ng-deep .vjs-control.custom-cc-icon .vjs-icon-placeholder::before {
+//   content: none !important;
+// }
+
+::ng-deep .custom-cc-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px; /* spacing between icon and text */
+}
+
+/* Make the image visible and aligned properly */
+::ng-deep .custom-cc-icon-img {
+  width: 1.8em;
+  height: 1.8em;
+  display: inline-block;
+  object-fit: contain;
+  margin-top: 0;
+}
+
+/* Style text as needed */
+::ng-deep .custom-cc-label {
+  font-size: 14px;
+  color: white;
+  display: inline-block;
+  margin-top: 0;
+}
+
+
+::ng-deep .video-js .vjs-control {
+  width: 6em;
+  
 }

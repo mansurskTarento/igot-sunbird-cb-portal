@@ -114,6 +114,12 @@
   background-color: #1B4CA114;
   height: 40px;
   border-radius: 3px;
+
+  .iconName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 ::ng-deep .profile-control {

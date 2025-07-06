@@ -79,11 +79,17 @@
 .search-container {
   position: absolute;
   top: 40px;
-  z-index: 9999;
+  z-index: 999;
   max-width: 710px;
   min-width: 710px;
-  @media (max-width: 768px) {
+  @media (min-width:481px) and (max-width: 768px) {
     min-width: 375px;
+  }
+  @media (max-width: 360px) {
+    min-width: 240px;
+  }
+    @media (min-width:361px) and (max-width: 480px) {
+    min-width: 340px;
   }
 }
 
@@ -145,9 +151,9 @@
 }
 
 .search-home-icon {
-  height: 18px;
-  margin-top: 12px;
-  margin-right: 8px;
+  height: 15px;
+  // margin-top: 14px;
+  // margin-right: 8px;
 }
 
 mat-list-item .mat-icon-button mat-icon {
@@ -157,6 +163,7 @@ mat-list-item .mat-icon-button mat-icon {
 }
 
 mat-list-item {
+  height: 42px !important;
   padding: 0 10px;
   border-radius: 4px;
   &:hover {
@@ -248,5 +255,15 @@ mat-list-item {
 }
 .recent_link {
   height: 40px;
-  line-height: 40px;
+  line-height: 1;
+  // span {
+  //   // margin-top: 14px;
+  // }
+}
+.recent-search-list {
+    width: 100% !important;
+
+    .mat-list-item-content {
+      padding: 0 16px !important;
+    }
 }
