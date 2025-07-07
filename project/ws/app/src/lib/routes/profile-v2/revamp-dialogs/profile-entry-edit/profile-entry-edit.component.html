@@ -115,7 +115,7 @@
 
         <div class="flex flex-col gap-0 md:flex-row md:gap-8">
           <!-- Start Date -->
-          <div class="flex flex-col profile-control w-full">
+          <div class="flex flex-col profile-control-date-field w-full">
             <div class="lable">{{'NetworkV2Profile.startDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate"
@@ -130,7 +130,7 @@
           </div>
 
           <!-- End Date -->
-          <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
+          <div class="flex flex-col profile-control-date-field w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
             <div class="lable">{{'NetworkV2Profile.endDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}"  [min]="startDate">
@@ -336,7 +336,7 @@
         </div>
 
         <!-- Issue Date -->
-        <div class="flex flex-col profile-control w-full">
+        <div class="flex flex-col profile-control-date-field w-full">
           <div class="lable">{{'NetworkV2Profile.issueDate' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate">
