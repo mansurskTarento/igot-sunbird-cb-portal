@@ -43,6 +43,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   profileBannerUrl = '';
   profileCompletionPercentage: number = 0;
   nameInitials: string = '';
+  isIgotOrg = false
+  isNotMyUser = false
   userStats: UserStats[] = [
     {
       state: 'NetworkV2Profile.myKarmaPoints',
@@ -261,6 +263,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
       this.userId = _.get(data, 'profile.userId', '')
+      this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
+      this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
         this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
         if(!this.isCurrentUser){

@@ -130,7 +130,7 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails, 'startDate', '')],
       endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,'-]*$/)]]
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,()]*$/)]]
     });
     this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
     const orgDistrictControl = this.entryForm.get('orgDistrict');
@@ -884,7 +884,7 @@ export class ProfileEntryEditComponent implements OnInit {
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],
       url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500), Validators.pattern(/^[a-zA-Z0-9\s.,()&\-\/]*$/)]],
     });
     if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url;
