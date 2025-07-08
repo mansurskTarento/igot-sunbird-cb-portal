@@ -5,6 +5,8 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ConfigurationsService, NsUser } from '@sunbird-cb/utils-v2';
 import { Router } from '@angular/router';
 import { NetworkingService } from '../../services/networking.service';
+import { MatLegacyDialog } from '@angular/material/legacy-dialog';
+import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-connections-card',
@@ -24,6 +26,7 @@ export class ConnectionsCardComponent implements OnInit {
     private router: Router,
     private configSvc: ConfigurationsService,
     private networkingSvc: NetworkingService,
+    private dialog: MatLegacyDialog,
   ) { }
 
   ngOnInit(): void {
@@ -81,11 +84,38 @@ export class ConnectionsCardComponent implements OnInit {
     case 'Unblocked':
       message = 'Are you sure you want to unblock this user?'
       break;
-    default:
-      message = 'Are you sure you want to proceed with this action?'
-      break;
     }
-    if(message) {} else {
+    if(message) {
+      const dialgoData = {
+        description: message,
+        iconName: 'info',
+        type: 'warning',
+        buttonsPositionClass: 'justify-center items-center',
+        buttons: [
+          {
+            classes: 'btn-out-line',
+            text: 'No',
+            response: false
+          },
+          {
+            classes: 'succes-button',
+            text: 'yes',
+            response: true
+          }
+        ]
+      }
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: dialgoData,
+        disableClose: true,
+        width: '400px',
+        maxWidth: '90vw'
+      })
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.updateConnection(action)
+        }
+      })
+    } else {
       this.updateConnection(action)
     }
   }

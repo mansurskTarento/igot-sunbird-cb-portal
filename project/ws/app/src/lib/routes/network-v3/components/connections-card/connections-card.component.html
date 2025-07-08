@@ -13,7 +13,7 @@
     <div class="user-details flex flex-col gap-1">
       <div class="user-name">{{ otherUserProfile?.fullName }}"</div>
       <div class="user-designation">{{ otherUserProfile?.professionalDetails?.[0]?.designation }}</div>
-      <div class="organisation">{{ otherUserProfile?.professionalDetails?.[0]?.organisationType }}</div>
+      <div class="organisation">{{ otherUserProfile?.departmentName }}</div>
       <div class="location">{{ otherUserProfile?.location }} </div>
     </div>
   </div>
@@ -35,7 +35,7 @@
               <span>copy profile link</span>
             </button>
             <ng-container *ngIf="!otherUserProfile?.connectionStatus">
-              <button mat-menu-item class="menu-item" (click)="updateConnection('Removed')">
+              <button mat-menu-item class="menu-item" (click)="openConformationPopup('Removed')">
                 <span>Remove connection</span>
               </button>
             </ng-container>
@@ -50,8 +50,8 @@
           </div>
           <ng-container *ngIf="!otherUserProfile?.connectionStatus; else connectionUpdated">
             <div class="request-btns flex justify-between w-full items-center">
-              <a class="ignore flex justify-center items-center" (click)="updateConnection('Rejected')">Ignore</a>
-              <button mat-button class="accept-btn" (click)="updateConnection('Approved')">Accept</button>
+              <a class="ignore flex justify-center items-center" (click)="openConformationPopup('Rejected')">Ignore</a>
+              <button mat-button class="accept-btn" (click)="openConformationPopup('Approved')">Accept</button>
             </div>
           </ng-container>
           <ng-template #connectionUpdated>
@@ -71,7 +71,7 @@
       <ng-container *ngSwitchCase="'sent'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link" (click)="updateConnection('Withdrawn')">
+            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Withdrawn')">
                 Withdraw
               </a>
           </div>
@@ -84,7 +84,7 @@
       <ng-container *ngSwitchCase="'blocked'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus; else blockedTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link" (click)="updateConnection('Unblocked')">
+            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Unblocked')">
                 Unblock
               </a>
           </div>
