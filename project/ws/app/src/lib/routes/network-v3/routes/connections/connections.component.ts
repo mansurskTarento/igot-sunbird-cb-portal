@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { tabDetails } from '../../models/network-v3.model';
 import * as _ from 'lodash';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
 
 @Component({
@@ -18,76 +19,17 @@ export class ConnectionsComponent implements OnInit {
     { lable: 'Sent', key: 'sent', recordsCount: 0 },
     { lable: 'Blocked', key: 'blocked', recordsCount: 0 }
   ]
-  connectionsList: any = [
-    {
-      id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-      updatedAt: null,
-      fullName: 'Jaydon Franci',
-      departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      professionalDetails: [
-        {
-          profileStatus: 'VERIFIED',
-          osid: 'c3153330-2fa0-42ae-bdc2-497f8c47a704',
-          designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-          organisationType: 'Government',
-          group: 'Group A'
-        }
-      ],
-      roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
-      rootOrgId: '0132238763297177601',
-      profileImageUrl: 'https://portal.dev.karmayogibharat.net/assets/public/profileImage/1748236292880_profile.png',
-      recievedAt: Date.now() - 27 * 1000, // 27 seconds ago
-      timeAgo: '27s'
-    },
-    {
-      id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
-      updatedAt: null,
-      fullName: 'Jaydon Franci',
-      departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      professionalDetails: [
-        {
-          profileStatus: 'VERIFIED',
-          osid: 'd4153330-2fa0-42ae-bdc2-497f8c47a705',
-          designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-          organisationType: 'Government',
-          group: 'Group A'
-        }
-      ],
-      roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
-      rootOrgId: '0132238763297177601',
-      profileImageUrl: '',
-      recievedAt: Date.now() - 2 * 24 * 60 * 60 * 1000, // 2 days ago
-      timeAgo: '2 days'
-    },
-    {
-      id: 'c3d4e5f6-a7b8-9012-cdef-345678901234',
-      updatedAt: null,
-      fullName: 'Jaydon Franci',
-      departmentName: 'Employees State Insurance Post Graduate Institute of Management (ESI PGIM)',
-      professionalDetails: [
-        {
-          profileStatus: 'VERIFIED',
-          osid: 'e5153330-2fa0-42ae-bdc2-497f8c47a706',
-          designation: 'Director General of Police (DGP) and Commandant General of Police (CGP)',
-          organisationType: 'Government',
-          group: 'Group A'
-        }
-      ],
-      roles: ['MDO_ADMIN', 'PROGRAM_COORDINATOR', 'PUBLIC'],
-      rootOrgId: '0132238763297177601',
-      profileImageUrl: '',
-      recievedAt: Date.now() - 45 * 24 * 60 * 60 * 1000, // 1.5 months ago
-      timeAgo: '1 month'
-    }
-  ];
+  connectionsList: any = [];
+  connectionsLoading = false;
   apiSubscription: any;
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
-  paginationPage = 0;
+  paginationPage = 1;
   totalItemsCount = 500;
 
   constructor(
-    private networkingSvc: NetworkingService
+    private networkingSvc: NetworkingService,
+    private snackBar: MatLegacySnackBar
   ) { }
 
   ngOnInit() {
@@ -96,7 +38,7 @@ export class ConnectionsComponent implements OnInit {
 
   initialization() {
     const getCount = true;
-    this.getConnectionsList(getCount);
+    this.getConnectionsList();
     this.getRequestsList(getCount);
     this.getSentRequsetsList(getCount);
     this.getBlockedList(getCount);
@@ -108,7 +50,7 @@ export class ConnectionsComponent implements OnInit {
   }
 
   resetPagination() {
-    this.paginationPage = 0;
+    this.paginationPage = 1;
     this.paginationSize = 50;
     this.totalItemsCount = 0;
     this.getTabData();
@@ -116,7 +58,7 @@ export class ConnectionsComponent implements OnInit {
 
   getTabData() {
     const key = _.get(this.tabDetailsList, `[${this.selectedTabIndex}].key`, '');
-    if(this.apiSubscription) {
+    if (this.apiSubscription) {
       this.apiSubscription.unsubscribe();
     }
     switch (key) {
@@ -136,61 +78,97 @@ export class ConnectionsComponent implements OnInit {
   }
 
   getConnectionsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageNo = getCount ? 0 : this.paginationPage - 1;
     const pageSize = getCount ? 1 : this.paginationSize;
+    if (!getCount) {
+      this.connectionsLoading = true;
+    }
     this.apiSubscription = this.networkingSvc.getConnections(pageNo, pageSize).subscribe({
       next: (response) => {
+        if (!getCount) {
+          this.connectionsLoading = false;
+          this.totalItemsCount = _.get(response, 'result.count', 0);
+        }
         this.connectionsList = _.get(response, 'result.data', []);
         this.setCountOfTab('connections', _.get(response, 'result.count', 0));
-        if(!getCount) {
-          this.totalItemsCount = _.get(response, 'result.count', 0) 
-        }
+      },
+      error: () => {
+        this.connectionsLoading = false;
+        this.connectionsList = [];
+        this.openSnackBar('Error while fetching connections', 'X');
       }
-    })
+    });
   }
 
   getRequestsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageNo = getCount ? 0 : this.paginationPage - 1;
     const pageSize = getCount ? 1 : this.paginationSize;
+    if (!getCount) {
+      this.connectionsLoading = true;
+    }
     this.apiSubscription = this.networkingSvc.getConnectionRequests(pageNo, pageSize).subscribe({
       next: (response) => {
+        if (!getCount) {
+          this.connectionsLoading = false;
+          this.totalItemsCount = _.get(response, 'result.count', 0);
+        }
         this.connectionsList = _.get(response, 'data', []);
         this.setCountOfTab('request', _.get(response, 'count', 0));
-        if(!getCount) {
-          this.totalItemsCount = _.get(response, 'result.count', 0) 
-        }
+      },
+      error: () => {
+        this.connectionsLoading = false;
+        this.connectionsList = [];
+        this.openSnackBar('Error while fetching connection requests', 'X');
       }
-    })
+    });
   }
 
   getSentRequsetsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage;
+    const pageNo = getCount ? 0 : this.paginationPage - 1;
     const pageSize = getCount ? 1 : this.paginationSize;
+    if (!getCount) {
+      this.connectionsLoading = true;
+    }
     this.apiSubscription = this.networkingSvc.getRequestSent(pageNo, pageSize).subscribe({
       next: (response) => {
+        if (!getCount) {
+          this.connectionsLoading = false;
+          this.totalItemsCount = _.get(response, 'result.count', 0);
+        }
         this.connectionsList = _.get(response, 'result.data', []);
         this.setCountOfTab('sent', _.get(response, 'result.count', 0));
-        if(!getCount) {
-          this.totalItemsCount = _.get(response, 'result.count', 0) 
-        }
+      },
+      error: () => {
+        this.connectionsLoading = false;
+        this.connectionsList = [];
+        this.openSnackBar('Error while fetching sent requests', 'X');
       }
-    })
+    });
   }
 
   getBlockedList(getCount = false) {
     const formBody = {
-      offset: getCount ? 0 : this.paginationPage,
+      offset: getCount ? 0 : this.paginationPage - 1,
       size: getCount ? 1 : this.paginationSize
+    };
+    if (!getCount) {
+      this.connectionsLoading = true;
     }
     this.apiSubscription = this.networkingSvc.getBlockedUsers(formBody).subscribe({
       next: (response) => {
+        if (!getCount) {
+          this.connectionsLoading = false;
+          this.totalItemsCount = _.get(response, 'result.count', 0);
+        }
         this.connectionsList = _.get(response, 'result.response', []);
         this.setCountOfTab('blocked', _.get(response, 'result.count', 0));
-        if(!getCount) {
-          this.totalItemsCount = _.get(response, 'result.count', 0) 
-        }
+      },
+      error: () => {
+        this.connectionsLoading = false;
+        this.connectionsList = [];
+        this.openSnackBar('Error while fetching blocked users', 'X');
       }
-    })
+    });
   }
 
   setCountOfTab(tabKey: string, count: number) {
@@ -198,6 +176,12 @@ export class ConnectionsComponent implements OnInit {
     if (tabIndex !== -1) {
       this.tabDetailsList[tabIndex]['recordsCount'] = count;
     }
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
 
 }

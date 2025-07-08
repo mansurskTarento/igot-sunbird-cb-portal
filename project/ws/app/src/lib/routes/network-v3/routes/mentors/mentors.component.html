@@ -1,9 +1,9 @@
 <div class="w-full flex flex-col p-4">
-  <div class="mentor-note-card flex justify-between items-center p-6 mb-4 gap-2">
+  <div class="mentor-note-card flex justify-between items-center p-6 mb-4 mr-4 gap-2">
     <div class="mentor-note-text">
       Connect with mentors who will guide your learning journey
     </div>
-    <button class="discover-mentor-btn">
+    <button class="discover-mentor-btn" (click)="descoverMentors()">
       Discover Mentor
     </button>
   </div>
@@ -12,21 +12,38 @@
     Find your Mentor
   </div>
 
-  <div class="section flex flex-col justify-between items-center">
-    <div class="flex gap-2 w-full flex-wrap">
-      <ng-container *ngFor="let otherUserProfile of mentorsList">
-        <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+  <div class="section flex gap-4 w-full flex-wrap">
+    <ng-container *ngIf="!mentorsListLoading; else showMentorsSkeleton">
+      <ng-container *ngIf="mentorsList?.length > 0; else noMentorsFound">
+        <ng-container *ngFor="let otherUserProfile of mentorsList">
+          <ws-app-connection-people-card [user]="otherUserProfile"></ws-app-connection-people-card>
+        </ng-container>
       </ng-container>
-    </div>
+      <ng-template #noMentorsFound>
+        <div class="no-records-found">
+          No mentors found.
+        </div>
+      </ng-template>
+    </ng-container>
+    <ng-template #showMentorsSkeleton>
+      <ng-container *ngFor="let i of [1,2,3,4,5,6]">
+        <ws-widget-skeleton-loader
+          [width]="'170px'"
+          [height]="'174px'"
+          [bindingClass]="'flex rounded margin-bottom-xs'">
+        </ws-widget-skeleton-loader>
+      </ng-container>
+    </ng-template>
   </div>
 
-  <div>
-    <ws-widget-pagination [defaultPaginationSize]="paginationSize"
-      [defaultPaginationSizeOptions]="paginationSizeOptions"
-      [totalItemsCount]="totalItemsCount"
-      [currentPage]="paginationPage"
-      [pageMessage]="'View designations per page'"
-      [numberOfPaginationVisable]="2"
-      (pageChange)="onPageChange($event)"></ws-widget-pagination>
-  </div>
+  <ng-container *ngIf="mentorsList?.length > 0">
+    <div>
+      <ws-widget-pagination [defaultPaginationSize]="paginationSize"
+        [defaultPaginationSizeOptions]="paginationSizeOptions"
+        [totalItemsCount]="totalItemsCount"
+        [pageMessage]="'View designations per page'"
+        [numberOfPaginationVisable]="2"
+        (pageChange)="onPageChange($event)"></ws-widget-pagination>
+    </div>
+  </ng-container>
 </div>

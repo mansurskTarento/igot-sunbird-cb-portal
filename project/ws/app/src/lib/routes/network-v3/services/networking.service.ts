@@ -17,7 +17,6 @@ const API_END_POINTS = {
   GET_BLOCKED_USERS: '/apis/proxies/v8/connections/v2/connections/requests/blocked',
   SENT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/add/connection',
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
-
 }
 
 @Injectable({
@@ -138,7 +137,7 @@ export class NetworkingService {
   }
 
   updateConnectionRequest(formBody: any): Observable<any> {
-    return this.http.put<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
+    return this.http.post<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
   }
 
   //#region (translation related methods)

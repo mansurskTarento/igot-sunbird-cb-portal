@@ -7,10 +7,6 @@ import { ConnectionsComponent } from "./routes/connections/connections.component
 import { RecommendationsComponent } from "./routes/recommendations/recommendations.component";
 import { MentorsComponent } from "./routes/mentors/mentors.component";
 import { AllRecommendationsComponent } from "./components/all-recommendations/all-recommendations.component";
-import { CommunityResolverService } from "./resolvers/community-resolver.service";
-import { profileResolver } from "./resolvers/profile.resolver";
-import { connectionRequestsResolver } from "./resolvers/connection-requests.resolver";
-import { mentorSuggestionsResolver } from "./resolvers/mentor-suggestions.resolver";
 
 const routes: Routes = [
   {
@@ -19,10 +15,6 @@ const routes: Routes = [
     data: {
       pageId: '',
       module: 'Network',
-    },
-    resolve: {
-      recamendedCommunity: CommunityResolverService,
-      profileDetails: profileResolver,
     },
     children: [
       {
@@ -36,10 +28,6 @@ const routes: Routes = [
         data: {
           pageId: 'home',
           module: 'Network',
-        },
-        resolve: {
-          connectionRequests: connectionRequestsResolver,
-          mentorSuggestions: mentorSuggestionsResolver,
         }
       },
       // {
@@ -81,9 +69,6 @@ const routes: Routes = [
         data: {
           pageId: 'mentors',
           module: 'Network',
-        },
-        resolve: {
-          mentorSuggestions: mentorSuggestionsResolver,
         }
       }
     ]
@@ -94,10 +79,6 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
   providers: [
-    CommunityResolverService,
-    profileResolver,
-    connectionRequestsResolver,
-    mentorSuggestionsResolver
   ],
 })
 export class NetworkV3RoutingModule { }

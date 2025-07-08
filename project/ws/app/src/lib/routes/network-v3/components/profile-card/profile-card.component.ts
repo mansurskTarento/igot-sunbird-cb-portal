@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 export class ProfileCardComponent implements OnInit, OnChanges {
   //#region (global variables)
   @Input() userDetails: any;
+  @Input() profileDetailsLoading: boolean = false;
   bannerImageUrl = '';
   profileImageUrl = '';
   userName = 'Astha Sharma'

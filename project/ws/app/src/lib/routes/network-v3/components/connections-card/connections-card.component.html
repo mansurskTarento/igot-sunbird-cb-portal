@@ -23,7 +23,7 @@
     <div class="flex justify-center items-center action-buttons h-full" [ngSwitch]="currentTab">
       <ng-container *ngSwitchCase="'connections'">
         <div class="flex w-full gap-8 justify-center items-center">
-           <a class="flex gap-1 items-center action-link">
+           <a class="flex gap-1 items-center action-link" (click)="viewProfile()">
               View Profile
             </a>
 

@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import { NetworkingService } from '../../services/networking.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ConfigurationsService, NsUser } from '@sunbird-cb/utils-v2';
+import { Router } from '@angular/router';
+import { NetworkingService } from '../../services/networking.service';
 
 @Component({
   selector: 'ws-app-connections-card',
@@ -19,9 +20,10 @@ export class ConnectionsCardComponent implements OnInit {
   currentUserDetails: NsUser.IUserProfile | null = null;
 
   constructor(
-    private networkingSvc: NetworkingService,
     private snackBar: MatLegacySnackBar,
-    private configSvc: ConfigurationsService
+    private router: Router,
+    private configSvc: ConfigurationsService,
+    private networkingSvc: NetworkingService,
   ) { }
 
   ngOnInit(): void {
@@ -46,10 +48,46 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   copyProfile() {
+    if (this.otherUserProfile && this.otherUserProfile.id) {
+      const userId = this.otherUserProfile.id
+      const url = `${window.location.origin}/app/person-profile/${userId}#profileInfo`
+      navigator.clipboard.writeText(url).then(() => {
+        this.openSnackbar('Profile link copied to clipboard')
+      }).catch(() => {
+        this.openSnackbar('Failed to copy link')
+      })
+    }
   }
 
-  acceptRequest() {
-    
+  viewProfile() {
+    if(this.otherUserProfile && this.otherUserProfile.id) {
+      const userId = this.otherUserProfile.id
+      this.router.navigate(['/app/person-profile', (userId)], { fragment: 'profileInfo' })
+    }
+  }
+
+  openConformationPopup(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
+    let message = ''
+    switch(action) {
+    case 'Rejected':
+      message = 'Are you sure you want to ignore this request?'
+      break;
+    case 'Withdrawn':
+      message = 'Are you sure you want to withdraw this request?'
+      break;
+    case 'Removed':
+      message = 'Are you sure you want to remove this connection?'
+      break;
+    case 'Unblocked':
+      message = 'Are you sure you want to unblock this user?'
+      break;
+    default:
+      message = 'Are you sure you want to proceed with this action?'
+      break;
+    }
+    if(message) {} else {
+      this.updateConnection(action)
+    }
   }
 
   updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {

@@ -21,6 +21,8 @@ export class ConnectionPeopleCardComponent implements OnInit {
   howerUser!: any
   unmappedUser!: any
   userAvatarName = ''
+  showBadge = false
+  showMentor = false
 
   constructor(
     private networkV2Service: NetworkV2Service,
@@ -37,12 +39,20 @@ export class ConnectionPeopleCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initialization();
+  }
+
+  initialization() { 
+    this.getCurrentUser()
     this.howerUser = this.user
     this.unmappedUser = this.user
-    this.getCurrentUser()
     this.userAvatarName = this.getUseravatarName
-
+    if (this.user && this.user.role && this.user.role.some(role => role.toLowerCase() === 'mentor')) {
+      this.showMentor = true
+      this.showBadge = true
+    }
   }
+  
 
   getCurrentUser() {
     this.cirrentUser = this.configurationsService.userProfileV2

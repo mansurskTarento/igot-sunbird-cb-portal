@@ -102,7 +102,6 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
         CertificateViewPopupComponent,
-        CommunitySuggestionsComponent,
         CertificateViewPopupComponent,
         DescriptionComponent,
         CustomFieldsComponent,

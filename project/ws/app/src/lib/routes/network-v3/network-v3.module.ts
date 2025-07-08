@@ -16,14 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyMenuModule } from '@angular/material/legacy-menu';
 import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module';
-// import { NetworkProfileCardModule } from '@sunbird-cb/consumption'
 import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component';
-import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
 import { TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
-import { CommunitySuggestionsModule, HorizontalScrollerV2Module } from '@sunbird-cb/consumption';
+import { CommunitySuggestionsModule, HorizontalScrollerV2Module, ConnectionNameModule } from '@sunbird-cb/consumption';
 import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
 import { MatLegacyButtonModule } from '@angular/material/legacy-button';
+import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module';
 
 
 @NgModule({
@@ -54,8 +53,8 @@ import { MatLegacyButtonModule } from '@angular/material/legacy-button';
     HorizontalScrollerV2Module,
     MatLegacyTabsModule,
     MatLegacyButtonModule,
-    // NetworkProfileCardModule,
-    CommunitySuggestionsModule
+    CommunitySuggestionsModule,
+    SkeletonLoaderModule
   ]
 })
 export class NetworkV3Module { }

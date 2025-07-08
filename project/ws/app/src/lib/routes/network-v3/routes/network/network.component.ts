@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { routesData } from '../../models/network-v3.model';
-import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
-// import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { NetworkingService } from '../../services/networking.service';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 
 
 @Component({
@@ -14,6 +15,7 @@ export class NetworkComponent implements OnInit {
 
   //#region (global variables)
   communitySuggestionsList: any[] = [];
+  communitiesLoading = false;
   navigationItems: routesData[] = [
     {
       name: 'Explore Network',
@@ -54,39 +56,78 @@ export class NetworkComponent implements OnInit {
       name: 'Mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/FRAC_dictionaries.svg',
+      imageUrl: './assets/icons/book_read.svg',
       queryParams: { pageSize: 50, offset: 0 }
     }
   ]
   userDetails: any = {};
+  profileDetailsLoading = false;
   //#endregion (global variables)
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    // private configSvc: ConfigurationsService,
+    private networkingSvc: NetworkingService,
+    private snackBar: MatLegacySnackBar,
+    private configSvc: ConfigurationsService,
   ) { }
 
   //#region (initialization)
   ngOnInit() {
-    this.getDetailsFromRoutes();
+    this.initialization();
+  }
+  
+  initialization() {
+    this.getCommunitesList();
+    this.getProfileDetails();
   }
 
-  getDetailsFromRoutes() {
-    this.activatedRoute.data.subscribe(data => {
-      if (_.get(data, 'recamendedCommunity.data')) {
-        this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data'))
-      }
-      if (_.get(data, 'profileDetails.data')) {
-        this.patchProfileDetails(_.get(data, 'profileDetails.data'))
+  getCommunitesList() {
+    const formBody = {
+      filterCriteriaMap: {
+        status: "active"
+      },
+      requestedFields: [],
+      pageNumber: 0,
+      pageSize: 3,
+      facets: [
+        "topicName"
+      ]
+    }
+    this.communitiesLoading = true;
+    this.networkingSvc.getCommunities(formBody).subscribe({
+      next: (responce: any) => {
+        this.communitiesLoading = false;
+        this.communitySuggestionsList = _.get(responce, 'result.search_results.data')
+      },
+      error: () => {
+        this.communitiesLoading = false;
+        this.openSnackBar('Error while fetching communities')
       }
     })
   }
-  patchRecamendedCommunity(communities: any) {
-    this.communitySuggestionsList = communities
+
+  getProfileDetails() {
+    const userId = _.get(this.configSvc, 'userProfile.userId')
+    if(_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
+      this.userDetails = this.configSvc.userProfileV2
+    } else {
+      this.profileDetailsLoading = true;
+      this.networkingSvc.fetchProfile(userId).subscribe({
+        next: (responce: any) => {
+          this.profileDetailsLoading = false;
+          this.userDetails = _.get(responce, 'result.response')
+        },
+        error: () => {
+          this.profileDetailsLoading = false;
+          this.openSnackBar('Error while fetching profile details')
+        }
+      })
+    }
   }
 
-  patchProfileDetails(profileDetails: any) {
-    this.userDetails = profileDetails;
+  openSnackBar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
   }
     
   //#endregion (initialization)

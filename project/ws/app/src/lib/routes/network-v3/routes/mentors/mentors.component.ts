@@ -3,6 +3,7 @@ import { PageChangeEmitter } from '../../models/network-v3.model';
 import { NetworkingService } from '../../services/networking.service';
 import * as _ from 'lodash';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'ws-app-mentors',
@@ -11,141 +12,144 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 })
 export class MentorsComponent implements OnInit {
   paginationSize = 50;
-  paginationSizeOptions = [50, 100, 150, 200];
-  paginationPage = 0;
+  paginationSizeOptions = [3,50, 100, 150, 200];
+  paginationPage = 1;
   totalItemsCount = 1000;
   mentorsList: any[] = [
-    {
-      professionalDetails: [
-        {
-          "name": "BIHAR",
-          "osid": "193ed4b1-00a8-4fc2-a1e1-44e5770cb93f",
-          "id": null,
-          "organisationType": "Government",
-          "group": "Group C"
-        }
-      ],
-      employmentDetails: {
-        "departmentName": "BIHAR",
-        "departmentId": null,
-      },
-      personalDetails: {
-        "firstname": "Ajeshck",
-        "phoneVerified": true,
-        "mobile": "8129324667",
-        "primaryEmail": "Kannancekeey1052@gmail.com"
-      },
-      "userId": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
-      "id": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
-      "@id": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
-    },
-    {
-      "professionalDetails": [
-        {
-          "name": "BIHAR",
-          "osid": "8ecddd6e-cb90-4e9f-a56e-3271071b89f7",
-          "designation": "",
-          "id": null,
-          "organisationType": "Government",
-          "group": "Group C"
-        }
-      ],
-      "verifiedKarmayogi": false,
-      "employmentDetails": {
-        "departmentName": "departmentName",
-        "pinCode": "",
-        "departmentId": null,
-        "employeeCode": ""
-      },
-      "personalDetails": {
-        "firstname": "Akkrapalli",
-        "gender": "",
-        "phoneVerified": true,
-        "dob": "",
-        "mobile": "7799813736",
-        "domicileMedium": "",
-        "category": "",
-        "primaryEmail": "prasanthakkarapalli123@gmail.com"
-      },
-      "userId": "1c8bd791-f34c-4a04-af52-f57074a726c2",
-      "id": "1c8bd791-f34c-4a04-af52-f57074a726c2",
-      "@id": "1c8bd791-f34c-4a04-af52-f57074a726c2"
-    },
-    {
-      "professionalDetails": [
-        {
-          "name": "BIHAR",
-          "osid": "66d34557-ef26-4c03-bf59-19ba03da1b68",
-          "id": null,
-          "organisationType": "Government",
-          "group": "Group C"
-        }
-      ],
-      "verifiedKarmayogi": false,
-      "employmentDetails": {
-        "departmentName": "BIHAR",
-        "departmentId": null
-      },
-      "personalDetails": {
-        "firstname": "Ajaysingh",
-        "phoneVerified": true,
-        "mobile": "7889476596",
-        "primaryEmail": "ajju122232@gmail.com"
-      },
-      "userId": "d1e8fb2b-8443-490a-aa5d-394059243f93",
-      "id": "d1e8fb2b-8443-490a-aa5d-394059243f93",
-      "@id": "d1e8fb2b-8443-490a-aa5d-394059243f93"
-    },
-    {
-      "professionalDetails": [
-        {
-          "name": "BIHAR",
-          "osid": "216244cd-bb72-47e2-98ba-e641a9c526c9",
-          "id": null,
-          "organisationType": "Government",
-          "group": "Group C"
-        }
-      ],
-      "verifiedKarmayogi": false,
-      "employmentDetails": {
-        "departmentName": "BIHAR",
-        "departmentId": null
-      },
-      "personalDetails": {
-        "firstname": "Aedwardsam",
-        "phoneVerified": true,
-        "mobile": "9480395303",
-        "primaryEmail": "edwardsam948039@gmail.com"
-      },
-      "userId": "c122bf31-5de6-4369-8fcb-8c5604ebbf48",
-      "id": "c122bf31-5de6-4369-8fcb-8c5604ebbf48",
-      "@id": "c122bf31-5de6-4369-8fcb-8c5604ebbf48"
-    },
-    {
-      "professionalDetails": [
-        {
-          "name": "BIHAR",
-          "osid": "8166f2b8-b975-4549-8cf4-4261755b6e48",
-          "id": null,
-          "organisationType": "Government",
-          "group": "Group A"
-        }
-      ],
-      "verifiedKarmayogi": false,
-      "employmentDetails": {
-        "departmentName": "BIHAR",
-        "departmentId": null
-      },
-      "personalDetails": {
-        "firstname": "Check Four",
-        "phoneVerified": true,
-        "mobile": "9654784112",
-        "primaryEmail": "checkFour@yopmail.com"
-      },
-      "userId": "bff48d63-5dba-4376-abd3-00a4e4315b4c",
-      "id": "bff48d63-5dba-4376-abd3-00a4e4315b4c",
-      "@id": "bff48d63-5dba-4376-abd3-00a4e4315b4c"
-    }
+    // {
+    //   professionalDetails: [
+    //     {
+    //       "name": "BIHAR",
+    //       "osid": "193ed4b1-00a8-4fc2-a1e1-44e5770cb93f",
+    //       "id": null,
+    //       "organisationType": "Government",
+    //       "group": "Group C"
+    //     }
+    //   ],
+    //   employmentDetails: {
+    //     "departmentName": "BIHAR",
+    //     "departmentId": null,
+    //   },
+    //   personalDetails: {
+    //     "firstname": "Ajeshck",
+    //     "phoneVerified": true,
+    //     "mobile": "8129324667",
+    //     "primaryEmail": "Kannancekeey1052@gmail.com"
+    //   },
+    //   roles: [
+    //     'mentor'
+    //   ],
+    //   "userId": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
+    //   "id": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
+    //   "@id": "5beb33ad-29c6-4425-aa3b-9afe6e395535",
+    // },
+    // {
+    //   "professionalDetails": [
+    //     {
+    //       "name": "BIHAR",
+    //       "osid": "8ecddd6e-cb90-4e9f-a56e-3271071b89f7",
+    //       "designation": "",
+    //       "id": null,
+    //       "organisationType": "Government",
+    //       "group": "Group C"
+    //     }
+    //   ],
+    //   "verifiedKarmayogi": false,
+    //   "employmentDetails": {
+    //     "departmentName": "departmentName",
+    //     "pinCode": "",
+    //     "departmentId": null,
+    //     "employeeCode": ""
+    //   },
+    //   "personalDetails": {
+    //     "firstname": "Akkrapalli",
+    //     "gender": "",
+    //     "phoneVerified": true,
+    //     "dob": "",
+    //     "mobile": "7799813736",
+    //     "domicileMedium": "",
+    //     "category": "",
+    //     "primaryEmail": "prasanthakkarapalli123@gmail.com"
+    //   },
+    //   "userId": "1c8bd791-f34c-4a04-af52-f57074a726c2",
+    //   "id": "1c8bd791-f34c-4a04-af52-f57074a726c2",
+    //   "@id": "1c8bd791-f34c-4a04-af52-f57074a726c2"
+    // },
+    // {
+    //   "professionalDetails": [
+    //     {
+    //       "name": "BIHAR",
+    //       "osid": "66d34557-ef26-4c03-bf59-19ba03da1b68",
+    //       "id": null,
+    //       "organisationType": "Government",
+    //       "group": "Group C"
+    //     }
+    //   ],
+    //   "verifiedKarmayogi": false,
+    //   "employmentDetails": {
+    //     "departmentName": "BIHAR",
+    //     "departmentId": null
+    //   },
+    //   "personalDetails": {
+    //     "firstname": "Ajaysingh",
+    //     "phoneVerified": true,
+    //     "mobile": "7889476596",
+    //     "primaryEmail": "ajju122232@gmail.com"
+    //   },
+    //   "userId": "d1e8fb2b-8443-490a-aa5d-394059243f93",
+    //   "id": "d1e8fb2b-8443-490a-aa5d-394059243f93",
+    //   "@id": "d1e8fb2b-8443-490a-aa5d-394059243f93"
+    // },
+    // {
+    //   "professionalDetails": [
+    //     {
+    //       "name": "BIHAR",
+    //       "osid": "216244cd-bb72-47e2-98ba-e641a9c526c9",
+    //       "id": null,
+    //       "organisationType": "Government",
+    //       "group": "Group C"
+    //     }
+    //   ],
+    //   "verifiedKarmayogi": false,
+    //   "employmentDetails": {
+    //     "departmentName": "BIHAR",
+    //     "departmentId": null
+    //   },
+    //   "personalDetails": {
+    //     "firstname": "Aedwardsam",
+    //     "phoneVerified": true,
+    //     "mobile": "9480395303",
+    //     "primaryEmail": "edwardsam948039@gmail.com"
+    //   },
+    //   "userId": "c122bf31-5de6-4369-8fcb-8c5604ebbf48",
+    //   "id": "c122bf31-5de6-4369-8fcb-8c5604ebbf48",
+    //   "@id": "c122bf31-5de6-4369-8fcb-8c5604ebbf48"
+    // },
+    // {
+    //   "professionalDetails": [
+    //     {
+    //       "name": "BIHAR",
+    //       "osid": "8166f2b8-b975-4549-8cf4-4261755b6e48",
+    //       "id": null,
+    //       "organisationType": "Government",
+    //       "group": "Group A"
+    //     }
+    //   ],
+    //   "verifiedKarmayogi": false,
+    //   "employmentDetails": {
+    //     "departmentName": "BIHAR",
+    //     "departmentId": null
+    //   },
+    //   "personalDetails": {
+    //     "firstname": "Check Four",
+    //     "phoneVerified": true,
+    //     "mobile": "9654784112",
+    //     "primaryEmail": "checkFour@yopmail.com"
+    //   },
+    //   "userId": "bff48d63-5dba-4376-abd3-00a4e4315b4c",
+    //   "id": "bff48d63-5dba-4376-abd3-00a4e4315b4c",
+    //   "@id": "bff48d63-5dba-4376-abd3-00a4e4315b4c"
+    // }
   ]
   mentorsListLoading = false;
   mentorsGetSubscription: any
@@ -183,8 +187,8 @@ export class MentorsComponent implements OnInit {
     this.mentorsGetSubscription =this.networkingSvc.getRecommendedMentors(formBody).subscribe({
       next: (response) => {
         this.mentorsListLoading = false;
-        this.mentorsList = _.get(response, 'result.data.results', []) ;
-        this.totalItemsCount = _.get(response, 'result.data.total', 0);
+        this.mentorsList = _.get(response, 'result.response', []) ;
+        this.totalItemsCount = _.get(response, 'result.total', 1000);
       },
       error: (error) => {
         this.mentorsListLoading = false;
@@ -193,6 +197,10 @@ export class MentorsComponent implements OnInit {
         }
       }
     });
+  }
+
+  descoverMentors() { 
+    window.open(`${environment.contentHost}/mentorship/tabs/mentor-directory`, '_blank')
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {
