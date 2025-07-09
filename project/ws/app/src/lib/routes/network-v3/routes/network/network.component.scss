@@ -1,0 +1,21 @@
+.left-nav-content {
+  width: 270px;
+  height: fit-content;
+}
+
+:host ::ng-deep .center-content {
+  width: 567px;
+  max-width: 95vw;
+}
+
+.right-nav-content {
+  width: 270px;
+}
+
+.suggestions-header{
+  color: var(--accessbility-shades-without-opacity-kb-greys-black-100, #000);
+  /*stylelint-disable */
+  font: 600 14px/normal Montserrat;
+  /* stylelint-enable */
+  font-style: normal;
+}

@@ -4,6 +4,8 @@ import { NSProfileDataV2 } from '../models/profile-v2.model';
 import { Observable } from 'rxjs';
 import { map, retry } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import * as _ from 'lodash';
 
 
 const API_END_POINTS = {
@@ -51,14 +53,22 @@ export class ProfileV2RevampService {
 
   constructor(
     private http: HttpClient,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private configSvc: ConfigurationsService
   ) { }
 
   fetchProfile(userId: string): Observable<NSProfileDataV2.IProfile> {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
+        this.configulreProfileDetails(res)
         return res
       }))
+  }
+
+  configulreProfileDetails(requestBody: any) {
+    if( this.configSvc && this.configSvc.userProfileV2) {
+      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '');
+    }
   }
 
   updateProfileDetails(requestBody: any): Observable<any> {

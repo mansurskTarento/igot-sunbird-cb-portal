@@ -1,0 +1,45 @@
+.mentor-note-card {
+  background: linear-gradient(90deg, #23243a 0%, #2c2e4a 60%, #3b3c5a 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44, 46, 74, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.mentor-note-text {
+  color: #fff;
+  /* stylelint-disable */
+  font: 600 14px 'Montserrat';
+  /* stylelint-enable */
+}
+
+.discover-mentor-btn {
+  padding: 0px;
+  width: 145px;
+  height: 33px;
+  border-radius: 17px;
+  border: none;
+  background: linear-gradient(90deg, #23243a 0%, #3b3c5a 100%);
+  color: #fff;
+  /* stylelint-disable */
+  font: 700 14px 'Lato';
+  /* stylelint-enable */
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #7f7fff, 0 0 8px 0 #7f7fff inset;
+  transition: box-shadow 0.2s, background 0.2s;
+
+  // &:hover, &:focus {
+  //   background: linear-gradient(90deg, #3b3c5a 0%, #23243a 100%);
+  //   box-shadow: 0 0 0 2px #fff, 0 0 12px 0 #7f7fff inset;
+  //   outline: none;
+  // }
+}
+
+.header {
+  /*stylelint-disable */
+  font: 600 16px 'Montserrat';
+  /* stylelint-enable */
+  color: #000000
+}

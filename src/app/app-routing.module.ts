@@ -531,7 +531,7 @@ const routes: Routes = [
   {
     path: 'app/network-v2',
     loadChildren: () =>
-      import('./routes/route-network-v2.module').then(u => u.RouteNetworkV2Module),
+      import('./routes/route-network-v3.module').then(u => u.RouteNetworkV3Module),
     canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
@@ -539,9 +539,9 @@ const routes: Routes = [
       pageId: 'app/network-v2',
       module: 'Newtwork',
     },
-    resolve: {
-      pageData: PageResolve,
-    },
+    // resolve: {
+    //   pageData: PageResolve,
+    // },
   },
   {
     path: 'app/notifications',

@@ -528,6 +528,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               this.startIfonlySection()
             }
           }
+        }, 
+       (error: any) => {
+          this.fetchingSectionsStatus = 'error'
+          // Only show specific message for 400 status code errors
+          if (error.status === 400) {
+            if (error.error && error.error.params && error.error.params.errmsg) {
+              this.openSnackbar(`${error.error.params.errmsg}`)
+              this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
+            }
+          } else {
+            this.openSnackbar('Failed to load assessment section. Please try again later.')
+          }
         })
       } else {
         this.quizSvc.getSection(this.identifier, this.forPreview,
