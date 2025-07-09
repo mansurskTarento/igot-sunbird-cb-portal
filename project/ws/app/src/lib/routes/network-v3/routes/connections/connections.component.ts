@@ -27,6 +27,7 @@ export class ConnectionsComponent implements OnInit {
   paginationSizeOptions = [50, 100, 150, 200];
   paginationPage = 1;
   totalItemsCount = 500;
+  noDataMessage = 'No connections found';
 
   constructor(
     private networkingSvc: NetworkingService,
@@ -72,15 +73,19 @@ export class ConnectionsComponent implements OnInit {
     switch (key) {
       case 'connections':
         this.getConnectionsList();
+        this.noDataMessage = 'No connections found';
         break;
       case 'request':
         this.getRequestsList();
+        this.noDataMessage = 'No Requests found';
         break;
       case 'sent':
         this.getSentRequsetsList();
+        this.noDataMessage = 'No Requests sent';
         break;
       case 'blocked':
         this.getBlockedList();
+        this.noDataMessage = 'No connections found';
         break;
     }
   }

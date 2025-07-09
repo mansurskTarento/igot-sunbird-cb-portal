@@ -11,8 +11,8 @@ import { NetworkingService } from '../../services/networking.service';
 })
 export class AllRecommendationsComponent implements OnInit {
 
-  recommendationType = 'peopleNearYou'
-  title = 'People near you'
+  // recommendationType = 'peopleNearYou'
+  title = 'People you may know'
   recommendationList: any[] = []
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
