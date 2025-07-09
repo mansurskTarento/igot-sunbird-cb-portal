@@ -1,0 +1,136 @@
+import { Component, OnInit } from '@angular/core';
+import { routesData } from '../../models/network-v3.model';
+import * as _ from 'lodash';
+import { NetworkingService } from '../../services/networking.service';
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+
+
+@Component({
+  selector: 'ws-app-network',
+  templateUrl: './network.component.html',
+  styleUrls: ['./network.component.scss']
+})
+export class NetworkComponent implements OnInit {
+
+  //#region (global variables)
+  communitySuggestionsList: any[] = [];
+  communitiesLoading = false;
+  navigationItems: routesData[] = [
+    {
+      name: 'Explore Network',
+      navigationUrl: '/app/network-v2/home',
+      routeId: 'home',
+      imageUrl: './assets/icons/person_search.svg'
+    },
+    // {
+    //   name: 'Updates',
+    //   navigationUrl: '/app/network-v2/updates',
+    //   routeId: 'updates',
+    //   imageUrl: './assets/icons/update.svg'
+    // },
+    {
+      name: 'Connections',
+      navigationUrl: '/app/network-v2/connections',
+      routeId: 'connections',
+      imageUrl: './assets/icons/connection.svg'
+    },
+    // {
+    //   name: 'Recommendations',
+    //   navigationUrl: '/app/network-v2/recommendations',
+    //   routeId: 'recommendations',
+    //   icon: 'groups',
+    //   queryParams: { pageSize: 20 }
+    //   // imageUrl: './assets/icons/.svg'
+    // },
+    {
+
+      name: 'Recommendations',
+      navigationUrl: 'recommendations/all',
+      routeId: 'recommendations',
+      icon: 'groups',
+      queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
+      // imageUrl: './assets/icons/.svg'
+    },
+    {
+      name: 'Mentors',
+      navigationUrl: 'mentors',
+      routeId: 'mentors',
+      imageUrl: './assets/icons/book_read.svg',
+      queryParams: { pageSize: 50, offset: 0 }
+    }
+  ]
+  userDetails: any = {};
+  profileDetailsLoading = false;
+  //#endregion (global variables)
+
+  constructor(
+    private networkingSvc: NetworkingService,
+    private snackBar: MatLegacySnackBar,
+    private configSvc: ConfigurationsService,
+  ) { }
+
+  //#region (initialization)
+  ngOnInit() {
+    this.initialization();
+  }
+  
+  initialization() {
+    this.getCommunitesList();
+    this.getProfileDetails();
+  }
+
+  getCommunitesList() {
+    const formBody = {
+      filterCriteriaMap: {
+        status: "active"
+      },
+      requestedFields: [],
+      pageNumber: 0,
+      pageSize: 3,
+      facets: [
+        "topicName"
+      ]
+    }
+    this.communitiesLoading = true;
+    this.networkingSvc.getCommunities(formBody).subscribe({
+      next: (responce: any) => {
+        this.communitiesLoading = false;
+        this.communitySuggestionsList = _.get(responce, 'result.search_results.data')
+      },
+      error: () => {
+        this.communitiesLoading = false;
+        this.openSnackBar('Error while fetching communities')
+      }
+    })
+  }
+
+  getProfileDetails() {
+    const userId = _.get(this.configSvc, 'userProfile.userId')
+    if(_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
+      this.userDetails = this.configSvc.userProfileV2
+    } else {
+      this.profileDetailsLoading = true;
+      this.networkingSvc.fetchProfile(userId).subscribe({
+        next: (responce: any) => {
+          this.profileDetailsLoading = false;
+          this.userDetails = _.get(responce, 'result.response')
+        },
+        error: () => {
+          this.profileDetailsLoading = false;
+          this.openSnackBar('Error while fetching profile details')
+        }
+      })
+    }
+  }
+
+  openSnackBar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
+    })
+  }
+    
+  //#endregion (initialization)
+
+
+}

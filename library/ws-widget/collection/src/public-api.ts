@@ -216,6 +216,7 @@ export * from './lib/_common/attendance-helper/attendance-helper.component'
 export * from './lib/_common/attendance-card/attendance-card.module'
 export * from './lib/_common/attendance-card/attendance-card.component'
 export * from './lib/_common/tips-for-learner/tips-for-learner.module'
+export * from './lib/_common/connection-name/connection-name.module'
 // constants
 export * from './lib/_constants/widget-content.constants'
 export * from './lib/_models/error.model'

@@ -1,0 +1,26 @@
+<div class="flex gap-6 justify-center mt-6">
+  <!-- #region (left nav content) -->
+  <div class="hidden md:flex flex-col gap-4 left-nav-content">
+    <div class="profile">
+      <ws-app-profile-card [userDetails]="userDetails" [profileDetailsLoading]="profileDetailsLoading"></ws-app-profile-card>
+    </div>
+    <div>
+      <ws-app-network-navigation [navigationItems]="navigationItems"></ws-app-network-navigation>
+    </div>
+  </div>
+  <!-- #endregion (left nav content) -->
+
+  <!-- #region (center content) -->
+   <div class="flex center-content">
+    <router-outlet></router-outlet>
+   </div>
+   <!-- #endregion (center content) -->
+
+  <!-- #region (right nav content) -->
+  <div class="hidden md:flex flex-col gap-4 right-nav-content">
+    <div class="suggestions-header">Recommended Communities</div>
+    <ws-app-community-suggestions [isLoading]="communitiesLoading"
+          [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+  </div>
+  <!-- #endregion (right nav content) -->
+</div>
