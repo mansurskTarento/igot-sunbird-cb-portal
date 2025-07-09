@@ -1,5 +1,5 @@
 <div class="w-full flex flex-col gap-4 network-connections">
-  <div class="header">Connections {{selectedTabIndex}}</div>
+  <div class="header">Connections</div>
 
   <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
     <ng-container *ngFor="let tabDetails of tabDetailsList; let i = index">
@@ -7,12 +7,14 @@
         <ng-template mat-tab-label>
           <div class="flex tabLable justify-center items-center">
             {{tabDetails?.lable}}
-            <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
-              <div class="selected-count">{{tabDetails?.recordsCount}}</div>
+            <ng-container *ngIf="tabDetails?.recordsCount > 0">
+              <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
+                <div class="selected-count">{{tabDetails?.recordsCount}}</div>
+              </ng-container>
+              <ng-template #notSelectedCount>
+                ({{tabDetails?.recordsCount}})
+              </ng-template>
             </ng-container>
-            <ng-template #notSelectedCount>
-              ({{tabDetails?.recordsCount}})
-            </ng-template>
           </div>
         </ng-template>
         <ng-template matTabContent>
