@@ -12,7 +12,7 @@
           {{ connectionRequestsCount }}
         </div>
       </div>
-      <ng-container *ngIf="connectionRequestsCount > 0">
+      <ng-container *ngIf="connectionRequestsCount > 3">
         <a (click)="showAll('connectionRequests')" class="flex gap-1 items-center show-all">
           show all
           <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
@@ -55,7 +55,7 @@
           people you may know
         </div>
       </div>
-      <ng-container *ngIf="peopleYouMayKnowList?.length > 0">
+      <ng-container *ngIf="peopleYouMayKnowCount > 6">
         <a (click)="showAll('peopleYouMayKnow')"
         class="flex gap-1 items-center show-all">
           show all
@@ -97,7 +97,7 @@
           Find your Mentor
         </div>
       </div>
-      <ng-container *ngIf="mentorSuggestionsList?.length > 0">
+      <ng-container *ngIf="mentorSuggestionsList?.length > 3">
         <a (click)="showAll('showAllMentors')" class="flex gap-1 items-center show-all">
           show all
           <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>

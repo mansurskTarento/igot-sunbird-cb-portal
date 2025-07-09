@@ -3,6 +3,7 @@ import { tabDetails } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'ws-app-connections',
@@ -29,19 +30,26 @@ export class ConnectionsComponent implements OnInit {
 
   constructor(
     private networkingSvc: NetworkingService,
-    private snackBar: MatLegacySnackBar
+    private snackBar: MatLegacySnackBar,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.initialization();
+    this.getParamsData();
   }
 
-  initialization() {
+  getParamsData() {
+    const tab = _.get(this.activatedRoute, 'snapshot.queryParams.tab', 'connections');
+    this.selectedTabIndex = this.tabDetailsList.findIndex(tabDetail => tabDetail.key === tab);
+    this.initialization(tab);
+  }
+
+  initialization(tab = 'connections') {
     const getCount = true;
-    this.getConnectionsList();
-    this.getRequestsList(getCount);
-    this.getSentRequsetsList(getCount);
-    this.getBlockedList(getCount);
+    this.getConnectionsList(tab === 'connections' ? getCount : false);
+    this.getRequestsList(tab === 'request' ? getCount : false);
+    this.getSentRequsetsList(tab === 'sent' ? getCount : false);
+    this.getBlockedList(tab === 'blocked' ? getCount : false);
   }
 
   onTabChange(index: number) {

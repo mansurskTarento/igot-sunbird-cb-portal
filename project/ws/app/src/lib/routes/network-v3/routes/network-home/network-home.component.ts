@@ -16,6 +16,7 @@ export class NetworkHomeComponent implements OnInit{
   connectionsLoading: boolean = false;
   connectionRequestsCount: number = 0;
   peopleYouMayKnowList: any[] = []
+  peopleYouMayKnowCount: number = 0;
   suggestionsLoading: boolean = false;
   mentorSuggestionsList: any[] = []
   mentorsLoading: boolean = false;
@@ -82,6 +83,7 @@ export class NetworkHomeComponent implements OnInit{
       next: (response) => {
         this.suggestionsLoading = false;
         this.peopleYouMayKnowList = _.get(response, 'result.response', []);
+        this.peopleYouMayKnowCount = _.get(response, 'result.count', 0);
       },
       error: (error: HttpErrorResponse) => {
         this.suggestionsLoading = false;
@@ -117,7 +119,7 @@ export class NetworkHomeComponent implements OnInit{
     if (type) {
       switch (type) {
         case 'connectionRequests':
-          this.router.navigate(['/app/network-v2/connections'])
+          this.router.navigate(['/app/network-v2/connections'], {queryParams: {tab: 'request'}})
           break
         case 'peopleYouMayKnow':
           const queryParams = {
