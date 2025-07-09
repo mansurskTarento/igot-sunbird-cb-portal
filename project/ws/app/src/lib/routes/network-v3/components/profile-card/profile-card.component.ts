@@ -48,7 +48,7 @@ export class ProfileCardComponent implements OnInit, OnChanges {
   }
 
   viewProfile() { 
-    this.router.navigate(['/app/person-profile/me', (this.userId)], { fragment: 'profileInfo' })
+    this.router.navigate(['/app/person-profile/me'], { fragment: 'profileInfo' })
   }
 
 }

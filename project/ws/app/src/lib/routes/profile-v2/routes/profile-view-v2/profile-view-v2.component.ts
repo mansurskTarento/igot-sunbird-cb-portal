@@ -22,6 +22,7 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
+import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 //#endregion
 
 @Component({
@@ -197,7 +198,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion
 
   connectionStatus = 'Connect'
-  connectionStatusTranslation = 'NetworkV2Profile.connect'
   isMobile = false;
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -289,26 +289,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getConnectionStatus() {
     this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
-      switch (this.connectionStatus.toLowerCase()) {
-        case 'connect':
-          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
-          break;
-        case 'pending':
-          this.connectionStatusTranslation = 'NetworkV2Profile.pending'
-          break;
-        case 'unblock':
-          this.connectionStatusTranslation = 'NetworkV2Profile.unblock'
-          break;
-        case 'approved':
-          this.connectionStatusTranslation = 'NetworkV2Profile.approved'
-          break;
-        case 'rejected':
-          this.connectionStatusTranslation = 'NetworkV2Profile.rejected'
-          break;
-        default:
-          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
-          break;
-      }
     })
   }
 
@@ -1229,9 +1209,59 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
-  blockProfile() {
-    this.connectionStatus = 'Unblock';
-    this.connectionStatusTranslation = 'NetworkV2Profile.unblock';
+  openConformationDialog(status: string) {
+    const dialgoData = {
+        description: status === 'Blocked' ? 'Are you sure you want to block this connection?' : 'Are you sure you want to withdraw this request?',
+        iconName: 'info',
+        type: 'warning',
+        buttonsPositionClass: 'justify-center items-center',
+        buttons: [
+          {
+            classes: 'btn-out-line',
+            text: 'No',
+            response: false
+          },
+          {
+            classes: 'succes-button',
+            text: 'yes',
+            response: true
+          }
+        ]
+      }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialgoData,
+      disableClose: true,
+      width: '400px',
+      maxWidth: '90vw'
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.updateProfileConnection(status)
+      }
+    })
+  }
+
+  updateProfileConnection(status: string) {
+    const currentUser = this.configSvc.userProfile
+    if(this.userId && currentUser) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'userId', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.userId,
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+        status
+      }
+      this.profileV2RevampSvc.updateConnectionRequest(formBody).subscribe({
+        next: (response: any) => {
+          if(response) {
+            this.getConnectionStatus()
+          }
+        }
+      })
+    }
   }
 
   copyProfileLink() {
@@ -1245,8 +1275,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     });
 }
 
-sendConnectionRequest(): void {
-  const currentUser = this.configSvc.userProfile
+  sendConnectionRequest(): void {
+    const currentUser = this.configSvc.userProfile
     if(this.userId && currentUser) {
       const formBody = {
         connectionId: this.userId,
@@ -1260,8 +1290,7 @@ sendConnectionRequest(): void {
 
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
-          this.connectionStatus = 'Pending';
-          this.connectionStatusTranslation = 'NetworkV2Profile.pending';
+          this.getConnectionStatus()
           this.openSnackbar('Connection request sent successfully');
         },
         error: () => {
