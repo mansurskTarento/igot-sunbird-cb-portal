@@ -119,7 +119,6 @@ export class EventDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    debugger
     this.skeletonLoader = true
     this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
     this.route.params.subscribe(params => {
