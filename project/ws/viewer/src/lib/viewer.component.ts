@@ -75,6 +75,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   coursePrimaryCategory: any = ''
   compatibilityLevel = 0
   loadAllHierarchyData = false
+  isPreAssessment = false
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -116,29 +117,67 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       lang = lang.replace(/\"/g, '')
       this.translate.use(lang)
     }
+
+    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams['preAssessment']) {
+      this.isPreAssessment = true
+    } else {
+      this.isPreAssessment = false
+    }
   }
 
   getContentData(e: any) {
-    e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
-      if (data.content && data.content.data) {
-        this.content = data.content.data
-        this.contentMIMEType = data.content.data.mimeType
-      }
-    })
+    console.log('this.activatedRoute.snapshot.data', this.activatedRoute.snapshot.data)
+    if( this.activatedRoute.snapshot.data &&  this.activatedRoute.snapshot.data['preAssessmentRead'] && 
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data'] && 
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result'] &&
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+    ) {
+        this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+        if(this.content) {
+          this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
+        }
+        this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
+        console.log('this.content', this.content)
+        console.log('this.contentMIMEType', this.contentMIMEType)
+        this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
+        console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
+        console.log('this.hierarchyData', this.hierarchyData)
+        
+        this.resetAndFetchTocStructure()
+        console.log('tocStructure', this.tocStructure)
+    } else {
+      e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
+        console.log('this.content',data)
+        if (data.content && data.content.data) {
+          this.content = data.content.data
+          
+          this.contentMIMEType = data.content.data.mimeType
+        }
+      })
+    }
+    
   }
 
   getAuthDataIdentifer() {
-    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-    this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-      if (data.result.content.cstoken) {
-        this.configSvc.cstoken = data.result.content.cstoken
-      }
-      this.leafNodesCount = data.result.content.leafNodesCount
-    })
+    if(this.isPreAssessment) {
+      
+      
+      
+    } else {
+      const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
+      this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
+        if (data.result.content.cstoken) {
+          this.configSvc.cstoken = data.result.content.cstoken
+        }
+        this.leafNodesCount = data.result.content.leafNodesCount
+      })
+    }
+   
   }
 
   async ngOnInit() {
-    this.getTocConfig()
+  
+      this.getTocConfig()
     // for left side player scroll on right side resource click
     // this.pageScrollSubscription = this.tocSvc.updatePageScroll.subscribe((value: boolean) => {
     //   if (value) {
@@ -154,6 +193,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     //     },         1000)
     //   }
     // })
+    console.log('this.activatedRoute.snapshot.data.contentRead--', this.activatedRoute.snapshot.data.contentRead)
     const contentData = this.activatedRoute.snapshot.data.hierarchyData 
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
 
@@ -274,6 +314,8 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       }
     }
+    
+    
   }
 
   ngAfterViewChecked() {
@@ -360,6 +402,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updatePathSet(event: any) {
+    console.log('event', event)
     if (event && event.pathSet) {
       this.pathSet = event.pathSet
     }

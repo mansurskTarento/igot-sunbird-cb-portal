@@ -24,6 +24,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hierarchyMapData: any = {}
   @Input() pathSet: any
   @Input() componentName!: string
+  @Input() isPreAssessment = false
   isPlayable = false
   contentPlayWidgetConfig: NsWidgetResolver.IRenderConfigWithTypedData<any> | null = null
   defaultThumbnail = ''
@@ -56,10 +57,20 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     // this.forPreview = window.location.href.includes('/author/')
     this.routeQuerySubscription = this.route.queryParamMap.subscribe(qParamsMap => {
+      console.log('qParamsMap--', qParamsMap)
+      console.log('this.content--', this.content)
+      console.log('this.hierarchyMapData', this.hierarchyMapData)
+      if(this.content && this.content?.preEnrolmentResources && typeof this.content?.preEnrolmentResources === 'string') {
+        this.content['preEnrolmentResources'] =  JSON.parse(this.content?.preEnrolmentResources)
+      }
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
       const batchId = qParamsMap.get('batchId')
       const primaryCategory = qParamsMap.get('primaryCategory')
+      const preAssessment = qParamsMap.get('preAssessment')
+      if([preAssessment === 'true']) {
+        this.isPreAssessment = true
+      }
       if (contextId && contextPath) {
         this.contextId = contextId
         this.contextPath = contextPath

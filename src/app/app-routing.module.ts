@@ -51,6 +51,7 @@ import { AppTocExtPublicResolverService } from '@ws/app/src/lib/routes/app-toc/r
 import { PublicCrpComponent } from './routes/public/public-crp/public-crp.component'
 import { AppPublicOrganizationResolver } from './routes/public/public-signup/organization.resolver'
 import { FormDataResolverService } from './services/form-data-resolver.service'
+import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -1150,6 +1151,7 @@ const routes: Routes = [
       hierarchyData: AppHierarchyResolverService,
       enrollmentData: AppEnrollmentResolverService,
       contentRead: AppContentResolverService,
+      preAssessmentRead: AppPreAssessmentContentResolverService
     },
     loadChildren: () => import('./routes/route-viewer.module').then(u => u.RouteViewerModule),
     canActivate: [GeneralGuard],

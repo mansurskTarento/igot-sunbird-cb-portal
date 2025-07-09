@@ -15,6 +15,7 @@
         </div>
     </div>
 </div>
+<div class="tab-group-container">
 <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu 
     [class.sticky-mat-tabs]="sticky" 
     [selectedIndex]="selectedTabIndex" 
@@ -211,3 +212,4 @@
         </mat-tab>
     </ng-container>
 </mat-tab-group>
+</div>

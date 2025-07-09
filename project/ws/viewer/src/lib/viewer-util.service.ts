@@ -359,4 +359,70 @@ export class ViewerUtilService {
     submitForm(formData: any) {
       return this.http.post<any>(this.API_ENDPOINTS.SUBMIT_FORM, formData)
     }
+
+    realTimeProgressUpdateForPreAssessment(contentId: string, request: any, collectionId?: string, batchId?: string) {
+      let req: any
+      if (this.configservice.userProfile) {
+        req = {
+          request: {
+            userId: this.configservice.userProfile.userId || '',
+            contents: [
+              {
+                contentId,
+                batchId,
+                status: this.getStatus(request.current, request.max_size, request.mime_type),
+                courseId: collectionId,
+                lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
+                progressdetails: {
+                  max_size: request.max_size,
+                  current: request.current,
+                  mimeType: request.mime_type,
+                },
+                completionPercentage: this.calculatePercent(request.current, request.max_size, request.mime_type),
+              },
+            ],
+          },
+        }
+        // if (this.configservice.cstoken !== '') {
+        //   const headers = new HttpHeaders()
+        //   .set('cstoken', this.configservice.cstoken)
+  
+        //   this.http
+        //   .patch(`${this.API_ENDPOINTS.PROGRESS_UPDATE}/${contentId}`, { headers } , req)
+        //   .subscribe(noop, noop)
+        // } else {
+        //   this.http
+        //   .patch(`${this.API_ENDPOINTS.PROGRESS_UPDATE}/${contentId}`, req)
+        //   .subscribe(noop, noop)
+        // }
+        // this.http
+        //   .patch(`${this.API_ENDPOINTS.PROGRESS_UPDATE}/${contentId}`, req)
+        //   .subscribe(noop, noop)
+        //const contentIdNew= req.request.contents[0].contentId
+        // const updatedCompletionPercentage = req.request.contents[0].completionPercentage
+        // const updatedStatus = req.request.contents[0].status
+
+        // // Clone the inner object and update
+        // const existingContent = this.tocSvc.hashmap[contentIdNew] || {}
+
+        // this.tocSvc.hashmap = {
+        //   ...this.tocSvc.hashmap,
+        //   [contentIdNew]: {
+        //     ...existingContent,
+        //     completionPercentage: updatedCompletionPercentage,
+        //     completionStatus: updatedStatus
+        //   }
+        // }
+        console.log('req', req)
+        this.tocSvc.hashmap['do_114347293746307072185']['completionPercentage'] =10
+        this.tocSvc.hashmap['do_114347293746307072185']['completionStatus'] =1
+
+        console.log('Updated hashmap:', this.tocSvc.hashmap)
+         
+          console.log('this.tocSvc.hashmap---', this.tocSvc.hashmap)
+      } else {
+        req = {}
+        // do nothing
+      }
+    }
 }

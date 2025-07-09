@@ -830,6 +830,31 @@ export class AppTocService {
     }
   }
 
+  public createPreAssessmentHirarchyProgressHashmap(hierarchyData: NsContent.IContent) {
+    console.log('hierarchyData--', hierarchyData)
+    if (hierarchyData && hierarchyData.preEnrolmentResources) {
+      hierarchyData.preEnrolmentResources.forEach((child: NsContent.IContent) => {
+        if (child && child.preEnrolmentResources) {
+          this.createPreAssessmentHirarchyProgressHashmap(child)
+        }
+        let localMap = {}
+        localMap = {
+          parent: child.parent,
+          identifier: child.identifier,
+          leafNodesCount: child.leafNodesCount || null,
+          leafNodes: child.leafNodes || [],
+          completionPercentage: child.completionPercentage || child.progress,
+          completionStatus: child.completionStatus,
+          progress: child.progress,
+          primaryCategory: child.primaryCategory,
+          duration: child.duration || 0,
+          expectedDuration: child.expectedDuration || 0,
+        }
+        this.hashmap[child.identifier] = localMap
+      })
+    }
+  }
+
   public callHirarchyProgressHashmap(hierarchyData: NsContent.IContent | null) {
     if (hierarchyData) {
       this.hashmap[hierarchyData.identifier] = {
