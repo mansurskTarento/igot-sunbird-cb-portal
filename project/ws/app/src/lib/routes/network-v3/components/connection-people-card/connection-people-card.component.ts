@@ -95,6 +95,7 @@ export class ConnectionPeopleCardComponent implements OnInit {
     return name
   }
   connetToUser() {
+    this.user['requestSent'] = false
     const req = {
       connectionId: this.user.id || this.user.identifier || this.user.wid,
       userIdFrom: _.get(this.cirrentUser, 'userId', ''),
@@ -110,6 +111,7 @@ export class ConnectionPeopleCardComponent implements OnInit {
         this.user['requestSent'] = true
       },
       () => {
+        this.user['requestSent'] = undefined
         this.openSnackbar(this.toastError.nativeElement.value)
       })
   }

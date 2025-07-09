@@ -132,7 +132,7 @@ export class ConnectionsCardComponent implements OnInit {
         userDepartmentTo: this.otherUserProfile.departmentName,
         status: action
       }
-      this.otherUserProfile['connectionStatus'] = action // need to remove when apis working
+      this.otherUserProfile['connectionStatus'] = 'progress'
       this.networkingSvc.updateConnectionRequest(formBody).subscribe({
         next: (response) => {
           if (response) {
@@ -141,6 +141,7 @@ export class ConnectionsCardComponent implements OnInit {
         },
         error: (error: HttpErrorResponse) => {
           if(error) {
+            this.otherUserProfile['connectionStatus'] = ''
             this.openSnackbar('Something went wrong please try again')
           }
         }

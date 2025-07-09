@@ -123,3 +123,16 @@
   opacity: 0.4;
   pointer-events: none;
 }
+
+.connection-sent-btn {
+    border: 1px solid #999999 !important;
+    color: #999999 !important;
+    pointer-events: none;
+    height: 30px;
+    border-radius: 15px;
+}
+
+.action-link-sent {
+  color: #999999 !important;
+  pointer-events: none;
+}

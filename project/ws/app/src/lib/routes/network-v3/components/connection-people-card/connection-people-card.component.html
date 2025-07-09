@@ -19,11 +19,11 @@
             </div>
         </div>
         <div class="action-container flex items-center justify-center">
-            <button mat-stroked-button color="accent" type="button" class="connect_btn flex justify-center item-center"
-                (click)="connetToUser()" *ngIf="!user?.requestSent">
+            <button mat-button color="accent" type="button" class="connect_btn flex justify-center item-center"
+                (click)="connetToUser()" *ngIf="!user?.requestSent" [ngClass]="{'disabled-btn': user?.requestSent === false}">
                 <span class="ws-mat-default-text" ><img class="connect-icon mr-1" src="assets/icons/Connect_icon.svg" alt="add"/>{{'connectionPeopleCard.connect' | translate}}</span>
             </button>
-            <button mat-stroked-button color="accent" type="button" class="disabled-btn mat-accent-border flex-auto-display minwid"
+            <button mat-button color="accent" type="button" class="connection-sent flex justify-center item-center"
                 disabled *ngIf="user?.requestSent">
                 <span class="" >{{'connectionPeopleCard.connectionSent' | translate}}</span>
             </button>

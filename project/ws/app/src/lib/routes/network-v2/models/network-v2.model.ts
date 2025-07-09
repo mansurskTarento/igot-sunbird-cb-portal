@@ -73,7 +73,7 @@ export namespace NSNetworkDataV2 {
         firstName: string,
         lastName: string,
         channel: string,
-        requestSent: boolean,
+        requestSent: boolean | undefined,
         fullName: string,
         role: string[]
     }

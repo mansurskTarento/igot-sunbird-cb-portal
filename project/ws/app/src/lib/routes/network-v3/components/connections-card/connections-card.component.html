@@ -48,16 +48,17 @@
           <div class="flex h-full flex-col w-full">
             <div class="flex justify-end timing">{{otherUserProfile?.timeAgo}}</div>
           </div>
-          <ng-container *ngIf="!otherUserProfile?.connectionStatus; else connectionUpdated">
+          <ng-container *ngIf="!otherUserProfile?.connectionStatus || otherUserProfile?.connectionStatus === 'progress'; else connectionUpdated">
             <div class="request-btns flex justify-between w-full items-center">
-              <a class="ignore flex justify-center items-center" (click)="openConformationPopup('Rejected')">Ignore</a>
-              <button mat-button class="accept-btn" (click)="openConformationPopup('Approved')">Accept</button>
+              <a class="ignore flex justify-center items-center" [ngClass]="{'action-link-disabled': otherUserProfile?.connectionStatus === 'progress'}" (click)="openConformationPopup('Rejected')">Ignore</a>
+              <button mat-button class="accept-btn" (click)="openConformationPopup('Approved')"
+               [ngClass]="{'action-link-disabled': otherUserProfile?.connectionStatus === 'progress'}">Accept</button>
             </div>
           </ng-container>
           <ng-template #connectionUpdated>
             <div class="request-btns flex justify-end w-full items-center">
               <ng-container *ngIf="otherUserProfile?.connectionStatus === 'Approved'; else ignoredTemplate">
-                <button mat-button class="request-btns accept-btn action-link-disabled">Accepted</button>
+                <button mat-button class="connection-sent-btn flex justify-center items-center">Accepted</button>
               </ng-container>
               <ng-template #ignoredTemplate>
                 <ng-container *ngTemplateOutlet="disableLink; context: { message: 'Ignored' }"></ng-container>
@@ -69,9 +70,10 @@
       </ng-container>
 
       <ng-container *ngSwitchCase="'sent'">
-        <ng-container *ngIf="!otherUserProfile?.connectionStatus; else withdrawnTemplate">
+        <ng-container *ngIf="!otherUserProfile?.connectionStatus || otherUserProfile?.connectionStatus === 'progress'; else withdrawnTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Withdrawn')">
+            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Withdrawn')"
+             [ngClass]="{'action-link-disabled': otherUserProfile?.connectionStatus === 'progress'}">
                 Withdraw
               </a>
           </div>
@@ -82,9 +84,10 @@
       </ng-container>
 
       <ng-container *ngSwitchCase="'blocked'">
-        <ng-container *ngIf="!otherUserProfile?.connectionStatus; else blockedTemplate">
+        <ng-container *ngIf="!otherUserProfile?.connectionStatus || otherUserProfile?.connectionStatus === 'progress'; else blockedTemplate">
           <div class="flex w-full justify-center items-center">
-            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Unblocked')">
+            <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Unblocked')"
+             [ngClass]="{'action-link-disabled': otherUserProfile?.connectionStatus === 'progress'}">
                 Unblock
               </a>
           </div>
@@ -98,7 +101,7 @@
 </div>
 
 <ng-template #disableLink let-message="message">
-  <a class="flex gap-1 items-center action-link action-link-disabled">
+  <a class="flex gap-1 items-center action-link action-link-sent">
     {{message}}
   </a>
 </ng-template>

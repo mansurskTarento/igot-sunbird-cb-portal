@@ -56,6 +56,11 @@
 }
 
 .disabled-btn {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.connection-sent {
     border: 1px solid #999999 !important;
     color: #999999 !important;
     pointer-events: none;
