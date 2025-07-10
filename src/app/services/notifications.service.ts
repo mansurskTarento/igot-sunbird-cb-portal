@@ -53,6 +53,41 @@ export class NotificationsService {
     return this.http.post(API_END_POINTS.WORKFLOW_SEARCH, req)
   }
 
+  constrctPayload(notification: any): any {
+    let req: any = {
+      applicationStatus: 'SEND_FOR_APPROVAL',
+      deptName: this.orgName,
+      limit: 50,
+      serviceName: 'profile'
+    }
+    if (notification.sub_category === 'PROFILE_VERIFICATION') {
+      req["requestType"] = ['GROUP_CHANGE', 'DESIGNATION_CHANGE']
+    } else if (notification.sub_category === 'USER_TRANSFER') {
+      req["requestType"] = ['ORG_TRANSFER']
+    }
+    return req
+  }
+
+  handleReviewStatus(res: any, notification: any, isStandaloneResource: boolean, roles: string[], environment: any, snackBar: any): void {
+    switch (res.reviewStatus) {
+      case 'InReview': {
+        if (roles.includes('CONTENT_REVIEWER')) {
+          window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
+        } else {
+          snackBar.open("You are not authorized to view this content.")
+        }
+        break
+      } case 'Reviewed': {
+        if (roles.includes('CONTENT_PUBLISHER')) {
+          window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+        } else {
+          snackBar.open("You are not authorized to view this content.")
+        }
+        break
+      }
+    }
+  }
+
   handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
     if (notification.category === 'LEARN') {
       this.router.navigate([`/app/toc/${notification.message.data.id}`])
@@ -85,40 +120,14 @@ export class NotificationsService {
             snackBar.open('You are not authorized to view this content.')
           }
         } else if (res.status === 'Review') {
-          switch (res.reviewStatus) {
-            case 'InReview': {
-              if (roles.includes('CONTENT_REVIEWER')) {
-                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}&preview=true&editMode=true&status=Review&reviewStatus=${res.reviewStatus}`, '_blank')
-              } else {
-                snackBar.open("You are not authorized to view this content.")
-              }
-              break
-            } case 'Reviewed': {
-              if (roles.includes('CONTENT_PUBLISHER')) {
-                window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
-              } else {
-                snackBar.open("You are not authorized to view this content.")
-              }
-              break
-            }
-          }
+          this.handleReviewStatus(res, notification, isStandaloneResource, roles, environment, snackBar)
         } else if (res.status === 'Retired') {
           snackBar.open('This content is retired.')
         }
       })
     } else if (notification.category === 'PROFILE') {
-      let req: any = {
-        applicationStatus: 'SEND_FOR_APPROVAL',
-        deptName: this.orgName,
-        limit: 50,
-        serviceName: 'profile'
-      }
-      if (notification.sub_category === 'PROFILE_VERIFICATION') {
-        req["requestType"] = ['GROUP_CHANGE', 'DESIGNATION_CHANGE']
-      } else if (notification.sub_category === 'USER_TRANSFER') {
-        req["requestType"] = ['ORG_TRANSFER']
-      }
-      this.searchWorkflowSearch(req).subscribe((res: any) => {
+      let payload = this.constrctPayload(notification)
+      this.searchWorkflowSearch(payload).subscribe((res: any) => {
         let data = _.get(res, 'result.data', [])
         let pendingUser = data.find((item: any) => {
           return item.wfInfo[0] && item.wfInfo[0].userId === notification.message.data.id
