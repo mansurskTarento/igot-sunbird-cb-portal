@@ -17,9 +17,10 @@ export class AllRecommendationsComponent implements OnInit {
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
   paginationPage = 1;
-  totalItemsCount = 1000; // This should be set based on the actual data count
+  totalItemsCount = 0;
   recommendationListLoading = false;
   apiCallSubscription: any;
+  defaultPaginationSize = 50
 
 
   constructor(

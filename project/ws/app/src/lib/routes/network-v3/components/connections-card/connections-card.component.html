@@ -5,13 +5,13 @@
       <ws-widget-avatar-photo 
         [photoUrl]="otherUserProfile?.profileImageUrl"
         [initials]="nameInitials"
-        [name]="otherUserProfile?.fullName"
+        [name]="fullName"
         [size]="'round-m'"
       ></ws-widget-avatar-photo>
     </div>
 
     <div class="user-details flex flex-col gap-1">
-      <div class="user-name">{{ otherUserProfile?.fullName }}"</div>
+      <div class="user-name">{{ fullName }}</div>
       <div class="user-designation">{{ otherUserProfile?.professionalDetails?.[0]?.designation }}</div>
       <div class="organisation">{{ otherUserProfile?.departmentName }}</div>
       <div class="location">{{ otherUserProfile?.location }} </div>

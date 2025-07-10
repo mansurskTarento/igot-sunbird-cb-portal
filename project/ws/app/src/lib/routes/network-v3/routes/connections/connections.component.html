@@ -46,7 +46,7 @@
               </div>
             </ng-template>
           </div>
-          <ng-container *ngIf="connectionsList?.length > 0">
+          <ng-container *ngIf="totalItemsCount > defaultPaginationSize">
             <div>
               <ws-widget-pagination [defaultPaginationSize]="paginationSize"
                 [defaultPaginationSizeOptions]="paginationSizeOptions" [totalItemsCount]="totalItemsCount"

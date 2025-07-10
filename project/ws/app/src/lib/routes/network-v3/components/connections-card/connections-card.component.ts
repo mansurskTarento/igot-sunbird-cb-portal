@@ -19,6 +19,7 @@ export class ConnectionsCardComponent implements OnInit {
   @Input() currentTab = 'request'
   @Input() showBorder = true;
   nameInitials = '';
+  fullName = '';
   currentUserDetails: NsUser.IUserProfile | null = null;
 
   constructor(
@@ -35,13 +36,13 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   getInitials(): void {
-    const userName = _.get(this.otherUserProfile, 'fullName', '');
-    if (userName) {
-      if (userName.split(' ').length > 1) {
-        const nameArr = userName.split(' ')
+    this.fullName = _.get(this.otherUserProfile, 'fullName', _.get(this.otherUserProfile, 'personalDetails.firstname', ''));
+    if (this.fullName) {
+      if (this.fullName.split(' ').length > 1) {
+        const nameArr = this.fullName.split(' ')
         this.nameInitials = nameArr[0].charAt(0) + nameArr[1].charAt(0)
       } else {
-        this.nameInitials = userName.charAt(0)
+        this.nameInitials = this.fullName.charAt(0)
       }
     }
   }
@@ -51,8 +52,8 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   copyProfile() {
-    if (this.otherUserProfile && this.otherUserProfile.id) {
-      const userId = this.otherUserProfile.id
+    if (this.otherUserProfile && this.otherUserProfile.userId) {
+      const userId = this.otherUserProfile.userId
       const url = `${window.location.origin}/app/person-profile/${userId}#profileInfo`
       navigator.clipboard.writeText(url).then(() => {
         this.openSnackbar('Profile link copied to clipboard')
@@ -63,8 +64,8 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   viewProfile() {
-    if(this.otherUserProfile && this.otherUserProfile.id) {
-      const userId = this.otherUserProfile.id
+    if(this.otherUserProfile && this.otherUserProfile.userId) {
+      const userId = this.otherUserProfile.userId
       this.router.navigate(['/app/person-profile', (userId)], { fragment: 'profileInfo' })
     }
   }
@@ -123,12 +124,12 @@ export class ConnectionsCardComponent implements OnInit {
   updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
     if(this.otherUserProfile && this.currentUserDetails) {
       const formBody = {
-        connectionId: this.otherUserProfile.id || this.otherUserProfile.identifier || this.otherUserProfile.wid,
+        connectionId: this.otherUserProfile.id || this.otherUserProfile.identifier || this.otherUserProfile.wid || this.otherUserProfile.userId,
         userIdFrom: this.currentUserDetails.userId,
         userNameFrom: this.currentUserDetails.firstName,
         userDepartmentFrom: this.currentUserDetails.departmentName,
-        userIdTo: this.otherUserProfile.id,
-        userNameTo: this.otherUserProfile.fullName,
+        userIdTo: this.otherUserProfile.userId,
+        userNameTo: this.fullName,
         userDepartmentTo: this.otherUserProfile.departmentName,
         status: action
       }

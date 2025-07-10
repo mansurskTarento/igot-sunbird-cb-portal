@@ -15,6 +15,7 @@ export class MentorsComponent implements OnInit {
   paginationSizeOptions = [3,50, 100, 150, 200];
   paginationPage = 1;
   totalItemsCount = 0;
+  defaultPaginationSize = 50;
   mentorsList: any[] = [
   ]
   mentorsListLoading = false;
