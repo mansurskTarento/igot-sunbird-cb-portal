@@ -408,8 +408,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     let identifier = this.resourceIdentifier 
     // console.log('identifier--', identifier)
     await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
-      let data:any = datas.data
-      console.log('parse vtt data---', data)
+      let data:any = datas?.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
       
@@ -433,7 +432,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
        let blocks:any = file.getBlocks();
           
           this.subTitles = blocks
-          console.log('this.subTitles', this.subTitles)
           // console.log('this.vttLangArr--',this.vttLangArr)
           // if(this.vttLangArr && this.vttLangArr.length) {
           //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
@@ -504,8 +502,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         } 
       }
     }
-    console.log('this.totalResource',this.totalResource)
-    console.log('this.scormAssessmentCount',this.scormAssessmentCount)
     if(this.totalResource === this.scormAssessmentCount) {
       this.enableAITutorFlag = false;
     } else {

@@ -128,6 +128,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
     if(this.chatbotService.iGOTAIChatHistory && this.chatbotService.iGOTAIChatHistory.length) {
       this.aiSearchResultArr = this.chatbotService.iGOTAIChatHistory 
+      this.aiSearchResultArr.map((item:any, index:any)=>{
+        if(item && (item?.newMessage === '')) {
+          // delete this.aiSearchResultArr[index]
+          this.aiSearchResultArr.splice(index,1)
+        }
+      })
     }
   }
 
@@ -709,7 +715,6 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.aiSearchResultArr.splice(index,1)
       }
      })
-     console.log('this.aiSearchResultArr--', this.aiSearchResultArr)
      this.chatbotService.iGOTAIChatHistory = this.aiSearchResultArr
     setTimeout(()=>{
      // this.scrollToBottomEvent.emit() 
