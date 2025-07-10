@@ -14,6 +14,7 @@ const API_END_POINTS = {
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
+  BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
@@ -107,6 +108,10 @@ export class ProfileV2RevampService {
 
   connectToNetwork(payload: any): Observable<any> {
     return this.http.post(API_END_POINTS.ADD_CONNECTION, payload)
+  }
+
+  blockConnection(payload: any): Observable<any> {
+    return this.http.post(API_END_POINTS.BLOCK_CONNECTION, payload)
   }
 
   getCommunities(formBody: any): Observable<any> {

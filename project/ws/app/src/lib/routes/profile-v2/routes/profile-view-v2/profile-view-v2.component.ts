@@ -1246,9 +1246,38 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.updateProfileConnection(status)
+        if(status === 'Blocked') {
+          this.blockUser()
+        } else {
+          this.updateProfileConnection(status)
+        }
       }
     })
+  }
+
+  blockUser(): void {
+    const currentUser = this.configSvc.userProfile
+    if (this.userId && currentUser && this.primaryDetails) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'firstName', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.primaryDetails.firstname || '',
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.blockConnection(formBody).subscribe({
+        next: () => {
+          this.getConnectionStatus()
+          this.openSnackbar('Connection request sent successfully');
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong while sending connection request');
+        }
+      });
+    }
   }
 
   updateProfileConnection(status: string) {
