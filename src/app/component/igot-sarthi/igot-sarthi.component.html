@@ -47,7 +47,7 @@
               </div>
               <div (click)="callFromInternet(chat, i)" *ngIf="chat?.showFromInternet">
                 <button type="button" class="web-button px-4 cursor-pointer">
-                  <mat-icon class="web-search-icon">search  </mat-icon><span class="blue-color">Search the web</span>
+                  <mat-icon class="web-search-icon">search  </mat-icon><span class="blue-color">Search on the web</span>
                 </button>
               </div>
               
@@ -168,7 +168,7 @@
                   <div class="btn-default my-2" (click)="redirectToToc(item)">{{item?.title}}
                     <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                   </div>
-                  <div *ngIf="!(item?.fromInternet)">
+                  <div class="recommended-question-desc" *ngIf="!(item?.fromInternet)">
                     <!-- {{item?.description}} -->
                     <markdown [data]="item?.description"></markdown>
                   </div>
@@ -224,9 +224,16 @@
            
             
           </ng-container>
+          
           <div class="flex flex-row font-12 mt-1 mb-1 ai-generated-content-container" *ngIf="chat?.result?.length">
             <div class="ml-5 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
             <div class="ai-generated-content ml-2">These are <span *ngIf="item?.fromInternet">Web</span><span *ngIf="!(item?.fromInternet)">AI</span> generated results</div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chat?.fromInternet">
+          <div class="flex flex-row font-12 mt-1 mb-1 ai-generated-content-container" *ngIf="chat?.result?.length">
+            <div class="ml-5 mr-2 cu"><img alt="ai-icon" src="/assets/ai-tutor/ai-icon.svg"></div>
+            <div class="ai-generated-content ml-2">These are <span *ngIf="chat?.fromInternet">Web</span> generated results</div>
           </div>
         </ng-container>
           

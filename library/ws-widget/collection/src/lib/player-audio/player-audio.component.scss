@@ -155,4 +155,95 @@
     line-height: 16px;
     letter-spacing: 0.25px;
   }
+
+  :host ::ng-deep .video-js .vjs-control {
+    width: 3em;
+    font-size: 16px;
+    vertical-align: middle;
+    margin:0.25em;
+  
+  }
+
+  :host ::ng-deep .video-js.vjs-paused .vjs-play-control {
+    margin: 0.5em !important;
+  }
+  :host ::ng-deep .video-js.vjs-playing .vjs-play-control {
+    margin: 0.5em !important;
+  }
 }
+
+
+:host ::ng-deep .video-js .vjs-menu-item {
+  text-transform: capitalize !important;
+}
+
+.vjs-subtitle-button {
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.vjs-subtitle-button:hover {
+  color: #fff;
+  background: #333;
+}
+
+// ::ng-deep .vjs-control.custom-cc-icon .vjs-icon-placeholder::before {
+//   content: none !important;
+// }
+
+::ng-deep .custom-cc-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px; /* spacing between icon and text */
+}
+
+/* Make the image visible and aligned properly */
+::ng-deep .custom-cc-icon-img {
+  width: 1.8em;
+  height: 1.8em;
+  display: inline-block;
+  object-fit: contain;
+  margin-top: -12px;
+}
+
+/* Style text as needed */
+::ng-deep .custom-cc-label {
+  font-size: 16px;
+  color: white;
+  display: inline-block;
+  margin-top: -9px;
+  font-weight: 700;
+}
+
+
+::ng-deep .video-js .vjs-control {
+  width: 4.25em;
+  font-size: 16px;
+  vertical-align: middle;
+  margin:0.25em;
+
+}
+
+::ng-deep .video-js.vjs-paused .vjs-play-control {
+  margin: 0.5em !important;
+}
+::ng-deep .video-js.vjs-playing .vjs-play-control {
+  margin: 0.5em !important;
+}
+
+::ng-deep .video-js .vjs-control-bar {
+  height: 6em;
+  // background-color: #414244e3 !important;
+  // background: linear-gradient(#eff3f9, #414244e3) !important;
+  // border-radius: 0px 0px 12px 12px;
+  background: linear-gradient(0deg, rgba(180, 181, 185, 0.38) 9.43%, rgba(154, 154, 154, 0.95) 92.51%);
+  
+}
+
+
+

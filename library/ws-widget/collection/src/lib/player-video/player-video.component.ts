@@ -787,6 +787,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
         for (let i = 0; i < tracks.length; i++) {
           const t = tracks[i];
+          t.mode = 'disabled'
           console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
         }
       }, 10000);

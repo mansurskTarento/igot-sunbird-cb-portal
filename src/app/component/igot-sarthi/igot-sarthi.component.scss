@@ -97,8 +97,8 @@
   // background-image: url('/assets/ai-tutor/background.svg');
   height: 100%;
   // min-height: 520px;
-  min-width: 400px;
-  width: 100%;
+  width: 400px;
+  // width: 100%;
   z-index: 2;
   position: relative;
 }
@@ -107,8 +107,8 @@
   // background-image: url('/assets/ai-tutor/background.svg');
   height: 100%;
   // min-height: 520px;
-  min-width: 96vw;
-  width: 100%;
+  width: 96vw;
+  // width: 100%;
   z-index: 2;
   position: relative;
 }
@@ -368,9 +368,18 @@
       max-width: 85%;
       height: 100%;
       word-break: break-word;
-      ::ng-deep markdown p {
+      ::ng-deep markdown * {
         margin: 0;
+        width: 100%;
+        word-wrap: break-word;
       }
+    }
+  }
+  .recommended-question-desc {
+    ::ng-deep markdown * {
+      margin: 0;
+      width: 100%;
+      word-wrap: break-word;
     }
   }
   .word-break {
@@ -673,7 +682,7 @@
   position: relative;
     background: #F3962F;
     color: white;
-    width: 100px;
+    width: auto;
     border-radius: 8px;
     text-align: center;
     margin-top: 1px;
@@ -682,7 +691,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    white-space: nowrap;
     .mat-icon {
       vertical-align: middle;
       color: #fff !important;

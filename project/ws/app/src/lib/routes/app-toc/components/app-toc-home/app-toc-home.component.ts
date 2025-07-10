@@ -225,6 +225,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
   recommendedCoursesId = ''
   feedbackGiven: any
+  fromAITutor = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1322,7 +1323,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         primaryCategory,
         batchId,
       )
-      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
+      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams, fromAITutor: this.fromAITutor } })
     }
   }
 
@@ -2358,6 +2359,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   enrollUserToAI() {
+    this.fromAITutor = true
     this.handleAutoBatchAssign()
   }
 }

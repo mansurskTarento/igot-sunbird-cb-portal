@@ -685,7 +685,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         mimeType: item.MimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
-        description: item.Description,
+        description: item?.Description?.replace(/^\s{4,}/gm, ''),
         identifier: item.Identifier,   
         contentStart: startTime,
         contentEnd: endTime,

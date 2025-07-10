@@ -11,8 +11,9 @@
 
       <ng-container *ngIf="chat.type === 'incoming'">
         <ng-container *ngIf="chat?.answer || chat?.reterivedChunks?.length">
-          <div class="flex row-start incoming-msg margin-bottom-s">
-            <div *ngIf="chat?.answer || chat?.reterivedChunks?.length" class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+          <div class="flex row-start incoming-msg margin-bottom-s" [ngClass]="!(chat?.showBot) ? 'ml-8':''">
+            <div *ngIf="chat?.answer || chat?.reterivedChunks?.length" class="system-icon">
+              <img *ngIf="chat?.showBot" alt="ai-icon" src="/assets/icons/support-bot.svg"></div>
           
             <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30"  [innerHTML]="chat.answer">
             </div> -->
@@ -23,14 +24,14 @@
   
             </div> -->
             <ng-container *ngIf="chat?.answer">
-            <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
+            <!-- <div class="system-msg padding-xs"  *ngIf="chat?.wordsCount <= 30">
               <markdown [data]="chat?.answer"></markdown>
-            </div>
-              <div class="system-msg padding-xs" *ngIf="chat?.wordsCount > 30">
+            </div> -->
+              <div class="system-msg padding-xs">
                 <!-- <div   *ngIf="chat?.wordsCount > 30" [innerHTML]="chat?.showLess ? chat.shortAnswer :  chat.answer"></div> -->
-                <markdown [data]="chat?.showLess ? chat.shortAnswer :  chat.answer"></markdown>
-                <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">show less</a>
-                <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">show more</a>
+                <markdown [data]="chat.answer"></markdown>
+                <!-- <a class="link" href="javascript:void(0)" *ngIf="!chat?.showLess" (click)="toggleShow(i, 'less')">show less</a>
+                <a class="link" href="javascript:void(0)" *ngIf="chat?.showLess" (click)="toggleShow(i, 'more')">show more</a> -->
               </div>
             </ng-container>
               <!-- <div *ngIf="!chat?.showLess && chat?.wordsCount > 30" (click)="toggleShow(i, 'less')">Show Less</div>
@@ -220,7 +221,7 @@
         </ng-container>
         <ng-container>
           <div class="flex row-start incoming-msg margin-bottom-s" *ngIf="chat?.newMessage === '' && !resultFetch ">
-            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/bot-chat-small.svg"></div>
+            <div class="system-icon"><img alt="ai-icon" src="/assets/icons/support-bot.svg"></div>
             <div class="loading-bar-icon flex flex-row vertical-middle">
               <div class="mt-2"><span class="blue-color">Retrieving Results</span></div>
               <div><img alt="ai-icon" src="/assets/icons/loading_bar.gif"></div>
