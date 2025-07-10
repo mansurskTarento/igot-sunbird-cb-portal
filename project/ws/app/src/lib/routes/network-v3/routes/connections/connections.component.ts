@@ -26,7 +26,8 @@ export class ConnectionsComponent implements OnInit {
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
   paginationPage = 1;
-  totalItemsCount = 500;
+  totalItemsCount = 0;
+  defaultPaginationSize = 50;
   noDataMessage = 'No connections found';
 
   constructor(

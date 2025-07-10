@@ -33,7 +33,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="recommendationList?.length > 0">
+  <ng-container *ngIf="totalItemsCount > defaultPaginationSize">
     <div>
       <ws-widget-pagination [defaultPaginationSize]="paginationSize"
         [defaultPaginationSizeOptions]="paginationSizeOptions"
