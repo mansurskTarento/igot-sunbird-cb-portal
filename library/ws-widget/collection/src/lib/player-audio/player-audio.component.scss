@@ -170,6 +170,15 @@
   :host ::ng-deep .video-js.vjs-playing .vjs-play-control {
     margin: 0.5em !important;
   }
+
+  ::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+    background-color: #2b333f;
+    background-color: rgba(43, 51, 63, .7);
+    position: absolute;
+    width: 100%;
+    bottom: 2.35em !important;
+    max-height: 15em;
+  }
 }
 
 
@@ -243,6 +252,15 @@
   // border-radius: 0px 0px 12px 12px;
   background: linear-gradient(0deg, rgba(180, 181, 185, 0.38) 9.43%, rgba(154, 154, 154, 0.95) 92.51%);
   
+}
+
+::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  background-color: #2b333f;
+  background-color: rgba(43, 51, 63, .7);
+  position: absolute;
+  width: 100%;
+  bottom: 2.35em !important;
+  max-height: 15em;
 }
 
 
