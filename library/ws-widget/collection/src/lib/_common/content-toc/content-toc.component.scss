@@ -323,3 +323,26 @@
   }
 }
 
+@media  (min-width: 768px)  {
+  ::ng-deep .tab-group-container .mdc-tab {
+    min-width: auto;
+    max-width: max-content;
+    text-align: left;
+    justify-content: start;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  
+  ::ng-deep .tab-group-container .mdc-tab {
+    min-width: auto;
+    max-width: max-content;
+    text-align: left;
+    justify-content: start;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  
+
+}
+

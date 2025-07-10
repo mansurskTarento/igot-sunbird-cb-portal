@@ -34,7 +34,9 @@
             </div>
             </div>
             <div class="flex flex-wrap user-info-div" *ngIf="currentFilter === 'sarthi' ||  currentFilter === 'support-ai'">
-              <div class="user-name"><img class="vertical-middle" src="assets/icons/bot-chat-small.svg">
+              <div class="user-name">
+                <img  *ngIf="currentFilter === 'sarthi'" class="vertical-middle" src="assets/icons/bot-chat-small.svg">
+                <img  *ngIf="currentFilter === 'support-ai'" class="vertical-middle" src="assets/icons/support-bot.svg" height="40" width="40">
                 <span class="ml-2" *ngIf="currentFilter === 'sarthi'">iGOT AI</span>
                 <span class="ml-2" *ngIf="currentFilter === 'support-ai'">Support AI</span>
               </div> 
@@ -167,7 +169,7 @@
         </div>
             <!-- //NOSONAR --> <div class="info br-bl padding-top-xs" *ngIf="enableSupportAI" [ngClass]="{active: currentFilter === 'support-ai'}" (click)="toggleFilter('support-ai')">
               <div class="info-icon">
-                <img src="assets/icons/bot-chat-mini.svg">
+                <img src="assets/icons/support-bot.svg" height="28" width="28">
             </div>
             <div class="info-text">
                 Support AI

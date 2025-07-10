@@ -126,6 +126,15 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+    if(this.chatbotService.iGOTAIChatHistory && this.chatbotService.iGOTAIChatHistory.length) {
+      this.aiSearchResultArr = this.chatbotService.iGOTAIChatHistory 
+      this.aiSearchResultArr.map((item:any, index:any)=>{
+        if(item && (item?.newMessage === '')) {
+          // delete this.aiSearchResultArr[index]
+          this.aiSearchResultArr.splice(index,1)
+        }
+      })
+    }
   }
 
   ngAfterViewInit(): void {
@@ -680,7 +689,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         mimeType: item.mimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
-        description: item.Description,
+        description: item?.Description?.replace(/^\s{4,}/gm, ''),
         identifier: item.Identifier,    
         contentStart: startTime,
         contentEnd: endTime, 
@@ -706,6 +715,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.aiSearchResultArr.splice(index,1)
       }
      })
+     this.chatbotService.iGOTAIChatHistory = this.aiSearchResultArr
     setTimeout(()=>{
      // this.scrollToBottomEvent.emit() 
     },0)
@@ -977,13 +987,14 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false, fromInternet: true})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiSearchResultArr.splice(index,1)
           }
          })
+         this.chatbotService.iGOTAIChatHistory = this.aiSearchResultArr
         setTimeout(()=>{
           this.scrollToBottomEvent.emit() 
         },0)
@@ -1010,7 +1021,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    if(item?.contentType === 'Resource') {
+      selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    } else {
+      selBox.value = `https://portal.igotkarmayogi.gov.in/app/toc/${item?.identifier}/overview`
+    }
+    
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()

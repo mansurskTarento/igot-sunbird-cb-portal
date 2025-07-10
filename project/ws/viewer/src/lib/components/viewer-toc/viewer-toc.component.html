@@ -1,5 +1,5 @@
 
-<mat-tab-group class="player-content" *ngIf="enableAITutorFlag" (selectedTabChange)="onTabChanged($event)">
+<mat-tab-group class="player-content" *ngIf="enableAITutorFlag" [selectedIndex]="defaultTabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Structured Content">
     <ng-container *ngIf="!isFetching; else Loading">
       <!-- commented course card in viewer toc as per new design, only content hierarchy to be shown -->

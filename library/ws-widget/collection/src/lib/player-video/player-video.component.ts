@@ -530,7 +530,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               // Add custom layout
               span.innerHTML = `
                 <div class="custom-cc-wrapper">
-                  <img src="/assets/ai-tutor/subtitle.png" class="custom-cc-icon-img" alt="icon" />
+                  <img src="/assets/ai-tutor/subtitle-on.svg" id="custom-cc-icon-img" class="custom-cc-icon-img" alt="icon" />
                   <span class="custom-cc-label">Subtitle</span>
                 </div>
               `;
@@ -613,11 +613,12 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         });
         initObj.player.on('texttrackchange', () => {
           const tracks = initObj.player.textTracks();
-          
+          // let subtitlesOn = false;
           for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
             
             if (track.mode === 'showing') {
+              // subtitlesOn = true;
               const currentLang = track.language;
               if (currentLang !== this.previousSubtitleLanguage) {
                 //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
@@ -659,10 +660,16 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 this.appTocService.setActiveSubtitleLanguage(currentLang);
                 //console.log('Called next');
               } 
-
+              this.updateSubtitleButtonIcon(true);
               break; // Only one track should be 'showing'
+            } else {
+              this.updateSubtitleButtonIcon(false);
             }
           }
+          // setTimeout(()=>{
+          //   this.updateSubtitleButtonIcon(subtitlesOn);
+          // },200)
+          
         });
         // console.log('initObj--', initObj.player.textTracks())
         let tracks = initObj.player.textTracks()
@@ -787,7 +794,9 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
         for (let i = 0; i < tracks.length; i++) {
           const t = tracks[i];
+          t.mode = 'disabled'
           console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+          // this.updateSubtitleButtonIcon(false);
         }
       }, 10000);
   
@@ -828,6 +837,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     };
   
     waitForTrack();
+  }
+  
+  updateSubtitleButtonIcon(subtitlesOn: boolean) {
+      let subtitleImage =  document.getElementById('custom-cc-icon-img') as HTMLImageElement
+      if(subtitleImage) {
+        subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
+      }
+    
   }
   
 }

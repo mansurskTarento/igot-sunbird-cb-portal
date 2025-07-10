@@ -15,13 +15,14 @@
         </div>
     </div>
 </div>
+<div class="tab-group-container">
 <mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu 
     [class.sticky-mat-tabs]="sticky" 
     [selectedIndex]="selectedTabIndex" 
     [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
     
     <!-- Transcription Tab -->
-    <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag && vttLangArr?.length">
+    <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag && vttLangArr?.length && subTitles?.length">
         <ng-template mat-tab-label>
             <div class="flex flex-row">
               <div class="flex">
@@ -211,3 +212,4 @@
         </mat-tab>
     </ng-container>
 </mat-tab-group>
+</div>

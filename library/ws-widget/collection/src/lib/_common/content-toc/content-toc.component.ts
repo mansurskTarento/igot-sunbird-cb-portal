@@ -71,6 +71,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   transcriptionActiveLanguage = 'en'
   transriptionLanguageSub:Subscription | null = null
   selectedTranscriptionStyle :any
+  fromAITutor = false
+  totalResource = 0
+  scormAssessmentCount = 0
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -86,7 +89,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
-      this.enableAITutorFlag = true
+      // console.log('this.contentReadData--', this.route.snapshot.data)
+      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json'])      
+      // this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
     }
@@ -233,11 +238,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   showAiTutorConfirmPopup() {
     this.raiseAIPopupStartTelemetry()
     if(this.isEnrolled) {
+      this.fromAITutor = true
       setTimeout(()=>{
         this.raiseAIPopupInteractTelemetry()
       },1000)
+
      
       this.generateResumeDataLinkNew()
+      setTimeout(()=>{
+        this.raiseAIPopupEndTelemetry() 
+      },1000)
     } else {
       setTimeout(()=>{
         this.raiseAIPopupInteractTelemetry()
@@ -252,7 +262,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
       dialogRef.afterClosed().subscribe((response:any) => {
         
-        if(response === 'enroll') {          
+        if(response === 'enroll') {     
+          this.fromAITutor = true     
           this.generateResumeDataLinkNew()
         } else if(response === 'needToEnroll'){
           this.enrollUserForAITutor()
@@ -288,7 +299,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       // console.log('this.resumeDataLink',this.resumeDataLink)
       // console.log('this.actionSVC', this.actionSVC)
       this.router.navigate([this.resumeDataLink.url], {
-        queryParams: this.resumeDataLink.queryParams
+        queryParams: {
+          ...this.resumeDataLink.queryParams,
+          fromAITutor: this.fromAITutor
+        }
       });
       // this.router.navigateByUrl(
       //   [this.resumeDataLink.url],
@@ -394,7 +408,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     let identifier = this.resourceIdentifier 
     // console.log('identifier--', identifier)
     await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
-      let data:any = datas.data
+      let data:any = datas?.data
       if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
        this.vttLangArr = data[0]['transcription_urls']
       
@@ -416,6 +430,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
        let blocks:any = file.getBlocks();
+          
           this.subTitles = blocks
           // console.log('this.vttLangArr--',this.vttLangArr)
           // if(this.vttLangArr && this.vttLangArr.length) {
@@ -472,6 +487,27 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   
     // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
     return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
+  }
+
+  onlyscormAssessmentExists(data:any, key:any, value:any) {
+    for (let i=0; i<data?.length; i++) {
+      if (data[i] && data[i]['children'] && data[i]['children'].length) { 
+        // this.totalResource = this.totalResource + 1
+        this.onlyscormAssessmentExists(data[i]?.children, key, value)      
+      } else {
+        this.totalResource = this.totalResource + 1
+        if (value.includes(data[i][key])) {
+          // this.showAITutorFlag = false;
+          this.scormAssessmentCount = this.scormAssessmentCount + 1
+        } 
+      }
+    }
+    if(this.totalResource === this.scormAssessmentCount) {
+      this.enableAITutorFlag = false;
+    } else {
+      this.enableAITutorFlag = true
+    }
+    return this.enableAITutorFlag;
   }
 
   ngOnDestroy() {

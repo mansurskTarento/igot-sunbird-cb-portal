@@ -125,6 +125,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   showAITutorFlag = true
   scormAssessmentCount = 0
   totalResource = 0
+  defaultTabIndex = 0
+  fromAITutor:any = false
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -178,6 +180,10 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.viewMode = params.get('viewMode') || 'START'
       this.forPreview = params.get('preview') === 'true' ? true : false
       this.channelId = params.get('channelId')
+      this.fromAITutor = params.get('fromAITutor')
+      if(this.fromAITutor === true || this.fromAITutor === 'true') {
+        this.defaultTabIndex = 1
+      }
       try {
         this.batchId = params.get('batchId')
       } catch {
