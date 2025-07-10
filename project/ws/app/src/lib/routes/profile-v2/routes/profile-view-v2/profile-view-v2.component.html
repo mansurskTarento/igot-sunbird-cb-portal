@@ -433,27 +433,48 @@
 
   <!-- #region (right profile connections )-->
   <div class="hidden md:flex flex-col gap-4 profileRightSection">
-    <ng-container *ngIf="peopleSuggestionsList?.length > 0">
-      <div class="flex flex-col gap-3">
-        <div class="people-you-may-know">
-          {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+    <ng-container *ngIf="!suggestionsLoading; else suggestionsLoader">
+      <ng-container *ngIf="peopleSuggestionsList?.length > 0">
+        <div class="flex flex-col gap-3">
+          <div class="people-you-may-know">
+            {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+          </div>
+          <div>
+            <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
+              [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+          </div>
         </div>
-        <div>
-          <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
-            [currentUser]="profesionalDetails"></ws-app-people-suggestions>
-        </div>
-      </div>
+      </ng-container>
     </ng-container>
 
     <div class="flex flex-col gap-3">
-      <div class="people-you-may-know">
-        {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
-      </div>
-      <div>
-        <ws-app-community-suggestions
-          [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
-      </div>
+      <ng-container *ngIf="!communitySuggestionsLoading; else suggestionsLoader">
+        <ng-container *ngIf="communitySuggestionsList?.length > 0">
+          <div class="people-you-may-know">
+            {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
+          </div>
+          <div>
+            <ws-app-community-suggestions
+              [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
+    <ng-template #suggestionsLoader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+                [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+    </ng-template>
   </div>
   <!-- #endregion (right profile connections )-->
 </div>
