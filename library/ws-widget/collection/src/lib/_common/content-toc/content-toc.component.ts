@@ -90,7 +90,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit() {    
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
-      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json'])      
+      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
       // this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
@@ -490,11 +490,14 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   onlyscormAssessmentExists(data:any, key:any, value:any) {
+   
     for (let i=0; i<data?.length; i++) {
       if (data[i] && data[i]['children'] && data[i]['children'].length) { 
         // this.totalResource = this.totalResource + 1
+       // console.log('in children')
         this.onlyscormAssessmentExists(data[i]?.children, key, value)      
       } else {
+        
         this.totalResource = this.totalResource + 1
         if (value.includes(data[i][key])) {
           // this.showAITutorFlag = false;
@@ -502,6 +505,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         } 
       }
     }
+    
     if(this.totalResource === this.scormAssessmentCount) {
       this.enableAITutorFlag = false;
     } else {

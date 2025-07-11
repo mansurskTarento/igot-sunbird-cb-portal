@@ -1035,11 +1035,21 @@
   }
 }
 
-::ng-deep markdown * {
-  margin: 0;
-  width: 100%;
-  word-wrap: break-word;
+.recommended-question-desc {
+  ::ng-deep markdown pre {
+    all: unset;            /* Remove all default browser styling */
+    display: revert;       /* Revert display to default for each tag (optional but useful) */
+    box-sizing: border-box;
+    word-wrap: break-word;
+    width: 100%;
+  }
 }
+
+// ::ng-deep markdown * {
+//   margin: 0;
+//   width: 100%;
+//   word-wrap: break-word;
+// }
 
 
   
