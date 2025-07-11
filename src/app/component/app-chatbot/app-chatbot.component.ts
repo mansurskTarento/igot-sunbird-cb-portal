@@ -71,7 +71,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   fullScreenChatFlag = false
   faqChatBotDisable = true
   footerClassName = 'cb-footer'
-  resetIGOTAIChat = false
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
