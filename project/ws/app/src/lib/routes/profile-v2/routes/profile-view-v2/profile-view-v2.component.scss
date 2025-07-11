@@ -389,6 +389,23 @@
 
 }
 
+.blockedBlock {
+  min-height: 270px;
+  height: 100%;
+  max-height: 100%;
+
+  .emptyPageIcon {
+    height: 70px;
+  }
+
+  .blocked-text {
+    color: #000000;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+}
+
 @media screen and (max-width: 1000px) {
   .not-my-user-container {
     width: 100%;
@@ -416,6 +433,19 @@
   border: 1px solid rgba(0, 0, 0, .08);
   opacity: 1;
   background-color: #fff;
+}
+
+.pendingButton {
+  width: 140px;
+  height: 32px;
+  background-color: #1B4CA11A !important;
+  border: 1px solid #1B4CA1;
+  border-radius: 17px;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  color: #1B4CA1 !important;
+  pointer-events: none;
 }
 
 .connectButton {

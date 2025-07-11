@@ -33,6 +33,25 @@
   border: 1px solid var(--borders-black-border-8-black, rgba(0, 0, 0, 0.08));
   background: #FFF;
   padding: 0px 16px;
+  width: 508px;
+  max-width: calc(100vw - 50px);
+}
+
+.no-records-found {
+  min-height: 270px;
+  height: 100%;
+  max-height: 100%;
+
+  .emptyPageIcon {
+    height: 70px;
+  }
+
+  .no-data-text {
+    color: #000000;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
 }
 
 :host ::ng-deep .network-connections {

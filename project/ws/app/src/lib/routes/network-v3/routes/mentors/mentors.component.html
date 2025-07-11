@@ -20,9 +20,12 @@
         </ng-container>
       </ng-container>
       <ng-template #noMentorsFound>
-        <div class="no-records-found">
-          No mentors found.
-        </div>
+        <div class="w-full flex flex-col gap-4 justify-center items-center no-records-found">
+              <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="empty">
+              <div class="no-data-text">
+                No Mentors found
+              </div>
+            </div>
       </ng-template>
     </ng-container>
     <ng-template #showMentorsSkeleton>
@@ -36,7 +39,7 @@
     </ng-template>
   </div>
 
-  <ng-container *ngIf="mentorsList?.length > 0">
+  <ng-container *ngIf="totalItemsCount > defaultPaginationSize">
     <div>
       <ws-widget-pagination [defaultPaginationSize]="paginationSize"
         [defaultPaginationSizeOptions]="paginationSizeOptions"

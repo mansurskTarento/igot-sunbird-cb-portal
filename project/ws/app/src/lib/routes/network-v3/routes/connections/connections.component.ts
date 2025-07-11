@@ -26,7 +26,9 @@ export class ConnectionsComponent implements OnInit {
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
   paginationPage = 1;
-  totalItemsCount = 500;
+  totalItemsCount = 0;
+  defaultPaginationSize = 50;
+  noDataMessage = 'No connections found';
 
   constructor(
     private networkingSvc: NetworkingService,
@@ -46,10 +48,10 @@ export class ConnectionsComponent implements OnInit {
 
   initialization(tab = 'connections') {
     const getCount = true;
-    this.getConnectionsList(tab === 'connections' ? getCount : false);
-    this.getRequestsList(tab === 'request' ? getCount : false);
-    this.getSentRequsetsList(tab === 'sent' ? getCount : false);
-    this.getBlockedList(tab === 'blocked' ? getCount : false);
+    this.getConnectionsList(tab === 'connections' ? false : getCount);
+    this.getRequestsList(tab === 'request' ? false : getCount);
+    this.getSentRequsetsList(tab === 'sent' ? false : getCount);
+    this.getBlockedList(tab === 'blocked' ? false : getCount);
   }
 
   onTabChange(index: number) {
@@ -72,15 +74,19 @@ export class ConnectionsComponent implements OnInit {
     switch (key) {
       case 'connections':
         this.getConnectionsList();
+        this.noDataMessage = 'No connections found';
         break;
       case 'request':
         this.getRequestsList();
+        this.noDataMessage = 'No Requests found';
         break;
       case 'sent':
         this.getSentRequsetsList();
+        this.noDataMessage = 'No Requests sent';
         break;
       case 'blocked':
         this.getBlockedList();
+        this.noDataMessage = 'No connections found';
         break;
     }
   }
@@ -96,8 +102,8 @@ export class ConnectionsComponent implements OnInit {
         if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
+          this.connectionsList = _.get(response, 'result.data', []);
         }
-        this.connectionsList = _.get(response, 'result.data', []);
         this.setCountOfTab('connections', _.get(response, 'result.count', 0));
       },
       error: () => {
@@ -119,8 +125,8 @@ export class ConnectionsComponent implements OnInit {
         if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
+          this.connectionsList = _.get(response, 'data', []);
         }
-        this.connectionsList = _.get(response, 'data', []);
         this.setCountOfTab('request', _.get(response, 'count', 0));
       },
       error: () => {
@@ -142,8 +148,8 @@ export class ConnectionsComponent implements OnInit {
         if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
+          this.connectionsList = _.get(response, 'result.data', []);
         }
-        this.connectionsList = _.get(response, 'result.data', []);
         this.setCountOfTab('sent', _.get(response, 'result.count', 0));
       },
       error: () => {
@@ -167,8 +173,8 @@ export class ConnectionsComponent implements OnInit {
         if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
+          this.connectionsList = _.get(response, 'result.response', []);
         }
-        this.connectionsList = _.get(response, 'result.response', []);
         this.setCountOfTab('blocked', _.get(response, 'result.count', 0));
       },
       error: () => {

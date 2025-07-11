@@ -12,8 +12,9 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
-  GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v2/connections/recommended',
+  GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
+  BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
@@ -42,6 +43,8 @@ const API_END_POINTS = {
 
   INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
+  UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection'
+
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
 }
@@ -107,6 +110,10 @@ export class ProfileV2RevampService {
     return this.http.post(API_END_POINTS.ADD_CONNECTION, payload)
   }
 
+  blockConnection(payload: any): Observable<any> {
+    return this.http.post(API_END_POINTS.BLOCK_CONNECTION, payload)
+  }
+
   getCommunities(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_COMMUNITIES, formBody)
   }
@@ -136,22 +143,6 @@ export class ProfileV2RevampService {
   getMinistriesList(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_MINISTRY)
   }
-
-  // getOrgReadData(organisationId: string): Observable<any> {
-  //   const request = {
-  //     request: {
-  //       organisationId,
-  //     },
-  //   };
-  //   return this.http.post<any>(API_END_POINTS.ORG_READ, request)
-  // }
-
-  // getFrameworkInfo(frameWorkName: string): Observable<any> {
-  //   return this.http
-  //     .get(`${API_END_POINTS.ORGANISATION_FW(frameWorkName)}`, {
-  //       withCredentials: true,
-  //     })
-  // }
 
   searchDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_SEARCH_DESIGNATIONS, _req)
@@ -206,6 +197,10 @@ export class ProfileV2RevampService {
 
   deleteEntriesOfProfile(requestBody: any): Observable<any> {
     return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, requestBody)
+  }
+
+  updateConnectionRequest(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
   }
 
   getWhiteListDomain(): Observable<any> {
