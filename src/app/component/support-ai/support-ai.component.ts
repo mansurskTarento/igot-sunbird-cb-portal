@@ -581,7 +581,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.iGOTAISearchResultArr = []
     let requestBody:any = {
       "channel_id": "web",
-      "session_id": this.chatId,
+      // "session_id": this.chatId,
       "text": this.cloneSearchQuery,
       "audio": "",
       "language": this.activeLaguage
@@ -627,13 +627,12 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     if(this.initiateSupportNewChat) {
       let requestBody:any = {
         "channel_id": "web",
-        "session_id": this.chatId,
+        // "session_id": this.chatId,
         "text": this.cloneSearchQuery,
         "audio": "",
         "language": this.activeLaguage
       }
         this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
-          console.log('data---', data)
           this.resultFetch = true
         this.aiSearchResult = data 
         
