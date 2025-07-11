@@ -668,8 +668,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       showFromInternet = true
     } 
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
+      let startTime = -1
+      let endTime = -1
       let pageNumber:any = 1
       if(item && item?.contentStart) {
         startTime = item?.contentStart

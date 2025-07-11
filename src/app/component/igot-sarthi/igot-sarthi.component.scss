@@ -1035,6 +1035,11 @@
   }
 }
 
+::ng-deep markdown * {
+  margin: 0;
+  width: 100%;
+  word-wrap: break-word;
+}
 
 
   

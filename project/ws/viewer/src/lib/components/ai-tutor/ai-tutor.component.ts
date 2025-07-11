@@ -664,8 +664,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     this.aiTutorResult.retrievedChunks = []
    }
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
+      let startTime = -1
+      let endTime = -1
       let pageNumber:any = 1
       if(item && item?.ContentStart) {
         startTime = item?.ContentStart
@@ -734,11 +734,23 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   redirectToResource(item:any) {
-    const queryString = Object.entries(this.route.snapshot.queryParams)
+    let queryParams = { ...this.route.snapshot.queryParams };
+    console.log(queryParams)
+    // Remove specific parameters
+    delete queryParams.st;
+    delete queryParams.et;
+    delete queryParams.pn;
+    delete queryParams.from;
+    delete queryParams.playerPreview;
+    let queryString = ''
+    queryString = Object.entries(queryParams)
         .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
         .join('&');
-    let path = (item.mimeType === 'application/pdf')? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
-    window.open(path, '_blank')
+    let path = ''
+    path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    console.log('path', path)
+   // window.open(path, '_blank')
+   this.router.navigateByUrl(path)
   }
 
   copyPath(item:any, cindex:any) {
