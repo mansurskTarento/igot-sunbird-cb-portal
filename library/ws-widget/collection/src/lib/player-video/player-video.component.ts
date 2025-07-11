@@ -98,10 +98,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       // setTimeout(()=>{
         // initObj.player.autoplay()
         if(this.videoTag && this.videoTag.nativeElement) {
-          this.videoTag.nativeElement.muted = true
+          this.videoTag.nativeElement.muted = false
           this.videoTag.nativeElement.play();
         } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
-          this.realvideoTag.nativeElement.muted = true
+          this.realvideoTag.nativeElement.muted = false
           this.realvideoTag.nativeElement.play();
         }
         
