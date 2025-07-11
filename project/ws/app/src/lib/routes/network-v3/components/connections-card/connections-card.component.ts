@@ -157,7 +157,7 @@ export class ConnectionsCardComponent implements OnInit {
                 listToGetCount = ['Approved']
                 break;
             }
-            if(listToGetCount.length) {
+            if(listToGetCount && listToGetCount.length) {
               this.getCountOf.emit(listToGetCount)
             }
           }

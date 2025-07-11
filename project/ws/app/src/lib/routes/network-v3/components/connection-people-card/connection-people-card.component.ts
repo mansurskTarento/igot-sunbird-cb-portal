@@ -112,7 +112,7 @@ export class ConnectionPeopleCardComponent implements OnInit {
       },
       () => {
         this.user['requestSent'] = undefined
-        this.openSnackbar(this.toastError.nativeElement.value)
+        this.openSnackbar('Failed to send request. Please try again.')
       })
   }
 
