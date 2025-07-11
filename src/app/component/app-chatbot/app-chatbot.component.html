@@ -138,7 +138,7 @@
             </ng-container>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'sarthi'" #scroll>
-             <ws-app-igot-sarthi [fullScreenChatFlag]="fullScreenChatFlag" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
+             <ws-app-igot-sarthi [fullScreenChatFlag]="fullScreenChatFlag" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId"  [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'support-ai'" #scroll>
              <ws-app-support-ai [fullScreenChatFlag]="fullScreenChatFlag" [activeLaguage]="selectedLaguage" [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId" [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
