@@ -136,6 +136,11 @@
                   {{'NetworkV2Profile.pending' | translate}}
                 </button>
               </ng-container>
+              <ng-container *ngSwitchCase="'Approved'">
+                <button mat-button class="pendingButton" i18n>
+                  {{'NetworkV2Profile.connected' | translate}}
+                </button>
+              </ng-container>
               <ng-container *ngSwitchDefault>
                 <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
                   <mat-icon class="connect-icon mr-2">person_add</mat-icon>
