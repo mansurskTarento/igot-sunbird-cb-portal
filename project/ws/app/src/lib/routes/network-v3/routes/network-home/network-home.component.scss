@@ -55,3 +55,7 @@
   width: 540px;
   max-width: 95vw;
 }
+
+:host ::ng-deep .horizontal-scroll-content {
+  margin-bottom: 10px;
+}

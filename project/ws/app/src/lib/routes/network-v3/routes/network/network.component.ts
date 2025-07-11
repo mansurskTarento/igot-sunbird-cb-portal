@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { routesData } from '../../models/network-v3.model';
+import { connectionUpdates, routesData } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { NetworkingService } from '../../services/networking.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
@@ -33,7 +33,7 @@ export class NetworkComponent implements OnInit {
       name: 'Connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      imageUrl: './assets/icons/connection.svg'
+      icon: 'groups',
     },
     // {
     //   name: 'Recommendations',
@@ -46,11 +46,10 @@ export class NetworkComponent implements OnInit {
     {
 
       name: 'Recommendations',
-      navigationUrl: 'recommendations/all',
+      navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
-      icon: 'groups',
+      imageUrl: './assets/icons/connection.svg',
       queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
-      // imageUrl: './assets/icons/.svg'
     },
     {
       name: 'Mentors',
@@ -76,6 +75,7 @@ export class NetworkComponent implements OnInit {
   }
   
   initialization() {
+    this.subscribeToUpdates();
     this.getCommunitesList();
     this.getProfileDetails();
   }
@@ -122,6 +122,18 @@ export class NetworkComponent implements OnInit {
         }
       })
     }
+  }
+
+  subscribeToUpdates() { 
+    this.networkingSvc.connectionsUpdates$.subscribe((update: connectionUpdates | null) => {
+      if(update && this.navigationItems) {
+        this.navigationItems.forEach(item => {
+          if(item.routeId === update.routeId) {
+            item['showUpdate'] = update.showUpdate
+          }
+        })
+      }
+    })
   }
 
   openSnackBar(primaryMsg: string, duration: number = 5000) {

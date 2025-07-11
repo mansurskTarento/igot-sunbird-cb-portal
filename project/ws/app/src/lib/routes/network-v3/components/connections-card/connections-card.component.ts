@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
@@ -16,8 +16,9 @@ import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 export class ConnectionsCardComponent implements OnInit {
   
   @Input() otherUserProfile: any;
-  @Input() currentTab = 'request'
+  @Input() currentTab = 'requested'
   @Input() showBorder = true;
+  @Output() getCountOf: EventEmitter<string[]> = new EventEmitter<string[]>(); 
   nameInitials = '';
   fullName = '';
   currentUserDetails: NsUser.IUserProfile | null = null;
@@ -138,6 +139,27 @@ export class ConnectionsCardComponent implements OnInit {
         next: (response) => {
           if (response) {
             this.otherUserProfile['connectionStatus'] = action
+            let listToGetCount: string[] = []
+            switch(action) {
+              case 'Approved':
+                listToGetCount = ['Approved', 'Requested']
+                break;
+              case 'Rejected':
+                listToGetCount = ['Requested']
+                break;
+              case 'Withdrawn':
+                listToGetCount = ['Pending']
+                break;
+              case 'Unblocked':
+                listToGetCount = ['Blocked']
+                break;
+              case 'Removed':
+                listToGetCount = ['Approved']
+                break;
+            }
+            if(listToGetCount.length) {
+              this.getCountOf.emit(listToGetCount)
+            }
           }
         },
         error: (error: HttpErrorResponse) => {

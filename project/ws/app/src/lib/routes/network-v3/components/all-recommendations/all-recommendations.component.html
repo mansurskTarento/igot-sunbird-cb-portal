@@ -5,7 +5,7 @@
   </div>
 
   <div class="section flex flex-col justify-between items-center">
-    <div class="flex gap-4 w-full flex-wrap">
+    <div class="flex gap-3 md:gap-4 w-full md:justify-start justify-center flex-wrap">
       <ng-container *ngIf="!recommendationListLoading; else showRecommendationsSkeleton">
         <ng-container *ngIf="recommendationList?.length > 0; else noRecommendationsFound">
           <ng-container *ngFor="let otherUserProfile of recommendationList">

@@ -5,6 +5,7 @@ export interface routesData {
   icon?: string
   imageUrl?: string
   queryParams?: any
+  showUpdate?: boolean
 }
 
 export interface PageChangeEmitter {
@@ -17,4 +18,9 @@ export interface tabDetails {
   lable: string;
   key: string;
   recordsCount: number;
+}
+
+export interface connectionUpdates {
+  routeId: string;
+  showUpdate: boolean;
 }
