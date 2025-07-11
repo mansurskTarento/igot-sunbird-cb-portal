@@ -126,6 +126,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+   
     if(this.chatbotService.iGOTAIChatHistory && this.chatbotService.iGOTAIChatHistory.length) {
       this.aiSearchResultArr = this.chatbotService.iGOTAIChatHistory 
       this.aiSearchResultArr.map((item:any, index:any)=>{
