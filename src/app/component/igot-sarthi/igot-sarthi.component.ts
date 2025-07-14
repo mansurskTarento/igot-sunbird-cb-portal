@@ -671,11 +671,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       let startTime = -1
       let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.contentStart) {
+      if(item && item?.contentStart.trim()) {
         startTime = item?.contentStart
         pageNumber= item?.contentStart
       }
-      if(item && item?.ContentEnd) {
+      if(item && item?.ContentEnd.trim()) {
         endTime = item?.ContentEnd
         pageNumber= item?.ContentEnd
       }
@@ -800,7 +800,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home" ,"subType" : "ai-global-search"  },
         object: { },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1050,7 +1050,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home" ,"subType" : "ai-global-search"  },
         object: { id: chat?.identifier, type: chat?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1123,7 +1123,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home","subType" : "ai-global-search"   },
         object: { id: item?.identifier, type: item?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,

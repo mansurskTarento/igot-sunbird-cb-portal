@@ -167,7 +167,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: this.content},
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -667,11 +667,11 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       let startTime = -1
       let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.ContentStart) {
+      if(item && item?.ContentStart.trim()) {
         startTime = item?.ContentStart
         pageNumber = item?.ContentStart
       }
-      if(item && item?.ContentEnd) {
+      if(item && item?.ContentEnd.trim()) {
         endTime = item?.ContentEnd
         pageNumber = item?.ContentEnd
       }
@@ -720,7 +720,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -782,7 +782,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: chat?.identifier, type: chat?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -875,7 +875,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title    },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title    },
         object: { id: item?.identifier, type: item?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1076,7 +1076,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: this.content},
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
