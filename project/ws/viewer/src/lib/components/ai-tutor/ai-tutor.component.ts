@@ -667,11 +667,11 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       let startTime = -1
       let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.ContentStart.trim()) {
+      if(item && item?.ContentStart?.trim()) {
         startTime = item?.ContentStart
         pageNumber = item?.ContentStart
       }
-      if(item && item?.ContentEnd.trim()) {
+      if(item && item?.ContentEnd?.trim()) {
         endTime = item?.ContentEnd
         pageNumber = item?.ContentEnd
       }

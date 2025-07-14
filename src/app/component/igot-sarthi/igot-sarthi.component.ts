@@ -671,11 +671,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       let startTime = -1
       let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.contentStart.trim()) {
+      if(item && item?.contentStart?.trim()) {
         startTime = item?.contentStart
         pageNumber= item?.contentStart
       }
-      if(item && item?.ContentEnd.trim()) {
+      if(item && item?.ContentEnd?.trim()) {
         endTime = item?.ContentEnd
         pageNumber= item?.ContentEnd
       }

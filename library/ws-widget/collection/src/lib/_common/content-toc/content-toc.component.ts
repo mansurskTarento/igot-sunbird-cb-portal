@@ -451,7 +451,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           // } else {
           //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
           // }
-          console.log('in resource id')
           this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
       } else {
         this.vttLangArr =  []
@@ -547,7 +546,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in start')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
@@ -566,7 +564,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in interact')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
@@ -585,7 +582,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in stop')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
@@ -604,7 +600,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in start')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
@@ -623,7 +618,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in interact')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
@@ -642,7 +636,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       from: '',
       to: 'Telemetry',
     }
-    console.log('in stop')
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
