@@ -79,7 +79,7 @@
                                 <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
                                   <mat-select-trigger class="multiline-select-box-trigger">
                                     <div class="selected-option-content">
-                                      <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
+                                      <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="defaultTranscriptLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
                                     </div>
                                   </mat-select-trigger>
                                   <mat-option class="multiline-select-option" value="" *ngFor="let lang of vttLangArr" [value]="lang"
