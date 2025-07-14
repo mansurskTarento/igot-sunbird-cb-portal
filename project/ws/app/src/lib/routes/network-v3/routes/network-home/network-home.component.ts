@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
+import { connectionUpdates } from '../../models/network-v3.model';
 
 @Component({
   selector: 'ws-app-network-home',
@@ -62,6 +63,11 @@ export class NetworkHomeComponent implements OnInit{
         this.connectionsLoading = false;
         this.connectionRequestsList = _.get(response, 'data', []);
         this.connectionRequestsCount = _.get(response, 'count', 0);
+        const connectionsUpdate: connectionUpdates = {
+          routeId: 'connections',
+          showUpdate: this.connectionRequestsList.length > 0 ? true : false
+        }
+        this.networkingService.sendConnectionUpdates(connectionsUpdate);
       },
       error: (error: HttpErrorResponse) => {
         this.connectionsLoading = false;

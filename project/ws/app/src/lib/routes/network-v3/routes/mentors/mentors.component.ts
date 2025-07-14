@@ -60,7 +60,7 @@ export class MentorsComponent implements OnInit {
       error: (error) => {
         this.mentorsListLoading = false;
         if(error) {
-          this.openSnackbar('Error fetching mentors. Please try again later.');
+          this.openSnackbar('No mentors found at the moment. Please try again later.');
         }
       }
     });

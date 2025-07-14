@@ -7,14 +7,14 @@
         <ng-template mat-tab-label>
           <div class="flex tabLable justify-center items-center">
             {{tabDetails?.lable}}
-            <ng-container *ngIf="tabDetails?.recordsCount > 0">
+            <!-- <ng-container *ngIf="tabDetails?.recordsCount > 0">
               <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
                 <div class="selected-count">{{tabDetails?.recordsCount}}</div>
               </ng-container>
               <ng-template #notSelectedCount>
                 ({{tabDetails?.recordsCount}})
               </ng-template>
-            </ng-container>
+            </ng-container> -->
           </div>
         </ng-template>
         <ng-template matTabContent>
@@ -23,7 +23,7 @@
               <ng-container *ngIf="connectionsList?.length > 0; else noConnectionsFound">
                 <ng-container *ngFor="let connection of connectionsList; let i = index">
                   <ws-app-connections-card [otherUserProfile]="connection" [currentTab]="tabDetails?.key"
-                    [showBorder]="i < connectionsList?.length -1">
+                    [showBorder]="i < connectionsList?.length -1" (getCountOf)="setSatesListGet($event)">
                   </ws-app-connections-card>
                 </ng-container>
               </ng-container>

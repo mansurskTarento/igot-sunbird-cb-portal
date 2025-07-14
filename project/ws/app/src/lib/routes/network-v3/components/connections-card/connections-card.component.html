@@ -21,7 +21,7 @@
 
    <!-- #region (status and actions) -->
     <div class="flex justify-center items-center action-buttons h-full" [ngSwitch]="currentTab">
-      <ng-container *ngSwitchCase="'connections'">
+      <ng-container *ngSwitchCase="'Approved'">
         <div class="flex w-full gap-8 justify-center items-center">
            <a class="flex gap-1 items-center action-link" (click)="viewProfile()">
               View Profile
@@ -43,7 +43,7 @@
         </div>
       </ng-container>
 
-      <ng-container *ngSwitchCase="'request'">
+      <ng-container *ngSwitchCase="'Requested'">
         <div class="w-full flex flex-col gap-4">
           <div class="flex h-full flex-col w-full">
             <div class="flex justify-end timing">{{otherUserProfile?.timeAgo}}</div>
@@ -69,7 +69,7 @@
         </div>
       </ng-container>
 
-      <ng-container *ngSwitchCase="'sent'">
+      <ng-container *ngSwitchCase="'Pending'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus || otherUserProfile?.connectionStatus === 'progress'; else withdrawnTemplate">
           <div class="flex w-full justify-center items-center">
             <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Withdrawn')"
@@ -83,7 +83,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container *ngSwitchCase="'blocked'">
+      <ng-container *ngSwitchCase="'Blocked'">
         <ng-container *ngIf="!otherUserProfile?.connectionStatus || otherUserProfile?.connectionStatus === 'progress'; else blockedTemplate">
           <div class="flex w-full justify-center items-center">
             <a class="flex gap-1 items-center action-link" (click)="openConformationPopup('Unblocked')"
