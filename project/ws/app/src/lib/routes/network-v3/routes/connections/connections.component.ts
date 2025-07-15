@@ -15,10 +15,10 @@ export class ConnectionsComponent implements OnInit {
   // selectedTabKey = 'connections';
   selectedTabIndex = 0;
   tabDetailsList: tabDetails[] = [
-    { lable: 'Connections', key: 'Approved', recordsCount: 0 },
-    { lable: 'Requests', key: 'Requested', recordsCount: 0 },
-    { lable: 'Sent', key: 'Pending', recordsCount: 0 },
-    { lable: 'Blocked', key: 'Blocked', recordsCount: 0 }
+    { lable: 'NetworkLandingPage.connections', key: 'Approved', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.requests', key: 'Requested', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.sent', key: 'Pending', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.blocked', key: 'Blocked', recordsCount: 0 }
   ]
   connectionsList: any = [];
   connectionsLoading = false;
@@ -28,7 +28,7 @@ export class ConnectionsComponent implements OnInit {
   paginationPage = 1;
   totalItemsCount = 0;
   defaultPaginationSize = 50;
-  noDataMessage = 'No connections found';
+  noDataMessage = 'NetworkLandingPage.noConnectionsFound';
   allStatesList = ['Approved', 'Requested', 'Pending', 'Blocked'];
   satesListToGetCount: string[] = [];
 
@@ -114,19 +114,19 @@ export class ConnectionsComponent implements OnInit {
     switch (key) {
       case 'Approved':
         this.getConnectionsList();
-        this.noDataMessage = 'No connections found';
+        this.noDataMessage = 'NetworkLandingPage.noConnectionsFound';
         break;
       case 'Requested':
         this.getRequestsList();
-        this.noDataMessage = 'No Requests found';
+        this.noDataMessage = 'NetworkLandingPage.noRequestsFound';
         break;
       case 'Pending':
         this.getSentRequsetsList();
-        this.noDataMessage = 'No Requests sent';
+        this.noDataMessage = 'NetworkLandingPage.noRequestsSent';
         break;
       case 'Blocked':
         this.getBlockedList();
-        this.noDataMessage = 'No connections found';
+        this.noDataMessage = 'NetworkLandingPage.noConnectionsFound';
         break;
     }
   }
@@ -144,7 +144,7 @@ export class ConnectionsComponent implements OnInit {
       error: () => {
         this.connectionsLoading = false;
         this.connectionsList = [];
-        this.openSnackBar('Error while fetching connections', 'X');
+        this.openSnackBar(this.handleTranslateTo('NetworkLandingPage.errorWhileFetchingConnections'), 'X');
       }
     });
   }
@@ -162,7 +162,7 @@ export class ConnectionsComponent implements OnInit {
       error: () => {
         this.connectionsLoading = false;
         this.connectionsList = [];
-        this.openSnackBar('Error while fetching connection requests', 'X');
+        this.openSnackBar(this.handleTranslateTo('NetworkLandingPage.errorWhileFetchingConnectionRequests'), 'X');
       }
     });
   }
@@ -180,7 +180,7 @@ export class ConnectionsComponent implements OnInit {
       error: () => {
         this.connectionsLoading = false;
         this.connectionsList = [];
-        this.openSnackBar('Error while fetching sent requests', 'X');
+        this.openSnackBar(this.handleTranslateTo('NetworkLandingPage.errorWhileFetchingSentRequests'), 'X');
       }
     });
   }
@@ -200,7 +200,7 @@ export class ConnectionsComponent implements OnInit {
       error: () => {
         this.connectionsLoading = false;
         this.connectionsList = [];
-        this.openSnackBar('Error while fetching blocked users', 'X');
+        this.openSnackBar(this.handleTranslateTo('NetworkLandingPage.errorWhileFetchingBlockedUsers'), 'X');
       }
     });
   }
@@ -209,6 +209,10 @@ export class ConnectionsComponent implements OnInit {
     const set = new Set(this.satesListToGetCount);
     stateList.forEach(state => set.add(state));
     this.satesListToGetCount = Array.from(set);
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingSvc.handleTranslateTo(menuName)
   }
 
   openSnackBar(message: string, action: string) {

@@ -6,7 +6,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex tabLable justify-center items-center">
-            {{tabDetails?.lable}}
+            {{tabDetails?.lable | translate}}
             <!-- <ng-container *ngIf="tabDetails?.recordsCount > 0">
               <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
                 <div class="selected-count">{{tabDetails?.recordsCount}}</div>
@@ -31,7 +31,7 @@
                 <div class="w-full flex flex-col gap-4 justify-center items-center no-records-found">
                   <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="empty">
                   <div class="no-data-text">
-                    {{noDataMessage}}
+                    {{noDataMessage | translate}}
                   </div>
                 </div>
               </ng-template>

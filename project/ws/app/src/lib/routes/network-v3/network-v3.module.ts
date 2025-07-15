@@ -17,13 +17,15 @@ import { MatLegacyMenuModule } from '@angular/material/legacy-menu';
 import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
 import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module';
 import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
 import { CommunitySuggestionsModule, HorizontalScrollerV2Module, ConnectionNameModule, DialogComponentsModule } from '@sunbird-cb/consumption';
 import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
 import { MatLegacyButtonModule } from '@angular/material/legacy-button';
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module';
 import { MatLegacyDialogModule } from '@angular/material/legacy-dialog';
+import { HttpLoaderFactory } from 'src/app/app.module';
+import { HttpClient } from '@angular/common/http';
 
 
 @NgModule({
@@ -50,14 +52,20 @@ import { MatLegacyDialogModule } from '@angular/material/legacy-dialog';
     AvatarPhotoModule,
     ConnectionNameModule,
     PaginationModule,
-    TranslateModule,
     HorizontalScrollerV2Module,
     MatLegacyTabsModule,
     MatLegacyButtonModule,
     CommunitySuggestionsModule,
     SkeletonLoaderModule,
     MatLegacyDialogModule,
-    DialogComponentsModule
+    DialogComponentsModule,
+    TranslateModule.forRoot({
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: HttpLoaderFactory,
+                    deps: [HttpClient],
+                },
+            }),
   ]
 })
 export class NetworkV3Module { }

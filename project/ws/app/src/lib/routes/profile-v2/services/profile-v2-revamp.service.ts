@@ -221,13 +221,6 @@ export class ProfileV2RevampService {
     return this.translateService.instant(translationKey)
   }
 
-  getWebSiteLanguage() {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translateService.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translateService.use(lang)
-    }
-  }
 
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
