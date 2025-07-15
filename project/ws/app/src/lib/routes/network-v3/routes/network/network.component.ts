@@ -34,7 +34,7 @@ export class NetworkComponent implements OnInit {
       name: 'NetworkLandingPage.connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      icon: 'groups',
+      imageUrl: './assets/icons/group.svg'
     },
     // {
     //   name: 'Recommendations',

@@ -53,6 +53,12 @@ export class ConnectionsCardComponent implements OnInit {
     this.currentUserDetails = this.configSvc.userProfileV2;
   }
 
+  goToUserProfile() {
+    if(this.otherUserProfile && this.otherUserProfile.userId) {
+      this.router.navigate(['/app/person-profile', (this.otherUserProfile.userId)], { fragment: 'profileInfo' })
+    }
+  }
+
   copyProfile() {
     if (this.otherUserProfile && this.otherUserProfile.userId) {
       const userId = this.otherUserProfile.userId
@@ -156,7 +162,7 @@ export class ConnectionsCardComponent implements OnInit {
         userDepartmentFrom: this.currentUserDetails.departmentName,
         userIdTo: this.otherUserProfile.userId,
         userNameTo: this.fullName,
-        userDepartmentTo: this.otherUserProfile.departmentName,
+        userDepartmentTo: this.otherUserProfile.departmentName ? this.otherUserProfile.departmentName : _.get(this.otherUserProfile, 'employmentDetails.departmentName', ''),
         status: action
       }
       this.otherUserProfile['connectionStatus'] = 'progress'

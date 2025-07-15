@@ -1287,10 +1287,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.profileV2RevampSvc.blockConnection(formBody).subscribe({
         next: () => {
           this.getConnectionStatus()
-          this.openSnackbar('Connection request sent successfully');
+          this.openSnackbar('User blocked successfully');
         },
         error: () => {
-          this.openSnackbar('Something went wrong while sending connection request');
+          this.openSnackbar('Something went wrong please try again');
         }
       });
     }
