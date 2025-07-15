@@ -116,7 +116,7 @@
                   <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                 </button>
               </ng-container>
-              <ng-container *ngIf="connectionStatus !== 'Blocked'">
+              <ng-container *ngIf="connectionStatus !== 'Blocked' && connectionStatus !== 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Blocked')">
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                 </button>

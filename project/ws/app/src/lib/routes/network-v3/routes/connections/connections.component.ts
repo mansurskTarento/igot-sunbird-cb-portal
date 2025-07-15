@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { tabDetails } from '../../models/network-v3.model';
+import { connectionUpdates, tabDetails } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
@@ -15,10 +15,10 @@ export class ConnectionsComponent implements OnInit {
   // selectedTabKey = 'connections';
   selectedTabIndex = 0;
   tabDetailsList: tabDetails[] = [
-    { lable: 'Connections', key: 'connections', recordsCount: 0 },
-    { lable: 'Requests', key: 'request', recordsCount: 0 },
-    { lable: 'Sent', key: 'sent', recordsCount: 0 },
-    { lable: 'Blocked', key: 'blocked', recordsCount: 0 }
+    { lable: 'Connections', key: 'Approved', recordsCount: 0 },
+    { lable: 'Requests', key: 'Requested', recordsCount: 0 },
+    { lable: 'Sent', key: 'Pending', recordsCount: 0 },
+    { lable: 'Blocked', key: 'Blocked', recordsCount: 0 }
   ]
   connectionsList: any = [];
   connectionsLoading = false;
@@ -29,6 +29,8 @@ export class ConnectionsComponent implements OnInit {
   totalItemsCount = 0;
   defaultPaginationSize = 50;
   noDataMessage = 'No connections found';
+  allStatesList = ['Approved', 'Requested', 'Pending', 'Blocked'];
+  satesListToGetCount: string[] = [];
 
   constructor(
     private networkingSvc: NetworkingService,
@@ -41,22 +43,60 @@ export class ConnectionsComponent implements OnInit {
   }
 
   getParamsData() {
-    const tab = _.get(this.activatedRoute, 'snapshot.queryParams.tab', 'connections');
+    const tab = _.get(this.activatedRoute, 'snapshot.queryParams.tab', 'Approved');
     this.selectedTabIndex = this.tabDetailsList.findIndex(tabDetail => tabDetail.key === tab);
-    this.initialization(tab);
+    this.initialization();
   }
 
-  initialization(tab = 'connections') {
-    const getCount = true;
-    this.getConnectionsList(tab === 'connections' ? false : getCount);
-    this.getRequestsList(tab === 'request' ? false : getCount);
-    this.getSentRequsetsList(tab === 'sent' ? false : getCount);
-    this.getBlockedList(tab === 'blocked' ? false : getCount);
+  initialization() {
+    this.getTabData();
+    this.getConnectionsCount();
+  }
+
+  getConnectionsCount() {
+    const formBody = {
+      request: {
+        filter: {
+          status: this.satesListToGetCount && this.satesListToGetCount.length ? this.satesListToGetCount : this.allStatesList
+        },
+        facets: [
+          "status"
+        ]
+      }
+    }
+
+    this.networkingSvc.getConnectionsCount(formBody).subscribe({
+      next: (response) => {
+        if(response) {
+          const facets = _.get(response, 'result.facets[0].values', []);
+          const responseMap = new Map(facets.map((item: any) => [item.name.toLowerCase(), item.count]));
+          this.satesListToGetCount = [];
+          this.tabDetailsList.forEach(tab => {
+            const count = responseMap.get(tab.key.toLowerCase()) as number;
+            if (count !== undefined && count !== null) {
+              tab.recordsCount = count as number;
+            } else if (this.satesListToGetCount.indexOf(tab.key) > -1) {
+              tab.recordsCount = 0;
+            }
+            if(tab.key === 'Requested') {
+              const connectionsUpdate: connectionUpdates = {
+                routeId: 'connections',
+                showUpdate: count > 0 ? true : false
+              }
+              this.networkingSvc.sendConnectionUpdates(connectionsUpdate);
+            }
+          });
+        }
+      }
+    })
   }
 
   onTabChange(index: number) {
     this.selectedTabIndex = index;
     this.resetPagination();
+    if(this.satesListToGetCount && this.satesListToGetCount.length) {
+      this.getConnectionsCount();
+    }
   }
 
   resetPagination() {
@@ -72,39 +112,34 @@ export class ConnectionsComponent implements OnInit {
       this.apiSubscription.unsubscribe();
     }
     switch (key) {
-      case 'connections':
+      case 'Approved':
         this.getConnectionsList();
         this.noDataMessage = 'No connections found';
         break;
-      case 'request':
+      case 'Requested':
         this.getRequestsList();
         this.noDataMessage = 'No Requests found';
         break;
-      case 'sent':
+      case 'Pending':
         this.getSentRequsetsList();
         this.noDataMessage = 'No Requests sent';
         break;
-      case 'blocked':
+      case 'Blocked':
         this.getBlockedList();
         this.noDataMessage = 'No connections found';
         break;
     }
   }
 
-  getConnectionsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage - 1;
-    const pageSize = getCount ? 1 : this.paginationSize;
-    if (!getCount) {
-      this.connectionsLoading = true;
-    }
+  getConnectionsList() {
+    const pageNo = this.paginationPage - 1;
+    const pageSize = this.paginationSize;
+    this.connectionsLoading = true;
     this.apiSubscription = this.networkingSvc.getConnections(pageNo, pageSize).subscribe({
       next: (response) => {
-        if (!getCount) {
-          this.connectionsLoading = false;
-          this.totalItemsCount = _.get(response, 'result.count', 0);
-          this.connectionsList = _.get(response, 'result.data', []);
-        }
-        this.setCountOfTab('connections', _.get(response, 'result.count', 0));
+        this.connectionsLoading = false;
+        this.totalItemsCount = _.get(response, 'result.count', 0);
+        this.connectionsList = _.get(response, 'result.data', []);
       },
       error: () => {
         this.connectionsLoading = false;
@@ -114,20 +149,15 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  getRequestsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage - 1;
-    const pageSize = getCount ? 1 : this.paginationSize;
-    if (!getCount) {
-      this.connectionsLoading = true;
-    }
+  getRequestsList() {
+    const pageNo = this.paginationPage - 1;
+    const pageSize = this.paginationSize;
+    this.connectionsLoading = true;
     this.apiSubscription = this.networkingSvc.getConnectionRequests(pageNo, pageSize).subscribe({
       next: (response) => {
-        if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
           this.connectionsList = _.get(response, 'data', []);
-        }
-        this.setCountOfTab('request', _.get(response, 'count', 0));
       },
       error: () => {
         this.connectionsLoading = false;
@@ -137,20 +167,15 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  getSentRequsetsList(getCount = false) {
-    const pageNo = getCount ? 0 : this.paginationPage - 1;
-    const pageSize = getCount ? 1 : this.paginationSize;
-    if (!getCount) {
-      this.connectionsLoading = true;
-    }
+  getSentRequsetsList() {
+    const pageNo = this.paginationPage - 1;
+    const pageSize = this.paginationSize;
+    this.connectionsLoading = true;
     this.apiSubscription = this.networkingSvc.getRequestSent(pageNo, pageSize).subscribe({
       next: (response) => {
-        if (!getCount) {
           this.connectionsLoading = false;
           this.totalItemsCount = _.get(response, 'result.count', 0);
           this.connectionsList = _.get(response, 'result.data', []);
-        }
-        this.setCountOfTab('sent', _.get(response, 'result.count', 0));
       },
       error: () => {
         this.connectionsLoading = false;
@@ -160,22 +185,17 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  getBlockedList(getCount = false) {
+  getBlockedList() {
     const formBody = {
-      offset: getCount ? 0 : this.paginationPage - 1,
-      size: getCount ? 1 : this.paginationSize
+      offset: this.paginationPage - 1,
+      size: this.paginationSize
     };
-    if (!getCount) {
-      this.connectionsLoading = true;
-    }
+    this.connectionsLoading = true;
     this.apiSubscription = this.networkingSvc.getBlockedUsers(formBody).subscribe({
       next: (response) => {
-        if (!getCount) {
-          this.connectionsLoading = false;
-          this.totalItemsCount = _.get(response, 'result.count', 0);
-          this.connectionsList = _.get(response, 'result.response', []);
-        }
-        this.setCountOfTab('blocked', _.get(response, 'result.count', 0));
+        this.connectionsLoading = false;
+        this.totalItemsCount = _.get(response, 'result.count', 0);
+        this.connectionsList = _.get(response, 'result.response', []);
       },
       error: () => {
         this.connectionsLoading = false;
@@ -185,11 +205,10 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  setCountOfTab(tabKey: string, count: number) {
-    const tabIndex = this.tabDetailsList.findIndex(tab => tab.key === tabKey);
-    if (tabIndex !== -1) {
-      this.tabDetailsList[tabIndex]['recordsCount'] = count;
-    }
+  setSatesListGet(stateList: string[]) {
+    const set = new Set(this.satesListToGetCount);
+    stateList.forEach(state => set.add(state));
+    this.satesListToGetCount = Array.from(set);
   }
 
   openSnackBar(message: string, action: string) {
