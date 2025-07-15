@@ -12,7 +12,7 @@ import { NetworkingService } from '../../services/networking.service';
 export class AllRecommendationsComponent implements OnInit {
 
   // recommendationType = 'peopleNearYou'
-  title = 'People you may know'
+  title = 'NetworkLandingPage.peopleYouMayKnow'
   recommendationList: any[] = []
   paginationSize = 50;
   paginationSizeOptions = [50, 100, 150, 200];
@@ -50,7 +50,7 @@ export class AllRecommendationsComponent implements OnInit {
       error: (error) => {
         this.recommendationListLoading = false;
         if(error) {
-          this.openSnackbar('Error fetching recommendations. Please try again later.', 3000);
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.errorWhileFetchingRecommendations'));
         }
       }
     });
@@ -65,6 +65,10 @@ export class AllRecommendationsComponent implements OnInit {
 
   scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingSvc.handleTranslateTo(menuName)
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {

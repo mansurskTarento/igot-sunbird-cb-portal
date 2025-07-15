@@ -96,11 +96,7 @@ export class NotificationsService {
     } else if (notification.category === 'DISCUSSION') {
       this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
     } else if (notification.category === 'NETWORK') {
-      if (notification.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
-        this.router.navigate([`/app/network-v2/my-connection`])
-      } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
-        this.router.navigate([`/app/network-v2/connection-requests`])
-      }
+      this.router.navigate([`/app/network-v2/connections`])
     } else if (notification?.category?.includes('CONTENT')) {
       this.getContentData(notification.message.data.id).subscribe((res: any) => {
         let isStandaloneResource = false

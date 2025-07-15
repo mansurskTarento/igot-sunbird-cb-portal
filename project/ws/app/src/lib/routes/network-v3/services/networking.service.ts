@@ -157,17 +157,9 @@ export class NetworkingService {
 
   //#region (translation related methods)
   handleTranslateTo(menuName: string): string {
-    // tslint:disable-next-line: prefer-template
-    const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
+    const translationKey = 'NetworkLandingPage.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
 
-  getWebSiteLanguage() {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translateService.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translateService.use(lang)
-    }
-  }
   //#endregion (translation related methods)
 }

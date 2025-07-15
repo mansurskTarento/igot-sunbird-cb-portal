@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ConfigurationsService, NsUser } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, NsUser, WsEvents } from '@sunbird-cb/utils-v2';
 import { Router } from '@angular/router';
 import { NetworkingService } from '../../services/networking.service';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog';
@@ -16,7 +16,7 @@ import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 export class ConnectionsCardComponent implements OnInit {
   
   @Input() otherUserProfile: any;
-  @Input() currentTab = 'requested'
+  @Input() currentTab = 'Requested'
   @Input() showBorder = true;
   @Output() getCountOf: EventEmitter<string[]> = new EventEmitter<string[]>(); 
   nameInitials = '';
@@ -29,6 +29,7 @@ export class ConnectionsCardComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private networkingSvc: NetworkingService,
     private dialog: MatLegacyDialog,
+     private events: EventService,
   ) { }
 
   ngOnInit(): void {
@@ -50,6 +51,12 @@ export class ConnectionsCardComponent implements OnInit {
 
   getCurrentUserDetails() {
     this.currentUserDetails = this.configSvc.userProfileV2;
+  }
+
+  goToUserProfile() {
+    if(this.otherUserProfile && this.otherUserProfile.userId) {
+      this.router.navigate(['/app/person-profile', (this.otherUserProfile.userId)], { fragment: 'profileInfo' })
+    }
   }
 
   copyProfile() {
@@ -74,18 +81,18 @@ export class ConnectionsCardComponent implements OnInit {
   openConformationPopup(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
     let message = ''
     switch(action) {
-    case 'Rejected':
-      message = 'Are you sure you want to ignore this request?'
-      break;
-    case 'Withdrawn':
-      message = 'Are you sure you want to withdraw this request?'
-      break;
-    case 'Removed':
-      message = 'Are you sure you want to remove this connection?'
-      break;
-    case 'Unblocked':
-      message = 'Are you sure you want to unblock this user?'
-      break;
+      case 'Rejected':
+        message = this.handleTranslateTo('areYouSureYouWantToIgnoreThisRequest')
+        break;
+      case 'Withdrawn':
+        message = this.handleTranslateTo('areYouSureYouWantToWithdrawThisRequest')
+        break;
+      case 'Removed':
+        message = this.handleTranslateTo('areYouSureYouWantToRemoveThisConnection')
+        break;
+      case 'Unblocked':
+        message = this.handleTranslateTo('areYouSureYouWantToUnblockThisUser')
+        break;
     }
     if(message) {
       const dialgoData = {
@@ -96,12 +103,12 @@ export class ConnectionsCardComponent implements OnInit {
         buttons: [
           {
             classes: 'btn-out-line',
-            text: 'No',
+            text: this.handleTranslateTo('no'),
             response: false
           },
           {
             classes: 'succes-button',
-            text: 'yes',
+            text: this.handleTranslateTo('yes'),
             response: true
           }
         ]
@@ -124,6 +131,30 @@ export class ConnectionsCardComponent implements OnInit {
 
   updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
     if(this.otherUserProfile && this.currentUserDetails) {
+      if(['Approved', 'Rejected', 'Withdrawn', 'Unblocked'].includes(action)) {
+        let subType = ''
+        let eDataId = ''
+        switch (action) {
+          case 'Accepted':
+            eDataId = 'accept-request'
+            subType = 'network-hub-connection-requests'
+            break;
+          case 'Rejected':
+            eDataId = 'ignore-request'
+            subType = 'network-hub-connection-requests'
+            break;
+          case 'Withdrawn':
+            eDataId = 'connect-withdraw'
+            subType = 'network-hub-connections-sent'
+            break;
+          case 'Unblocked':
+            eDataId = 'profile-unblock'
+            subType = 'network-hub-connections-blocked'
+            break;
+        }
+        this.raiseTelemetry(_.get(this.currentUserDetails, 'userId', ''), eDataId, subType)
+      }
+
       const formBody = {
         connectionId: this.otherUserProfile.id || this.otherUserProfile.identifier || this.otherUserProfile.wid || this.otherUserProfile.userId,
         userIdFrom: this.currentUserDetails.userId,
@@ -131,7 +162,7 @@ export class ConnectionsCardComponent implements OnInit {
         userDepartmentFrom: this.currentUserDetails.departmentName,
         userIdTo: this.otherUserProfile.userId,
         userNameTo: this.fullName,
-        userDepartmentTo: this.otherUserProfile.departmentName,
+        userDepartmentTo: this.otherUserProfile.departmentName ? this.otherUserProfile.departmentName : _.get(this.otherUserProfile, 'employmentDetails.departmentName', ''),
         status: action
       }
       this.otherUserProfile['connectionStatus'] = 'progress'
@@ -170,6 +201,28 @@ export class ConnectionsCardComponent implements OnInit {
         }
       })
     }
+  }
+
+  raiseTelemetry(userId: string, eDataId: string, subType?: string) {
+    const edata: any = {
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: eDataId
+    }
+    const objDetails = {
+      id: userId,
+      type: 'User'
+    }
+    const env = {
+      module: WsEvents.EnumTelemetrymodules.NETWORK,
+    }
+    if(subType) {
+      edata['subType'] = subType
+    }
+    this.events.raiseInteractTelemetry(edata, objDetails, env)
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingSvc.handleTranslateTo(menuName)
   }
   
   openSnackbar(primaryMsg: string, duration: number = 5000) {
