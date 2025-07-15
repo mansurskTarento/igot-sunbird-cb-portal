@@ -41,6 +41,7 @@ export class AppTocContentCardV2Component implements OnInit {
   @Input() expandActive = true
   @Input() hierarchyMapData: any = {}
   @Input() batchData: /**NsContent.IBatchListResponse */ any | null = null
+  @Input() isPreAssessment = false
   hasContentStructure = false
   downloadCertificateLoading = false
   enumContentTypes = NsContent.EDisplayContentTypes
@@ -130,6 +131,8 @@ export class AppTocContentCardV2Component implements OnInit {
         }
       }
     }
+    // console.log('pre assessment content---', this.content)
+    // console.log('this.hierarchyMapData---', this.hierarchyMapData)
   }
 
   check(content: any) {
@@ -504,6 +507,16 @@ export class AppTocContentCardV2Component implements OnInit {
     } else {
       return true
     }
+  }
+
+  get computedQueryParams() {
+    if (this.isAllowed && !this.forPreview && this.isEnabled) {
+      return {
+        ...this.resourceLink.queryParams,
+        preAssessment: 'true'
+      };
+    }
+    return null;
   }
 
 }

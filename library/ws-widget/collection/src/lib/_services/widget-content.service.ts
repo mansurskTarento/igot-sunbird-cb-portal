@@ -600,4 +600,37 @@ export class WidgetContentService {
           )
     } return true
   }
+
+  getPreAssessmentFirstChildInHierarchy(content: NsContent.IContent): NsContent.IContent {
+    if (!(content.children || []).length) {
+      return content
+    }
+    if (
+      (content.primaryCategory === NsContent.EPrimaryCategory.PROGRAM &&
+        !(content.artifactUrl && content.artifactUrl.length)) ||
+      content.primaryCategory === NsContent.EPrimaryCategory.MANDATORY_COURSE_GOAL ||
+      (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM &&
+        !(content.artifactUrl && content.artifactUrl.length)) ||
+      (content.primaryCategory === NsContent.EPrimaryCategory.MODULE &&
+        !(content.artifactUrl && content.artifactUrl.length))
+    ) {
+      const child = content.children[0]
+      return this.getPreAssessmentFirstChildInHierarchy(child)
+    }
+    if (
+      content.primaryCategory === NsContent.EPrimaryCategory.RESOURCE ||
+      content.primaryCategory === NsContent.EPrimaryCategory.KNOWLEDGE_ARTIFACT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.PROGRAM ||
+      content.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE ||
+      content.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM ||
+      content.primaryCategory === NsContent.EPrimaryCategory.OFFLINE_SESSION
+    ) {
+      return content
+    }
+    const firstChild = content.children[0]
+    const resultContent = this.getPreAssessmentFirstChildInHierarchy(firstChild)
+    return resultContent
+  }
 }

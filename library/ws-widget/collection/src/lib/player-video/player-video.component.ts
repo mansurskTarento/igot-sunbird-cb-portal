@@ -365,8 +365,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               this.activatedRoute.snapshot.queryParams.collectionId : ''
       const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
               this.activatedRoute.snapshot.queryParams.batchId : ''
-
-      if (this.widgetData.identifier && identifier && data) {
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+        }
+      } else if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
@@ -451,7 +456,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                                                            this.activatedRoute.snapshot.queryParams.batchId, identifier)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
-        if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+        }
+      } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
           this.viewerSvc
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }

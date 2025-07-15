@@ -158,7 +158,12 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
     //   this.activatedRoute.snapshot.queryParams.collectionId : ''
     // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
     //   this.activatedRoute.snapshot.queryParams.batchId : ''
-    if (this.identifier && collectionId && batchId) {
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+      if (this.identifier && collectionId && batchId) {
+        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, collectionId, batchId, status)
+      }
+    }else if (this.identifier && collectionId && batchId) {
       this.viewerSvc.realTimeProgressUpdateQuiz(this.identifier, collectionId, batchId, status)
     }
   }

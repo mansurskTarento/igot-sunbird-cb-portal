@@ -59,6 +59,7 @@
             <ws-app-karmapoints-panel [btntype]="'Take Assessment'" [data]="kparray"></ws-app-karmapoints-panel>
           </div> -->
         </ng-container>
+     
         <ng-container *ngIf=" (actionBtnStatus === 'grant' && !(isMobile && content?.isInIntranet) && 
                       !( content?.primaryCategory === primaryCategory.COURSE && content?.children.length === 0 && !content?.artifactUrl?.length ) &&
                       !( content?.primaryCategory === primaryCategory.COURSE && batchData?.enrolled ) &&
@@ -80,6 +81,20 @@
           </ng-container>
         </ng-container>
       </ng-container>
+      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
+        <a class="flex action-button enroll-btn justify-center resume" *ngIf="contentReadData?.preEnrolmentResources?.length" (click)="routeToPreAssessent()">
+             <ng-container >
+               {{ 'apptochome.preEnroll' | translate }}
+             </ng-container>
+           </a>
+     </ng-container>
+      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM && preAssessmentCompletionStatus">
+        <a class="flex preenrolldone-btn justify-center resume">
+             <ng-container >
+               {{ 'apptochome.preEnrollDone' | translate }}<img src="/assets/icons/Accept_icon.png" alt="tick" class="tick-icon">
+             </ng-container>
+           </a>
+     </ng-container>
 
       <!-- PRogram & mandatory course block -->
       <ng-container *ngIf="!forPreview || isInIFrame; else authViewBtn">
@@ -101,6 +116,7 @@
             </ng-container>
             <ng-container *ngIf="!forPreview || isInIFrame">
               <ng-container *ngIf="((content?.primaryCategory !== primaryCategory.RESOURCE)  && !enrollBtnLoading) && contentReadData?.batches[0].endDate">
+                
                 <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
                 [userEnrollmentList]="userEnrollmentList"  [analytics]="analytics" (programEnrollCall)="programEnrollCall($event)"
                 [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -556,7 +572,7 @@
               </div>
             </ng-container>
             <ng-container *ngIf="!forPreview || isInIFrame; else authViewBtn">
-              <ng-container *ngIf="!mobile1200">
+              <ng-container *ngIf="!mobile1200 && preAssessmentCompletionStatus">
                 <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
                 [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
                 [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -729,6 +745,7 @@
   <div class="mobile-enroll-div" [ngClass]="{'bg-white': content?.primaryCategory === primaryCategory.BLENDED_PROGRAM }">
     <ng-container *ngIf="content && content?.primaryCategory === primaryCategory.BLENDED_PROGRAM ">
       <div class="mb-2" *ngIf="mobile1200 && !forPreview || isInIFrame; else authViewBtn">
+        test1
         <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
           [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
           [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">

@@ -323,3 +323,48 @@
   }
 }
 
+
+// .content-tabs {
+ 
+// }
+
+// ::ng-deep .mat-mdc-tab-group .mat-mdc-tab-labels {
+//   justify-content: flex-start; /* Align tab labels to the left */
+//   flex-wrap: wrap;             /* Allow wrapping of the tab list */
+// }
+
+// ::ng-deep .mat-mdc-tab-group .mdc-tab {
+//   width: 150px;                /* Fixed width for each tab */
+//   text-align: left;            /* Left-align text within the tab */
+//   white-space: normal;         /* Allow wrapping */
+//   padding: 12px;               /* Optional: add padding for spacing */
+//   height: auto !important;     /* Let tabs grow in height if wrapping */
+// }
+
+// ::ng-deep .mat-mdc-tab-group .mdc-tab__text-label {
+//   white-space: normal !important; /* Force text to wrap inside */
+//   text-align: left;
+// }
+@media  (min-width: 768px)  {
+  ::ng-deep .tab-group-container .mdc-tab {
+    min-width: auto;
+    max-width: max-content;
+    text-align: left;
+    justify-content: start;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  
+  ::ng-deep .tab-group-container .mdc-tab {
+    min-width: auto;
+    max-width: max-content;
+    text-align: left;
+    justify-content: start;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  
+
+}
+
