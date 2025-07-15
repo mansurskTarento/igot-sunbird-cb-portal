@@ -126,7 +126,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getContentData(e: any) {
-    console.log('this.activatedRoute.snapshot.data', this.activatedRoute.snapshot.data)
+    // console.log('this.activatedRoute.snapshot.data', this.activatedRoute.snapshot.data)
     if( this.activatedRoute.snapshot.data &&  this.activatedRoute.snapshot.data['preAssessmentRead'] && 
       this.activatedRoute.snapshot.data['preAssessmentRead']['data'] && 
       this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result'] &&
@@ -136,25 +136,25 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         
         if(this.content) {
           let hashMap = this.tocSvc.hashmap
-          console.log('hasMap', hashMap)
-          console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
+          // console.log('hasMap', hashMap)
+          // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
           if(!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
             this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
           }          
         }
         this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
-        console.log('this.content', this.content)
-        console.log('this.contentMIMEType', this.contentMIMEType)
+        // console.log('this.content', this.content)
+        // console.log('this.contentMIMEType', this.contentMIMEType)
         this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
         this.getPreEnrollmentResoureStateRead()
-        console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
-        console.log('this.hierarchyData', this.hierarchyData)
+        // console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
+        // console.log('this.hierarchyData', this.hierarchyData)
         
         this.resetAndFetchTocStructure()
-        console.log('tocStructure', this.tocStructure)
+        // console.log('tocStructure', this.tocStructure)
     } else {
       e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
-        console.log('this.content',data)
+        // console.log('this.content',data)
         if (data.content && data.content.data) {
           this.content = data.content.data
           
@@ -200,7 +200,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     //     },         1000)
     //   }
     // })
-    console.log('this.activatedRoute.snapshot.data.contentRead--', this.activatedRoute.snapshot.data.contentRead)
+    // console.log('this.activatedRoute.snapshot.data.contentRead--', this.activatedRoute.snapshot.data.contentRead)
     const contentData = this.activatedRoute.snapshot.data.hierarchyData 
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
 
@@ -409,7 +409,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updatePathSet(event: any) {
-    console.log('event', event)
+    // console.log('event', event)
     if (event && event.pathSet) {
       this.pathSet = event.pathSet
     }

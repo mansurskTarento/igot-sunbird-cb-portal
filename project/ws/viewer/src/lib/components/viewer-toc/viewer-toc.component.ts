@@ -325,20 +325,20 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   private processCurrentResourceChange() {
     if (this.collection && this.resourceId) {      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
-      console.log('this.contentData', this.contentData)
-      console.log('this.queue', this.queue)
-      console.log('this.resourceId', this.resourceId)
+      // console.log('this.contentData', this.contentData)
+      // console.log('this.queue', this.queue)
+      // console.log('this.resourceId', this.resourceId)
       if(this.queue && currentIndex > -1) {
         if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
         // this.aiTutorResourceId = this.queue[currentIndex].identifier
         }        
       }
-      console.log('currentIndex' , currentIndex)
+      // console.log('currentIndex' , currentIndex)
       const next =
         currentIndex + 1 < this.queue.length ? this.queue[currentIndex + 1] : null
       const prev = currentIndex - 1 >= 0 ? this.queue[currentIndex - 1] : null
-      console.log('pre', prev)
-      console.log('next', next)
+      // console.log('pre', prev)
+      // console.log('next', next)
       if(this.queue && this.queue.length) {
         this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next)
         this.processCollectionForTree()
@@ -607,12 +607,12 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   expandThePath() {
-    console.log('this.collection', this.contentData)
-    console.log('this.resourceId', this.resourceId)
+    // console.log('this.collection', this.contentData)
+    // console.log('this.resourceId', this.resourceId)
     if (this.collection && this.resourceId && !this.isPreAssessment) {
       const path = this.utilitySvc.getPath(this.collection, this.resourceId)
       this.pathSet = new Set(path.map((u: { identifier: any }) => u.identifier))
-      console.log('this.pathSet', this.pathSet)
+      // console.log('this.pathSet', this.pathSet)
       this.pathSetEvent.emit({ pathSet: this.pathSet })
       // path.forEach((node: IViewerTocCard) => {
       //   this.nestedTreeControl.expand(node)

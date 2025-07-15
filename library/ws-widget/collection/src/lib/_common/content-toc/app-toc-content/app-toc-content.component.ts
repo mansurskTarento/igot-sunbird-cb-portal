@@ -57,9 +57,9 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     // this.forPreview = window.location.href.includes('/author/')
     this.routeQuerySubscription = this.route.queryParamMap.subscribe(qParamsMap => {
-      console.log('qParamsMap--', qParamsMap)
-      console.log('this.content--', this.content)
-      console.log('this.hierarchyMapData', this.hierarchyMapData)
+      // console.log('qParamsMap--', qParamsMap)
+      // console.log('this.content--', this.content)
+      // console.log('this.hierarchyMapData', this.hierarchyMapData)
       if(this.content && this.content?.preEnrolmentResources && typeof this.content?.preEnrolmentResources === 'string') {
         this.content['preEnrolmentResources'] =  JSON.parse(this.content?.preEnrolmentResources)
       }

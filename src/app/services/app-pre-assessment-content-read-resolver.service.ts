@@ -14,11 +14,11 @@ export class AppPreAssessmentContentResolverService
         _route: ActivatedRouteSnapshot,
         _state: RouterStateSnapshot,
     ): Observable<IResolveResponse<any>> {
-        const collectionId = ['do_114347287692820480182'] //_route.queryParams && _route.queryParams.collectionId || ''
+        const collectionId = _route.queryParams && _route.queryParams.collectionId || ''
         const preAssessment =  _route.queryParams && _route.queryParams.preAssessment || ''
         if (collectionId && preAssessment) {
-            console.log('collectionId', collectionId)
-            console.log('preAssessment', preAssessment)
+            // console.log('collectionId', collectionId)
+            // console.log('preAssessment', preAssessment)
             return this.contentSvc.fetchProgramContent(collectionId).pipe(
                 map((rData: any) => ({ data: rData, error: null })), //  (rData.responseData || []).map((p: any) => p.name)
                 tap((resolveData: any) => of({ error: null, data: resolveData })),

@@ -428,9 +428,9 @@ export class ViewerUtilService {
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
         }
         
-        console.log('Updated hashmap:', this.tocSvc.hashmap)
+        // console.log('Updated hashmap:', this.tocSvc.hashmap)
          
-          console.log('this.tocSvc.hashmap---', this.tocSvc.hashmap)
+          // console.log('this.tocSvc.hashmap---', this.tocSvc.hashmap)
       } else {
         req = {}
         // do nothing

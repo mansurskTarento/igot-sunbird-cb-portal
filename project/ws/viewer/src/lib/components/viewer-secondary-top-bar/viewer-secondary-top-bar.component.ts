@@ -162,7 +162,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     })
 
     this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
-      console.log('data---', data)
       if (data.prevResource) {
         if(data.prevResource && !data.prevResource.viewerUrl) {
           data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
@@ -192,9 +191,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
           this.updateProgress(2, data.prevResource.identifier)
         }
-        if(data.prevResource?.isMandatory) {
-          this.updateProgressForPreAssessment(data)
-        }
+        // if(data.prevResource?.isMandatory) {
+        //   this.updateProgressForPreAssessment(data)
+        // }
       } else {
         this.prevResourceUrl = null
       }
@@ -228,9 +227,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
           this.updateProgress(2, data.nextResource.identifier)
         }
-        if(data.prevResource?.isMandatory) {
-          this.updateProgressForPreAssessment(data)
-        }
+        // if(data.prevResource?.isMandatory) {
+        //   this.updateProgressForPreAssessment(data)
+        // }
       } else {
         this.nextResourceUrl = null
       }
@@ -505,8 +504,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateProgressForPreAssessment(data:any) {
-    console.log('data--', data)
-    console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
-  }
+  // updateProgressForPreAssessment(data:any) {
+  //   console.log('data--', data)
+  //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
+  // }
 }
