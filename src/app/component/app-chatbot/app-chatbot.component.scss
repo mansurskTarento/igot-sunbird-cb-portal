@@ -662,14 +662,14 @@
   background-position: center;
   text-align: center;
 }
-.fullscreen-chat {
+.fullscreen {
   display: block;
 }
 .fullscreen-chat-exit {
   display: block;
 }
 @media only screen and (min-width:240px) and (max-width: 360px) {
-  .fullscreen-chat {
+  .fullscreen {
     display: none;
   }
   .fullscreen-chat-exit {
@@ -736,7 +736,7 @@
 }
 
 @media only screen and (min-width:361px) and (max-width: 767px) {
-  .fullscreen-chat {
+  .fullscreen {
     display: none;
   }
   .fullscreen-chat-exit {
