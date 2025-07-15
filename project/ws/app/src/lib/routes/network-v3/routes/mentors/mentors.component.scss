@@ -1,5 +1,5 @@
 .mentor-note-card {
-  background: linear-gradient(90deg, #23243a 0%, #2c2e4a 60%, #3b3c5a 100%);
+  background: linear-gradient(90deg,#1B2133, rgb(73 55 35 / 90%) 50%, #1B2133);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(44, 46, 74, 0.08);
   display: flex;
@@ -20,21 +20,16 @@
   width: 145px;
   height: 33px;
   border-radius: 17px;
-  border: none;
-  background: linear-gradient(90deg, #23243a 0%, #3b3c5a 100%);
   color: #fff;
   /* stylelint-disable */
   font: 700 14px 'Lato';
   /* stylelint-enable */
   cursor: pointer;
-  box-shadow: 0 0 0 2px #7f7fff, 0 0 8px 0 #7f7fff inset;
-  transition: box-shadow 0.2s, background 0.2s;
-
-  // &:hover, &:focus {
-  //   background: linear-gradient(90deg, #3b3c5a 0%, #23243a 100%);
-  //   box-shadow: 0 0 0 2px #fff, 0 0 12px 0 #7f7fff inset;
-  //   outline: none;
-  // }
+  background: linear-gradient(#1B2133, #1B2133) padding-box, 
+              linear-gradient(90deg, #DB79FE, #E3C3EA, #55D3FB, #001541) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 0 10px rgba(219, 121, 254, 0.4), 
+              0 0 20px rgba(85, 211, 251, 0.2);
 }
 
 .header {

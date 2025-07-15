@@ -1,7 +1,7 @@
 <div class="w-full flex flex-col">
   <div class="header flex pl-2 items-center gap-2 mb-8">
     <!-- <mat-icon class="arrow-icon">arrow_back</mat-icon>  -->
-    {{title}}
+    {{title | translate}}
   </div>
 
   <div class="section flex flex-col justify-between items-center">
@@ -16,7 +16,7 @@
           <div class="w-full flex flex-col gap-4 justify-center items-center no-records-found">
             <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="empty">
             <div class="no-data-text">
-              No connections found
+              {{'NetworkLandingPage.noConnectionsFound' | translate}}
             </div>
           </div>
         </ng-template>

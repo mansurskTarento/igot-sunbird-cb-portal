@@ -72,7 +72,7 @@ export class NetworkHomeComponent implements OnInit{
       error: (error: HttpErrorResponse) => {
         this.connectionsLoading = false;
         if(error) {
-          this.openSnackbar('Failed to fetch connection requests', 3000);
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchConnectionRequests'), 3000);
         }
       }
     });
@@ -94,7 +94,7 @@ export class NetworkHomeComponent implements OnInit{
       error: (error: HttpErrorResponse) => {
         this.suggestionsLoading = false;
         if(error) {
-          this.openSnackbar('Failed to fetch people you may know', 3000);
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchPeopleYouMayKnow'), 3000);
         }
       }
     });
@@ -114,7 +114,7 @@ export class NetworkHomeComponent implements OnInit{
       error: (error: HttpErrorResponse) => {
         this.mentorsLoading = false;
         if (error) {
-          this.openSnackbar('Failed to fetch mentor suggestions', 3000); 
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchMentorSuggestions'), 3000); 
         }
       }
     });
@@ -138,6 +138,21 @@ export class NetworkHomeComponent implements OnInit{
           break
       }
     }
+  }
+
+  get showEmptyData(): boolean {
+    return (
+      this.connectionRequestsList.length === 0 &&
+      this.connectionsLoading === false &&
+      this.peopleYouMayKnowList.length === 0 &&
+      this.suggestionsLoading === false &&
+      this.mentorSuggestionsList.length === 0 &&
+      this.mentorsLoading === false
+    )
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingService.handleTranslateTo(menuName)
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {

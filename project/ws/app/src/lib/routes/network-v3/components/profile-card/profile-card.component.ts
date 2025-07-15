@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
 @Component({
@@ -19,10 +20,16 @@ export class ProfileCardComponent implements OnInit, OnChanges {
   //#endregion (global variables)
 
   constructor(
-    private router: Router
+    private router: Router,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
     this.getInitials()
   }
 

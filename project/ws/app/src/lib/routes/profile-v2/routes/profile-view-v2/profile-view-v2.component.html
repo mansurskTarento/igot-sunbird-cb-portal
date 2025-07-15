@@ -121,6 +121,11 @@
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                 </button>
               </ng-container>
+              <ng-container *ngIf="connectionStatus === 'Approved'">
+                <button mat-menu-item (click)="openConformationDialog('Removed')">
+                  <span>{{ 'NetworkV2Profile.removeConnection' | translate }} </span>
+                </button>
+              </ng-container>
               <button mat-menu-item (click)="copyProfileLink()">
                 <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
               </button>
