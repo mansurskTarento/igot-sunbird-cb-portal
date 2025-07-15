@@ -36,7 +36,8 @@ const API_END_POINTS = {
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
   GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
   SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
-  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`
+  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
+  PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`
 }
 
 @Injectable()
@@ -973,5 +974,10 @@ export class AppTocService {
 
   aiGetResourceVttFile(resourceID:any) {
     return this.http.get<any>(`${API_END_POINTS.AI_RESOURCE_VTT_FILE}?resource_id=${resourceID}`)
+  }
+
+  readPreEnrollmentResourcesState(req:any) {
+    return this.http
+      .post(`${API_END_POINTS.PRE_ENROLLMENT_STATE_READ}`, req)
   }
 }

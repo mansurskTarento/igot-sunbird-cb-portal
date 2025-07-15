@@ -131,6 +131,8 @@ export class AppTocContentCardV2Component implements OnInit {
         }
       }
     }
+    console.log('pre assessment content---', this.content)
+    console.log('this.hierarchyMapData---', this.hierarchyMapData)
   }
 
   check(content: any) {

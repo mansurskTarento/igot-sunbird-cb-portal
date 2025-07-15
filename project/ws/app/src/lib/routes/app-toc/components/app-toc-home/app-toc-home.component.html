@@ -88,7 +88,7 @@
              </ng-container>
            </a>
      </ng-container>
-      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
+      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM && preAssessmentCompletionStatus">
         <a class="flex preenrolldone-btn justify-center resume">
              <ng-container >
                {{ 'apptochome.preEnrollDone' | translate }}<img src="/assets/icons/Accept_icon.png" alt="tick" class="tick-icon">

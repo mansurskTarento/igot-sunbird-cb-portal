@@ -1059,7 +1059,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     //   this.activatedRoute.snapshot.queryParams.collectionId : ''
     // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
     //   this.activatedRoute.snapshot.queryParams.batchId : ''
-    if (this.identifier && collectionId && batchId) {
+
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.identifier && collectionId && batchId) {
+          if (this.selectedSection && 
+            this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
+            this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+          ) {
+            this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, collectionId, batchId, status)
+          }
+        }
+      } else if (this.identifier && collectionId && batchId) {
       if (this.selectedSection && 
         this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
         this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE

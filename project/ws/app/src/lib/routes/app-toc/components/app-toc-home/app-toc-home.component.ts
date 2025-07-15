@@ -225,6 +225,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
   recommendedCoursesId = ''
   feedbackGiven: any
+  preAssessmentCompletionStatus = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -361,6 +362,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
             console.log('this.contentReadData', this.contentReadData)
+            this.getPreAssessmentCompletionStatus()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
@@ -1808,6 +1810,12 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.route.snapshot.params.id : ''
     const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.route.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, collectionId, batchId, status)
+      
+    }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
@@ -2440,6 +2448,39 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       queryParams = { ...queryParams,  preAssessment: 'true' }
       this.router.navigate([`${routerLink}`], { queryParams })
     }
+  }
+
+  getPreAssessmentCompletionStatus() {
+    this.preAssessmentCompletionStatus = false
+    let preEnrollmentResourcesArr:any = []
+    if(this.contentReadData?.preEnrolmentResources?.length) {
+      this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
+        if(item && item?.isMandatory) {
+          preEnrollmentResourcesArr.push(item?.identifier)
+        }
+      })
+    }
+    let req ={
+      "request": {
+        "contentIds": preEnrollmentResourcesArr,
+        "fields": [
+            // "lastAccessTime",
+            // "completionPercentage"
+        ]
+    }
+    } 
+    this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+      // console.log('read resources progress data', data)
+      if(data && data.result && data.result.contentList) {
+        for(let i=0; i<data.result.contentList; i++) {
+          if(Number(data.result.contentList[i]['completionPercentage']) === 100 && 
+            data.result.contentList[i]['status'] === 2 
+          ) {
+            this.preAssessmentCompletionStatus = true
+          }
+        }
+      }
+    })
   }
 
 }

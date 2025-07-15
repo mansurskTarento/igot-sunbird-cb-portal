@@ -186,7 +186,6 @@ export class PlayerAudioComponent extends WidgetBaseComponent
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
-      console.log(this.widgetData, identifier, data, collectionId, batchId)
       if(isPreAssessment) {
         if (this.widgetData.identifier && identifier && data && collectionId) {
           this.viewerSvc

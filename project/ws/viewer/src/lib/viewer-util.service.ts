@@ -19,7 +19,9 @@ export class ViewerUtilService {
     PROGRESS_UPDATE: `/apis/proxies/v8/content-progres`,
     ASSESSMENT_SECTION: `/apis/proxies/v8/assessment/v5/read`,
     GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
-    SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`
+    SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
+    PRE_ASSESSMENT_STATE_UPDATE: `/apis/proxies/v8/content/v2/state/update`
+    
   }
   downloadRegex = new RegExp(`(/content-store/.*?)(\\\)?\\\\?['"])`, 'gm')
   authoringBase = '/apis/authContent/'
@@ -413,10 +415,19 @@ export class ViewerUtilService {
         //     completionStatus: updatedStatus
         //   }
         // }
-        console.log('req', req)
-        this.tocSvc.hashmap['do_114347293746307072185']['completionPercentage'] =10
-        this.tocSvc.hashmap['do_114347293746307072185']['completionStatus'] =1
-
+        // console.log('req', JSON.stringify(req))
+        this.http
+        .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
+        .subscribe(noop, noop)
+        if (this.tocSvc.hashmap[contentId] &&
+          (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
+          this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
+          this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
+          this.tocSvc.hashmap[contentId]['parent'] = req.request.contents[0].courseId
+          this.tocSvc.hashmap[contentId]['progress'] = req.request.contents[0].progressdetails
+          this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+        }
+        
         console.log('Updated hashmap:', this.tocSvc.hashmap)
          
           console.log('this.tocSvc.hashmap---', this.tocSvc.hashmap)
@@ -425,4 +436,42 @@ export class ViewerUtilService {
         // do nothing
       }
     }
+
+    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
+      let req: any
+      if (this.configservice.userProfile) {
+        req = {
+          request: {
+            userId: this.configservice.userProfile.userId || '',
+            contents: [
+              {
+                contentId,
+                batchId,
+                status: status || 2,
+                courseId: collectionId,
+                lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
+                completionPercentage: status === 2 ? 100 : 0,
+              },
+            ],
+          },
+        }
+  
+        this.http
+          .patch(`${this.API_ENDPOINTS.PROGRESS_UPDATE}/${contentId}`, req)
+          .subscribe(noop, noop)
+        if (this.tocSvc.hashmap && this.tocSvc.hashmap[contentId] && req.request.contents[0]) {
+          if (this.tocSvc.hashmap[contentId] &&
+            (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
+            this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
+            this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
+            this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+          }
+        }
+      } else {
+        req = {}
+        // do nothing
+      }
+    }
+
+   
 }

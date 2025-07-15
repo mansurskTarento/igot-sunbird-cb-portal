@@ -275,6 +275,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     // this.activatedRoute.snapshot.params.id : ''
     const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       this.activatedRoute.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, collectionId, batchId, status)
+      
+    }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 

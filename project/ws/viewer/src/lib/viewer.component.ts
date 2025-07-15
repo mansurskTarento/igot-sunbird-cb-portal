@@ -133,13 +133,20 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
     ) {
         this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+        
         if(this.content) {
-          this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
+          let hashMap = this.tocSvc.hashmap
+          console.log('hasMap', hashMap)
+          console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
+          if(!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
+            this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
+          }          
         }
         this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
         console.log('this.content', this.content)
         console.log('this.contentMIMEType', this.contentMIMEType)
         this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
+        this.getPreEnrollmentResoureStateRead()
         console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
         console.log('this.hierarchyData', this.hierarchyData)
         
@@ -200,7 +207,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
     && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     this.contentReadData = this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data.contentRead
-    && this.activatedRoute.snapshot.data.contentRead.data.result.content || {}
+    && this.activatedRoute.snapshot.data.contentRead.data?.result.content || {}
     if (contentData && contentData.result && contentData.result.content) {
       this.coursePrimaryCategory = contentData.result.content.courseCategory
       if (contentData.result.content.children && contentData.result.content.children.length) {
@@ -465,6 +472,33 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   navigateToBack() {
     this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
     window.history.back()
+  }
+
+  getPreEnrollmentResoureStateRead() {
+    let identifierArr:any = []
+    this.hierarchyData.map((item:any)=>{
+      identifierArr.push(item.identifier)
+    })
+    let req ={
+      "request": {
+        "contentIds": identifierArr,
+        "fields": [
+            // "lastAccessTime",
+            // "completionPercentage"
+        ]
+    }
+    } 
+    this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+      // console.log('read resources progress data', data)
+      if(data && data.result && data.result.contentList) {
+        for(let i=0; i<data.result.contentList; i++) {
+          if(this.hierarchyMapData && this.hierarchyMapData[data.result.contentList[i]['contentId']]) {
+            this.hierarchyMapData[data.result.contentList[i]]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
+            this.hierarchyMapData[data.result.contentList[i]]['completionStatus'] = data.result.contentList[i]['status']
+          }
+        }
+      }
+    })
   }
 
  }
