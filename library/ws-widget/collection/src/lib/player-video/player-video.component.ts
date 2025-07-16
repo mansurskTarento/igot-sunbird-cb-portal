@@ -369,7 +369,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       if(isPreAssessment) {
         if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
@@ -460,7 +460,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       if(isPreAssessment) {
         if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
           this.viewerSvc

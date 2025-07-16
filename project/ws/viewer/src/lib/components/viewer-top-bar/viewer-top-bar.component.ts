@@ -253,7 +253,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if(isPreAssessment) {
         return this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, collectionId, batchId, status)
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
       
     }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)

@@ -232,7 +232,7 @@ export class PlayerYoutubeComponent extends WidgetBaseComponent
       if(isPreAssessment) {
         if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
           this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else 
       if (this.widgetData.identifier && identifier && data && collectionId && batchId) {

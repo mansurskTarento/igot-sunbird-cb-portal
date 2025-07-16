@@ -1813,7 +1813,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     const isPreAssessment = this.route.snapshot.queryParams.preAssessment
     if(isPreAssessment) {
         return this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, collectionId, batchId, status)
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
       
     }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
@@ -2451,6 +2451,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   getPreAssessmentCompletionStatus() {
+    console.log('this.contentReadData',this.contentReadData)
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
     if(this.contentReadData?.preEnrolmentResources?.length) {
@@ -2470,10 +2471,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
     } 
     this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-      // console.log('read resources progress data', data)
       if(data && data.result && data.result.contentList) {
-        for(let i=0; i<data.result.contentList; i++) {
-          if(Number(data.result.contentList[i]['completionPercentage']) === 100 && 
+        for(let i=0; i<data.result.contentList.length; i++) {
+          if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
             data.result.contentList[i]['status'] === 2 
           ) {
             this.preAssessmentCompletionStatus = true

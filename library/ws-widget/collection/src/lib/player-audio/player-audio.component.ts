@@ -189,7 +189,7 @@ export class PlayerAudioComponent extends WidgetBaseComponent
       if(isPreAssessment) {
         if (this.widgetData.identifier && identifier && data && collectionId) {
           this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(identifier, data, collectionId, batchId)
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else {
         if (this.widgetData.identifier && identifier && data && collectionId && batchId) {

@@ -362,7 +362,7 @@ export class ViewerUtilService {
       return this.http.post<any>(this.API_ENDPOINTS.SUBMIT_FORM, formData)
     }
 
-    realTimeProgressUpdateForPreAssessment(contentId: string, request: any, collectionId?: string, batchId?: string) {
+    realTimeProgressUpdateForPreAssessment(contentId: string, request: any) {
       let req: any
       if (this.configservice.userProfile) {
         req = {
@@ -371,9 +371,9 @@ export class ViewerUtilService {
             contents: [
               {
                 contentId,
-                batchId,
+                // batchId,
                 status: this.getStatus(request.current, request.max_size, request.mime_type),
-                courseId: collectionId,
+                // courseId: collectionId,
                 lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
                 progressdetails: {
                   max_size: request.max_size,
@@ -437,7 +437,7 @@ export class ViewerUtilService {
       }
     }
 
-    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
+    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, status?: number) {
       let req: any
       if (this.configservice.userProfile) {
         req = {
@@ -446,9 +446,9 @@ export class ViewerUtilService {
             contents: [
               {
                 contentId,
-                batchId,
+                // batchId,
                 status: status || 2,
-                courseId: collectionId,
+                // courseId: collectionId,
                 lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
                 completionPercentage: status === 2 ? 100 : 0,
               },

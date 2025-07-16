@@ -81,7 +81,7 @@
           </ng-container>
         </ng-container>
       </ng-container>
-      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
+      <ng-container *ngIf="content?.primaryCategory === primaryCategory.BLENDED_PROGRAM && !preAssessmentCompletionStatus">
         <a class="flex action-button enroll-btn justify-center resume" *ngIf="contentReadData?.preEnrolmentResources?.length" (click)="routeToPreAssessent()">
              <ng-container >
                {{ 'apptochome.preEnroll' | translate }}

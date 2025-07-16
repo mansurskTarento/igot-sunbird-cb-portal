@@ -328,7 +328,7 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       if(isPreAssessment) {
         if (id && collectionId) {
           this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest, collectionId, batchId)
+            .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
         }
       } else 
       if (id && collectionId && batchId) {
