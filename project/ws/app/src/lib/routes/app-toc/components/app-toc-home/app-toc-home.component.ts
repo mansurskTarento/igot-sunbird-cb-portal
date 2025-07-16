@@ -2451,7 +2451,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   getPreAssessmentCompletionStatus() {
-    console.log('this.contentReadData',this.contentReadData)
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
     if(this.contentReadData?.preEnrolmentResources?.length) {
