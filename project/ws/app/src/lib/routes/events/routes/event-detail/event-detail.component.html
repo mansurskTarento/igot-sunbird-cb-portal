@@ -91,7 +91,7 @@
     </div>
   </div>
 </ng-template>
-<ng-container *ngIf="!isretired; else noDataFound">
+<!-- <ng-container *ngIf="!isretired; else noDataFound"> -->
 <div class="toc-banner">
   <div class="flex flex-row gap-6 fixed-width section-container">
     <div class="banner-details toc-content" #bannerDetails>
@@ -332,7 +332,7 @@
       [enrolledEvent]="enrolledEvent" *ngIf="eventData" (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
   </div>
 </div>
-</ng-container>
+<!-- </ng-container> -->
 
 <ng-template #noDataFound>
   <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
