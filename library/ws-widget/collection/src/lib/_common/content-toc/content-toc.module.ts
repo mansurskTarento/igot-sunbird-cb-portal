@@ -44,6 +44,8 @@ import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc
 import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
 import { HighlightPipe } from '../../_pipes/highlight.pipe'
 import {MatSelectModule} from '@angular/material/select';
+import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
+
 @NgModule({
   declarations: [
     ContentTocComponent,
@@ -59,7 +61,8 @@ import {MatSelectModule} from '@angular/material/select';
     TruncatePipe,
     ReplaceNbspPipe,
     AiTutorConfirmPopupComponent,
-    HighlightPipe
+    HighlightPipe,
+    AiTutorComponent
   ],
   imports: [
     CommonModule,
@@ -106,6 +109,7 @@ import {MatSelectModule} from '@angular/material/select';
     AppTocContentComponent,
     AppTocTeachersNotesComponent,
     ReviewsContentComponent,
+    AiTutorComponent
   ]
 })
 export class ContentTocModule { }

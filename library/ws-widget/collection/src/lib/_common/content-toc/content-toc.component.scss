@@ -342,7 +342,13 @@
     padding-right: 24px;
   }
 
+ 
+
   
 
+}
+
+:host ::ng-deep .tab-group-container ::ng-deep .mat-mdc-tab-header-pagination {
+  z-index: 1 !important;
 }
 

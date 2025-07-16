@@ -982,3 +982,41 @@ width: 262px;
     width: 100%;
   }
 }
+
+.ai-tutor-popup {
+  position: fixed;
+  top:50px;
+  z-index: 999;
+  background-color: white;
+  
+}
+
+.ai-popup-mobile-footer {
+  height: 25px;
+  bottom: 70px;
+  position: fixed;
+}
+
+.ai-tutor-mobile-header {
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid #ccc;
+  height: 35px;
+  margin-top: 15px;
+}
+
+.red-circle {
+  background: red;
+  opacity: 1;
+  color: white;
+  padding: 2px 10px;
+  height: 20px;
+  width: 50px;
+  border-radius: 2px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 8px;
+  margin-top: -10px;
+}
