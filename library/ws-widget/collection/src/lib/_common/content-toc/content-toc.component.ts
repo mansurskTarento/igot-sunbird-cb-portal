@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService, EventService, NsContent, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -14,6 +14,7 @@ import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.se
 import { VttFile } from '@polyflix/vtt-parser';
 import { tap } from 'rxjs/operators'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
+import { MatTab } from '@angular/material/tabs'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -38,6 +39,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() fromViewer = false
   @Input() hierarchyMapData: any = {}
   @ViewChild('stickyMenu') tabElement!: MatTabGroup
+  @ViewChildren(MatTab) tabs!: QueryList<MatTab>;
   @Input() condition: any
   @Input() kparray: any
   @Input() selectedBatchData: any
@@ -75,6 +77,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   fromAITutor = false
   totalResource = 0
   scormAssessmentCount = 0
+  showAITutorPopup = false
+  fromAISelectedTabIndex = false
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -89,6 +93,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {    
+
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
@@ -173,12 +178,32 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       })
     }
 
+   
+
+   
     
   }
 
   ngAfterViewInit() {
     this.isMobile = this.utilityService.isMobile
     this.menuPosition = this.tabElement._elementRef.nativeElement.offsetTop
+
+    this.route.queryParamMap.subscribe(async (params:any) => {
+   
+      let fromAITutor = params.get('fromAITutor')
+      
+      if((fromAITutor === 'true' || fromAITutor === true) && this.isMobile) {
+       setTimeout(()=>{
+        const tabsArray = this.tabs?.toArray();        
+        let index = tabsArray?.findIndex(tab => tab.textLabel.trim() === "AI Tutor".trim());
+        if(index > -1) {
+          this.selectedTabIndex = index
+          this.fromAISelectedTabIndex = true
+        }
+       },3000)
+        
+      }
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -190,6 +215,14 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.enableTranscriptionFlag = false
     }
 
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
+      // console.log('this.contentReadData--', this.route.snapshot.data)
+      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.content?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
+      // this.enableAITutorFlag = true
+    } else {
+      this.enableAITutorFlag = false
+    }
+
     if ( changes && changes['playResourceId']) {
       if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
         if(this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
@@ -197,7 +230,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       }
     }
-    if (changes.changeTab && changes.changeTab.currentValue) {
+    if (changes.changeTab && changes.changeTab.currentValue && !this.fromAISelectedTabIndex ) {
       this.selectedTabIndex = 1
     }
     if (this.config && this.config.discussWidgetData) {
@@ -218,6 +251,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
+
+    
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -236,6 +271,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     this.loadCheckService.componentLoaded(true)
     // console.log('event', event)
     // console.log('this.content', this.viewerDataSvc?.resourceId)
+    if(event && event.tab.textLabel === 'AI Tutor') {
+      this.showAITutorPopup = true
+    }
     if(event && event.index === 0 && event.tab.textLabel === 'Transcription') {
       this.raiseTranscriptionTabStartTelemetry()
       setTimeout(()=>{
@@ -637,6 +675,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  closeAIPopup(event:any) {
+    if(event) {
+      this.showAITutorPopup = false
+      this.selectedTabIndex = 0
+    }
   }
 
   ngOnDestroy() {

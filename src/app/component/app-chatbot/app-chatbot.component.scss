@@ -662,14 +662,14 @@
   background-position: center;
   text-align: center;
 }
-.fullscreen-chat {
+.fullscreen {
   display: block;
 }
 .fullscreen-chat-exit {
   display: block;
 }
 @media only screen and (min-width:240px) and (max-width: 360px) {
-  .fullscreen-chat {
+  .fullscreen {
     display: none;
   }
   .fullscreen-chat-exit {
@@ -731,10 +731,12 @@
   .lang-select[_ngcontent-ng-c68842119] {
     width: 63px;
   }
+
+ 
 }
 
 @media only screen and (min-width:361px) and (max-width: 767px) {
-  .fullscreen-chat {
+  .fullscreen {
     display: none;
   }
   .fullscreen-chat-exit {
@@ -793,6 +795,7 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2392156863);  
     height: 70px;
   }
+  
 }
 
 @media only screen and (min-width:768px) and (max-width: 1023px) {

@@ -127,6 +127,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   totalResource = 0
   defaultTabIndex = 0
   fromAITutor:any = false
+  isMobile = false
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -135,6 +136,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isMobile = this.utilitySvc.isMobile
     if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {

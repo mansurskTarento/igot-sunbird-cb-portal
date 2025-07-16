@@ -1,6 +1,6 @@
-import { AfterViewChecked, AfterViewInit, Component,ElementRef,Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from 'src/app/component/root/root.service';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from './socket.service';
@@ -106,7 +106,10 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   SocraticeStyleHost = ''
   StorytellingHost = ''
   @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  @Output() closeAIPopup = new EventEmitter<any>()
   containerHeight = 38;
+  isMobile = false
+  showAITutorPopup = false
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -116,11 +119,13 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     private websocketService: WebSocketService,
     private dialog: MatDialog,
     private matSnackBarNew: MatSnackbarNew,
+    private utilitySvc: UtilityService,
     private router: Router) { 
       this.selectedLearningStyle = this.learningStyle[0]
     }
 
   ngOnInit() {
+    this.isMobile = this.utilitySvc.isMobile
     if (environment?.sitePath?.includes('portal.igotkarmayogi.gov.in')) {
       this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
       this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
@@ -1120,5 +1125,9 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     }
 
 
+  }
+
+  closeAITutorPopup() {
+    this.closeAIPopup.emit(true)
   }
 }
