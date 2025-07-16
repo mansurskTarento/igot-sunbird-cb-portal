@@ -366,7 +366,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
     if(isPreAssessment) {
       if (id && collectionId) {
         this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(id, collectionId, batchId, status)
+          .realTimeProgressUpdateForPreAssessmentQuiz(id, status)
       }
     } else 
     if (collectionId && batchId && id) {

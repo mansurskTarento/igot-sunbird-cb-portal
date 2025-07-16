@@ -491,13 +491,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
       // console.log('read resources progress data', data)
       if(data && data.result && data.result.contentList) {
-        for(let i=0; i<data.result.contentList; i++) {
-          if(this.hierarchyMapData && this.hierarchyMapData[data.result.contentList[i]['contentId']]) {
-            this.hierarchyMapData[data.result.contentList[i]]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
-            this.hierarchyMapData[data.result.contentList[i]]['completionStatus'] = data.result.contentList[i]['status']
+        for(let i=0; i<data.result.contentList.length; i++) {
+          if(Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
+            this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
+            this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
           }
         }
       }
+      // console.log(this.tocSvc.hashmap)
+      // console.log('this.hierarchyMapData', this.hierarchyData)
     })
   }
 
