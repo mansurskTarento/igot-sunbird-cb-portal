@@ -145,6 +145,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   // }
 
   async ngAfterViewInit() {
+    let playerInitialize = false
     //console.log('this.widgetData--', this.widgetData)
     this.widgetData = {
       ...this.widgetData,
@@ -157,6 +158,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
         if(!this.playerInitObj) {
+          playerInitialize = true
           this.initializePlayer()
         }
         
@@ -170,7 +172,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             if(this.transcriptionSubscriptionData?.loadPlayer) {
               this.initializePlayer()  
             } else {
-              if (Array.isArray(this.transcriptionLangArr)) {
+              if (Array.isArray(this.transcriptionLangArr) && !playerInitialize) {
   
                 let tracks = this.playerInitObj.player.textTracks()
                 //let allCues:any = []
