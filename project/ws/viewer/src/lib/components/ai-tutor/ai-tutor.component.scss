@@ -988,7 +988,16 @@ width: 262px;
   top:50px;
   z-index: 999;
   background-color: white;
-  
+  width: 100%;
+}
+
+.ai-tutor-popup-minimize {
+  position: fixed;
+  bottom:65px;
+  z-index: 999;
+  background-color: white;
+  width:100%;
+  border-top:3px solid #eff3f9
 }
 
 .ai-popup-mobile-footer {

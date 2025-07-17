@@ -169,10 +169,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             this.transcriptionSubscriptionData = data   
             this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
             this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
-            if(this.transcriptionSubscriptionData?.loadPlayer && !playerInitialize) {
+            if(this.transcriptionSubscriptionData?.loadPlayer) {
               this.initializePlayer()  
             } else {
-              if (Array.isArray(this.transcriptionLangArr)) {
+              if (Array.isArray(this.transcriptionLangArr) && !playerInitialize) {
   
                 let tracks = this.playerInitObj.player.textTracks()
                 //let allCues:any = []
@@ -488,6 +488,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     
 
     initObj.player.ready(() => {
+      let tracks = initObj.player.textTracks()
       setTimeout(() => {
         const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any;
         if (ccButton) {
@@ -614,13 +615,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           }, false);
         });
         initObj.player.on('texttrackchange', () => {
-          const tracks = initObj.player.textTracks();
-          // let subtitlesOn = false;
+          
           for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
-            
             if (track.mode === 'showing') {
-              // subtitlesOn = true;
               const currentLang = track.language;
               if (currentLang !== this.previousSubtitleLanguage) {
                 //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
@@ -660,21 +658,19 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 // this.appTocService.setActiveSubtitleLanguage(currentLang);
                // console.log('About to call next with:', currentLang);
                 this.appTocService.setActiveSubtitleLanguage(currentLang);
+                
                 //console.log('Called next');
               } 
-              this.updateSubtitleButtonIcon(true);
+              
+              this.updateSubtitleButtonIcon(true)
               break; // Only one track should be 'showing'
             } else {
-              this.updateSubtitleButtonIcon(false);
+              this.updateSubtitleButtonIcon(false)
             }
           }
-          // setTimeout(()=>{
-          //   this.updateSubtitleButtonIcon(subtitlesOn);
-          // },200)
-          
         });
         // console.log('initObj--', initObj.player.textTracks())
-        let tracks = initObj.player.textTracks()
+        
         //let allCues:any = []
         for (let i = 0; i < tracks.length; i++) {
           const track = tracks[i];
@@ -787,24 +783,34 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     trackEl.label = newTrack.language;
     trackEl.default = true;
     videoEl.appendChild(trackEl);
+    let tracks = videoEl.textTracks;
 
 
-
-      setTimeout(() => {
-        const tracks = videoEl.textTracks;
+      // setTimeout(() => {
+        
         console.log('👉 Number of textTracks:', tracks.length);
 
         for (let i = 0; i < tracks.length; i++) {
           const t = tracks[i];
-          t.mode = 'disabled'
+          if (t.kind === 'subtitles') {
+            // Toggle and force reflow if needed
+            if (t.mode === 'showing') {
+              t.mode = 'hidden';
+            } else {
+              // Workaround: re-set mode after short delay to force repaint
+              t.mode = 'hidden';
+              setTimeout(() => {
+                t.mode = 'showing';
+              }, 1000); // or 10–50ms if needed
+            }
+          }
+          
           console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
-          // this.updateSubtitleButtonIcon(false);
         }
-      }, 10000);
+      // }, 1000);
   
     // Wait for the TextTrack to load
     const waitForTrack = () => {
-      const tracks = videoEl.textTracks;
       for (let i = 0; i < tracks.length; i++) {
         const track = tracks[i];
         if (
@@ -840,13 +846,29 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   
     waitForTrack();
   }
-  
+
   updateSubtitleButtonIcon(subtitlesOn: boolean) {
-      let subtitleImage =  document.getElementById('custom-cc-icon-img') as HTMLImageElement
-      if(subtitleImage) {
-        subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
-      }
+    let subtitleImage =  document.getElementById('custom-cc-icon-img') as HTMLImageElement
     
+    if(subtitleImage) {
+      subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
+    }
+
+    if(!subtitlesOn) {
+      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
+      let tracks = videoEl.textTracks;
+      for (let i = 0; i < tracks.length; i++) {
+        const t = tracks[i];
+        if (t.kind === 'subtitles') {
+          // Toggle and force reflow if needed
+          if (t.mode === 'showing') {
+            t.mode = 'hidden';
+          }
+        }
+        
+       // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+      }
+    }
   }
   
 }
