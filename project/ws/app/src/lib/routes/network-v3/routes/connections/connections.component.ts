@@ -23,11 +23,11 @@ export class ConnectionsComponent implements OnInit {
   connectionsList: any = [];
   connectionsLoading = false;
   apiSubscription: any;
-  paginationSize = 50;
-  paginationSizeOptions = [50, 100, 150, 200];
+  paginationSize = 10;
+  paginationSizeOptions = [10, 20, 30, 40];
   paginationPage = 1;
   totalItemsCount = 0;
-  defaultPaginationSize = 50;
+  defaultPaginationSize = 10;
   noDataMessage = 'NetworkLandingPage.noConnectionsFound';
   allStatesList = ['Approved', 'Requested', 'Pending', 'Blocked'];
   satesListToGetCount: string[] = [];
@@ -101,7 +101,7 @@ export class ConnectionsComponent implements OnInit {
 
   resetPagination() {
     this.paginationPage = 1;
-    this.paginationSize = 50;
+    this.paginationSize = this.defaultPaginationSize;
     this.totalItemsCount = 0;
     this.getTabData();
   }
