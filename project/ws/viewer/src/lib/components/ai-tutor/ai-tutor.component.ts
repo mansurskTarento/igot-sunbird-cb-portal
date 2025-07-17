@@ -44,7 +44,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   public circleColor!: string
   random = Math.random().toString(36).slice(2)
   iGOTAITutorResultArr:any = []
-
+  maximize = true
   // tslint:disable
   localization: any = {
     'en' : {
@@ -716,7 +716,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         this.aiTutorResultArr.splice(index,1)
       }
      })     
-    // console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
+    console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
      setTimeout(()=>{
      // this.scrollToBottom()
     },0)
@@ -753,8 +753,12 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         .join('&');
     let path = ''
     path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
-    console.log('path', path)
+    // console.log('path', path)
    // window.open(path, '_blank')
+   if(this.isMobile) {
+    this.maximize = false
+   }
+   
    this.router.navigateByUrl(path)
   }
 
@@ -1129,5 +1133,13 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
 
   closeAITutorPopup() {
     this.closeAIPopup.emit(true)
+  }
+
+  minimizeAITutor() {
+    this.maximize = false
+  }
+
+  maximizeAITutor() {
+    this.maximize = true
   }
 }

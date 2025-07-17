@@ -799,6 +799,12 @@
 }
 
 @media only screen and (min-width:768px) and (max-width: 1023px) {
+  .fullscreen {
+    display: none;
+  }
+  .fullscreen-chat-exit {
+    display: none;
+  }
   .chatbot-with-ai {
     width: 100%;
     position: fixed; /* fixed might be better for mobile full-screen */

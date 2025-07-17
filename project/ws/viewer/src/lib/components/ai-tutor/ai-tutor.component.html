@@ -127,7 +127,7 @@
 </div>
 </div> -->
 
-<div class="overflow-y-hidden" [ngClass]="isMobile ? 'ai-tutor-popup':''">
+<div class="overflow-y-hidden" [ngClass]="isMobile && maximize ? 'ai-tutor-popup':'ai-tutor-popup-minimize'">
 <div *ngIf="isMobile">
   <div class="flex flex-row ai-tutor-mobile-header">
       <div class="flex flex-row">
@@ -138,12 +138,22 @@
               New
             </div>
       </div>
-      <div (click)="closeAITutorPopup()">
-          <mat-icon>close</mat-icon>
+      <div class="flex flex-row justify-end">
+        <div *ngIf="maximize" (click)="minimizeAITutor()">
+          <mat-icon>minimize</mat-icon>
+        </div>
+        <div *ngIf="!maximize" (click)="maximizeAITutor()">
+          <mat-icon>maximize</mat-icon>
+        </div>
+        <div (click)="closeAITutorPopup()">
+            <mat-icon>close</mat-icon>
+        </div>
       </div>
+      
       
   </div>
 </div>
+<div [hidden]="!maximize">
 <div class="header">
   <!-- <mat-form-field appearance="none" style="width:100%">
     <select  matNativeControl required class="section-dd" >
@@ -485,5 +495,6 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 </div>

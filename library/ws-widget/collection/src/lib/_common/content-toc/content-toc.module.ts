@@ -45,6 +45,7 @@ import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-
 import { HighlightPipe } from '../../_pipes/highlight.pipe'
 import {MatSelectModule} from '@angular/material/select';
 import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tuto
     }),
     PipeSafeSanitizerModule,
     WidgetCommentModule,
-    MatSelectModule
+    MatSelectModule,
+    MarkdownModule.forRoot()
   ],
   exports: [
     ContentTocComponent,
