@@ -8,7 +8,7 @@
 }
 
 .card-container {
-    height: 185px;
+    height: 195px;
     width:  170px;
     border: 1px solid rgba(0,0,0,8%);
     border-radius: 8px;
@@ -22,7 +22,7 @@
 
 .name-container {
     padding: $size-m $size-l 10px;
-    height: 85px;
+    height: 95px;
 }
 .name-container-inner {
     height: 65px;
@@ -31,7 +31,7 @@
 .name{
     font-size: 16px;
     line-height: 24px;
-    height: 28px;
+    margin-bottom: 5px;
     text-transform: capitalize;
 }
 .designation{
