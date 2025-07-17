@@ -60,7 +60,7 @@ export class MentorsComponent implements OnInit {
       error: (error) => {
         this.mentorsListLoading = false;
         if(error) {
-          this.openSnackbar('Error fetching mentors. Please try again later.');
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.noMentorsFoundatTheMomentPleaseTryAgain'));
         }
       }
     });
@@ -68,6 +68,10 @@ export class MentorsComponent implements OnInit {
 
   descoverMentors() { 
     window.open(`${environment.contentHost}/mentorship/tabs/mentor-directory`, '_blank')
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingSvc.handleTranslateTo(menuName)
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {

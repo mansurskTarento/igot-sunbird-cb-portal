@@ -20,7 +20,7 @@
 }
 
 .user-details {
-  width: 280px;
+  // width: 280px;
 
   .user-name {
     /*stylelint-disable */
@@ -30,6 +30,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    pointer-events: all;
+    cursor: pointer;
   }
 
   .user-designation {

@@ -47,9 +47,13 @@ export class ConnectionPeopleCardComponent implements OnInit {
     this.howerUser = this.user
     this.unmappedUser = this.user
     this.userAvatarName = this.getUseravatarName
-    if (this.user && this.user.role && this.user.role.some(role => role.toLowerCase() === 'mentor')) {
-      this.showMentor = true
-      this.showBadge = true
+    if(this.user ) {
+      if(this.user.verifiedKarmayogi) {
+        this.showBadge = true
+      }
+      if (this.user.role && this.user.role.some(role => role.toLowerCase() === 'mentor')) {
+        this.showMentor = true
+      }
     }
   }
   
@@ -112,7 +116,7 @@ export class ConnectionPeopleCardComponent implements OnInit {
       },
       () => {
         this.user['requestSent'] = undefined
-        this.openSnackbar(this.toastError.nativeElement.value)
+        this.openSnackbar('Failed to send request. Please try again.')
       })
   }
 

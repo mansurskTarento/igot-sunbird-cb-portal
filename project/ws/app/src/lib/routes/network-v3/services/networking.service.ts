@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { connectionUpdates } from '../models/network-v3.model';
 
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
@@ -17,12 +18,16 @@ const API_END_POINTS = {
   GET_BLOCKED_USERS: '/apis/proxies/v8/connections/v2/connections/requests/blocked',
   SENT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/add/connection',
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
+  CONNECTIONS_COUNT: '/apis/proxies/v8/connections/user/v1/network/connections/list',
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkingService {
+
+  connectionsUpdates = new BehaviorSubject<connectionUpdates | null>(null)
+  connectionsUpdates$ = this.connectionsUpdates.asObservable()
 
   constructor(
     private http: HttpClient,
@@ -49,7 +54,7 @@ export class NetworkingService {
   }
 
   getQueryString(pageNo?: number, pageSize?: number): string {
-    let params = [];
+    let params: string[] = [];
     if (pageNo !== undefined && pageNo !== null) {
       params.push(`pageNo=${pageNo}`);
     }
@@ -140,19 +145,21 @@ export class NetworkingService {
     return this.http.post<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
   }
 
+  getConnectionsCount(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.CONNECTIONS_COUNT, formBody)
+  }
+
+  //#region (connections updates)
+  sendConnectionUpdates(connectionUpdates: connectionUpdates) {
+    this.connectionsUpdates.next(connectionUpdates)
+  }
+  //#endregion (connections updates
+
   //#region (translation related methods)
   handleTranslateTo(menuName: string): string {
-    // tslint:disable-next-line: prefer-template
-    const translationKey = 'profileInfo.' + menuName.replace(/\s/g, '')
+    const translationKey = 'NetworkLandingPage.' + menuName.replace(/\s/g, '')
     return this.translateService.instant(translationKey)
   }
 
-  getWebSiteLanguage() {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translateService.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translateService.use(lang)
-    }
-  }
   //#endregion (translation related methods)
 }

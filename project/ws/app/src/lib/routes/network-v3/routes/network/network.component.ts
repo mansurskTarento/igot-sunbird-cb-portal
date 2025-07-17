@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { routesData } from '../../models/network-v3.model';
+import { connectionUpdates, routesData } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { NetworkingService } from '../../services/networking.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -18,7 +19,7 @@ export class NetworkComponent implements OnInit {
   communitiesLoading = false;
   navigationItems: routesData[] = [
     {
-      name: 'Explore Network',
+      name: 'NetworkLandingPage.exploreNetwork',
       navigationUrl: '/app/network-v2/home',
       routeId: 'home',
       imageUrl: './assets/icons/person_search.svg'
@@ -30,10 +31,10 @@ export class NetworkComponent implements OnInit {
     //   imageUrl: './assets/icons/update.svg'
     // },
     {
-      name: 'Connections',
+      name: 'NetworkLandingPage.connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      imageUrl: './assets/icons/connection.svg'
+      imageUrl: './assets/icons/group.svg'
     },
     // {
     //   name: 'Recommendations',
@@ -45,15 +46,14 @@ export class NetworkComponent implements OnInit {
     // },
     {
 
-      name: 'Recommendations',
-      navigationUrl: 'recommendations/all',
+      name: 'NetworkLandingPage.recommendations',
+      navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
-      icon: 'groups',
+      imageUrl: './assets/icons/connection.svg',
       queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
-      // imageUrl: './assets/icons/.svg'
     },
     {
-      name: 'Mentors',
+      name: 'NetworkLandingPage.mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
       imageUrl: './assets/icons/book_read.svg',
@@ -68,14 +68,21 @@ export class NetworkComponent implements OnInit {
     private networkingSvc: NetworkingService,
     private snackBar: MatLegacySnackBar,
     private configSvc: ConfigurationsService,
+    private translateService: TranslateService,
   ) { }
 
   //#region (initialization)
   ngOnInit() {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
     this.initialization();
   }
   
   initialization() {
+    this.subscribeToUpdates();
     this.getCommunitesList();
     this.getProfileDetails();
   }
@@ -100,7 +107,7 @@ export class NetworkComponent implements OnInit {
       },
       error: () => {
         this.communitiesLoading = false;
-        this.openSnackBar('Error while fetching communities')
+        this.openSnackBar(this.handleTranslateTo('errorFetchingCommunities'))
       }
     })
   }
@@ -118,10 +125,26 @@ export class NetworkComponent implements OnInit {
         },
         error: () => {
           this.profileDetailsLoading = false;
-          this.openSnackBar('Error while fetching profile details')
+          this.openSnackBar(this.handleTranslateTo('errorFetchingProfileDetails'))
         }
       })
     }
+  }
+
+  subscribeToUpdates() { 
+    this.networkingSvc.connectionsUpdates$.subscribe((update: connectionUpdates | null) => {
+      if(update && this.navigationItems) {
+        this.navigationItems.forEach(item => {
+          if(item.routeId === update.routeId) {
+            item['showUpdate'] = update.showUpdate
+          }
+        })
+      }
+    })
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingSvc.handleTranslateTo(menuName)
   }
 
   openSnackBar(primaryMsg: string, duration: number = 5000) {

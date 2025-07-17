@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
+import { connectionUpdates } from '../../models/network-v3.model';
 
 @Component({
   selector: 'ws-app-network-home',
@@ -62,11 +63,16 @@ export class NetworkHomeComponent implements OnInit{
         this.connectionsLoading = false;
         this.connectionRequestsList = _.get(response, 'data', []);
         this.connectionRequestsCount = _.get(response, 'count', 0);
+        const connectionsUpdate: connectionUpdates = {
+          routeId: 'connections',
+          showUpdate: this.connectionRequestsList.length > 0 ? true : false
+        }
+        this.networkingService.sendConnectionUpdates(connectionsUpdate);
       },
       error: (error: HttpErrorResponse) => {
         this.connectionsLoading = false;
         if(error) {
-          this.openSnackbar('Failed to fetch connection requests', 3000);
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchConnectionRequests'), 3000);
         }
       }
     });
@@ -88,7 +94,7 @@ export class NetworkHomeComponent implements OnInit{
       error: (error: HttpErrorResponse) => {
         this.suggestionsLoading = false;
         if(error) {
-          this.openSnackbar('Failed to fetch people you may know', 3000);
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchPeopleYouMayKnow'), 3000);
         }
       }
     });
@@ -108,7 +114,7 @@ export class NetworkHomeComponent implements OnInit{
       error: (error: HttpErrorResponse) => {
         this.mentorsLoading = false;
         if (error) {
-          this.openSnackbar('Failed to fetch mentor suggestions', 3000); 
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchMentorSuggestions'), 3000); 
         }
       }
     });
@@ -132,6 +138,21 @@ export class NetworkHomeComponent implements OnInit{
           break
       }
     }
+  }
+
+  get showEmptyData(): boolean {
+    return (
+      this.connectionRequestsList.length === 0 &&
+      this.connectionsLoading === false &&
+      this.peopleYouMayKnowList.length === 0 &&
+      this.suggestionsLoading === false &&
+      this.mentorSuggestionsList.length === 0 &&
+      this.mentorsLoading === false
+    )
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.networkingService.handleTranslateTo(menuName)
   }
 
   openSnackbar(primaryMsg: string, duration: number = 5000) {

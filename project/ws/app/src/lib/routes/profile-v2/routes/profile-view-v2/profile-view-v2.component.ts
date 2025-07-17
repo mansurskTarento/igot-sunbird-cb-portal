@@ -16,7 +16,7 @@ import { AchievementsComponent } from '../../components/profile-revamp/achieveme
 import { forkJoin, Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'
-import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -215,6 +215,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private breakpointObserver: BreakpointObserver,
     private translateService: TranslateService,
     private datePipe: DatePipe,
+    private events: EventService,
   ) {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
@@ -1220,20 +1221,35 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   openConformationDialog(status: string) {
+    let message = ''
+    switch(status) {
+      case 'Rejected':
+        message = this.handleTranslateTo('areYouSureYouWantToIgnoreThisRequest')
+        break;
+      case 'Withdrawn':
+        message = this.handleTranslateTo('areYouSureYouWantToWithdrawThisRequest')
+        break;
+      case 'Removed':
+        message = this.handleTranslateTo('areYouSureYouWantToRemoveThisConnection')
+        break;
+      case 'Blocked':
+        message = this.handleTranslateTo('areYouSureYouWantToBlockThisConnection')
+        break;
+    }
     const dialgoData = {
-      description: status === 'Blocked' ? 'Are you sure you want to block this connection?' : 'Are you sure you want to withdraw this request?',
+      description: message,
       iconName: 'info',
       type: 'warning',
       buttonsPositionClass: 'justify-center items-center',
       buttons: [
         {
           classes: 'btn-out-line',
-          text: 'No',
+          text: this.handleTranslateTo('no'),
           response: false
         },
         {
           classes: 'succes-button',
-          text: 'yes',
+          text: this.handleTranslateTo('yes'), 
           response: true
         }
       ]
@@ -1246,13 +1262,59 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.updateProfileConnection(status)
+        if(status === 'Blocked') {
+          this.blockUser()
+        } else {
+          this.updateProfileConnection(status)
+        }
       }
     })
   }
 
+  blockUser(): void {
+    const currentUser = this.configSvc.userProfile
+    if (this.userId && currentUser && this.primaryDetails) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'firstName', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.primaryDetails.firstname || '',
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.blockConnection(formBody).subscribe({
+        next: () => {
+          this.getConnectionStatus()
+          this.openSnackbar('User blocked successfully');
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong please try again');
+        }
+      });
+    }
+  }
+
   updateProfileConnection(status: string) {
     const currentUser = this.configSvc.userProfile
+    let subType = ''
+    let eDataId = ''
+    switch (status) {
+      case 'Withdrawn':
+        eDataId = 'connect-withdraw'
+        subType = 'network-hub-connections-sent'
+        break;
+      // case 'Accepted':
+      //   break;
+      case 'Unblocked':
+        eDataId = 'profile-unblock'
+        subType = 'network-hub-connections-blocked'
+        break;
+      // case 'Blocked':
+      //   break
+    }
+    this.raiseTelemetry(_.get(currentUser, 'userId', ''), eDataId, subType)
     if (this.userId && currentUser && this.primaryDetails) {
       const formBody = {
         connectionId: this.userId,
@@ -1287,6 +1349,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   sendConnectionRequest(): void {
     const currentUser = this.configSvc.userProfile
+    this.raiseTelemetry(_.get(currentUser, 'userId', ''), 'profile-connect')
     if (this.userId && currentUser && this.primaryDetails) {
       const formBody = {
         connectionId: this.userId,
@@ -1372,6 +1435,24 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
   //#endregion (activities)
 
+  raiseTelemetry(userId: string, eDataId: string, subType?: string) {
+    const edata: any = {
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: eDataId
+    }
+    const objDetails = {
+      id: userId,
+      type: 'User'
+    }
+    const env = {
+      module: WsEvents.EnumTelemetrymodules.NETWORK,
+    }
+    if(subType) {
+      edata['subType'] = subType
+    }
+    this.events.raiseInteractTelemetry(edata, objDetails, env)
+  }
+    
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
   }

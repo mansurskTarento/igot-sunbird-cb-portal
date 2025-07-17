@@ -116,9 +116,14 @@
                   <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                 </button>
               </ng-container>
-              <ng-container *ngIf="connectionStatus !== 'Blocked'">
+              <ng-container *ngIf="connectionStatus !== 'Blocked' && connectionStatus !== 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Blocked')">
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="connectionStatus === 'Approved'">
+                <button mat-menu-item (click)="openConformationDialog('Removed')">
+                  <span>{{ 'NetworkV2Profile.removeConnection' | translate }} </span>
                 </button>
               </ng-container>
               <button mat-menu-item (click)="copyProfileLink()">
@@ -134,6 +139,11 @@
               <ng-container *ngSwitchCase="'Pending'">
                 <button mat-button class="pendingButton" i18n>
                   {{'NetworkV2Profile.pending' | translate}}
+                </button>
+              </ng-container>
+              <ng-container *ngSwitchCase="'Approved'">
+                <button mat-button class="pendingButton" i18n>
+                  {{'NetworkV2Profile.connected' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchDefault>
