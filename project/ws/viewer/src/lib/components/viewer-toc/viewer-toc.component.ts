@@ -366,6 +366,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
                 ).toPromise()
         }
         const contentData = content.result.content
+        console.log('contentData--', contentData)
         this.collection = content.result.content
         this.contentSvc.currentMetaData = contentData
         this.collectionCard = this.createCollectionCard(contentData)

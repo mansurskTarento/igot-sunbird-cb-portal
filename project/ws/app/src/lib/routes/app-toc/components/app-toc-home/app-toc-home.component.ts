@@ -2460,26 +2460,29 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         }
       })
     }
-    let req ={
-      "request": {
-        "contentIds": preEnrollmentResourcesArr,
-        "fields": [
-            // "lastAccessTime",
-            // "completionPercentage"
-        ]
-    }
-    } 
-    this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-      if(data && data.result && data.result.contentList) {
-        for(let i=0; i<data.result.contentList.length; i++) {
-          if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
-            data.result.contentList[i]['status'] === 2 
-          ) {
-            this.preAssessmentCompletionStatus = true
+    if(preEnrollmentResourcesArr && preEnrollmentResourcesArr.length) {
+      let req ={
+        "request": {
+          "contentIds": preEnrollmentResourcesArr,
+          "fields": [
+              // "lastAccessTime",
+              // "completionPercentage"
+          ]
+      }
+      } 
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        if(data && data.result && data.result.contentList) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+            if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
+              data.result.contentList[i]['status'] === 2 
+            ) {
+              this.preAssessmentCompletionStatus = true
+            }
           }
         }
-      }
-    })
+      })
+    }
+    
   }
 
 }

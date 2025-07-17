@@ -53,9 +53,13 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
         this.isFetchingDataComplete = false
 
         this.dataSubscription = this.activatedRoute.data.subscribe(
-            async data => {
+            async (data:any) => {
                 this.isFetchingDataComplete = false
                 this.testData = data.content.data
+                console.log('dat---',data)
+                if(data && data?.contextCategory === 'Pre Enrolment Assessment') {
+                    this.contentSvc.currentMetaData = data
+                }
                 //   console.log(this.testData)
                 this.init()
             })

@@ -115,6 +115,8 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
 
   checkForAssessmentSubmitAlready(identifier: any) {
     if (this.selectedAssessmentCompatibilityLevel) {
+      console.log('this.selectedAssessmentCompatibilityLevel--',this.selectedAssessmentCompatibilityLevel)
+      console.log(this.questionTYP.FINAL_ASSESSMENT , this.primaryCategory)
       if (this.selectedAssessmentCompatibilityLevel < 7 && this.questionTYP.FINAL_ASSESSMENT === this.primaryCategory) {
         this.quizSvc.canAttend(identifier).subscribe(response => {
           if (response && response.attemptsMade > 0 && response.attemptsMade < response.attemptsAllowed) {
