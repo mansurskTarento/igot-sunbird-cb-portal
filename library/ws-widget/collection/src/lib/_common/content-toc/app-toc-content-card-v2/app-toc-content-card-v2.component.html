@@ -454,6 +454,7 @@
                 [ngClass]="{'ml-3': isEnrolled}"
                 [routerLink]="(isAllowed && !forPreview && isEnabled) ? resourceLink.url : null"
                 [queryParams]="computedQueryParams">
+                <!-- {{content?.courseCategory}} -->
                 <div [ngClass]="{'resource-active': pathSet?.has(content?.identifier)}"></div>
                 <div class="text-truncate " [ngClass]="{'cursor-pointer': !isEnabled}"
                     (click)="raiseTelemetry(); changeResource()">

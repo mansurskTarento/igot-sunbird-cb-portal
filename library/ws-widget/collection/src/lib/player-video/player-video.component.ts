@@ -64,7 +64,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   playerInitObj:any
   previousSubtitleLanguage = 'en'
   playTranscriptionVideoSubscription:Subscription | null = null
-  changeTranscriptionLanguageEventSubscription: Subscription | null = null
+  changeTranscriptionLanguageEventSubscription: Subscription | null = null  
   constructor(
     private eventSvc: EventService,
     private contentSvc: WidgetContentService,

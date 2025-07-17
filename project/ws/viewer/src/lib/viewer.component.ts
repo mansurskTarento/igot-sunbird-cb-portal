@@ -169,7 +169,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if(this.isPreAssessment) {
       
       
-      
     } else {
       const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
       this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
@@ -498,8 +497,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         }
       }
-      // console.log(this.tocSvc.hashmap)
-      // console.log('this.hierarchyMapData', this.hierarchyData)
     })
   }
 
