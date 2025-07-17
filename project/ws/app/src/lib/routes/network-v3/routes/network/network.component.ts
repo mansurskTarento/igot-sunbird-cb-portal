@@ -50,14 +50,13 @@ export class NetworkComponent implements OnInit {
       navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
       imageUrl: './assets/icons/connection.svg',
-      queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
+      queryParams: { type: 'peopleYouMayKnow' }
     },
     {
       name: 'NetworkLandingPage.mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/book_read.svg',
-      queryParams: { pageSize: 50, offset: 0 }
+      imageUrl: './assets/icons/book_read.svg'
     }
   ]
   userDetails: any = {};
