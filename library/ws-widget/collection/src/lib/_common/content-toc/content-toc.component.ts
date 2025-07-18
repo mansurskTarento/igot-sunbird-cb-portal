@@ -15,7 +15,6 @@ import { VttFile } from '@polyflix/vtt-parser';
 import { tap } from 'rxjs/operators'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { MatTab } from '@angular/material/tabs'
-import { ViewerHeaderSideBarToggleService } from '@ws/viewer/src/lib/viewer-header-side-bar-toggle.service'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -93,8 +92,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private actionSVC: ActionService,
     private router: Router,
     private eventSvc: EventService,
-    private viewerDataSvc: ViewerDataService,
-    public viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
+    private viewerDataSvc: ViewerDataService
   ) { }
 
   ngOnInit() {    

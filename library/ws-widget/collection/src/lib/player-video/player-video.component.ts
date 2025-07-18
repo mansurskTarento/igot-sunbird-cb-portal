@@ -602,7 +602,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
       if (Array.isArray(this.transcriptionLangArr)) {
         const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
-        console.log('defaultTrack--', defaultTrackTemp)
         let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
           return item?.label === defaultTrackTemp?.default_lang
         });
@@ -778,7 +777,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   replaceSubtitleTrack(newTrack: any) {
-    console.log('newTrack', newTrack)
 
     // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
     // console.log('defaultTrack--', defaultTrackTemp)
