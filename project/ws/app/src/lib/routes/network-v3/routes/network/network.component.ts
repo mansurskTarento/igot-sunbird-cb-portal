@@ -95,7 +95,7 @@ export class NetworkComponent implements OnInit {
     this.networkingSvc.getCommunities(formBody).subscribe({
       next: (responce: any) => {
         this.communitiesLoading = false;
-        this.communitySuggestionsList = _.get(responce, 'result.search_results.data')
+        this.communitySuggestionsList = _.get(responce, 'result.data')
       },
       error: () => {
         this.communitiesLoading = false;

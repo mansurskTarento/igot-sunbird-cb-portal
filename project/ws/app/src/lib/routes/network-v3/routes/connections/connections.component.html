@@ -8,7 +8,7 @@
           <div class="flex tabLable justify-center items-center">
             {{tabDetails?.lable | translate}}
             <ng-container *ngIf="tabDetails?.recordsCount > 0">
-              <ng-container *ngIf="selectedTabIndex === i; else notSelectedCount">
+              <ng-container *ngIf="tabDetails?.key === 'Received'; else notSelectedCount">
                 <div class="selected-count">{{tabDetails?.recordsCount}}</div>
               </ng-container>
               <ng-template #notSelectedCount>
