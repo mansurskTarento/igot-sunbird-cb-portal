@@ -169,7 +169,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if(this.isPreAssessment) {
       
       
-      
     } else {
       const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
       this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
@@ -479,28 +478,29 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.hierarchyData.map((item:any)=>{
       identifierArr.push(item.identifier)
     })
-    let req ={
-      "request": {
-        "contentIds": identifierArr,
-        "fields": [
-            // "lastAccessTime",
-            // "completionPercentage"
-        ]
-    }
-    } 
-    this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-      // console.log('read resources progress data', data)
-      if(data && data.result && data.result.contentList) {
-        for(let i=0; i<data.result.contentList.length; i++) {
-          if(Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
-            this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
-            this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
+    if(identifierArr && identifierArr.length) {
+      let req ={
+        "request": {
+          "contentIds": identifierArr,
+          "fields": [
+              // "lastAccessTime",
+              // "completionPercentage"
+          ]
+      }
+      } 
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        // console.log('read resources progress data', data)
+        if(data && data.result && data.result.contentList) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+            if(Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
+              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
+              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
+            }
           }
         }
-      }
-      // console.log(this.tocSvc.hashmap)
-      // console.log('this.hierarchyMapData', this.hierarchyData)
-    })
+      })
+    }
+   
   }
 
  }

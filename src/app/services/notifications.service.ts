@@ -11,6 +11,7 @@ const API_END_POINTS = {
   RESET_NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/reset/unread/count`,
   CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
   WORKFLOW_SEARCH: `apis/protected/v8/workflowhandler/profileApprovalSearch`,
+  CONNECTION_REQUEST: (pageNo: any, pageSize: any) => `apis/protected/v8/connections/v2/connections/requests/received?pageNo=${pageNo}&pageSize=${pageSize}`,
 }
 
 @Injectable({
@@ -53,6 +54,14 @@ export class NotificationsService {
     return this.http.post(API_END_POINTS.WORKFLOW_SEARCH, req)
   }
 
+  getMyRequests(): Observable<any> {
+    return this.http.get<any>(`${API_END_POINTS.CONNECTION_REQUEST(0, 100)}`).pipe(
+      map((data: any) => {
+        return data.result.data
+      }),
+      retry(1))
+  }
+
   constrctPayload(notification: any): any {
     let req: any = {
       applicationStatus: 'SEND_FOR_APPROVAL',
@@ -88,6 +97,27 @@ export class NotificationsService {
     }
   }
 
+  handleNetworkRedirection(notification: any, snackBar: any): void {
+    if (notification.sub_category === 'REJECTED_CONNECTION_REQUEST') {
+      snackBar.open('Your connection request has been rejected.')
+    } else if (notification.sub_category === 'SEND_CONNECTION_REQUEST') {
+      this.getMyRequests().subscribe((res: any) => {
+        if (res && res.length) {
+          const connection = res.find((item: any) => item.userId === notification.message.data.id)
+          if (connection) {
+            this.router.navigate([`/app/network-v2/connections`])
+          } else {
+            snackBar.open('No pending request found for the user.')
+          }
+        } else {
+          snackBar.open('No pending request found for the user.')
+        }
+      })
+    } else {
+      this.router.navigate([`/app/network-v2/connections`])
+    }
+  }
+
   handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
     if (notification.category === 'LEARN') {
       this.router.navigate([`/app/toc/${notification.message.data.id}`])
@@ -96,7 +126,7 @@ export class NotificationsService {
     } else if (notification.category === 'DISCUSSION') {
       this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
     } else if (notification.category === 'NETWORK') {
-      this.router.navigate([`/app/network-v2/connections`])
+      this.handleNetworkRedirection(notification, snackBar)
     } else if (notification?.category?.includes('CONTENT')) {
       this.getContentData(notification.message.data.id).subscribe((res: any) => {
         let isStandaloneResource = false

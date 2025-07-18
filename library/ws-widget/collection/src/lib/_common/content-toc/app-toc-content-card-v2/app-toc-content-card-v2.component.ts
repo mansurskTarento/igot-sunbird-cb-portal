@@ -194,16 +194,25 @@ export class AppTocContentCardV2Component implements OnInit {
         // || this.content.primaryCategory === NsContent.EPrimaryCategory.KNOWLEDGE_ARTIFACT
         || this.content.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
         || this.content.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
-        || this.content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT
+        || this.content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT        
       )
     }
     return false
   }
   get resourceLink(): { url: string; queryParams: { [key: string]: any } } {
     if (this.content) {
+      let mimeType:any = ''
+      if(this.content && this.content.courseCategory === 'Pre Enrolment Assessment' && 
+        this.content.mimeType === 'application/vnd.ekstep.content-collection'
+      ) {
+        mimeType = 'application/vnd.sunbird.questionset'
+        this.content.mimeType = NsContent.EMimeTypes.FINAL_ASSESSMENT
+      } else {
+        mimeType = this.content.mimeType
+      }
       let url = viewerRouteGenerator(
         this.content.identifier,
-        this.content.mimeType,
+        mimeType,
         this.rootId,
         this.rootContentType,
         this.forPreview,
