@@ -2174,8 +2174,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   assignQuizResult(res: NSPractice.IQuizSubmitResponseV2) {
-    console.log('this.quizJson', this.quizJson)
-    console.log('res', res)
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       if(isPreAssessment) {
         if(res && res.pass) {

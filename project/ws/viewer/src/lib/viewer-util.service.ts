@@ -459,7 +459,6 @@ export class ViewerUtilService {
             ],
           },
         }
-        console.log('req', req)
         this.http
           .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}/${contentId}`, req)
           .subscribe(noop, noop)

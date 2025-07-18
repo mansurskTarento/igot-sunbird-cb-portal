@@ -110,7 +110,6 @@ export class ViewerResolve
             }
           }
         }
-        console.log('data--', data)
         if (resourceType === 'unknown') {
           this.router.navigate([
             `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(data.mimeType)}/${data.identifier
