@@ -373,7 +373,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.coursePrimaryCategory = this.widgetContentService.currentMetaData.primaryCategory
-    console.log('this.widgetContentService.currentMetaData', this.widgetContentService.currentMetaData)
     if (this.widgetContentService.currentMetaData.children && this.widgetContentService.currentMetaData.children.length) {
       this.widgetContentService.currentMetaData.children.map((item: any) => {
         const activeResource =  this.findNested(item, 'identifier', this.identifier)
