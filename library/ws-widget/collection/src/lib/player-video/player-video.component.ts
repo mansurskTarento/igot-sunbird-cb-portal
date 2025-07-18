@@ -601,8 +601,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        const defaultTrack:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
-        // console.log('defaultTrack--', defaultTrack)
+        const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+        let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+          return item?.label === defaultTrackTemp?.default_lang
+        });
         this.transcriptionLangArr.forEach((track:any) => {
           // console.log(track?.label , defaultTrack?.label)
           // console.log('track--', track)
@@ -636,6 +638,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 });
                 if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
                   this.replaceSubtitleTrack(newTrack);
+                } else {
+                  this.replaceSubtitleTrack(defaultTrack);
                 }
                 // if(newTrack) {
                 //   this.transcriptionLangArr.forEach((track:any) => {
@@ -665,6 +669,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               this.updateSubtitleButtonIcon(true)
               break; // Only one track should be 'showing'
             } else {
+              this.previousSubtitleLanguage = ''
               this.updateSubtitleButtonIcon(false)
             }
           }
@@ -772,6 +777,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   replaceSubtitleTrack(newTrack: any) {
+
+    // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+    // console.log('defaultTrack--', defaultTrackTemp)
+    // let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+    //   return item?.label === defaultTrackTemp?.default_lang
+    // });
+
     const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
     const existingTracks = videoEl.querySelectorAll('track');
     existingTracks.forEach((el: any) => el.remove());
@@ -837,6 +849,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   
           console.log('✅ Cuechange listener attached');
           return; // Done
+        } else {
+         // track.mode = 'hidden'
         }
       }
   

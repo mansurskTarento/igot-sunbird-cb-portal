@@ -242,6 +242,8 @@
     width: 100%; /* Ensure it takes up the full width of the parent */
 }
 
+
+
 .selected-option-content {
   color: #1b4ca1;
 }
@@ -253,7 +255,7 @@
 .black-text {
   color: black;
   word-wrap: break-word;
-  text-align: justify;
+  // text-align: justify;
 }
 
 .subtitle-time {
@@ -262,15 +264,15 @@
 }
 
 .subtitle-text-slot {
-  width: 80%;
+  width: 74%;
 }
 
 .w-subtitle-80 {
-  width: 80%;
+  width: 70%;
 }
 
 .w-subtitle-20 {
-  width: 20%;
+  width: 30%;
 }
 
 ::ng-deep {
@@ -279,17 +281,7 @@
   }
 }
 
-@media (min-width: 1056px) and (max-width: 1232px) {
-  .subtitle-time {
-    width: 40%; /* Slightly more space for readability */
-  }
-
-  .subtitle-text-slot {
-    width: 60%;
-  }
-}
-
-@media  (min-width: 768px) and (max-width:1023px) {
+@media (min-width: 1280px) and (max-width: 1280px) {
   .subtitle-time {
     width: 30%; /* Slightly more space for readability */
   }
@@ -299,13 +291,98 @@
   }
 }
 
-@media only screen and (max-width: 767px) {
+@media (min-width: 1280px) and (max-width: 1280px) {
   .subtitle-time {
-    width: 38%; /* Slightly more space for readability */
+    width: 30%; /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
-    width: 62%;
+    width: 70%;
+  }
+}
+
+@media (min-width: 1056px) and (max-width: 1232px) {
+  .subtitle-time {
+    width: 30%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 70%;
+  }
+}
+
+@media  (min-width: 1024px) and (max-width:1024px) {
+  .subtitle-time {
+    width: 30%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 70%;
+  }
+}
+
+@media  (min-width: 768px) and (max-width:1023px) {
+  .subtitle-time {
+    width: 25%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 75%;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 360px) {
+  .subtitle-time {
+    width: 50%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 50%;
+  }
+
+  .disclaimer {
+    background-color: rgba(243, 150, 47, 0.2);
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Lato;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin: 10px;
+  }
+}
+
+@media (min-width: 361px)  and (max-width: 540px) {
+  .subtitle-time {
+    width: 50%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 50%;
+  }
+
+  .w-subtitle-20 {
+    width:40%
+  }
+
+  .disclaimer {
+    background-color: rgba(243, 150, 47, 0.2);
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Lato;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin: 10px;
+  }
+}
+
+
+@media (min-width: 541px)  and (max-width: 767px) {
+  .subtitle-time {
+    width: 40%; /* Slightly more space for readability */
+  }
+
+  .subtitle-text-slot {
+    width: 60%;
   }
 
   .w-subtitle-20 {
@@ -353,4 +430,32 @@
 :host ::ng-deep .tab-group-container ::ng-deep .mat-mdc-tab-header-pagination {
   z-index: 1 !important;
 }
+
+:host ::ng-deep .transcript-flex-container .mat-mdc-text-field-wrapper {
+  width: 100%;
+  padding: 10px;
+}
+
+/* Remove underline by default */
+:host ::ng-deep .multiline-select.mat-mdc-form-field .mdc-line-ripple {
+  display: none !important;
+}
+
+:host ::ng-deep .multiline-select.mat-mdc-form-field:hover .mdc-line-ripple {
+  display: block !important;
+  height: 4px !important;
+
+  color: #1b4ca1 !important
+}
+/* 3. Add light blue hover background */
+:host ::ng-deep .multiline-select.mat-mdc-form-field:hover .mat-mdc-form-field-flex {
+  background-color: #e3eeff !important;
+  
+}
+
+:host ::ng-deep .multiline-select .mat-mdc-select-arrow-wrapper {
+  margin-right: 10px;
+}
+
+
 
