@@ -698,7 +698,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         query: this.aiTutorResult.query,  
         query_id: this.aiTutorResult.query_id,
         feedback: '',
-        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: 
+        (startTime <= 0 && endTime <= 0) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true`:  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       // arr.push(resultObj)
@@ -752,7 +753,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
         .join('&');
     let path = ''
-    path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
+    (item?.contentStart <= 0 && item?.contentEnd <=0) ? `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` : `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     // console.log('path', path)
    // window.open(path, '_blank')
    if(this.isMobile) {
@@ -773,7 +775,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
+     (item?.contentStart <=0 && item?.contentEnd <=0 ) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` :  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()

@@ -38,6 +38,25 @@
             <div class="disclaimer my-2">
                 <p class="py-2 px-2">Disclaimer : These transcripts and subtitles are AI-generated and may contain errors.</p>
             </div>
+            <div class="w-full ml-5 mr-5" *ngIf="isMobileForAI">
+                <div class="transcript-flex-container mt-2">
+                    <mat-form-field class="multiline-select" appearance="fill" style="height: auto; width: 100%;" floatLabel="never">
+                        <mat-select class="multiline-select-box pr-5" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
+                          <mat-select-trigger class="multiline-select-box-trigger">
+                            <div class="selected-option-content px-5 py-2">
+                              <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="defaultTranscriptLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
+                            </div>
+                          </mat-select-trigger>
+                          <mat-option class="multiline-select-option" value="" *ngFor="let lang of vttLangArr" [value]="lang"
+                          [ngClass]="{'active-option': selectedTranscriptionStyle?.label === lang?.label}">
+                            <div class="option-content">
+                              <div class="title">{{lang?.language | titlecase}}</div>
+                            </div>
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+            </div>
             <div class="ml-4 flex flex-row justify-end transcript-control">
                 <!-- <mat-form-field appearance="none">
                     <select matNativeControl required class="section-dd" (change)="renderSelectedLanguageTranscription($event)">
@@ -47,8 +66,8 @@
                     </select>
                 </mat-form-field> -->
                 <div class="flex flex-row w-full">
-                    <div class="w-subtitle-80">
-                        <div class="ml-5-per" *ngIf="subTitles && subTitles?.length">
+                    <div [ngClass]="!isMobileForAI ? 'w-subtitle-80':'w-full'">
+                        <div [ngClass]="!isMobileForAI ? 'ml-5-per' : ''" *ngIf="subTitles && subTitles?.length">
                             <!-- Transcription content -->
                              <ng-container *ngFor="let subtitle of subTitles">
                                 <div class="flex flex-col  my-2">
@@ -73,12 +92,12 @@
                     </ng-container> 
                         </div>
                     </div>
-                    <div class="w-subtitle-20">
+                    <div class="w-subtitle-20" *ngIf="!isMobileForAI"> 
                         <div class="transcript-flex-container mt-2">
-                            <mat-form-field class="multiline-select" appearance="fill" style="height: 75px; width: 100%;" floatLabel="never">
-                                <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
+                            <mat-form-field class="multiline-select" appearance="fill" style="height: auto; width: 100%;" floatLabel="never">
+                                <mat-select class="multiline-select-box pr-5" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
                                   <mat-select-trigger class="multiline-select-box-trigger">
-                                    <div class="selected-option-content">
+                                    <div class="selected-option-content px-5 py-2">
                                       <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="defaultTranscriptLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
                                     </div>
                                   </mat-select-trigger>
