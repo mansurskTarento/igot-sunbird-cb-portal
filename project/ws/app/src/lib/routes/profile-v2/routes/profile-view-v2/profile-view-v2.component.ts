@@ -16,12 +16,13 @@ import { AchievementsComponent } from '../../components/profile-revamp/achieveme
 import { forkJoin, Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'
-import { ConfigurationsService, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
+import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 //#endregion
 
 @Component({
@@ -159,10 +160,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
 
   peopleSuggestionsList: any[] = []
+  suggestionsLoading = false
   communitySuggestionsList: any[] = []
+  communitySuggestionsLoading = true
   aboutme = ''
   showMoreAbout = false
-  showViewMoreBtn =  false
+  showViewMoreBtn = false
   primaryDetails: any;
 
   groupsList: any[] = []
@@ -197,7 +200,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion
 
   connectionStatus = 'Connect'
-  connectionStatusTranslation = 'NetworkV2Profile.connect'
   isMobile = false;
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
@@ -213,8 +215,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private breakpointObserver: BreakpointObserver,
     private translateService: TranslateService,
     private datePipe: DatePipe,
+    private events: EventService,
   ) {
-     this.breakpointObserver.observe([Breakpoints.Handset])
+    this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
         this.setAboutMeButton()
@@ -239,14 +242,52 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.selectRoute(lastSectionId);
       }, 100);
     }
+    this.getRecommendedUsers()
+    this.getRecommendedCommunitesList()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getGroupData()
     this.getInsightsData()
-    
   }
 
   //#region (initialization)
+
+  getRecommendedUsers() {
+    const formBody = {
+      size: 3,
+      offset: 0,
+    }
+
+    this.suggestionsLoading = true;
+    this.profileV2RevampSvc.getRecommendedUsers(formBody).subscribe({
+      next: (response: any) => {
+        this.suggestionsLoading = false;
+        this.peopleSuggestionsList = _.get(response, 'result.response', []);
+      },
+      error: () => {
+        this.suggestionsLoading = false;
+        this.openSnackbar('Error while fetching communities')
+      }
+    });
+  }
+
+  getRecommendedCommunitesList() {
+    const formBody = {
+      field: "countOfPeopleJoined",
+      limit: 3
+    }
+    this.communitySuggestionsLoading = true;
+    this.profileV2RevampSvc.getCommunities(formBody).subscribe({
+      next: (response: any) => {
+        this.communitySuggestionsLoading = false;
+        this.communitySuggestionsList = _.get(response, 'result.data', [])
+      },
+      error: () => {
+        this.communitySuggestionsLoading = false;
+        this.openSnackbar('Error while fetching communities')
+      }
+    })
+  }
 
   getGroupData(): void {
     this.profileV2RevampSvc.getGroups()
@@ -267,7 +308,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
         this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
-        if(!this.isCurrentUser){
+        if (!this.isCurrentUser) {
           this.getConnectionStatus()
         }
       }
@@ -279,8 +320,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.patchProfileDetails()
       this.setUserStats()
       this.patchEntries(_.get(data, 'entries.data', {}))
-      this.patchConnections(_.get(data, 'recamendations.data', []))
-      this.patchRecamendedCommunity(_.get(data, 'recamendedCommunity.data', []))
       this.checkIsMentor()
     })
     this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
@@ -289,26 +328,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getConnectionStatus() {
     this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
-      switch (this.connectionStatus.toLowerCase()) {
-        case 'connect':
-          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
-          break;
-        case 'pending':
-          this.connectionStatusTranslation = 'NetworkV2Profile.pending'
-          break;
-        case 'unblock':
-          this.connectionStatusTranslation = 'NetworkV2Profile.unblock'
-          break;
-        case 'approved':
-          this.connectionStatusTranslation = 'NetworkV2Profile.approved'
-          break;
-        case 'rejected':
-          this.connectionStatusTranslation = 'NetworkV2Profile.rejected'
-          break;
-        default:
-          this.connectionStatusTranslation = 'NetworkV2Profile.connect'
-          break;
-      }
     })
   }
 
@@ -343,7 +362,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
       profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
-    if(isCadre) {
+    if (isCadre) {
       this.primaryDetails['civilServiceTypeId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceTypeId', '')
       this.primaryDetails['civilServiceType'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceType', 'NA')
       this.primaryDetails['civilServiceId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceId', '')
@@ -355,7 +374,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
-    if(!this.isCurrentUser && this.aboutme !== '') {
+    if (!this.isCurrentUser && this.aboutme === '') {
       this.filterProfileRoutes('about-me')
     }
     this.getInitials()
@@ -393,7 +412,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setUserStats() {
-    if(this.userStats && this.userStats.length > 0 && this.profileData) {
+    if (this.userStats && this.userStats.length > 0 && this.profileData) {
       this.userStats.forEach((userStat: UserStats) => {
         switch (userStat.identifier) {
           case 'karmaPoints':
@@ -431,14 +450,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.achievementsDetails.count = _.get(entries, 'achievements.count', 0)
     this.locationDetails = _.get(entries, 'locationDetails.data[0]', {})
 
-    if(!this.isCurrentUser) {
+    if (!this.isCurrentUser) {
       if (_.get(this.serviceHistoryDetails, 'serviceHistoryList', []).length === 0) {
         this.filterProfileRoutes('service-history')
       }
       if (_.get(this.educationalQualificationDetails, 'educationalQualifications', []).length === 0) {
         this.filterProfileRoutes('educational-qualifications')
       }
-      if(_.get(this.achievementsDetails, 'achievementsList', []).length === 0) {
+      if (_.get(this.achievementsDetails, 'achievementsList', []).length === 0) {
         this.filterProfileRoutes('achievements')
       }
     }
@@ -451,19 +470,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   setAboutMeButton() {
     if (this.aboutme !== '') {
       setTimeout(() => {
-        if(this.aboutMeElement && this.aboutMeElement.nativeElement && this.aboutMeElement.nativeElement.offsetHeight) {
+        if (this.aboutMeElement && this.aboutMeElement.nativeElement && this.aboutMeElement.nativeElement.offsetHeight) {
           this.showViewMoreBtn = this.aboutMeElement.nativeElement.offsetHeight > 56
         }
       }, 10)
     }
-  }
-
-  patchConnections(connections: any) {
-    this.peopleSuggestionsList = connections.slice(0, 3)
-  }
-
-  patchRecamendedCommunity(community: any) {
-    this.communitySuggestionsList = community
   }
 
   checkIsMentor() {
@@ -618,8 +629,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        const handleSendApproval = header === 'Primary Details'
-        this.generateBasicProfileFormBody(result, handleSendApproval)
+        this.generateBasicProfileFormBody(result)
         if (_.get(result, 'state', '') || _.get(result, 'district', '')) {
           if (_.get(result, 'state', '') !== _.get(this.locationDetails, 'state', '') ||
             _.get(result, 'district', '') !== _.get(this.locationDetails, 'district', '')
@@ -643,7 +653,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
-  generateBasicProfileFormBody(result: any, handleSendApproval: boolean): any {
+  generateBasicProfileFormBody(result: any): any {
     if (result) {
       const formBody: any = {
         request: {
@@ -653,138 +663,138 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       };
 
       // Define field mappings with their paths in the API response and form body
-      const fieldMappings:{
-          formField: string,
-          resultPath: string,
-          formBodyPath: string,
-          isCader?: boolean
-        }[] = [
-        {
-          formField: 'profileImageUrl',
-          resultPath: 'profileImageUrl',
-          formBodyPath: 'profileDetails.profileImageUrl'
-        },
-        {
-          formField: 'firstname',
-          resultPath: 'firstname',
-          formBodyPath: 'profileDetails.personalDetails.firstname'
-        },
-        {
-          formField: 'primaryEmail',
-          resultPath: 'primaryEmail',
-          formBodyPath: 'profileDetails.personalDetails.primaryEmail'
-        },
-        {
-          formField: 'mobile',
-          resultPath: 'mobile',
-          formBodyPath: 'profileDetails.personalDetails.mobile'
-        },
-        {
-          formField: 'gender',
-          resultPath: 'gender',
-          formBodyPath: 'profileDetails.personalDetails.gender'
-        },
-        {
-          formField: 'dob',
-          resultPath: 'dob',
-          formBodyPath: 'profileDetails.personalDetails.dob'
-        },
-        {
-          formField: 'domicileMedium',
-          resultPath: 'domicileMedium',
-          formBodyPath: 'profileDetails.personalDetails.domicileMedium'
-        },
-        {
-          formField: 'category',
-          resultPath: 'category',
-          formBodyPath: 'profileDetails.personalDetails.category'
-        },
-        {
-          formField: 'isCadre',
-          resultPath: 'isCadre',
-          formBodyPath: 'profileDetails.personalDetails.isCadre'
-        },
-        {
-          formField: 'group',
-          resultPath: 'group',
-          formBodyPath: 'profileDetails.professionalDetails[0].group'
-        },
-        {
-          formField: 'designation',
-          resultPath: 'designation',
-          formBodyPath: 'profileDetails.professionalDetails[0].designation'
-        },
-        {
-          formField: 'osid',
-          resultPath: 'osid',
-          formBodyPath: 'profileDetails.professionalDetails[0].osid'
-        },
-        {
-          formField: 'employeeCode',
-          resultPath: 'employeeCode',
-          formBodyPath: 'profileDetails.employmentDetails.employeeCode'
-        },
-        {
-          formField: 'pinCode',
-          resultPath: 'pinCode',
-          formBodyPath: 'profileDetails.employmentDetails.pinCode'
-        },
-        {
-          formField: 'aboutme',
-          resultPath: 'aboutme',
-          formBodyPath: 'profileDetails.employmentDetails.aboutme'
-        }
-      ];
+      const fieldMappings: {
+        formField: string,
+        resultPath: string,
+        formBodyPath: string,
+        isCader?: boolean
+      }[] = [
+          {
+            formField: 'profileImageUrl',
+            resultPath: 'profileImageUrl',
+            formBodyPath: 'profileDetails.profileImageUrl'
+          },
+          {
+            formField: 'firstname',
+            resultPath: 'firstname',
+            formBodyPath: 'profileDetails.personalDetails.firstname'
+          },
+          {
+            formField: 'primaryEmail',
+            resultPath: 'primaryEmail',
+            formBodyPath: 'profileDetails.personalDetails.primaryEmail'
+          },
+          {
+            formField: 'mobile',
+            resultPath: 'mobile',
+            formBodyPath: 'profileDetails.personalDetails.mobile'
+          },
+          {
+            formField: 'gender',
+            resultPath: 'gender',
+            formBodyPath: 'profileDetails.personalDetails.gender'
+          },
+          {
+            formField: 'dob',
+            resultPath: 'dob',
+            formBodyPath: 'profileDetails.personalDetails.dob'
+          },
+          {
+            formField: 'domicileMedium',
+            resultPath: 'domicileMedium',
+            formBodyPath: 'profileDetails.personalDetails.domicileMedium'
+          },
+          {
+            formField: 'category',
+            resultPath: 'category',
+            formBodyPath: 'profileDetails.personalDetails.category'
+          },
+          {
+            formField: 'isCadre',
+            resultPath: 'isCadre',
+            formBodyPath: 'profileDetails.personalDetails.isCadre'
+          },
+          {
+            formField: 'group',
+            resultPath: 'group',
+            formBodyPath: 'profileDetails.professionalDetails[0].group'
+          },
+          {
+            formField: 'designation',
+            resultPath: 'designation',
+            formBodyPath: 'profileDetails.professionalDetails[0].designation'
+          },
+          {
+            formField: 'osid',
+            resultPath: 'osid',
+            formBodyPath: 'profileDetails.professionalDetails[0].osid'
+          },
+          {
+            formField: 'employeeCode',
+            resultPath: 'employeeCode',
+            formBodyPath: 'profileDetails.employmentDetails.employeeCode'
+          },
+          {
+            formField: 'pinCode',
+            resultPath: 'pinCode',
+            formBodyPath: 'profileDetails.employmentDetails.pinCode'
+          },
+          {
+            formField: 'aboutme',
+            resultPath: 'aboutme',
+            formBodyPath: 'profileDetails.employmentDetails.aboutme'
+          }
+        ];
 
-      if(result && result.isCadre) {
+      if (result && result.isCadre) {
         const cadreDetailsFieldMappings = [
           {
-          formField: 'civilServiceTypeId',
-          resultPath: 'civilServiceTypeId',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceTypeId',
-          isCader: true
-        }, {
-          formField: 'civilServiceType',
-          resultPath: 'civilServiceType',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceType',
-          isCader: true
-        },
-        {
-          formField: 'civilServiceId',
-          resultPath: 'civilServiceId',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceId',
-          isCader: true
-        },
-        {
-          formField: 'civilServiceName',
-          resultPath: 'civilServiceName',
-          formBodyPath: 'profileDetails.cadreDetails.civilServiceName',
-          isCader: true
-        },
-        {
-          formField: 'cadreId',
-          resultPath: 'cadreId',
-          formBodyPath: 'profileDetails.cadreDetails.cadreId',
-          isCader: true
-        },
-        {
-          formField: 'cadreName',
-          resultPath: 'cadreName',
-          formBodyPath: 'profileDetails.cadreDetails.cadreName',
-          isCader: true
-        },
-        {
-          formField: 'cadreBatch',
-          resultPath: 'cadreBatch',
-          formBodyPath: 'profileDetails.cadreDetails.cadreBatch',
-          isCader: true
-        },
-        {
-          formField: 'cadreControllingAuthorityName',
-          resultPath: 'cadreControllingAuthorityName',
-          formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName',
-          isCader: true
-        }
+            formField: 'civilServiceTypeId',
+            resultPath: 'civilServiceTypeId',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceTypeId',
+            isCader: true
+          }, {
+            formField: 'civilServiceType',
+            resultPath: 'civilServiceType',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceType',
+            isCader: true
+          },
+          {
+            formField: 'civilServiceId',
+            resultPath: 'civilServiceId',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceId',
+            isCader: true
+          },
+          {
+            formField: 'civilServiceName',
+            resultPath: 'civilServiceName',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceName',
+            isCader: true
+          },
+          {
+            formField: 'cadreId',
+            resultPath: 'cadreId',
+            formBodyPath: 'profileDetails.cadreDetails.cadreId',
+            isCader: true
+          },
+          {
+            formField: 'cadreName',
+            resultPath: 'cadreName',
+            formBodyPath: 'profileDetails.cadreDetails.cadreName',
+            isCader: true
+          },
+          {
+            formField: 'cadreBatch',
+            resultPath: 'cadreBatch',
+            formBodyPath: 'profileDetails.cadreDetails.cadreBatch',
+            isCader: true
+          },
+          {
+            formField: 'cadreControllingAuthorityName',
+            resultPath: 'cadreControllingAuthorityName',
+            formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName',
+            isCader: true
+          }
         ]
         fieldMappings.push(...cadreDetailsFieldMappings)
       }
@@ -795,18 +805,18 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       fieldMappings.forEach(mapping => {
         const currentValue = _.get(result, mapping.resultPath, null);
         let formValue = this.primaryDetails[mapping.formField];
-        if(mapping.formField === 'dob' && formValue) {
+        if (mapping.formField === 'dob' && formValue) {
           formValue = this.datePipe.transform(new Date(formValue), 'dd-MM-yyyy');
         }
 
         if ((
-              (formValue !== currentValue && currentValue !== null) && 
-              (
-                (formValue === 'NA' && currentValue !== '') || 
-                formValue !== 'NA'
-              )
-            )
-            || mapping.isCader
+          (formValue !== currentValue && currentValue !== null) &&
+          (
+            (formValue === 'NA' && currentValue !== '') ||
+            formValue !== 'NA'
+          )
+        )
+          || mapping.isCader
         ) {
           const pathParts = mapping.formBodyPath.split('.');
           let current = formBody.request;
@@ -829,32 +839,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           hasChanges = true;
         }
       });
-
-      if (handleSendApproval) {
-        // const data: any = {}
-        // if ((
-        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
-        //   _.get(result, 'group', '') &&
-        //   _.get(result, 'group', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].group', '')) ||
-        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
-        //     _.get(result, 'group', ''))) {
-        //   data['group'] = _.get(result, 'group', '')
-        // }
-        // if ((
-        //   _.get(this.profesionalDetails, 'professionalDetails', []).length > 0 &&
-        //   _.get(result, 'designation', '') &&
-        //   _.get(result, 'designation', '') !== _.get(this.profesionalDetails, 'professionalDetails[0].designation', '')) ||
-        //   (_.get(this.profesionalDetails, 'professionalDetails', []).length === 0 &&
-        //     _.get(result, 'designation', ''))) {
-        //   data['designation'] = _.get(result, 'designation', '')
-        // }
-
-        // if(data['group'] || data['designation']) {
-        //   formBody.request.profileDetails['professionalDetails'] = _.get(this.profesionalDetails, 'professionalDetails', [])
-        //   formBody.request.profileDetails['professionalDetails'].push(data)
-        //   hasChanges = true;
-        // }
-      }
 
       if (hasChanges) {
         this.updateProfileDetails(formBody);
@@ -944,8 +928,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   handleTransferRequest(): void {
     const portalProfile = _.get(this.profesionalDetails, 'profileDetails', this.profesionalDetails)
     const dialogRef = this.dialog.open(TransferRequestComponent, {
-      data: { 
-        portalProfile, 
+      data: {
+        portalProfile,
         groupData: this.groupsList
       },
       disableClose: true,
@@ -987,7 +971,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     const dialogDetails = {
       header: header,
       userId: this.userId,
-      isCurrentUser : this.isCurrentUser || false
+      isCurrentUser: this.isCurrentUser || false
     }
     switch (header) {
       case 'Service History':
@@ -1229,39 +1213,150 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
-  blockProfile() {
-    this.connectionStatus = 'Unblock';
-    this.connectionStatusTranslation = 'NetworkV2Profile.unblock';
+  openConformationDialog(status: string) {
+    let message = ''
+    switch(status) {
+      case 'Rejected':
+        message = this.handleTranslateTo('areYouSureYouWantToIgnoreThisRequest')
+        break;
+      case 'Withdrawn':
+        message = this.handleTranslateTo('areYouSureYouWantToWithdrawThisRequest')
+        break;
+      case 'Removed':
+        message = this.handleTranslateTo('areYouSureYouWantToRemoveThisConnection')
+        break;
+      case 'Blocked':
+        message = this.handleTranslateTo('areYouSureYouWantToBlockThisConnection')
+        break;
+    }
+    const dialgoData = {
+      description: message,
+      iconName: 'info',
+      type: 'warning',
+      buttonsPositionClass: 'justify-center items-center',
+      buttons: [
+        {
+          classes: 'btn-out-line',
+          text: this.handleTranslateTo('no'),
+          response: false
+        },
+        {
+          classes: 'succes-button',
+          text: this.handleTranslateTo('yes'), 
+          response: true
+        }
+      ]
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialgoData,
+      disableClose: true,
+      width: '400px',
+      maxWidth: '90vw'
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        if(status === 'Blocked') {
+          this.blockUser()
+        } else {
+          this.updateProfileConnection(status)
+        }
+      }
+    })
   }
 
-  copyProfileLink() {
-  const currentUrl = window.location.href; // Get the current URL
-  navigator.clipboard.writeText(currentUrl) // Copy the URL to the clipboard
-    .then(() => {
-      this.openSnackbar('Profile link copied to clipboard'); // Notify the user
-    })
-    .catch(() => {
-      this.openSnackbar('Failed to copy profile link'); // Handle errors
-    });
-}
-
-sendConnectionRequest(): void {
-  const currentUser = this.configSvc.userProfile
-    if(this.userId && currentUser) {
+  blockUser(): void {
+    const currentUser = this.configSvc.userProfile
+    if (this.userId && currentUser && this.primaryDetails) {
       const formBody = {
         connectionId: this.userId,
         userIdFrom: _.get(currentUser, 'userId', ''),
-        userNameFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'firstName', ''),
         userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
         userIdTo: this.userId,
-        userNameTo: this.userId,
+        userNameTo: this.primaryDetails.firstname || '',
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+      }
+
+      this.profileV2RevampSvc.blockConnection(formBody).subscribe({
+        next: () => {
+          this.getConnectionStatus()
+          this.openSnackbar('User blocked successfully');
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong please try again');
+        }
+      });
+    }
+  }
+
+  updateProfileConnection(status: string) {
+    const currentUser = this.configSvc.userProfile
+    let subType = ''
+    let eDataId = ''
+    switch (status) {
+      case 'Withdrawn':
+        eDataId = 'connect-withdraw'
+        subType = 'network-hub-connections-sent'
+        break;
+      // case 'Accepted':
+      //   break;
+      case 'Unblocked':
+        eDataId = 'profile-unblock'
+        subType = 'network-hub-connections-blocked'
+        break;
+      // case 'Blocked':
+      //   break
+    }
+    this.raiseTelemetry(_.get(currentUser, 'userId', ''), eDataId, subType)
+    if (this.userId && currentUser && this.primaryDetails) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'firstName', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.primaryDetails.firstname || '',
+        userDepartmentTo: this.primaryDetails.departmentName || '',
+        status
+      }
+      this.profileV2RevampSvc.updateConnectionRequest(formBody).subscribe({
+        next: (response: any) => {
+          if (response) {
+            this.getConnectionStatus()
+          }
+        }
+      })
+    }
+  }
+
+  copyProfileLink() {
+    const currentUrl = window.location.href; // Get the current URL
+    navigator.clipboard.writeText(currentUrl) // Copy the URL to the clipboard
+      .then(() => {
+        this.openSnackbar('Profile link copied to clipboard'); // Notify the user
+      })
+      .catch(() => {
+        this.openSnackbar('Failed to copy profile link'); // Handle errors
+      });
+  }
+
+  sendConnectionRequest(): void {
+    const currentUser = this.configSvc.userProfile
+    this.raiseTelemetry(_.get(currentUser, 'userId', ''), 'profile-connect')
+    if (this.userId && currentUser && this.primaryDetails) {
+      const formBody = {
+        connectionId: this.userId,
+        userIdFrom: _.get(currentUser, 'userId', ''),
+        userNameFrom: _.get(currentUser, 'firstName', ''),
+        userDepartmentFrom: _.get(currentUser, 'departmentName', ''),
+        userIdTo: this.userId,
+        userNameTo: this.primaryDetails.firstname || '',
         userDepartmentTo: this.primaryDetails.departmentName || '',
       }
 
       this.profileV2RevampSvc.connectToNetwork(formBody).subscribe({
         next: () => {
-          this.connectionStatus = 'Pending';
-          this.connectionStatusTranslation = 'NetworkV2Profile.pending';
+          this.getConnectionStatus()
           this.openSnackbar('Connection request sent successfully');
         },
         error: () => {
@@ -1333,6 +1428,24 @@ sendConnectionRequest(): void {
   }
   //#endregion (activities)
 
+  raiseTelemetry(userId: string, eDataId: string, subType?: string) {
+    const edata: any = {
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: eDataId
+    }
+    const objDetails = {
+      id: userId,
+      type: 'User'
+    }
+    const env = {
+      module: WsEvents.EnumTelemetrymodules.NETWORK,
+    }
+    if(subType) {
+      edata['subType'] = subType
+    }
+    this.events.raiseInteractTelemetry(edata, objDetails, env)
+  }
+    
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
   }

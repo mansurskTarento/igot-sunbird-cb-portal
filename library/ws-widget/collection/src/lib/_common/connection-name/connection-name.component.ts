@@ -12,6 +12,7 @@ import { NsUser } from '@sunbird-cb/utils-v2'
 })
 export class ConnectionNameComponent implements OnInit, AfterViewInit {
   @Input() hoverUser!: any
+  @Input() showBadge = true
   me!: NsUser.IUserProfile
   // hoverUser!: NSProfileDataV2.IProfile
   constructor(
@@ -37,19 +38,25 @@ export class ConnectionNameComponent implements OnInit, AfterViewInit {
   get getUseravatarName() {
     let name = 'Guest'
     if (this.hoverUser && !this.hoverUser.personalDetails) {
-      if (this.hoverUser.firstName) {
+      if (this.hoverUser.firstName && this.hoverUser.lastName) {
         name = `${this.hoverUser.firstName} ${this.hoverUser.lastName}`
+      } else if(this.hoverUser.firstName) {
+        name = `${this.hoverUser.firstName}`
       } else {
         name = `${this.hoverUser.name}`
       }
     } else if (this.hoverUser && this.hoverUser.personalDetails) {
       if (this.hoverUser.personalDetails.middlename) {
         // tslint:disable-next-line: max-line-length
-        name = `${this.hoverUser.personalDetails.firstname} ${this.hoverUser.personalDetails.middlename} ${this.hoverUser.personalDetails.surname}`
+        name = `${this.hoverUser.personalDetails.firstname} ${this.hoverUser.personalDetails.middlename}`
       } else if (this.hoverUser.personalDetails.firstName) {
-        name = `${this.hoverUser.personalDetails.firstName} ${this.hoverUser.personalDetails.surname}`
+        name = this.hoverUser.personalDetails.firstName
       } else {
-        name = `${this.hoverUser.personalDetails.firstname} ${this.hoverUser.personalDetails.surname}`
+        name = this.hoverUser.personalDetails.firstname
+      }
+
+      if(this.hoverUser.personalDetails.surname) {
+        name = `${name} ${this.hoverUser.personalDetails.surname}`
       }
     }
     // if (this.hoverUser) {

@@ -1,4 +1,4 @@
-<div class="flex flex-row gap-5">
+<div class="flex flex-row gap-5 mb-4">
   <!-- #region (left profile )-->
   <div class="flex flex-col gap-0 md:gap-4 items-center profileLeftSection">
     <div class="profile w-full">
@@ -111,16 +111,51 @@
                 [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
             </div>
             <mat-menu #profileMenu="matMenu">
+              <ng-container *ngIf="connectionStatus === 'Pending'">
+                <button mat-menu-item (click)="openConformationDialog('Withdrawn')">
+                  <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="connectionStatus !== 'Blocked' && connectionStatus !== 'Pending'">
+                <button mat-menu-item (click)="openConformationDialog('Blocked')">
+                  <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="connectionStatus === 'Approved'">
+                <button mat-menu-item (click)="openConformationDialog('Removed')">
+                  <span>{{ 'NetworkV2Profile.removeConnection' | translate }} </span>
+                </button>
+              </ng-container>
               <button mat-menu-item (click)="copyProfileLink()">
                 <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
               </button>
             </mat-menu>
-            <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
-              <ng-container *ngIf="connectionStatus === 'Connect'">
-                <mat-icon class="connect-icon mr-2">person_add</mat-icon>
+            <ng-container [ngSwitch]="connectionStatus">
+              <ng-container *ngSwitchCase="'Blocked'">
+                <button mat-button class="connectButton " i18n (click)="updateProfileConnection('Unblocked')">
+                  {{'NetworkV2Profile.unblock' | translate}}
+                </button>
               </ng-container>
-              {{connectionStatusTranslation | translate}}
-            </button>
+              <ng-container *ngSwitchCase="'Pending'">
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
+                  {{'connectionPeopleCard.connectionSent' | translate}}
+                </button>
+              </ng-container>
+              <ng-container *ngSwitchCase="'Approved'">
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
+                  {{'NetworkV2Profile.connected' | translate}}
+                </button>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <ng-container *ngIf="connectionStatus !== 'Received'">
+                  <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
+                    <mat-icon class="connect-icon mr-2">person_add</mat-icon>
+                    {{'NetworkV2Profile.connect' | translate}}
+                  </button>
+                </ng-container>
+                
+              </ng-container>
+            </ng-container>
           </div>
         </ng-template>
       </div>
@@ -173,6 +208,8 @@
         <mat-tab-group class="profile-tabs flex w-full" [selectedIndex]="selectedTabIndex" id="matTabGroup">
           <mat-tab label="Profile">
             <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
+            <ng-template #blocked>
+            </ng-template>
           </mat-tab>
           <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
             <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
@@ -187,143 +224,145 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <div class="flex flex-col gap-4">
-          <ng-container *ngIf="isCurrentUser && isMobile">
-            <div>
-              <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"></ws-app-user-stats>
-            </div>
-          </ng-container>
-
-          <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
-            <div id="about-me" class="user-details">
-              <div class="flex justify-between items-center mb-2">
-                <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' :
-                  'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
-                <ng-container *ngIf="isCurrentUser">
-                  <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
-                </ng-container>
+        <ng-container *ngIf="connectionStatus !== 'Blocked'; else blocked">
+          <div class="flex flex-col gap-4">
+            <ng-container *ngIf="isCurrentUser && isMobile">
+              <div>
+                <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"></ws-app-user-stats>
               </div>
-              <ng-container *ngIf="aboutme; else emptyGif">
-                <div [ngClass]="{'show-less': !showMoreAbout}">
-                  <div class="about-text" #aboutMeElement>
-                    {{aboutme}}
-                  </div>
+            </ng-container>
+
+            <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
+              <div id="about-me" class="user-details">
+                <div class="flex justify-between items-center mb-2">
+                  <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' :
+                    'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
+                  <ng-container *ngIf="isCurrentUser">
+                    <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+                  </ng-container>
                 </div>
-                <ng-container *ngIf="showViewMoreBtn">
-                  <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
-                    {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
-                  </div>
-                </ng-container>
-              </ng-container>
-            </div>
-          </ng-container>
-
-          <div id="basic-details" class="user-details">
-            <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
-              [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
-              [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
-              (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
-              (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
-          </div>
-          <ng-container *ngIf="isCurrentUser">
-            <ws-app-view-custom-fields></ws-app-view-custom-fields>
-          </ng-container>
-
-
-          <ng-container
-            *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
-            <div id="service-history" class="user-details">
-              <div class="flex justify-between items-center mb-2">
-                <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
-                <ng-container *ngIf="isCurrentUser">
-                  <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
-                </ng-container>
-              </div>
-              <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
-                [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
-                (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
-              <ng-container *ngIf="serviceHistoryDetails?.count > 2">
-                <div class="flex flex-col justify-between items-center">
-                  <div class="dividing-line"></div>
-                  <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">
-                    {{'NetworkV2Profile.showAll' | translate}}</div>
-                </div>
-              </ng-container>
-            </div>
-          </ng-container>
-
-          <!-- <ng-container *ngIf="isCurrentUser || (competencies && competencies?.length > 0)">
-            <div class="user-details">
-              <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
-            </div>
-          </ng-container> -->
-
-          <ng-container
-            *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
-            <div id="educational-qualifications" class="user-details">
-              <div class="flex justify-between items-center mb-2">
-                <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
-                <ng-container *ngIf="isCurrentUser">
-                  <mat-icon class="add-icon"
-                    (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
-                </ng-container>
-              </div>
-              <ng-container
-                *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
-                <ws-app-educational-qualifications
-                  [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
-                  [isCurrentUser]="isCurrentUser"
-                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
-                <ng-container *ngIf="educationalQualificationDetails?.count > 2">
-                  <div class="flex flex-col justify-between items-center">
-                    <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">
-                      {{'NetworkV2Profile.showAll' | translate}}
+                <ng-container *ngIf="aboutme; else emptyGif">
+                  <div [ngClass]="{'show-less': !showMoreAbout}">
+                    <div class="about-text" #aboutMeElement>
+                      {{aboutme}}
                     </div>
                   </div>
-                </ng-container>
-              </ng-container>
-            </div>
-          </ng-container>
-
-          <ng-container
-            *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
-            <div id="achievements" class="user-details">
-              <div class="flex justify-between items-center mb-2">
-                <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
-                <ng-container *ngIf="isCurrentUser">
-                  <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+                  <ng-container *ngIf="showViewMoreBtn">
+                    <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                      {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
+                    </div>
+                  </ng-container>
                 </ng-container>
               </div>
-              <ng-container
-                *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
-                <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
-                  [isCurrentUser]="isCurrentUser"
-                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
-                <ng-container *ngIf="achievementsDetails?.count > 2">
+            </ng-container>
+
+            <div id="basic-details" class="user-details">
+              <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
+                [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
+                [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
+                (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
+                (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
+            </div>
+            <ng-container *ngIf="isCurrentUser">
+              <ws-app-view-custom-fields></ws-app-view-custom-fields>
+            </ng-container>
+
+            <ng-container
+              *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
+              <div id="service-history" class="user-details">
+                <div class="flex justify-between items-center mb-2">
+                  <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
+                  <ng-container *ngIf="isCurrentUser">
+                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
+                  </ng-container>
+                </div>
+                <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
+                  [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
+                  (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
+                <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">
                       {{'NetworkV2Profile.showAll' | translate}}</div>
                   </div>
                 </ng-container>
-              </ng-container>
+              </div>
+            </ng-container>
+
+            <!-- <ng-container *ngIf="isCurrentUser || (competencies && competencies?.length > 0)">
+              <div class="user-details">
+                <ws-app-competencies [competencies]="competencies"></ws-app-competencies>
+              </div>
+            </ng-container> -->
+
+            <ng-container
+              *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
+              <div id="educational-qualifications" class="user-details">
+                <div class="flex justify-between items-center mb-2">
+                  <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
+                  <ng-container *ngIf="isCurrentUser">
+                    <mat-icon class="add-icon"
+                      (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
+                  </ng-container>
+                </div>
+                <ng-container
+                  *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
+                  <ws-app-educational-qualifications
+                    [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
+                    [isCurrentUser]="isCurrentUser"
+                    (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
+                  <ng-container *ngIf="educationalQualificationDetails?.count > 2">
+                    <div class="flex flex-col justify-between items-center">
+                      <div class="dividing-line"></div>
+                      <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">
+                        {{'NetworkV2Profile.showAll' | translate}}
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+
+            <ng-container
+              *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
+              <div id="achievements" class="user-details">
+                <div class="flex justify-between items-center mb-2">
+                  <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
+                  <ng-container *ngIf="isCurrentUser">
+                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+                  </ng-container>
+                </div>
+                <ng-container
+                  *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
+                  <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
+                    [isCurrentUser]="isCurrentUser"
+                    (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
+                  <ng-container *ngIf="achievementsDetails?.count > 2">
+                    <div class="flex flex-col justify-between items-center">
+                      <div class="dividing-line"></div>
+                      <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">
+                        {{'NetworkV2Profile.showAll' | translate}}</div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+        <ng-template #blocked>
+          <div class="w-full flex flex-col gap-4 justify-center items-center blockedBlock">
+            <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
+            <div class="blocked-text">
+              {{'NetworkV2Profile.youBlockedThisProfile' | translate}}
             </div>
-          </ng-container>
-        </div>
+          </div>
+        </ng-template>
       </ng-template>
       <!-- #endregion (user details ) -->
 
       <!-- #region (activity section ) -->
       <ng-template #activitySection>
         <div class="flex flex-col gap-4 p-2">
-          <!-- <div class="flex flex-row gap-4 horizontal-strip mt-4">
-            <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/seeAll/new']"
-              [queryParams]="{key: 'continueLearning', tab: 'completed'}">{{ 'profileInfo.myLearnings' | translate }}
-            </div>
-            <div class="flex items-center justify-center nav-chips" [routerLink]="['/app/person-profile/karma-points']">
-              {{ 'profileInfo.myKarmaPoints' | translate }}</div>
-          </div> -->
 
           <div class="tab-heading mt-4">{{ 'profileInfo.yourStats' | translate }}</div>
 
@@ -407,27 +446,48 @@
 
   <!-- #region (right profile connections )-->
   <div class="hidden md:flex flex-col gap-4 profileRightSection">
-    <ng-container *ngIf="peopleSuggestionsList?.length > 0">
-      <div class="flex flex-col gap-3">
-        <div class="people-you-may-know">
-          {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+    <ng-container *ngIf="!suggestionsLoading; else suggestionsLoader">
+      <ng-container *ngIf="peopleSuggestionsList?.length > 0">
+        <div class="flex flex-col gap-3">
+          <div class="people-you-may-know">
+            {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
+          </div>
+          <div>
+            <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
+              [currentUser]="profesionalDetails"></ws-app-people-suggestions>
+          </div>
         </div>
-        <div>
-          <ws-app-people-suggestions [peopleSuggestionsList]="peopleSuggestionsList"
-            [currentUser]="profesionalDetails"></ws-app-people-suggestions>
-        </div>
-      </div>
+      </ng-container>
     </ng-container>
 
     <div class="flex flex-col gap-3">
-      <div class="people-you-may-know">
-        {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
-      </div>
-      <div>
-        <ws-app-community-suggestions
-          [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
-      </div>
+      <ng-container *ngIf="!communitySuggestionsLoading; else suggestionsLoader">
+        <ng-container *ngIf="communitySuggestionsList?.length > 0">
+          <div class="people-you-may-know">
+            {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
+          </div>
+          <div>
+            <ws-app-community-suggestions
+              [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
+    <ng-template #suggestionsLoader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+                [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+        [bindingClass]="'flex rounded margin-bottom-xs'">
+      </ws-widget-skeleton-loader>
+    </ng-template>
   </div>
   <!-- #endregion (right profile connections )-->
 </div>

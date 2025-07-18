@@ -4,15 +4,18 @@ import { NSProfileDataV2 } from '../models/profile-v2.model';
 import { Observable } from 'rxjs';
 import { map, retry } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import * as _ from 'lodash';
 
 
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
-  GET_RECOMMENDED_USERS: '/apis/protected/v8/connections/v2/connections/recommended',
+  GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
-  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
+  BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
+  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
   GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // old
@@ -40,6 +43,8 @@ const API_END_POINTS = {
 
   INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
+  UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection'
+
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
 }
@@ -51,14 +56,24 @@ export class ProfileV2RevampService {
 
   constructor(
     private http: HttpClient,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private configSvc: ConfigurationsService
   ) { }
 
-  fetchProfile(userId: string): Observable<NSProfileDataV2.IProfile> {
+  fetchProfile(userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile> {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
+        if(!isNotCurrentUser) {
+          this.configulreProfileDetails(res) 
+        }
         return res
       }))
+  }
+
+  configulreProfileDetails(requestBody: any) {
+    if( this.configSvc && this.configSvc.userProfileV2) {
+      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '');
+    }
   }
 
   updateProfileDetails(requestBody: any): Observable<any> {
@@ -97,6 +112,10 @@ export class ProfileV2RevampService {
     return this.http.post(API_END_POINTS.ADD_CONNECTION, payload)
   }
 
+  blockConnection(payload: any): Observable<any> {
+    return this.http.post(API_END_POINTS.BLOCK_CONNECTION, payload)
+  }
+
   getCommunities(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_COMMUNITIES, formBody)
   }
@@ -126,22 +145,6 @@ export class ProfileV2RevampService {
   getMinistriesList(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_MINISTRY)
   }
-
-  // getOrgReadData(organisationId: string): Observable<any> {
-  //   const request = {
-  //     request: {
-  //       organisationId,
-  //     },
-  //   };
-  //   return this.http.post<any>(API_END_POINTS.ORG_READ, request)
-  // }
-
-  // getFrameworkInfo(frameWorkName: string): Observable<any> {
-  //   return this.http
-  //     .get(`${API_END_POINTS.ORGANISATION_FW(frameWorkName)}`, {
-  //       withCredentials: true,
-  //     })
-  // }
 
   searchDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_SEARCH_DESIGNATIONS, _req)
@@ -198,6 +201,10 @@ export class ProfileV2RevampService {
     return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, requestBody)
   }
 
+  updateConnectionRequest(formBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
+  }
+
   getWhiteListDomain(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.approvedDomains)
   }
@@ -216,13 +223,6 @@ export class ProfileV2RevampService {
     return this.translateService.instant(translationKey)
   }
 
-  getWebSiteLanguage() {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translateService.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translateService.use(lang)
-    }
-  }
 
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)

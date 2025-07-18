@@ -1442,7 +1442,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             this.connectionRequestsSent.length > 0
           ) {
             this.connectionRequestsSent.map((user: any) => {
-              const userid = user.id || user.identifier || user.wid;
+              const userid = user.id || user.identifier || user.wid || user.userId;
               if (userid) {
                 this.peoplesSearchResults.forEach((usr: any) => {
                   if ((usr.userId || usr.wid) === userid) {
