@@ -127,7 +127,7 @@
 </div>
 </div> -->
 
-<div class="overflow-y-hidden" [ngClass]="isMobile && maximize ? 'ai-tutor-popup':'ai-tutor-popup-minimize'">
+<div class="overflow-y-hidden" [ngClass]="(isMobile && !maximize ? 'ai-tutor-popup-minimize' : (isMobile ? 'ai-tutor-popup': ''))">
 <div *ngIf="isMobile">
   <div class="flex flex-row ai-tutor-mobile-header">
       <div class="flex flex-row">
