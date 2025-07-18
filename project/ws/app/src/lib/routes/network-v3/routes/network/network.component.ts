@@ -88,15 +88,8 @@ export class NetworkComponent implements OnInit {
 
   getCommunitesList() {
     const formBody = {
-      filterCriteriaMap: {
-        status: "active"
-      },
-      requestedFields: [],
-      pageNumber: 0,
-      pageSize: 3,
-      facets: [
-        "topicName"
-      ]
+      field: "countOfPeopleJoined",
+      limit: 3
     }
     this.communitiesLoading = true;
     this.networkingSvc.getCommunities(formBody).subscribe({
