@@ -47,6 +47,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
   @Input() playResourceId = ''
+  @Input() sideNavBarOpened = false
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   
@@ -79,6 +80,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   scormAssessmentCount = 0
   showAITutorPopup = false
   fromAISelectedTabIndex = false
+  isMobileForAI = false
+  transcriptActiveLanguageText = 'English'
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -179,13 +182,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
    
-
-   
     
   }
 
   ngAfterViewInit() {
     this.isMobile = this.utilityService.isMobile
+    if(window.innerWidth < 1480) {
+      this.isMobileForAI = true
+    } else {
+      this.isMobileForAI = false
+    }
     this.menuPosition = this.tabElement._elementRef.nativeElement.offsetTop
 
     this.route.queryParamMap.subscribe(async (params:any) => {
@@ -251,7 +257,23 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
-
+    
+    if(this.sideNavBarOpened) {
+      if(window.innerWidth < 1480) {
+        if(this.isMobileForAI) {
+          this.isMobileForAI = false
+        }        
+      } else {
+        this.isMobileForAI = false
+      }
+     
+    } else {
+      if(window.innerWidth < 1480) {
+          this.isMobileForAI = true
+      } else {
+        this.isMobileForAI = false
+      }
+    }
     
   }
 
@@ -503,9 +525,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     // this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
     if(typeof _langvalue === 'string' && _langvalue) {
       this.transcriptionActiveLanguage = _langvalue
+      
     } else {
       this.selectedTranscriptionStyle = _langvalue?.value
       this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
+      this.transcriptActiveLanguageText = _langvalue?.value?.language
     }
     this.raiseTranscriptionLanguageStartTelemetry()
     setTimeout(()=>{
@@ -580,7 +604,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
@@ -598,7 +622,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
@@ -616,7 +640,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
@@ -628,13 +652,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptionActiveLanguage, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'  },
+        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'  },
         object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
@@ -646,13 +670,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptionActiveLanguage, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`,subType:  'transcript-language'   },
+        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`,subType:  'transcript-language'   },
         object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
@@ -664,13 +688,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptionActiveLanguage, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'   },
+        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'   },
         object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: 'viewer', module: 'Learn'},
+      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
       from: '',
       to: 'Telemetry',
     }
