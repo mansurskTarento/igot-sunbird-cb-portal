@@ -57,7 +57,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                 this.isFetchingDataComplete = false
                 this.testData = data.content.data
                 console.log('dat---',data)
-                if(data && data?.contextCategory === 'Pre Enrolment Assessment') {
+                if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
                     this.contentSvc.currentMetaData = data
                 }
                 //   console.log(this.testData)

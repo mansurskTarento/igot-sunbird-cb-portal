@@ -402,6 +402,35 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           }
           this.canAttend()
       })
+    } else if(this.widgetContentService.currentMetaData && this.widgetContentService.currentMetaData?.content && 
+      this.widgetContentService.currentMetaData?.content?.data && 
+      this.widgetContentService.currentMetaData?.content?.data?.contextCategory === 'Pre Enrolment Assessment'){
+
+      const activeResource =   this.widgetContentService.currentMetaData?.content?.data
+      this.showQuestionMarks = activeResource?.showMarks ? activeResource?.showMarks : 'No'
+        // this.selectedAssessmentCompatibilityLevel = item.compatibilityLevel
+        // console.log('item.children', item.children)
+        // console.log('selectedAssessmentCompatibilityLevel', this.selectedAssessmentCompatibilityLevel)
+        // console.log('this.identifier',this.identifier, 'item.identifier', item.identifier)
+        // this.canAttend()
+        // if (this.identifier === item.identifier) {
+        //   // this.instructionAssessment = item.description
+        //   if (item.identifier) {
+        //     this.getInstructionAssessmentPagination(item.description)
+        //   }
+        //   this.totalAssessemntQuestionsCount = item.maxQuestions
+        // }
+        if (activeResource && activeResource.compatibilityLevel) {
+          this.selectedAssessmentCompatibilityLevel = activeResource.compatibilityLevel
+        }
+        if (activeResource && activeResource.maxQuestions) {
+          this.totalAssessemntQuestionsCount = activeResource.maxQuestions
+        }
+        if (activeResource &&  activeResource.description) {
+          this.instructionAssessment = activeResource.description
+          this.getInstructionAssessmentPagination(activeResource.description)
+        }
+        this.canAttend()
     }
 
     // console.log('this.widgetContentService.currentMetaData', this.widgetContentService)
@@ -2145,6 +2174,27 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   assignQuizResult(res: NSPractice.IQuizSubmitResponseV2) {
+    console.log('this.quizJson', this.quizJson)
+    console.log('res', res)
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if(res && res.pass) {
+          const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
+            this.activatedRoute.snapshot.queryParams.batchId, this.identifier)
+          const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+          const batchId = (resData && resData.batchId) ? resData.batchId : ''
+          if (this.identifier && collectionId && batchId) {
+            this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, 2)
+          // if (this.selectedSection && 
+          //   this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
+          //   this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+          // ) {
+            
+          // }
+        }
+        }
+        
+    }
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
      }  else {
