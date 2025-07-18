@@ -113,8 +113,8 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
     const factes = {
       'facets': [
         gyaanConstants.resourceCategory,
-        gyaanConstants.subSectorName,
-        gyaanConstants.sectorName,
+        gyaanConstants.requestSubSectorName,
+        gyaanConstants.requestSectorName,
         gyaanConstants.year,
     ],
     }
@@ -155,20 +155,20 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           delete strip.request.searchV6.request.filters.contextYear
         }
         strip.request.searchV6.request.query = this.searchControl && this.searchControl.value
-        if (!(this.selectedFilter[gyaanConstants.sectorName] &&
-          this.selectedFilter[gyaanConstants.sectorName].length)) {
-          strip.request.searchV6.request.filters.sectorName = this.sectorNames
+        if (!(this.selectedFilter[gyaanConstants.requestSectorName] &&
+          this.selectedFilter[gyaanConstants.requestSectorName].length)) {
+          strip.request.searchV6.request.filters[gyaanConstants.requestSectorName] = this.sectorNames
           // delete strip.request.searchV6.request.filters.sectorName
         }
-        if (!(this.selectedFilter[gyaanConstants.subSectorName] &&
-          this.selectedFilter[gyaanConstants.subSectorName].length)) {
+        if (!(this.selectedFilter[gyaanConstants.requestSubSectorName] &&
+          this.selectedFilter[gyaanConstants.requestSectorName].length)) {
           delete strip.request.searchV6.request.filters.subSectorName
         }
         if (!this.selectedFilter[gyaanConstants.resourceCategory]) {
           delete strip.request.searchV6.request.filters.resourceCategory
         }
-        if (!(this.selectedFilter[gyaanConstants.sectorName] &&
-          this.selectedFilter[gyaanConstants.sectorName].length) && this.selectedFilter[gyaanConstants.resourceCategory]) {
+        if (!(this.selectedFilter[gyaanConstants.requestSectorName] &&
+          this.selectedFilter[gyaanConstants.requestSectorName].length) && this.selectedFilter[gyaanConstants.resourceCategory]) {
           strip.request.searchV6.request.filters = {
             ...strip.request.searchV6.request.filters,
             ...{ 'sectorName': this.sectorNames },
@@ -303,14 +303,14 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                 },
               ],
             },
-            sectorName: {
+            [gyaanConstants.requestSectorName]: {
               name: gyaanConstants.sectors,
               displayName: gyaanConstants.sectors,
               label: gyaanConstants.sectors,
               placeHolder:  gyaanConstants.sectors,
               values: 'values',
             },
-            subSectorName: {
+            [gyaanConstants.requestSubSectorName]: {
               name: gyaanConstants.subSectors,
               displayName: gyaanConstants.subSectors,
               label: gyaanConstants.subSectors,
@@ -354,7 +354,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
 
           response.result.facets.forEach((facet: any) => {
             if (localFacetData[facet.name]) {
-              if (facet.name === gyaanConstants.sectorName) {
+              if (facet.name === gyaanConstants.requestSectorName) {
                 this.sectorNames = facet.values.map((sectorName: any) => sectorName.name)
               }
               if (facet.name === gyaanConstants.resourceCategory) {
@@ -365,20 +365,20 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                   item['checked'] = true
                   this.selectedFilter[gyaanConstants.resourceCategory] = item.name
                 }
-                if (facet.name === gyaanConstants.sectorName) {
+                if (facet.name === gyaanConstants.requestSectorName) {
                   if (this.selectedSector === gyaanConstants.allSectors) {
                     if (this.selectedSector.toLowerCase()) {
                       item['checked'] = true
-                      if (this.selectedFilter[gyaanConstants.sectorName]) {
-                        this.selectedFilter[gyaanConstants.sectorName].push(item.name)
+                      if (this.selectedFilter[gyaanConstants.requestSectorName]) {
+                        this.selectedFilter[gyaanConstants.requestSectorName].push(item.name)
                       } else {
-                        this.selectedFilter[gyaanConstants.sectorName] = [item.name]
+                        this.selectedFilter[gyaanConstants.requestSectorName] = [item.name]
                       }
                     }
                   } else {
                     if (item.name === this.selectedSector.toLowerCase()) {
                       item['checked'] = true
-                      this.selectedFilter[gyaanConstants.sectorName] = [item.name]
+                      this.selectedFilter[gyaanConstants.requestSectorName] = [item.name]
                     }
                   }
                 }
@@ -396,9 +396,9 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
                 if (facet.values.length > 0) {
                   if (facet.name !== gyaanConstants.contextYear) {
                     localFacetData[facet.name].values = [{
-                      name: 'All', count: 1, checked: facet.name === gyaanConstants.sectorName
-                      && (this.selectedFilter[gyaanConstants.sectorName]
-                      && this.selectedFilter[gyaanConstants.sectorName].length) === facet.values.length,
+                      name: 'All', count: 1, checked: facet.name === gyaanConstants.requestSectorName
+                      && (this.selectedFilter[gyaanConstants.requestSectorName]
+                      && this.selectedFilter[gyaanConstants.requestSectorName].length) === facet.values.length,
                     }, ...facet.values]
                   } else {
                     localFacetData[facet.name].values = [..._.orderBy(facet.values, ['name'], ['asc'])]
@@ -414,9 +414,9 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           this.facetsData = localFacetData
           if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
             if (this.selectedSector === gyaanConstants.allSectors)  {
-              this.selectedFilter[gyaanConstants.sectorName]  = this.sectorNames
+              this.selectedFilter[gyaanConstants.requestSectorName]  = this.sectorNames
             } else if (this.selectedSector) {
-              this.selectedFilter[gyaanConstants.sectorName] = [this.selectedSector]
+              this.selectedFilter[gyaanConstants.requestSectorName] = [this.selectedSector]
             }
             if (this.keyData)  {
               this.selectedFilter[gyaanConstants.resourceCategory] = this.keyData
