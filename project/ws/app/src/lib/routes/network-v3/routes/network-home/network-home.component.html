@@ -23,7 +23,7 @@
       <div class="flex flex-col w-full">
         <ng-container *ngIf="!connectionsLoading; else showConnectionsSkeleton">
           <ng-container *ngFor="let otherUserProfile of connectionRequestsList; index as i">
-            <ws-app-connections-card [otherUserProfile]="otherUserProfile" [currentTab]="'Requested'"
+            <ws-app-connections-card [otherUserProfile]="otherUserProfile" [currentTab]="'Received'"
               [showBorder]="i < connectionRequestsList.length -1"></ws-app-connections-card>
           </ng-container>
         </ng-container>
