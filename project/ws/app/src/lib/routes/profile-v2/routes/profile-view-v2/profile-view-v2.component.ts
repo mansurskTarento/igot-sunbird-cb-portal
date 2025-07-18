@@ -273,21 +273,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getRecommendedCommunitesList() {
     const formBody = {
-      filterCriteriaMap: {
-        status: "active"
-      },
-      requestedFields: [],
-      pageNumber: 0,
-      pageSize: 3,
-      facets: [
-        "topicName"
-      ]
+      field: "countOfPeopleJoined",
+      limit: 3
     }
     this.communitySuggestionsLoading = true;
     this.profileV2RevampSvc.getCommunities(formBody).subscribe({
       next: (response: any) => {
         this.communitySuggestionsLoading = false;
-        this.communitySuggestionsList = _.get(response, 'result.search_results.data', [])
+        this.communitySuggestionsList = _.get(response, 'result.data', [])
       },
       error: () => {
         this.communitySuggestionsLoading = false;

@@ -14,13 +14,13 @@ export class AllRecommendationsComponent implements OnInit {
   // recommendationType = 'peopleNearYou'
   title = 'NetworkLandingPage.peopleYouMayKnow'
   recommendationList: any[] = []
-  paginationSize = 50;
-  paginationSizeOptions = [50, 100, 150, 200];
+  paginationSize = 10;
+  paginationSizeOptions = [10, 20, 30, 40];
   paginationPage = 1;
   totalItemsCount = 0;
   recommendationListLoading = false;
   apiCallSubscription: any;
-  defaultPaginationSize = 50
+  defaultPaginationSize = 10
 
 
   constructor(

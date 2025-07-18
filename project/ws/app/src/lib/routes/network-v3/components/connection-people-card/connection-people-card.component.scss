@@ -8,7 +8,7 @@
 }
 
 .card-container {
-    height: 174px;
+    height: 195px;
     width:  170px;
     border: 1px solid rgba(0,0,0,8%);
     border-radius: 8px;
@@ -22,7 +22,7 @@
 
 .name-container {
     padding: $size-m $size-l 10px;
-    height: 70px;
+    height: 95px;
 }
 .name-container-inner {
     height: 65px;
@@ -31,16 +31,18 @@
 .name{
     font-size: 16px;
     line-height: 24px;
+    margin-bottom: 5px;
     text-transform: capitalize;
 }
 .designation{
     line-height: 21px;
-    // height: 60px;
+    height: 21px;
     overflow: hidden;
-    font-size: 14px;
+    /*stylelint-disable */
+    font: 400 12px Lato
+    /*stylelint-enable */;
     text-overflow: ellipsis;
-    word-wrap: break-word;
-    overflow: hidden;
+    white-space: nowrap; 
 }
 .action-container {
     position: relative;

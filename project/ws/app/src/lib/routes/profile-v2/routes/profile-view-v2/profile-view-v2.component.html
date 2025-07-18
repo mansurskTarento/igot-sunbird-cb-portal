@@ -137,20 +137,23 @@
                 </button>
               </ng-container>
               <ng-container *ngSwitchCase="'Pending'">
-                <button mat-button class="pendingButton" i18n>
-                  {{'NetworkV2Profile.pending' | translate}}
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
+                  {{'connectionPeopleCard.connectionSent' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchCase="'Approved'">
-                <button mat-button class="pendingButton" i18n>
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
                   {{'NetworkV2Profile.connected' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchDefault>
-                <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
-                  <mat-icon class="connect-icon mr-2">person_add</mat-icon>
-                  {{'NetworkV2Profile.connect' | translate}}
-                </button>
+                <ng-container *ngIf="connectionStatus !== 'Received'">
+                  <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
+                    <mat-icon class="connect-icon mr-2">person_add</mat-icon>
+                    {{'NetworkV2Profile.connect' | translate}}
+                  </button>
+                </ng-container>
+                
               </ng-container>
             </ng-container>
           </div>
