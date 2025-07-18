@@ -56,10 +56,10 @@
                         </div>
                         <mat-form-field class="profile-form-field w-full">
                           <mat-select [formControlName]="hierarchyField"
-                            (selectionChange)="onDropdownChange(field.attributeName, hierarchyField, $event.value, i)">
-                            <mat-option *ngFor="let option of fieldOptions[field.attributeName][hierarchyField] || []"
-                              [value]="option.value">
-                              {{ option.label }}
+                            (selectionChange)="onDropdownChange(field?.attributeName, hierarchyField, $event.value, i)">
+                            <mat-option *ngFor="let option of fieldOptions[field?.attributeName][hierarchyField] || []"
+                              [value]="option?.value">
+                              {{ option?.label }}
                             </mat-option>
                           </mat-select>
                         </mat-form-field>
