@@ -522,7 +522,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   async renderSelectedLanguageTranscription(_langvalue:any)  {
-    console.log('__langvalue', _langvalue)
     // this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
     if(typeof _langvalue === 'string' && _langvalue) {
       this.transcriptionActiveLanguage = _langvalue
