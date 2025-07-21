@@ -70,10 +70,10 @@
 
           <div class="lang-chip-list text-left">
 
-            <mat-form-field appearance="outline" class="lang-select-field">
+            <!-- <mat-form-field appearance="outline" class="lang-select-field">
               <mat-select [(value)]="selectedLanguage" panelClass="language-control">
                 <mat-option *ngFor="let lang of languages" [value]="lang.code">
-                  <!-- {{ lang.name }} -->
+                
                      <mat-radio-group [value]="selectedLanguage">
                 <mat-radio-button [value]="lang.code" class="lang-radio">
                   {{ lang?.localName }} ({{  lang?.name }})
@@ -81,9 +81,47 @@
               </mat-radio-group>
                 </mat-option>
               </mat-select>
+            </mat-form-field> -->
+            <!-- <ng-select [(ngModel)]="selectedLanguage">    
+    <mat-radio-group>
+      <ng-template *ngFor="let lang of languageList">
+        <mat-radio-button [value]="lang"> {{ lang.name }}</mat-radio-button>
+       
+    </ng-template>
+    </mat-radio-group>
+</ng-select> -->
+
+            <!-- <div class="dropdown" (click)="toggleDropdown()">
+  <button class="dropdown-btn">
+    {{ selectedLanguage }}
+  </button>
+{{ selectedLanguage | json }} 
+  <div class="dropdown-content" *ngIf="dropdownOpen">
+    <label *ngFor="let lang of languageList" class="dropdown-label mat-body-2">
+      <input
+        type="radio"
+        name="dropdownOptions"
+        [value]="lang"
+        [(ngModel)]="selectedLanguage"
+        (change)="onSelect(lang)"
+      />
+     {{ lang.name }}
+      
+    </label>
+  </div>
+</div> -->
+
+            <mat-form-field appearance="fill" class="language-select">
+              <!-- <mat-label>Select Language</mat-label> -->
+              <mat-select [value]="selectedLanguage" (selectionChange)="onLanguageChange($event.value)">
+                <mat-option *ngFor="let lang of languageList" [value]="lang">
+                  <mat-radio-button [checked]="selectedLanguage?.name === lang.name" class="full-width">
+                    {{ lang.name | titlecase }}
+                  </mat-radio-button>
+                </mat-option>
+              </mat-select>
             </mat-form-field>
 
-      
           </div>
         </div>
       </div>

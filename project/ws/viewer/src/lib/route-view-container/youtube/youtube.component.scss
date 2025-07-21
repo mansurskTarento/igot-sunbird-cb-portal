@@ -223,4 +223,54 @@ mat-form-field.lang-select-field  .mat-select-panel {
   padding:8px 16px;
   height: 40px;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-btn {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  min-width: 160px;
+  z-index: 1;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.dropdown-label {
+  color: #1B2133;
+}
+::ng-deep  .mat-mdc-form-field {
+  background-color: white !important;
+  color: black !important;
+  border-radius: 25px !important;
+  padding-left: 12px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.language-select .mat-select-trigger {
+  color: black !important;
+}
+
+.language-select .mat-select-panel {
+  background-color: white !important;
+  border-radius: 12px;
+  color: black !important;
+}
+
+.language-select .mat-option {
+  color: black !important;
+  background-color: white !important;
+}
+
+.language-select .mat-radio-label-content {
+  color: black;
+}
+
  

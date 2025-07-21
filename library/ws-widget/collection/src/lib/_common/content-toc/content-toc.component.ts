@@ -44,8 +44,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
+  @Input() enrolledCourseData: any
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
+  selectedLang: any
   sticky = false
   menuPosition: any
   isMobile = false
@@ -83,7 +85,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    
+    console.log(this.resumeData, 'resumeData data')
+    console.log(this.enrolledCourseData, 'enrolledCourseData data====')
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -165,8 +168,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
+  }
 
-    
+   onLanguageSelected(lang: any) {
+    this.selectedLang = lang;
+    console.log('selectedLang=============', this.selectedLang)
+    // this.languageSelected.emit(this.selectedLang)
+    // if (this.resumeData && this.selectedLang) {
+    //   console.log(this.selectedLang, "this.selectedLang");
+    //   this.openConfirmDialog();
+    // }
   }
 
   ngAfterViewInit() {

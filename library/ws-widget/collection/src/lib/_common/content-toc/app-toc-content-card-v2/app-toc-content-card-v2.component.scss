@@ -696,3 +696,30 @@ span.optional-span {
 .unlock-icon {
   color: #0c9600;
 }
+
+.language-select .mat-form-field-flex {
+  background-color: white !important;
+  color: black !important;
+  border-radius: 25px !important;
+  padding-left: 12px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.language-select .mat-select-trigger {
+  color: black !important;
+}
+
+.language-select .mat-select-panel {
+  background-color: white !important;
+  border-radius: 12px;
+  color: black !important;
+}
+
+.language-select .mat-option {
+  color: black !important;
+  background-color: white !important;
+}
+
+.language-select .mat-radio-label-content {
+  color: black;
+}

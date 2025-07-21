@@ -303,19 +303,40 @@
                             <ng-container>
                                 <!-- <a (click)="openLangDialog()" class="lang-button">English <mat-icon class="margin-left-xs lang-icon">arrow_drop_down</mat-icon></a> -->
                                 <div class="flex items-end">
-                                <mat-form-field appearance="outline" class="lang-select-field">
+                                    <!-- <mat-form-field appearance="outline" class="lang-select-field">
                                     <mat-select [value]="selectedLanguage" panelClass="language-control" (closed)="onSelectClosed()">
-                                        <mat-option *ngFor="let lang of languages" [value]="lang.code">
-                                            <!-- {{ lang.name }} -->
+                                        <mat-option *ngFor="let lang of languageList" [value]="lang">
+                                            {{ lang.name }} --
                                             <mat-radio-group [value]="selectedLanguage" (change)="onRadioChange($event.value)">
-                                                <mat-radio-button [value]="lang.code" class="lang-radio">
-                                                    {{ lang?.localName }} ({{ lang?.name }})
+                                                <mat-radio-button [value]="lang" class="lang-radio">
+                                                    {{ lang }}
                                                 </mat-radio-button>
                                             </mat-radio-group>
                                         </mat-option>
                                     </mat-select>
-                                </mat-form-field>
-                                  </div>
+                                </mat-form-field> -->
+
+                                    <!-- <ng-select [items]="cities" [(ngModel)]="selectedCity" bindLabel="name" bindValue="name">    
+                                <mat-radio-group aria-label="Select an option">
+                                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                                    <mat-radio-button value="index">{{item.name}}</mat-radio-button>
+                                    <input matInput type="text">
+                                </ng-template>
+                                </mat-radio-group>
+                            </ng-select> -->
+                                    <mat-form-field appearance="fill" class="language-select">
+                                        <!-- <mat-label>Select Language</mat-label> -->
+                                        <mat-select [value]="selectedLang"
+                                            (selectionChange)="onLanguageChange($event.value)">
+                                            <mat-option *ngFor="let lang of languageList" [value]="lang">
+                                                <mat-radio-button [checked]="selectedLang === lang.name"
+                                                    class="full-width">
+                                                    {{ lang.name | titlecase }}
+                                                </mat-radio-button>
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
                             </ng-container>
                         </div>
                     </div>

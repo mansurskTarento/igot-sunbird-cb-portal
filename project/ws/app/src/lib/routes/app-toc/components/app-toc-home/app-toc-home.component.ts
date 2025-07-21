@@ -58,6 +58,19 @@ export enum ErrorType {
   somethingWrong = 'somethingWrong',
 }
 
+export interface ILanguageMapItem {
+  [key: string]: {
+    id: string
+    status: string
+  }
+}
+
+export interface ILanguageListItem {
+  name: string
+  id: string
+  status: string
+}
+
 const flattenItems = (items: any[], key: string | number) => {
   return items.reduce((flattenedItems, item) => {
     flattenedItems.push(item)
@@ -77,6 +90,8 @@ const SNACKBAR_DURATION = 3000
   // tslint:disable-next-line: use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
+
+
 
 export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
   show = false
@@ -100,6 +115,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   cbPlanEndDate: any
   cbPlanDuration: any
   enrolledCourseData: any
+  selectedLanguageName: string = ''
   @Input() forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('/author/')
   // forPreview = window.location.href.includes('/author/')
   analytics = this.route.snapshot.data.pageData.data.analytics
@@ -119,26 +135,28 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   // todo hard coded data ===
-   languages = [
-     { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
-    { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
-    { name: 'Telugu', localName: 'తెలుగు', code: 'te' },
-    { name: 'Bengali', localName: 'বাংলা', code: 'bn' },
-    { name: 'Marathi', localName: 'मराठी', code: 'mr' },
-    { name: 'Gujarati', localName: 'ગુજરાતી', code: 'gu' },
-    { name: 'Kannada', localName: 'ಕನ್ನಡ', code: 'kn' },
-    { name: 'Malayalam', localName: 'മലയാളം', code: 'ml' },
-    { name: 'Punjabi', localName: 'ਪੰਜਾਬੀ', code: 'pa' },
-    { name: 'English', localName: 'English', code: 'en' },
-    { name: 'Odia', localName: 'ଓଡ଼ିଆ', code: 'or' },
-    { name: 'Assamese', localName: 'অসমীয়া', code: 'as' },
-    { name: 'Konkani', localName: 'कोंकणी', code: 'kok' },
-    { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
-    { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
-  ];
+  languages = {
+      tamil: {
+        id: "do_114351316566654976145",
+        status: "live"
+      },
+      english: {
+        id: "do_114351316566654976146",
+        status: "live"
+      },
+       hindi: {
+        id: "do_114351316566654976147",
+        status: "not live"
+      }
+    }
+
+  languageList: any = []
+  languageLength: number = 0
+
   showAllLang = false;
-  firstSixLang:any
-  remainingLang:any
+  firstSixLang: any
+  remainingLang: any
+  displayMoreBtn = false
   tocConfig: any = null
   primaryCategory = NsContent.EPrimaryCategory
   courseCategory = NsContent.ECourseCategory
@@ -340,10 +358,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   ngOnInit() {
-    this.firstSixLang = this.languages.slice(0, 5);
-   this.remainingLang = this.languages.slice(5);
-   console.log(this.remainingLang, "this.remainingLang===")
-
+    // this.getCourseLanguage()
     this.dataTransferSvc.setEnrollData(null)
     this.mobile1200 = window.innerWidth < 1201
     this.configSvc.languageTranslationFlag.subscribe((data: any) => {
@@ -387,6 +402,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
+            console.log(this.contentReadData, 'contentReadData from toc home component')
+            this.getCourseLanguage()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
@@ -551,33 +568,133 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   //   return this.showAllLang ? this.languages : this.languages.slice(0, 6);
   // }
 
-  openLangDialog(event:any) {
+  getCourseLanguage() {
+    console.log(this.contentReadData, 'contentReadData========')
+    console.log(this.content, 'content=======')
+    console.log(this.contentSvc, 'widget data')
+    // const contentId = this.widgetData?.content?.identifier
+    // const contentId = 'do_114349267477905408131'
+    // console.log(contentId, 'content id')
+    // if (contentId) {
+    // this.contentSvc?.getContent(contentId).subscribe((data: any) => {
+    //   console.log(data, 'data from content service')
+    // if (data && data.result && data.result.content && data.result.content.languageMapV1) {
+    // return data.result.content.language
+    const languageMapV1 = this.contentReadData?.languageMapV1 || {}
+    console.log(languageMapV1, 'languageMapV1')
+
+    this.languageList = Object.entries(languageMapV1)
+      .filter(([_, val]: [string, any]) => val.status === "live")
+      .map(([lang, val]: [string, any]) => ({
+        name: lang,
+        id: val.id,
+        status: val.status
+      }))
+    // this.getLangArray(languageMapV1)
+
+    console.log(this.languageList, 'languageList')
+    this.languageLength = this.languageList?.length
+    if (this.languageLength <= 5) {
+      this.firstSixLang = this.languageList
+      this.displayMoreBtn = false
+    } else {
+      this.firstSixLang = this.languageList.slice(0, 5)
+      this.remainingLang = this.languageList.slice(5)
+      this.displayMoreBtn = true
+    }
+
+    // }
+    // })
+    // }
+  }
+
+  // getLangArray(data:any) {
+  //   return this.languageList = Object.entries(data)
+  //     .filter(([_, val]: [string, any]) => val.status === "live")
+  //     .map(([lang, val]: [string, any]) => ({
+  //       name: lang,
+  //       id: val.id,
+  //       status: val.status
+  //     }))
+      // console.log(this.languageList, 'languageList from getLangArray')
+      // return  this.languageList
+  // }
+
+  openLangDialog(event: any) {
+    // this.getCourseLanguage()
     event?.stopPropagation()
-    this.dialog.open(LanguageDialogComponent, {
+    const dialogRef = this.dialog.open(LanguageDialogComponent, {
       width: '400px',
       height: 'auto',
-      data:  {
-        from : 'appTocHomeLanguageDialog',
-        content: this.languages,
-        selectLang:'hi'
+      data: {
+        from: 'appTocHomeLanguageDialog',
+        content:  this.languages,
+      }
+    });
+    dialogRef.afterClosed().subscribe((selectedLang) => {
+      if (selectedLang) {
+        console.log(selectedLang, 'selected language from dialog=======')
+        this.selectedLanguageName = selectedLang.name
+        console.log('Selected Language name:', this.selectedLanguageName)
+        this.handleAutoBatchAssign()
+        // You can now use selectedLanguageId as needed
+      }
+    })
+  }
+
+  openLanguageDialog(event: any) {
+    event?.stopPropagation()
+    const dialogRef = this.dialog.open(LanguageDialogComponent, {
+      width: '400px',
+      height: 'auto',
+      data: {
+        from: 'openLanguageDialog',
+        content: this.remainingLang,
+
+      }
+    })
+    dialogRef.afterClosed().subscribe((selectedLang) => {
+      if (selectedLang) {
+        this.selectedLanguageName = selectedLang.id;
+        console.log('Selected Language ID:', this.selectedLanguageName);
+
       }
     });
   }
 
-  openLanguageDialog(event:any) {
-    event?.stopPropagation()
-    this.dialog.open(LanguageDialogComponent, {
-      width: '400px',
-      height: 'auto',
-      data:  {
-        from : 'openLanguageDialog',
-        content: this.languages,
-        selectLang:'hi'
-      }
-    });
+  //   selectCourseLang(lang:any) {
+  //     console.log(lang, 'selected language')
+  //     console.log(lang.id, 'selected language id')
+  //     const id = lang.status === "live" ? lang.id : null;
+  // console.log(id);
+  //   }
+
+  onLanguageClick(id: string, status: string): void {
+    console.log("Language ID:", id)
+    console.log("Status:", status)
+    // let contentType = this.content?.contentType
+    if (id && status && status === 'live') {
+      // Your logic here
+      this.contentSvc?.fetchContent(id, "detail").subscribe((data: any) => {
+        console.log(data, 'data from content service for language click')
+        this.contentReadData = data?.result?.content
+        this.router.navigate(
+          [],
+          {
+            relativeTo: this.route,
+            queryParams: { selectedMLCourse: id },
+            queryParamsHandling: 'merge',
+          })
+        //  this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?batchId=${this.contentReadData?.batchId}`)
+        // this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?selectedMLCourse=${id}`)
+      })
+      // this.contentSvc?.getContent(id).subscribe((data: any) => { 
+      //   console.log(data, 'data from content service for language click')
+      // })
+    }
   }
 
-    
+
 
   // displayRandomlearnAdvisoryData(): void {
   //   const randomIndex = Math.floor(Math.random() * this.learnAdvisoryData.length)
@@ -597,7 +714,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
   }
 
- 
+
 
   isCourseCompletedOnThisMonth() {
     const now = moment(this.serverDate).format('YYYY-MM-DD')
@@ -1257,6 +1374,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   // }
 
   public handleAutoBatchAssign() {
+    console.log('handleAutoBatchAssign called---------')
+     console.log('Selected Language name:++++', this.selectedLanguageName)
     if (this.forPreview) {
       this.navigateToPlayerPage('')
     } else {
@@ -1281,7 +1400,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         }
         this.autoEnrollCuratedProgram(NsContent.ECourseCategory.MODERATED_PROGRAM, moderatedBatchData)
       } else {
-        this.autoAssignEnroll()
+        // this.autoAssignEnroll()
+        this.langAutoAssignEnroll()
       }
     }
     this.contentViewEventForNetCore('enroll')
@@ -1363,6 +1483,49 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     }
   }
 
+   langAutoAssignEnroll() {
+    console.log('langAutoAssignEnroll called---------')
+    // const req = {
+    //   "request": {
+    //     "courseId": "do_11402573033635840016",
+    //     "language": "english"
+    //   }
+    // }
+    if (this.content && this.content.identifier) {
+      // this.contentSvc.languageAutoEnroll(this.content.identifier, this.selectedLanguageName).subscribe(
+      this.contentSvc.languageAutoEnroll("do_11433459942889881614", this.selectedLanguageName).subscribe(
+        
+        (data: NsContent.IBatchListResponse) => {
+          console.log('langAutoAssignEnroll data: ', data)
+          this.batchData = {
+            content: data.content,
+            enrolled: true,
+          }
+          console.log('batchData: ', this.batchData)
+          const batchId = this.getBatchId()
+          if (batchId) {
+            console.log('batchId: ', batchId)
+            // this.createCertTemplate(this.getBatchId(), this.content.identifier)
+
+            // this.router.navigate(
+            //   [],
+            //   {
+            //     relativeTo: this.route,
+            //     queryParams: { batchId: this.getBatchId() },
+            //     queryParamsHandling: 'merge',
+            //   })
+            this.navigateToPlayerPage(batchId)
+          }
+          // this.enrollBtnLoading = false
+        },
+        (_error: any) => {
+          this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
+          this.enrollBtnLoading = false
+        }
+      )
+    }
+  }
+
   navigateToPlayerPage(batchId: string) {
     if (this.content) {
       this.enrollBtnLoading = true
@@ -1381,7 +1544,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.forPreview,
         primaryCategory,
         batchId,
+        this.selectedLanguageName
       )
+      console.log('firstResourceLink: ', this.firstResourceLink)
       this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
     }
   }
@@ -2407,14 +2572,14 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   playResumeForAI() {
-    if(this.content) {
-      if(this.firstResourceLink) {
-        this.router.navigate([this.firstResourceLink.url],{queryParams: this.firstResourceLink.queryParams} )
+    if (this.content) {
+      if (this.firstResourceLink) {
+        this.router.navigate([this.firstResourceLink.url], { queryParams: this.firstResourceLink.queryParams })
       }
-      
-     // this.getContinueLearningData(this.content.identifier)
+
+      // this.getContinueLearningData(this.content.identifier)
     }
-    
+
   }
 
   enrollUserToAI() {

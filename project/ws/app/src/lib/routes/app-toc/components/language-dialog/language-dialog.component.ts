@@ -7,7 +7,8 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
   styleUrls: ['./language-dialog.component.scss']
 })
 export class LanguageDialogComponent implements OnInit{
-  selectedLanguage = '';
+  selectedLanguage: any
+   languageList: any = []
   constructor(
     public dialogRef: MatDialogRef<LanguageDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -18,7 +19,25 @@ export class LanguageDialogComponent implements OnInit{
   
 
   ngOnInit() {
-    console.log(this.data, 'data========')
+  
+    console.log(this.selectedLanguage, 'selectedLanguage========')
+    this.languageList = Object.entries(this.data?.content)
+      .filter(([_, val]: [string, any]) => val.status === "live")
+      .map(([lang, val]: [string, any]) => ({
+        name: lang,
+        id: val.id,
+        status: val.status
+      }))
+      console.log(this.languageList, 'languageList from ngOnInit')
   }
+  
+   
+
+ onSubmit() {
+  // console.log(selectedLang, 'selected language from onSubmit=======')
+  if(this.selectedLanguage) {
+    this.dialogRef.close(this.selectedLanguage); // Pass selected object to parent
+  }
+}
 
 }

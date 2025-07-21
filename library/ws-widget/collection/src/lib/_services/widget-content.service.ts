@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Observable, of, EMPTY, BehaviorSubject } from 'rxjs'
@@ -34,6 +34,7 @@ const API_END_POINTS = {
   COURSE_BATCH_LIST: `/apis/proxies/v8/learner/course/v1/batch/list`,
   COURSE_BATCH: `/apis/proxies/v8/course/v1/batch/read`,
   AUTO_ASSIGN_BATCH: `/apis/protected/v8/cohorts/user/autoenrollment/`,
+  COURSE_AUTO_ENROLL:`apis/proxies/v8/course/v2/autoenrollment`,
   AUTO_ASSIGN_CURATED_BATCH: `/apis/proxies/v8/curatedprogram/v1/enrol`,
   AUTO_ASSIGN_OPEN_PROGRAM: `/apis/proxies/v8/openprogram/v1/enrol`,
   USER_CONTINUE_LEARNING: `${PROTECTED_SLAG_V8}/user/history/continue`,
@@ -59,6 +60,8 @@ const API_END_POINTS = {
   EXT_USER_COURSE_ENROLL : (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
   EXT_CONTENT_EROLL: `/apis/proxies/v8/cios-enroll/v1/create`,
   EXT_PUBLIC_CONTENT: (partent: any, contentId: any) => `/apis/proxies/v8/ciosIntegration/v1/read/content/${partent}/${contentId}`,
+  FETCH_CONTENT_READ: (contentId: string) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
+  LANGUAGE_AUTO_ENROLLMENT: `apis/proxies/v8/course/v2/autoenrollment`,
 }
 
 @Injectable({
@@ -100,6 +103,9 @@ export class WidgetContentService {
 
   updateTocConfig(data: any) {
     this.tocConfigData.next(data)
+  }
+   getContent(contentId: string) {
+     return this.http.get(API_END_POINTS.FETCH_CONTENT_READ(contentId))
   }
 
   fetchContent(
@@ -143,6 +149,9 @@ export class WidgetContentService {
     //   return apiData.result.content
     // }
   }
+
+ 
+  
   fetchAuthoringContent(contentId: string): Observable<NsContent.IContent> {
     const forcreator = window.location.href.includes('editMode=true')
     let url = ''
@@ -192,6 +201,20 @@ export class WidgetContentService {
   autoAssignBatchApi(identifier: any): Observable<NsContent.IBatchListResponse> {
     return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}`)
       .pipe(
+        retry(1),
+        map(
+          (data: any) => data.result.response
+        )
+      )
+  }
+  
+   courseAutoEnroll(request: any) {
+    return this.http.post<NsContent.IBatchListResponse>(`${API_END_POINTS.COURSE_AUTO_ENROLL}`, request).toPromise()
+  }
+  languageAutoEnroll(courseId: string, language: string) {
+    const headers = new HttpHeaders().set('language', language)
+    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${courseId}`, { headers })
+    .pipe(
         retry(1),
         map(
           (data: any) => data.result.response

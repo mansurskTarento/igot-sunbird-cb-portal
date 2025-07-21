@@ -237,6 +237,21 @@ export class ViewerUtilService {
    return courseData
   }
 
+  async getCourseAutoEnrollment() {
+    let  req = {
+      request : {
+        courseId: "do_11402573033635840016",
+        language: "english"
+    }
+    }
+     
+   
+    this.contentSvc.courseAutoEnroll(req).then((res:any) => {
+      console.log('getCourseAutoEnrollment response', res)
+    })
+
+  }
+
   realTimeProgressUpdateQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
     let req: any
     if (this.configservice.userProfile) {

@@ -68,7 +68,7 @@
                       !(content?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL)">
           <ng-container *ngIf="content?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading">
             <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"
-              (click)="handleAutoBatchAssign();openLangDialog($event)">
+              (click)="openLangDialog($event)">
               <ng-container>
                 {{ 'apptochome.enroll' | translate }} 
               </ng-container>
@@ -403,11 +403,11 @@
 
               <div class="lang-chip-list">
                 <p class="mat-subheading-2 text-white">Select a language to view the Table of Contents in that language. Titles and content will update automatically.</p>
-                <a class="lang-mat-chip" *ngFor="let lang of firstSixLang" selected>
-                  {{ lang.localName }} 
+                <a class="lang-mat-chip" *ngFor="let lang of firstSixLang" (click)="onLanguageClick(lang.id, lang.status)">
+                {{ lang.name }}
                 
               </a>
-               <a (click)="openLanguageDialog($event)" class="open-dialog-btn">
+               <a (click)="openLanguageDialog($event)" class="open-dialog-btn" *ngIf="displayMoreBtn">
                 <!-- {{ showAll ? 'Show Less' : 'Show More' }} -->
                   More  <mat-icon>expand_more</mat-icon>
               </a>

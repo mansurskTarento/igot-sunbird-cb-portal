@@ -19,7 +19,7 @@
       </mat-tab-group> -->
       <ng-container *ngIf="isTypeOfCollection">
         <ng-container *ngIf="!loadAllHierarchyData">
-          <viewer-viewer-toc [forPreview]="forPreview" [contentData]="hierarchyData" [tocStructure]="tocStructure" [config]="tocConfig"
+          <viewer-viewer-toc [forPreview]="forPreview" [contentData]="hierarchyData" [enrolledCourseData]="enrolledCourseData" [tocStructure]="tocStructure" [config]="tocConfig"
           [batchData]="batchData" (hidenav)="minimizeBar()"  [hierarchyMapData]="tocSvc?.hashmap" (pathSetEvent)="updatePathSet($event)">
           </viewer-viewer-toc>
         </ng-container>
@@ -128,7 +128,7 @@
         </div>
         <div [ngClass]="isMobile ? 'toc-container-mobile' : 'toc-container'" *ngIf="viewerHeaderSideBarToggleFlag && !(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <div class="pb-4 lg:py-4">
-            <ws-widget-content-toc [fromViewer]="true" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentReadData]="contentReadData" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
+            <ws-widget-content-toc [fromViewer]="true" [enrolledCourseData]="enrolledCourseData" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentReadData]="contentReadData" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
             [resumeData]="resumeData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig"></ws-widget-content-toc>
           </div>
         </div>
@@ -136,7 +136,7 @@
       <ng-container *ngIf="!isMobile">
         <div class='toc-container' *ngIf="viewerHeaderSideBarToggleFlag">
           <div class="pb-4 lg:py-4 pl-4 pr-4">
-            <ws-widget-content-toc [contentReadData]="contentReadData" [fromViewer]="true" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
+            <ws-widget-content-toc [contentReadData]="contentReadData" [enrolledCourseData]="enrolledCourseData" [fromViewer]="true" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
             [resumeData]="resumeData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig"></ws-widget-content-toc>
           </div>
         </div>

@@ -17,6 +17,7 @@ import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
+import { WidgetContentService } from '../_services/widget-content.service'
 // import { Router } from '@angular/router'
 
 @Component({
@@ -63,6 +64,8 @@ export class CardContentV2Component extends WidgetBaseComponent
     { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
     { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
   ];
+  languageList: any = []
+  languageLength: number = 0
   
   isIntranetAllowedSettings = false
   constructor(
@@ -76,7 +79,8 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private widgetSvc : WidgetContentService
 
   ) {
     super()
@@ -91,6 +95,7 @@ export class CardContentV2Component extends WidgetBaseComponent
 
   ngOnInit() {
     // this.widgetInstanceId=his.id
+     this.getCourseLanguage() 
     this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
     this.prefChangeSubscription = this.configSvc.prefChangeNotifier.subscribe(() => {
       this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
@@ -143,6 +148,29 @@ export class CardContentV2Component extends WidgetBaseComponent
     },                                1000)
   }
 
+
+  getCourseLanguage() {
+    console.log(this.widgetData, 'widget data')
+    // const contentId = this.widgetData?.content?.identifier
+    const contentId = 'do_114349267477905408131'
+    console.log(contentId, 'content id')
+    if (contentId) {
+      this.widgetSvc?.getContent(contentId).subscribe((data: any) => {
+        console.log(data, 'data from content service')
+        if (data && data.result && data.result.content && data.result.content.languageMapV1) {
+          // return data.result.content.language
+          const languageMapV1 = data.result.content.languageMapV1
+          console.log(languageMapV1, 'languageMapV1')
+          this.languageList = Object.keys(languageMapV1).filter(language => {
+            return languageMapV1[language].status === "live";
+          });
+          console.log(this.languageList, 'languageList')
+          this.languageLength = this.languageList.length;
+        }
+      })
+    }
+  }
+
   openLanguageDialog(event:any): void {
     event.stopPropagation()
     this.dialog.open(ConfirmDialogComponent, {
@@ -151,7 +179,7 @@ export class CardContentV2Component extends WidgetBaseComponent
         title: ' ',
         from: 'openLanguageDialog',
         acceptButton: '',
-        content: this.languages
+        content: this.languageList
        
       } // optional, if you need to pass data
     });

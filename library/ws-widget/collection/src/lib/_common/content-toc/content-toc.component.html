@@ -2,40 +2,41 @@
 <div class="ai-tutor-get-started" *ngIf="!viewerPage && enableAITutorFlag && !isMobile">
     <div class="flex flex-row align-items-center">
         <div class="px-2 py-2">
-            <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px"/>
+            <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px" />
         </div>
         <div class="flex flex-row align-items-center">
             <div class="py-2" [ngClass]="isMobile ? '' : 'w-565'">
                 <p class="font-weight-600">Get Started with AI Tutor</p>
-                <span>Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</span>
+                <span>Get instant explanations, step-by-step learning guidance, and customised learning tailored just
+                    for you.</span>
             </div>
             <div class="ai-tutor-btn px-2 py-1">
-                <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
+                <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img
+                        src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
             </div>
         </div>
     </div>
 </div>
-<mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu 
-    [class.sticky-mat-tabs]="sticky" 
-    [selectedIndex]="selectedTabIndex" 
-    [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
-    
+<mat-tab-group (selectedTabChange)="handleTabChange($event)" #stickyMenu [class.sticky-mat-tabs]="sticky"
+    [selectedIndex]="selectedTabIndex" [ngClass]="{'content-tabs':!fromViewer,'contentSticky': forPreview}">
+
     <!-- Transcription Tab -->
     <mat-tab label="Transcription" *ngIf="viewerPage && enableTranscriptionFlag && vttLangArr?.length">
         <ng-template mat-tab-label>
             <div class="flex flex-row">
-              <div class="flex">
-                <span>Transcript</span>
-              </div>        
-              <div class="red-circle ml-5">
-                New
-              </div>
+                <div class="flex">
+                    <span>Transcript</span>
+                </div>
+                <div class="red-circle ml-5">
+                    New
+                </div>
             </div>
 
-          </ng-template>
+        </ng-template>
         <ng-template matTabContent>
             <div class="disclaimer my-2">
-                <p class="py-2 px-2">Disclaimer : These transcripts and subtitles are AI-generated and may contain errors.</p>
+                <p class="py-2 px-2">Disclaimer : These transcripts and subtitles are AI-generated and may contain
+                    errors.</p>
             </div>
             <div class="ml-4 flex flex-row justify-end transcript-control">
                 <!-- <mat-form-field appearance="none">
@@ -49,46 +50,57 @@
                     <div class="w-80">
                         <div class="ml-5-per" *ngIf="subTitles && subTitles.length">
                             <!-- Transcription content -->
-                             <ng-container *ngFor="let subtitle of subTitles">
+                            <ng-container *ngFor="let subtitle of subTitles">
                                 <div class="flex flex-col  my-2">
                                     <div class="flex flex-row">
-                            <div class="w-15">
-                                <p class="blue-underline cursor-pointer" (click)="playFromSlot(subtitle)">
-                                    <span *ngIf="subtitle?.startTime/1000 === 0">0s</span>
-                                    <span *ngIf="subtitle?.startTime/1000 !== 0">{{ (subtitle?.startTime/1000) | pipeDurationTransform: 'hms'  }}</span>
-                                    
-                                     -  {{ (subtitle?.endTime/1000) | pipeDurationTransform: 'hms'}}
-                                </p>
-                            </div>
-                            <div class="ml-4 w-80 mr-4">
-                                <p class="black-text" [innerHtml]="subtitle?.text | highlight:keywordToHighlight?.text:((subtitle?.startTime/1000) === keywordToHighlight?.start)"></p>
-                            </div> 
-                        </div>
-                        </div>
-                    </ng-container> 
+                                        <div class="w-15">
+                                            <p class="blue-underline cursor-pointer" (click)="playFromSlot(subtitle)">
+                                                <span *ngIf="subtitle?.startTime/1000 === 0">0s</span>
+                                                <span *ngIf="subtitle?.startTime/1000 !== 0">{{
+                                                    (subtitle?.startTime/1000) | pipeDurationTransform: 'hms' }}</span>
+
+                                                - {{ (subtitle?.endTime/1000) | pipeDurationTransform: 'hms'}}
+                                            </p>
+                                        </div>
+                                        <div class="ml-4 w-80 mr-4">
+                                            <p class="black-text"
+                                                [innerHtml]="subtitle?.text | highlight:keywordToHighlight?.text:((subtitle?.startTime/1000) === keywordToHighlight?.start)">
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
                         </div>
                     </div>
                     <div class="w-20">
                         <div class="transcript-flex-container mt-2">
-                            <mat-form-field class="multiline-select" appearance="fill" style="height: 75px; width: 100%;" floatLabel="never">
-                                <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle" (selectionChange)="renderSelectedLanguageTranscription($event)">
-                                  <mat-select-trigger class="multiline-select-box-trigger">
-                                    <div class="selected-option-content">
-                                      <div class="title"><span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label"> <b>Transcript Language: </b></span> {{selectedTranscriptionStyle?.language | titlecase}} <span *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label">(Auto)</span></div>
-                                    </div>
-                                  </mat-select-trigger>
-                                  <mat-option class="multiline-select-option" value="" *ngFor="let lang of vttLangArr" [value]="lang"
-                                  [ngClass]="{'active-option': selectedTranscriptionStyle?.label === lang?.label}">
-                                    <div class="option-content">
-                                      <div class="title">{{lang?.language | titlecase}}</div>
-                                    </div>
-                                  </mat-option>
+                            <mat-form-field class="multiline-select" appearance="fill"
+                                style="height: 75px; width: 100%;" floatLabel="never">
+                                <mat-select class="multiline-select-box" [(value)]="selectedTranscriptionStyle"
+                                    (selectionChange)="renderSelectedLanguageTranscription($event)">
+                                    <mat-select-trigger class="multiline-select-box-trigger">
+                                        <div class="selected-option-content">
+                                            <div class="title"><span
+                                                    *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label">
+                                                    <b>Transcript Language: </b></span>
+                                                {{selectedTranscriptionStyle?.language | titlecase}} <span
+                                                    *ngIf="transcriptionActiveLanguage === selectedTranscriptionStyle?.label">(Auto)</span>
+                                            </div>
+                                        </div>
+                                    </mat-select-trigger>
+                                    <mat-option class="multiline-select-option" value="" *ngFor="let lang of vttLangArr"
+                                        [value]="lang"
+                                        [ngClass]="{'active-option': selectedTranscriptionStyle?.label === lang?.label}">
+                                        <div class="option-content">
+                                            <div class="title">{{lang?.language | titlecase}}</div>
+                                        </div>
+                                    </mat-option>
                                 </mat-select>
-                              </mat-form-field>
-                            </div>
+                            </mat-form-field>
+                        </div>
                     </div>
                 </div>
-               
+
             </div>
             <!-- <div class="flex flex-row align-items-center my-2">
                 <div>
@@ -105,86 +117,70 @@
                     </mat-form-field>
                 </div>
             </div> -->
-            
+
         </ng-template>
     </mat-tab>
-    
+
     <!-- About Tab -->
     <mat-tab label="{{ 'apptocsinglepage.about' | translate }}">
         <ng-template matTabContent>
             <div class="ai-tutor-get-started-mobile mt-2 ml-2" *ngIf="!viewerPage && enableAITutorFlag && isMobile">
                 <div class="flex flex-row align-items-center w-98">
                     <div class="px-2 py-2">
-                        <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px"/>
+                        <img src="assets/icons/bot-chat-small.svg" height="64px" width="64px" />
                     </div>
                     <div class="flex flex-row align-items-center">
                         <div class="py-2">
                             <p class="font-weight-600">Get Started with AI Tutor</p>
-                            <span>Get instant explanations, step-by-step learning guidance, and customised learning tailored just for you.</span>
+                            <span>Get instant explanations, step-by-step learning guidance, and customised learning
+                                tailored just for you.</span>
                         </div>
-                        
+
                     </div>
-                    
+
                 </div>
                 <div class="flex justify-end my-2 mx-2">
                     <div class="ai-tutor-btn px-2 py-1">
-                        <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
+                        <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img
+                                src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI
+                                Tutor</span></a>
                     </div>
                 </div>
             </div>
-            <ws-widget-app-toc-about 
-                [fromViewer]="fromViewer" 
-                [pathSet]="pathSet" 
-                [content]="content"
-                [contentReadData]="contentReadData" 
-                [tocStructure]="tocStructure" 
-                [config]="config" 
-                [forPreview]="false" 
-                [sticky]="sticky" 
-                [selectedBatchData]="selectedBatchData" 
-                [selectedTabValue]="selectedTabIndex"
-                [resumeData]="resumeData" 
-                [batchData]="batchData" 
-                [skeletonLoader]="skeletonLoader" 
-                [condition]="condition" 
-                [kparray]="kparray" 
-                [showReviews]="'true'">
+            <ws-widget-app-toc-about [fromViewer]="fromViewer" [pathSet]="pathSet" [content]="content"
+                [contentReadData]="contentReadData" [tocStructure]="tocStructure" [config]="config" [forPreview]="false"
+                [sticky]="sticky" [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
+                [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
+                [condition]="condition" [kparray]="kparray" [showReviews]="'true'">
             </ws-widget-app-toc-about>
         </ng-template>
     </mat-tab>
-    
+
     <!-- Content Tab -->
     <ng-container *ngIf="content?.children?.length">
         <mat-tab label="{{ 'apptocsinglepage.content' | translate }}" *ngIf="contentTabFlag">
             <ng-template matTabContent>
-                <ws-widget-app-toc-content 
-                    [batchId]="batchId" 
-                    [componentName]="componentName" 
-                    [pathSet]="pathSet" 
-                    [content]="content" 
-                    [tocStructure]="tocStructure" 
-                    [config]="config" 
-                    [forPreview]="false"
-                    [resumeData]="resumeData" 
-                    [batchData]="batchData" 
-                    [skeletonLoader]="skeletonLoader" 
-                    [hierarchyMapData]="hierarchyMapData">
+                <ws-widget-app-toc-content [batchId]="batchId" [componentName]="componentName" [pathSet]="pathSet"
+                    [content]="content" [tocStructure]="tocStructure" [config]="config" [forPreview]="false"
+                    [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
+                    [enrolledCourseData]="enrolledCourseData" [hierarchyMapData]="hierarchyMapData" (languageSelected)="onLanguageSelected($event)">
+
                 </ws-widget-app-toc-content>
             </ng-template>
         </mat-tab>
     </ng-container>
     
     <!-- Comments Tab -->
-    <ng-container *ngIf="config?.commentsTab && !forPreview">
-        <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
-            <!-- <ng-template matTabContent> -->
-                <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
-                    <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
-                </div>
-            <!-- </ng-template> -->
-        </mat-tab>
+    <ng-container *ngIf=" config?.commentsTab && !forPreview">
+                    <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+                        <!-- <ng-template matTabContent> -->
+                        <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
+                            <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
+                        </div>
+                        <!-- </ng-template> -->
+                    </mat-tab>
     </ng-container>
-    
+
     <!-- Teachers Note Tab -->
     <ng-container *ngIf="content?.referenceNodes && teacherNotesFlag && displayTeachersContent">
         <mat-tab label="Teachers Note">
@@ -195,7 +191,7 @@
             </ng-template>
         </mat-tab>
     </ng-container>
-    
+
     <!-- Reference Note Tab -->
     <ng-container *ngIf="content?.referenceNodes && referenceNotesFlag">
         <mat-tab label="Reference Note">
