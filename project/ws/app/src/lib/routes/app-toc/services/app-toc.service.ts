@@ -569,7 +569,7 @@ export class AppTocService {
     if (content && content.children) {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
-      const foundParentContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
+      const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, content?.identifier)
       if (foundParentContent && foundParentContent.completionPercentage === 100) {
         this.mapCompletionChildPercentageProgram(content)
       } else {
@@ -578,7 +578,7 @@ export class AppTocService {
             // content.children.forEach(async (parentChild,index) => {
               const parentChild = content.children[i]
               if (parentChild.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
-                const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === parentChild.identifier)
+                const foundContent = this.findEnrolmentByCollectionId(enrolmentList, parentChild?.identifier)
                 // tslint:disable-next-line: max-line-length
                 // totalCount = foundContent && foundContent.completionPercentage ? totalCount + foundContent.completionPercentage : totalCount + 0
                 // content.completionPercentage = Math.round(totalCount / leafnodeCount)
@@ -621,7 +621,7 @@ export class AppTocService {
                     inprogressDataCheck = inprogressDataCheck
                     await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
                       const data: any  = progressdata
-                      if (data.result && data.result.contentList.length > 0) {
+                      if (data.result && data?.result?.contentList?.length > 0) {
                         const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
                         this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
                         totalCount = completedLeafNodes.length
@@ -680,7 +680,7 @@ export class AppTocService {
           || content.primaryCategory === NsContent.EPrimaryCategory.STANDALONE_ASSESSMENT
           || content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
           // this.mapCompletionPercentage(content, this.resumeData)
-          const foundParentContent = enrolmentList.find((el: any) => el.collectionId === content.identifier)
+          const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, content?.identifier)
           const req = {
             request: {
               batchId: foundParentContent?.batch.batchId,
@@ -776,6 +776,10 @@ export class AppTocService {
   // }
   // }
 
+  findEnrolmentByCollectionId (enrolmentList: any, identifier: string) {
+    return enrolmentList && enrolmentList?.length && enrolmentList.find((el: any) => el?.collectionId === identifier)
+  }
+  
   mapCompletionChildPercentageProgram(course: any) {
     if (course && course.children) {
       course.children.map((courseChild: any) => {
