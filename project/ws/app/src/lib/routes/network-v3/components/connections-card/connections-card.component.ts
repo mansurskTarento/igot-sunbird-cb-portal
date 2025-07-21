@@ -183,6 +183,7 @@ export class ConnectionsCardComponent implements OnInit {
                 break;
               case 'Unblocked':
                 listToGetCount = ['Blocked']
+                this.openSnackbar('User unblocked successfully')
                 break;
               case 'Removed':
                 listToGetCount = ['Approved']
