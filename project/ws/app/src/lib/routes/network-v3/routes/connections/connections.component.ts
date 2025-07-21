@@ -28,7 +28,7 @@ export class ConnectionsComponent implements OnInit {
   paginationPage = 1;
   totalItemsCount = 0;
   defaultPaginationSize = 10;
-  noDataMessage = 'NetworkLandingPage.noConnectionsFound';
+  noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
   allStatesList = ['Approved', 'Received', 'Pending', 'Blocked'];
   satesListToGetCount: string[] = [];
 
@@ -70,7 +70,6 @@ export class ConnectionsComponent implements OnInit {
         if(response) {
           const facets = _.get(response, 'result.facets[0].values', []);
           const responseMap = new Map(facets.map((item: any) => [item.name.toLowerCase(), item.count]));
-          this.satesListToGetCount = [];
           this.tabDetailsList.forEach((tab) => {
             let keyToSet = tab.key;
             if(tab.key === 'Pending') {
@@ -90,6 +89,7 @@ export class ConnectionsComponent implements OnInit {
               this.networkingSvc.sendConnectionUpdates(connectionsUpdate);
             }
           });
+          this.satesListToGetCount = [];
         }
       }
     })
@@ -118,7 +118,7 @@ export class ConnectionsComponent implements OnInit {
     switch (key) {
       case 'Approved':
         this.getConnectionsList();
-        this.noDataMessage = 'NetworkLandingPage.noConnectionsFound';
+        this.noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
         break;
       case 'Received':
         this.getRequestsList();
