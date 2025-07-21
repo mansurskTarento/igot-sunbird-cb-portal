@@ -406,6 +406,14 @@
   }
 }
 
+.connection-sent {
+    border: 1px solid #999999 !important;
+    color: #999999 !important;
+    pointer-events: none;
+    height: 30px;
+    border-radius: 15px;
+}
+
 @media screen and (max-width: 1000px) {
   .not-my-user-container {
     width: 100%;

@@ -15,21 +15,21 @@ export class ConnectionsComponent implements OnInit {
   // selectedTabKey = 'connections';
   selectedTabIndex = 0;
   tabDetailsList: tabDetails[] = [
-    { lable: 'NetworkLandingPage.connections', key: 'Approved', recordsCount: 0 },
-    { lable: 'NetworkLandingPage.requests', key: 'Requested', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.myConnections', key: 'Approved', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.requests', key: 'Received', recordsCount: 0 },
     { lable: 'NetworkLandingPage.sent', key: 'Pending', recordsCount: 0 },
     { lable: 'NetworkLandingPage.blocked', key: 'Blocked', recordsCount: 0 }
   ]
   connectionsList: any = [];
   connectionsLoading = false;
   apiSubscription: any;
-  paginationSize = 50;
-  paginationSizeOptions = [50, 100, 150, 200];
+  paginationSize = 10;
+  paginationSizeOptions = [10, 20, 30, 40];
   paginationPage = 1;
   totalItemsCount = 0;
-  defaultPaginationSize = 50;
-  noDataMessage = 'NetworkLandingPage.noConnectionsFound';
-  allStatesList = ['Approved', 'Requested', 'Pending', 'Blocked'];
+  defaultPaginationSize = 10;
+  noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
+  allStatesList = ['Approved', 'Received', 'Pending', 'Blocked'];
   satesListToGetCount: string[] = [];
 
   constructor(
@@ -70,15 +70,18 @@ export class ConnectionsComponent implements OnInit {
         if(response) {
           const facets = _.get(response, 'result.facets[0].values', []);
           const responseMap = new Map(facets.map((item: any) => [item.name.toLowerCase(), item.count]));
-          this.satesListToGetCount = [];
-          this.tabDetailsList.forEach(tab => {
-            const count = responseMap.get(tab.key.toLowerCase()) as number;
+          this.tabDetailsList.forEach((tab) => {
+            let keyToSet = tab.key;
+            if(tab.key === 'Pending') {
+              keyToSet = 'Requested'
+            }
+            const count = responseMap.get(keyToSet.toLowerCase()) as number;
             if (count !== undefined && count !== null) {
               tab.recordsCount = count as number;
             } else if (this.satesListToGetCount.indexOf(tab.key) > -1) {
               tab.recordsCount = 0;
             }
-            if(tab.key === 'Requested') {
+            if(tab.key === 'Received') {
               const connectionsUpdate: connectionUpdates = {
                 routeId: 'connections',
                 showUpdate: count > 0 ? true : false
@@ -86,6 +89,7 @@ export class ConnectionsComponent implements OnInit {
               this.networkingSvc.sendConnectionUpdates(connectionsUpdate);
             }
           });
+          this.satesListToGetCount = [];
         }
       }
     })
@@ -101,7 +105,7 @@ export class ConnectionsComponent implements OnInit {
 
   resetPagination() {
     this.paginationPage = 1;
-    this.paginationSize = 50;
+    this.paginationSize = this.defaultPaginationSize;
     this.totalItemsCount = 0;
     this.getTabData();
   }
@@ -114,9 +118,9 @@ export class ConnectionsComponent implements OnInit {
     switch (key) {
       case 'Approved':
         this.getConnectionsList();
-        this.noDataMessage = 'NetworkLandingPage.noConnectionsFound';
+        this.noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
         break;
-      case 'Requested':
+      case 'Received':
         this.getRequestsList();
         this.noDataMessage = 'NetworkLandingPage.noRequestsFound';
         break;
