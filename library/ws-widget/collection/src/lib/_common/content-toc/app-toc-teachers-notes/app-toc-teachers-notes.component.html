@@ -1,11 +1,22 @@
-<div class="flex justify-between">
-  <div class="teachers-note-header pt-2">{{ 'apptocsinglepage.teachersNoteHeading' | translate }}</div>
-  <div class="download-all" (click)="downloadAllContent()">{{ 'apptocsinglepage.downaloadAllPdfs' | translate }}</div>
+<div class="flex justify-between items-center">
+  <div class="teachers-note-header">{{ 'apptocsinglepage.teachersNoteHeading' | translate }}</div>
+  <div >
+    <button 
+      [disabled]="hasActiveDownloads()" 
+      (click)="downloadAllContent()" 
+      class="download-all flex items-center">
+      <span *ngIf="!isDownloadingAll">{{ 'apptocsinglepage.downaloadAllPdfs' | translate }}</span>
+      <span *ngIf="isDownloadingAll" class="flex items-center">
+        <mat-spinner diameter="16" class="mr-2"></mat-spinner>
+        Downloading
+      </span>
+    </button>
+  </div>
 </div>
 
 <div class="guide-container" *ngIf="content?.referenceNodes">
   <ng-container *ngFor="let note of content?.referenceNodes">
-    <div class="guide-card flex gap-4 justify-between"  *ngIf="note?.resourceCategory === 'Teachers Resource'">
+    <div class="guide-card flex gap-4 justify-between" *ngIf="note?.resourceCategory === notesDisplayType">
       <div>
         <div class="note-title">{{note?.name}}</div>
         <div class="flex gap-2 pt-2">
@@ -15,13 +26,24 @@
           <a (click)="previewContent(note)">
             <span class="view-pdf">{{ 'apptocsinglepage.viewPDF' | translate }}</span>
           </a>
-          </div>
+        </div>
       </div>
       <div>
         <div class="download-ind">
-          <a  download="{{note?.name}}" (click)="downloadPDF(note)">{{ 'apptocsinglepage.downloadPdf' | translate }}</a>
+          <a (click)="downloadPDF(note)" class="download-link flex items-center">
+            <span *ngIf="!downloadInProgress[note.identifier]">{{ 'apptocsinglepage.downloadPdf' | translate }}</span>
+            <span *ngIf="downloadInProgress[note.identifier]" class="flex items-center">
+              <mat-spinner diameter="16" class="mr-2"></mat-spinner>
+              Downloading
+            </span>
+          </a>
         </div>
       </div>
     </div>
   </ng-container>
+</div>
+
+<!-- No teachers resources message -->
+<div *ngIf="!hasTeacherResources()" class="no-resources-message mt-4">
+  {{ 'apptocsinglepage.noTeachersResources' | translate }}
 </div>
