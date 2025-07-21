@@ -452,7 +452,29 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
     
   }
-
+  getUniqueArray(arrayData: any[]) {
+    if (!arrayData || !arrayData.length) {
+      return [];
+    }
+    
+    // For arrays of objects with 'sectorName' property
+    if (typeof arrayData[0] === 'object' && arrayData[0].sectorName) {
+      const uniqueValues = new Set<string>();
+      const result: any[] = [];
+      
+      arrayData.forEach(item => {
+        if (item.sectorName && !uniqueValues.has(item.sectorName)) {
+          uniqueValues.add(item.sectorName);
+          result.push(item);
+        }
+      });
+      
+      return result;
+    }
+    
+    // For arrays of primitive values
+    return Array.from(new Set(arrayData));
+  }
   get getMimeType() {
     let mimetype = this.widgetData && this.widgetData.content && this.widgetData.content.mimeType
     return VIEWER_ROUTE_FROM_MIME(mimetype)

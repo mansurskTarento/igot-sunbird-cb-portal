@@ -3,6 +3,8 @@ export const gyaanConstants = {
     allSectors: 'All Sectors',
     allSubSector: 'All Sub sector',
     sectorName: 'sectorName',
+    requestSectorName: 'sectorDetails_v1.sectorName',
+    requestSubSectorName: 'sectorDetails_v1.subSectorName',
     sectors: 'Sectors',
     subSectors: 'Sub-sectors',
     category: 'Category',

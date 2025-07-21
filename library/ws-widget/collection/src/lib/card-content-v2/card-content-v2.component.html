@@ -1665,8 +1665,24 @@
           </div>
           <div class="padding-m">
             <div class="course_widget flex margin-remove">
-              <div class="flex flex-end course_v2" *ngIf="widgetData?.content?.sectorName">
-                <!-- <mat-icon class="mat-icon main_icon ws-mat-default-text margin-right-xs">video_library</mat-icon> -->
+              <ng-container *ngIf="widgetData?.content?.sectorDetails_v1?.length > 0">
+                <!-- Display first two sectors -->
+                <ng-container *ngFor="let sector of getUniqueArray(widgetData?.content?.sectorDetails_v1)?.slice(0, 2); let i = index">
+                  <div class="flex flex-end course_v2 mr-2 mb-1">
+                    <span class="content-type-class font-normal mat-caption">
+                      {{sector?.sectorName}}
+                    </span>
+                  </div>
+                </ng-container>
+                
+                <!-- Show count for remaining sectors if more than 2 -->
+                <div class="flex flex-end  mb-1 items-center" *ngIf="getUniqueArray(widgetData?.content?.sectorDetails_v1)?.length > 2">
+                  <span class="content-type-class font-normal mat-caption" >
+                    +{{getUniqueArray(widgetData?.content?.sectorDetails_v1)?.length - 2}} more
+                  </span>
+                </div>
+              </ng-container>
+              <!-- <div class="flex flex-end course_v2" *ngIf="widgetData?.content?.sectorName">
                 <span  class="content-type-class font-normal mat-caption" >
                   {{widgetData?.content?.sectorName}}</span>
               </div>
@@ -1674,7 +1690,7 @@
                 <span  class="content-type-class font-normal mat-caption" >
                   
                 {{widgetData?.content?.subSectorName}}</span>
-              </div>
+              </div> -->
             </div>
             <div [id]="'m-c-'+ widgetData?.content?.identifier"
               class="mat-subheading-1 title-text ws-mat-text-block-fade-gradient">
@@ -1682,7 +1698,7 @@
             </div>
             <div [id]="'m-c-'+ widgetData?.content?.identifier"
               class="mat-subheading-1 description-text  ws-mat-text-block-fade-gradient" [innerText]="widgetData?.content?.description"></div>
-            <div class="flex w-full flex-wrap flex-middle">
+            <div class="flex w-full flex-wrap flex-middle mt-4">
               <div class="course_logo_box">
                 <img [src]="widgetData?.content?.creatorLogo | pipePublicURL " class="source-icon" [wsUtilsDefaultThumbnail]="defaultSLogo"
                 [alt]="(widgetData?.content?.sourceName + '_' + widgetData?.content?.identifier)" />
