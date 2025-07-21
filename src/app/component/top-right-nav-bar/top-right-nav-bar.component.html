@@ -6,7 +6,8 @@
                 *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
                 <div #notificationTrigger [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()"
                     title="Notifications"
-                    (keydown.enter)="$event.preventDefault(); notificationTrigger.click(); onBellClick();" tabindex="0">
+                    (keydown.enter)="$event.preventDefault(); notificationTrigger.click(); onBellClick();" tabindex="0"
+                    (keydown.escape)="$event.preventDefault(); notificationTrigger.click();">
                     <mat-icon class="bell-icon">notifications</mat-icon>
                     <span class="counter" *ngIf="notificationsCount > 0">{{notificationsCount > 9 ? '9+' :
                         notificationsCount}}</span>
