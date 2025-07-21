@@ -23,12 +23,12 @@ import { BtnSettingsService } from '@sunbird-cb/collection'
 
 // Add this helper function before your component class
 function isStripActive(strip: any): boolean {
-  return !!(strip && 
-            strip.strips && 
-            Array.isArray(strip.strips) && 
-            strip.strips.length > 0 &&
-            strip.strips[0] && 
-            strip.strips[0].active === true);
+  return !!(strip &&
+    strip.strips &&
+    Array.isArray(strip.strips) &&
+    strip.strips.length > 0 &&
+    strip.strips[0] &&
+    strip.strips[0].active === true);
 }
 
 // Add this constant at the top of your file (near other constants)
@@ -144,10 +144,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.contentStripData = this.activatedRoute.snapshot.data.pageData.data || []
       // tslint:disable-next-line: prefer-template
       this.contentStripData = (this.contentStripData.newHomeStrip || []).sort((a: any, b: any) => a.order - b.order)
-      
+
       // Clear sectionList before adding new entries
       this.sectionList = [];
-      
+
       // Add all content strips to sectionList with correct indices
       this.contentStripData.forEach((strip: any, index: number) => {
         const obj: any = {};
@@ -285,8 +285,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     this.userProfileService.readOrgData(request).subscribe((res: any) => {
       const isPopupEnabled = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
-      const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount') > 0 ? true : false
-      if (isPopupEnabled && customFieldsCount) {
+      const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
+      const customFieldsLength = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
+      if (isPopupEnabled && customFieldsCount && customFieldsLength.length > 0) {
         this.readCustomattributeDetails()
       } else {
         this.canShowCustomAttrOpen = false
@@ -301,8 +302,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
       let customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       if (customFieldValues.length === 0) {
+        this.redirectToCustomProfile()
         this.canShowCustomAttrOpen = true
       } else {
+        //this.redirectToCustomProfile()
         this.canShowCustomAttrOpen = false
       }
     }, error => {
@@ -409,8 +412,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   scrollHandler() {
     // Check visibility for sections that aren't already visible
     for (let i = 0; i < this.sectionList.length; i++) {
-      if (!this.sectionList[i]['isVisible'] && 
-          !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
+      if (!this.sectionList[i]['isVisible'] &&
+        !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
         this.checkSectionVisibility(this.sectionList[i]['section']);
       }
     }
@@ -418,14 +421,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   checkSectionVisibility(className: string) {
     // Skip already visible sections
-    if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips-1}]$`))) {
+    if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
       return;
     }
-    
+
     // Find the section in our list
-    const sectionIndex = this.sectionList.findIndex((item:any) => item.section === className);
+    const sectionIndex = this.sectionList.findIndex((item: any) => item.section === className);
     if (sectionIndex === -1) return;
-    
+
     // Check if the element is in viewport
     const elements = document.getElementsByClassName(className);
     if (elements && elements.length > 0) {
@@ -433,7 +436,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const eleTop = rect.top;
       const eleBottom = rect.bottom;
       const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight);
-      
+
       // Update visibility
       if (isVisible) {
         this.sectionList[sectionIndex]['isVisible'] = true;

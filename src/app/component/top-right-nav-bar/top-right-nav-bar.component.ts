@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { NotificationsService } from 'src/app/services/notifications.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from '../../../environments/environment'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -49,12 +52,13 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
+  roles: string[] = []
 
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService,
+    private events: EventService, private snackBar: MatSnackBar,
     private router: Router, private notificationsService: NotificationsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -72,6 +76,10 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         this.selectedLanguage = lang
       }
     })
+
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
+      this.roles = this.configSvc.unMappedUser.roles
+    }
   }
 
   ngOnInit() {
@@ -198,21 +206,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   viewAllClick(event: any) {
     if (event.category) {
       this.raiseTelemetryEventForNotification(event)
-      if (event.category === 'LEARN') {
-        this.router.navigate([`/app/toc/${event.message.data.id}`])
-      } else if (event.category === 'EVENT') {
-        this.router.navigate([`/app/event-hub/home/${event.message.data.id}`])
-      } else if (event.category === 'DISCUSSION') {
-        this.router.navigate([`/app/discussion-forum-v2/community/${event.message.data.communityId}/${event.message.data.discussionId}`])
-      } else if (event.category === 'NETWORK') {
-        if (event.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
-          this.router.navigate([`/app/person-profile/${event.message.data.id}`])
-        } else if (event.sub_category === "SEND_CONNECTION_REQUEST") {
-          this.router.navigate([`/app/network-v2/connection-requests`])
-        }
-      } else {
-        this.router.navigate(['/app/notifications'])
-      }
+      this.notificationsService.handleRedirection(event, environment, this.roles, this.snackBar)
     } else {
       this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
     }
@@ -225,6 +219,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   calculateCount(event: any) {
     console.log("sds", event)
+  }
+
+  showDialog(data: any, url: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
+      }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

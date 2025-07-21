@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-
+import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service';
+import { environment } from 'src/environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'ws-app-my-notifications',
   templateUrl: './my-notifications.component.html',
@@ -10,9 +13,14 @@ import { EventService, MultilingualTranslationsService } from '@sunbird-cb/utils
 })
 export class MyNotificationsComponent {
   selectedLanguage = 'en'
+  roles: string[] = []
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
-    private router: Router, private events: EventService) {
+    private notificationsService: NotificationsService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private configService: ConfigurationsService,
+    private events: EventService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -29,24 +37,24 @@ export class MyNotificationsComponent {
         this.selectedLanguage = lang
       }
     })
+    if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.roles) {
+      this.roles = this.configService.unMappedUser.roles
+    }
   }
 
 
   redirectTo(notification: any) {
     this.raiseTelemetryEventForNotification(notification)
-    if (notification.category === 'LEARN') {
-      this.router.navigate([`/app/toc/${notification.message.data.id}`])
-    } else if (notification.category === 'EVENT') {
-      this.router.navigate([`/app/event-hub/home/${notification.message.data.id}`])
-    } else if (notification.category === 'DISCUSSION') {
-      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
-    } else if (notification.category === 'NETWORK') {
-      if (notification.sub_category === "ACCEPTED_CONNECTION_REQUEST") {
-        this.router.navigate([`/app/network-v2/my-connection`])
-      } else if (notification.sub_category === "SEND_CONNECTION_REQUEST") {
-        this.router.navigate([`/app/network-v2/connection-requests`])
+    this.notificationsService.handleRedirection(notification, environment, this.roles, this.snackBar)
+  }
+
+  showDialog(data: any, url: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, data)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        window.open(url, '_blank')
       }
-    }
+    })
   }
 
   raiseTelemetryEventForNotification(notification: any) {

@@ -721,7 +721,7 @@
                 cbpData: cbPlanMapData[widgetData?.content?.identifier]
               }}"></ng-container>
             </ng-container>
-            <div class="duration-box right-corner" *ngIf="widgetData?.content?.duration > 0">
+            <div class="duration-box right-corner" *ngIf="widgetData?.content?.duration > 0 && !(widgetData?.content?.programDuration > 0)">
               <mat-icon class="mat-icon main_icon mr-1">access_time</mat-icon>
               <span class=" ws-mat-white-text duration nodtranslate">
                 {{ (widgetData?.content?.duration || 120)| pipeDurationTransform: 'hms' }}
@@ -741,7 +741,7 @@
                 <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                   class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
                   ?'Module'
-                  :widgetData.content?.primaryCategory">
+                  :widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
 
                 </ws-widget-display-content-type>
               </div>
@@ -854,7 +854,7 @@
               <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                 class="ws-mat-black60-text font-normal mat-caption text-uppercase" [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
                 ?'Module'
-                :widgetData.content?.primaryCategory">
+                :widgetData.content?.courseCategory ? widgetData.content?.courseCategory:widgetData.content?.primaryCategory">
 
               </ws-widget-display-content-type>
             </div>
@@ -1103,7 +1103,7 @@
           <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
             class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
             ?'Module'
-            :widgetData.content?.primaryCategory">
+            :widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
           </ws-widget-display-content-type>
         </div>
       </div>
@@ -1221,7 +1221,7 @@
 
 <ng-template #cardWideV2Skelton>
   <mat-card class="card-wide-v2 padding-remove position-relative flex">
-    <div class="">
+    <div class="image-section" >
       <ws-widget-skeleton-loader [width]="'100%'" [height]="'100%'" class="h-full" [bindingClass]="'flex rounded h-full min-height-width'"></ws-widget-skeleton-loader>
     </div>
     <mat-card-content class="mat-text-box">
@@ -1367,7 +1367,7 @@
               <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                 class="ws-mat-black60-text font-normal mat-caption text-uppercase" [displayContentType]="widgetData.content?.primaryCategory === 'CuratedCollections'
                 ? 'Curated collection'
-                : widgetData.content?.primaryCategory">
+                : widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
 
               </ws-widget-display-content-type>
             </div>
@@ -1480,7 +1480,7 @@
            <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
            class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
            ?'Module'
-           :widgetData.content?.primaryCategory">
+           :widgetData.content?.courseCategory ? widgetData.content?.courseCategory:widgetData.content?.primaryCategory">
            </ws-widget-display-content-type>
         </div>
      </div>

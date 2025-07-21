@@ -1784,3 +1784,12 @@ $title-line-count: 2;
   opacity: 0.5;
   cursor: default;
 }
+
+
+.image-section {
+  width: 310px;
+  @media (max-width:992px) {
+    width: 100%;
+    height: 186px;
+  }
+}

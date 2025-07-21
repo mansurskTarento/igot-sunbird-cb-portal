@@ -118,7 +118,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   selectedLanguageName: string = ''
   @Input() forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('/author/')
   // forPreview = window.location.href.includes('/author/')
-  analytics = this.route.snapshot.data.pageData.data.analytics
+  analytics = this.route.snapshot.data.pageData.data?.analytics
   errorWidgetData: NsWidgetResolver.IRenderConfigWithTypedData<any> = {
     widgetType: 'errorResolver',
     widgetSubType: 'errorResolver',
@@ -1446,6 +1446,10 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           }
         },
         (_error: any) => {
+          // console.log('_error', _error)
+          // if(_error && _error.error && _error.error.params && _error.error.params.err && _error.error.params.err.errmsg) {
+            this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
+          // }
           this.enrollBtnLoading = false
         }
       )

@@ -13,7 +13,7 @@
       </div>
       <div class="flex-grow">
         <div class="personName">{{person?.personalDetails?.firstname}}</div>
-        <div class="person-details">{{person?.professionalDetails[0]?.designation}} | {{person?.employmentDetails?.departmentName}}</div>
+        <div class="person-details">{{ person?.professionalDetails ? person?.professionalDetails[0]?.designation + ' | ' : '' }}{{person?.employmentDetails?.departmentName}}</div>
       </div>
     </div>
     <div class="dividing-line mt-2"></div>

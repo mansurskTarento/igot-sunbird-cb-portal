@@ -619,6 +619,7 @@ export class InitService {
             // tslint:disable-next-line: max-line-length
             userName: `${_.get(profileV2, 'personalDetails.firstname') ? _.get(profileV2, 'personalDetails.firstname') : ''}${_.get(profileV2, 'personalDetails.surname') ? _.get(profileV2, 'personalDetails.surname') : ''}`,
             profileImage: _.get(profileV2, 'photo') || userPidProfile.thumbnail,
+            profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
             dealerCode: null,
             isManager: false,
             competencies: _.get(profileV2, 'competencies') || [],

@@ -4,6 +4,7 @@ import { UserProfileService } from '../../../user-profile/services/user-profile.
 import _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacyDialogRef } from '@angular/material/legacy-dialog';
 @Component({
   selector: 'ws-app-custom-fields',
   templateUrl: './custom-fields.component.html',
@@ -33,15 +34,14 @@ export class CustomFieldsComponent {
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
     private matSnackBar: MatSnackBar,
+    private dialogRef: MatLegacyDialogRef<CustomFieldsComponent>,
   ) { }
 
   ngOnInit() {
     this.currentUser = this.configService && this.configService.userProfile
-    console.log('Current User', this.currentUser)
     this.userId = this.currentUser.userId || ''
     this.orgId = this.currentUser.rootOrgId || ''
     //this.orgId = "0140788510336040962"
-
     this.getOrgDetails()
 
   }
@@ -86,10 +86,16 @@ export class CustomFieldsComponent {
 
   }
 
+  handleCancel(): void {
+    this.dialogRef.close();
+  }
+
 
   readCustomattributeDetails() {
     this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
+      this.buildDynamicForm()
+      this.editCustomDetails = true
     }, error => {
       console.log('Error', error)
     })
@@ -100,10 +106,11 @@ export class CustomFieldsComponent {
     return customField ? customField.value : '';
   }
 
-  getListItemName(arryListItem: any, listItem: any) {
-    const customField = this.customFieldValues.find((_filed: any) => _filed.attributeName === arryListItem.attributeName)
+
+  getListItemName(arrtName: any, listItem: any) {
+    const customField = this.customFieldValues.find((_filed: any) => _filed.attributeName === arrtName)
     if (customField && customField.values && customField.values.length) {
-      const _item = customField.values.find((_filed: any) => _filed.attributeName.toLocaleLowerCase() === listItem.name.toLocaleLowerCase())
+      const _item = customField.values.find((_filed: any) => _filed.attributeName.toLocaleLowerCase() === listItem.toLocaleLowerCase())
       return _item ? _item.value : ''
     }
     return ''
@@ -113,10 +120,7 @@ export class CustomFieldsComponent {
     return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName;
   }
 
-  cancelCustomFormRequest() {
-    this.editCustomDetails = false
-    this.customAttrForm.reset()
-  }
+
 
   buildDynamicForm() {
     // Clear previous form state
@@ -146,8 +150,9 @@ export class CustomFieldsComponent {
       }
 
       if (field.type === 'text') {
+        let value = this.getValue(field.attributeName)
         // Simple text field
-        formControls[field.attributeName] = ['', validators];
+        formControls[field.attributeName] = [value, validators];
       } else if (field.type === 'masterList') {
         // For masterList fields, create a nested FormGroup with controls for each level
         const nestedFormControls: { [key: string]: any } = {};
@@ -180,9 +185,14 @@ export class CustomFieldsComponent {
               this.extractOptionsForField(dataSource, topField, this.useReversedData[field.attributeName]);
           }
 
+          let parentValues = ''
           // Create form controls for each level in the hierarchy
           hierarchy.forEach(hierarchyField => {
-            nestedFormControls[hierarchyField] = ['', field.isMandatory ? [Validators.required] : []];
+            const value = this.getListItemName(field.attributeName, hierarchyField)
+            parentValues = parentValues ? parentValues + ',' + value : value
+
+            // Add required validator if the field is mandatory, regardless of hierarchy level
+            nestedFormControls[hierarchyField] = [value, field.isMandatory ? [Validators.required] : []];
           });
 
           // Create the nested form group
@@ -190,9 +200,16 @@ export class CustomFieldsComponent {
           this.masterListFormGroups[field.attributeName] = nestedGroup;
 
           // Add a control for the main field to store combined value
-          formControls[field.attributeName] = ['', validators];
+          formControls[field.attributeName] = [parentValues, validators];
         } else {
-          // Fallback if no custom data is available
+          // Even for empty data, create hierarchy with at least one level
+          this.hierarchyFields[field.attributeName] = ['item'];
+          this.fieldOptions[field.attributeName] = { 'item': [] };
+
+          const nestedFormControls = { 'item': ['', field.isMandatory ? [Validators.required] : []] };
+          const nestedGroup = this.fb.group(nestedFormControls);
+          this.masterListFormGroups[field.attributeName] = nestedGroup;
+
           formControls[field.attributeName] = ['', validators];
         }
       }
@@ -221,6 +238,13 @@ export class CustomFieldsComponent {
       console.log(`Hierarchy for ${fieldName}:`, this.hierarchyFields[fieldName]);
       console.log(`Form group controls for ${fieldName}:`,
         Object.keys(this.customAttrForm.get(`${fieldName}_group`).controls));
+    });
+
+    // Add to buildDynamicForm after setting up the form
+    Object.keys(this.hierarchyFields).forEach(fieldName => {
+      if (this.hierarchyFields[fieldName].length === 1) {
+        console.log(`- ${fieldName}: ${this.hierarchyFields[fieldName][0]}`);
+      }
     });
   }
 
@@ -357,9 +381,18 @@ export class CustomFieldsComponent {
     const formGroup = this.masterListFormGroups[fieldName];
     const isReversed = this.useReversedData[fieldName];
 
-    if (!hierarchy || !formGroup || hierarchy.length <= 1) return;
+    if (!hierarchy || !formGroup) return;
 
     console.log(`Setting up cascade listeners for ${fieldName}, levels: ${hierarchy.length}`);
+
+    // Special case for single-level dropdown
+    if (hierarchy.length === 1) {
+      const singleField = hierarchy[0];
+      formGroup.get(singleField)?.valueChanges.subscribe(() => {
+        this.updateCombinedValue(fieldName);
+      });
+      return;
+    }
 
     // For each level except the last one
     for (let i = 0; i < hierarchy.length - 1; i++) {
@@ -592,7 +625,6 @@ export class CustomFieldsComponent {
     });
   }
 
-  // Enhanced to handle up to 5 levels when populating values
   populateHierarchicalValues(field: any) {
     const hierarchy = this.hierarchyFields[field.attributeName];
     const formGroup = this.masterListFormGroups[field.attributeName];
@@ -607,7 +639,18 @@ export class CustomFieldsComponent {
     const subscriptions = this.disableValueChangeListeners(field.attributeName);
 
     try {
-      // STEP 1: Pre-load all options for all levels first
+      if (hierarchy.length === 1) {
+        const singleField = hierarchy[0];
+        const fieldValue = field.selectedValues[singleField];
+
+        if (fieldValue) {
+          console.log(`Setting single field ${singleField} = ${fieldValue}`);
+          formGroup.get(singleField)?.setValue(fieldValue, { emitEvent: false });
+          this.updateCombinedValue(field.attributeName);
+        }
+        return;
+      }
+
       for (let i = 0; i < hierarchy.length; i++) {
         const currentField = hierarchy[i];
 
@@ -693,13 +736,18 @@ export class CustomFieldsComponent {
           payload.push(data)
       } else if (field.type === 'masterList') {
         let values: any = []
-        this.hierarchyFields[field.attributeName].forEach((hierarchyField: any, index) => {
-          values.push({
-            attributeName: hierarchyField,
-            value: field.selectedValues[hierarchyField],
-            level: index + 1
+        const group = this.customAttrForm.get(`${field.attributeName}_group`) as FormGroup
+        if (group && group.value) {
+          field.originalCustomFieldData.forEach((item: any) => {
+            if (item.name && group.value[item.name]) {
+              values.push({
+                attributeName: item.name,
+                value: group.value[item.name],
+                level: item.level || 1
+              })
+            }
           })
-        })
+        }
         data['values'] = values
         payload.push(data)
       }
@@ -714,10 +762,12 @@ export class CustomFieldsComponent {
         this.editCustomDetails = false
         this.customAttrForm.reset()
         this.getCustomAttributes()
+        this.dialogRef.close(true)
         this.matSnackBar.open("Custom fields saved successfully")
       }
     }, error => {
       this.matSnackBar.open(error.error.params.errMsg)
+      this.dialogRef.close(true)
       console.error('Error saving custom fields:', error.error.params.errMsg);
     })
   }

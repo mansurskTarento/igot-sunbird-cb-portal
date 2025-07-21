@@ -42,6 +42,11 @@
     padding-top: 37.5%;
 }
 
+.query-box {
+  min-height: 38px;
+  transition: height 0.2s;
+  width: 100%;
+}
 
 .query-box input{
     border: 0;
@@ -58,8 +63,9 @@
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     width: 96%;
-    height: 32px;
+    min-height: 36px;
     margin-left: 1%;
+    z-index: 3;
 }
 
 .send-btn {
@@ -915,4 +921,46 @@ width: 262px;
 .h-w-34 {
   height: 34px;
   width: 34px;
+}
+
+.border-gradient-rounded textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  overflow: hidden;
+  font-size: 14px;
+  font-family: Lato;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding-top: 5px;
+}
+
+.border-gradient-rounded textarea:focus {
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.overflow-y-hidden  {
+  overflow-y: hidden;
+}
+
+
+.blue-loader-animation{
+  width: 18px;
+  height: 18px;
+  animation: spin 2s linear infinite; /* Duration, timing, and loop */
+  transform-origin: center center; /* Ensure rotation happens from the center */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.margin-top-2px {
+  margin-top: 2px;
 }

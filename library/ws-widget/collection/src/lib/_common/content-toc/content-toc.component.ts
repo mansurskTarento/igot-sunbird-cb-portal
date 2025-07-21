@@ -48,6 +48,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   selectedLang: any
+  @Input() playResourceId = ''
+  // @Output() playResumeForAI = new EventEmitter()
+  // @Output() enrollUserToAI = new EventEmitter()
+  
   sticky = false
   menuPosition: any
   isMobile = false
@@ -86,7 +90,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
     console.log(this.resumeData, 'resumeData data')
-    console.log(this.enrolledCourseData, 'enrolledCourseData data====')
+    console.log(this.enrolledCourseData, 'enrolledCourseData data====')   
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -187,13 +191,27 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.resourceIdentifier = this.viewerDataSvc.resourceId
-    this.parseVTT()
+
+    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+      this.enableTranscriptionFlag = true
+    } else {
+      this.enableTranscriptionFlag = false
+    }
+
+    if ( changes && changes['playResourceId']) {
+      if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
+        if(this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
+          this.parseVTT()
+        }
+      }
+    }
     if (changes.changeTab && changes.changeTab.currentValue) {
       this.selectedTabIndex = 1
     }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.content && this.content.identifier) {
+        // console.log('this.content.identifier', this.content.identifier)
         this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
@@ -455,6 +473,19 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       let endTime = subtitle.endTime/1000
       this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
     }    
+  }
+
+  formatMsToVttTime(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+  //  const milliseconds = ms % 1000;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+  
+    const pad = (num: number, size: number) => num.toString().padStart(size, '0');
+  
+    // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
+    return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
   }
 
   ngOnDestroy() {

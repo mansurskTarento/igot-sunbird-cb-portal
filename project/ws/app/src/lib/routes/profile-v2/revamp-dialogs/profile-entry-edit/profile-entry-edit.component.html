@@ -31,7 +31,7 @@
       <div class="flex flex-col">
         <!-- Organisation/Ministry -->
         <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentOrgDetails}">
-          <div class="lable required">{{'NetworkV2Profile.organisationMinistry' | translate}}</div>
+          <div class="lable required">{{'NetworkV2Profile.organisation' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="orgName" placeholder="{{'NetworkV2Profile.selectOrganisationMinistry'| translate}}"panelClass="profile-control"
             (openedChange)="setupScrollListenerForOrg($event)" (closed)="onOrganisationDropdownClosed()">
@@ -57,7 +57,7 @@
         </div>
 
         <!-- Designation -->
-        <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentOrgDetails}">
+        <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentOrgDetails || !selctedOrgDetails?.orgId}">
           <div class="lable required">{{'NetworkV2Profile.designation' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="designation" placeholder="{{'NetworkV2Profile.selectDesignation' | translate}}" panelClass="profile-control"
@@ -69,13 +69,13 @@
                   autocomplete="off">
               </div>
             </div>
-            <mat-option *ngFor="let option of designationsMeta" [value]="option?.designation">
-              {{ option?.designation }}
+            <mat-option *ngFor="let option of designationsMeta" [value]="option?.name">
+              {{ option?.name }}
             </mat-option>
             <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
               {{'NetworkV2Profile.loadingMore' | translate}}
             </div>
-            <mat-option *ngIf="(designationsMeta )?.length === 0" disabled>
+            <mat-option *ngIf="(designationsMeta )?.length === 0 && !isLoadingMoreDesignations" disabled>
               {{'NetworkV2Profile.noMatchesFound' | translate}}
             </mat-option>
           </mat-select>
@@ -115,7 +115,7 @@
 
         <div class="flex flex-col gap-0 md:flex-row md:gap-8">
           <!-- Start Date -->
-          <div class="flex flex-col profile-control w-full">
+          <div class="flex flex-col profile-control-date-field w-full">
             <div class="lable">{{'NetworkV2Profile.startDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="startPicker" formControlName="startDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate"
@@ -130,7 +130,7 @@
           </div>
 
           <!-- End Date -->
-          <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
+          <div class="flex flex-col profile-control-date-field w-full" [ngClass]="{'disableField': isCurrentlyWorking}">
             <div class="lable">{{'NetworkV2Profile.endDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}"  [min]="startDate">
@@ -160,7 +160,7 @@
           <div class="lable">{{'NetworkV2Profile.description' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput maxlength="1000" formControlName="description" rows="4" placeholder="{{'NetworkV2Profile.addYourDescription' | translate}}"></textarea>
-            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept(),.' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/1000
             </mat-hint>
@@ -202,13 +202,13 @@
         </div>
 
         <!-- Other Degree -->
-        <ng-container *ngIf="entryForm.get('degree')?.value === 'other'">
+        <ng-container *ngIf="entryForm.get('degree')?.value?.toLowerCase() === 'other'">
           <div class="flex flex-col profile-control w-full">
             <div class="lable">{{'NetworkV2Profile.degreeName' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput formControlName="otherDegree" placeholder="{{'NetworkV2Profile.pleaseEnterYourDegreeName' | translate'}}" maxlength="80">
+              <input matInput formControlName="otherDegree" placeholder="{{'NetworkV2Profile.pleaseEnterYourDegreeName' | translate}}" maxlength="80">
               <mat-error *ngIf="hasError('otherDegree', 'required')">{{'NetworkV2Profile.pleaseEnterDegreeName' | translate}}</mat-error>
-              <mat-error *ngIf="hasError('otherDegree', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('otherDegree', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
               <mat-hint align="end" *ngIf="entryForm.get('otherDegree')?.value">
                 {{ entryForm.get('otherDegree')?.value.length }}/80
               </mat-hint>
@@ -223,7 +223,7 @@
             <input matInput formControlName="fieldOfStudy" maxlength="250"
               placeholder="{{'NetworkV2Profile.enterYourSpecialization' | translate}}">
             <mat-error *ngIf="hasError('fieldOfStudy', 'required')">{{'NetworkV2Profile.pleaseEnterFieldOfStudy' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('fieldOfStudy', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('fieldOfStudy')?.value">
               {{ entryForm.get('fieldOfStudy')?.value.length }}/250
             </mat-hint>
@@ -264,7 +264,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <input matInput formControlName="otherInstituteName" placeholder="{{'NetworkV2Profile.enterYourInstituteName' | translate}}" maxlength="125">
               <mat-error *ngIf="hasError('otherInstituteName', 'required')">{{'NetworkV2Profile.pleaseEnterInstituteName' | translate}}</mat-error>
-              <mat-error *ngIf="hasError('otherInstituteName', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('otherInstituteName', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedInThisField' | translate}}</mat-error>
               <mat-hint align="end" *ngIf="entryForm.get('otherInstituteName')?.value">
                 {{ entryForm.get('otherInstituteName')?.value.length }}/125
               </mat-hint>
@@ -336,10 +336,10 @@
         </div>
 
         <!-- Issue Date -->
-        <div class="flex flex-col profile-control w-full">
+        <div class="flex flex-col profile-control-date-field w-full">
           <div class="lable">{{'NetworkV2Profile.issueDate' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="{{'NetworkV2Profile.selectDate | translate'}}" [max]="todayDate">
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate">
             <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #issueDatePicker></mat-datepicker>
             <mat-error *ngIf="hasError('issuedDate', 'required')">{{'NetworkV2Profile.pleaseSelectIssueDate' | translate}}</mat-error>
@@ -347,10 +347,10 @@
         </div>
 
         <div class="w-full mb-5">
-          <div class="lable">{{'NetworkV2Profile.uploadFromSystem' | translate}}</div>
+          <div class="lable">{{'NetworkV2Profile.upload' | translate}}</div>
         <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
           <div class="fileNameCard flex justify-between px-2 items-center">
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-center w-full">
               <img src="/assets/icons/image.svg" alt="app icon">
               <span class="iconName">{{entryForm?.controls?.fileName?.value}}</span>
             </div>
@@ -387,8 +387,8 @@
           <div class="lable">{{'NetworkV2Profile.description' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput formControlName="description" rows="4" maxlength="500"
-              placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning'}}"></textarea>
-               <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowed' | translate}}</mat-error>
+              placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning' | translate}}"></textarea>
+               <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/500
             </mat-hint>

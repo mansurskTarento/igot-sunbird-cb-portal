@@ -114,6 +114,12 @@
   background-color: #1B4CA114;
   height: 40px;
   border-radius: 3px;
+
+  .iconName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 ::ng-deep .profile-control {
@@ -169,6 +175,42 @@
     display: none !important;
   }
   
+}
+
+::ng-deep .profile-control-date-field {
+  .mat-form-field-flex {
+    align-items: center !important; 
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-flex {
+    height: 35px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 7px 0px 0px !important;
+  }
+
+  .mat-form-field-infix {
+    border-top: 0.7em !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0px !important;
+  }
+
+  .mat-mdc-icon-button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 16px !important;
+    border-left-style: solid !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none !important;
+  }
 }
 
 .remove-file {

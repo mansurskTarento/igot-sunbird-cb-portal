@@ -1,6 +1,6 @@
 
 export const environment = {
-  production: true,
+  production: false,
   name: (window as { [key: string]: any })['env']['name'],
   sitePath: (window as { [key: string]: any })['env']['sitePath'] || '',
   organisation: (window as { [key: string]: any })['env']['organisation'] || '',
@@ -39,6 +39,7 @@ export const environment = {
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
   cbcOrg: (window as { [key: string]: any })['env']['cbcOrg'] || '',
+  portalsForNotifications: (((window as { [key: string]: any })['env']['portalsForNotifications'] || {})) || {}
   // mdoPortal: (window as { [key: string]: any })['env']['mdoPath'] || '',
   // spvPortal: (window as { [key: string]: any })['env']['spvPath'] || '',
   // cbcPortal: (window as { [key: string]: any })['env']['cbcPath'] || '',

@@ -307,7 +307,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       const certificate: any = courseData.issuedCertificates.sort((a: any, b: any) =>
         new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
  
-      const certificateId = certificate.issuedCertificates[0].identifier
+      const certificateId = certificate?.issuedCertificates?.[0].identifier
       this.widgetServ.downloadCert(certificateId).subscribe((response: any) => {
         if (this.content) {
           this.content['certificateObj'] = {
