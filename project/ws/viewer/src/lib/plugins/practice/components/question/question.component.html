@@ -51,7 +51,7 @@
         <div class="flex flex-column respo_inner">
           <div class="flex flex-1">
             <h2 *ngIf="question.questionType !== 'ftb'" class="mat-h2" [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl"
-              class="quiz-question">
+              class="quiz-question ques-padding-top">
             </h2>
             <ng-container *ngIf="question.questionType === 'ftb'">
               <viewer-fitb-question [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [primaryCategory]="primaryCategory" class="flex-1" [question]="question"
@@ -162,7 +162,7 @@
         <div class="flex flex-column respo_inner">
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
-              <h2 [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl " class="m-auto quiz-question mat-h2">
+              <h2 [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl " class="m-auto quiz-question mat-h2 ques-padding-top">
               </h2>
               <span *ngIf="question?.instructions" class="mat-subheading-2" >
                 {{ question?.instructions}}
@@ -229,7 +229,7 @@
           <p *ngIf="questionParagraph" [innerHtml]="questionParagraph"></p>
           <div class="flex flex-1">
             <h2 *ngIf="question.questionType !== 'ftb'" class="mat-h2" [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl"
-              class="quiz-question">
+              class="quiz-question ques-padding-top">
             </h2>
             <ng-container *ngIf="question.questionType === 'ftb'">
               <viewer-fitb-question [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [primaryCategory]="primaryCategory" class="flex-1" [question]="question"
@@ -314,7 +314,7 @@
         <div class="flex flex-1 flex-column respo_inner">          
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
-              <h2 [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl" class="m-auto quiz-question mat-h2">
+              <h2 [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl" class="m-auto quiz-question mat-h2 ques-padding-top">
               </h2>
               <span *ngIf="question?.instructions" class="mat-subheading-2" >
                 {{ question?.instructions}}
