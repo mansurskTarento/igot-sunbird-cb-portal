@@ -26,7 +26,6 @@ ul {
     text-align: center;
     a {
       color: $textGreyShade1;
-      font-size: 14px;
       border: 0;
       font-family: Lato;
       font-weight: 400;
@@ -74,4 +73,18 @@ ul {
   pointer-events: none;
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media screen and (max-width:768px) {
+  ul {
+    padding-inline-start: 20px;
+    li {
+      width: 28px;
+
+      a {
+        font-size: 10px;
+        line-height: 12px;
+      }
+    }
+  }
 }
