@@ -237,6 +237,7 @@ export class ViewerUtilService {
    return courseData
   }
 
+
   realTimeProgressUpdateQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
     let req: any
     if (this.configservice.userProfile) {

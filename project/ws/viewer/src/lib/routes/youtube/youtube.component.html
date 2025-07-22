@@ -6,6 +6,8 @@
   [widgetResolverYoutubeData]="widgetResolverYoutubeData"
   [discussionForumWidget]="discussionForumWidget"
   [forPreview]="forPreview"
+  [languageList]="languageList"
+  (languageSelected)="onLanguageChange($event)"
 ></viewer-youtube-container>
 </ng-container>
 <ng-template #loader>

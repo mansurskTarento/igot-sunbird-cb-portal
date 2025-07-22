@@ -79,7 +79,8 @@
                 </ng-container>
             </div>
             <!-- deactivated as per NIC CEO requirement to access course wthout login -->
-            <a class="" [class.disabled]="(forPreview || !isEnabled || !isEnrolled || !isBatchInProgess || !isContentUnlocked) ? true : null"
+            <a class=""
+                [class.disabled]="(forPreview || !isEnabled || !isEnrolled || !isBatchInProgess || !isContentUnlocked) ? true : null"
                 [ngClass]="{'ml-3': isEnrolled}"
                 [routerLink]="(isAllowed && !forPreview && isEnabled) ? resourceLink.url : null"
                 [queryParams]="(isAllowed && !forPreview && isEnabled)  ? resourceLink.queryParams : null">
@@ -91,9 +92,10 @@
                             [ngClass]="{'text-active': pathSet?.has(content?.identifier) && isEnrolled}">
                             <!-- <mat-icon class="margin-right-xs radiobtn time-icon">radio_button_unchecked </mat-icon> -->
                             {{ content?.name | truncate:50 }}
-                            
+
                         </p>
-                        <span class="content-type optional-span nodtranslate" *ngIf="content?.optionalReading">{{ 'playerbrief.optional' | translate | titlecase}} </span>
+                        <span class="content-type optional-span nodtranslate" *ngIf="content?.optionalReading">{{
+                            'playerbrief.optional' | translate | titlecase}} </span>
                     </div>
                     <!-- for default grey icons -->
                     <ng-container *ngIf="!pathSet?.has(content?.identifier) || !isEnrolled">
@@ -120,20 +122,22 @@
                                 *ngIf="content.mimeType === 'application/vnd.ekstep.content-collection' || content?.mimeType === 'application/survey'">
                             <img src="/assets/icons/content/grey/module.svg" class="float-left margin-right-xs"
                                 alt="offline sessions" *ngIf="content.mimeType === 'application/offline'">
-                              
+
                             <ng-container *ngIf="content.primaryCategory === primaryCategory.FINAL_ASSESSMENT || 
                             content.primaryCategory === primaryCategory.COMP_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.PRACTICE_RESOURCE">
-                           
-                                <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ content?.maxQuestions }} {{ 'playerbrief.questions' | translate | titlecase}}</span>
+
+                                <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ content?.maxQuestions
+                                    }} {{ 'playerbrief.questions' | translate | titlecase}}</span>
                             </ng-container>
                             <ng-container *ngIf="!(content.primaryCategory === primaryCategory.FINAL_ASSESSMENT || 
                             content.primaryCategory === primaryCategory.COMP_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT || 
                             content.primaryCategory === primaryCategory.PRACTICE_RESOURCE)">
                                 <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ (content?.duration||
-                                    hierarchyMapData[content?.identifier]?.expectedDuration || 0)| pipeDurationTransform:
+                                    hierarchyMapData[content?.identifier]?.expectedDuration || 0)|
+                                    pipeDurationTransform:
                                     'hms'
                                     }}</span>
                             </ng-container>
@@ -169,14 +173,16 @@
                             content.primaryCategory === primaryCategory.COMP_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.PRACTICE_RESOURCE">
-                                <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ content?.maxQuestions }} {{ 'playerbrief.questions' | translate | titlecase}}</span>
+                                <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ content?.maxQuestions
+                                    }} {{ 'playerbrief.questions' | translate | titlecase}}</span>
                             </ng-container>
                             <ng-container *ngIf="!(content.primaryCategory === primaryCategory.FINAL_ASSESSMENT || 
                             content.primaryCategory === primaryCategory.COMP_ASSESSMENT ||
                             content.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT || 
                             content.primaryCategory === primaryCategory.PRACTICE_RESOURCE)">
                                 <span class="resourceDuration ws-mat-black60-text nodtranslate">{{ (content?.duration||
-                                    hierarchyMapData[content?.identifier]?.expectedDuration || 0)| pipeDurationTransform:
+                                    hierarchyMapData[content?.identifier]?.expectedDuration || 0)|
+                                    pipeDurationTransform:
                                     'hms'
                                     }}</span>
                             </ng-container>
@@ -192,7 +198,7 @@
     <a mat-menu-item [routerLink]="'../' + content?.identifier + '/overview'" [queryParams]="contextPath"
         class="flex flex-middle">
         <mat-icon>toc</mat-icon>
-        <h3 class="margin-remove nodtranslate" >
+        <h3 class="margin-remove nodtranslate">
             View Details
         </h3>
     </a>
@@ -249,7 +255,9 @@
                                         [showBackground]="false"></circle-progress>
                                 </ng-template>
                             </ng-container>
-                            <div [ngClass]="{'collection-active-class': pathSet?.has(content?.identifier) && isEnrolled}"></div>
+                            <div
+                                [ngClass]="{'collection-active-class': pathSet?.has(content?.identifier) && isEnrolled}">
+                            </div>
                             <p class="margin-remove text-truncate mat-subheading-1 flex-auto font-bold nodtranslate"
                                 [ngClass]="{'text-active': pathSet?.has(content.identifier) && isEnrolled}">
                                 {{index}}. {{ content?.name | truncate:50 }}
@@ -272,22 +280,63 @@
                                 class="time-icon icon-color">video_library</mat-icon>
                             <img *ngIf="isModule" alt="Module" class="time-icon"
                                 src="/assets/icons/content/grey/module.svg">
-                            <div class="text-xs nodtranslate">{{ (hierarchyMapData[content?.identifier]?.duration || 120)|
+                            <div class="text-xs nodtranslate">{{ (hierarchyMapData[content?.identifier]?.duration ||
+                                120)|
                                 pipeDurationTransform: 'hms' }}</div>
 
                             <ng-container *ngIf="content?.moduleCount">
                                 <div class="flex items-center">
                                     <span class="period"></span>
                                 </div>
-                                <div class="text-xs nodtranslate">{{content?.moduleCount}} {{content?.moduleCount > 1? 'modules' :
+                                <div class="text-xs nodtranslate">{{content?.moduleCount}} {{content?.moduleCount > 1?
+                                    'modules' :
                                     'module'}}</div>
                             </ng-container>
                             <ng-container *ngIf="content?.leafNodesCount">
                                 <div class="flex items-center">
                                     <span class="period"></span>
                                 </div>
-                                <div class="text-xs nodtranslate">{{content?.leafNodesCount}} {{content?.leafNodesCount >1 ? 'items':
+                                <div class="text-xs nodtranslate">{{content?.leafNodesCount}} {{content?.leafNodesCount
+                                    >1 ? 'items':
                                     'item'}}</div>
+                            </ng-container>
+                            <ng-container>
+                                <!-- <a (click)="openLangDialog()" class="lang-button">English <mat-icon class="margin-left-xs lang-icon">arrow_drop_down</mat-icon></a> -->
+                                <div class="flex items-end">
+                                    <!-- <mat-form-field appearance="outline" class="lang-select-field">
+                                    <mat-select [value]="selectedLanguage" panelClass="language-control" (closed)="onSelectClosed()">
+                                        <mat-option *ngFor="let lang of languageList" [value]="lang">
+                                            {{ lang.name }} --
+                                            <mat-radio-group [value]="selectedLanguage" (change)="onRadioChange($event.value)">
+                                                <mat-radio-button [value]="lang" class="lang-radio">
+                                                    {{ lang }}
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field> -->
+
+                                    <!-- <ng-select [items]="cities" [(ngModel)]="selectedCity" bindLabel="name" bindValue="name">    
+                                <mat-radio-group aria-label="Select an option">
+                                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                                    <mat-radio-button value="index">{{item.name}}</mat-radio-button>
+                                    <input matInput type="text">
+                                </ng-template>
+                                </mat-radio-group>
+                            </ng-select> -->
+                                    <mat-form-field appearance="fill" class="language-select">
+                                        <!-- <mat-label>Select Language</mat-label> -->
+                                        <mat-select [value]="selectedLang"
+                                            (selectionChange)="onLanguageChange($event.value)">
+                                            <mat-option *ngFor="let lang of languageList" [value]="lang">
+                                                <mat-radio-button [checked]="selectedLang.name === lang.name"
+                                                    class="full-width">
+                                                    {{ lang.name | titlecase }} 
+                                                </mat-radio-button>
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
                             </ng-container>
                         </div>
                     </div>
@@ -302,7 +351,7 @@
                                             <span class="mat-body-2 nodtranslate ">
                                                 {{getCompletionPercentage(content?.identifier)}}%</span>
                                         </div>
-    
+
                                         <ws-widget-content-progress [contentId]="content?.progress"
                                             [progress]="getCompletionPercentage(content?.identifier)"
                                             [progressType]="'percentage'" [customClassName]="'viewer-progress'">
@@ -310,14 +359,17 @@
                                     </div>
                                     <ng-container *ngIf="content?.issuedCertificatesId">
                                         <a class="ml-5 certificate-btn"
-                                        [ngClass]="{'disable-btn': downloadCertificateLoading || content?.issuedCertificatesId}" 
-                                        (click)="!downloadCertificateLoading && downloadCertificate(content?.issuedCertificatesId);$event.stopPropagation()">
+                                            [ngClass]="{'disable-btn': downloadCertificateLoading || content?.issuedCertificatesId}"
+                                            (click)="!downloadCertificateLoading && downloadCertificate(content?.issuedCertificatesId);$event.stopPropagation()">
                                             <!-- <img src="fusion-assets/images/certificate-ico.svg" width="24" height="24"> -->
                                             <span class="nodtranslate">Certificate</span>
-                                            <mat-icon  *ngIf="!downloadCertificateLoading" class="ml-2">arrow_downward</mat-icon>
-                                            <div class="center flex flex-middle certificate-loader"  *ngIf="downloadCertificateLoading">
-                                                <mat-spinner strokeWidth="2" stroke="'white'" class="white-spinner" [diameter]="16"></mat-spinner>
-                                              </div>
+                                            <mat-icon *ngIf="!downloadCertificateLoading"
+                                                class="ml-2">arrow_downward</mat-icon>
+                                            <div class="center flex flex-middle certificate-loader"
+                                                *ngIf="downloadCertificateLoading">
+                                                <mat-spinner strokeWidth="2" stroke="'white'" class="white-spinner"
+                                                    [diameter]="16"></mat-spinner>
+                                            </div>
                                         </a>
                                     </ng-container>
                                 </div>
@@ -339,7 +391,7 @@
                                             <span class="mat-body-2  ws-mat-black-text nodtranslate">
                                                 {{getCompletionPercentage(content?.identifier)}}%</span>
                                         </div>
-    
+
                                         <ws-widget-content-progress [contentId]="content?.progress"
                                             [progress]="getCompletionPercentage(content?.identifier)"
                                             [progressType]="'percentage'" [customClassName]="'viewer-progress'">
@@ -347,14 +399,17 @@
                                     </div>
                                     <ng-container *ngIf="content?.issuedCertificatesId">
                                         <a class="ml-5 certificate-btn"
-                                        [ngClass]="{'disable-btn': downloadCertificateLoading || content?.issuedCertificatesId}" 
-                                        (click)="!downloadCertificateLoading && downloadCertificate(content?.issuedCertificatesId);$event.stopPropagation()">
+                                            [ngClass]="{'disable-btn': downloadCertificateLoading || content?.issuedCertificatesId}"
+                                            (click)="!downloadCertificateLoading && downloadCertificate(content?.issuedCertificatesId);$event.stopPropagation()">
                                             <!-- <img src="fusion-assets/images/certificate-ico.svg" width="24" height="24"> -->
                                             <span class="nodtranslate">Certificate</span>
-                                            <mat-icon  *ngIf="!downloadCertificateLoading" class="ml-2">arrow_downward</mat-icon>
-                                            <div class="center flex flex-middle certificate-loader"  *ngIf="downloadCertificateLoading">
-                                                <mat-spinner strokeWidth="2" stroke="'white'" class="white-spinner" [diameter]="16"></mat-spinner>
-                                              </div>
+                                            <mat-icon *ngIf="!downloadCertificateLoading"
+                                                class="ml-2">arrow_downward</mat-icon>
+                                            <div class="center flex flex-middle certificate-loader"
+                                                *ngIf="downloadCertificateLoading">
+                                                <mat-spinner strokeWidth="2" stroke="'white'" class="white-spinner"
+                                                    [diameter]="16"></mat-spinner>
+                                            </div>
                                         </a>
                                     </ng-container>
                                 </div>
@@ -375,16 +430,15 @@
                 </div>
             </div>
         </div>
-        <div class="child-wrapper  " *ngIf="content.viewChildren"
-            [ngClass]="{'open': content.viewChildren,
+        <div class="child-wrapper  " *ngIf="content.viewChildren" [ngClass]="{'open': content.viewChildren,
             'close': !content.viewChildren,
             'course':!isModule, 
-            'module': isModule}"
-            [@panelInOut]>
+            'module': isModule}" [@panelInOut]>
             <div class="children-container" [ngClass]="{'module': isModule, '': !isModule}">
-                <ws-widget-app-toc-content-card-v2 [forPreview]="forPreview" [componentName]="componentName" [content]="child" [expandAll]="expandAll"
-                    [rootId]="rootId" [batchId]="batchId" [rootContentType]="rootContentType" [index]="j+1"
-                    [pathSet]="pathSet" [hierarchyMapData]="hierarchyMapData" [batchData]="batchData"
+                <ws-widget-app-toc-content-card-v2 [forPreview]="forPreview" [componentName]="componentName"
+                    [content]="child" [expandAll]="expandAll" [rootId]="rootId" [batchId]="batchId"
+                    [rootContentType]="rootContentType" [index]="j+1" [pathSet]="pathSet"
+                    [hierarchyMapData]="hierarchyMapData" [batchData]="batchData"
                     *ngFor="let child of content?.children; trackBy: contentTrackBy; let j= index;let isFirst = first"
                     [ngClass]="{'moduleCard': checkIsModule(child), 'resourceCard': !checkIsModule(child), 'first': isFirst}">
                 </ws-widget-app-toc-content-card-v2>

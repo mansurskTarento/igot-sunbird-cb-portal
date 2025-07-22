@@ -71,6 +71,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   @Input() tocStructure: any
   @Input() hierarchyMapData: any = {}
   @Input() config: any
+  @Input() enrolledCourseData: any
 
   @Output() pathSetEvent = new EventEmitter()
 
@@ -133,6 +134,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log("viewer toc component init========================")
+    console.log(this.enrolledCourseData, "enrolledCourseData===++++++++++=")
     if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {

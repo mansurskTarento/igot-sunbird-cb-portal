@@ -50,11 +50,25 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { LanguageDialogComponent } from '../language-dialog/language-dialog.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
   serviceUnavailable = 'serviceUnavailable',
   somethingWrong = 'somethingWrong',
+}
+
+export interface ILanguageMapItem {
+  [key: string]: {
+    id: string
+    status: string
+  }
+}
+
+export interface ILanguageListItem {
+  name: string
+  id: string
+  status: string
 }
 
 const flattenItems = (items: any[], key: string | number) => {
@@ -76,6 +90,8 @@ const SNACKBAR_DURATION = 3000
   // tslint:disable-next-line: use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
+
+
 
 export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
   show = false
@@ -99,6 +115,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   cbPlanEndDate: any
   cbPlanDuration: any
   enrolledCourseData: any
+  selectedLanguageName: string = ''
+  selectedLangageId: string = ''
   @Input() forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('/author/')
   // forPreview = window.location.href.includes('/author/')
   analytics = this.route.snapshot.data.pageData.data?.analytics
@@ -116,6 +134,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       type: 'mat-button',
     },
   }
+  languageList: any = []
+  languageLength: number = 0
+
+  showAllLang = false;
+  firstSixLang: any
+  remainingLang: any
+  displayMoreBtn = false
   tocConfig: any = null
   primaryCategory = NsContent.EPrimaryCategory
   courseCategory = NsContent.ECourseCategory
@@ -317,6 +342,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   ngOnInit() {
+    // this.getCourseLanguage()
     this.dataTransferSvc.setEnrollData(null)
     this.mobile1200 = window.innerWidth < 1201
     this.configSvc.languageTranslationFlag.subscribe((data: any) => {
@@ -360,6 +386,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
+            this.getCourseLanguage()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
@@ -513,9 +540,116 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }
     }
+  }
 
+  // toggleShowAll() {
+  //   this.showAllLang = !this.showAllLang;
+  // }
+  // get visibleLanguages() {
+  //   return this.showAllLang ? this.languages : this.languages.slice(0, 6);
+  // }
+
+  handleEnrollment(event:any) {
+    if(this.contentReadData && this.contentReadData.languageMapV1 && this.contentReadData.languageMapV1.length && 
+      this.contentReadData.languageMapV1.length>0) {
+        this.openLangDialog(event)
+    } else {
+      this.handleAutoBatchAssign()
+    }
 
   }
+
+  getCourseLanguage() {
+    const languageMapV1 = this.contentReadData?.languageMapV1 || {}
+
+    this.languageList = Object.entries(languageMapV1)
+      .filter(([_, val]: [string, any]) => val.status === "live")
+      .map(([lang, val]: [string, any]) => ({
+        name: lang,
+        id: val.id,
+        status: val.status
+      }))
+    this.languageLength = this.languageList?.length
+    if (this.languageLength <= 5) {
+      this.firstSixLang = this.languageList
+      this.displayMoreBtn = false
+    } else {
+      this.firstSixLang = this.languageList.slice(0, 5)
+      this.remainingLang = this.languageList.slice(5)
+      this.displayMoreBtn = true
+    }
+  }
+
+
+
+  openLangDialog(event: any) {
+    // this.getCourseLanguage()
+    event?.stopPropagation()
+    const dialogRef = this.dialog.open(LanguageDialogComponent, {
+      width: '400px',
+      height: 'auto',
+      data: {
+        from: 'appTocHomeLanguageDialog',
+        content: this.languageList,
+      }
+    });
+    dialogRef.afterClosed().subscribe((selectedLang) => {
+      if (selectedLang) {
+        this.selectedLanguageName = selectedLang.name
+        this.selectedLangageId = selectedLang.id
+        this.handleAutoBatchAssign()
+        // You can now use selectedLanguageId as needed
+      }
+    })
+  }
+
+  openLanguageDialog(event: any) {
+    event?.stopPropagation()
+    const dialogRef = this.dialog.open(LanguageDialogComponent, {
+      width: '400px',
+      height: 'auto',
+      data: {
+        from: 'openLanguageDialog',
+        content: this.remainingLang,
+
+      }
+    })
+    dialogRef.afterClosed().subscribe((selectedLang) => {
+      if (selectedLang) {
+        this.selectedLanguageName = selectedLang.id
+
+      }
+    });
+  }
+
+
+
+  onLanguageClick(lang: any): void {
+    const langId = lang.id
+    const status = lang.status
+    // let contentType = this.content?.contentType    
+    if (langId && status && status === 'live') {
+      // Your logic here
+      this.contentSvc?.fetchContent(langId, "detail").subscribe((data: any) => {
+        this.contentReadData = data?.result?.content
+        this.router.navigate(
+          [],
+          {
+            relativeTo: this.route,
+            queryParams: {
+              selectedMLCourse: lang.name.toLowerCase(),      // e.g., 'tamil'
+              selectedMLCourseCode: lang.id?.toLowerCase()
+            },
+            queryParamsHandling: 'merge',
+          })
+        //  this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?batchId=${this.contentReadData?.batchId}`)
+        // this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?selectedMLCourse=${id}`)
+      })
+     
+    }
+  }
+
+
 
   // displayRandomlearnAdvisoryData(): void {
   //   const randomIndex = Math.floor(Math.random() * this.learnAdvisoryData.length)
@@ -534,6 +668,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       })
     }
   }
+
+
 
   isCourseCompletedOnThisMonth() {
     const now = moment(this.serverDate).format('YYYY-MM-DD')
@@ -1217,7 +1353,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         }
         this.autoEnrollCuratedProgram(NsContent.ECourseCategory.MODERATED_PROGRAM, moderatedBatchData)
       } else {
-        this.autoAssignEnroll()
+        // this.autoAssignEnroll()
+        this.langAutoAssignEnroll()
       }
     }
     this.contentViewEventForNetCore('enroll')
@@ -1264,7 +1401,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         (_error: any) => {
           // console.log('_error', _error)
           // if(_error && _error.error && _error.error.params && _error.error.params.err && _error.error.params.err.errmsg) {
-            this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
+          this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
           // }
           this.enrollBtnLoading = false
         }
@@ -1275,6 +1412,39 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   public autoAssignEnroll() {
     if (this.content && this.content.identifier) {
       this.contentSvc.autoAssignBatchApi(this.content.identifier).subscribe(
+        (data: NsContent.IBatchListResponse) => {
+          this.batchData = {
+            content: data.content,
+            enrolled: true,
+          }
+          const batchId = this.getBatchId()
+          if (batchId) {
+            // this.createCertTemplate(this.getBatchId(), this.content.identifier)
+
+            // this.router.navigate(
+            //   [],
+            //   {
+            //     relativeTo: this.route,
+            //     queryParams: { batchId: this.getBatchId() },
+            //     queryParamsHandling: 'merge',
+            //   })
+            this.navigateToPlayerPage(batchId)
+          }
+          // this.enrollBtnLoading = false
+        },
+        (_error: any) => {
+          this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
+          this.enrollBtnLoading = false
+        }
+      )
+    }
+  }
+
+  langAutoAssignEnroll() {
+    if (this.content && this.content.identifier) {
+      this.contentSvc.languageAutoEnroll(this.content.identifier, this.selectedLanguageName).subscribe(
+      // this.contentSvc.languageAutoEnroll("do_11433459942889881614", this.selectedLanguageName).subscribe(
+
         (data: NsContent.IBatchListResponse) => {
           this.batchData = {
             content: data.content,
@@ -1321,6 +1491,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.forPreview,
         primaryCategory,
         batchId,
+        this.selectedLanguageName,
+        this.selectedLangageId
       )
       this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
     }
@@ -2347,14 +2519,14 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   playResumeForAI() {
-    if(this.content) {
-      if(this.firstResourceLink) {
-        this.router.navigate([this.firstResourceLink.url],{queryParams: this.firstResourceLink.queryParams} )
+    if (this.content) {
+      if (this.firstResourceLink) {
+        this.router.navigate([this.firstResourceLink.url], { queryParams: this.firstResourceLink.queryParams })
       }
-      
-     // this.getContinueLearningData(this.content.identifier)
+
+      // this.getContinueLearningData(this.content.identifier)
     }
-    
+
   }
 
   enrollUserToAI() {

@@ -16,6 +16,8 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
+import { WidgetContentService } from '../_services/widget-content.service'
 // import { Router } from '@angular/router'
 
 @Component({
@@ -45,7 +47,10 @@ export class CardContentV2Component extends WidgetBaseComponent
   btnGoalsConfig: NsGoal.IBtnGoal | null = null
   prefChangeSubscription: Subscription | null = null
   sourceLogos: NsInstanceConfig.ISourceLogo[] | undefined
-  
+
+  languageList: any = []
+  languageLength: number = 0
+
   isIntranetAllowedSettings = false
   constructor(
     private dialog: MatDialog,
@@ -58,7 +63,8 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private widgetSvc: WidgetContentService
 
   ) {
     super()
@@ -73,6 +79,7 @@ export class CardContentV2Component extends WidgetBaseComponent
 
   ngOnInit() {
     // this.widgetInstanceId=his.id
+    this.getCourseLanguage()
     this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
     this.prefChangeSubscription = this.configSvc.prefChangeNotifier.subscribe(() => {
       this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
@@ -87,9 +94,9 @@ export class CardContentV2Component extends WidgetBaseComponent
 
     if (this.widgetData) {
       if (this.widgetData.context && this.widgetData.context.pageSection === 'curatedCollections') {
-        this.widgetData.content.linkUrl = '/app/curatedCollections/'+ this.widgetData.content.identifier
+        this.widgetData.content.linkUrl = '/app/curatedCollections/' + this.widgetData.content.identifier
       }
-      if(this.widgetData && this.widgetData.content) {
+      if (this.widgetData && this.widgetData.content) {
         this.btnPlaylistConfig = {
           contentId: this.widgetData.content.identifier,
           contentName: this.widgetData.content.name,
@@ -107,7 +114,7 @@ export class CardContentV2Component extends WidgetBaseComponent
       this.modifySensibleContentRating()
     }
 
-  if(this.widgetData && this.widgetData.content) {
+    if (this.widgetData && this.widgetData.content) {
 
       // required for knowledge board
       // TODO: make it more generic
@@ -122,7 +129,44 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
     this.cbPlanInterval = setInterval(() => {
       this.getCbPlanData()
-    },                                1000)
+    }, 1000)
+  }
+
+
+  getCourseLanguage() {
+    console.log(this.widgetData, 'widget data')
+    // const contentId = this.widgetData?.content?.identifier
+    const contentId = 'do_114349267477905408131'
+    console.log(contentId, 'content id')
+    if (contentId) {
+      this.widgetSvc?.getContent(contentId).subscribe((data: any) => {
+        console.log(data, 'data from content service')
+        if (data && data.result && data.result.content && data.result.content.languageMapV1) {
+          // return data.result.content.language
+          const languageMapV1 = data.result.content.languageMapV1
+          console.log(languageMapV1, 'languageMapV1')
+          this.languageList = Object.keys(languageMapV1).filter(language => {
+            return languageMapV1[language].status === "live";
+          });
+          console.log(this.languageList, 'languageList')
+          this.languageLength = this.languageList.length;
+        }
+      })
+    }
+  }
+
+  openLanguageDialog(event: any): void {
+    event.stopPropagation()
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '470px',
+      data: {
+        title: ' ',
+        from: 'openLanguageDialog',
+        acceptButton: '',
+        content: this.languageList
+
+      } // optional, if you need to pass data
+    });
   }
 
   checkContentTypeCriteria() {
@@ -141,7 +185,7 @@ export class CardContentV2Component extends WidgetBaseComponent
   redirectToUrl() {
     let url = window.location.href
     let indexValue = url.split('curatedCollections/')
-    window.location.href = indexValue[0] + 'curatedCollections/'  + this.widgetData.content.identifier
+    window.location.href = indexValue[0] + 'curatedCollections/' + this.widgetData.content.identifier
 
   }
 
@@ -245,15 +289,15 @@ export class CardContentV2Component extends WidgetBaseComponent
 
   private modifySensibleContentRating() {
     if (this.widgetData.content)
-    if(this.widgetData.content.averageRating &&
-      typeof this.widgetData.content.averageRating !== 'number'){
-      // tslint:disable-next-line: ter-computed-property-spacing
-      this.widgetData.content.averageRating = (this.widgetData.content.averageRating as any)[
-        this.configSvc.rootOrg || ''
+      if (this.widgetData.content.averageRating &&
+        typeof this.widgetData.content.averageRating !== 'number') {
         // tslint:disable-next-line: ter-computed-property-spacing
-      ]
-      this.widgetData.content.averageRating = this.widgetData.content.averageRating || 0
-    }
+        this.widgetData.content.averageRating = (this.widgetData.content.averageRating as any)[
+          this.configSvc.rootOrg || ''
+          // tslint:disable-next-line: ter-computed-property-spacing
+        ]
+        this.widgetData.content.averageRating = this.widgetData.content.averageRating || 0
+      }
   }
 
   // private assignThumbnail() {
@@ -381,11 +425,11 @@ export class CardContentV2Component extends WidgetBaseComponent
         id: certificateData.issuedCertificates[0].identifier,   // id of the certificate
         type: WsEvents.EnumInteractSubTypes.CERTIFICATE,
       })
-    if(certificateData && certificateData.issuedCertificates && certificateData.issuedCertificates.length && certificateData.issuedCertificates.length > 0) {
+    if (certificateData && certificateData.issuedCertificates && certificateData.issuedCertificates.length && certificateData.issuedCertificates.length > 0) {
       this.downloadCertificateLoading = true
       let certData: any = certificateData.issuedCertificates
       certData.sort((a: any, b: any) => new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
-      this.certificateService.downloadCertificate_v2(certData[0].identifier).subscribe((res: any)=>{
+      this.certificateService.downloadCertificate_v2(certData[0].identifier).subscribe((res: any) => {
         this.downloadCertificateLoading = false
         const cet = res.result.printUri
         this.dialog.open(CertificateDialogComponent, {
@@ -407,7 +451,7 @@ export class CardContentV2Component extends WidgetBaseComponent
   }
 
   getCbPlanData() {
-    let cbpList: any={}
+    let cbpList: any = {}
     if (localStorage.getItem('cbpData')) {
       let cbpListArr = JSON.parse(localStorage.getItem('cbpData') || '')
       if (cbpListArr && cbpListArr.length) {
@@ -420,37 +464,43 @@ export class CardContentV2Component extends WidgetBaseComponent
       clearInterval(this.cbPlanInterval)
     }
   }
-  async getRedirectUrlData(content: any,contentType?:any){
+  async getRedirectUrlData(content: any, contentType?: any) {
+    console.log(content, 'content from card content v2')
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
-    
-    if(contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
+
+    if (contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
       // if(content.primaryCategory === this.primaryCategory.COURSE) {
       //   this.router.navigate([`app/toc/${content.identifier}/overview`],{
       //     queryParams : { }
       //   })
       // } else {
-        this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`],{
-          queryParams : {
-            primaryCategory: this.primaryCategory.RESOURCE,
-            ...this.route.snapshot.queryParams
-          }
-        })
+      this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(content.mimeType)}/${content.identifier}`], {
+        queryParams: {
+          primaryCategory: this.primaryCategory.RESOURCE,
+          ...this.route.snapshot.queryParams
+        }
+      })
       // }
     } else {
       // if (content && content.status && content.status.toLowerCase() !== 'retired') {
-        let urlData = await this.contSvc.getResourseLink(content)
-        if (urlData && urlData.url ) {
-          this.router.navigate(
-            [urlData.url],
-            {
-              queryParams: urlData.queryParams
-            })
-        } else {
-          // const contentType = urlData;
-          this.snackBar.open(`This ${contentCategory} has been archived and is no longer available.`, 'X', { duration: 2000 });
-        }
+      let urlData = await this.contSvc.getResourseLink(content)
+      // const extraQueryParams = {
+      //   selectedMLCourse: lang?.name?.toLowerCase(),
+      //   selectedMLCourseCode: lang?.id?.toLowerCase(),
+      // };
+      console.log(urlData, 'urlData from content service')
+      if (urlData && urlData.url) {
+        this.router.navigate(
+          [urlData.url],
+          {
+            queryParams: urlData.queryParams
+          })
+      } else {
+        // const contentType = urlData;
+        this.snackBar.open(`This ${contentCategory} has been archived and is no longer available.`, 'X', { duration: 2000 });
+      }
     }
-    
+
   }
 
   get getMimeType() {

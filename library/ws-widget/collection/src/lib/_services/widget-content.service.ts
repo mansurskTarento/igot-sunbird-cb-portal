@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Observable, of, EMPTY, BehaviorSubject } from 'rxjs'
@@ -34,6 +34,7 @@ const API_END_POINTS = {
   COURSE_BATCH_LIST: `/apis/proxies/v8/learner/course/v1/batch/list`,
   COURSE_BATCH: `/apis/proxies/v8/course/v1/batch/read`,
   AUTO_ASSIGN_BATCH: `/apis/protected/v8/cohorts/user/autoenrollment/`,
+  COURSE_AUTO_ENROLL:`apis/proxies/v8/course/v2/autoenrollment`,
   AUTO_ASSIGN_CURATED_BATCH: `/apis/proxies/v8/curatedprogram/v1/enrol`,
   AUTO_ASSIGN_OPEN_PROGRAM: `/apis/proxies/v8/openprogram/v1/enrol`,
   USER_CONTINUE_LEARNING: `${PROTECTED_SLAG_V8}/user/history/continue`,
@@ -101,6 +102,9 @@ export class WidgetContentService {
   updateTocConfig(data: any) {
     this.tocConfigData.next(data)
   }
+   getContent(contentId: string) {
+     return this.http.get(API_END_POINTS.CONTENT_READ(contentId))
+  }
 
   fetchContent(
     contentId: string,
@@ -108,6 +112,7 @@ export class WidgetContentService {
     _additionalFields: string[] = [],
     primaryCategory?: string | null,
   ): Observable<NsContent.IContent> {
+    console.log(`Fetching content for contentId: ${contentId}, hierarchyType: ${hierarchyType}, primaryCategory: ${primaryCategory}`)
     // const url = `${API_END_POINTS.CONTENT}/${contentId}?hierarchyType=${hierarchyType}`
     let url = ''
     const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
@@ -143,6 +148,9 @@ export class WidgetContentService {
     //   return apiData.result.content
     // }
   }
+
+ 
+  
   fetchAuthoringContent(contentId: string): Observable<NsContent.IContent> {
     const forcreator = window.location.href.includes('editMode=true')
     let url = ''
@@ -192,6 +200,20 @@ export class WidgetContentService {
   autoAssignBatchApi(identifier: any): Observable<NsContent.IBatchListResponse> {
     return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}`)
       .pipe(
+        retry(1),
+        map(
+          (data: any) => data.result.response
+        )
+      )
+  }
+  
+   courseAutoEnroll(request: any) {
+    return this.http.post<NsContent.IBatchListResponse>(`${API_END_POINTS.COURSE_AUTO_ENROLL}`, request).toPromise()
+  }
+  languageAutoEnroll(courseId: string, language: string) {
+    const headers = new HttpHeaders().set('language', language)
+    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${courseId}`, { headers })
+    .pipe(
         retry(1),
         map(
           (data: any) => data.result.response

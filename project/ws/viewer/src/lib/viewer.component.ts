@@ -174,6 +174,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     if (this.collectionId && this.enrollmentList) {
       const enrolledCourseData = this.widgetLibServ.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId)
+     
       this.enrolledCourseData = enrolledCourseData
       if (enrolledCourseData && enrolledCourseData.batch) {
         this.batchData = {

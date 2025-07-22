@@ -44,9 +44,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() config: any
   @Input() componentName!: string
   @Input() isEnrolled!: boolean
-  @Input() playResourceId = ''
+  @Input() enrolledCourseData: any
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
+  selectedLang: any
+  @Input() playResourceId = ''
+  // @Output() playResumeForAI = new EventEmitter()
+  // @Output() enrollUserToAI = new EventEmitter()
   
   sticky = false
   menuPosition: any
@@ -84,7 +88,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private viewerDataSvc: ViewerDataService
   ) { }
 
-  ngOnInit() {    
+  ngOnInit() {
+    console.log(this.resumeData, 'resumeData data')
+    console.log(this.enrolledCourseData, 'enrolledCourseData data====')   
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -166,8 +172,18 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
+  }
 
-    
+   onLanguageSelected(lang: any) {
+    debugger
+    console.log('Language selected in parent:===========', lang);
+    this.selectedLang = lang;
+    console.log('selectedLang=============', this.selectedLang)
+    // this.languageSelected.emit(this.selectedLang)
+    // if (this.resumeData && this.selectedLang) {
+    //   console.log(this.selectedLang, "this.selectedLang");
+    //   this.openConfirmDialog();
+    // }
   }
 
   ngAfterViewInit() {

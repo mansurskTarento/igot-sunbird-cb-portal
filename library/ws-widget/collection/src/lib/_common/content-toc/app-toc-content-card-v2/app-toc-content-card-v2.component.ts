@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, Renderer2, SimpleChanges } from '@angular/core'
-import { NsContent, viewerRouteGenerator } from '@sunbird-cb/collection'
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2, SimpleChanges } from '@angular/core'
+import { NsContent, viewerRouteGenerator, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc } from '../models/app-toc.model'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
@@ -11,6 +11,13 @@ import moment from 'moment'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { Subscription } from 'rxjs'
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component'
+import {  ActivatedRoute, Router } from '@angular/router'
+
+ interface ILanguageQueryParams {
+    selectedMLCourse?: string
+    selectedMLCourseCode?: string
+  }
 
 @Component({
   selector: 'ws-widget-app-toc-content-card-v2',
@@ -18,15 +25,15 @@ import { Subscription } from 'rxjs'
   styleUrls: ['./app-toc-content-card-v2.component.scss'],
   animations: [
     trigger('panelInOut', [
-        transition('void => *', [
-            style({transform: 'translateY(-10%)',opacity: '0'}),
-            animate(250)
-        ]),
-        transition('* => void', [
-            animate(200, style({transform: 'translateY(-10%)',opacity: '0'}))
-        ])
+      transition('void => *', [
+        style({ transform: 'translateY(-10%)', opacity: '0' }),
+        animate(250)
+      ]),
+      transition('* => void', [
+        animate(200, style({ transform: 'translateY(-10%)', opacity: '0' }))
+      ])
     ])
-]
+  ]
 })
 export class AppTocContentCardV2Component implements OnInit {
   @Input() content: NsContent.IContent | null = null
@@ -36,11 +43,15 @@ export class AppTocContentCardV2Component implements OnInit {
   @Input() forPreview = false
   @Input() batchId!: string
   @Input() componentName: string = 'toc'
-  @Input() index!:number
+  @Input() index!: number
   @Input() pathSet!: any
   @Input() expandActive = true
   @Input() hierarchyMapData: any = {}
   @Input() batchData: /**NsContent.IBatchListResponse */ any | null = null
+  @Input() resumeData: NsContent.IContinueLearningData | null = null
+  @Input() enrolledCourseData: any = null
+  @Output() languageSelected = new EventEmitter<any>()
+  recentLang: any = null
   hasContentStructure = false
   downloadCertificateLoading = false
   enumContentTypes = NsContent.EDisplayContentTypes
@@ -64,33 +75,62 @@ export class AppTocContentCardV2Component implements OnInit {
     interactivecontent: 0,
     offlineSession: 0,
   }
+  // languages = [
+  //   { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
+  //   { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
+  //   { name: 'Telugu', localName: 'తెలుగు', code: 'te' },
+  //   { name: 'Bengali', localName: 'বাংলা', code: 'bn' },
+  //   { name: 'Marathi', localName: 'मराठी', code: 'mr' },
+  //   { name: 'Gujarati', localName: 'ગુજરાતી', code: 'gu' },
+  //   { name: 'Kannada', localName: 'ಕನ್ನಡ', code: 'kn' },
+  //   { name: 'Malayalam', localName: 'മലയാളം', code: 'ml' },
+  //   { name: 'Punjabi', localName: 'ਪੰਜਾਬੀ', code: 'pa' },
+  //   { name: 'English', localName: 'English', code: 'en' },
+  //   { name: 'Odia', localName: 'ଓଡ଼ିଆ', code: 'or' },
+  //   { name: 'Assamese', localName: 'অসমীয়া', code: 'as' },
+  //   { name: 'Konkani', localName: 'कोंकणी', code: 'kok' },
+  //   { name: 'Sanskrit', localName: 'संस्कृतम्', code: 'sa' },
+  //   { name: 'Maithili', localName: 'मैथिली', code: 'mai' }
+  // ]
+  languageList: any = []
+  selectedValue: string | null = null
+  openDialogOnClose: boolean = false
   defaultThumbnail = ''
   viewChildren = false
   primaryCategory = NsContent.EPrimaryCategory
   pageScrollSubscription: Subscription | null = null
+   selectedLang: any = null
+  selectedLangCode: string = '' 
+
   constructor(
     private events: EventService,
     private dialog: MatDialog,
+    private contentSvc: WidgetContentService,
     private renderer: Renderer2,
     private certificateService: CertificateService,
-    private appTocSvc: AppTocService
+    private appTocSvc: AppTocService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.getSelectedLanguage()
+  
     this.evaluateImmediateChildrenStructure()
     // this.route.data.subscribe(data => {
     //     this.defaultThumbnail = data.configData.data.logos.defaultContent
     //   }
     // )
     this.resourceScroll()
+    this.getCourseLanguage()
   }
   // FOR RIGHT SIDE RESOURCE SCROLL ON TOC PAGE
   resourceScroll() {
     this.pageScrollSubscription = this.appTocSvc.updatePageScroll.subscribe((value: boolean) => {
       if (value) {
-        setTimeout(()=>{
+        setTimeout(() => {
           this.scrollView()
-        },700) 
+        }, 700)
       }
     })
   }
@@ -99,19 +139,81 @@ export class AppTocContentCardV2Component implements OnInit {
     this.appTocSvc.getPageScroll.next(true)
   }
 
+  getSelectedLanguage() {
+  this.route.queryParams.subscribe((params: ILanguageQueryParams) => {
+    if (params) {
+      this.selectedLang =  {
+        'name': params.selectedMLCourse?.toLowerCase() ,
+        'id': params.selectedMLCourseCode?.toLowerCase(),
+        'status': 'live'
+      } 
+  
+    } else {
+      let recentLang = this.enrolledCourseData?.recent_language
+     let langObj = this.languageList?.filter((lang: any) => { lang?.name?.toLowerCase() === recentLang })
+     this.selectedLang = langObj
+    }
+  })
+}
+
+  getCourseLanguage() {
+    const contentId = this.content?.parent
+    if (contentId) {
+      this.contentSvc?.getContent(contentId).subscribe((data: any) => {
+        if (data && data.result && data.result.content && data.result.content.languageMapV1) {
+          // return data.result.content.language
+          const languageMapV1 = data.result.content.languageMapV1 || {}
+
+          this.languageList = Object.entries(languageMapV1)
+            .filter(([_, val]: [string, any]) => val.status === "live")
+            .map(([lang, val]: [string, any]) => ({
+              name: lang,
+              id: val.id,
+              status: val.status
+            }))
+          // this.getLangArray(languageMapV1)
+        }
+
+      })
+    }
+  }
+
+  onLanguageChange(lang: any) {
+    this.selectedLang = lang
+    const selectedLangId = this.selectedLang?.id
+    if (!this.resumeData) {
+      this.contentSvc?.fetchContent(selectedLangId, "detail").subscribe((data: any) => {
+        this.content = data?.result?.content
+      })
+    }
+    if (this.resumeData && this.selectedLang) {
+      this.openConfirmDialoge()
+    }
+    this.router.navigate([], {
+    // relativeTo: this.route,
+    queryParams: {
+      selectedMLCourse: lang.name.toLowerCase(),      // e.g., 'tamil'
+      selectedMLCourseCode: lang.id?.toLowerCase()  // e.g., 'ta'
+    },
+    queryParamsHandling: 'merge', // preserves other existing params
+    replaceUrl: true              // optional: avoids pushing new history entry
+  });
+    this.languageSelected.emit(this.selectedLang)
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     for (const property in changes) {
       if (property === 'expandAll') {
         this.viewChildren = this.expandAll
       }
-      if(property === 'pathSet' && changes['pathSet']) {
+      if (property === 'pathSet' && changes['pathSet']) {
         let currentValue = changes['pathSet'].currentValue
         let previousValue = changes['pathSet'].previousValue
-        if(currentValue && previousValue){
+        if (currentValue && previousValue) {
           const eqSet = (xs: any, ys: any) =>
-          xs.size === ys.size &&
-          [...xs].every((x) => ys.has(x));
-          if(!eqSet(previousValue, currentValue)){ }
+            xs.size === ys.size &&
+            [...xs].every((x) => ys.has(x));
+          if (!eqSet(previousValue, currentValue)) { }
         }
         // if(previousValue === undefined){
         //   setTimeout(()=>{  
@@ -119,12 +221,12 @@ export class AppTocContentCardV2Component implements OnInit {
         // }
       }
       // this.appTocSvc.getPageScroll.next(true)
-    
+
       if (property === 'hierarchyMapData') {
-        if(_.isEmpty(changes['hierarchyMapData'].currentValue)){
+        if (_.isEmpty(changes['hierarchyMapData'].currentValue)) {
           // this.loadingOverallPRogress = true
         } else {
-          if(this.content) {
+          if (this.content) {
             this.updateChildParentMap(this.content.identifier)
           }
         }
@@ -133,7 +235,7 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   check(content: any) {
-    if(this.expandActive) {
+    if (this.expandActive) {
       content.viewChildren = this.pathSet && this.pathSet.has(content.identifier) || content.viewChildren
     }
     return content.viewChildren
@@ -153,7 +255,7 @@ export class AppTocContentCardV2Component implements OnInit {
     return false
   }
 
-  public checkModule(content: NsContent.IContent | null):boolean {
+  public checkModule(content: NsContent.IContent | null): boolean {
     if (content) {
       return content.primaryCategory === NsContent.EPrimaryCategory.MODULE
     }
@@ -168,25 +270,25 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   get isBatchInProgess() {
-    if(this.batchData && (this.batchData.content && this.batchData.content.length) && this.batchData.enrolled) {
+    if (this.batchData && (this.batchData.content && this.batchData.content.length) && this.batchData.enrolled) {
       const batchData = this.batchData.content[0]
       if (batchData && batchData.endDate) {
         const now = moment().format('YYYY-MM-DD')
         const startDate = moment(batchData.startDate).format('YYYY-MM-DD')
         const endDate = batchData.endDate ? moment(batchData.endDate).format('YYYY-MM-DD') : now
-            return (
-              // batch.status &&
-              moment(startDate).isSameOrBefore(now)
-              && moment(endDate).isSameOrAfter(now)
-            )
+        return (
+          // batch.status &&
+          moment(startDate).isSameOrBefore(now)
+          && moment(endDate).isSameOrAfter(now)
+        )
       } return true
     }
     return false
   }
 
   get isResource(): boolean {
-    if (this.content) {  
-      return ( 
+    if (this.content) {
+      return (
         this.content.primaryCategory === NsContent.EPrimaryCategory.RESOURCE
         // || this.content.primaryCategory === NsContent.EPrimaryCategory.KNOWLEDGE_ARTIFACT
         || this.content.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
@@ -223,7 +325,7 @@ export class AppTocContentCardV2Component implements OnInit {
     // if (this.currentProgress > 70 && this.currentProgress <= 100) {
     //   return '#1D8923'
     // }
-   
+
     return '#1D8923'
   }
   public progressColor2(): string {
@@ -355,13 +457,13 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   updateChildParentMap(identifier: string) {
-    if(this.hierarchyMapData  && this.hierarchyMapData[identifier]) {
+    if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
       let localContentData = this.hierarchyMapData[identifier]
-      if(
+      if (
         !(localContentData.primaryCategory === NsContent.EPrimaryCategory.RESOURCE
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT)
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT)
       ) {
         // real percent logic
         // const total = localContentData.leafNodes.reduce((sum: number, childId: string) => {
@@ -371,13 +473,13 @@ export class AppTocContentCardV2Component implements OnInit {
         // if(total > 0) {
         //   this.hierarchyMapData[identifier]['completionPercentage'] = total / _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount'))
         // }
-        if(localContentData.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
+        if (localContentData.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
           this.hierarchyMapData[identifier]['duration'] = this.hierarchyMapData[identifier].leafNodes.reduce(
             (sum: any, childID: any) => {
-              if(this.hierarchyMapData && this.hierarchyMapData[childID]) {
-                return sum + Number(this.hierarchyMapData[childID].duration || this.hierarchyMapData[childID].expectedDuration  || 0)
+              if (this.hierarchyMapData && this.hierarchyMapData[childID]) {
+                return sum + Number(this.hierarchyMapData[childID].duration || this.hierarchyMapData[childID].expectedDuration || 0)
               }
-            
+
             }, 0)
         }
         // tslint:disable
@@ -392,16 +494,11 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   getCompletionPercentage(identifier: string) {
-    // console.log('getCompletionPercentage', identifier)
-    // console.log('this.hierarchyMapData[identifier] : ', this.hierarchyMapData[identifier])
-    // const item = this.updateChildParentMap(identifier)
-    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage  
+    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage
   }
 
   getCompletionStatus(identifier: string) {
-    // console.log('getCompletionStatus')
-    // const item = this.updateChildParentMap(identifier)
-    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionStatus  
+    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionStatus
   }
 
   openCertificateDialog(certData: any) {
@@ -413,30 +510,30 @@ export class AppTocContentCardV2Component implements OnInit {
       // panelClass: 'custom-dialog-container',
     })
   }
-  scrollView(){
+  scrollView() {
     try {
       let errorField: any = this.renderer.selectRootElement('.resource-container .resource-active');
-      if(errorField){
+      if (errorField) {
         errorField.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
       }
-      if(this.componentName === 'toc') { 
-          if(errorField) {
-            const rect = errorField.getBoundingClientRect();
-            if(rect.top-420 > 0){
-              window.scroll(420,rect.top-148)
-            }
+      if (this.componentName === 'toc') {
+        if (errorField) {
+          const rect = errorField.getBoundingClientRect();
+          if (rect.top - 420 > 0) {
+            window.scroll(420, rect.top - 148)
           }
-      } 
-      setTimeout(()=>{
+        }
+      }
+      setTimeout(() => {
         this.appTocSvc.getPageScroll.next(false)
-      },700)
-     
+      }, 700)
+
       // else {
       //   errorField.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
       //   const rect = errorField.getBoundingClientRect();
       //   errorField.scroll(0,rect.top-56)
       // }
-    }catch (err) {
+    } catch (err) {
     }
   }
 
@@ -451,10 +548,10 @@ export class AppTocContentCardV2Component implements OnInit {
         id: certificateData,   // id of the certificate
         type: WsEvents.EnumInteractSubTypes.CERTIFICATE,
       })
-    if(certificateData) {
+    if (certificateData) {
       this.downloadCertificateLoading = true
       let certData: any = certificateData
-      this.certificateService.downloadCertificate_v2(certData).subscribe((res: any)=>{
+      this.certificateService.downloadCertificate_v2(certData).subscribe((res: any) => {
         this.downloadCertificateLoading = false
         const cet = res.result.printUri
         this.dialog.open(CertificateDialogComponent, {
@@ -473,29 +570,29 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   get checkForCuratedProgram() {
-    if(this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+    if (this.content && this.content.parent && this.hierarchyMapData && this.hierarchyMapData[this.content.parent]) {
       let parentData = this.hierarchyMapData[this.content.parent]
-      return parentData && parentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM && 
-      parentData.compatibilityLevel >= 5 && 
-      parentData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY
+      return parentData && parentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM &&
+        parentData.compatibilityLevel >= 5 &&
+        parentData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY
     }
     return false
   }
 
-  get isContentUnlocked () {
-    if (this.checkForCuratedProgram)  {
-      if (this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+  get isContentUnlocked() {
+    if (this.checkForCuratedProgram) {
+      if (this.content && this.content.parent && this.hierarchyMapData && this.hierarchyMapData[this.content.parent]) {
         let parentData = this.hierarchyMapData[this.content.parent]
         let completedLeafNodes = []
-        parentData.leafNodes.forEach((_ele:any) => {
-          if(this.hierarchyMapData && this.hierarchyMapData[_ele]) {
+        parentData.leafNodes.forEach((_ele: any) => {
+          if (this.hierarchyMapData && this.hierarchyMapData[_ele]) {
             let childData = this.hierarchyMapData[_ele]
-            if(childData && childData.completionStatus === 2) {
+            if (childData && childData.completionStatus === 2) {
               completedLeafNodes.push(childData)
             }
           }
         });
-        if (completedLeafNodes.length >= parentData.leafNodesCount-1) {
+        if (completedLeafNodes.length >= parentData.leafNodesCount - 1) {
           return true
         } else {
           return false
@@ -505,5 +602,60 @@ export class AppTocContentCardV2Component implements OnInit {
       return true
     }
   }
+
+  openConfirmDialoge() {
+    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: ' ',
+        from: 'openConfirmDialoge',
+        cancelButton: 'Cancel',
+        acceptButton: 'Change language',
+        header: 'Are you sure you want to change the language?',
+        message: 'Switching the language will reset your progress. the course will restart from the beginning in the selected language.',
+
+      } // optional, if you need to pass data
+    })
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.contentSvc?.fetchContent(this.selectedLang?.id, "detail").subscribe((data: any) => {
+          this.content = data?.result?.content
+        })
+      }
+
+    })
+
+  }
+
+  openLangDialog() {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: ' ',
+        from: 'openLangDialog',
+        cancelButton: 'Cancel',
+        acceptButton: 'Resume Progress',
+        header: 'Continue where you left off in Hindi?',
+        message: "You’ve already made some progress in this language? Would you like to resume from where you left off or start over",
+
+      } // optional, if you need to pass data
+    });
+
+  }
+
+
+  onRadioChange(value: string) {
+    this.selectedValue = value
+    this.openDialogOnClose = true
+  }
+
+  onSelectClosed() {
+    if (this.openDialogOnClose) {
+      this.openConfirmDialoge()
+      this.openDialogOnClose = false
+    }
+  }
+
+
 
 }

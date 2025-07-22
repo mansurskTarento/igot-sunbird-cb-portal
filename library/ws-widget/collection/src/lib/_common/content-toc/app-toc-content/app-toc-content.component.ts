@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core'
 import { ActivatedRoute, Data } from '@angular/router'
 import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
 import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2'
@@ -24,6 +24,8 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hierarchyMapData: any = {}
   @Input() pathSet: any
   @Input() componentName!: string
+  @Input() enrolledCourseData: any
+  @Output() languageSelected = new EventEmitter<any>()
   isPlayable = false
   contentPlayWidgetConfig: NsWidgetResolver.IRenderConfigWithTypedData<any> | null = null
   defaultThumbnail = ''
@@ -36,7 +38,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   contextId!: string
   contextPath!: string
   contentLoader = false
-
+  selectedLang: any
   typesOfContent: any
   selectedTabType: any = 'content'
   nsContent: any =  NsContent
@@ -189,6 +191,11 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   //     mimeType: firstItem.progressdetails && firstItem.progressdetails.mimeType,
   //   }
   // }
+
+  onLanguageSelected(lang: any) {
+    this.selectedLang = lang
+    this.languageSelected.emit(this.selectedLang)
+  }
 
   ngOnDestroy() {
     if (this.routeSubscription) {
