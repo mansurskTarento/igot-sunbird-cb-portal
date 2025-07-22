@@ -550,13 +550,18 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   // }
 
   handleEnrollment(event:any) {
-    if(this.contentReadData && this.contentReadData.languageMapV1 && this.contentReadData.languageMapV1.length && 
-      this.contentReadData.languageMapV1.length>0) {
+    if(this.contentReadData && this.contentReadData.languageMapV1 && this.getLanguageCount(this.contentReadData.languageMapV1) > 0) {
         this.openLangDialog(event)
     } else {
       this.handleAutoBatchAssign()
     }
+  }
 
+  public getLanguageCount(languageMap: { [key: string]: any }): number {
+    if (languageMap) {
+      return Object.keys(languageMap).length
+    }
+    return 0
   }
 
   getCourseLanguage() {
