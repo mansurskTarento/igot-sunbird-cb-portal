@@ -128,11 +128,8 @@ export class YoutubeComponent implements OnInit, OnDestroy {
     const contentId = this.courseId
     if (contentId) {
       this.contentSvc?.getContent(contentId).subscribe((data: any) => {
-        console.log(data, 'data from content service')
         if (data && data.result && data.result.content && data.result.content.languageMapV1) {
-          // return data.result.content.language
           const languageMapV1 = data.result.content.languageMapV1 || {}
-          console.log(languageMapV1, 'languageMapV1')
 
           this.languageList = Object.entries(languageMapV1)
             .filter(([_, val]: [string, any]) => val.status === "live")
@@ -141,8 +138,6 @@ export class YoutubeComponent implements OnInit, OnDestroy {
               id: val.id,
               status: val.status
             }))
-          console.log(this.languageList, 'languageList')
-          // this.getLangArray(languageMapV1)
         }
 
       })
@@ -150,10 +145,8 @@ export class YoutubeComponent implements OnInit, OnDestroy {
   }
 
   onLanguageChange(lang: any) {
-    console.log('Language selected in child:', lang);
     this.selectedLang = lang.id
     this.contentSvc?.fetchContent(this.selectedLang, "detail").subscribe((data: any) => {
-      console.log(data, 'data from content service for language click')
       const contData: any = data?.result?.content
       console.log(contData, 'contData from content service for language click')
       //  this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?batchId=${this.contentReadData?.batchId}`)

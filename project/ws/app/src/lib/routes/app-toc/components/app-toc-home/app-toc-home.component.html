@@ -66,19 +66,21 @@
                       !(content?.primaryCategory === primaryCategory.RESOURCE && !content?.artifactUrl)) &&
                       !(content?.primaryCategory === primaryCategory.PROGRAM) &&
                       !(content?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL)">
-          <ng-container *ngIf="content?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading">
+          <ng-container *ngIf="content?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading && content?.languageMapV1">
             <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"
               (click)="openLangDialog($event)">
               <ng-container>
                 {{ 'apptochome.enroll' | translate }} 
               </ng-container>
             </a>
-            <!-- <ng-container *ngIf="isAcbpCourse">
-              <ws-app-karmapoints-panel [btntype]="'ACBP'" [data]="kparray"></ws-app-karmapoints-panel>
-            </ng-container> -->
-            <!-- <ng-container *ngIf="!isAcbpCourse && !monthlyCapExceed && userEnrollmentList && !userEnrollmentList.length">
-              <ws-app-karmapoints-panel [btntype]="'Enroll'" [data]="kparray"></ws-app-karmapoints-panel>
-            </ng-container> -->
+          </ng-container>
+           <ng-container *ngIf="content?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading && !(content?.languageMapV1)">
+            <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"
+              (click)="handleAutoBatchAssign()">
+              <ng-container>
+                {{ 'apptochome.enroll' | translate }} 
+              </ng-container>
+            </a>
           </ng-container>
         </ng-container>
       </ng-container>

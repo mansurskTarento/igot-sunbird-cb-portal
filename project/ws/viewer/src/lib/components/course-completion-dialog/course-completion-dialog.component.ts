@@ -33,7 +33,6 @@ export class CourseCompletionDialogComponent implements OnInit {
     }
 
   ngOnInit() {
-    console.log(this.data, "data==========")
     const app: any = document.getElementById('viewer-conatiner-backdrop')
     if (app) {
       app.style.filter = 'blur(5px)'

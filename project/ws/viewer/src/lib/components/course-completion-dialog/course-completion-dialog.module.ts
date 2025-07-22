@@ -9,8 +9,6 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatRadioModule } from '@angular/material/radio'
-import { MatMenuModule } from '@angular/material/menu'
 
 @NgModule({
     declarations: [CourseCompletionDialogComponent],
@@ -23,8 +21,6 @@ import { MatMenuModule } from '@angular/material/menu'
         ContentRatingV2DialogModule,
         TranslateModule.forChild(),
         MatIconModule,
-        MatRadioModule,
-        MatMenuModule
     ],
     exports: [CourseCompletionDialogComponent]
 })

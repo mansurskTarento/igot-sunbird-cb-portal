@@ -161,7 +161,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     this.contentReadData = this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data.contentRead
     && this.activatedRoute.snapshot.data.contentRead.data.result.content || {}
-    console.log(this.enrollmentList, 'enrollmentList data')
     if (contentData && contentData.result && contentData.result.content) {
       this.coursePrimaryCategory = contentData.result.content.courseCategory
       if (contentData.result.content.children && contentData.result.content.children.length) {
@@ -186,7 +185,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
          this.tocSvc.mapSessionCompletionPercentage(this.batchData)
         }
       }
-       console.log(this.enrolledCourseData, 'enrolledCourseData data on viewwer page =====')
 
     }
 

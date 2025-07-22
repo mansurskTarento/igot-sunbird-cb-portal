@@ -116,6 +116,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   cbPlanDuration: any
   enrolledCourseData: any
   selectedLanguageName: string = ''
+  selectedLangageId: string = ''
   @Input() forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('/author/')
   // forPreview = window.location.href.includes('/author/')
   analytics = this.route.snapshot.data.pageData.data?.analytics
@@ -133,23 +134,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       type: 'mat-button',
     },
   }
-
-  // todo hard coded data ===
-  languages = {
-    tamil: {
-      id: "do_114351316566654976145",
-      status: "live"
-    },
-    english: {
-      id: "do_114351316566654976146",
-      status: "live"
-    },
-    hindi: {
-      id: "do_114351316566654976147",
-      status: "not live"
-    }
-  }
-
   languageList: any = []
   languageLength: number = 0
 
@@ -402,7 +386,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
-            console.log(this.contentReadData, 'contentReadData from toc home component')
             this.getCourseLanguage()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
@@ -557,8 +540,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }
     }
-
-
   }
 
   // toggleShowAll() {
@@ -570,7 +551,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
 
   getCourseLanguage() {
     const languageMapV1 = this.contentReadData?.languageMapV1 || {}
-    console.log(languageMapV1, 'languageMapV1')
 
     this.languageList = Object.entries(languageMapV1)
       .filter(([_, val]: [string, any]) => val.status === "live")
@@ -579,9 +559,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         id: val.id,
         status: val.status
       }))
-    // this.getLangArray(languageMapV1)
-
-    console.log(this.languageList, 'languageList')
     this.languageLength = this.languageList?.length
     if (this.languageLength <= 5) {
       this.firstSixLang = this.languageList
@@ -591,23 +568,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.remainingLang = this.languageList.slice(5)
       this.displayMoreBtn = true
     }
-
-    // }
-    // })
-    // }
   }
 
-  // getLangArray(data:any) {
-  //   return this.languageList = Object.entries(data)
-  //     .filter(([_, val]: [string, any]) => val.status === "live")
-  //     .map(([lang, val]: [string, any]) => ({
-  //       name: lang,
-  //       id: val.id,
-  //       status: val.status
-  //     }))
-  // console.log(this.languageList, 'languageList from getLangArray')
-  // return  this.languageList
-  // }
+
 
   openLangDialog(event: any) {
     // this.getCourseLanguage()
@@ -617,14 +580,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       height: 'auto',
       data: {
         from: 'appTocHomeLanguageDialog',
-        content: this.languages,
+        content: this.languageList,
       }
     });
     dialogRef.afterClosed().subscribe((selectedLang) => {
       if (selectedLang) {
-        console.log(selectedLang, 'selected language from dialog=======')
         this.selectedLanguageName = selectedLang.name
-        console.log('Selected Language name:', this.selectedLanguageName)
+        this.selectedLangageId = selectedLang.id
         this.handleAutoBatchAssign()
         // You can now use selectedLanguageId as needed
       }
@@ -644,30 +606,21 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     })
     dialogRef.afterClosed().subscribe((selectedLang) => {
       if (selectedLang) {
-        this.selectedLanguageName = selectedLang.id;
-        console.log('Selected Language ID:', this.selectedLanguageName);
+        this.selectedLanguageName = selectedLang.id
 
       }
     });
   }
 
-  //   selectCourseLang(lang:any) {
-  //     console.log(lang, 'selected language')
-  //     console.log(lang.id, 'selected language id')
-  //     const id = lang.status === "live" ? lang.id : null;
-  // console.log(id);
-  //   }
+
 
   onLanguageClick(lang: any): void {
-    console.log("Language ID:", lang.id)
-    console.log("Status:", lang.status)
     const langId = lang.id
     const status = lang.status
     // let contentType = this.content?.contentType    
     if (langId && status && status === 'live') {
       // Your logic here
       this.contentSvc?.fetchContent(langId, "detail").subscribe((data: any) => {
-        console.log(data, 'data from content service for language click')
         this.contentReadData = data?.result?.content
         this.router.navigate(
           [],
@@ -682,9 +635,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         //  this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?batchId=${this.contentReadData?.batchId}`)
         // this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?selectedMLCourse=${id}`)
       })
-      // this.contentSvc?.getContent(id).subscribe((data: any) => { 
-      //   console.log(data, 'data from content service for language click')
-      // })
+     
     }
   }
 
@@ -1480,27 +1431,17 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   langAutoAssignEnroll() {
-    console.log('langAutoAssignEnroll called---------')
-    // const req = {
-    //   "request": {
-    //     "courseId": "do_11402573033635840016",
-    //     "language": "english"
-    //   }
-    // }
     if (this.content && this.content.identifier) {
-      // this.contentSvc.languageAutoEnroll(this.content.identifier, this.selectedLanguageName).subscribe(
-      this.contentSvc.languageAutoEnroll("do_11433459942889881614", this.selectedLanguageName).subscribe(
+      this.contentSvc.languageAutoEnroll(this.content.identifier, this.selectedLanguageName).subscribe(
+      // this.contentSvc.languageAutoEnroll("do_11433459942889881614", this.selectedLanguageName).subscribe(
 
         (data: NsContent.IBatchListResponse) => {
-          console.log('langAutoAssignEnroll data: ', data)
           this.batchData = {
             content: data.content,
             enrolled: true,
           }
-          console.log('batchData: ', this.batchData)
           const batchId = this.getBatchId()
           if (batchId) {
-            console.log('batchId: ', batchId)
             // this.createCertTemplate(this.getBatchId(), this.content.identifier)
 
             // this.router.navigate(
@@ -1540,9 +1481,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         this.forPreview,
         primaryCategory,
         batchId,
-        this.selectedLanguageName
+        this.selectedLanguageName,
+        this.selectedLangageId
       )
-      console.log('firstResourceLink: ', this.firstResourceLink)
       this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
     }
   }

@@ -60,8 +60,6 @@ const API_END_POINTS = {
   EXT_USER_COURSE_ENROLL : (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
   EXT_CONTENT_EROLL: `/apis/proxies/v8/cios-enroll/v1/create`,
   EXT_PUBLIC_CONTENT: (partent: any, contentId: any) => `/apis/proxies/v8/ciosIntegration/v1/read/content/${partent}/${contentId}`,
-  FETCH_CONTENT_READ: (contentId: string) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
-  LANGUAGE_AUTO_ENROLLMENT: `apis/proxies/v8/course/v2/autoenrollment`,
 }
 
 @Injectable({
@@ -105,7 +103,7 @@ export class WidgetContentService {
     this.tocConfigData.next(data)
   }
    getContent(contentId: string) {
-     return this.http.get(API_END_POINTS.FETCH_CONTENT_READ(contentId))
+     return this.http.get(API_END_POINTS.CONTENT_READ(contentId))
   }
 
   fetchContent(
