@@ -173,10 +173,10 @@ export class ConnectionsCardComponent implements OnInit {
             let listToGetCount: string[] = []
             switch(action) {
               case 'Approved':
-                listToGetCount = ['Approved', 'Requested']
+                listToGetCount = ['Approved', 'Pending']
                 break;
               case 'Rejected':
-                listToGetCount = ['Requested']
+                listToGetCount = ['Pending']
                 break;
               case 'Withdrawn':
                 listToGetCount = ['Pending']
