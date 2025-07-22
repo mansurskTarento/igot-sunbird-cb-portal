@@ -56,8 +56,6 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    console.log(this.resumeData, 'resumeData data')
-    console.log(this.enrolledCourseData, 'enrolledCourseData data====')
     // this.forPreview = window.location.href.includes('/author/')
     this.routeQuerySubscription = this.route.queryParamMap.subscribe(qParamsMap => {
       const contextId = qParamsMap.get('contextId')
@@ -197,11 +195,6 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   onLanguageSelected(lang: any) {
     this.selectedLang = lang
     this.languageSelected.emit(this.selectedLang)
-    console.log('selectedLang=============', this.selectedLang)
-    // if (this.resumeData && this.selectedLang) {
-    //   console.log(this.selectedLang, "this.selectedLang");
-    //   this.openConfirmDialog();
-    // }
   }
 
   ngOnDestroy() {

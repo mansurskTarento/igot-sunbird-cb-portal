@@ -12,6 +12,12 @@ import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { Subscription } from 'rxjs'
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component'
+import {  ActivatedRoute, Router } from '@angular/router'
+
+ interface ILanguageQueryParams {
+    selectedMLCourse?: string
+    selectedMLCourseCode?: string
+  }
 
 @Component({
   selector: 'ws-widget-app-toc-content-card-v2',
@@ -93,22 +99,23 @@ export class AppTocContentCardV2Component implements OnInit {
   viewChildren = false
   primaryCategory = NsContent.EPrimaryCategory
   pageScrollSubscription: Subscription | null = null
-  selectedLang: any
+   selectedLang: any = null
+  selectedLangCode: string = '' 
+
   constructor(
     private events: EventService,
     private dialog: MatDialog,
     private contentSvc: WidgetContentService,
     private renderer: Renderer2,
     private certificateService: CertificateService,
-    private appTocSvc: AppTocService
+    private appTocSvc: AppTocService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    console.log(this.content, 'content data')
-    console.log(this.hierarchyMapData, 'hierarchyMapData data')
-    console.log(this.enrolledCourseData, 'this.enrolledCourseData')
-    this.selectedLang = this.enrolledCourseData?.recent_language
-    console.log(this.selectedLang, 'this.selectedLang')
+    this.getSelectedLanguage()
+  
     this.evaluateImmediateChildrenStructure()
     // this.route.data.subscribe(data => {
     //     this.defaultThumbnail = data.configData.data.logos.defaultContent
@@ -132,16 +139,30 @@ export class AppTocContentCardV2Component implements OnInit {
     this.appTocSvc.getPageScroll.next(true)
   }
 
+  getSelectedLanguage() {
+  this.route.queryParams.subscribe((params: ILanguageQueryParams) => {
+    if (params) {
+      this.selectedLang =  {
+        'name': params.selectedMLCourse?.toLowerCase() ,
+        'id': params.selectedMLCourseCode?.toLowerCase(),
+        'status': 'live'
+      } 
+  
+    } else {
+      let recentLang = this.enrolledCourseData?.recent_language
+     let langObj = this.languageList?.filter((lang: any) => { lang?.name?.toLowerCase() === recentLang })
+     this.selectedLang = langObj
+    }
+  })
+}
+
   getCourseLanguage() {
-    console.log(this.resumeData, 'resumeData---')
     const contentId = this.content?.parent
     if (contentId) {
       this.contentSvc?.getContent(contentId).subscribe((data: any) => {
-        console.log(data, 'data from content service')
         if (data && data.result && data.result.content && data.result.content.languageMapV1) {
           // return data.result.content.language
           const languageMapV1 = data.result.content.languageMapV1 || {}
-          console.log(languageMapV1, 'languageMapV1')
 
           this.languageList = Object.entries(languageMapV1)
             .filter(([_, val]: [string, any]) => val.status === "live")
@@ -150,7 +171,6 @@ export class AppTocContentCardV2Component implements OnInit {
               id: val.id,
               status: val.status
             }))
-          console.log(this.languageList, 'languageList')
           // this.getLangArray(languageMapV1)
         }
 
@@ -159,22 +179,25 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   onLanguageChange(lang: any) {
-    console.log('Language selected in child:', lang);
     this.selectedLang = lang
-    const selectedLangId = this.selectedLang.id
+    const selectedLangId = this.selectedLang?.id
     if (!this.resumeData) {
       this.contentSvc?.fetchContent(selectedLangId, "detail").subscribe((data: any) => {
-        console.log(data, 'data from content service for language click')
         this.content = data?.result?.content
-        console.log(this.content, 'contData from content service for language click')
-        //  this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?batchId=${this.contentReadData?.batchId}`)
-        // this.router.navigateByUrl(`app/toc/${this.contentReadData?.contentId}/overview?selectedMLCourse=${id}`)
       })
     }
     if (this.resumeData && this.selectedLang) {
-      console.log(this.selectedLang, "this.selectedLang")
       this.openConfirmDialoge()
     }
+    this.router.navigate([], {
+    // relativeTo: this.route,
+    queryParams: {
+      selectedMLCourse: lang.name.toLowerCase(),      // e.g., 'tamil'
+      selectedMLCourseCode: lang.id?.toLowerCase()  // e.g., 'ta'
+    },
+    queryParamsHandling: 'merge', // preserves other existing params
+    replaceUrl: true              // optional: avoids pushing new history entry
+  });
     this.languageSelected.emit(this.selectedLang)
   }
 
@@ -471,15 +494,10 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   getCompletionPercentage(identifier: string) {
-    // console.log('getCompletionPercentage', identifier)
-    // console.log('this.hierarchyMapData[identifier] : ', this.hierarchyMapData[identifier])
-    // const item = this.updateChildParentMap(identifier)
     return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage
   }
 
   getCompletionStatus(identifier: string) {
-    // console.log('getCompletionStatus')
-    // const item = this.updateChildParentMap(identifier)
     return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionStatus
   }
 
@@ -600,10 +618,8 @@ export class AppTocContentCardV2Component implements OnInit {
     })
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.contentSvc?.fetchContent(this.selectedLang.id, "detail").subscribe((data: any) => {
-          console.log(data, 'data from content service for language click')
+        this.contentSvc?.fetchContent(this.selectedLang?.id, "detail").subscribe((data: any) => {
           this.content = data?.result?.content
-          console.log(this.content, 'contData from content service for language click')
         })
       }
 
@@ -629,13 +645,11 @@ export class AppTocContentCardV2Component implements OnInit {
 
 
   onRadioChange(value: string) {
-    console.log('onRadioChange called with value:', value)
     this.selectedValue = value
     this.openDialogOnClose = true
   }
 
   onSelectClosed() {
-    console.log('onSelectClosed called')
     if (this.openDialogOnClose) {
       this.openConfirmDialoge()
       this.openDialogOnClose = false

@@ -175,6 +175,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
    onLanguageSelected(lang: any) {
+    debugger
+    console.log('Language selected in parent:===========', lang);
     this.selectedLang = lang;
     console.log('selectedLang=============', this.selectedLang)
     // this.languageSelected.emit(this.selectedLang)

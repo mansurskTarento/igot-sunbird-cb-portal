@@ -403,7 +403,7 @@
 
               <div class="lang-chip-list">
                 <p class="mat-subheading-2 text-white">Select a language to view the Table of Contents in that language. Titles and content will update automatically.</p>
-                <a class="lang-mat-chip" *ngFor="let lang of firstSixLang" (click)="onLanguageClick(lang.id, lang.status)">
+                <a class="lang-mat-chip" *ngFor="let lang of firstSixLang" (click)="onLanguageClick(lang)">
                 {{ lang.name }}
                 
               </a>

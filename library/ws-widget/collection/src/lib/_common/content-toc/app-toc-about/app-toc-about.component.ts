@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { Subject } from 'rxjs'
@@ -29,6 +29,7 @@ import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/res
 import { ReviewsContentComponent } from '../reviews-content/reviews-content.component'
 import { CertificateDialogComponent } from '../../certificate-dialog/certificate-dialog.component'
 import { environment } from 'src/environments/environment'
+import { WidgetContentService as WidgetSvc } from '../../../_services/widget-content.service' 
 
 interface IStripUnitContentData {
   key: string
@@ -62,6 +63,10 @@ interface IStripUnitContentData {
   viewMoreUrl: any,
   sectorWidgets?:any
 }
+ interface ILanguageQueryParams {
+    selectedMLCourse?: string
+    selectedMLCourseCode?: string
+  }
 
 @Component({
   selector: 'ws-widget-app-toc-about',
@@ -86,6 +91,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     private handleClaimService: HandleClaimService,
     private resetRatingsService: ResetRatingsService,
     private contentSvc: WidgetContentService,
+    private route: ActivatedRoute,
+    private widgetContentService: WidgetSvc,
   ) {
     this.resetRatingsService.resetRatings$.subscribe((_res: any) => {
       this.fetchRatingSummary()
@@ -184,6 +191,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     filters: []
   }
 
+  selectedLang: string = '' 
+  selectedLangCode: string = '' 
+
   timer: any = {}
   isMobile = false
   compentencyKey!: NsContent.ICompentencyKeys
@@ -194,6 +204,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   selectedSector = ''
   selectedSectorId = ''
   ngOnInit() {
+ 
+    this.getCourseLanguage()
+ 
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     this.userProfile = this.configService.userProfile
     if (window.innerWidth <= 1200) {
@@ -266,6 +279,29 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
   }
 
+getCourseLanguage() {
+  this.route.queryParams.subscribe((params: ILanguageQueryParams) => {
+    console.log('Query Params:', params) // Log all params
+
+    this.selectedLang = params.selectedMLCourse || ''
+    this.selectedLangCode = params.selectedMLCourseCode || ''
+
+    console.log('Language:', this.selectedLang)
+    console.log('Language Code:', this.selectedLangCode)
+
+    if (this.selectedLangCode) {
+      console.log('Fetching content for language:', this.selectedLangCode)
+      this.widgetContentService?.fetchContent(this.selectedLangCode, 'detail').subscribe((data: any) => {
+        console.log(data, 'data from content service for language click on about page=======')
+        this.contentReadData = data?.result?.content
+        console.log(this.content, 'contData from content service for language click on about page=======')
+      })
+  
+    }
+  })
+}
+
+
   ngAfterViewInit(): void {
     this.timerUnsubscribe = this.timerService.getTimerData()
     .pipe(takeUntil(this.destroySubject$))
@@ -275,6 +311,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.getCourseLanguage()
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     if (changes.selectedTabValue && changes.selectedTabValue.currentValue === 0) {
       setTimeout(() => {

@@ -5,6 +5,11 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // import { MatSelectChange } from '@angular/material/select'
 
+ interface ILanguageQueryParams {
+    selectedMLCourse?: string
+    selectedMLCourseCode?: string
+  }
+
 @Component({
   selector: 'viewer-youtube-container',
   templateUrl: './youtube.component.html',
@@ -24,10 +29,11 @@ export class YoutubeComponent implements OnInit {
   @Input() isScreenSizeLtMedium = false
   @Input() isPreviewMode = false
   @Input() languageList: any = []
-  selectedLanguage: any
+  selectedLanguage: any = null
   isTypeOfCollection = false
   isRestricted = false
   isMobile = false
+    //  selectedLang: any = null
   //   languages = [
   //    { name: 'Hindi', localName: 'हिन्दी', code: 'hi' },
   //   { name: 'Tamil', localName: 'தமிழ்', code: 'ta' },
@@ -55,7 +61,6 @@ export class YoutubeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.languageList, 'languageList from ngOnInit')
     if (window.innerWidth <= 1200) {
       this.isMobile = true
     } else {
@@ -67,9 +72,7 @@ export class YoutubeComponent implements OnInit {
     }
     this.isTypeOfCollection = this.activatedRoute.snapshot.queryParams.collectionType ? true : false
 
-
-  //   this.firstLang = this.languages[0];
-  //  this.remainingLang = this.languages.slice(1);
+    this.getSelectedLanguage()
   }
   get getData() {
     return this.widgetResolverYoutubeData
@@ -79,12 +82,28 @@ export class YoutubeComponent implements OnInit {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
-  onSelect(option: any) {
-    console.log('onSelect option: called')
-    this.languageSelected.emit(option)
-    this.dropdownOpen = false;
-    this.selectedLanguage = option
-  }
+    getSelectedLanguage() {
+      console.log('getSelectedLanguage called')
+  this.activatedRoute.queryParams.subscribe((params: ILanguageQueryParams) => {
+    console.log('Query Params:', params) // Log all params
+    if (params) {
+      this.selectedLanguage =  {
+        'name': params.selectedMLCourse?.toLowerCase() ,
+        'id': params.selectedMLCourseCode?.toLowerCase(),
+        'status': 'live'
+      } 
+  
+    } else {
+    //   let recentLang = this.enrolledCourseData?.recent_language
+    //  let langObj = this.languageList?.filter((lang: any) => { lang?.name?.toLowerCase() === recentLang })
+    //  this.selectedLanguage = langObj
+    //  console.log(langObj, 'langObj')
+    }
+    console.log(this.selectedLanguage, 'selectedLang from query params on youtube component') // Log selected language
+  })
+}
+
+
 
 //   onLanguageChange(event: MatSelectChange) {
 //   console.log('Selected:', event.value);
@@ -92,7 +111,7 @@ export class YoutubeComponent implements OnInit {
 
  onLanguageChange(lang: any) {
    this.languageSelected.emit(lang)
-    this.selectedLanguage = lang;
+    this.selectedLanguage = lang
   }
 
 }

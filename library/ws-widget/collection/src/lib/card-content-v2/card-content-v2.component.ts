@@ -481,6 +481,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
   }
   async getRedirectUrlData(content: any,contentType?:any){
+    console.log(content, 'content from card content v2')
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
     
     if(contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
@@ -499,11 +500,12 @@ export class CardContentV2Component extends WidgetBaseComponent
     } else {
       // if (content && content.status && content.status.toLowerCase() !== 'retired') {
         let urlData = await this.contSvc.getResourseLink(content)
+        console.log(urlData, 'urlData from content service')
         if (urlData && urlData.url ) {
           this.router.navigate(
             [urlData.url],
             {
-              queryParams: urlData.queryParams
+              queryParams:  urlData.queryParams
             })
         } else {
           // const contentType = urlData;

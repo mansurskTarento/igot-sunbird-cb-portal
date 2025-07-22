@@ -329,9 +329,9 @@
                                         <mat-select [value]="selectedLang"
                                             (selectionChange)="onLanguageChange($event.value)">
                                             <mat-option *ngFor="let lang of languageList" [value]="lang">
-                                                <mat-radio-button [checked]="selectedLang === lang.name"
+                                                <mat-radio-button [checked]="selectedLang.name === lang.name"
                                                     class="full-width">
-                                                    {{ lang.name | titlecase }}
+                                                    {{ lang.name | titlecase }} 
                                                 </mat-radio-button>
                                             </mat-option>
                                         </mat-select>
