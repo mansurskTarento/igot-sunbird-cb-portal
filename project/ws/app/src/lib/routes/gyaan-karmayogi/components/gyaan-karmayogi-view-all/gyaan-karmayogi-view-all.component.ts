@@ -171,7 +171,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           this.selectedFilter[gyaanConstants.requestSectorName].length) && this.selectedFilter[gyaanConstants.resourceCategory]) {
           strip.request.searchV6.request.filters = {
             ...strip.request.searchV6.request.filters,
-            ...{ 'sectorName': this.sectorNames },
+            ...{ [gyaanConstants.requestSectorName]: this.sectorNames },
           }
         }
         strip.request.searchV6['request']['limit'] = this.limit
