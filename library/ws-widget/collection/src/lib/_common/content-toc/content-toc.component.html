@@ -190,7 +190,7 @@
     </ng-container>
     
     <!-- Teachers Note Tab -->
-    <ng-container *ngIf="content?.referenceNodes && teacherNotesFlag">
+    <ng-container *ngIf="contentReadData?.referenceNodes && teacherNotesFlag">
         <mat-tab label="Teachers Note">
             <ng-template matTabContent>
                 <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
@@ -201,7 +201,7 @@
     </ng-container>
     
     <!-- Reference Note Tab -->
-    <ng-container *ngIf="content?.referenceNodes && referenceNotesFlag">
+    <ng-container *ngIf="contentReadData?.referenceNodes && referenceNotesFlag">
         <mat-tab label="Reference Note">
             <ng-template matTabContent>
                 <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
