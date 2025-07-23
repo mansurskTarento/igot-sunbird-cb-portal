@@ -140,6 +140,7 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   getSelectedLanguage() {
+    console.log(this.enrolledCourseData, 'enrolledCourseData')
   this.route.queryParams.subscribe((params: ILanguageQueryParams) => {
     if (params) {
       this.selectedLang =  {
