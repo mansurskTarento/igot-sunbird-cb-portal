@@ -152,20 +152,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
       
     }
-    if (this.contentReadData && this.contentReadData.referenceNodes) {
-      this.contentReadData.referenceNodes.forEach((item: any) => {
-        if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
-          this.teacherNotesFlag = true
-        }
-      })
-    }
-    if (this.contentReadData && this.contentReadData.referenceNodes) {
-      this.contentReadData.referenceNodes.forEach((item: any) => {
-        if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
-          this.referenceNotesFlag = true
-        }
-      })
-    }
 
     
   }
@@ -211,6 +197,17 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
+    }
+    
+    if (this.contentReadData && this.contentReadData.referenceNodes) {
+      this.contentReadData.referenceNodes.forEach((item: any) => {
+        if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
+          this.teacherNotesFlag = true
+        }
+        if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
+          this.referenceNotesFlag = true
+        }
+      })
     }
   }
 
