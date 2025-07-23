@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 export interface PageChangeEmitter {
@@ -26,6 +27,16 @@ export class PaginationComponent implements OnInit, OnChanges {
   lastPage = 0;
   firstPage = 0;
   previousPage = 0;
+  isMobile = false;
+
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+  ) { 
+    this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+      });
+  }
 
   ngOnInit(): void {
     this.paginationInListing();
@@ -83,7 +94,7 @@ export class PaginationComponent implements OnInit, OnChanges {
   paginationDup(c: any, m: any) {
     let current = c;
     let last = m;
-    let delta = this.numberOfPaginationVisable;
+    let delta = this.isMobile ? 1 : this.numberOfPaginationVisable;
     let left = current - delta;
     let right = current + delta + 1;
     let range: any = [];

@@ -741,7 +741,7 @@
                 <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                   class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
                   ?'Module'
-                  :widgetData.content?.primaryCategory">
+                  :widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
 
                 </ws-widget-display-content-type>
               </div>
@@ -845,7 +845,7 @@
               <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                 class="ws-mat-black60-text font-normal mat-caption text-uppercase" [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
                 ?'Module'
-                :widgetData.content?.primaryCategory">
+                :widgetData.content?.courseCategory ? widgetData.content?.courseCategory:widgetData.content?.primaryCategory">
 
               </ws-widget-display-content-type>
             </div>
@@ -1094,7 +1094,7 @@
           <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
             class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
             ?'Module'
-            :widgetData.content?.primaryCategory">
+            :widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
           </ws-widget-display-content-type>
         </div>
       </div>
@@ -1358,7 +1358,7 @@
               <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
                 class="ws-mat-black60-text font-normal mat-caption text-uppercase" [displayContentType]="widgetData.content?.primaryCategory === 'CuratedCollections'
                 ? 'Curated collection'
-                : widgetData.content?.primaryCategory">
+                : widgetData.content?.courseCategory ? widgetData.content?.courseCategory: widgetData.content?.primaryCategory">
 
               </ws-widget-display-content-type>
             </div>
@@ -1471,7 +1471,7 @@
            <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
            class="ws-mat-black60-text font-normal mat-caption " [displayContentType]="widgetData.content?.primaryCategory==='Course Unit'
            ?'Module'
-           :widgetData.content?.primaryCategory">
+           :widgetData.content?.courseCategory ? widgetData.content?.courseCategory:widgetData.content?.primaryCategory">
            </ws-widget-display-content-type>
         </div>
      </div>

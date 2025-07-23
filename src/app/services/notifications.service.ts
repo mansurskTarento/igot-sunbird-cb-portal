@@ -99,7 +99,7 @@ export class NotificationsService {
 
   handleNetworkRedirection(notification: any, snackBar: any): void {
     if (notification.sub_category === 'REJECTED_CONNECTION_REQUEST') {
-      snackBar.open('Your connection request has been rejected.')
+      snackBar.open('This request has been resolved or is no longer available.')
     } else if (notification.sub_category === 'SEND_CONNECTION_REQUEST') {
       this.getMyRequests().subscribe((res: any) => {
         if (res && res.length) {
@@ -107,10 +107,10 @@ export class NotificationsService {
           if (connection) {
             this.router.navigate([`/app/network-v2/connections`])
           } else {
-            snackBar.open('No pending request found for the user.')
+            snackBar.open('This request has been resolved or is no longer available.')
           }
         } else {
-          snackBar.open('No pending request found for the user.')
+          snackBar.open('This request has been resolved or is no longer available.')
         }
       })
     } else {
@@ -162,9 +162,9 @@ export class NotificationsService {
           let url = `${environment.portalsForNotifications.mdo}/app/home/approvals/approval`
           window.open(url, '_blank')
         } else if (notification.sub_category === 'PROFILE_VERIFICATION') {
-          snackBar.open('No pending profile verification request for the user')
+          snackBar.open('This request has been resolved or is no longer available.')
         } else if (notification.sub_category === 'USER_TRANSFER') {
-          snackBar.open('No pending transfer request for the user')
+          snackBar.open('This request has been resolved or is no longer available.')
         }
       }, error => {
         console.error('Error while fetching workflow search data', error)

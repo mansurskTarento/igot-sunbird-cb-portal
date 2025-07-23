@@ -217,7 +217,7 @@
         <mat-tab label="Teachers Note">
             <ng-template matTabContent>
                 <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
-                    <ws-widget-app-toc-teachers-notes [content]="content"></ws-widget-app-toc-teachers-notes>
+                    <ws-widget-app-toc-teachers-notes [content]="contentReadData" [notesDisplayType]="'Teachers Resource'"></ws-widget-app-toc-teachers-notes>
                 </div>
             </ng-template>
         </mat-tab>
@@ -228,7 +228,9 @@
         <mat-tab label="Reference Note">
             <ng-template matTabContent>
                 <div class="flex flex-col ratings-div mt-5" id="teachersNoteDiv">
-                    <ws-widget-app-toc-reference-notes [content]="content"></ws-widget-app-toc-reference-notes>
+                    <ws-widget-app-toc-teachers-notes [content]="contentReadData" [notesDisplayType]="'Reference Resource'"></ws-widget-app-toc-teachers-notes>
+
+                    <!-- <ws-widget-app-toc-reference-notes [content]="contentReadData"></ws-widget-app-toc-reference-notes> -->
                 </div>
             </ng-template>
         </mat-tab>
