@@ -572,6 +572,7 @@ export class AppTocService {
       const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, content?.identifier)
       if (foundParentContent && foundParentContent.completionPercentage === 100) {
         this.mapCompletionChildPercentageProgram(content)
+        totalCount = content.leafNodesCount
       } else {
         if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
           for (let i = 0; i < content.children.length; i += 1) {
