@@ -508,7 +508,7 @@ export class CardContentV2Component extends WidgetBaseComponent
       //   selectedMLCourse: lang?.name?.toLowerCase(),
       //   selectedMLCourseCode: lang?.id?.toLowerCase(),
       // };
-\
+
       if (urlData && urlData.url) {
         //  console.log(this.widgetData?.content, 'widgetData from card content v2')
         // console.log(this.widgetData?.content?.language, 'selectedMLCourse from card content v2')
