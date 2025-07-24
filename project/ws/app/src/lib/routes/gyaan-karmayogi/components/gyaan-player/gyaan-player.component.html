@@ -35,7 +35,7 @@
                         <p class="published-date mb-4">Published on {{resourceData?.lastPublishedOn |date:'MMM d, y'}}</p>
                     </div>
                     <div class="flex gap-6 flex-wrap">
-                        <div class="content-details">
+                        <!-- <div class="content-details">
                             <p class="title-label">{{'gyaanKarmayogi.sector'| translate}}</p>
                             <ng-container *ngIf="resourceData?.sectorsList?.length > 0">
                                 <div class="flex gap-2 flex-wrap items-center">
@@ -66,7 +66,7 @@
                             <ng-container *ngIf="resourceData?.subSectorsList?.length === 0">
                                 <p class="title-value">{{'-'}}</p>
                             </ng-container>
-                        </div>
+                        </div> -->
                         <div class="content-details">
                             <p class="title-label">{{'gyaanKarmayogi.categories'| translate}}</p>
                             <p class="title-value">{{resourceData?.resourceCategory || '-'}}</p>
@@ -109,6 +109,43 @@
         <div class="mt-4" *ngIf="resourceData?.description">
             <p [innerText]="resourceData?.description"></p>
         </div>
+        <ng-container *ngIf="resourceData?.sectorDetails_v1?.length">
+            <div class="flex flex-col">
+                <div class="mat-subheading-1 nodtranslate">{{ 'gyaanKarmayogi.sectors' | translate }}</div>
+                <ng-container *ngIf="resourceData?.sectorDetails_v1?.length > 0">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-row gap-3 sm:gap-4 mb-3 flex-wrap">
+                            <ng-container *ngFor="let sector of resourceData?.sectorDetails_v1; let i = index; let isLast = last" >
+                                <!-- [ngClass]="{'theme-activated': competencySelected === item.key}"-->
+                                <div class="themes-button" [ngClass]="{'theme-activated': selectedSectorId === sector?.sectorId}"  (click)="handleSubsector(sector, 'selected')">{{ sector?.sectorName }}</div>
+                            </ng-container>
+                        </div>
+                        <ng-container *ngIf="subSectorsList?.length">
+                            <div>
+                                <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="{cardSubType: 'standard'}">
+                                    <ng-container *ngFor="let widget of subSectorsList; trackBy: tracker">
+                                        <ng-container [wsResolverWidget]="widget"></ng-container>
+                                    </ng-container>
+                                </ws-utils-horizontal-scroller-v2>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="subSectorsList?.length === 0 && selectedSectorId">
+                            <div class="mb-2">
+                                No Subsector Available
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <!-- <div class="flex flex-wrap gap-2" >
+                    <ng-container *ngFor="let sector of sectorsList; let i = index; let isLast = last">
+                        <div class="text-xs mob-text" >{{ sector?.sectorName }}</div>
+                        <div class="flex items-center" *ngIf="!isLast">
+                            <span class="period"></span>
+                        </div>
+                    </ng-container>
+                </div> -->
+            </div>
+        </ng-container>
     </div>
 </div>
 <div class="flex flex-center filter-section  pb-4 bg-primary"  *ngIf="displayContents">

@@ -273,21 +273,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getRecommendedCommunitesList() {
     const formBody = {
-      filterCriteriaMap: {
-        status: "active"
-      },
-      requestedFields: [],
-      pageNumber: 0,
-      pageSize: 3,
-      facets: [
-        "topicName"
-      ]
+      field: "countOfPeopleJoined",
+      limit: 3
     }
     this.communitySuggestionsLoading = true;
     this.profileV2RevampSvc.getCommunities(formBody).subscribe({
       next: (response: any) => {
         this.communitySuggestionsLoading = false;
-        this.communitySuggestionsList = _.get(response, 'result.search_results.data', [])
+        this.communitySuggestionsList = _.get(response, 'result.data', [])
       },
       error: () => {
         this.communitySuggestionsLoading = false;
@@ -1300,16 +1293,22 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     const currentUser = this.configSvc.userProfile
     let subType = ''
     let eDataId = ''
+    let successMessage = ''
     switch (status) {
       case 'Withdrawn':
         eDataId = 'connect-withdraw'
         subType = 'network-hub-connections-sent'
+        successMessage = 'Connection withdrawn successfully'
         break;
       // case 'Accepted':
       //   break;
       case 'Unblocked':
         eDataId = 'profile-unblock'
         subType = 'network-hub-connections-blocked'
+        successMessage = 'User unblocked successfully'
+        break;
+      case 'Removed':
+        successMessage = 'Connection removed successfully'
         break;
       // case 'Blocked':
       //   break
@@ -1330,7 +1329,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         next: (response: any) => {
           if (response) {
             this.getConnectionStatus()
+            this.openSnackbar(successMessage);
           }
+        },
+        error: () => {
+          this.openSnackbar('Something went wrong please try again');
         }
       })
     }

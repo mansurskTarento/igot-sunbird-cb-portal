@@ -50,14 +50,13 @@ export class NetworkComponent implements OnInit {
       navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
       imageUrl: './assets/icons/connection.svg',
-      queryParams: { pageSize: 50, offset: 0, type: 'peopleYouMayKnow' }
+      queryParams: { type: 'peopleYouMayKnow' }
     },
     {
       name: 'NetworkLandingPage.mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/book_read.svg',
-      queryParams: { pageSize: 50, offset: 0 }
+      imageUrl: './assets/icons/book_read.svg'
     }
   ]
   userDetails: any = {};
@@ -89,21 +88,14 @@ export class NetworkComponent implements OnInit {
 
   getCommunitesList() {
     const formBody = {
-      filterCriteriaMap: {
-        status: "active"
-      },
-      requestedFields: [],
-      pageNumber: 0,
-      pageSize: 3,
-      facets: [
-        "topicName"
-      ]
+      field: "countOfPeopleJoined",
+      limit: 3
     }
     this.communitiesLoading = true;
     this.networkingSvc.getCommunities(formBody).subscribe({
       next: (responce: any) => {
         this.communitiesLoading = false;
-        this.communitySuggestionsList = _.get(responce, 'result.search_results.data')
+        this.communitySuggestionsList = _.get(responce, 'result.data')
       },
       error: () => {
         this.communitiesLoading = false;

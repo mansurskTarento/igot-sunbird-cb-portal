@@ -37,7 +37,7 @@ export class UserAutocompleteService {
     url += stringifiedQueryParams ? `?${stringifiedQueryParams}` : ''
 
     return this.http.get<NsAutoComplete.IUserAutoComplete[]>(
-      url ,
+      url,
     )
   }
 
@@ -68,6 +68,7 @@ export class UserAutocompleteService {
         query: value,
         filters: {
           rootOrgId,
+          status: 1
         },
       },
     }

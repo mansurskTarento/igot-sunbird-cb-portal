@@ -173,19 +173,24 @@ export class ConnectionsCardComponent implements OnInit {
             let listToGetCount: string[] = []
             switch(action) {
               case 'Approved':
-                listToGetCount = ['Approved', 'Requested']
+                listToGetCount = ['Approved', 'Pending']
+                this.openSnackbar('Connection accepted successfully')
                 break;
               case 'Rejected':
-                listToGetCount = ['Requested']
+                listToGetCount = ['Pending']
+                this.openSnackbar('Connection rejected successfully')
                 break;
               case 'Withdrawn':
                 listToGetCount = ['Pending']
+                this.openSnackbar('Connection withdrawn successfully')
                 break;
               case 'Unblocked':
                 listToGetCount = ['Blocked']
+                this.openSnackbar('User unblocked successfully')
                 break;
               case 'Removed':
                 listToGetCount = ['Approved']
+                this.openSnackbar('Connection removed successfully')
                 break;
             }
             if(listToGetCount && listToGetCount.length) {

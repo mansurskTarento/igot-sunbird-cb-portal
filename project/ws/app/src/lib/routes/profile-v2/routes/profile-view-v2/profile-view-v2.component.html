@@ -116,7 +116,7 @@
                   <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                 </button>
               </ng-container>
-              <ng-container *ngIf="connectionStatus !== 'Blocked' && connectionStatus !== 'Pending'">
+              <ng-container *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Blocked')">
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                 </button>
@@ -131,26 +131,29 @@
               </button>
             </mat-menu>
             <ng-container [ngSwitch]="connectionStatus">
-              <ng-container *ngSwitchCase="'Blocked'">
+              <ng-container *ngSwitchCase="'Blocked Outgoing'">
                 <button mat-button class="connectButton " i18n (click)="updateProfileConnection('Unblocked')">
                   {{'NetworkV2Profile.unblock' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchCase="'Pending'">
-                <button mat-button class="pendingButton" i18n>
-                  {{'NetworkV2Profile.pending' | translate}}
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
+                  {{'connectionPeopleCard.connectionSent' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchCase="'Approved'">
-                <button mat-button class="pendingButton" i18n>
+                <button mat-button class="connection-sent flex justify-center item-center" i18n>
                   {{'NetworkV2Profile.connected' | translate}}
                 </button>
               </ng-container>
               <ng-container *ngSwitchDefault>
-                <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
-                  <mat-icon class="connect-icon mr-2">person_add</mat-icon>
-                  {{'NetworkV2Profile.connect' | translate}}
-                </button>
+                <ng-container *ngIf="connectionStatus !== 'Received' && connectionStatus !== 'Blocked Incoming'">
+                  <button mat-button class="connectButton " i18n (click)="sendConnectionRequest()">
+                    <mat-icon class="connect-icon mr-2">person_add</mat-icon>
+                    {{'NetworkV2Profile.connect' | translate}}
+                  </button>
+                </ng-container>
+                
               </ng-container>
             </ng-container>
           </div>
@@ -221,7 +224,7 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <ng-container *ngIf="connectionStatus !== 'Blocked'; else blocked">
+        <ng-container *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing'; else blocked">
           <div class="flex flex-col gap-4">
             <ng-container *ngIf="isCurrentUser && isMobile">
               <div>
@@ -350,7 +353,7 @@
           <div class="w-full flex flex-col gap-4 justify-center items-center blockedBlock">
             <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
             <div class="blocked-text">
-              {{'NetworkV2Profile.youBlockedThisProfile' | translate}}
+              {{ (connectionStatus === 'Blocked Outgoing' ? 'NetworkV2Profile.youBlockedThisProfile' : 'NetworkV2Profile.youAreNotAuthorisedToSeeThisProfile') | translate}}
             </div>
           </div>
         </ng-template>

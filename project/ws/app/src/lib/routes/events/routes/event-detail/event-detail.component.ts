@@ -129,7 +129,7 @@ export class EventDetailComponent implements OnInit {
       // this.data = this.route.snapshot.data.topic.data
     })
     this.eventSvc.getEventData(this.eventId).subscribe((data: any) => {
-      this.eventData = data.result.event
+      this.eventData = data?.result?.event
       this.isretired = this.eventData?.status?.toLowerCase() !== 'live'
       this.eventSvc.eventData = data.result.event
       if (this.eventData && typeof this.eventData.batches === 'string') {

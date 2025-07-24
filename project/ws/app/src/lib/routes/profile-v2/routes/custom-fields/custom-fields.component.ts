@@ -732,8 +732,8 @@ export class CustomFieldsComponent {
         attributeName: field.attributeName
       }
       if (field.type === 'text') {
-        data['value'] = this.customAttrForm.get(field.attributeName)?.value,
-          payload.push(data)
+        data['value'] = this.customAttrForm.get(field.attributeName)?.value
+        payload.push(data)
       } else if (field.type === 'masterList') {
         let values: any = []
         const group = this.customAttrForm.get(`${field.attributeName}_group`) as FormGroup
@@ -747,9 +747,11 @@ export class CustomFieldsComponent {
               })
             }
           })
+          if (values.length) {
+            data['values'] = values
+            payload.push(data)
+          }
         }
-        data['values'] = values
-        payload.push(data)
       }
     })
     let requestPalyoud: any = {

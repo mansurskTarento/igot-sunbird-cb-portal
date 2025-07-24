@@ -245,11 +245,13 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       if (type === 'start') {
         const timestamp = Date.now();
         this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
+        this.chatbotService.iGOTAIChatHistory = []
         this.disableScroll()
         this.raiseChatStartTelemetry()
         // this.toggleFilter(this.currentFilter)
       } else {
         this.chatId = ''
+        this.chatbotService.iGOTAIChatHistory = []
         this.raiseChatEndTelemetry()
         this.userJourney = []
         this.chatInformation = []
@@ -258,6 +260,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
         this.checkForApiCalls()
         this.more = false
+        
         this.enableScroll()
       }
     }
