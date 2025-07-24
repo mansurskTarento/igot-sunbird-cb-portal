@@ -633,4 +633,36 @@ export class WidgetContentService {
     const resultContent = this.getPreAssessmentFirstChildInHierarchy(firstChild)
     return resultContent
   }
+
+  fetchHierarchyContent(contentId:string, hierarchyType: 'all' | 'minimal' | 'detail' = 'detail') {
+    let url = ''
+    const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+    if (!forPreview) {
+      url = `/apis/proxies/v8/action/content/v3/hierarchy/${contentId}?hierarchyType=${hierarchyType}`
+    } else {
+      const forcreator = window.location.href.includes('editMode=true')
+      if (forcreator) {
+        url = `apis/proxies/v8/action/content/v3/hierarchy/${contentId}?mode=edit`
+      } else {
+        url = `/api/course/v1/hierarchy/${contentId}?hierarchyType=${hierarchyType}`
+      }
+    }
+    return this.http.get<NsContent.IContent>(url).pipe(shareReplay(1))
+  }
+
+  fetchContentData(contentId: string): Observable<NsContent.IContent> {
+    let url = ''
+    const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+    if (!forPreview) {
+      return this.http.get<NsContent.IContent>(
+        API_END_POINTS.CONTENT_READ(contentId),
+      )
+    }
+    if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
+      url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
+    } else {
+        url = `/api/content/v1/read/${contentId}`
+    }
+      return this.http.get<NsContent.IContent>(url)
+  }
 }

@@ -70,7 +70,7 @@ import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tip
 // Components
 import { AppTocAnalyticsComponent } from './routes/app-toc-analytics/app-toc-analytics.component'
 import { AppTocContentsComponent } from './routes/app-toc-contents/app-toc-contents.component'
-import { AppTocHomeComponent } from './components/app-toc-home/app-toc-home.component'
+// import { AppTocHomeComponent } from './components/app-toc-home/app-toc-home.component'
 import { AppTocHomeComponent as AppTocHomeRootComponent } from './routes/app-toc-home/app-toc-home.component'
 import { AppTocOverviewComponent } from './components/app-toc-overview/app-toc-overview.component'
 import { AppTocBannerComponent } from './components/app-toc-banner/app-toc-banner.component'
@@ -93,7 +93,6 @@ import { TagWidgetComponent } from '../discuss/widget/tag-widget/tag-widget.comp
 
 // Services
 import { AppTocService } from './services/app-toc.service'
-import { AppTocResolverService } from './resolvers/app-toc-resolver.service'
 import { ProfileResolverService } from './resolvers/profile-resolver.service'
 import { CertificationApiService } from './routes/app-toc-certification/apis/certification-api.service'
 import { ActionService } from './services/action.service'
@@ -143,12 +142,15 @@ import { EnrollProfileFormComponent } from './components/enroll-profile-form/enr
 import { SurveyFormQuestionComponent } from './components/survey-form-question/survey-form-question.component';
 import { SurveyFormSectionComponent } from './components/survey-form-section/survey-form-section.component'
 import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
+import { AppTocContentReadResolverService } from './resolvers/app-toc-content-read-resolver.service'
+import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home-v2.component'
 
 @NgModule({
   declarations: [
     AppTocAnalyticsComponent,
     AppTocContentsComponent,
-    AppTocHomeComponent,
+    AppTocHomeV2Component,
+    // AppTocHomeComponent,
     AppTocOverviewComponent,
     AppTocBannerComponent,
     AppTocCohortsComponent,
@@ -271,7 +273,7 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     SurveyFormSectionComponent,
   ],
   providers: [
-    AppTocResolverService,
+    AppTocContentReadResolverService,
     AppPublicTocResolverService,
     AppTocService,
     PipeContentRoutePipe,
@@ -293,7 +295,8 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
     AppTocSinglePageComponent,
     AppTocBannerComponent,
     AppTocHomeRootComponent,
-    AppTocHomeComponent,
+    AppTocHomeV2Component,
+    // AppTocHomeComponent,
     ShareTocModule,
     AppTocCiosHomeComponent,
   ]
