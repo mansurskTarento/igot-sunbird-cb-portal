@@ -465,7 +465,7 @@
           </div>
         </div>
       </ng-container>
-      <div class="pb-4 lg:py-4">
+      <div class="pb-4 lg:py-4" *ngIf="contentReadData?.identifier && content?.identifier">
         <!-- Overall progress functionality -->
         <div class="mobile-progress">
           <ng-container [ngTemplateOutlet]="progressFunctionality"></ng-container>

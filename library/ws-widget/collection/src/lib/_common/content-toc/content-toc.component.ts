@@ -140,10 +140,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
-      if (this.content && this.content.identifier) {
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
+      if (this.contentReadData && this.contentReadData.identifier) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.contentReadData.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.contentReadData.identifier
         }
       }
       this.discussWidgetData = { ...this.discussWidgetData }

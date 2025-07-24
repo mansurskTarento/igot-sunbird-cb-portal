@@ -5,7 +5,7 @@ import {
 import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
 import { ActivatedRoute, Event, Data, Router, NavigationEnd } from '@angular/router'
 import { UntypedFormControl, Validators } from '@angular/forms'
-import { HttpErrorResponse } from '@angular/common/http'
+// import { HttpErrorResponse } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core'
 import { Subscription, Observable, Subject, of, from } from 'rxjs'
 import { catchError, share, switchMap, takeUntil } from 'rxjs/operators'
@@ -273,7 +273,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private events: EventService,
-    private matSnackBar: MatSnackBar,
+    // private matSnackBar: MatSnackBar,
     private loadCheckService: LoadCheckService,
     private handleClaimService: HandleClaimService,
     private resetRatingsService: ResetRatingsService,
@@ -360,17 +360,18 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.routeSubscription = this.route.data.subscribe(async (data: Data) => {
         if (data && data.content && data.content.data && data.content.data.identifier) {
           this.courseID = data.content.data.identifier
-          this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
-            this.contentReadData = res.result.content
-            console.log('this.contentReadData', this.contentReadData)
-            this.getPreAssessmentCompletionStatus()
-          }, (error: HttpErrorResponse) => {
-            if (!error.ok) {
-              this.matSnackBar.open('Unable to fetch content data, due to some error!')
-            }
-          })
+          // this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
+          //   this.contentReadData = res.result.content
+          //   console.log('this.contentReadData', this.contentReadData)
+          //   this.getPreAssessmentCompletionStatus()
+          // }, (error: HttpErrorResponse) => {
+          //   if (!error.ok) {
+          //     this.matSnackBar.open('Unable to fetch content data, due to some error!')
+          //   }
+          // })
           const initData = this.tocSvc.initData(data, true)
           this.contentReadData = initData.content
+          this.getPreAssessmentCompletionStatus()
           if (this.forPreview) {
             this.tocSvc.contentLoader.next(true)
             await this.tocSvc.fetchCourseHeirarchy(this.content)
@@ -888,24 +889,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       offlineSession: 0,
     }
 
-    if (this.content) {
-      this.hasTocStructure = false
-      this.tocStructure.learningModule = this.content.primaryCategory === this.primaryCategory.MODULE ? -1 : 0
-      this.tocStructure.course = this.content.primaryCategory === this.primaryCategory.COURSE ? -1 : 0
-      this.tocStructure = this.tocSvc.getTocStructure(this.content, this.tocStructure)
-      for (const progType in this.tocStructure) {
-        if (this.tocStructure[progType] > 0) {
-          this.hasTocStructure = true
-          break
-        }
-      }
-
-      // from ngOnChanges
-      this.fetchExternalContentAccess()
-      this.modifySensibleContentRating()
-      this.assignPathAndUpdateBanner(this.router.url)
-      this.getLearningUrls()
-    }
+    
 
     this.actionSVC.getUpdateCompGroupO.subscribe((res: any) => {
       this.resumeDataLink = res
@@ -2517,13 +2501,13 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             (el: any) => el.collectionId === this.contentReadData?.identifier && 
                          el.completionPercentage === 100
           );
-          
+          debugger
           if (completedContentData) {
             this.contentViewEventForNetCore('complete');
           }
           
           this.dataTransferSvc.setEnrollData(this.userEnrollmentList);
-          
+          return from(this.fetchContentHierarchy(this.contentReadData?.identifier || ''));
           // Handle one-step resume if enabled
           if (this.contentLibSvc?.oneStepResumeEnable) {
             return from(this.handleOneStepResume());
@@ -2631,6 +2615,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         next: (response: any) => {
           if (response?.result?.content) {
             this.content = response.result.content;
+            this.getTocStructure()
             resolve(true);
           } else {
             resolve(false);
@@ -2644,6 +2629,27 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         }
       });
     });
+  }
+
+  getTocStructure() {
+    if (this.content && this.tocStructure) {
+      this.hasTocStructure = false
+      this.tocStructure.learningModule = this.content.primaryCategory === this.primaryCategory.MODULE ? -1 : 0
+      this.tocStructure.course = this.content.primaryCategory === this.primaryCategory.COURSE ? -1 : 0
+      this.tocStructure = this.tocSvc.getTocStructure(this.content, this.tocStructure)
+      for (const progType in this.tocStructure) {
+        if (this.tocStructure[progType] > 0) {
+          this.hasTocStructure = true
+          break
+        }
+      }
+
+      // from ngOnChanges
+      this.fetchExternalContentAccess()
+      this.modifySensibleContentRating()
+      this.assignPathAndUpdateBanner(this.router.url)
+      this.getLearningUrls()
+    }
   }
 
 }
