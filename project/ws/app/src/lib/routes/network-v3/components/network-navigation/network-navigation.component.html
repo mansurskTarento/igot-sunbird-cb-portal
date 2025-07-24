@@ -9,7 +9,9 @@
           </mat-icon>
         </ng-container>
         <ng-template #routImg>
-          <img class="route-icons" [src]="item?.imageUrl" alt="route icon">
+          <div class="icons-div flex items-center">
+            <img class="route-icons" [src]="item?.imageUrl" alt="route icon">
+          </div>
         </ng-template>
         {{ item?.name | translate }}
       </div>
