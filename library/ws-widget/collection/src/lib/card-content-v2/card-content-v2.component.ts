@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
 // import { Router } from '@angular/router'
 
 @Component({
@@ -241,6 +242,34 @@ export class CardContentV2Component extends WidgetBaseComponent
       default:
         return ['description', this.widgetData.content.resourceType]
     }
+  }
+
+  get languageList(): any[] {
+    let languageListArray: { name: string; id: string; status: string }[] = []
+    if(this.widgetData.content && this.widgetData.content.languageMapV1) {
+      languageListArray = Object.entries(this.widgetData.content.languageMapV1)
+              .filter(([_, val]: [string, any]) => val.status === "live")
+              .map(([lang, val]: [string, any]) => ({
+                name: lang,
+                id: val.id,
+                status: val.status
+              }))
+    }
+    return languageListArray
+  }
+  
+  openLanguageDialog(event: any): void {
+    event.stopPropagation()
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '470px',
+      data: {
+        title: ' ',
+        from: 'openLanguageDialog',
+        acceptButton: '',
+        content: this.languageList
+
+      } // optional, if you need to pass data
+    });
   }
 
   private modifySensibleContentRating() {
