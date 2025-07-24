@@ -162,6 +162,30 @@
     line-height: 16px;
     letter-spacing: 0.25px;
   }
+
+  :host ::ng-deep .video-js .vjs-control {
+    width: 3em;
+    font-size: 16px;
+    vertical-align: middle;
+    margin:0.25em;
+  
+  }
+
+  :host ::ng-deep .video-js.vjs-paused .vjs-play-control {
+    margin: 0.5em !important;
+  }
+  :host ::ng-deep .video-js.vjs-playing .vjs-play-control {
+    margin: 0.5em !important;
+  }
+
+  :host ::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+    background-color: #2b333f;
+    background-color: rgba(43, 51, 63, .7);
+    position: absolute;
+    width: 100%;
+    bottom: 2.35em !important;
+    max-height: 15em;
+  }
 }
 
 :host ::ng-deep .video-js .vjs-menu-item {
@@ -223,7 +247,14 @@
   font-size: 16px;
   vertical-align: middle;
   margin:0.25em;
-  
+
+}
+
+::ng-deep .video-js.vjs-paused .vjs-play-control {
+  margin: 0.5em !important;
+}
+::ng-deep .video-js.vjs-playing .vjs-play-control {
+  margin: 0.5em !important;
 }
 
 ::ng-deep .video-js .vjs-control-bar {
@@ -231,7 +262,16 @@
   // background-color: #414244e3 !important;
   // background: linear-gradient(#eff3f9, #414244e3) !important;
   // border-radius: 0px 0px 12px 12px;
-  background: linear-gradient(0deg, rgba(180, 181, 185, 0.38) 9.43%, rgba(154, 154, 154, 0.95) 92.51%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.38) 9.43%, rgba(154, 154, 154, 0.95) 92.51%);
   
 }
 
+
+::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  background-color: #2b333f;
+  background-color: rgba(43, 51, 63, .7);
+  position: absolute;
+  width: 100%;
+  bottom: 2.35em !important;
+  max-height: 15em;
+}

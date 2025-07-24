@@ -1,6 +1,6 @@
-import { AfterViewChecked, AfterViewInit, Component,ElementRef,Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2';
 import { RootService } from 'src/app/component/root/root.service';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from './socket.service';
@@ -44,7 +44,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   public circleColor!: string
   random = Math.random().toString(36).slice(2)
   iGOTAITutorResultArr:any = []
-
+  maximize = true
   // tslint:disable
   localization: any = {
     'en' : {
@@ -106,7 +106,10 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   SocraticeStyleHost = ''
   StorytellingHost = ''
   @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  @Output() closeAIPopup = new EventEmitter<any>()
   containerHeight = 38;
+  isMobile = false
+  showAITutorPopup = false
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -116,11 +119,13 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     private websocketService: WebSocketService,
     private dialog: MatDialog,
     private matSnackBarNew: MatSnackbarNew,
+    private utilitySvc: UtilityService,
     private router: Router) { 
       this.selectedLearningStyle = this.learningStyle[0]
     }
 
   ngOnInit() {
+    this.isMobile = this.utilitySvc.isMobile
     if (environment?.sitePath?.includes('portal.igotkarmayogi.gov.in')) {
       this.authTokenHost = 'learning-ai.prod.karmayogibharat.net'
       this.NoneSocketHost = 'learning-ai.prod.karmayogibharat.net'
@@ -167,7 +172,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: this.content},
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -664,14 +669,14 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     this.aiTutorResult.retrievedChunks = []
    }
     this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
+      let startTime = -1
+      let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.ContentStart) {
+      if(item && item?.ContentStart?.trim()) {
         startTime = item?.ContentStart
         pageNumber = item?.ContentStart
       }
-      if(item && item?.ContentEnd) {
+      if(item && item?.ContentEnd?.trim()) {
         endTime = item?.ContentEnd
         pageNumber = item?.ContentEnd
       }
@@ -685,7 +690,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         mimeType: item.MimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
-        description: item.Description,
+        description: item?.Description?.replace(/^\s{4,}/gm, ''),
         identifier: item.Identifier,   
         contentStart: startTime,
         contentEnd: endTime,
@@ -693,7 +698,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         query: this.aiTutorResult.query,  
         query_id: this.aiTutorResult.query_id,
         feedback: '',
-        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: 
+        (startTime <= 0 && endTime <= 0) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true`:  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       // arr.push(resultObj)
@@ -711,7 +717,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         this.aiTutorResultArr.splice(index,1)
       }
      })     
-    // console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
+    console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
      setTimeout(()=>{
      // this.scrollToBottom()
     },0)
@@ -720,7 +726,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -734,11 +740,28 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   redirectToResource(item:any) {
-    const queryString = Object.entries(this.route.snapshot.queryParams)
+    let queryParams = { ...this.route.snapshot.queryParams };
+    console.log(queryParams)
+    // Remove specific parameters
+    delete queryParams.st;
+    delete queryParams.et;
+    delete queryParams.pn;
+    delete queryParams.from;
+    delete queryParams.playerPreview;
+    let queryString = ''
+    queryString = Object.entries(queryParams)
         .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
         .join('&');
-    let path = (item.mimeType === 'application/pdf')? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
-    window.open(path, '_blank')
+    let path = ''
+    path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
+    (item?.contentStart <= 0 && item?.contentEnd <=0) ? `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` : `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    // console.log('path', path)
+   // window.open(path, '_blank')
+   if(this.isMobile) {
+    this.maximize = false
+   }
+   
+   this.router.navigateByUrl(path)
   }
 
   copyPath(item:any, cindex:any) {
@@ -752,7 +775,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
+     (item?.contentStart <=0 && item?.contentEnd <=0 ) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` :  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
@@ -770,7 +794,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: chat?.identifier, type: chat?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -863,7 +887,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title    },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title    },
         object: { id: item?.identifier, type: item?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1064,7 +1088,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subtype" :   this.selectedLearningStyle.title  },
+        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
         object: { id: this.content},
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1108,5 +1132,17 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     }
 
 
+  }
+
+  closeAITutorPopup() {
+    this.closeAIPopup.emit(true)
+  }
+
+  minimizeAITutor() {
+    this.maximize = false
+  }
+
+  maximizeAITutor() {
+    this.maximize = true
   }
 }

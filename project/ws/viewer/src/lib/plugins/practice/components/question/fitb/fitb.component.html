@@ -3,7 +3,7 @@
   <span class="mat-subheading-2" >Instruction</span>
   <span class="mat-body-2 margin-bottom-l" >{{ question?.instructions || 'Fill in the blank with the best word'}}</span>
   </ng-container>
-  <h2 *ngIf="question.questionType === 'ftb'" class="mat-h2" [innerHTML]="safeQuestion" class="quiz-question">
+  <h2 *ngIf="question.questionType === 'ftb'" class="mat-h2 ques-padding-top" [innerHTML]="safeQuestion" class="quiz-question">
   </h2>
 
   <div *ngIf="question.questionType === 'ftb'">

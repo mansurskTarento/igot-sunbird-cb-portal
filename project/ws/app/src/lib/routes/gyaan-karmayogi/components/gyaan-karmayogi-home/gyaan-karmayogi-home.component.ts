@@ -69,7 +69,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
     }
     const addFilters: any = {}
     if (this.selectedSector === gyaanConstants.allSectors) {
-      addFilters[gyaanConstants.sectorName] = this.sectorNames
+      addFilters[gyaanConstants.requestSectorName] = this.sectorNames
     }
     if (this.sectorNames.length) {
 
@@ -159,12 +159,12 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
     this.contentTabEmptyResponseCount = 0
 
     if (form.value.sectors && form.value.sectors.name !== gyaanConstants.allSectors) {
-      addFilters[gyaanConstants.sectorName] = form.value.sectors.name
+      addFilters[gyaanConstants.requestSectorName] = form.value.sectors.name
     } else {
-      addFilters[gyaanConstants.sectorName] = this.sectorNames
+      addFilters[gyaanConstants.requestSectorName] = this.sectorNames
     }
     if (form.value.subSectors && form.value.subSectors !== gyaanConstants.allSubSector) {
-      addFilters[gyaanConstants.subSectorName] = form.value.subSectors
+      addFilters[gyaanConstants.requestSubSectorName] = form.value.subSectors
     }
     if (form.value.category && form.value.category !== gyaanConstants.allCategories) {
       addFilters[gyaanConstants.resourceCategory] = form.value.category
@@ -244,9 +244,9 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
     const addFilters: any = {}
 
     if (sectorData && type) {
-      addFilters[gyaanConstants.sectorName] = this.sectorNames
+      addFilters[gyaanConstants.requestSectorName] = this.sectorNames
     } else {
-      addFilters[gyaanConstants.sectorName] = sectorData.name
+      addFilters[gyaanConstants.requestSectorName] = sectorData.name
     }
     this.selectedSector = sectorData.name
     if (this.gyaanForm) {
@@ -258,7 +258,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   // global search method
   searchFilter() {
     const addFilters: any = {
-      sectorName: this.sectorNames,
+      [gyaanConstants.requestSectorName]: this.sectorNames,
     }
     this.contentTabEmptyResponseCount = 0
     this.callStrips(addFilters)
@@ -275,7 +275,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
       this.subSector = this.subSectorDefault
       this.selectedSector = gyaanConstants.allSectors
     } else {
-      addFilter[gyaanConstants.sectorName] = event.value.name
+      addFilter[gyaanConstants.requestSectorName] = event.value.name
       this.selectedSector = event.value.name
     }
     this.callFacetApi(addFilter)
@@ -283,16 +283,17 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
 
   // on change of subsector dropdown will call this method
   subSectorChange(event: any) {
+    
     const addFilter: any = {}
     if (event && event.value === gyaanConstants.allSubSector) {
       this.categories = this.categories
     } else {
       if (this.gyaanForm) {
         if (this.gyaanForm.value.sectors.name !== gyaanConstants.allSectors) {
-          addFilter[gyaanConstants.sectorName] = this.gyaanForm.value.sectors.name
+          addFilter[gyaanConstants.requestSectorName] = this.gyaanForm.value.sectors.name
         }
       }
-      addFilter[gyaanConstants.subSectorName] = event.value
+      addFilter[gyaanConstants.requestSubSectorName] = event.value
     }
     this.callFacetApi(addFilter)
   }
@@ -319,7 +320,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
         },
         'facets': [
             gyaanConstants.resourceCategory,
-            gyaanConstants.subSectorName,
+            gyaanConstants.requestSubSectorName,
         ],
     },
     }
@@ -343,10 +344,10 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
             }
           })
         }
-        if (ele.name === gyaanConstants.subSectorName) {
+        if (ele.name === gyaanConstants.requestSubSectorName) {
           this.subSector = ele.values
         }
-        if (ele.name === gyaanConstants.sectorName) {
+        if (ele.name === gyaanConstants.requestSectorName) {
           ele.values.forEach((sec: any) => {
             sec['identifier'] = sec.name
           })
@@ -386,6 +387,9 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
     this.contentTabEmptyResponseCount = 0
     this.selectedTabIndex = event.index
     this.callStrips()
+    // if( this.gyaanForm) {
+    // this.applyFilter(this.gyaanForm)
+    // }
   }
   openForm() {
     window.open('https://forms.gle/J4hQoCTRovzuo1AdA')

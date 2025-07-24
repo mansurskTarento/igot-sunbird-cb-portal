@@ -1731,6 +1731,11 @@ $title-line-count: 2;
     text-overflow: ellipsis;
     /* stylelint-disable */
     font-family: 'Lato';
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
     /* stylelint-enable */
     // line-height: $description-line-height;
   }

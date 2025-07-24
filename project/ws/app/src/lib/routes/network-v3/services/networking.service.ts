@@ -9,7 +9,7 @@ import { connectionUpdates } from '../models/network-v3.model';
 
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
-  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
+  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular',
   GET_CONNECTION_REQUESTS: '/apis/protected/v8/connections/v2/connections/requests/received',
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   GET_RECOMMENDED_MENTORS: '/apis/proxies/v8/connections/v3/connections/recommended/mentors',

@@ -15,7 +15,7 @@ const API_END_POINTS = {
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
   BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
-  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/search',
+  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
   GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // old
@@ -60,10 +60,12 @@ export class ProfileV2RevampService {
     private configSvc: ConfigurationsService
   ) { }
 
-  fetchProfile(userId: string): Observable<NSProfileDataV2.IProfile> {
+  fetchProfile(userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile> {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
-        this.configulreProfileDetails(res)
+        if(!isNotCurrentUser) {
+          this.configulreProfileDetails(res) 
+        }
         return res
       }))
   }

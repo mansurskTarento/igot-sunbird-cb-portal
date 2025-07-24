@@ -226,6 +226,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   recommendedCoursesId = ''
   feedbackGiven: any
   preAssessmentCompletionStatus = false
+  fromAITutor = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1325,7 +1326,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         primaryCategory,
         batchId,
       )
-      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
+      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams, fromAITutor: this.fromAITutor } })
     }
   }
 
@@ -2367,6 +2368,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   enrollUserToAI() {
+    this.fromAITutor = true
     this.handleAutoBatchAssign()
   }
 

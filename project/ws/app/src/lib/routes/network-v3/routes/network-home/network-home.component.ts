@@ -125,7 +125,7 @@ export class NetworkHomeComponent implements OnInit{
     if (type) {
       switch (type) {
         case 'connectionRequests':
-          this.router.navigate(['/app/network-v2/connections'], {queryParams: {tab: 'request'}})
+          this.router.navigate(['/app/network-v2/connections'], {queryParams: {tab: 'Received'}})
           break
         case 'peopleYouMayKnow':
           const queryParams = {

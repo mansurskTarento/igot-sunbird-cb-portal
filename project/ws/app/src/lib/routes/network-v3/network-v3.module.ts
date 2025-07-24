@@ -19,7 +19,7 @@ import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar
 import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component';
-import { CommunitySuggestionsModule, HorizontalScrollerV2Module, ConnectionNameModule, DialogComponentsModule } from '@sunbird-cb/consumption';
+import { CommunitySuggestionsModule, HorizontalScrollerV2Module, ConnectionNameModule, DialogComponentsModule, AvatarPhotoLibModule } from '@sunbird-cb/consumption';
 import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module';
 import { MatLegacyButtonModule } from '@angular/material/legacy-button';
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module';
@@ -59,6 +59,7 @@ import { HttpClient } from '@angular/common/http';
     SkeletonLoaderModule,
     MatLegacyDialogModule,
     DialogComponentsModule,
+    AvatarPhotoLibModule,
     TranslateModule.forRoot({
                 loader: {
                     provide: TranslateLoader,

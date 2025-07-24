@@ -29,7 +29,8 @@ export class profileResolver
     } else {
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
-    return this.profileSvc.fetchProfile(userId).pipe(
+    const isNotCurrentUser = userId !== _.get(this.configSvc, 'userProfile.userId')
+    return this.profileSvc.fetchProfile(userId, isNotCurrentUser).pipe(
       map(data =>  ({
          data: _.get(data, 'result.response'), 
          error: null,

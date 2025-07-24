@@ -6,11 +6,12 @@ import { GyaanPlayerComponent } from './components/gyaan-player/gyaan-player.com
 import { GyaanKarmayogiComponent } from './gyaan-karmayogi.component'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
 import { GyaanKarmayogiViewAllComponent } from './components/gyaan-karmayogi-view-all/gyaan-karmayogi-view-all.component'
-import { PageResolve } from '@sunbird-cb/utils-v2'
+
 import { GyaanVideoComponent } from './components/players/gyaan-video/gyaan-video.component'
 import { PdfComponent } from './components/players/pdf/pdf.component'
 import { GyaanAudioComponent } from './components/players/gyaan-audio/gyaan-audio.component'
 import { GyaanYoutubeComponent } from './components/players/gyaan-youtube/gyaan-youtube.component'
+import { FormDataResolverService } from 'src/app/services/form-data-resolver.service'
 
 const routes: Routes = [
   {
@@ -46,7 +47,7 @@ const routes: Routes = [
           pageId: 'app/amrit-gyaan-kosh',
         },
         resolve: {
-          pageData: PageResolve,
+          pageData: FormDataResolverService,
         },
       },
       {

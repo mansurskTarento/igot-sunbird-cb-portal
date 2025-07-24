@@ -57,23 +57,50 @@ export class NetworkHubComponent implements OnInit {
     return this.translate.instant(translationKey)
   }
 
+  // fetchNetworkRecommendations(): void {
+  //   const payload = {
+  //     size: 2,
+  //     offset: 0,
+  //     search: [
+  //       {
+  //         field: 'employmentDetails.departmentName',
+  //         values: [this.userInfo.departmentName],
+  //       },
+  //     ],
+  //   }
+
+  //   this.network.suggestionsLoader = true
+  //   this.homePageService.getNetworkRecommendations(payload).subscribe(
+  //     (res: any) => {
+  //       this.network.suggestionsLoader = false
+  //       this.network.networkRecommended = res.result.data[0].results
+  //       if (this.network.networkRecommended.length) {
+  //         this.network.networkRecommended = this.network.networkRecommended.map((obj: any) => {
+  //           obj.fullName = this.createInitials(obj.personalDetails.firstname)
+  //           obj.connecting = false
+  //           return obj
+  //         })
+  //       }
+  //       // tslint:disable-next-line: align
+  //     }, (error: HttpErrorResponse) => {
+  //       if (!error.ok) {
+  //         this.network.suggestionsLoader = false
+  //       }
+  //     }
+  //   )
+  // }
+
   fetchNetworkRecommendations(): void {
     const payload = {
       size: 2,
-      offset: 0,
-      search: [
-        {
-          field: 'employmentDetails.departmentName',
-          values: [this.userInfo.departmentName],
-        },
-      ],
+      offset: 0
     }
 
     this.network.suggestionsLoader = true
     this.homePageService.getNetworkRecommendations(payload).subscribe(
       (res: any) => {
         this.network.suggestionsLoader = false
-        this.network.networkRecommended = res.result.data[0].results
+        this.network.networkRecommended = res && res.result && res.result.response ? res.result.response : []
         if (this.network.networkRecommended.length) {
           this.network.networkRecommended = this.network.networkRecommended.map((obj: any) => {
             obj.fullName = this.createInitials(obj.personalDetails.firstname)

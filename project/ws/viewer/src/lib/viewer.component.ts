@@ -76,6 +76,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   compatibilityLevel = 0
   loadAllHierarchyData = false
   isPreAssessment = false
+  sideNavForAIOpened = false
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -382,6 +383,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   toggleSideBar() {
     this.sideNavBarOpened = !this.sideNavBarOpened
+    this.sideNavForAIOpened = !this.sideNavForAIOpened
   }
 
   getEnrollmentList() {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { connectionUpdates, tabDetails } from '../../models/network-v3.model';
+import { connectionUpdates, PageChangeEmitter, tabDetails } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { NetworkingService } from '../../services/networking.service';
@@ -15,21 +15,21 @@ export class ConnectionsComponent implements OnInit {
   // selectedTabKey = 'connections';
   selectedTabIndex = 0;
   tabDetailsList: tabDetails[] = [
-    { lable: 'NetworkLandingPage.connections', key: 'Approved', recordsCount: 0 },
-    { lable: 'NetworkLandingPage.requests', key: 'Requested', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.myConnections', key: 'Approved', recordsCount: 0 },
+    { lable: 'NetworkLandingPage.requests', key: 'Received', recordsCount: 0 },
     { lable: 'NetworkLandingPage.sent', key: 'Pending', recordsCount: 0 },
     { lable: 'NetworkLandingPage.blocked', key: 'Blocked', recordsCount: 0 }
   ]
   connectionsList: any = [];
   connectionsLoading = false;
   apiSubscription: any;
-  paginationSize = 50;
-  paginationSizeOptions = [50, 100, 150, 200];
+  paginationSize = 10;
+  paginationSizeOptions = [10, 20, 30, 40];
   paginationPage = 1;
   totalItemsCount = 0;
-  defaultPaginationSize = 50;
-  noDataMessage = 'NetworkLandingPage.noConnectionsFound';
-  allStatesList = ['Approved', 'Requested', 'Pending', 'Blocked'];
+  defaultPaginationSize = 10;
+  noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
+  allStatesList = ['Approved', 'Pending', 'Blocked'];
   satesListToGetCount: string[] = [];
 
   constructor(
@@ -70,22 +70,36 @@ export class ConnectionsComponent implements OnInit {
         if(response) {
           const facets = _.get(response, 'result.facets[0].values', []);
           const responseMap = new Map(facets.map((item: any) => [item.name.toLowerCase(), item.count]));
-          this.satesListToGetCount = [];
-          this.tabDetailsList.forEach(tab => {
-            const count = responseMap.get(tab.key.toLowerCase()) as number;
+          this.tabDetailsList.forEach((tab) => {
+            let keyToSet = tab.key;
+            if(tab.key === 'Pending') {
+              keyToSet = 'Requested'
+            } else if(tab.key === 'Blocked') {
+              keyToSet = 'Blocked Outgoing'
+            }
+            let statusList = _.get(formBody, 'request.filter.status', []);
+            if (statusList.includes('Pending')) {
+              statusList = statusList.filter((s: string) => s !== 'Pending').concat(['Requested', 'Received']);
+            }
+            const count = responseMap.get(keyToSet.toLowerCase()) as number;
+            const tabKey = tab.key === 'Pending' ? 'Requested' : tab.key;
             if (count !== undefined && count !== null) {
               tab.recordsCount = count as number;
-            } else if (this.satesListToGetCount.indexOf(tab.key) > -1) {
+            } else if (statusList.indexOf(tabKey) > -1) {
               tab.recordsCount = 0;
             }
-            if(tab.key === 'Requested') {
+
+            //#region (emit count for left navigation to show red dot)
+            if(tab.key === 'Received') {
               const connectionsUpdate: connectionUpdates = {
                 routeId: 'connections',
                 showUpdate: count > 0 ? true : false
               }
               this.networkingSvc.sendConnectionUpdates(connectionsUpdate);
             }
+            //#endregion
           });
+          this.satesListToGetCount = [];
         }
       }
     })
@@ -101,7 +115,7 @@ export class ConnectionsComponent implements OnInit {
 
   resetPagination() {
     this.paginationPage = 1;
-    this.paginationSize = 50;
+    this.paginationSize = this.defaultPaginationSize;
     this.totalItemsCount = 0;
     this.getTabData();
   }
@@ -111,12 +125,12 @@ export class ConnectionsComponent implements OnInit {
     if (this.apiSubscription) {
       this.apiSubscription.unsubscribe();
     }
-    switch (key) {
+    switch (key) { // key is based on the tab selected
       case 'Approved':
         this.getConnectionsList();
-        this.noDataMessage = 'NetworkLandingPage.noConnectionsFound';
+        this.noDataMessage = 'NetworkLandingPage.youDoNotHaveAnyConnectionsSendConnectionRequestsFromTheHomeTab';
         break;
-      case 'Requested':
+      case 'Received':
         this.getRequestsList();
         this.noDataMessage = 'NetworkLandingPage.noRequestsFound';
         break;
@@ -209,6 +223,12 @@ export class ConnectionsComponent implements OnInit {
     const set = new Set(this.satesListToGetCount);
     stateList.forEach(state => set.add(state));
     this.satesListToGetCount = Array.from(set);
+  }
+
+  onPageChange(event: PageChangeEmitter) {
+    this.paginationPage = event.currentPage;
+    this.paginationSize = event.limit;
+    this.getTabData();
   }
 
   handleTranslateTo(menuName: string): string {
