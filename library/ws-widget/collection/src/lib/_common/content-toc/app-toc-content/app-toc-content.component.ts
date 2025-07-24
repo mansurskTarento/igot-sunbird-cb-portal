@@ -68,7 +68,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
       const batchId = qParamsMap.get('batchId')
       const primaryCategory = qParamsMap.get('primaryCategory')
       const preAssessment = qParamsMap.get('preAssessment')
-      if([preAssessment === 'true']) {
+      if(preAssessment === 'true') {
         this.isPreAssessment = true
       }
       if (contextId && contextPath) {
