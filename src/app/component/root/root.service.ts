@@ -24,7 +24,7 @@ export class RootService {
 
   showNavbarDisplay$ = new BehaviorSubject<boolean>(true)
   discussionCnfig: any
-
+  iGOTAIChatHistory:any
   constructor(
     private http: HttpClient,
   ) { }

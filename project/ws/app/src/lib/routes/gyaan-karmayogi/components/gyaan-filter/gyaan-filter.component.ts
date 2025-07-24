@@ -153,7 +153,7 @@ export class GyaanFilterComponent implements OnInit {
     }
   } else {
       keyData['checked'] = event
-      if (key === gyaanConstants.sectorName || key === gyaanConstants.subSectorName
+      if (key === gyaanConstants.requestSectorName || key === gyaanConstants.requestSubSectorName
         || key === gyaanConstants.contextStateOrUTs || key === gyaanConstants.contextSDGs
       ) {
         if (keyData.name === 'All' && keyData.checked) {

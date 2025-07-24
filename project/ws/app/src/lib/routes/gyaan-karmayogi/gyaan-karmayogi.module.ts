@@ -42,6 +42,8 @@ import { MatSliderModule } from '@angular/material/slider'
 import { MatTabsModule } from '@angular/material/tabs'
 
 import { NgxSliderModule } from '@angular-slider/ngx-slider'
+import { HorizontalScrollerV2Module } from '@sunbird-cb/consumption'
+import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
@@ -78,8 +80,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     InfiniteScrollModule,
     MatSliderModule,
     MatTabsModule,
+    HorizontalScrollerV2Module,
     SlidersModule,
     PipePublicURLModule,
+    WidgetResolverModule,
    TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
