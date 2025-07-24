@@ -52,6 +52,9 @@ export class CardContentV2Component extends WidgetBaseComponent
   languageLength: number = 0
 
   isIntranetAllowedSettings = false
+  selectedMLCourse: any
+  selectedMLCourseCode: any
+  enrolledCourseData: any = {}
   constructor(
     private dialog: MatDialog,
     private events: EventService,
@@ -78,8 +81,8 @@ export class CardContentV2Component extends WidgetBaseComponent
   }
 
   ngOnInit() {
-    // this.widgetInstanceId=his.id
     this.getCourseLanguage()
+    this.getRecentLanguage() 
     this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
     this.prefChangeSubscription = this.configSvc.prefChangeNotifier.subscribe(() => {
       this.isIntranetAllowedSettings = this.configSvc.isIntranetAllowed
@@ -134,25 +137,43 @@ export class CardContentV2Component extends WidgetBaseComponent
 
 
   getCourseLanguage() {
-    console.log(this.widgetData, 'widget data')
-    // const contentId = this.widgetData?.content?.identifier
-    const contentId = 'do_114349267477905408131'
-    console.log(contentId, 'content id')
+    //  const recentLang = this.widgetData?.content?.language
+    //         console.log(recentLang, 'recentLang from card content v2')
+    const contentId = this.widgetData?.content?.identifier
+    // console.log(this.widgetData, 'widget data')
+    // const contentId = 'do_114349267477905408131'
     if (contentId) {
       this.widgetSvc?.getContent(contentId).subscribe((data: any) => {
-        console.log(data, 'data from content service')
         if (data && data.result && data.result.content && data.result.content.languageMapV1) {
           // return data.result.content.language
           const languageMapV1 = data.result.content.languageMapV1
-          console.log(languageMapV1, 'languageMapV1')
-          this.languageList = Object.keys(languageMapV1).filter(language => {
-            return languageMapV1[language].status === "live";
-          });
-          console.log(this.languageList, 'languageList')
+
+          if (languageMapV1 && languageMapV1.length && languageMapV1.length > 0) {
+            this.languageList = Object.entries(languageMapV1)
+              .filter(([_, val]: [string, any]) => val.status === "live")
+              .map(([lang, val]: [string, any]) => ({
+                name: lang,
+                id: val.id,
+                status: val.status
+              }))
+          } 
+
           this.languageLength = this.languageList.length;
-        }
+        } else {
+            const recentLang = data.result.content.language[0]
+            this.selectedMLCourse = recentLang.toLowerCase()
+            this.selectedMLCourseCode = this.widgetData?.content?.identifier
+            this.languageList = recentLang ? [{ name: this.selectedMLCourse, id: this.selectedMLCourseCode, status: 'live' }] : []
+          }
       })
     }
+  }
+
+  getRecentLanguage() {
+     let recentLang = this.enrolledCourseData?.recent_language
+     let langObj = this.languageList?.filter((lang: any) => { lang?.name?.toLowerCase() === recentLang })
+     this.selectedMLCourse = langObj.name
+      this.selectedMLCourseCode = langObj.id
   }
 
   openLanguageDialog(event: any): void {
@@ -465,7 +486,6 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
   }
   async getRedirectUrlData(content: any, contentType?: any) {
-    console.log(content, 'content from card content v2')
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
 
     if (contentType && content.primaryCategory !== this.primaryCategory.COURSE) {
@@ -488,12 +508,22 @@ export class CardContentV2Component extends WidgetBaseComponent
       //   selectedMLCourse: lang?.name?.toLowerCase(),
       //   selectedMLCourseCode: lang?.id?.toLowerCase(),
       // };
-      console.log(urlData, 'urlData from content service')
+\
       if (urlData && urlData.url) {
+        //  console.log(this.widgetData?.content, 'widgetData from card content v2')
+        // console.log(this.widgetData?.content?.language, 'selectedMLCourse from card content v2')
+        // console.log(this.widgetData?.content?.identifier, 'selectedMLCourseCode from card content v2')
+       
+        // this.router.navigate([urlData.url], {
         this.router.navigate(
           [urlData.url],
           {
-            queryParams: urlData.queryParams
+            queryParams: {
+              ...(urlData.queryParams),
+              selectedMLCourse: this.selectedMLCourse, // custom param
+              selectedMLCourseCode: this.selectedMLCourseCode
+            },
+             queryParamsHandling: 'merge',
           })
       } else {
         // const contentType = urlData;

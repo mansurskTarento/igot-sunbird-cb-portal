@@ -36,9 +36,11 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { FormsModule } from '@angular/forms'
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
+import { PlayerOverlayComponent } from '../overlay/player-overlay/player-overlay.component'
+
 
 @NgModule({
-  declarations: [YoutubeComponent],
+  declarations: [YoutubeComponent, PlayerOverlayComponent],
   imports: [
     RouterModule,
     BtnContentDownloadModule,
