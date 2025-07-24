@@ -65,31 +65,10 @@
           </div>
         </mat-card>
         <div class="player-overlay">
-          <p class="mat-subheading-2">Great job! You’ve completed course 1 (Overview of Administrative Law)</p>
-          <p class="mat-subheading-1">You can now move to Course 2 or switch the course language as needed.</p>
+         <viewer-player-overlay [languageList]="languageList"
+            (languageSelected)="onLanguageChange($event)">
+          </viewer-player-overlay>
 
-          <div class="lang-chip-list text-left">
-
-            <mat-form-field appearance="fill" class="language-select">
-              <!-- <mat-label>Select Language</mat-label> -->
-              <!-- <mat-select [value]="selectedLanguage" (selectionChange)="onLanguageChange($event.value)">
-                <mat-option *ngFor="let lang of languageList" [value]="lang">
-                  <mat-radio-button [checked]="selectedLanguage?.name === lang?.name" class="full-width">
-                    {{ lang?.name | titlecase }}
-                  </mat-radio-button>
-                </mat-option> 
-              </mat-select> -->
-
-              <mat-select [value]="selectedLanguage" (selectionChange)="onLanguageChange($event.value)">
-                <mat-option *ngFor="let lang of languageList" [value]="lang">
-                  <mat-radio-button [checked]="selectedLanguage.name === lang.name" class="full-width">
-                    {{ lang.name | titlecase }}
-                  </mat-radio-button>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-          </div>
         </div>
       </div>
     </div>

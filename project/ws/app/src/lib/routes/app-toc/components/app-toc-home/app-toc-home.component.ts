@@ -58,18 +58,18 @@ export enum ErrorType {
   somethingWrong = 'somethingWrong',
 }
 
-export interface ILanguageMapItem {
-  [key: string]: {
-    id: string
-    status: string
-  }
-}
+// export interface ILanguageMapItem {
+//   [key: string]: {
+//     id: string
+//     status: string
+//   }
+// }
 
-export interface ILanguageListItem {
-  name: string
-  id: string
-  status: string
-}
+// export interface ILanguageListItem {
+//   name: string
+//   id: string
+//   status: string
+// }
 
 const flattenItems = (items: any[], key: string | number) => {
   return items.reduce((flattenedItems, item) => {
