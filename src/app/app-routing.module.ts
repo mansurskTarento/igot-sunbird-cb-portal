@@ -69,6 +69,7 @@ const routes: Routes = [
     },
     resolve: {
       pageData: PageResolve,
+      enrollmentData: AppEnrollmentResolverService
     },
   },
   // {
