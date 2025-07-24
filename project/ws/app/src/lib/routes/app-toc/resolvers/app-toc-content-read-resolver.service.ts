@@ -28,7 +28,6 @@ export class AppTocContentReadResolverService
       ).pipe(
         map(data => ({ data, error: null })),
         tap((resolveData: any) => {
-          debugger
           resolveData.data = resolveData.data.result.content
           let currentRoute: string[] | string = window.location.href.split('/')
           currentRoute = currentRoute[currentRoute.length - 1]
