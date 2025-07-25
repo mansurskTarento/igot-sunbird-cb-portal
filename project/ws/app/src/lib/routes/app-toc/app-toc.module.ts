@@ -110,7 +110,7 @@ import { AppTocHomeDirective } from './routes/app-toc-home/app-toc-home.directiv
 import { AppTocCohortsDirective } from './routes/app-toc-cohorts/app-toc-cohorts.directive'
 import { AppTocSinglePageDirective } from './routes/app-toc-single-page/app-toc-single-page.directive'
 import { AppTocCiosHomeComponent } from './components/app-toc-cios-home/app-toc-cios-home.component'
-import { CommonMethodsService } from '@sunbird-cb/consumption'
+import { CommonMethodsService, ContentLanguageService } from '@sunbird-cb/consumption'
 import { UserProfileService } from '../user-profile/services/user-profile.service'
 import { OtpService } from '../user-profile/services/otp.services'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
@@ -290,6 +290,7 @@ import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home
     CommonMethodsService,
     UserProfileService,
     OtpService,
+    ContentLanguageService
   ],
   exports: [
     AppTocDiscussionComponent,
