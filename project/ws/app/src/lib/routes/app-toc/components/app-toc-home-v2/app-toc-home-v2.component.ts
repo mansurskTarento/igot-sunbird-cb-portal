@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -266,6 +266,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     private mobileAppsSvc: MobileAppsService,
     private utilitySvc: UtilityService,
     // private progressSvc: ContentProgressService,
+    private contentLangSvc: ContentLanguageService,
     private actionSVC: ActionService,
     private viewerSvc: ViewerUtilService,
     private ratingSvc: RatingService,
@@ -371,6 +372,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           // })
           const initData = this.tocSvc.initData(data, true)
           this.contentReadData = initData.content
+          console.log('this.contentReadData', this.contentLangSvc.getAllContentLanguages(this.contentReadData))
           this.getPreAssessmentCompletionStatus()
           if (this.forPreview) {
             this.tocSvc.contentLoader.next(true)
@@ -2495,13 +2497,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       switchMap((res: any) => {
         if (res?.result?.courses?.length) {
           this.userEnrollmentList = res.result.courses;
-          
           // Check for completed content
           const completedContentData = this.userEnrollmentList.find(
             (el: any) => el.collectionId === this.contentReadData?.identifier && 
                          el.completionPercentage === 100
           );
-          debugger
           if (completedContentData) {
             this.contentViewEventForNetCore('complete');
           }
