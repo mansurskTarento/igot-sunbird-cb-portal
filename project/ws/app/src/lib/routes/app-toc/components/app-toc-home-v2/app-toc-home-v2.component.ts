@@ -399,7 +399,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           const initData = this.tocSvc.initData(data, true)
           this.contentReadData = initData.content
           console.log('this.contentReadData', this.contentLangSvc.getAllContentLanguages(this.contentReadData))
-          this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
+          this.languageList = [...this.contentLangSvc.getAllContentLanguages(this.contentReadData),
+            ...this.contentLangSvc.getAllContentLanguages(this.contentReadData),
+            ...this.contentLangSvc.getAllContentLanguages(this.contentReadData)
+          ]
           this.getPreAssessmentCompletionStatus()
           if (this.forPreview) {
             this.tocSvc.contentLoader.next(true)

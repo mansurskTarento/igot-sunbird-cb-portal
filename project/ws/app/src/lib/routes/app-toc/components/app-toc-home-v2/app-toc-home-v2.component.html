@@ -415,31 +415,33 @@
             <div class="flex flex-row gap-2" *ngIf="languageList">
               <mat-chip-list>
                 <!-- Show up to 6 chips -->
-                <mat-chip class="matchip-custom"
-                  *ngFor="let lang of languageList | slice:0:6"
+                <ng-container *ngFor="let lang of languageList | slice:0:5; let i = index">
+                  <mat-chip class="matchip-custom"
                   selectable="true"
                   [selected]="lang === selectedLanguage"
                   (click)="onLanguageSelect(lang)">
                   {{ lang.name || lang.value }}
-                </mat-chip>
+                  </mat-chip>
+                </ng-container>
 
                 <!-- "More" chip if there are more than 6 languages -->
-                <ng-container *ngIf="languageList.length > 6">
+                <ng-container *ngIf="languageList.length > 5">
                   <mat-chip
-                    [matMenuTriggerFor]="moreLanguagesMenu"
-                    selectable="false"
-                    class="more-chip">
-                    More
+                  [matMenuTriggerFor]="moreLanguagesMenu"
+                  selectable="false"
+                  class="more-chip matchip-custom"
+                  [selected]="languageList.slice(5).includes(selectedLanguage)">
+                  More <mat-icon class="mat-icon">keyboard_arrow_down</mat-icon>
                   </mat-chip>
                   <mat-menu #moreLanguagesMenu="matMenu">
-                    <mat-radio-group [value]="selectedLanguage">
-                      <mat-radio-button
-                        *ngFor="let lang of languageList"
-                        [value]="lang"
-                        (change)="onLanguageSelect(lang)">
-                        {{ lang.displayName || lang.name || lang }}
-                      </mat-radio-button>
-                    </mat-radio-group>
+                  <mat-radio-group class="mat-radio-group flex flex-col gap-2 p-3" [value]="selectedLanguage">
+                    <mat-radio-button
+                    *ngFor="let lang of languageList | slice:5"
+                    [value]="lang"
+                    (change)="onLanguageSelect(lang)">
+                    {{ lang.displayName || lang.name || lang }}
+                    </mat-radio-button>
+                  </mat-radio-group>
                   </mat-menu>
                 </ng-container>
               </mat-chip-list>
