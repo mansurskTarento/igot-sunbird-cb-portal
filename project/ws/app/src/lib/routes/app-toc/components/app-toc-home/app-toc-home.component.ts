@@ -227,6 +227,32 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   feedbackGiven: any
   preAssessmentCompletionStatus = false
   fromAITutor = false
+  selectedLanguage: any; // Set this to the default/initial language
+  languageList = [
+    { name: "English", value: "English" },
+    { name: "ಕನ್ನಡ (Kannada)", value: "Kannada" },
+    { name: "తెలుగు (Telugu)", value: "Telugu" },
+    { name: "தமிழ் (Tamil)", value: "Tamil" },
+    { name: "മലയാളം (Malayalam)", value: "Malayalam" },
+    { name: "हिंदी (Hindi)", value: "Hindi" },
+    { name: "অসমীয়া (Assamese)", value: "Assamese" },
+    { name: "বাংলা (Bengali)", value: "Bengali" },
+    { name: "ગુજરાતી (Gujarati)", value: "Gujarati" },
+    { name: "मराठी (Marathi)", value: "Marathi" },
+    { name: "ଓଡିଆ (Odia)", value: "Odia" },
+    { name: "ਪੰਜਾਬੀ (Punjabi)", value: "Punjabi" },
+    { name: "कोंकणी (Konkani)", value: "Konkani" },
+    { name: "बड़ो (Bodo)", value: "Bodo" },
+    { name: "डोगरी (Dogri)", value: "Dogri" },
+    { name: "كشميري / कश्मीरी (Kashmiri)", value: "Kashmiri" },
+    { name: "मैथिली (Maithili)", value: "Maithili" },
+    { name: "মৈতৈলোন্  (Manipuri )", value: "Manipuri" },
+    { name: "नेपाली (Nepali)", value: "Nepali" },
+    { name: "संस्कृतम् (Sanskrit)", value: "Sanskrit" },
+    { name: "ᱥᱟᱱᱛᱟᱲᱤ (Santali)", value: "Santali" },
+    { name: "سنڌي / सिंधी (Sindhi)", value: "Sindhi" },
+    { name: "اُردُو (Urdu)", value: "Urdu" }
+  ]
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -2485,6 +2511,13 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       })
     }
     
+  }
+
+
+  onLanguageSelect(lang: any) {
+    this.selectedLanguage = lang;
+    console.log('Selected language:', lang);
+    // Add your language change logic here
   }
 
 }

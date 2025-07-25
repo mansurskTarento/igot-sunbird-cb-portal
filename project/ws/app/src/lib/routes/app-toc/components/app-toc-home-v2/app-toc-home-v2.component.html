@@ -411,6 +411,40 @@
           <ng-container *ngIf="!skeletonLoader && contentReadData?.sYS_INTERNAL_LAST_UPDATED_ON">
             <div class="text-xs leading-4 source-text nodtranslate">({{ 'apptoc.lastUpdatedOn' | translate }} {{ contentReadData?.sYS_INTERNAL_LAST_UPDATED_ON | date: 'MMM d, y' }})</div>
           </ng-container>
+          <ng-container>
+            <div class="flex flex-row gap-2" *ngIf="languageList">
+              <mat-chip-list>
+                <!-- Show up to 6 chips -->
+                <mat-chip
+                  *ngFor="let lang of languageList | slice:0:6"
+                  selectable="true"
+                  [selected]="lang === selectedLanguage"
+                  (click)="onLanguageSelect(lang)">
+                  {{ lang.displayName || lang.name || lang }}
+                </mat-chip>
+
+                <!-- "More" chip if there are more than 6 languages -->
+                <ng-container *ngIf="languageList.length > 6">
+                  <mat-chip
+                    [matMenuTriggerFor]="moreLanguagesMenu"
+                    selectable="false"
+                    class="more-chip">
+                    More
+                  </mat-chip>
+                  <mat-menu #moreLanguagesMenu="matMenu">
+                    <mat-radio-group [value]="selectedLanguage">
+                      <mat-radio-button
+                        *ngFor="let lang of languageList"
+                        [value]="lang"
+                        (change)="onLanguageSelect(lang)">
+                        {{ lang.displayName || lang.name || lang }}
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </mat-menu>
+                </ng-container>
+              </mat-chip-list>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>

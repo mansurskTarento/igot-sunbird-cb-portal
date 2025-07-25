@@ -206,6 +206,7 @@ import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home
     MatSnackBarModule,
     MatExpansionModule,
     MatDatepickerModule,
+    MatChipsModule,
     MatNativeDateModule,
     DisplayContentTypeModule,
     DisplayContentTypeIconModule,
