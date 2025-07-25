@@ -57,6 +57,7 @@ export class ProfileEntryEditComponent implements OnInit {
   designationsOffset = 0
   isLoadingMoreDesignations = false;
   designationListLoadCount = 50
+  selectedOrgHasDesignations = false;
 
   statesList: state[] = [];
   districtsList: string[] = [];
@@ -153,7 +154,7 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     }
     this.getOrgList('');
-    this.getdesignationsMeta();
+    this.checkSelectedOrgHasDesignations();
     this.getStatesList()
     if (_.get(this.entryDetails, 'startDate', '')) {
       this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
@@ -231,7 +232,7 @@ export class ProfileEntryEditComponent implements OnInit {
             if( designationControl) {
               designationControl.reset();
             }
-            this.getdesignationsMeta()
+            this.checkSelectedOrgHasDesignations()
           }
         }
       })
@@ -344,51 +345,134 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (organisation)
 
   //#region (designations)
-  getdesignationsMeta() {
-    if (this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
-      const requestBody: any = {
+
+  checkSelectedOrgHasDesignations(): void {
+    if(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
+      const igotDesignationBody: any = {
         request: {
           filters: {
-            status: "Live",
-            category: "designation",
+            status: 'Live',
+            category: 'designation',
             categories: [
               this.selctedOrgDetails['rootOrgId'] + '_odcs_designation',
             ],
-            objectType: "Term"
+            objectType: 'Term',
           },
-          fields: [
-              "name"
-          ],
-          offset: this.designationsOffset,
-          limit: this.designationListLoadCount,
+          fields: ['name'],
+          offset: 0,
+          limit: 1,
           sort_by: {
-            lastUpdatedOn: "desc",
-            objectType: "Term"
+            lastUpdatedOn: 'desc',
+            objectType: 'Term',
           },
-          facets: []
-        }
-      }
-      if(this.designationSearchText){
-        requestBody['request']['query'] = this.designationSearchText
-      }
-      this.isLoadingMoreDesignations = true
-      this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
+          facets: [],
+        },
+      };
+      this.ProfileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
         next: (res: any) => {
-          this.isLoadingMoreDesignations = false
-          if(this.designationsOffset === 0) {
-            this.designationsMeta = _.get(res, 'result.Term', []) as designation[]
-          } else {
-            this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]]
-          }
-          this.designationsTotalCount = _.get(res, 'result.count', 0)
-          this.checkCurrentDesignationPresent()
-        }, error: (error: HttpErrorResponse) => {
-          if(error) {
-            this.openSnackbar('Something went wrong. Please refresh or try again later.')
-          }
+          const count = _.get(res, 'result.count', 0);
+          this.selectedOrgHasDesignations = count > 0;
+          this.getdesignationsMeta();
+        },
+        error: () => {
+          this.selectedOrgHasDesignations = false;
+          this.getdesignationsMeta();
         }
-      })
+      });
+    } else {
+      this.selectedOrgHasDesignations = false;
+      this.getdesignationsMeta();
     }
+  }
+  getdesignationsMeta() {
+    if (!(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId'])) {
+      return;
+    }
+    this.isLoadingMoreDesignations = true;
+    if (this.selectedOrgHasDesignations) {
+      this.getIgotDesignations();
+    } else {
+      this.getDefaultDesignations();
+    }
+  }
+
+  private getIgotDesignations() {
+    const requestBody: any = {
+      request: {
+        filters: {
+          status: "Live",
+          category: "designation",
+          categories: [
+            this.selctedOrgDetails['rootOrgId'] + '_odcs_designation',
+          ],
+          objectType: "Term"
+        },
+        fields: [
+          "name"
+        ],
+        offset: this.designationsOffset,
+        limit: this.designationListLoadCount,
+        sort_by: {
+          lastUpdatedOn: "desc",
+          objectType: "Term"
+        },
+        facets: []
+      }
+    };
+    if(this.designationSearchText){
+      requestBody['request']['query'] = this.designationSearchText;
+    }
+    this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false;
+        if(this.designationsOffset === 0) {
+          this.designationsMeta = _.get(res, 'result.Term', []) as designation[];
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]];
+        }
+        this.designationsTotalCount = _.get(res, 'result.count', 0);
+        this.checkCurrentDesignationPresent();
+      },
+      error: () => {
+        this.isLoadingMoreDesignations = false;
+        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+      }
+    });
+  }
+
+  private getDefaultDesignations() {
+    const requestBody: any = {
+      filterCriteriaMap: {
+        status: 'Active'
+      },
+      requestedFields: [],
+      pageNumber: this.designationsOffset,
+      pageSize: this.designationListLoadCount
+    }
+    if (this.designationSearchText) {
+      requestBody['searchString'] = this.designationSearchText
+    }
+    this.ProfileV2RevampService.searchDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false;
+        const content = _.get(res, 'result.result.data', []) as designation[];
+        const mapped = content.map((item: any) => ({
+          name: item.designation || '',
+          status: item.status || 'Active',
+        }));
+        if (this.designationsOffset === 0) {
+          this.designationsMeta = mapped;
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ...mapped];
+        }
+        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0);
+        this.checkCurrentDesignationPresent();
+      },
+      error: () => {
+        this.isLoadingMoreDesignations = false;
+        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+      }
+    });
   }
 
   setupScrollListener(opened: boolean): void {
