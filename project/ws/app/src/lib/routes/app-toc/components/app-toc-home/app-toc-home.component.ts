@@ -1312,18 +1312,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           }
           const batchId = this.getBatchId()
           if (batchId) {
-            // this.createCertTemplate(this.getBatchId(), this.content.identifier)
-
-            // this.router.navigate(
-            //   [],
-            //   {
-            //     relativeTo: this.route,
-            //     queryParams: { batchId: this.getBatchId() },
-            //     queryParamsHandling: 'merge',
-            //   })
             this.navigateToPlayerPage(batchId)
           }
-          // this.enrollBtnLoading = false
         },
         (_error: any) => {
           this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
