@@ -67,7 +67,7 @@
                       !(contentReadData?.primaryCategory === primaryCategory.PROGRAM) &&
                       !(contentReadData?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL)">
           <ng-container *ngIf="contentReadData?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading">
-            <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"  (click)="handleAutoBatchAssign()">
+            <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"  (click)="handleEnrollment()">
               <ng-container >
                 {{ 'apptochome.enroll' | translate }}
               </ng-container>
@@ -102,7 +102,7 @@
           *ngIf="contentReadData?.primaryCategory === primaryCategory.PROGRAM || contentReadData?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL">
           <ng-container *ngIf="(courseCategory?.MODERATED_PROGRAM === contentReadData?.courseCategory) && (contentReadData?.batches && !batchData?.enrolled)">
             <ng-container *ngIf="((contentReadData?.primaryCategory !== primaryCategory.RESOURCE)  && !enrollBtnLoading) && !contentReadData?.batches[0].endDate">
-              <a class="flex action-button justify-center resume" (click)="handleAutoBatchAssign()">
+              <a class="flex action-button justify-center resume" (click)="handleEnrollment()">
                 <ng-container *ngIf="!forPreview || isInIFrame" >
                   {{'apptochome.enroll' | translate}}
                 </ng-container>
@@ -221,7 +221,7 @@
       <!-- Curated program block -->
       <ng-container
         *ngIf="contentReadData?.primaryCategory === primaryCategory.CURATED_PROGRAM && !batchData?.enrolled && !enrollBtnLoading">
-        <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"(click)="handleAutoBatchAssign()">
+        <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"(click)="handleEnrollment()">
           <ng-container >
             {{ 'apptochome.enroll' | translate }}
           </ng-container>
@@ -230,7 +230,7 @@
       <!-- STANDALONE_ASSESSMENT black -->
       <ng-container
         *ngIf="contentReadData?.primaryCategory === primaryCategory.STANDALONE_ASSESSMENT && !batchData?.enrolled && !enrollBtnLoading && contentReadData?.courseCategory !== 'Invite-Only Assessment'">
-        <a class="flex action-button justify-center resume" (click)="handleAutoBatchAssign()" *ngIf="!forPreview || isInIFrame">
+        <a class="flex action-button justify-center resume" (click)="handleEnrollment()" *ngIf="!forPreview || isInIFrame">
           <ng-container >
             {{ 'apptochome.enroll' | translate }} 
           </ng-container>

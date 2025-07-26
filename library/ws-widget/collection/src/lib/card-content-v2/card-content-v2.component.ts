@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
@@ -48,6 +48,7 @@ export class CardContentV2Component extends WidgetBaseComponent
   sourceLogos: NsInstanceConfig.ISourceLogo[] | undefined
   
   isIntranetAllowedSettings = false
+  languageList: any[] = []
   constructor(
     private dialog: MatDialog,
     private events: EventService,
@@ -59,7 +60,8 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private contentLangSvc: ContentLanguageService
 
   ) {
     super()
@@ -91,6 +93,7 @@ export class CardContentV2Component extends WidgetBaseComponent
         this.widgetData.content.linkUrl = '/app/curatedCollections/'+ this.widgetData.content.identifier
       }
       if(this.widgetData && this.widgetData.content) {
+        this.languageList = [...this.contentLangSvc.getAllContentLanguages(this.widgetData.content)],
         this.btnPlaylistConfig = {
           contentId: this.widgetData.content.identifier,
           contentName: this.widgetData.content.name,
@@ -242,20 +245,6 @@ export class CardContentV2Component extends WidgetBaseComponent
       default:
         return ['description', this.widgetData.content.resourceType]
     }
-  }
-
-  get languageList(): any[] {
-    let languageListArray: { name: string; id: string; status: string }[] = []
-    if(this.widgetData.content && this.widgetData.content.languageMapV1) {
-      languageListArray = Object.entries(this.widgetData.content.languageMapV1)
-              .filter(([_, val]: [string, any]) => val.status === "live")
-              .map(([lang, val]: [string, any]) => ({
-                name: lang,
-                id: val.id,
-                status: val.status
-              }))
-    }
-    return languageListArray
   }
   
   openLanguageDialog(event: any): void {

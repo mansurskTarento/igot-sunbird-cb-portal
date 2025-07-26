@@ -50,6 +50,7 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { EnrollLanguageDialogueComponent } from '../enroll-language-dialogue/enroll-language-dialogue.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -791,8 +792,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   public autoAssignEnroll() {
-    if (this.content && this.content.identifier) {
-      this.contentSvc.autoAssignBatchApi(this.content.identifier).subscribe(
+    if (this.baseContentReadData && this.baseContentReadData.identifier) {
+      this.contentSvc.autoAssignBatchApi(this.baseContentReadData.identifier, this.selectedLanguage).subscribe(
         (data: NsContent.IBatchListResponse) => {
           this.batchData = {
             content: data.content,
@@ -2702,6 +2703,40 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   get getBaseContentIdentifier() {
     return this.baseContentReadData?.identifier || this.content?.identifier || ''
+  }
+
+  get isMultilingual() {
+    if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
+      return Object.keys(this.baseContentReadData.languageMapV1).length > 1
+    }
+    return false
+  }
+
+  handleEnrollment(event:any) {
+    debugger
+    if(this.isMultilingual) {
+        this.openLangDialog(event)
+    } else {
+      this.handleAutoBatchAssign()
+    }
+  }
+
+  openLangDialog(event: any) {
+    console.log('event', event)
+    const dialogRef = this.dialog.open(EnrollLanguageDialogueComponent, {
+      width: '400px',
+      height: 'auto',
+      data: {
+        languageList: this.languageList,
+      }
+    });
+    dialogRef.afterClosed().subscribe((selectedLang) => {
+      if (selectedLang) {
+        this.selectedLanguage = selectedLang
+        console.log('this.selectedLanguage',this.selectedLanguage)
+        this.handleAutoBatchAssign()
+      }
+    })
   }
 
 }
