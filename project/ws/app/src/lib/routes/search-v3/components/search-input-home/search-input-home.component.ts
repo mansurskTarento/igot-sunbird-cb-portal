@@ -336,6 +336,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "mimeType",
             "contentId",
             "creatorLogo",
+            'languageMapV1',
+            'language',
             "sectorDetails_v1"
           ],
           "facets": [
@@ -529,7 +531,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "mimeType",
             "contentId",
             "creatorLogo",
-            "sectorDetails_v1"
+            "sectorDetails_v1",
+            'languageMapV1',
+            'language'
           ],
           "facets": [
             "avgRating",

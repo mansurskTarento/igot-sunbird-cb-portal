@@ -415,29 +415,31 @@
             <div class="flex flex-row gap-2" *ngIf="languageList">
               <mat-chip-list>
                 <!-- Show up to 6 chips -->
-                <ng-container *ngFor="let lang of languageList | slice:0:5; let i = index">
+                <ng-container *ngFor="let lang of languageList | slice:0:2; let i = index">
                   <mat-chip class="matchip-custom"
                   selectable="true"
-                  [selected]="lang === selectedLanguage"
+                  [selected]="lang?.identifier === selectedLanguage?.identifier"
                   (click)="onLanguageSelect(lang)">
                   {{ lang.name || lang.value }}
                   </mat-chip>
                 </ng-container>
 
                 <!-- "More" chip if there are more than 6 languages -->
-                <ng-container *ngIf="languageList.length > 5">
+                <ng-container *ngIf="languageList.length > 2">
                   <mat-chip
                   [matMenuTriggerFor]="moreLanguagesMenu"
                   selectable="false"
                   class="more-chip matchip-custom"
-                  [selected]="languageList.slice(5).includes(selectedLanguage)">
+                  [selected]="isSelectedInMoreDropdown()"
+                  >
                   More <mat-icon class="mat-icon">keyboard_arrow_down</mat-icon>
                   </mat-chip>
                   <mat-menu #moreLanguagesMenu="matMenu">
                   <mat-radio-group class="mat-radio-group flex flex-col gap-2 p-3" [value]="selectedLanguage">
                     <mat-radio-button
-                    *ngFor="let lang of languageList | slice:5"
+                    *ngFor="let lang of languageList | slice:2"
                     [value]="lang"
+                    [checked]="lang?.identifier === selectedLanguage?.identifier"
                     (change)="onLanguageSelect(lang)">
                     {{ lang.displayName || lang.name || lang }}
                     </mat-radio-button>

@@ -374,6 +374,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       'avgRating',
       'courseCategory',
       'secureSettings',
+      'languageMapV1',
+      'language'
     ]
     this.newQueryParam = data
     let modifiedDataCount = 0
