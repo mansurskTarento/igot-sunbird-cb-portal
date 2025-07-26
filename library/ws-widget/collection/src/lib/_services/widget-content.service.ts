@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Observable, of, EMPTY, BehaviorSubject } from 'rxjs'
@@ -189,8 +189,9 @@ export class WidgetContentService {
     )
   }
 
-  autoAssignBatchApi(identifier: any): Observable<NsContent.IBatchListResponse> {
-    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}`)
+  autoAssignBatchApi(identifier: any, language?: any): Observable<NsContent.IBatchListResponse> {
+    const headers = language? new HttpHeaders().set('language', language.langId): new HttpHeaders()
+    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}`, { headers })
       .pipe(
         retry(1),
         map(
