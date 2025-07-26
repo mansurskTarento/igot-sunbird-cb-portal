@@ -5,7 +5,8 @@ import { Observable, Subject } from 'rxjs'
 const API_END_POINTS = {
   INSIGHTS: `apis/proxies/v8/read/user/insights`,
   DISCUSSIONS: `apis/proxies/v8/discussion/user/`,
-  NETWORK: `apis/protected/v8/connections/v2/connections/recommended`,
+  // NETWORK: `apis/protected/v8/connections/v2/connections/recommended`,
+  GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
   UPDATE_CONNECTION: `apis/protected/v8/connections/v2/update/connection`,
   CONN_REQUESTED: `apis/protected/v8/connections/v2/connections/requests/received`,
@@ -36,7 +37,8 @@ export class HomePageService {
   }
 
   getNetworkRecommendations(payload: any): Observable<any> {
-    return this.http.post(API_END_POINTS.NETWORK, payload)
+    // return this.http.post(API_END_POINTS.NETWORK, payload)
+    return this.http.post(API_END_POINTS.GET_RECOMMENDED_USERS, payload)
   }
 
   connectToNetwork(payload: any): Observable<any> {
