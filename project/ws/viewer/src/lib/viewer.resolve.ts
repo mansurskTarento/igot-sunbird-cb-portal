@@ -44,7 +44,6 @@ export class ViewerResolve
 
     const forPreview = window.location.href.includes('/preview/') || route.queryParamMap.get('preview') === 'true'
     return (forPreview
-      // ? this.contentSvc.fetchAuthoringContent(this.viewerDataSvc.resourceId)
       ? this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
         'detail',

@@ -14,8 +14,13 @@ export class AppHierarchyResolverService
         _route: ActivatedRouteSnapshot,
         _state: RouterStateSnapshot,
     ): Observable<IResolveResponse<any>> {
-        const collectionId = _route.queryParams && _route.queryParams.collectionId || ''
+        let collectionId = _route.queryParams && _route.queryParams.collectionId || ''
         const collectionType = _route.queryParams && _route.queryParams._collectionType || ''
+
+        const multilingualContentId = _route.queryParams && _route.queryParams.multilingualContentId || ''
+        if (multilingualContentId && (collectionId !== multilingualContentId)) {
+            collectionId = multilingualContentId
+        }
         // tslint:disable-next-line
         // console.log("========> Before api call <===========", collectionId, collectionType)
         if (collectionId) {
