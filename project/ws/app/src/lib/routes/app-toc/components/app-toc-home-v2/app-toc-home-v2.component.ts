@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentLanguageService, TOCMultiLingualDialogComponent, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -231,6 +231,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   languageList: any = []
   selectedLanguage: any
   queryParamsData: any = {}
+  languageMapProgress: any
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -2300,6 +2301,59 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   onLanguageSelect(lang: any) {
+    // Check if the selected language is already set
+    if (this.selectedLanguage && this.selectedLanguage.identifier === lang.identifier) {
+      console.log('Language is already selected:', lang.name);
+      return; // Exit the function if the language is the same
+    }
+
+    if(this.userEnrollmentList && this.userEnrollmentList.length) {
+      let data = {} 
+      // TODO: Remove hardcode strings
+      if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
+         data = {
+          width: '500px',
+          height: 'auto',
+          data: {
+            from: 'languageSwitch',
+            icon: 'translate',
+            header: 'Are you sure you want to change the language?',
+            message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
+            cancelButton: 'Cancel',
+            acceptButton: 'Change language',
+          }
+        }
+      } else {
+        data = {
+          width: '500px',
+          height: 'auto',
+          data: {
+            from: 'languageSwitch',
+            icon: 'translate',
+            header: `Continue where you left off in ${lang.name}?`,
+            message: `You’ve already made some progress in this language.\n Would you like to resume from where you left off or start over`,
+            cancelButton: 'Cancel',
+            acceptButton: 'Change language',
+          }
+        }
+      }
+      this.showLangSwitchPopup(lang, data)
+    } else {
+      this.processLanguageSelection(lang)
+    }
+  }
+
+  showLangSwitchPopup(lang: any, data?: any) {
+    const dialogRef = this.dialog.open(TOCMultiLingualDialogComponent, data);
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+       console.log('confirmed')
+       this.processLanguageSelection(lang)
+      }
+    })
+  }
+
+  processLanguageSelection(lang: any) {
     this.selectedLanguage = lang;
     console.log('Selected language:', lang);
     
@@ -2466,6 +2520,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         data => {
           if (data && data.result && data.result.contentList && data.result.contentList.length) {
             const tempResumeData = _.get(data, 'result.contentList')
+            this.languageMapProgress = _.get(data, 'result.languageProgress') || {}
             this.resumeData = _.map(tempResumeData, rr => {
               // tslint:disable-next-line
               const items = _.filter(flattenItems(_.get(this.content, 'children') || [], 'children'), { 'identifier': rr.contentId, primaryCategory: 'Learning Resource' })
@@ -2721,8 +2776,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  openLangDialog(event: any) {
-    console.log('event', event)
+  openLangDialog(_event: any) {
     const dialogRef = this.dialog.open(EnrollLanguageDialogueComponent, {
       width: '400px',
       height: 'auto',
@@ -2738,5 +2792,4 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       }
     })
   }
-
 }

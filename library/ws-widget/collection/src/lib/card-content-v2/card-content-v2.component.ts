@@ -11,12 +11,11 @@ import _ from 'lodash'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { ContentLanguageService, WidgetContentLibService } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetContentLibService, TOCMultiLingualDialogComponent } from '@sunbird-cb/consumption'
 import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
 // import { Router } from '@angular/router'
 
 @Component({
@@ -249,13 +248,13 @@ export class CardContentV2Component extends WidgetBaseComponent
   
   openLanguageDialog(event: any): void {
     event.stopPropagation()
-    this.dialog.open(ConfirmDialogComponent, {
+    this.dialog.open(TOCMultiLingualDialogComponent, {
       width: '470px',
       data: {
         title: ' ',
-        from: 'openLanguageDialog',
+        from: 'availableLanguages',
         acceptButton: '',
-        content: this.languageList
+        languageList: this.languageList
 
       } // optional, if you need to pass data
     });
