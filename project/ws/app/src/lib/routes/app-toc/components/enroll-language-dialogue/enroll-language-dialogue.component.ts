@@ -18,8 +18,12 @@ export class EnrollLanguageDialogueComponent implements OnInit {
 
  ngOnInit() {
   this.languageList = this.data.languageList || [];
-  this.selectedLanguage = (this.languageList && this.languageList.length > 0) ? this.languageList[0] : null
-  console.log('Language List:', this.languageList);
+  if (this.data.preSelect) {
+    const preSelectIndex = this.languageList.findIndex((lang: any) => lang.langId === this.data.preSelect.langId);
+    this.selectedLanguage = preSelectIndex !== -1 ? this.languageList[preSelectIndex] : null;
+  } else {
+    this.selectedLanguage = this.languageList.length > 0 ? this.languageList[0] : null;
+  }
  }
 
  onLanguageChange($event: any) {

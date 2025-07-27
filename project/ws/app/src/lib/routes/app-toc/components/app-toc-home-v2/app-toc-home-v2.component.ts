@@ -2357,11 +2357,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           // Update UI as needed with new content
           this.routerChangeHandler(true)
           let leafNodes = this.content?.leafNodes || []
-          this.getContinueLearningData(this.getBaseContentIdentifier,this.getBatchId(),leafNodes)
-          this.generateResumeDataLinkNew();
+          if(this.userEnrollmentList && this.userEnrollmentList.length) {
+            this.getContinueLearningData(this.getBaseContentIdentifier,this.getBatchId(),leafNodes)
+            this.generateResumeDataLinkNew();
+          }
           if (this.content) {
             this.getLearningUrls();
-            
             // Reset user progress and fetch enrollment data if not in preview mode
             if (!this.forPreview) {
               this.checkIfUserEnrolled();
@@ -2737,7 +2738,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   get isMultilingual() {
     if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
-      return Object.keys(this.baseContentReadData.languageMapV1).length > 1
+      return this.languageList.length > 1
     }
     return false
   }
@@ -2756,6 +2757,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       width: '400px',
       height: 'auto',
       data: {
+        preSelect: this.selectedLanguage,
         languageList: this.languageList,
       }
     });
