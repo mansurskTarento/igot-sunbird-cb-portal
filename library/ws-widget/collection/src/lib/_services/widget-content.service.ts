@@ -258,6 +258,8 @@ export class WidgetContentService {
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
     req.request.fields = ['progressdetails']
+    req.request.contentIds = req?.request?.contentIds && req?.request?.contentIds?.length ? req?.request?.contentIds : this.currentContentReadMetaData?.leafNodes || []
+    if(req.request.courseId) {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
     )
@@ -265,6 +267,8 @@ export class WidgetContentService {
     //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
     //     })
     return data
+  }
+  return of()
   }
 
   setProgramChildResumeData(contentList: any, courseId: any) {
