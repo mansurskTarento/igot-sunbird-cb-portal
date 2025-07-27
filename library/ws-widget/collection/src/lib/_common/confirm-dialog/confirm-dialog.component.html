@@ -47,22 +47,6 @@ data?.from !== 'openConfirmDialoge'">
 </div>
 </ng-container>
 
-<ng-container *ngIf="data && data?.from === 'openLanguageDialog'">
-  <div  class="confirmation-dialog-container">  
-    <div class="dialog-header text-left flex justify-between align-items-center">
-          <p class="mat-subheading-1">Available Languages</p> <a (click)="dialogRef.close()" ><mat-icon class="close-icon">close</mat-icon></a>
-    </div>
-
-    <div class="lang-msg-wrapper">
-
-      <p *ngFor="let lang of data?.content" class="language-item">
-        <span class="language-name">{{ lang?.name }}</span>
-
-      </p>
-    </div> 
-</div>
-</ng-container> 
-
 <ng-container *ngIf="data && data?.from === 'openConfirmDialoge'">
   <div class="flex flex-col items-center justify-center text-center">
     <img src="assets/icons/translate.svg" alt="Congratulations Badge" class="congrats-badge">
