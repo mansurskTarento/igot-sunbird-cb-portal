@@ -7,6 +7,7 @@ export interface IViewerTocChangeEvent {
   tocAvailable: boolean
   nextResource: IViewerTocCard | null
   prevResource: IViewerTocCard | null
+  queryMLParams: any
 }
 export interface IViewerResourceOptions {
   page?: {
@@ -70,12 +71,13 @@ export class ViewerDataService {
     }
     this.changedSubject.next()
   }
-  updateNextPrevResource(isValid = true, prev: IViewerTocCard | null = null, next: IViewerTocCard | null = null) {
+  updateNextPrevResource(isValid = true, prev: IViewerTocCard | null = null, next: IViewerTocCard | null = null, queryMLParams: any) {
     this.tocChangeSubject.next(
       {
         tocAvailable: isValid,
         nextResource: next,
         prevResource: prev,
+        queryMLParams: queryMLParams
       },
     )
   }

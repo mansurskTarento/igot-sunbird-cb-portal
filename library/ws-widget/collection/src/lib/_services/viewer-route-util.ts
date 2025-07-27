@@ -71,8 +71,8 @@ export function viewerRouteGenerator(
   primaryCategory?: string,
   batchId?: string,
   courseName?: string,
-  multilingualLanguage?: string,
-  multilingualContentId?: string,
+  ML?: string,
+  MLId?: string,
 ): { url: string; queryParams: { [key: string]: any } } {
   let collId = collectionId
   let collType = collectionType
@@ -105,8 +105,8 @@ export function viewerRouteGenerator(
   if (forcreator) {
     queryParams = { ...queryParams, editMode: true }
   }
-  if( multilingualLanguage && multilingualContentId) {
-    queryParams = { ...queryParams, multilingualLanguage, multilingualContentId }
+  if( ML && MLId) {
+    queryParams = { ...queryParams, ML, MLId }
   }
   return {
     queryParams,
