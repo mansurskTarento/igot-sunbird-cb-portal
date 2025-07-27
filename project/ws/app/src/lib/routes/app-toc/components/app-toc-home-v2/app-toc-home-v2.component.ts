@@ -824,15 +824,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       } else {
         primaryCategory = firstPlayableContent.primaryCategory || this.content.primaryCategory
       }
-      this.firstResourceLink = viewerRouteGenerator(
-        firstPlayableContent.identifier,
-        firstPlayableContent.mimeType,
-        this.isResource ? undefined : this.content.identifier,
-        this.isResource ? undefined : this.content.contentType,
-        this.forPreview,
-        primaryCategory,
-        batchId,
-      )
+      this.firstResourceLink = this.getResumeUrl(firstPlayableContent, batchId, primaryCategory)
       this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams, fromAITutor: this.fromAITutor } })
     }
   }
@@ -1020,15 +1012,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       } else {
         primaryCategory = firstPlayableContent.primaryCategory || this.content.primaryCategory
       }
-      this.firstResourceLink = viewerRouteGenerator(
-        firstPlayableContent.identifier,
-        firstPlayableContent.mimeType,
-        this.isResource ? undefined : this.content.identifier,
-        this.isResource ? undefined : this.content.contentType,
-        this.forPreview,
-        primaryCategory,
-        this.getBatchId(),
-      )
+      this.firstResourceLink = this.getResumeUrl(firstPlayableContent,null, primaryCategory)
 
       /* tslint:disable-next-line */
 
@@ -1748,10 +1732,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.firstResourceLink = viewerRouteGenerator(
         firstResource.identifier,
         firstResource.mimeType,
-        this.contentReadData?.identifier,
-        this.contentReadData?.courseCategory,
+        this.baseContentReadData?.identifier,
+        this.baseContentReadData?.courseCategory,
         this.forPreview,
-        this.contentReadData.preEnrolmentResources[0]?.primaryCategory,
+        this.baseContentReadData && this.baseContentReadData.preEnrolmentResources[0]?.primaryCategory || '',
         '',
       )
       console.log('this.firstResourceLink', this.firstResourceLink)
@@ -2578,16 +2562,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if (!resumeDataV2.mimeType) {
         resumeDataV2.mimeType = this.tocSvc.getMimeType(this.content, resumeDataV2.identifier)
       }
-      this.resumeDataLink = viewerRouteGenerator(
-        resumeDataV2.identifier,
-        resumeDataV2.mimeType,
-        this.isResource ? undefined : this.content.identifier,
-        this.isResource ? undefined : this.content.contentType,
-        this.forPreview,
-        'Learning Resource',
-        this.getBatchId(),
-        this.content.name,
-      )
+      this.resumeDataLink = this.getResumeUrl(resumeDataV2)
       this.actionSVC.setUpdateCompGroupO = this.resumeDataLink
       /* tslint:disable-next-line */
     }
@@ -2791,5 +2766,23 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         this.handleAutoBatchAssign()
       }
     })
+  }
+
+  getResumeUrl(resourceData: any, batchId?:any, primaryCategory?:any) {
+    let multilingualContentId = this.selectedLanguage?.identifier || ''
+    let multilingualLanguage = this.selectedLanguage?.langId || ''
+    let resumeDataUrl = viewerRouteGenerator(
+      resourceData.identifier,
+      resourceData.mimeType,
+      this.isResource ? undefined : this.baseContentReadData && this.baseContentReadData?.identifier || '',
+      this.isResource ? undefined : this.baseContentReadData && this.baseContentReadData?.contentType || '',
+      this.forPreview,
+      primaryCategory || 'Learning Resource',
+      batchId || this.getBatchId(),
+      this.baseContentReadData && this.baseContentReadData?.name || '',
+      multilingualLanguage,
+      multilingualContentId,
+    )
+    return resumeDataUrl
   }
 }
