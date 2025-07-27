@@ -2311,14 +2311,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       let data = {} 
       // TODO: Remove hardcode strings
       if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
-         data = {
+        data = {
           width: '500px',
           height: 'auto',
           data: {
             from: 'languageSwitch',
             icon: 'translate',
-            header: 'Are you sure you want to change the language?',
-            message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
+            header: `Continue where you left off in ${lang.name}?`,
+            message: `You’ve already made some progress in this language.\n Would you like to resume from where you left off or start over`,
             cancelButton: 'Cancel',
             acceptButton: 'Change language',
           }
@@ -2330,8 +2330,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           data: {
             from: 'languageSwitch',
             icon: 'translate',
-            header: `Continue where you left off in ${lang.name}?`,
-            message: `You’ve already made some progress in this language.\n Would you like to resume from where you left off or start over`,
+            header: 'Are you sure you want to change the language?',
+            message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
             cancelButton: 'Cancel',
             acceptButton: 'Change language',
           }

@@ -413,7 +413,7 @@
           </ng-container>
           <ng-container>
             <div class="flex flex-row gap-2" *ngIf="languageList">
-              <mat-chip-list>
+              <mat-chip-list class="lang-chips">
                 <!-- Show up to 6 chips -->
                 <ng-container *ngFor="let lang of languageList | slice:0:2; let i = index">
                   <mat-chip class="matchip-custom"

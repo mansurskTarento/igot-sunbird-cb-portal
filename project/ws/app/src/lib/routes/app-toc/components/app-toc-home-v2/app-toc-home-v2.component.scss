@@ -1013,11 +1013,12 @@ mat-divider {
   cursor: pointer;
 }
 
-.theme-igot.day-mode .mat-chip.matchip-custom {
+.theme-igot.day-mode .lang-chips .mat-chip.matchip-custom {
   background: transparent;
   border: 1px solid #fff;
   color: #fff !important;
   cursor: pointer;
+  margin: 0 !important;
 
   & mat-icon  {
     color: #fff !important;
