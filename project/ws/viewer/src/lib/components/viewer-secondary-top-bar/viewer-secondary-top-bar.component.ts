@@ -317,29 +317,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getFetchHistory(batchId:any, identifier:any) {
-  //     if (this.configSvc.userProfile) {
-  //       this.userid = this.configSvc.userProfile.userId || ''
-  //     }
-  //   const req  = {
-  //     request: {
-  //       userId:this.userid,
-  //       batchId: batchId,
-  //       courseId: identifier || '',
-  //       contentIds: [],
-  //       fields: ['progressdetails'],
-  //     },
-  //   }
-  //   return this.widgetServ.fetchContentHistoryV2(req)
-  // }
-
-  //  getAuthDataIdentifer() {
-  //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-  //   this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-  //       this.leafNodesCount = data.result.content.leafNodesCount
-  //       console.log('this.leafNodesCount inside api call-------', this.leafNodesCount)
-  //   })
-  // }
   finishDialog() {
     if (!this.forPreview) {
       this.contentProgressHash = []

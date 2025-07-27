@@ -2139,15 +2139,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.dataTransferSvc.setEnrollData(this.userEnrollmentList);
 
           // Always call fetchContentHierarchy first
-          return from(this.fetchContentHierarchy(this.contentReadData?.identifier || '')).pipe(
-            switchMap(() => {
-              // After fetchContentHierarchy, check for oneStepResumeEnable
-              if (this.contentLibSvc?.oneStepResumeEnable) {
-                return from(this.handleOneStepResume());
-              }
-              return of(true);
-            })
-          );
+          return from(this.fetchContentHierarchy(this.contentReadData?.identifier || ''))
         } else {
           this.userEnrollmentList = [];
           // Check if we have content ID from either content or contentReadData
@@ -2167,6 +2159,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       })
     ).subscribe({
       next: () => {
+        if (this.contentLibSvc?.oneStepResumeEnable) {
+          return from(this.handleOneStepResume());
+        }
         this.checkIfUserEnrolled();
       },
       error: (error) => {
@@ -2188,7 +2183,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       }
       
       const foundContent = this.userEnrollmentList.find(
-        (el: any) => el.collectionId === this.contentReadData?.identifier
+        (el: any) => el.collectionId === this.baseContentReadData?.identifier
       );
       
       if (!foundContent) {
@@ -2212,10 +2207,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           return true; // Continue with normal flow
         } else {
           this.contentLibSvc.oneStepResumeEnable = false;
-          this.router.navigate(
-            [urlData.url],
-            { queryParams: urlData.queryParams }
-          );
+          // Use NgZone to ensure navigation works
+          
+            this.router.navigate(
+              [urlData.url],
+              { queryParams: urlData.queryParams })
           return false; // Redirect handled, don't continue with normal flow
         }
       }
@@ -2302,7 +2298,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             from: 'languageSwitch',
             icon: 'translate',
             header: `Continue where you left off in ${lang.name}?`,
-            message: `You’ve already made some progress in this language.\n Would you like to resume from where you left off or start over`,
+            message: `You've already made some progress in this language.\n Would you like to resume from where you left off or start over`,
             cancelButton: 'Cancel',
             acceptButton: 'Change language',
           }

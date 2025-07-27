@@ -30,6 +30,7 @@ export enum ErrorType {
 })
 
 export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
+  
   fullScreenContainer: HTMLElement | null = null
   content: NsContent.IContent | null = null
   contentReadData: NsContent.IContent | null = null
@@ -418,7 +419,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async manipulateHierarchyData() {
     if (!this.forPreview) {
-      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses)
+      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId||''  )
 
     } else {
       this.loadAllHierarchyData = true
