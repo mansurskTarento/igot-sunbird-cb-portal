@@ -348,7 +348,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       // console.log('pre', prev)
       // console.log('next', next)
       if(this.queue && this.queue.length) {
-        this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next)
+        this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next, this.getMLQueryParam())
         this.processCollectionForTree()
         this.expandThePath()
       }
@@ -357,6 +357,18 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
        // this.getContentProgressHash()
       // }
     }
+  }
+
+  getMLQueryParam() {
+    const  queryMLParams: any = {}
+    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML && 
+      this.activatedRoute.snapshot.queryParams.MLId
+    ) {
+      queryMLParams['ML'] = this.activatedRoute.snapshot.queryParams.ML
+      queryMLParams['MLId'] = this.activatedRoute.snapshot.queryParams.MLId
+      return queryMLParams
+    }
+    return null
   }
   private async getCollection(
     collectionId: string,

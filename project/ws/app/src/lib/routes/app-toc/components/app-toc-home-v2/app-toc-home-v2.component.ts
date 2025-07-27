@@ -2460,10 +2460,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       }
       // Only add parameters if we have valid data
       if (language) {
-        queryParams.ml = language;
+        queryParams.ML = language;
       }
       
-      queryParams.mlId = this.contentReadData.identifier;
+      queryParams.MLId = this.contentReadData.identifier;
     }
     
     // Only navigate if we have batch ID or other parameters
@@ -2767,8 +2767,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   getResumeUrl(resourceData: any, batchId?:any, primaryCategory?:any) {
-    let multilingualContentId = this.selectedLanguage?.identifier || ''
-    let multilingualLanguage = this.selectedLanguage?.langId || ''
+    let MLId = this.selectedLanguage?.identifier || ''
+    let ML = this.selectedLanguage?.langId || ''
     let resumeDataUrl = viewerRouteGenerator(
       resourceData.identifier,
       resourceData.mimeType,
@@ -2778,8 +2778,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       primaryCategory || 'Learning Resource',
       batchId || this.getBatchId(),
       this.baseContentReadData && this.baseContentReadData?.name || '',
-      multilingualLanguage,
-      multilingualContentId,
+      ML,
+      MLId,
     )
     return resumeDataUrl
   }
