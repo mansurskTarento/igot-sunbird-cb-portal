@@ -2107,7 +2107,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
 
   fetchUserEnrollmentDataV2() {
-    debugger
+    
     const identifier = this.baseContentReadData?.identifier  || '';
     if (!identifier) {
       this.loggerSvc.error('Cannot fetch enrollment data: content identifier is missing');
@@ -2194,7 +2194,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       const urlData = await this.contentLibSvc.getResourseLink(
         this.content, 
         [foundContent], 
-        true
+        true,
+        this.baseContentReadData,
+        this.contentReadData?.identifier || '',
       );
       
       if (!urlData) {
@@ -2574,9 +2576,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   async getQueryParams() {
-    debugger
+    
     this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
-      debugger
+      
       // Create a plain object to store query parameters
       this.queryParamsData = {};
       
@@ -2740,7 +2742,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   handleEnrollment(event:any) {
-    debugger
+    
     if(this.isMultilingual) {
         this.openLangDialog(event)
     } else {

@@ -414,6 +414,10 @@
     border-radius: 15px;
 }
 
+.not-my-user-menu {
+  color: #000000;
+}
+
 @media screen and (max-width: 1000px) {
   .not-my-user-container {
     width: 100%;
@@ -432,6 +436,12 @@
 
   .profile-info {
     width: 100% !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .not-my-user-menu {
+    display: none !important;
   }
 }
 
