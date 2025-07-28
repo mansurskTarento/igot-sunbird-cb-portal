@@ -54,7 +54,16 @@
   }
 }
 
+.connections-tab-group {
+  max-width: 96vw;
+}
+
 :host ::ng-deep .network-connections {
+
+  .mat-tab-header-pagination-controls-enabled .mat-tab-header-pagination {
+    box-shadow: none !important;
+  }
+
   .mat-tab-label {
     min-width: fit-content !important;
     padding: 0 16px !important;
@@ -73,4 +82,13 @@
       /* stylelint-enable */
     }
   }
+}
+
+@media (max-width: 768px) {
+
+  .connections-list {
+    width: 100%;
+    padding: 0px 10px;
+  }
+
 }

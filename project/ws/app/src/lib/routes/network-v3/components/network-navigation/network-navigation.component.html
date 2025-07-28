@@ -1,7 +1,7 @@
-<div class="navigation-card flex flex-row md:flex-col gap-1 md:p-3">
+<div class="navigation-card flex flex-row md:flex-col justify-between md:justify-start md:gap-1  md:p-3">
   <ng-container *ngFor="let item of navigationItems">
     <a [routerLink]="item?.navigationUrl" [queryParams]="item?.queryParams" routerLinkActive="active"
-      class="navigation-item flex items-center justify-between gap-2 pl-2 pr-3 rounded hover:bg-gray-200">
+      class="navigation-item flex items-center justify-between gap-2 md:pl-2 md:pr-3 px-1 rounded hover:bg-gray-200">
       <div class="flex flex-col md:flex-row items-center gap-2">
         <ng-container *ngIf="item?.icon; else routImg">
           <mat-icon class="route-icons">
@@ -9,7 +9,9 @@
           </mat-icon>
         </ng-container>
         <ng-template #routImg>
-          <img class="route-icons" [src]="item?.imageUrl" alt="route icon">
+          <div class="icons-div flex items-center">
+            <img class="route-icons" [src]="item?.imageUrl" alt="route icon">
+          </div>
         </ng-template>
         {{ item?.name | translate }}
       </div>
