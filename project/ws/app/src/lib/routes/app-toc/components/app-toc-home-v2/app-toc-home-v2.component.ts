@@ -2159,7 +2159,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       })
     ).subscribe({
       next: () => {
-        if (this.contentLibSvc?.oneStepResumeEnable) {
+        if (this.userEnrollmentList?.length && this.contentLibSvc?.oneStepResumeEnable) {
           return from(this.handleOneStepResume());
         }
         this.checkIfUserEnrolled();
