@@ -571,8 +571,9 @@ export class AppTocService {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
       const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, collectionId || content.identifier)
-      if (foundParentContent && foundParentContent.completionPercentage === 110) {
-        this.mapCompletionChildPercentageProgram(content)
+      if (foundParentContent && foundParentContent.completionPercentage === 100) {
+        await this.mapCompletionChildPercentageProgram(content)
+        console.log('if program is 100 persent complete', content)
         totalCount = content.leafNodesCount
       } else {
         if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
@@ -603,7 +604,8 @@ export class AppTocService {
                   }
                   parentChild.completionPercentage = 100
                   parentChild.completionStatus = 2
-                  this.mapCompletionChildPercentageProgram(parentChild)
+                  await this.mapCompletionChildPercentageProgram(parentChild)
+                  console.log('if course is 100 persent complete', parentChild)
                 } else {
                   if (foundContent) {
                     this.contentLoader.next(true)
@@ -756,6 +758,7 @@ export class AppTocService {
       // // }
       // })
       // this.mapModuleDurationAndProgress(content, content)
+      console.log('content percentage bind final', content)
       this.callHirarchyProgressHashmap(content)
       this.checkModuleWiseData(content)
       this.contentLoader.next(false)
@@ -782,9 +785,9 @@ export class AppTocService {
     return enrolmentList && enrolmentList?.length && enrolmentList.find((el: any) => el?.collectionId === identifier)
   }
   
-  mapCompletionChildPercentageProgram(course: any) {
+  async mapCompletionChildPercentageProgram(course: any) {
     if (course && course.children) {
-      course.children.map((courseChild: any) => {
+      await course.children.map(async (courseChild: any) => {
           if ((courseChild && courseChild.children) || courseChild.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
             this.mapCompletionChildPercentageProgram(courseChild)
             course['moduleCount'] = course['moduleCount'] ? course['moduleCount'] + 1 : 1

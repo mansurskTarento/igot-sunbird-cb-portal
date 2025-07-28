@@ -138,3 +138,13 @@
   color: #999999 !important;
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .user-details {
+    max-width: calc(100% - 50px);
+  }
+
+  .user-details-container {
+    max-width: calc(100% - 157px);
+  }
+}

@@ -37,3 +37,37 @@
     z-index: 1100;
   }
 }
+/* Mobile Header Bar Styles */
+.mobile-header {
+  height: 56px;
+  background: #ffffff;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.back-arrow {
+  position: absolute;
+  left: 6px;
+  top: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  pointer-events: all;
+  cursor: pointer;
+}
+.header-title {
+  /*stylelint-disable */
+  font: 600 14px/normal Montserrat;
+  /* stylelint-enable */
+  color: #000000;
+  margin: 0 auto;
+}
+
+.navigateBack-icon {
+  color: #00000099;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  cursor: pointer;
+  pointer-events: all;
+}

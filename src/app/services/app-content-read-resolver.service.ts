@@ -15,7 +15,7 @@ export class AppContentResolverService
         _state: RouterStateSnapshot,
     ): Observable<IResolveResponse<any>> {
         let collectionId = _route.queryParams && _route.queryParams.collectionId || ''
-        const multilingualContentId = _route.queryParams && _route.queryParams.multilingualContentId || ''
+        const multilingualContentId = _route.queryParams && _route.queryParams.MLId || ''
         if (multilingualContentId && (collectionId !== multilingualContentId)) {
             collectionId = multilingualContentId
         }
