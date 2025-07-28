@@ -154,9 +154,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           },
           fragment: '',
         }
-        if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.prevResource.identifier)
-        }
+        // if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.prevResource.identifier)
+        // }
       } else {
         this.prevResourceUrl = null
       }
@@ -175,9 +175,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           },
           fragment: '',
         }
-        if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.nextResource.identifier)
-        }
+        // if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.nextResource.identifier)
+        // }
       } else {
         this.nextResourceUrl = null
       }
@@ -244,13 +244,13 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateProgress(status: number, resourceId: any) {
-    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-      this.activatedRoute.snapshot.queryParams.collectionId : ''
-    // const collectionId = this.activatedRoute.snapshot.params.id ?
-    // this.activatedRoute.snapshot.params.id : ''
-    const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
-      this.activatedRoute.snapshot.queryParams.batchId : ''
-    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
+        this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
+      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+      const batchId = (resData && resData.batchId) ? resData.batchId : ''
+    if(collectionId && batchId && resourceId) {
+      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    }
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {

@@ -363,12 +363,12 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-              this.activatedRoute.snapshot.queryParams.collectionId : ''
-      const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
-              this.activatedRoute.snapshot.queryParams.batchId : ''
+      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
+        this.activatedRoute.snapshot.queryParams.batchId, identifier)
+      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+      const batchId = (resData && resData.batchId) ? resData.batchId : ''
 
-      if (this.widgetData.identifier && identifier && data) {
+      if (collectionId && identifier && batchId) {
           this.viewerSvc
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
