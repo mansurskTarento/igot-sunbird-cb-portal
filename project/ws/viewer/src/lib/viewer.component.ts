@@ -78,6 +78,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadAllHierarchyData = false
   isPreAssessment = false
   sideNavForAIOpened = false
+  baseContentReadData: any
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -124,6 +125,20 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.isPreAssessment = true
     } else {
       this.isPreAssessment = false
+    }
+
+    this.checkMultilingual()
+  }
+
+  checkMultilingual() {
+    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML
+      && this.activatedRoute.snapshot.queryParams.MLId
+    ) {
+      if(this.content?.identifier !== this.activatedRoute.snapshot.queryParams.MLId) {
+          this.baseContentReadData = this.widgetServ.fetchContentData(this.content?.identifier || '')
+      }else {
+        this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+      }
     }
   }
 

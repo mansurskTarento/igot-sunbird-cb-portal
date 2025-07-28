@@ -28,6 +28,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() contentReadData!: any
   @Input() initialRouteData: any
   @Input() changeTab = false
+  @Input() baseContentReadData!: any
   routeSubscription: Subscription | null = null
   @Input() forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
   @Input() contentTabFlag = true
@@ -140,10 +141,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
-      if (this.contentReadData && this.contentReadData.identifier) {
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.contentReadData.identifier
+      if (this.baseContentReadData && this.baseContentReadData.identifier) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.contentReadData.identifier
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.baseContentReadData.identifier
         }
       }
       this.discussWidgetData = { ...this.discussWidgetData }
