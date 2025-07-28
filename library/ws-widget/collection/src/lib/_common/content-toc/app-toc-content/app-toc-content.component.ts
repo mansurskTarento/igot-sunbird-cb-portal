@@ -25,6 +25,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pathSet: any
   @Input() componentName!: string
   @Input() isPreAssessment = false
+  @Input() baseContentReadData!: any
   isPlayable = false
   contentPlayWidgetConfig: NsWidgetResolver.IRenderConfigWithTypedData<any> | null = null
   defaultThumbnail = ''
