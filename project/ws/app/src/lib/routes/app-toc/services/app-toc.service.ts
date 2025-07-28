@@ -571,7 +571,7 @@ export class AppTocService {
       leafnodeCount = content.leafNodesCount
       this.contentLoader.next(true)
       const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, collectionId || content.identifier)
-      if (foundParentContent && foundParentContent.completionPercentage === 110) {
+      if (foundParentContent && foundParentContent.completionPercentage === 100) {
         this.mapCompletionChildPercentageProgram(content)
         totalCount = content.leafNodesCount
       } else {

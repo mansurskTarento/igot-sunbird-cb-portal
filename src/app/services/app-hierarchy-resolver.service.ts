@@ -17,7 +17,7 @@ export class AppHierarchyResolverService
         let collectionId = _route.queryParams && _route.queryParams.collectionId || ''
         const collectionType = _route.queryParams && _route.queryParams._collectionType || ''
 
-        const multilingualContentId = _route.queryParams && _route.queryParams.multilingualContentId || ''
+        const multilingualContentId = _route.queryParams && _route.queryParams.MLId || ''
         if (multilingualContentId && (collectionId !== multilingualContentId)) {
             collectionId = multilingualContentId
         }
