@@ -75,6 +75,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   coursePrimaryCategory: any = ''
   compatibilityLevel = 0
   loadAllHierarchyData = false
+  isPreAssessment = false
   sideNavForAIOpened = false
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -117,29 +118,73 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       lang = lang.replace(/\"/g, '')
       this.translate.use(lang)
     }
+
+    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams['preAssessment']) {
+      this.isPreAssessment = true
+    } else {
+      this.isPreAssessment = false
+    }
   }
 
   getContentData(e: any) {
-    e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
-      if (data.content && data.content.data) {
-        this.content = data.content.data
-        this.contentMIMEType = data.content.data.mimeType
-      }
-    })
+    // console.log('this.activatedRoute.snapshot.data', this.activatedRoute.snapshot.data)
+    if( this.activatedRoute.snapshot.data &&  this.activatedRoute.snapshot.data['preAssessmentRead'] && 
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data'] && 
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result'] &&
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+    ) {
+        this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+        
+        if(this.content) {
+          let hashMap = this.tocSvc.hashmap
+          // console.log('hasMap', hashMap)
+          // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
+          if(!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
+            this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
+          }          
+        }
+        this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
+        // console.log('this.content', this.content)
+        // console.log('this.contentMIMEType', this.contentMIMEType)
+        this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
+        this.getPreEnrollmentResoureStateRead()
+        // console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
+        // console.log('this.hierarchyData', this.hierarchyData)
+        
+        this.resetAndFetchTocStructure()
+        // console.log('tocStructure', this.tocStructure)
+    } else {
+      e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
+        // console.log('this.content',data)
+        if (data.content && data.content.data) {
+          this.content = data.content.data
+          
+          this.contentMIMEType = data.content.data.mimeType
+        }
+      })
+    }
+    
   }
 
   getAuthDataIdentifer() {
-    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-    this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-      if (data.result.content.cstoken) {
-        this.configSvc.cstoken = data.result.content.cstoken
-      }
-      this.leafNodesCount = data.result.content.leafNodesCount
-    })
+    if(this.isPreAssessment) {
+      
+      
+    } else {
+      const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
+      this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
+        if (data.result.content.cstoken) {
+          this.configSvc.cstoken = data.result.content.cstoken
+        }
+        this.leafNodesCount = data.result.content.leafNodesCount
+      })
+    }
+   
   }
 
   async ngOnInit() {
-    this.getTocConfig()
+  
+      this.getTocConfig()
     // for left side player scroll on right side resource click
     // this.pageScrollSubscription = this.tocSvc.updatePageScroll.subscribe((value: boolean) => {
     //   if (value) {
@@ -155,13 +200,14 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     //     },         1000)
     //   }
     // })
+    // console.log('this.activatedRoute.snapshot.data.contentRead--', this.activatedRoute.snapshot.data.contentRead)
     const contentData = this.activatedRoute.snapshot.data.hierarchyData 
     && this.activatedRoute.snapshot.data.hierarchyData.data || ''
 
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
     && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     this.contentReadData = this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data.contentRead
-    && this.activatedRoute.snapshot.data.contentRead.data.result.content || {}
+    && this.activatedRoute.snapshot.data.contentRead.data?.result.content || {}
     if (contentData && contentData.result && contentData.result.content) {
       this.coursePrimaryCategory = contentData.result.content.courseCategory
       if (contentData.result.content.children && contentData.result.content.children.length) {
@@ -275,6 +321,8 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       }
     }
+    
+    
   }
 
   ngAfterViewChecked() {
@@ -362,6 +410,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updatePathSet(event: any) {
+    // console.log('event', event)
     if (event && event.pathSet) {
       this.pathSet = event.pathSet
     }
@@ -424,6 +473,36 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   navigateToBack() {
     this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
     window.history.back()
+  }
+
+  getPreEnrollmentResoureStateRead() {
+    let identifierArr:any = []
+    this.hierarchyData.map((item:any)=>{
+      identifierArr.push(item.identifier)
+    })
+    if(identifierArr && identifierArr.length) {
+      let req ={
+        "request": {
+          "contentIds": identifierArr,
+          "fields": [
+              // "lastAccessTime",
+              // "completionPercentage"
+          ]
+      }
+      } 
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        // console.log('read resources progress data', data)
+        if(data && data.result && data.result.contentList) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+            if(Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
+              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
+              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
+            }
+          }
+        }
+      })
+    }
+   
   }
 
  }

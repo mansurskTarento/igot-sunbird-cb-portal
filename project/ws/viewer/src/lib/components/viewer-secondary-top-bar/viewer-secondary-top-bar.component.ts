@@ -3,7 +3,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
-import { NsContent } from '@sunbird-cb/collection'
+import { NsContent, VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, NsPage, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { ViewerDataService } from '../../viewer-data.service'
@@ -161,9 +161,20 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe(data => {
+    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
       if (data.prevResource) {
-        this.prevResourceUrl = data.prevResource.viewerUrl
+        if(data.prevResource && !data.prevResource.viewerUrl) {
+          data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
+            data.prevResource.mimeType,
+            // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
+            // &collectionId=${this.viewerDataSvc.collectionId}&collectionType=${this.collectionType}
+            // &batchId=${this.batchId}&viewMode=${this.viewMode}`,
+          )}/${data.prevResource.identifier}`
+          this.prevResourceUrl = data.prevResource.viewerUrl
+        } else {
+          this.prevResourceUrl = data.prevResource.viewerUrl
+        }
+        
         this.prevResourceUrlParams = {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
@@ -184,7 +195,18 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         this.prevResourceUrl = null
       }
       if (data.nextResource) {
-        this.nextResourceUrl = data.nextResource.viewerUrl
+        if(data.nextResource && !data.nextResource.viewerUrl) {
+          data.nextResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
+            data.nextResource.mimeType,
+            // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
+            // &collectionId=${this.viewerDataSvc.collectionId}&collectionType=${this.collectionType}
+            // &batchId=${this.batchId}&viewMode=${this.viewMode}`,
+          )}/${data.nextResource.identifier}`
+          this.nextResourceUrl = data.nextResource.viewerUrl
+        } else {
+          this.nextResourceUrl = data.nextResource.viewerUrl
+        }
+        
         this.nextResourceUrlParams = {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
@@ -240,14 +262,17 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   updateProgress(status: number, resourceId: any) {
-
     const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
       this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
     const collectionId = (resData && resData.courseId) ? resData.courseId : ''
     const batchId = (resData && resData.batchId) ? resData.batchId : ''
-    if(collectionId && batchId && resourceId) {
-      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
+      
     }
+    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ngOnDestroy() {
@@ -470,4 +495,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
     }
   }
+
+  // updateProgressForPreAssessment(data:any) {
+  //   console.log('data--', data)
+  //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
+  // }
 }

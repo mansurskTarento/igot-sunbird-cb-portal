@@ -244,13 +244,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateProgress(status: number, resourceId: any) {
-      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
-        this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
-      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-      const batchId = (resData && resData.batchId) ? resData.batchId : ''
-    if(collectionId && batchId && resourceId) {
-      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
+      this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
+    const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+    const batchId = (resData && resData.batchId) ? resData.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
+      
     }
+    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {

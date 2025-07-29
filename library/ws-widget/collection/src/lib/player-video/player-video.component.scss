@@ -235,6 +235,12 @@
   font-weight: 700;
 }
 
+::ng-deep .video-js.vjs-paused .vjs-play-control {
+  margin: 0.5em !important;
+}
+::ng-deep .video-js.vjs-playing .vjs-play-control {
+  margin: 0.5em !important;
+}
 
 ::ng-deep .video-js .vjs-control {
   width: 4.25em;

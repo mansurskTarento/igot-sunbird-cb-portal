@@ -225,6 +225,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
   recommendedCoursesId = ''
   feedbackGiven: any
+  preAssessmentCompletionStatus = false
   fromAITutor = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
@@ -361,6 +362,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
+            console.log('this.contentReadData', this.contentReadData)
+            this.getPreAssessmentCompletionStatus()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
@@ -1808,6 +1811,12 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.route.snapshot.params.id : ''
     const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.route.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
+      
+    }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
@@ -2362,4 +2371,120 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
     this.fromAITutor = true
     this.handleAutoBatchAssign()
   }
+
+  generatePreAssessmentQuery(type: 'RESUME' | 'START_OVER' | 'START'): { [key: string]: string } {
+    if (this.firstResourceLink && (type === 'START' || type === 'START_OVER')) {
+      let qParams: { [key: string]: string } = {
+        ...this.firstResourceLink.queryParams,
+        viewMode: type,
+        batchId: this.getBatchId(),
+      }
+      if (this.contextId && this.contextPath) {
+        qParams = {
+          ...qParams,
+          collectionId: this.contextId,
+          collectionType: this.contextPath,
+        }
+      }
+      if (this.forPreview) {
+        delete qParams.viewMode
+      }
+      qParams = {
+        ...qParams,
+        channelId: this.channelId,
+      }
+      return qParams
+    }
+
+    if (this.resumeDataLink && type === 'RESUME') {
+      let qParams: { [key: string]: string } = {
+        ...this.resumeDataLink.queryParams,
+        batchId: this.getBatchId(),
+        viewMode: 'RESUME',
+        // courseName: this.content ? this.content.name : '',
+      }
+      if (this.contextId && this.contextPath) {
+        qParams = {
+          ...qParams,
+          collectionId: this.contextId,
+          collectionType: this.contextPath,
+        }
+      }
+      if (this.forPreview) {
+        delete qParams.viewMode
+      }
+      qParams = {
+        ...qParams,
+        channelId: this.channelId,
+      }
+      return qParams
+    }
+    if (this.forPreview) {
+      return {}
+    }
+    return {
+      batchId: this.getBatchId(),
+      viewMode: type,
+    }
+  }
+
+  routeToPreAssessent() {
+    if (this.contentReadData) { 
+      console.log('this.content',this.contentReadData)  
+      console.log('this.content', this.contentReadData.preEnrolmentResources) 
+      // this.generatePreAssessmentQuery('START')
+      let firstResource  = this.contentReadData.preEnrolmentResources[0]
+
+      this.firstResourceLink = viewerRouteGenerator(
+        firstResource.identifier,
+        firstResource.mimeType,
+        this.contentReadData?.identifier,
+        this.contentReadData?.courseCategory,
+        this.forPreview,
+        this.contentReadData.preEnrolmentResources[0]?.primaryCategory,
+        '',
+      )
+      console.log('this.firstResourceLink', this.firstResourceLink)
+      let routerLink =  this.firstResourceLink?.url  
+      let queryParams = this.generatePreAssessmentQuery('START')
+      queryParams = { ...queryParams,  preAssessment: 'true' }
+      this.router.navigate([`${routerLink}`], { queryParams })
+    }
+  }
+
+  getPreAssessmentCompletionStatus() {
+    this.preAssessmentCompletionStatus = false
+    let preEnrollmentResourcesArr:any = []
+    if(this.contentReadData?.preEnrolmentResources?.length) {
+      this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
+        if(item && item?.isMandatory) {
+          preEnrollmentResourcesArr.push(item?.identifier)
+        }
+      })
+    }
+    if(preEnrollmentResourcesArr && preEnrollmentResourcesArr.length) {
+      let req ={
+        "request": {
+          "contentIds": preEnrollmentResourcesArr,
+          "fields": [
+              // "lastAccessTime",
+              // "completionPercentage"
+          ]
+      }
+      } 
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        if(data && data.result && data.result.contentList) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+            if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
+              data.result.contentList[i]['status'] === 2 
+            ) {
+              this.preAssessmentCompletionStatus = true
+            }
+          }
+        }
+      })
+    }
+    
+  }
+
 }

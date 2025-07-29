@@ -36,7 +36,8 @@ const API_END_POINTS = {
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
   GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
   SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
-  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`
+  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
+  PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`
 }
 
 @Injectable()
@@ -843,6 +844,31 @@ export class AppTocService {
     }
   }
 
+  public createPreAssessmentHirarchyProgressHashmap(hierarchyData: NsContent.IContent) {
+    console.log('hierarchyData--', hierarchyData)
+    if (hierarchyData && hierarchyData.preEnrolmentResources) {
+      hierarchyData.preEnrolmentResources.forEach((child: NsContent.IContent) => {
+        if (child && child.preEnrolmentResources) {
+          this.createPreAssessmentHirarchyProgressHashmap(child)
+        }
+        let localMap = {}
+        localMap = {
+          parent: child.parent,
+          identifier: child.identifier,
+          leafNodesCount: child.leafNodesCount || null,
+          leafNodes: child.leafNodes || [],
+          completionPercentage: child.completionPercentage || child.progress,
+          completionStatus: child.completionStatus,
+          progress: child.progress,
+          primaryCategory: child.primaryCategory,
+          duration: child.duration || 0,
+          expectedDuration: child.expectedDuration || 0,
+        }
+        this.hashmap[child.identifier] = localMap
+      })
+    }
+  }
+
   public callHirarchyProgressHashmap(hierarchyData: NsContent.IContent | null) {
     if (hierarchyData) {
       this.hashmap[hierarchyData.identifier] = {
@@ -961,5 +987,10 @@ export class AppTocService {
 
   aiGetResourceVttFile(resourceID:any) {
     return this.http.get<any>(`${API_END_POINTS.AI_RESOURCE_VTT_FILE}?resource_id=${resourceID}`)
+  }
+
+  readPreEnrollmentResourcesState(req:any) {
+    return this.http
+      .post(`${API_END_POINTS.PRE_ENROLLMENT_STATE_READ}`, req)
   }
 }
