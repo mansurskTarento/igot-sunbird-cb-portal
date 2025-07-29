@@ -560,7 +560,6 @@ export class AppTocService {
   }
 
   async mapCompletionPercentageProgram(content: NsContent.IContent | null,  enrolmentList: any) {
-    debugger
     this.contentLoader.next(true)
     let totalCount = 0
     let leafnodeCount = 0
@@ -573,7 +572,6 @@ export class AppTocService {
       const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, content?.identifier)
       if (foundParentContent && foundParentContent.completionPercentage === 100) {
         await this.mapCompletionChildPercentageProgram(content)
-        console.log('if program is 100 persent complete', content)
         totalCount = content.leafNodesCount
       } else {
         if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
