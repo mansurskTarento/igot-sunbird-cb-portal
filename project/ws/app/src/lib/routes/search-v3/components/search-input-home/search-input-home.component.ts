@@ -426,9 +426,14 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         sort_by: {},
         query: nlpSearchQuery,
       }
-      this.searchV3Service.searchConnections(req).then(
-        // this.updateRecentSearchQuery(query)
-      ).catch()
+      this.searchV3Service.searchConnections(req)
+    .then(() => {
+      this.updateRecentSearchQuery(query);
+    })
+    .catch(error => {
+      // tslint:disable-next-line: align
+      console.error('something went wrong', error);
+    });
     }
 
     if (category && category === 'resources' && nlpSearchQuery) {
