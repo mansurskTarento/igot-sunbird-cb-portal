@@ -2137,7 +2137,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.contentViewEventForNetCore('complete');
           }
           this.dataTransferSvc.setEnrollData(this.userEnrollmentList);
-
+          // in case of back from player we need to check recent language and load
+          // if(this.baseContentReadData?.identifier === this.contentReadData?.identifier) {
+          //   let lang = this.baseContentReadData?.languages?.length ? this.baseContentReadData?.languages[0] : ''
+          //   let baseContentFromEnrollData = this.userEnrollmentList.find((el: any) => el.collectionId === this.baseContentReadData?.identifier)
+          //   if(lang && baseContentFromEnrollData && this.baseContentReadData?.recent_language?.toLowerCase() !== lang.langId){
+          // TODO: check if this is required
+          //   }
+          // }
           // Always call fetchContentHierarchy first
           return from(this.fetchContentHierarchy(this.contentReadData?.identifier || ''))
         } else {
@@ -2160,9 +2167,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     ).subscribe({
       next: () => {
         if (this.userEnrollmentList?.length && this.contentLibSvc?.oneStepResumeEnable) {
-          return from(this.handleOneStepResume());
+          this.handleOneStepResume();
+          this.checkIfUserEnrolled();
+        } else {
+          this.checkIfUserEnrolled();
         }
-        this.checkIfUserEnrolled();
       },
       error: (error) => {
         this.loggerSvc.error('Failed to fetch user enrollment data', error);
@@ -2175,11 +2184,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     });
   }
 
-  private async handleOneStepResume(): Promise<boolean> {
+  private async handleOneStepResume() {
     try {
       if (!this.content) {
         this.loggerSvc.error('Content not available for one-step resume');
-        return true;
+        
       }
       
       const foundContent = this.userEnrollmentList.find(
@@ -2188,7 +2197,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       
       if (!foundContent) {
         this.loggerSvc.warn('No matching enrolled content found for one-step resume');
-        return true;
+        
       }
       
       const urlData = await this.contentLibSvc.getResourseLink(
@@ -2201,12 +2210,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       
       if (!urlData) {
         this.loggerSvc.warn('No URL data returned for one-step resume');
-        return true;
+        
       }
       
       if (urlData?.url) {
         if (urlData.url.includes('app/toc')) {
-          return true; // Continue with normal flow
+          this.contentLibSvc.oneStepResumeEnable = false;
         } else {
           this.contentLibSvc.oneStepResumeEnable = false;
           // Use NgZone to ensure navigation works
@@ -2214,15 +2223,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.router.navigate(
               [urlData.url],
               { queryParams: urlData.queryParams })
-          return false; // Redirect handled, don't continue with normal flow
         }
       }
       
-      return true;
     } catch (error) {
       this.loggerSvc.error('Error in handleOneStepResume', error);
       this.contentLibSvc.oneStepResumeEnable = false;
-      return true; // Continue with normal flow despite error
     }
   }
   private fetchContentHierarchy(identifier: string): Promise<boolean> {
