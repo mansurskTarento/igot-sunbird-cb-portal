@@ -1584,6 +1584,11 @@
     <p *ngIf="data.cbpData.planDuration === acbpConstants?.SUCCESS && data?.cbpData?.contentStatus < 2"  class="cbp-success">{{data?.cbpData?.endDate | date: 'd MMM, y'}}</p>
     <p *ngIf="data.cbpData.planDuration === acbpConstants?.OVERDUE && data?.cbpData?.contentStatus < 2" class="cbp-danger">{{'cardcontentv2.overDue' | translate}}</p>
   </div>
+  <ng-container *ngIf="widgetData?.content?.isApar">
+    <div class="cbp-mark right-0 rounded-bottom">
+      <p class="cbp-success apar-flag">APAR</p>
+    </div>
+  </ng-container>
 </ng-template>
 
 <ng-template #cardResource>
@@ -1656,6 +1661,7 @@
                 cbpData: cbPlanMapData[widgetData?.content?.identifier]
               }}"></ng-container>
             </ng-container>
+  
             <div class="duration-box right-corner" *ngIf="widgetData?.content?.duration > 0">
               <mat-icon class="mat-icon main_icon mr-1">access_time</mat-icon>
               <span class=" ws-mat-white-text duration nodtranslate">
