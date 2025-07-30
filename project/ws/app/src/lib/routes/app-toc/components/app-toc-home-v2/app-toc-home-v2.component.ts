@@ -1496,7 +1496,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           // this.tocSvc.contentLoader.next(false)
         } else {
           let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes)
+          let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
           this.content['completionPercentage'] = enrolledCourse.completionPercentage
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
@@ -2486,7 +2487,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  private getContinueLearningData(contentId: string, batchId?: string,resourceIds?: string[]) {
+  private getContinueLearningData(contentId: string, batchId?: string,resourceIds?: string[], lang?: string) {
     this.tocSvc.contentLoader.next(true)
     this.resumeData = null
     let userId
@@ -2501,6 +2502,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         courseId: contentId || '',
         contentIds: resourceIds? resourceIds: [],
         fields: ['progressdetails'],
+        ...(lang ? { language: lang }: null),
       },
     }
     if (this.content && this.content.primaryCategory !== NsContent.EPrimaryCategory.RESOURCE) {

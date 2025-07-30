@@ -10,6 +10,7 @@ export namespace NsContent {
       contentIds: string[],
       batchId: string | undefined | null
       fields?: string[]
+      language?: string
     }
   }
 

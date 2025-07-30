@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ContentLanguageService } from '@sunbird-cb/consumption'
 import { Observable, of, EMPTY, BehaviorSubject } from 'rxjs'
 import { catchError, retry, map, shareReplay } from 'rxjs/operators'
 import { NsContentStripMultiple } from '../content-strip-multiple/content-strip-multiple.model'
@@ -68,6 +69,7 @@ export class WidgetContentService {
   constructor(
     private http: HttpClient,
     private configSvc: ConfigurationsService,
+    private contentLangSvc: ContentLanguageService ,
   ) {
   }
 
@@ -257,8 +259,10 @@ export class WidgetContentService {
   }
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
+    debugger
     req.request.fields = ['progressdetails']
     req.request.contentIds = req?.request?.contentIds && req?.request?.contentIds?.length ? req?.request?.contentIds : this.currentContentReadMetaData?.leafNodes || []
+    req.request["language"] =  req?.request?.language ? req?.request?.language : this.contentLangSvc.getContentLanguage(this.currentContentReadMetaData)
     if(req.request.courseId) {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
