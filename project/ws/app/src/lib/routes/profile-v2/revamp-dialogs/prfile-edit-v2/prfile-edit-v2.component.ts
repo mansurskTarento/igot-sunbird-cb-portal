@@ -552,6 +552,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       cadreName: [_.get(this.profileDetails, 'cadreName', ''), []],
       cadreBatch: [_.get(this.profileDetails, 'cadreBatch', ''), []],
       cadreControllingAuthorityName: [_.get(this.profileDetails, 'cadreControllingAuthorityName', ''), []],
+      isOnCentralDeputation: [_.get(this.profileDetails, 'isOnCentralDeputation', false), []],
     });
     this.civilServiceTypeId = _.get(this.profileDetails, 'civilServiceTypeId', '');
     this.civilServiceId = _.get(this.profileDetails, 'civilServiceId', '');
@@ -677,6 +678,22 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       return true;
     }
     return false
+  }
+
+  get showCentralDeputation(): boolean {
+    const civilServiceTypeControl = this.profileForm.get('civilServiceType');
+    const isCadreControl = this.profileForm.get('isCadre');
+    const cadreNameControl = this.profileForm.get('cadreName');
+    const cadreBatchControl = this.profileForm.get('cadreBatch');
+    if (
+      civilServiceTypeControl && civilServiceTypeControl.value === 'All India Services' &&
+      isCadreControl && !!isCadreControl.value &&
+      cadreNameControl && !!cadreNameControl.value &&
+      cadreBatchControl && !!cadreBatchControl.value
+    ) {
+      return true;
+    }
+    return false;
   }
 
   valueCahngeMethosdsForOtherDetails(): void {
@@ -1023,7 +1040,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
     const serviceNameControl = this.profileForm.get('civilServiceName');
     const isCadreControl = this.profileForm.get('isCadre');
-    const cadreBatchControl = this.profileForm.get('cadreBatch');
+    const cadreBatchControl = this.profileForm.get('cadreBatch')
+    const isOnCentralDeputationControl = this.profileForm.get('isOnCentralDeputation');
     if (typeOfCivilServiceControl && serviceNameControl && isCadreControl && cadreBatchControl) {
       if ((
         typeOfCivilServiceControl.value &&
@@ -1034,6 +1052,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         formBody['civilServiceId'] = this.civilServiceId || '';
         formBody['cadreId'] = this.cadreId || '';
         formBody['cadreControllingAuthorityName'] = this.cadreControllingAuthority || '';
+        formBody['isOnCentralDeputation'] = isOnCentralDeputationControl?.value || false;
       } else {
         formBody['civilServiceType'] = '';
         formBody['civilServiceName'] = '';
@@ -1044,6 +1063,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         formBody['civilServiceId'] = '';
         formBody['cadreControllingAuthorityName'] = '';
         formBody['cadreBatch'] = '';
+        formBody['isOnCentralDeputation'] = false;
+
       }
     }
     this.dialogRef.close(formBody);
