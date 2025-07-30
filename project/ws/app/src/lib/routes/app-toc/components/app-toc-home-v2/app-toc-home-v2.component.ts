@@ -1655,8 +1655,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if(this.firstResourceLink) {
         this.router.navigate([this.firstResourceLink.url],{queryParams: this.firstResourceLink.queryParams} )
       }
-      
-     // this.getContinueLearningData(this.content.identifier)
     }
     
   }
@@ -2001,18 +1999,18 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     if (this.forPreview) {
       await this.loadContentForPreview();
     } else {
-      // If we're working with multilingual content, make sure to fetch its hierarchy
-      if (this.queryParamsData.mlId && this.contentReadData && 
-          this.contentReadData.identifier === this.queryParamsData.mlId) {
-        // Fetch content hierarchy for the multilingual content
-        try {
-          await this.fetchContentHierarchy(this.contentReadData.identifier);
-          // After fetching hierarchy, update UI components
-          this.getLearningUrls();
-        } catch (error) {
-          this.loggerSvc.error('Error fetching hierarchy for multilingual content:', error);
-        }
-      }
+      // // If we're working with multilingual content, make sure to fetch its hierarchy
+      // if (this.queryParamsData.mlId && this.contentReadData && 
+      //     this.contentReadData.identifier === this.queryParamsData.mlId) {
+      //   // Fetch content hierarchy for the multilingual content
+      //   try {
+      //     await this.fetchContentHierarchy(this.contentReadData.identifier);
+      //     // After fetching hierarchy, update UI components
+      //     this.getLearningUrls();
+      //   } catch (error) {
+      //     this.loggerSvc.error('Error fetching hierarchy for multilingual content:', error);
+      //   }
+      // }
       
       // Continue with regular enrollment flow
       this.fetchUserEnrollmentDataV2();
@@ -2138,19 +2136,22 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           }
           this.dataTransferSvc.setEnrollData(this.userEnrollmentList);
           // in case of back from player we need to check recent language and load
-          // if(this.baseContentReadData?.identifier === this.contentReadData?.identifier) {
-          //   let lang = this.baseContentReadData?.languages?.length ? this.baseContentReadData?.languages[0] : ''
-          //   let baseContentFromEnrollData = this.userEnrollmentList.find((el: any) => el.collectionId === this.baseContentReadData?.identifier)
-          //   if(lang && baseContentFromEnrollData && this.baseContentReadData?.recent_language?.toLowerCase() !== lang.langId){
-          // TODO: check if this is required
-          //   }
-          // }
-          // Always call fetchContentHierarchy first
-          return from(this.fetchContentHierarchy(this.contentReadData?.identifier || ''))
+          if(!this.contentLibSvc?.oneStepResumeEnable &&this.baseContentReadData?.identifier === this.contentReadData?.identifier) {
+            let lang = this.baseContentReadData?.language.length ? this.baseContentReadData?.language[0] : ''
+            let baseContentFromEnrollData = this.userEnrollmentList.find((el: any) => el.collectionId === this.baseContentReadData?.identifier)
+            if(lang && baseContentFromEnrollData && baseContentFromEnrollData?.recent_language?.toLowerCase() !== lang){
+              this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, baseContentFromEnrollData?.recent_language))
+            }
+            return of(false)
+          } else {
+             // Always call fetchContentHierarchy first
+            return from(this.fetchContentHierarchy(this.contentReadData?.identifier || ''))
+          }
+
         } else {
           this.userEnrollmentList = [];
           // Check if we have content ID from either content or contentReadData
-          const contentId = this.contentReadData?.identifier || this.content?.identifier || '';
+          const contentId = this.contentReadData?.identifier || this.baseContentReadData?.identifier || '';
           if (!contentId) {
             this.loggerSvc.error('Cannot fetch hierarchy: content identifier is missing');
             return of(false);
@@ -2360,9 +2361,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           // Both operations were successful
           // Update UI as needed with new content
           this.routerChangeHandler(true)
-          let leafNodes = this.content?.leafNodes || []
           if(this.userEnrollmentList && this.userEnrollmentList.length) {
-            this.getContinueLearningData(this.getBaseContentIdentifier,this.getBatchId(),leafNodes)
             this.generateResumeDataLinkNew();
           }
           if (this.content) {
