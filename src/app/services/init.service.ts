@@ -1044,13 +1044,13 @@ export class InitService {
   async netCoreUserLoginSetup() {
     /* tslint:disable */
     localStorage.setItem('netCoreUserSetup', 'true')
-    console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)  
+    // console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)  
     let userEnrollmentCount:any = await localStorage.getItem('userEnrollmentCount')
     if(userEnrollmentCount) {
       userEnrollmentCount = JSON.parse(userEnrollmentCount)
     }
     /* tslint:disable */
-    console.log('userEnrollmentCount', userEnrollmentCount)
+    // console.log('userEnrollmentCount', userEnrollmentCount)
     /* tslint:enable */
     const userInfoPayload:any = {}
     userInfoPayload['TOTAL_EXPERIENCE'] = ''
@@ -1111,7 +1111,7 @@ export class InitService {
       }         
     }
     /* tslint:disable */
-    console.log('userInfoPayload', userInfoPayload)
+    // console.log('userInfoPayload', userInfoPayload)
     if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
       && this.configSvc.netcoreConfig.netcoreWebConfig.isActive) {
       this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
