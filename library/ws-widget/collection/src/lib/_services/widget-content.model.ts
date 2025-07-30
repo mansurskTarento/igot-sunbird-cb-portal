@@ -214,7 +214,9 @@ export namespace NsContent {
     issuedCertificates: []
     lastContentAccessTime?: string
     lastReadContentId?: string
-    lastReadContentStatus: string | null
+    lastReadContentStatus: string | null,
+    lrcProgressDetails: any,
+    recent_language: string
     leafNodesCount: number
     progress: number
     status: number
