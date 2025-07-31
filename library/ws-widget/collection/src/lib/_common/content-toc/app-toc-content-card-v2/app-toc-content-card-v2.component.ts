@@ -11,6 +11,7 @@ import moment from 'moment'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { Subscription } from 'rxjs'
+import { ContentLanguageService } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-widget-app-toc-content-card-v2',
@@ -42,6 +43,7 @@ export class AppTocContentCardV2Component implements OnInit {
   @Input() hierarchyMapData: any = {}
   @Input() batchData: /**NsContent.IBatchListResponse */ any | null = null
   @Input() isPreAssessment = false
+  @Input() baseContentReadData: NsContent.IContent | null = null
   hasContentStructure = false
   downloadCertificateLoading = false
   enumContentTypes = NsContent.EDisplayContentTypes
@@ -74,7 +76,8 @@ export class AppTocContentCardV2Component implements OnInit {
     private dialog: MatDialog,
     private renderer: Renderer2,
     private certificateService: CertificateService,
-    private appTocSvc: AppTocService
+    private appTocSvc: AppTocService,
+    private contentLangSvc: ContentLanguageService,
   ) { }
 
   ngOnInit() {
@@ -210,14 +213,17 @@ export class AppTocContentCardV2Component implements OnInit {
       } else {
         mimeType = this.content.mimeType
       }
+      let selectedLanguage = this.contentLangSvc.getSelectedLanguage(this.content)
       let url = viewerRouteGenerator(
-        this.content.identifier,
+       this.content.identifier,
         mimeType,
-        this.rootId,
-        this.rootContentType,
+        this.baseContentReadData?.identifier || this.rootId,
+        this.baseContentReadData?.contentType || this.rootContentType,
         this.forPreview,
         this.content.primaryCategory,
-        this.batchId
+        this.batchId,
+        (selectedLanguage? selectedLanguage.langId : null),
+        (selectedLanguage? selectedLanguage.identifier : null),
       )
       /* tslint:disable-next-line */
       // console.log(this.content.identifier, '------', url,'=====> content card url link <========')
