@@ -201,6 +201,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   connectionStatus = 'Connect'
   isMobile = false;
+  showProfileSection = true;
+  blockedMessage = '';
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
   //#endregion
@@ -328,7 +330,31 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getConnectionStatus() {
     this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
+      this.setProfileVisibilityStatus()
     })
+  }
+
+  setProfileVisibilityStatus() {
+    const privacyStatus = _.get(this.profileData, 'privacyStatus', 'public')
+    let blockedMessage = ''
+    if(this.connectionStatus === 'Blocked Incoming' || this.connectionStatus === 'Blocked Outgoing') {
+      this.showProfileSection = false;
+      blockedMessage = this.connectionStatus === 'Blocked Outgoing' ? 'youBlockedThisProfile' : 'youAreNotAuthorisedToSeeThisProfile'
+    } else {
+      if (privacyStatus === 'private') {
+        this.showProfileSection = false;
+        blockedMessage = 'thisProfileIsLocked'
+      } else if (privacyStatus === 'connections' && this.connectionStatus !== 'Approved') {
+        this.showProfileSection = false;
+        blockedMessage = 'thisProfileIsLocked'
+      } else {
+        this.showProfileSection = true;
+      }
+    }
+
+    if(blockedMessage) {
+      this.blockedMessage = this.handleTranslateTo(blockedMessage)
+    }
   }
 
   patchProfileDetails() {
