@@ -757,12 +757,8 @@
               </div>
               <span class="org-text">{{'cardcontentv2.by' | translate}} {{ (widgetData.content.organisation && widgetData.content.organisation[0]) ? widgetData.content.organisation[0] : 'Karmayogi Bharat' }}</span>
             </div>
-            <div class="flex language-text-box" *ngIf="languageList?.length > 1">
-              <mat-icon class="language_icon">language</mat-icon>
-              <a class="language-text" (click)="openLanguageDialog($event)">
-                Available in {{ languageList.length }} languages
-              </a>
-             <mat-icon class="language_icon color_blue">keyboard_arrow_right</mat-icon>
+            <div class="mt-2">
+              <sb-uic-available-languages [content]="widgetData?.content"></sb-uic-available-languages>
             </div>
             <div class="flex flex-middle rating-session margin-top-m">
               <div class="flex flex-middle" *ngIf="widgetData?.content?.avgRating">

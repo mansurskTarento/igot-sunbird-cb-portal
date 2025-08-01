@@ -136,19 +136,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     } else {
       this.enableTranscriptionFlag = false
     }
-    if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
-      this.config = this.route.snapshot.data.pageData.data
-    }
-    if (this.config && this.config.discussWidgetData) {
-      this.discussWidgetData = this.config.discussWidgetData
-      if (this.baseContentReadData && this.baseContentReadData.identifier) {
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
-        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.baseContentReadData.identifier
-        }
-      }
-      this.discussWidgetData = { ...this.discussWidgetData }
-    }
+
     const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
     if (batchId) {
@@ -200,6 +188,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    debugger
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
@@ -226,15 +215,19 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (changes.changeTab && changes.changeTab.currentValue && !this.fromAISelectedTabIndex ) {
       this.selectedTabIndex = 1
     }
+    if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
+      this.config = this.route.snapshot.data.pageData.data
+    }
     if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
-      if (this.content && this.content.identifier) {
+      if (this.baseContentReadData && this.baseContentReadData.identifier) {
         // console.log('this.content.identifier', this.content.identifier)
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.content.identifier
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.content.identifier
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.baseContentReadData.identifier
         }
       }
+      
       if(this.isEnrolled) {
         this.discussWidgetData.enrolledContent = true
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'

@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { ContentLanguageService, WidgetContentLibService, TOCMultiLingualDialogComponent } from '@sunbird-cb/consumption'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
@@ -47,7 +47,6 @@ export class CardContentV2Component extends WidgetBaseComponent
   sourceLogos: NsInstanceConfig.ISourceLogo[] | undefined
   
   isIntranetAllowedSettings = false
-  languageList: any[] = []
   constructor(
     private dialog: MatDialog,
     private events: EventService,
@@ -60,7 +59,6 @@ export class CardContentV2Component extends WidgetBaseComponent
     private contSvc: WidgetContentLibService,
     private router: Router,
     private route: ActivatedRoute,
-    private contentLangSvc: ContentLanguageService
 
   ) {
     super()
@@ -92,7 +90,6 @@ export class CardContentV2Component extends WidgetBaseComponent
         this.widgetData.content.linkUrl = '/app/curatedCollections/'+ this.widgetData.content.identifier
       }
       if(this.widgetData && this.widgetData.content) {
-        this.languageList = [...this.contentLangSvc.getAllContentLanguages(this.widgetData.content)],
         this.btnPlaylistConfig = {
           contentId: this.widgetData.content.identifier,
           contentName: this.widgetData.content.name,
@@ -246,19 +243,6 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
   }
   
-  openLanguageDialog(event: any): void {
-    event.stopPropagation()
-    this.dialog.open(TOCMultiLingualDialogComponent, {
-      width: '470px',
-      data: {
-        title: ' ',
-        from: 'availableLanguages',
-        acceptButton: '',
-        languageList: this.languageList
-
-      } // optional, if you need to pass data
-    });
-  }
 
   private modifySensibleContentRating() {
     if (this.widgetData.content)
