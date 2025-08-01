@@ -72,8 +72,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
     this.appTocSvc.getFormById(this.surveyId).subscribe((result: any) => {
       this.addLoader = this.addLoader - 1
       this.formDetails = {
-        title: _.get(result, 'responseData.title', ''),
-        fields: _.get(result, 'responseData.fields', [])
+        title: _.get(result, 'result.response.title', ''),
+        fields: _.get(result, 'result.response.fields', [])
       }
       this.buildForm()
     }, (error: HttpErrorResponse) => {
@@ -116,7 +116,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
               questionIndex: [questionsArray.length],
               fieldType: [field.fieldType],
               answer: ['', validatorsArray],
-              isNA: [false]
+              isNA: [false],
+              questionId: [field.id]
             })
             field['controlIndex'] = questionsArray.length
             field['validatorsArray'] = validatorsArray
@@ -182,23 +183,10 @@ export class EnrollQuestionnaireComponent implements OnInit {
     if (this.surveyFormIsValid) {
       const formBody: any = {
         formId: this.surveyId,
-        formData: '',
-        timestamp: Date.now(),
         version: 4,
-        dataObject: this.dataObject,
+        status: 'SUBMITTED',
+        responses: this.dataObject,
 
-      }
-
-      if (this.childFields.length) {
-        formBody['meta'] = [
-          {
-            key: '',
-            value: ''
-          }
-        ],
-          formBody['infoObject'] = {
-            '': ''
-          }
       }
 
       this.addLoader = this.addLoader + 1
@@ -223,10 +211,7 @@ export class EnrollQuestionnaireComponent implements OnInit {
   }
 
   get dataObject(): any {
-    const dataObject: any = {
-      'Course ID and Name': `${this.data.courseId},${this.data.courseName}`
-    }
-
+    const dataObject: any = []
     const fields = _.get(this.surveyForm, 'value.fields', [])
     if (fields) {
       fields.forEach((field: any) => {
@@ -237,10 +222,12 @@ export class EnrollQuestionnaireComponent implements OnInit {
           const formattedDay = String(value.getDate()).padStart(2, '0')
           value = `${formattedYear}-${formattedMonth}-${formattedDay}`
         }
-        // dataObject[field.question] = field.fieldType === 'date' ? this.datePipe.transform(value, 'yyyy/MM/dd') : value
-        if(!field.isNA) {
-          dataObject[field.question] = value
-        }
+        dataObject.push({
+          questionId: field.questionId,
+          question: field.question,
+          answer: value,
+          answerType: field.fieldType
+        })
       })
     }
     return dataObject

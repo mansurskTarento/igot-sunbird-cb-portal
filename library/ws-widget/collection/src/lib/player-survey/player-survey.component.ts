@@ -145,8 +145,8 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
     this.viewerSvc.getFormById(this.surveyId).subscribe((result: any) => {
       this.addLoader = this.addLoader - 1
       this.formDetails = {
-        title: _.get(result, 'responseData.title', ''),
-        fields: _.get(result, 'responseData.fields', [])
+        title: _.get(result, 'result.response.title', ''),
+        fields: _.get(result, 'result.response.fields', [])
       }
       this.buildForm()
     }, (error: HttpErrorResponse) => {
@@ -189,7 +189,8 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
               questionIndex: [questionsArray.length],
               fieldType: [field.fieldType],
               answer: ['', validatorsArray],
-              isNA: [false]
+              isNA: [false],
+              questionId: [field.id]
             })
             field['controlIndex'] = questionsArray.length
             field['validatorsArray'] = validatorsArray
@@ -251,23 +252,10 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
     if (this.surveyFormIsValid) {
       const formBody: any = {
         formId: this.surveyId,
-        formData: '',
-        timestamp: Date.now(),
         version: 4,
-        dataObject: this.dataObject,
+        status: 'SUBMITTED',
+        responses: this.dataObject,
 
-      }
-
-      if (this.childFields.length) {
-        formBody['meta'] = [
-          {
-            key: '',
-            value: ''
-          }
-        ],
-          formBody['infoObject'] = {
-            '': ''
-          }
       }
 
       this.addLoader = this.addLoader + 1
@@ -293,28 +281,27 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   }
 
   get dataObject(): any {
-    const dataObject: any = {
-      // 'Course ID and Name': `${this.data.courseId},${this.data.courseName}`
-      'Course ID and Name': `do_1143060351609569281194,Mechanical Systems Design`
+      const dataObject: any = []
+      const fields = _.get(this.surveyForm, 'value.fields', [])
+      if (fields) {
+        fields.forEach((field: any) => {
+          let value = field.isNA ? 'N/A' : field.answer
+          if (!field.isNA && field.fieldType === 'date' && value) {
+            const formattedYear = value.getFullYear()
+            const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
+            const formattedDay = String(value.getDate()).padStart(2, '0')
+            value = `${formattedYear}-${formattedMonth}-${formattedDay}`
+          }
+          dataObject.push({
+            questionId: field.questionId,
+            question: field.question,
+            answer: value,
+            answerType: field.fieldType
+          })
+        })
+      }
+      return dataObject
     }
-
-    const fields = _.get(this.surveyForm, 'value.fields', [])
-    if (fields) {
-      fields.forEach((field: any) => {
-        let value = field.isNA ? 'N/A' : field.answer
-        if (!field.isNA && field.fieldType === 'date' && value) {
-          const formattedYear = value.getFullYear()
-          const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
-          const formattedDay = String(value.getDate()).padStart(2, '0')
-          value = `${formattedYear}-${formattedMonth}-${formattedDay}`
-        }
-        if(!field.isNA) {
-          dataObject[field.question] = value
-        }
-      })
-    }
-    return dataObject
-  }
 
   updateQuestionValues(event: any) {
     this.questionsArray.value[event.questionIndex] = event
