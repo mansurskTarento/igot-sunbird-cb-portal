@@ -96,6 +96,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() kparray: any
   @Input() content: NsContent.IContent | null = null
   @Input() contentReadData: NsContent.IContent | null = null
+  @Input() baseContentReadData: NsContent.IContent | null = null
   @Input() skeletonLoader = false
   @Input() sticky = false
   @Input() tocStructure: any
@@ -218,15 +219,15 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       this.disableCertificate = true
     }
 
-    if (this.content?.sectorDetails_v1) {
+    if (this.baseContentReadData?.sectorDetails_v1) {
       // Parse string to array if needed
-      let sectorDetailsArray = this.content.sectorDetails_v1
+      let sectorDetailsArray = this.baseContentReadData.sectorDetails_v1
  
       // If it's a string, try to parse it into an array
       if (typeof sectorDetailsArray === 'string') {
         try {
           sectorDetailsArray = JSON.parse(sectorDetailsArray)
-          this.content.sectorDetails_v1 = sectorDetailsArray
+          this.baseContentReadData.sectorDetails_v1 = sectorDetailsArray
         } catch (e) {
           console.error('Error parsing sectorDetails_v1:', e)
           sectorDetailsArray = []
@@ -430,13 +431,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   loadCompetencies(): void {
-    if (this.contentReadData && this.contentReadData[this.compentencyKey.vKey] && this.contentReadData[this.compentencyKey.vKey].length) {
+    if (this.baseContentReadData && this.baseContentReadData[this.compentencyKey.vKey] && this.baseContentReadData[this.compentencyKey.vKey].length) {
       const competenciesObject: any = {}
-      if (typeof this.contentReadData[this.compentencyKey.vKey] === 'string'
-        && this.checkValidJSON(this.contentReadData[this.compentencyKey.vKey])) {
-        this.contentReadData[this.compentencyKey.vKey] = JSON.parse(this.contentReadData[this.compentencyKey.vKey])
+      if (typeof this.baseContentReadData[this.compentencyKey.vKey] === 'string'
+        && this.checkValidJSON(this.baseContentReadData[this.compentencyKey.vKey])) {
+        this.baseContentReadData[this.compentencyKey.vKey] = JSON.parse(this.baseContentReadData[this.compentencyKey.vKey])
       }
-      this.contentReadData[this.compentencyKey.vKey].forEach((_obj: any) => {
+      this.baseContentReadData[this.compentencyKey.vKey].forEach((_obj: any) => {
         if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
           if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
             [_obj[this.compentencyKey.vCompetencyTheme]]) {
@@ -895,16 +896,16 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.subSectorDetailArr = []
     this.selectedSector = ''
     this.selectedSectorId = ''
-    if(this.content) {
-      for(let i=0; i<this.content.sectorDetails_v1.length;i++) {
-        if(this.content.sectorDetails_v1[i]['sectorId'] === item.sectorId) {
-          if(this.content.sectorDetails_v1[i]['subSectorName']) {
+    if(this.baseContentReadData) {
+      for(let i=0; i<this.baseContentReadData.sectorDetails_v1.length;i++) {
+        if(this.baseContentReadData.sectorDetails_v1[i]['sectorId'] === item.sectorId) {
+          if(this.baseContentReadData.sectorDetails_v1[i]['subSectorName']) {
             let obj = {}
             obj = {
-              'sectorId': this.content.sectorDetails_v1[i]['sectorId'],
-              'sectorName': this.content.sectorDetails_v1[i]['sectorName'],
-              'key': this.content.sectorDetails_v1[i]['subSectorName'],
-              'value':[this.content.sectorDetails_v1[i]['subSectorName']] 
+              'sectorId': this.baseContentReadData.sectorDetails_v1[i]['sectorId'],
+              'sectorName': this.baseContentReadData.sectorDetails_v1[i]['sectorName'],
+              'key': this.baseContentReadData.sectorDetails_v1[i]['subSectorName'],
+              'value':[this.baseContentReadData.sectorDetails_v1[i]['subSectorName']] 
             }
             this.subSectorDetailArr.push(obj)
           }         
@@ -924,7 +925,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           subSectorArray.push(_tempObj)
         }
       }
-      console.log('this.content.sectorDetails_v1', this.content.sectorDetails_v1)
+      console.log('this.content.sectorDetails_v1', this.baseContentReadData.sectorDetails_v1)
       console.log('this.subSectorDetailArr', this.subSectorDetailArr)
      this.strip['sectorWidgets'] = this.transformCompetenciesToWidget('Behavioural', this.subSectorDetailArr, this.strip)
     }

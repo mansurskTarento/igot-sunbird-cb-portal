@@ -138,12 +138,8 @@
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
 
-                <div class="flex language-text-box" *ngIf="languageList?.length > 1">
-                    <mat-icon class="language_icon">language</mat-icon>
-                    <a class="language-text" (click)="openLanguageDialog($event)">
-                      Available in {{ languageList.length }} languages
-                    </a>
-                   <mat-icon class="language_icon color_blue">keyboard_arrow_right</mat-icon>
+                <div class="mt-2">
+                    <sb-uic-available-languages [content]="content"></sb-uic-available-languages>
                 </div>
 
                 <div class="course-stats flex items-center gap-4 flex-wrap">

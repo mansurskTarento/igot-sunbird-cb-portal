@@ -18,7 +18,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component';
 import { CertificateService } from '../../../certificate/services/certificate.service';
 import { Router } from '@angular/router';
-import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption';
+import { WidgetContentLibService } from '@sunbird-cb/consumption';
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 const NEW_CONTENT_THRESHOLD_DAYS = 14;
@@ -40,7 +40,6 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   courseEnrollment: any;
   downloadCertificateLoading = false;
   isIgot = false;
-  languageList: any[] = []
   constructor(
     private configSvc: ConfigurationsService,
     private dialog: MatDialog,
@@ -48,13 +47,11 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private certificateService: CertificateService,
     private router: Router,
     private contSvc: WidgetContentLibService,
-    private contentLangSvc: ContentLanguageService
   ) {}
 
   ngOnInit(): void {
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey];
-    this.languageList = [...this.contentLangSvc.getAllContentLanguages(this.content)]
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -32,7 +32,7 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-import { TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
+import { TOCMultiLingualDialogModule, CardsModule } from '@sunbird-cb/consumption'
 @NgModule({
     declarations: [CardContentV2Component],
     imports: [
@@ -71,6 +71,7 @@ import { TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
         SkeletonLoaderModule,
         MatProgressSpinnerModule,
         TOCMultiLingualDialogModule,
+        CardsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
