@@ -397,22 +397,23 @@ export class InsightSideBarComponent implements OnInit {
   }
 
   getPendingRequestData() {
-    this.homePageSvc.getRecentRequests().subscribe(
-      (res: any) => {
-        this.pendingRequestSkeleton = false
-        this.pendingRequestData = res.result.data && res.result.data.map((elem: any) => {
-          elem.fullName = elem.fullName.charAt(0).toUpperCase() + elem.fullName.slice(1)
-          return elem
-        })
-        // tslint:disable-next-line: align
-      }, (error: HttpErrorResponse) => {
-        // tslint:disable-next-line: align
-        if (!error.ok) {
-          // tslint:disable-next-line: align
-          this.pendingRequestSkeleton = false
-        }
-      }
-    )
+    this.pendingRequestSkeleton = false
+    // this.homePageSvc.getRecentRequests().subscribe(
+    //   (res: any) => {
+    //     this.pendingRequestSkeleton = false
+    //     this.pendingRequestData = res.result.data && res.result.data.map((elem: any) => {
+    //       elem.fullName = elem.fullName.charAt(0).toUpperCase() + elem.fullName.slice(1)
+    //       return elem
+    //     })
+    //     // tslint:disable-next-line: align
+    //   }, (error: HttpErrorResponse) => {
+    //     // tslint:disable-next-line: align
+    //     if (!error.ok) {
+    //       // tslint:disable-next-line: align
+    //       this.pendingRequestSkeleton = false
+    //     }
+    //   }
+    // )
   }
 
   navigateTo() {
