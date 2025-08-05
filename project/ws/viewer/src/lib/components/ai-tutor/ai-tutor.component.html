@@ -434,17 +434,17 @@
               </div> -->
             </div>
           </ng-container>
-          <div class="feefback-section flex flex-row">
-            <div  (click)="sharePositiveContentRating(item,i, ci)" class="cursor-pointer feedback-icon mt-1" 
+          <div class=" flex flex-row ml-10" *ngIf="chat?.answer && !(chat?.result?.length)">
+            <div  (click)="sharePositiveContentRatingForAnswer(chat,i)" class="cursor-pointer feedback-icon mt-1" 
             >
-              <img [ngClass]="'rotate-180'" *ngIf="item?.feedback !== 'up' && !item?.showLoaderForUp" src="/assets/ai-tutor/down.svg">
-              <img *ngIf="item?.feedback === 'up'  && !item?.showLoaderForUp" src="/assets/ai-tutor/up.svg">
-              <img *ngIf="item?.showLoaderForUp" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
+              <img [ngClass]="'rotate-180'" *ngIf="chat?.feedback !== 'up' && !chat?.showLoaderForUp" src="/assets/ai-tutor/down.svg">
+              <img *ngIf="chat?.feedback === 'up'  && !chat?.showLoaderForUp" src="/assets/ai-tutor/up.svg">
+              <img *ngIf="chat?.showLoaderForUp" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
             </div>
-            <div (click)="openAIFeedbackPopup(item,i, ci)" class="ml-2 cursor-pointer feedback-icon mt-1">
-              <img *ngIf="item?.feedback !== 'down' && !item?.showLoaderForDown" src="/assets/ai-tutor/down.svg"> 
-              <img *ngIf="item?.feedback === 'down'  && !item?.showLoaderForDown" src="/assets/ai-tutor/fill-down.svg"> 
-              <img *ngIf="item?.showLoaderForDown" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
+            <div (click)="openAIFeedbackPopupForAnswer(chat,i)" class="ml-2 cursor-pointer feedback-icon mt-1">
+              <img *ngIf="chat?.feedback !== 'down' && !chat?.showLoaderForDown" src="/assets/ai-tutor/down.svg"> 
+              <img *ngIf="chat?.feedback === 'down'  && !chat?.showLoaderForDown" src="/assets/ai-tutor/fill-down.svg"> 
+              <img *ngIf="chat?.showLoaderForDown" class="blue-loader-animation" height="18" width="18" src="/assets/ai-tutor/blue-loader.png">
             </div>
           </div> 
           <div class="flex flex-row font-12 mt-1 mb-1 ai-generated-content-container" *ngIf="chat?.result?.length">

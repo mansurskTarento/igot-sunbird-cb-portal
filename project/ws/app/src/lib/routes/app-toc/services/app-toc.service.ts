@@ -560,7 +560,6 @@ export class AppTocService {
   }
 
   async mapCompletionPercentageProgram(content: NsContent.IContent | null,  enrolmentList: any) {
-    debugger
     this.contentLoader.next(true)
     let totalCount = 0
     let leafnodeCount = 0

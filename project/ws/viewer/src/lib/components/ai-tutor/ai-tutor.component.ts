@@ -639,6 +639,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     this.messageSubscription = this.websocketService
       .getMessages()
       .subscribe((message: string) => {
+      
        // this.messages.push(message);
        this.aiTutorResult = message
        this.resultFetch = true
@@ -668,6 +669,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
 
     //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
    // let arr:any = []
+   console.log('this.aiTutorResult--',this.aiTutorResult)
    if(this.aiTutorResult && !this.aiTutorResult.answer && !this.aiTutorResult.retrievedChunks) {
     this.aiTutorResult.retrievedChunks = []
    }
@@ -713,7 +715,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
  
     let shortAnswer =  this.splitParagraphByWords(answer)
    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
-    this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet: (!(this.aiTutorResult.answer) && !(this.aiTutorResult.retrievedChunks)) ? true : false})
+    this.aiTutorResultArr.push({ query: this.aiTutorResult.query, query_id: this.aiTutorResult.query_id,clientId: this.aiTutorResult.clientId, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet: (!(this.aiTutorResult.answer) && !(this.aiTutorResult.retrievedChunks)) ? true : false})
     this.aiTutorResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
@@ -911,10 +913,12 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   sharePositiveContentRating(item:any, index:any, cindex:any) {
     let requestBody:any = {
       "query_id": item?.query_id,
-      // "response": item?.description,
+      "response":  this.aiTutorResultArr[index]['answer'],
       "comments": "",
       "is_liked":true,
-      "rating": "5"
+      "rating": "5",
+      "identifier":this.content,
+      "query": item.query
 
    }
    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
@@ -980,10 +984,12 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
 
     let requestBody:any = {
       "query_id": item?.query_id,
-      // "response": item?.description,
+      "response": this.aiTutorResultArr[index]['answer'],
       "comments": result,
       "is_liked":false,
-      "rating": "0"
+      "rating": "0",
+      "identifier":this.content,
+      "query": item.query
 
    }
    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
@@ -1010,6 +1016,122 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
           if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
             this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
           this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
+        }
+        this.matSnackBarNew.open(
+          'Something is wrong. Please try again later.', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
+     })
+  }
+
+
+  sharePositiveContentRatingForAnswer(item:any, index:any) {
+    let requestBody:any = {
+      "query_id": item.query_id,
+      "response": item.answer,
+      "comments": "",
+      "is_liked":true,
+      "rating": "5",
+      "identifier":this.content,
+      "query": item.query
+
+   }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+      this.aiTutorResultArr[index]['showLoader'] = true
+      this.aiTutorResultArr[index]['showLoaderForUp'] = true
+   }
+   //this.matSnackBar.open('Unable to fetch content data, due to some error!')
+   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
+    if(data && data.status === 'success') {
+      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+        if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+          this.aiTutorResultArr[index]['feedback'] = 'up'
+          this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForUp'] = false
+      }
+      this.matSnackBarNew.open(
+        'Thank you for your feedback.', 'X',
+        { duration: 5000, panelClass: ['success'] }
+      );
+    } else {
+      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+        if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+          this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForUp'] = false
+      }
+      this.matSnackBarNew.open(
+        'Something is wrong. Please try again later.', 'X',
+        { duration: 5000, panelClass: ['error'] }
+      );
+    }
+
+  })
+  }
+
+  openAIFeedbackPopupForAnswer(item:any, index:any) {
+    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+      if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['feedback'] !== 'down') {
+        const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
+          disableClose: true,
+          width: '502px',
+          panelClass: ['relevent-feedback-dialog'],
+        })
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result) {
+            this.shareAIForAnswerFeedback(item, result, index);
+            dialogRef.close();
+          } else {
+            dialogRef.close();
+          }
+        })
+      } else {
+        this.matSnackBarNew.open(
+          'You have already submitted feedback', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        );
+      }
+    }
+
+  }
+
+  shareAIForAnswerFeedback(item:any, result:any, index:any) {
+
+    let requestBody:any = {
+      "query_id": item.query_id,
+      "response": item?.answer,
+      "comments": result,
+      "is_liked":false,
+      "rating": "0",
+      "identifier":this.content,
+      "query": item.query
+
+   }
+   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+    if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+      this.aiTutorResultArr[index]['showLoader'] = true
+      this.aiTutorResultArr[index]['showLoaderForDown'] = true
+    }
+
+  }
+     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
+      if(data  && data.status === 'success') {
+        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+            this.aiTutorResultArr[index]['feedback'] = 'down'
+            this.aiTutorResultArr[index]['showLoader'] = false
+            this.aiTutorResultArr[index]['showLoaderForDown'] = false
+        }
+        this.matSnackBarNew.open(
+          'Thank you for your feedback.', 'X',
+          { duration: 5000, panelClass: ['success'] }
+        );
+      } else {
+        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+            this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
@@ -1063,7 +1185,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         this.iGOTAITutorResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiTutorResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false})
+        this.aiTutorResultArr.push({ feedback:'', wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false})
         this.aiTutorResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
