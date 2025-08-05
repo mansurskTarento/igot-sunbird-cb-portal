@@ -415,7 +415,7 @@
             <div class="flex flex-row gap-2" *ngIf="languageList">
               <mat-chip-list class="lang-chips">
                 <!-- Show up to 6 chips -->
-                <ng-container *ngFor="let lang of languageList | slice:0:2; let i = index">
+                <ng-container *ngFor="let lang of languageList | slice:0:5; let i = index">
                   <mat-chip class="matchip-custom"
                   selectable="true"
                   [selected]="lang?.identifier === selectedLanguage?.identifier"
@@ -425,7 +425,7 @@
                 </ng-container>
 
                 <!-- "More" chip if there are more than 6 languages -->
-                <ng-container *ngIf="languageList.length > 2">
+                <ng-container *ngIf="languageList.length > 5">
                   <mat-chip
                   [matMenuTriggerFor]="moreLanguagesMenu"
                   selectable="false"
