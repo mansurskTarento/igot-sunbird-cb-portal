@@ -250,9 +250,6 @@ export class ProfileEntryEditComponent implements OnInit {
           isMdo: true,
           isCbp: true
         },
-        sort_by: {
-          orgName: 'asc'
-        },
         fields: [
           'channel',
           'imgUrl',
