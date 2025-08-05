@@ -2220,11 +2220,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.contentLibSvc.oneStepResumeEnable = false;
         } else {
           this.contentLibSvc.oneStepResumeEnable = false;
-          // Use NgZone to ensure navigation works
-          
+          // When coming from search page for particular language content, confirm first to one step resume or load the searched language
+          if(urlData?.queryParams?.ML !==  this.queryParamsData['ML']) {
+            this.showOneStepResumeConfirm(urlData)
+          } else {
             this.router.navigate(
               [urlData.url],
               { queryParams: urlData.queryParams })
+          }
         }
       }
       
@@ -2339,6 +2342,31 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if (confirmed) {
        console.log('confirmed')
        this.processLanguageSelection(lang)
+      }
+    })
+  }
+
+  showOneStepResumeConfirm(urlData: any) {
+    const data = {
+      width: '500px',
+      height: 'auto',
+      data: {
+        from: 'languageSwitch',
+        icon: 'translate',
+        header: `You've already started this course`,
+        message: `You’ve made some <b>progress</b> in another language of this course. \nWould you like to <b>resume where you left off</b>, or continue with this version instead?`,
+        cancelButton: 'Continue Here',
+        acceptButton: 'Resume',
+      }
+    }
+    const dialogRef = this.dialog.open(TOCMultiLingualDialogComponent, data);
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.router.navigate(
+          [urlData.url],
+          { queryParams: urlData.queryParams })
+      } else {
+        this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, this.queryParamsData['ML']))
       }
     })
   }

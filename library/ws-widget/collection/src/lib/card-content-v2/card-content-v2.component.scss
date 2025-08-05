@@ -1092,7 +1092,8 @@ $title-line-count: 2;
            // object-fit: cover;
            // object-position: center;
            height: 100%;
-           max-height: 172px;
+          //  max-height: 172px;
+          max-height: 198px; // because of showing available languages
            object-fit: cover;
            vertical-align: middle;
 
