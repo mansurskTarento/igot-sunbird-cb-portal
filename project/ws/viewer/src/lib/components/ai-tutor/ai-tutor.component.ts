@@ -110,6 +110,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   containerHeight = 38;
   isMobile = false
   showAITutorPopup = false
+  chatId = ''
   constructor(
     private route: ActivatedRoute,
     private configSvc: ConfigurationsService,
@@ -183,6 +184,8 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+    const timestamp = Date.now();
+    this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
   }
 
   ngAfterViewInit(): void {
@@ -863,19 +866,24 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   getLearningStyle() {
+    const timestamp = Date.now();
+    this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
     if(this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
+      this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
       
       this.websocketService.connect(`wss://${this.SocraticeStyleHost}/socratic/v1/ws?token=${this.jwtToken}`);
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
+      this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
       
       this.websocketService.connect(`wss://${this.NoneSocketHost}/ws?token=${this.jwtToken}`);
     }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
+      this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
       
       this.websocketService.connect(`wss://${this.StorytellingHost}/storytelling/v1/ws?token=${this.jwtToken}`);
     }
@@ -904,7 +912,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     let requestBody:any = {
       "query_id": item?.query_id,
       // "response": item?.description,
-      "comments": "accurate",
+      "comments": "",
       "is_liked":true,
       "rating": "5"
 
@@ -915,7 +923,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = true
    }
    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
-   this.chatbotService.saveAIChatPositiveContentRating(requestBody, 't', this.userInfo?.userId).subscribe((data:any)=>{
+   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
     if(data && data.status === 'success') {
       if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
         if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
@@ -985,7 +993,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     }
 
   }
-     this.chatbotService.shareAIFeedback(requestBody, '', this.userInfo?.userId).subscribe((data:any)=>{
+     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
       if(data  && data.status === 'success') {
         if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
           if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])

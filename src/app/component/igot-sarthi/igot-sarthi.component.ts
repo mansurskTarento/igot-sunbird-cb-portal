@@ -819,7 +819,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     let requestBody:any = {
       "query_id": item?.query_id,
       // "response": item?.description,
-      "comments": "accurate",
+      "comments": "",
       "is_liked":true,
       "rating": "5"
 
