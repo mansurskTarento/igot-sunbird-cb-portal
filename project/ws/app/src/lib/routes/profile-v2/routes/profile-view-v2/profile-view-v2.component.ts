@@ -242,7 +242,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.selectRoute(lastSectionId);
       }, 100);
     }
-    this.getRecommendedUsers()
     this.getRecommendedCommunitesList()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
@@ -253,8 +252,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#region (initialization)
 
   getRecommendedUsers() {
+    const countOfRecommendations = 3
     const formBody = {
-      size: 3,
+      size: countOfRecommendations + 1,
       offset: 0,
     }
 
@@ -262,7 +262,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.getRecommendedUsers(formBody).subscribe({
       next: (response: any) => {
         this.suggestionsLoading = false;
-        this.peopleSuggestionsList = _.get(response, 'result.response', []);
+        const suggestedUser = _.get(response, 'result.response', []).filter((suggestedUser: any) => suggestedUser.id !== this.userId);
+        this.peopleSuggestionsList = suggestedUser.slice(0, countOfRecommendations);
       },
       error: () => {
         this.suggestionsLoading = false;
@@ -303,6 +304,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
+      this.getRecommendedUsers()
       this.userId = _.get(data, 'profile.userId', '')
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
