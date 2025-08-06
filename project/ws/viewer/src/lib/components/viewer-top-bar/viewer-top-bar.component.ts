@@ -154,9 +154,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           },
           fragment: '',
         }
-        if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.prevResource.identifier)
-        }
+        // if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.prevResource.identifier)
+        // }
       } else {
         this.prevResourceUrl = null
       }
@@ -175,9 +175,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           },
           fragment: '',
         }
-        if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.nextResource.identifier)
-        }
+        // if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.nextResource.identifier)
+        // }
       } else {
         this.nextResourceUrl = null
       }

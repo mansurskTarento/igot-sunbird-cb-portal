@@ -386,7 +386,9 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.routeSubscription = this.route.data.subscribe(async (data: Data) => {
         if (data && data.content && data.content.data && data.content.data.identifier) {
           this.courseID = data.content.data.identifier
-          this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
+          const initData = this.tocSvc.initData(data, true)
+          this.content = initData.content
+          this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(async res => {
             this.contentReadData = res.result.content
             console.log('this.contentReadData', this.contentReadData)
             this.getPreAssessmentCompletionStatus()
@@ -395,18 +397,6 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
             }
           })
-          const initData = this.tocSvc.initData(data, true)
-          this.content = initData.content
-          if (this.forPreview) {
-            this.tocSvc.contentLoader.next(true)
-            await this.tocSvc.fetchCourseHeirarchy(this.content)
-            this.tocSvc.contentLoader.next(false)
-            this.tocSvc.checkModuleWiseData(this.content)
-            this.skeletonLoader = false
-          } else {
-            this.fetchUserEnrollmentData();
-
-          }
           this.initialrouteData = data
           this.banners = data.pageData.data.banners
           this.tocSvc.subtitleOnBanners = data.pageData.data.subtitleOnBanners || false
