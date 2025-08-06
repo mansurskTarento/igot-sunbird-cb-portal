@@ -1,6 +1,7 @@
+
 import { NsContent } from './widget-content.model'
 
-export const VIEWER_ROUTE_FROM_MIME = (mimeType: NsContent.EMimeTypes) => {
+export const PRE_ASSESSMENT_VIEWER_ROUTE_FROM_MIME = (mimeType: NsContent.EMimeTypes) => {
   switch (mimeType) {
     case NsContent.EMimeTypes.MP3:
       return 'audio'
@@ -62,7 +63,7 @@ export const VIEWER_ROUTE_FROM_MIME = (mimeType: NsContent.EMimeTypes) => {
   }
 }
 
-export function viewerRouteGenerator(
+export function preAssessmentViewerRouteGenerator(
   id: string,
   mimeType: NsContent.EMimeTypes,
   collectionId?: string,
@@ -71,8 +72,6 @@ export function viewerRouteGenerator(
   primaryCategory?: string,
   batchId?: string,
   courseName?: string,
-  ML?: string,
-  MLId?: string,
 ): { url: string; queryParams: { [key: string]: any } } {
   let collId = collectionId
   let collType = collectionType
@@ -80,7 +79,7 @@ export function viewerRouteGenerator(
     collId = undefined
     collType = undefined
   }
-  const url = `/viewer/${VIEWER_ROUTE_FROM_MIME(mimeType)}/${id}`
+  const url = `/viewer/${PRE_ASSESSMENT_VIEWER_ROUTE_FROM_MIME(mimeType)}/${id}`
   // tslint:disable-next-line
   // console.log(url,'========>Route from MIME TYPE<==========')
   const forcreator = window.location.href.includes('editMode=true')
@@ -91,7 +90,7 @@ export function viewerRouteGenerator(
     }
   }
   if (collectionId && collectionType) {
-    queryParams = { ...queryParams, collectionId: collId, collectionType: collType }
+    queryParams = { ...queryParams, collectionId: collId, collectionType: collType, preAssessment: true }
   }
   if (batchId) {
     queryParams = { ...queryParams, batchId }
@@ -104,9 +103,6 @@ export function viewerRouteGenerator(
   }
   if (forcreator) {
     queryParams = { ...queryParams, editMode: true }
-  }
-  if( ML && MLId) {
-    queryParams = { ...queryParams, ML, MLId }
   }
   return {
     queryParams,

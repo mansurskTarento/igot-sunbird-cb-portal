@@ -184,11 +184,20 @@ export class PlayerAudioComponent extends WidgetBaseComponent
       const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
                                                            this.activatedRoute.snapshot.queryParams.batchId, identifier)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
-      if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
-        this.viewerSvc
-          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data && collectionId) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else {
+        if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
+          this.viewerSvc
+            .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+        }
       }
+      
     }
     let enableTelemetry = false
     if (!this.widgetData.disableTelemetry && typeof (this.widgetData.disableTelemetry) !== 'undefined') {

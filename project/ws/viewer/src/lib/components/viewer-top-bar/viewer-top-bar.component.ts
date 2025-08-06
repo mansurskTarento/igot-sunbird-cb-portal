@@ -244,13 +244,19 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateProgress(status: number, resourceId: any) {
-      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
-        this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
-      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-      const batchId = (resData && resData.batchId) ? resData.batchId : ''
-    if(collectionId && batchId && resourceId) {
-      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
+      this.activatedRoute.snapshot.queryParams.collectionId : ''
+    // const collectionId = this.activatedRoute.snapshot.params.id ?
+    // this.activatedRoute.snapshot.params.id : ''
+    const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
+      this.activatedRoute.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
+      
     }
+    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
@@ -297,30 +303,6 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       window.history.back()
     }
   }
-
-  // getFetchHistory(batchId:any, identifier:any) {
-  //     if (this.configSvc.userProfile) {
-  //       this.userid = this.configSvc.userProfile.userId || ''
-  //     }
-  //   const req  = {
-  //     request: {
-  //       userId:this.userid,
-  //       batchId: batchId,
-  //       courseId: identifier || '',
-  //       contentIds: [],
-  //       fields: ['progressdetails'],
-  //     },
-  //   }
-  //   return this.widgetServ.fetchContentHistoryV2(req)
-  // }
-
-  //  getAuthDataIdentifer() {
-  //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-  //   this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-  //       this.leafNodesCount = data.result.content.leafNodesCount
-  //       console.log('this.leafNodesCount inside api call-------', this.leafNodesCount)
-  //   })
-  // }
   finishDialog() {
     if (!this.forPreview) {
       this.contentProgressHash = []

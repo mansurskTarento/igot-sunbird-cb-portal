@@ -3,7 +3,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
-import { NsContent } from '@sunbird-cb/collection'
+import { NsContent, VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, NsPage, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { ViewerDataService } from '../../viewer-data.service'
@@ -161,9 +161,20 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe(data => {
+    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
       if (data.prevResource) {
-        this.prevResourceUrl = data.prevResource.viewerUrl
+        if(data.prevResource && !data.prevResource.viewerUrl) {
+          data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
+            data.prevResource.mimeType,
+            // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
+            // &collectionId=${this.viewerDataSvc.collectionId}&collectionType=${this.collectionType}
+            // &batchId=${this.batchId}&viewMode=${this.viewMode}`,
+          )}/${data.prevResource.identifier}`
+          this.prevResourceUrl = data.prevResource.viewerUrl
+        } else {
+          this.prevResourceUrl = data.prevResource.viewerUrl
+        }
+        
         this.prevResourceUrlParams = {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
@@ -173,18 +184,33 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(data.queryMLParams ? data.queryMLParams : null),
             ...(window.location.href.includes('editMode=true') ? { editMode: true } : {}),
           },
           fragment: '',
         }
-        // if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
-        //   this.updateProgress(2, data.prevResource.identifier)
+        if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
+          this.updateProgress(2, data.prevResource.identifier)
+        }
+        // if(data.prevResource?.isMandatory) {
+        //   this.updateProgressForPreAssessment(data)
         // }
       } else {
         this.prevResourceUrl = null
       }
       if (data.nextResource) {
-        this.nextResourceUrl = data.nextResource.viewerUrl
+        if(data.nextResource && !data.nextResource.viewerUrl) {
+          data.nextResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
+            data.nextResource.mimeType,
+            // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
+            // &collectionId=${this.viewerDataSvc.collectionId}&collectionType=${this.collectionType}
+            // &batchId=${this.batchId}&viewMode=${this.viewMode}`,
+          )}/${data.nextResource.identifier}`
+          this.nextResourceUrl = data.nextResource.viewerUrl
+        } else {
+          this.nextResourceUrl = data.nextResource.viewerUrl
+        }
+        
         this.nextResourceUrlParams = {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
@@ -195,12 +221,16 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             courseName: this.courseName,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(data.queryMLParams ? data.queryMLParams : null),
             ...(window.location.href.includes('editMode=true') ? { editMode: true } : {}),
           },
           fragment: '',
         }
-        // if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
-        //   this.updateProgress(2, data.nextResource.identifier)
+        if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
+          this.updateProgress(2, data.nextResource.identifier)
+        }
+        // if(data.prevResource?.isMandatory) {
+        //   this.updateProgressForPreAssessment(data)
         // }
       } else {
         this.nextResourceUrl = null
@@ -240,14 +270,19 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   updateProgress(status: number, resourceId: any) {
-
-    const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute?.snapshot?.queryParams?.collectionId,
-      this.activatedRoute?.snapshot?.queryParams?.batchId, resourceId)
-    const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-    const batchId = (resData && resData.batchId) ? resData.batchId : ''
-    if(collectionId && batchId && resourceId) {
-      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
+      this.activatedRoute.snapshot.queryParams.collectionId : ''
+    // const collectionId = this.activatedRoute.snapshot.params.id ?
+    // this.activatedRoute.snapshot.params.id : ''
+    const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
+      this.activatedRoute.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
+      
     }
+    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ngOnDestroy() {
@@ -284,29 +319,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getFetchHistory(batchId:any, identifier:any) {
-  //     if (this.configSvc.userProfile) {
-  //       this.userid = this.configSvc.userProfile.userId || ''
-  //     }
-  //   const req  = {
-  //     request: {
-  //       userId:this.userid,
-  //       batchId: batchId,
-  //       courseId: identifier || '',
-  //       contentIds: [],
-  //       fields: ['progressdetails'],
-  //     },
-  //   }
-  //   return this.widgetServ.fetchContentHistoryV2(req)
-  // }
-
-  //  getAuthDataIdentifer() {
-  //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-  //   this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-  //       this.leafNodesCount = data.result.content.leafNodesCount
-  //       console.log('this.leafNodesCount inside api call-------', this.leafNodesCount)
-  //   })
-  // }
   finishDialog() {
     if (!this.forPreview) {
       this.contentProgressHash = []
@@ -470,4 +482,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
     }
   }
+
+  // updateProgressForPreAssessment(data:any) {
+  //   console.log('data--', data)
+  //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
+  // }
 }

@@ -336,6 +336,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "mimeType",
             "contentId",
             "creatorLogo",
+            'languageMapV1',
+            'language',
             "sectorDetails_v1"
           ],
           "facets": [
@@ -426,13 +428,16 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
         sort_by: {},
         query: nlpSearchQuery,
       }
-      this.searchV3Service.searchConnections(req)
+      // this.searchV3Service.searchConnections(req).then(
+      //   // this.updateRecentSearchQuery(query)
+      // ).catch()
+       this.searchV3Service.searchConnections(req)
     .then(() => {
       this.updateRecentSearchQuery(query);
     })
     .catch(error => {
       // tslint:disable-next-line: align
-      console.error('something went wrong', error);
+      console.error('some error', error);
     });
     }
 
@@ -534,7 +539,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
             "mimeType",
             "contentId",
             "creatorLogo",
-            "sectorDetails_v1"
+            "sectorDetails_v1",
+            'languageMapV1',
+            'language'
           ],
           "facets": [
             "avgRating",

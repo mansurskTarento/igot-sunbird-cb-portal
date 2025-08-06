@@ -44,7 +44,6 @@ export class ViewerResolve
 
     const forPreview = window.location.href.includes('/preview/') || route.queryParamMap.get('preview') === 'true'
     return (forPreview
-      // ? this.contentSvc.fetchAuthoringContent(this.viewerDataSvc.resourceId)
       ? this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
         'detail',
@@ -61,6 +60,16 @@ export class ViewerResolve
       tap((content: any) => {
         // tslint:disable-next-line: no-parameter-reassignment
         content = content.result.content
+        if(content && content?.courseCategory === 'Pre Enrolment Assessment') {
+          if(content?.children && content?.children?.length)
+          {
+            if(content?.children[0]['contextCategory'] && content?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
+              content = content?.children[0]
+            }
+          }
+        } else {
+         // content = content.result.content
+        }
         if (content.status === 'Deleted' || content.status === 'Expired') {
           this.router.navigate([
             `${forPreview ? '/author' : '/app'}/toc/${content.identifier}/overview?primaryCategory=${content.primaryCategory}`,
@@ -89,8 +98,17 @@ export class ViewerResolve
         }
       }),
       map((data: any) => {
+        
         // tslint:disable-next-line: no-parameter-reassignment
         data = data.result.content
+        if(data && data?.courseCategory === 'Pre Enrolment Assessment') {
+          if(data?.children && data?.children?.length)
+          {
+            if(data?.children[0]['contextCategory'] && data?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
+              data = data?.children[0]
+            }
+          }
+        }
         if (resourceType === 'unknown') {
           this.router.navigate([
             `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(data.mimeType)}/${data.identifier
@@ -101,6 +119,7 @@ export class ViewerResolve
           this.mobileAppsSvc.sendViewerData(data)
           return { data, error: null }
         }
+        
         return { data: null, error: 'mimeTypeMismatch' }
       }),
       catchError(error => {

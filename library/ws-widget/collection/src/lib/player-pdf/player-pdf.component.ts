@@ -323,7 +323,14 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
                                                            this.activatedRoute.snapshot.queryParams.batchId, id)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
+      if(isPreAssessment) {
+        if (id && collectionId) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
+        }
+      } else 
       if (id && collectionId && batchId) {
         this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest, collectionId, batchId)
       }

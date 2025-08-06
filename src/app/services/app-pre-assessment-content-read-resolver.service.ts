@@ -6,7 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 
 @Injectable()
-export class AppContentResolverService
+export class AppPreAssessmentContentResolverService
      {
     constructor(private contentSvc: WidgetContentService) {}
 
@@ -14,12 +14,11 @@ export class AppContentResolverService
         _route: ActivatedRouteSnapshot,
         _state: RouterStateSnapshot,
     ): Observable<IResolveResponse<any>> {
-        let collectionId = _route.queryParams && _route.queryParams.collectionId || ''
-        const multilingualContentId = _route.queryParams && _route.queryParams.MLId || ''
-        if (multilingualContentId && (collectionId !== multilingualContentId)) {
-            collectionId = multilingualContentId
-        }
-        if (collectionId) {
+        const collectionId = _route.queryParams && _route.queryParams.collectionId || ''
+        const preAssessment =  _route.queryParams && _route.queryParams.preAssessment || ''
+        if (collectionId && preAssessment) {
+            // console.log('collectionId', collectionId)
+            // console.log('preAssessment', preAssessment)
             return this.contentSvc.fetchProgramContent(collectionId).pipe(
                 map((rData: any) => ({ data: rData, error: null })), //  (rData.responseData || []).map((p: any) => p.name)
                 tap((resolveData: any) => of({ error: null, data: resolveData })),

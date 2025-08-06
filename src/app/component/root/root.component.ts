@@ -423,7 +423,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     let isNotMyUser = false
     let isIgotOrg = false
-    console.log('this.configSvc.unMappedUser--', this.configSvc.unMappedUser)
     if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
       this.iGOTAIConfig()
     }

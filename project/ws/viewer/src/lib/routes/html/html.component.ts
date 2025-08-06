@@ -74,9 +74,9 @@ export class HtmlComponent implements OnInit, OnDestroy {
       this.viewerDataSubscription = this.activatedRoute.data.subscribe(
         async data => {
           data.content.data.artifactUrl =
-            data.content.data.artifactUrl.indexOf('ScormCoursePlayer') > -1
-              ? `${data.content.data.artifactUrl.replace(/%20/g, '')}&Param1=${this.uuid}`
-              : data.content.data.artifactUrl.replace(/%20/g, '')
+            data.content.data.artifactUrl?.indexOf('ScormCoursePlayer') > -1
+              ? `${data.content.data.artifactUrl?.replace(/%20/g, '')}&Param1=${this.uuid}`
+              : data.content.data.artifactUrl?.replace(/%20/g, '')
           const tempHtmlData = data.content.data
           if (tempHtmlData) {
             data.artifactUrl = (data.content.data.artifactUrl.startsWith('https://')
@@ -161,9 +161,9 @@ export class HtmlComponent implements OnInit, OnDestroy {
           //   data.content.data.artifactUrl.startsWith('/scorm-player') ?
           //     `/apis/proxies/v8${data.content.data.artifactUrl}` : data.content.data.artifactUrl
           data.content.data.artifactUrl =
-            data.content.data.artifactUrl.indexOf('ScormCoursePlayer') > -1
-              ? `${data.content.data.artifactUrl.replace(/%20/g, '')}&Param1=${this.uuid}`
-              : data.content.data.artifactUrl.replace(/%20/g, '')
+            data.content.data.artifactUrl?.indexOf('ScormCoursePlayer') > -1
+              ? `${data.content.data.artifactUrl?.replace(/%20/g, '')}&Param1=${this.uuid}`
+              : data.content.data.artifactUrl?.replace(/%20/g, '')
           const tempHtmlData = data.content.data
           if (this.alreadyRaised && tempHtmlData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, tempHtmlData)
@@ -178,7 +178,7 @@ export class HtmlComponent implements OnInit, OnDestroy {
           if (tempHtmlData) {
             this.formDiscussionForumWidget(tempHtmlData)
           }
-          if (tempHtmlData && tempHtmlData.artifactUrl.indexOf('content-store') >= 0) {
+          if (tempHtmlData && tempHtmlData.artifactUrl?.indexOf('content-store') >= 0) {
             await this.setS3Cookie(tempHtmlData.identifier)
             this.htmlData = tempHtmlData
           } else {

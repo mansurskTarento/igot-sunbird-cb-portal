@@ -67,11 +67,12 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   @Output() hidenav = new EventEmitter<boolean>()
   @Input() forPreview = false
   @Input() contentData: any = {}
+
   @Input() batchData: any
   @Input() tocStructure: any
   @Input() hierarchyMapData: any = {}
   @Input() config: any
-
+  @Input() isPreAssessment = false
   @Output() pathSetEvent = new EventEmitter()
 
   constructor(
@@ -219,19 +220,39 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
                 return q
               } return null
             }))
+            if (this.resourceId) {
+              this.processCurrentResourceChange()
+            }
           } else {
-            this.queue = this.utilitySvc.getLeafNodes(this.collection, [])
+            if(this.isPreAssessment) {
+              this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
+              if (this.resourceId && this.queue.length) {
+                this.processCurrentResourceChange()
+              }
+            } else {
+              this.queue = this.utilitySvc.getLeafNodes(this.collection, [])  
+              if (this.resourceId) {
+                this.processCurrentResourceChange()
+              }
+            }
+            
           }
         }
       }
-      if (this.resourceId) {
-        this.processCurrentResourceChange()
-      }
+      
     })
     this.viewerDataServiceSubscription = this.viewerDataSvc.changedSubject.subscribe(_data => {
       if (this.resourceId !== this.viewerDataSvc.resourceId) {
         this.resourceId = this.viewerDataSvc.resourceId
-        this.processCurrentResourceChange()
+        if(this.isPreAssessment) {
+          this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
+          if (this.resourceId && this.queue.length) {
+            this.processCurrentResourceChange()
+          }
+        } else {
+          this.processCurrentResourceChange()
+        }
+        
       }
     })
   }
@@ -312,21 +333,42 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   private processCurrentResourceChange() {
     if (this.collection && this.resourceId) {      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
+      // console.log('this.contentData', this.contentData)
+      // console.log('this.queue', this.queue)
+      // console.log('this.resourceId', this.resourceId)
       if(this.queue && currentIndex > -1) {
         if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
         // this.aiTutorResourceId = this.queue[currentIndex].identifier
         }        
       }
+      // console.log('currentIndex' , currentIndex)
       const next =
         currentIndex + 1 < this.queue.length ? this.queue[currentIndex + 1] : null
       const prev = currentIndex - 1 >= 0 ? this.queue[currentIndex - 1] : null
-      this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next)
-      this.processCollectionForTree()
-      this.expandThePath()
+      // console.log('pre', prev)
+      // console.log('next', next)
+      if(this.queue && this.queue.length) {
+        this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next, this.getMLQueryParam())
+        this.processCollectionForTree()
+        this.expandThePath()
+      }
+      
       // if (next && next.viewerUrl === '0') { // temp
        // this.getContentProgressHash()
       // }
     }
+  }
+
+  getMLQueryParam() {
+    const  queryMLParams: any = {}
+    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML && 
+      this.activatedRoute.snapshot.queryParams.MLId
+    ) {
+      queryMLParams['ML'] = this.activatedRoute.snapshot.queryParams.ML
+      queryMLParams['MLId'] = this.activatedRoute.snapshot.queryParams.MLId
+      return queryMLParams
+    }
+    return null
   }
   private async getCollection(
     collectionId: string,
@@ -585,14 +627,43 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   expandThePath() {
-    if (this.collection && this.resourceId) {
+    // console.log('this.collection', this.contentData)
+    // console.log('this.resourceId', this.resourceId)
+    if (this.collection && this.resourceId && !this.isPreAssessment) {
       const path = this.utilitySvc.getPath(this.collection, this.resourceId)
       this.pathSet = new Set(path.map((u: { identifier: any }) => u.identifier))
+      // console.log('this.pathSet', this.pathSet)
       this.pathSetEvent.emit({ pathSet: this.pathSet })
       // path.forEach((node: IViewerTocCard) => {
       //   this.nestedTreeControl.expand(node)
       // })
+    } else if (this.isPreAssessment && this.resourceId && this.contentData) {
+      const path = this.getPath(this.contentData, this.resourceId)
+      this.pathSet = new Set(path.map((u: { identifier: any }) => u.identifier))
+      this.pathSetEvent.emit({ pathSet: this.pathSet })
     }
+  }
+
+  getPath(node: any, id: string): any[] {
+    const path: any = []
+    this.hasPath(node, path, id)
+    return path
+  }
+
+  private hasPath(node: any, pathArr: any[], id: string): boolean {
+    if (node == null) {
+      return false
+    }
+    pathArr.push(node)
+    if (node.identifier === id) {
+      return true
+    }
+    const children = node.preEnrolmentResources || []
+    if (children.some((u:any) => this.hasPath(u, pathArr, id))) {
+      return true
+    }
+    pathArr.pop()
+    return false
   }
 
   minimizenav() {
@@ -686,5 +757,24 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
+
+  getLeafNodes(node: any, nodes: any[]): any[] {
+    if (Array.isArray(node)) {
+      if (node.length === 0) {
+        // empty array
+        return nodes;
+      } else {
+        // node is an array with items
+        node.forEach((child: any) => {
+          this.getLeafNodes(child, nodes);
+        });
+      }
+    } else if (node) {
+      // node is a single object
+      nodes.push(node);
+    }
+    
+    return nodes;
   }
 }
