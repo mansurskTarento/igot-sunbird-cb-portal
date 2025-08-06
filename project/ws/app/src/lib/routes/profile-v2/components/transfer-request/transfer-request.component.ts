@@ -44,6 +44,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   designationDefaultLoadCount =  50
   isLoadingMoreDesignations = false;
   desigantionFilterEnable = false
+  selectedOrgHasDesignations = false;
   currentOrg: any = ''
 
   // deptFilterData: any[] = []
@@ -51,6 +52,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   organizationDefaultLoadCount =  20
   isLoadingMoreOrganization = false
   organizationDataTotalCount = 0
+  selectedOrgId: string = ''
 
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
@@ -130,7 +132,93 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+  checkOrgHasDesignations(): void {
+    if (this.selectedOrgId) {
+      const igotDesignationBody: any = {
+        request: {
+          filters: {
+            status: 'Live',
+            category: 'designation',
+            categories: [
+              this.selectedOrgId + '_odcs_designation'
+            ],
+            objectType: 'Term',
+          },
+          fields: ['name'],
+          offset: 0,
+          limit: 1,
+          sort_by: {
+            lastUpdatedOn: 'desc',
+            objectType: 'Term',
+          },
+          facets: [],
+        },
+      };
+      this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+        next: (res: any) => {
+          const count = _.get(res, 'result.count', 0);
+          this.selectedOrgHasDesignations = count > 0;
+          this.getdesignationsMeta();
+        },
+        error: () => {
+          this.selectedOrgHasDesignations = false;
+          this.getdesignationsMeta();
+        }
+      });
+    } else {
+      this.selectedOrgHasDesignations = false;
+      this.getdesignationsMeta();
+    }
+  }
+
   getdesignationsMeta() {
+    this.isLoadingMoreDesignations = true;
+    if (this.selectedOrgHasDesignations) {
+      this.getIgotDesignations();
+    } else {
+      this.getDefaultDesignations();
+    }
+  }
+
+  getIgotDesignations() {
+      const igotDesignationBody: any = {
+        request: {
+          filters: {
+            status: 'Live',
+            category: 'designation',
+            categories: [
+              this.selectedOrgId + '_odcs_designation'
+            ],
+            objectType: 'Term',
+          },
+          fields: ['name'],
+          offset: this.designationsOffset,
+          limit: this.designationListLoadCount,
+          sort_by: {
+            lastUpdatedOn: 'desc',
+            objectType: 'Term',
+          },
+          facets: [],
+        },
+      };
+      if (this.designationSearchText) {
+        igotDesignationBody['request']['query'] = this.designationSearchText;
+      }
+      this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+        next: (res: any) => {
+          const igotData = _.get(res, 'result.Term', []);
+          const data = igotData.map((item: any) => ({ designation: item.name, status: 'Active' }));
+          const totalCount = _.get(res, 'result.count', igotData.length);
+          this.setDesignationResults(data, totalCount);
+        },
+        error: () => {
+          this.isLoadingMoreDesignations = false;
+          this.matSnackBar.open('Something went wrong. Please refresh or try again later.');
+        },
+      });
+    }
+
+  getDefaultDesignations() {
     const requestBody: any = {
       filterCriteriaMap: {
         status: 'Active'
@@ -146,19 +234,25 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.profileV2RevampService.searchDesignation(requestBody).subscribe({
       next: (res: any) => {
         this.isLoadingMoreDesignations = false
-        if(this.designationsOffset === 0) {
-          this.designationData = _.get(res, 'result.result.data', [])
-        } else {
-          this.designationData = [...this.designationData, ..._.get(res, 'result.result.data', [])]
-        }
-        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0)
-        this.checkCurrentDesignationPresent()
+        let data = _.get(res, 'result.result.data', [])
+        let totalCount = _.get(res, 'result.result.totalCount', 0)
+        this.setDesignationResults(data, totalCount)
       }, error: (error: HttpErrorResponse) => {
         if(error) {
           this.matSnackBar.open('Something went wrong. Please try again later.')
         }
       }
     })
+  }
+
+  setDesignationResults(data: any[], totalCount: number) {
+    if(this.designationsOffset === 0) {
+      this.designationData = data
+    } else {
+      this.designationData = [...this.designationData, ...data]
+    }
+    this.designationsTotalCount = totalCount
+    this.checkCurrentDesignationPresent()
   }
 
   ngOnInit() {
@@ -213,7 +307,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
               "isMdo": true,
               "isCbp": true
           },
-          "fields":["channel", "orgName"],
+          "fields":["channel", "orgName", "rootOrgId"],
           "limit": this.organizationDefaultLoadCount,
           "offset": offsetValue
       }
@@ -389,6 +483,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   onOrgSelectionChange(org: any) {
     if (org && org.channel) {
+      this.selectedOrgId = org.rootOrgId
+      this.checkOrgHasDesignations()
       this.transferRequestForm.controls.organization.setValue(org.channel)
     }
   }

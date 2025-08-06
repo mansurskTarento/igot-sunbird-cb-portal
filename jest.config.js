@@ -14,6 +14,7 @@ module.exports = {
     'worker-loader!.*': '<rootDir>/test/mocks/workerMock.js',
     'pdfjs-dist/build/pdf.worker': '<rootDir>/test/mocks/workerMock.js',
     "^src/environments/environment$": "<rootDir>/src/environments/environment.ts",
+    '^@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component$': '<rootDir>/__mocks__/confirm-dialog.component.js',
   },
   coverageReporters: ["clover", "json", "lcov", "text", "text-summary"],
   collectCoverage: true,
