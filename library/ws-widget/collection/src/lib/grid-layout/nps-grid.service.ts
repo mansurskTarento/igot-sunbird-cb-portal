@@ -10,6 +10,7 @@ const API_END_POINTS = {
     readFeed: (id: string) => `/apis/proxies/v8/user/v1/feed/${id}`,
     getFormID: (id: string) => `/apis/proxies/v8/forms/getFormById?id=${id}`,
     submitForm: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
+    SUBMIT_ENROLMENT_FORM: `apis/proxies/v8/forms/v2/saveFormSubmit`,
     deleteFeed: `/apis/proxies/v8/user/feed/v1/delete`,
 }
 
@@ -40,6 +41,6 @@ export class NPSGridService {
     return this.http.post<any>(API_END_POINTS.deleteFeed, req)
   }
   submitBpFormWithProfileDetails(req: any) {
-    return this.http.post<any>(API_END_POINTS.submitForm, req)
+    return this.http.post<any>(API_END_POINTS.SUBMIT_ENROLMENT_FORM, req)
   }
 }
