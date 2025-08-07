@@ -188,7 +188,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    debugger
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
