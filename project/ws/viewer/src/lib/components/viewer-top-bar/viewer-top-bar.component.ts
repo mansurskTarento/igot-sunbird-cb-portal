@@ -385,7 +385,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
   openFeedbackDialog(contentP?: any): void {
     const contentTmp = {
-      identifier: this.collectionId,
+      identifier: this.content.identifier || this.collectionId,
       primaryCategory: this.collectionType,
     }
     const content = contentP ? contentP : contentTmp

@@ -126,19 +126,21 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.isPreAssessment = false
     }
-
-    this.checkMultilingual()
   }
 
   checkMultilingual() {
     if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML
       && this.activatedRoute.snapshot.queryParams.MLId
     ) {
-      if(this.content?.identifier !== this.activatedRoute.snapshot.queryParams.MLId) {
-          this.baseContentReadData = this.widgetServ.fetchContentData(this.content?.identifier || '')
+      if(this.collectionId !== this.activatedRoute.snapshot.queryParams.MLId) {
+          this.widgetServ.fetchContentData(this.collectionId || '').subscribe(data => {
+            this.baseContentReadData = data?.result?.content
+          })
       }else {
         this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
       }
+    } else {
+      this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
     }
   }
 
@@ -179,7 +181,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       })
     }
-    
   }
 
   getAuthDataIdentifer() {
@@ -234,7 +235,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.resetAndFetchTocStructure()
       this.leafNodesCount = contentData.result.content.leafNodesCount
     }
-
+    this.checkMultilingual()
     if (this.collectionId && this.enrollmentList) {
       const enrolledCourseData = this.widgetLibServ.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId)
       this.enrolledCourseData = enrolledCourseData
