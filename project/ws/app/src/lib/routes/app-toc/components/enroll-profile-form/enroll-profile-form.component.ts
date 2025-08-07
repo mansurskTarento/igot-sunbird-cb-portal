@@ -1258,7 +1258,6 @@ export class EnrollProfileFormComponent implements OnInit {
       status: 'SUBMITTED',
       responses: this.genereateSurveyPayload(status),
     } 
-    debugger
     this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
       this.addLoader = this.addLoader - 1
