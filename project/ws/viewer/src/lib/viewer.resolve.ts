@@ -50,17 +50,21 @@ export class ViewerResolve
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       )
-      : this.contentSvc.fetchContent(
+      : ( route.queryParamMap.get('preAssessment')    ? this.contentSvc.fetchContentData(
+        this.viewerDataSvc.resourceId
+      ) : this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
         'detail',
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
-      )
+      ))
     ).pipe(
       tap((content: any) => {
         // tslint:disable-next-line: no-parameter-reassignment
         content = content.result.content
+        let mimeType:any
         if(content && content?.courseCategory === 'Pre Enrolment Assessment') {
+          mimeType = 'application/vnd.sunbird.questionset'
           if(content?.children && content?.children?.length)
           {
             if(content?.children[0]['contextCategory'] && content?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
@@ -68,6 +72,7 @@ export class ViewerResolve
             }
           }
         } else {
+          mimeType = content?.mimeType
          // content = content.result.content
         }
         if (content.status === 'Deleted' || content.status === 'Expired') {
@@ -85,14 +90,14 @@ export class ViewerResolve
           this.router.navigate([ // app/toc/do_113477192567939072124/overview?
             `${forPreview ? '/author' : ''}/app/toc/${content.identifier}/overview`,
           ])
-        } else if (resourceType === VIEWER_ROUTE_FROM_MIME(content.mimeType)) {
+        } else if (resourceType === VIEWER_ROUTE_FROM_MIME(mimeType)) {
           this.viewerDataSvc.updateResource(content, null)
         } else {
           this.viewerDataSvc.updateResource(null, {
             errorType: 'mimeTypeMismatch',
-            mimeType: content.mimeType,
+            mimeType: mimeType,
             probableUrl: `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
-              content.mimeType,
+              mimeType,
             )}/${content.identifier}`,
           })
         }
@@ -101,20 +106,24 @@ export class ViewerResolve
         
         // tslint:disable-next-line: no-parameter-reassignment
         data = data.result.content
+        let mimeType:any = ''
         if(data && data?.courseCategory === 'Pre Enrolment Assessment') {
+          mimeType = 'application/vnd.sunbird.questionset'
           if(data?.children && data?.children?.length)
           {
             if(data?.children[0]['contextCategory'] && data?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
               data = data?.children[0]
             }
           }
+        } else {
+          mimeType = data?.mimeType
         }
         if (resourceType === 'unknown') {
           this.router.navigate([
-            `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(data.mimeType)}/${data.identifier
+            `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(mimeType)}/${data.identifier
             }`,
           ])
-        } else if (resourceType === VIEWER_ROUTE_FROM_MIME(data.mimeType)) {
+        } else if (resourceType === VIEWER_ROUTE_FROM_MIME(mimeType)) {
           data.platform = this.platform
           this.mobileAppsSvc.sendViewerData(data)
           return { data, error: null }
