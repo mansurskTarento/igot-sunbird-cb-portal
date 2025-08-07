@@ -73,6 +73,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   @Input() hierarchyMapData: any = {}
   @Input() config: any
   @Input() isPreAssessment = false
+  @Input() baseContentReadData!: any
   @Output() pathSetEvent = new EventEmitter()
 
   constructor(

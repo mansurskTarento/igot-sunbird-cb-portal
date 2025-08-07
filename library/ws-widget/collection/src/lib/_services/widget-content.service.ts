@@ -259,7 +259,6 @@ export class WidgetContentService {
   }
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
-    debugger
     req.request.fields = ['progressdetails']
     req.request.contentIds = req?.request?.contentIds && req?.request?.contentIds?.length ? req?.request?.contentIds : this.currentContentReadMetaData?.leafNodes || []
     req.request["language"] =  req?.request?.language ? req?.request?.language : this.contentLangSvc.getContentLanguage(this.currentContentReadMetaData)
