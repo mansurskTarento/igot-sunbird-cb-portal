@@ -145,7 +145,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getContentData(e: any) {
-    // console.log('this.activatedRoute.snapshot.data', this.activatedRoute.snapshot.data)
     if( this.activatedRoute.snapshot.data &&  this.activatedRoute.snapshot.data['preAssessmentRead'] && 
       this.activatedRoute.snapshot.data['preAssessmentRead']['data'] && 
       this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result'] &&

@@ -687,7 +687,7 @@ export class AppTocService {
           const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList,  collectionId || content?.identifier)
           const req = {
             request: {
-              batchId: foundParentContent?.batch.batchId,
+              batchId: foundParentContent?.batch?.batchId,
               userId: foundParentContent?.userId,
               courseId: foundParentContent?.collectionId,
               contentIds: collectionId ? content?.leafNodes : [],
