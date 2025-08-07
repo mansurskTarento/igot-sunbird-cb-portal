@@ -11,6 +11,7 @@ import cloneDeep from 'lodash/cloneDeep';
 // import { throwError } from 'rxjs';
 import { WebSocketService } from './socket.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { AiStreamService } from './ai-stream.service';
 @Component({
   selector: 'ws-app-igot-sarthi',
   templateUrl: './igot-sarthi.component.html',
@@ -50,6 +51,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   // public initials!: string
   resultFetch = false
   searchAPIResponseInProgress = false
+  socketResponse = ''  
+  public answer = '';
+  public retrievedChunks: any[] = [];
   private colors = [
     '#EB7181', // red
     '#306933', // green
@@ -102,6 +106,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   authTokenHost = ''
   jwtToken = ''
   messageSubscription: Subscription | undefined;
+  private subscriptions: Subscription[] = [];
+  answerText = ''
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -110,7 +116,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     private dialog: MatDialog,
     private matSnackBarNew: MatSnackbarNew,
     private router: Router,
-    private websocketService: WebSocketService) { }
+    private websocketService: WebSocketService,
+    private aiStreamService: AiStreamService,) { }
 
   ngOnInit() {
     this.router.events.subscribe((event: any) => {
@@ -547,6 +554,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    
     if (!this.searchQuery.trim()) {
       event.preventDefault(); // Prevents Enter key from adding a new line
     }
@@ -599,8 +607,10 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         user_id: this.userId,
         query: this.cloneSearchQuery
       }
+      this.retrievedChunks = []
       this.websocketService.sendMessage(message);
-      this.searchAPIResponseInProgress = false
+      this.searchAPIResponseInProgress = true
+      this.aiStreamService.resetEmittedAnswer()
       setTimeout(()=>{
         this.getAiSearchMessage()
       }, 1000)
@@ -610,18 +620,39 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   
 
   getAiSearchMessage() {
-    this.messageSubscription = this.websocketService
+    this.subscriptions.push(this.websocketService
       .getMessages()
-      .subscribe((message: string) => {
-      console.log('message', message)
+      .subscribe((message: any) => {
        // this.messages.push(message);
-       this.aiSearchResult = message
+       //this.aiSearchResult = message
+       this.aiStreamService.handleMessage(message);
+      //console.log('this.socketResponse',this.socketResponse)
+      //console.log('this.answer', this.answer)
+    //  console.log('this.retrievedChunks', this.retrievedChunks)
        this.resultFetch = true
-       this.searchAPIResponseInProgress = true
-      this.globalSearchResultMessage()
+       this.searchAPIResponseInProgress = false
+     // this.globalSearchResultMessage()
       //  this.searchQueryAItutor = '';
        
-      });
+      }),
+      this.aiStreamService.answer$.subscribe(answer => {
+        this.answerText = answer;
+        this.aiSearchResult['answer'] = this.answerText
+        
+        console.log('this.answerText', this.answerText)
+        this.globalSearchResultMessage()
+      }),
+      this.aiStreamService.retrievedChunks$.subscribe(chunk => {
+        this.retrievedChunks.push(chunk);
+        this.aiSearchResult['RetrievedChunks'] = this.retrievedChunks
+
+        console.log('retrievedChunks', this.retrievedChunks)
+        this.globalSearchResultMessage()
+      }),
+      this.aiStreamService.final$.subscribe(() => {
+        console.log('Stream finished.');
+      })
+    );
   }
 
 
@@ -752,8 +783,12 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     let answer = this.aiSearchResult.answer ? this.aiSearchResult.answer.trim().replace(/\n/g, '<br>') : ""
     let shortAnswer =  this.splitParagraphByWords(answer)
     
+    if(this.aiSearchResultArr.length === 0) {
+      this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
+    } else {
+      this.aiSearchResultArr[0]= ({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
+    }
     
-    this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
     this.aiSearchResultArr.map((item:any, index:any)=>{
       if(item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
@@ -1398,9 +1433,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     
   }
 
+  
+
 
   ngOnDestroy(): void {
-   
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
   
 }

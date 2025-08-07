@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import {  take } from 'rxjs/operators';
+// import {  take } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http'
 const PROXY_CREATE_V8 = '/apis/proxies/v8'
 const API_END_POINTS = {
@@ -34,17 +34,14 @@ export class WebSocketService {
     };
 
     this.socket.onmessage = (event) => {
-        console.log('event', event)
         try {
           const data = JSON.parse(event.data);
-          console.log('data', data)
           if (data.type === 'connection' && data.clientId) {
               this.clientId = data.clientId;
              // clientIdDisplay.textContent = `Assigned Client ID: ${this.clientId}`;
              // console.log('Server', `Connected. Assigned Client ID: ${this.clientId}`);
-          } else if (data) {
-          
-            this.messageSubject.next(JSON.parse(event.data));
+          } else if (data) {            
+            this.messageSubject.next(data);
              // console.log('Server', `Answer: ${data.answer}`);
               // if (data.sources && data.sources.length > 0) {
               //    // console.log('Server', `Sources: ${data.sources.join(', ')}`);
@@ -95,7 +92,7 @@ export class WebSocketService {
 
   // Observable for receiving messages from WebSocket
   getMessages(): Observable<any> {
-    return this.messageSubject.asObservable().pipe(take(1));
+    return this.messageSubject.asObservable().pipe();
   }
 
   startClientPing() {
@@ -107,7 +104,7 @@ export class WebSocketService {
           this.socket.send(JSON.stringify({ type: 'ping' })); // Send a ping message
             // console.log('Client sent ping');
         }
-    }, 25000); // Send ping every 25 seconds (slightly less than server's 30s)
+    }, 60000); // Send ping every 25 seconds (slightly less than server's 30s)
 }
 
   // Close the WebSocket connection
