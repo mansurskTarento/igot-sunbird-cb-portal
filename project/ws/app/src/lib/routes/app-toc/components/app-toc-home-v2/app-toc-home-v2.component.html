@@ -412,7 +412,7 @@
             <div class="text-xs leading-4 source-text nodtranslate">({{ 'apptoc.lastUpdatedOn' | translate }} {{ contentReadData?.sYS_INTERNAL_LAST_UPDATED_ON | date: 'MMM d, y' }})</div>
           </ng-container>
           <ng-container>
-            <div class="flex flex-row gap-2" *ngIf="languageList">
+            <div class="flex flex-row gap-2" *ngIf="languageList?.length > 1">
               <mat-chip-list class="lang-chips">
                 <!-- Show up to 6 chips -->
                 <ng-container *ngFor="let lang of languageList | slice:0:5; let i = index">

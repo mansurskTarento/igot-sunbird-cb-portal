@@ -1430,6 +1430,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.contentLibSvc.oneStepResumeEnable = false
     this.enrollBtnLoading = true
     this.tocSvc.contentLoader.next(true)
+    // only for  resource
     // tslint:disable-next-line
     if (this.baseContentReadData && this.baseContentReadData.identifier && this.baseContentReadData.primaryCategory !== this.primaryCategory.COURSE &&
       this.baseContentReadData.primaryCategory !== this.primaryCategory.PROGRAM &&
@@ -1480,28 +1481,37 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             }
           }
         }
-        this.content.completionPercentage = enrolledCourse.completionPercentage || 0
-        this.content.completionStatus = enrolledCourse.status || 0
-        if (this.contentReadData && this.contentReadData.cumulativeTracking) {
-          await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
-          this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
-            if (res) {
-              this.resumeData = res
-              this.getLastPlayedResource()
-              this.generateResumeDataLinkNew()
-            }
-          })
-
-          this.enrollBtnLoading = false
-          // this.tocSvc.contentLoader.next(false)
-        } else {
+        // if enrolled course is completed then to make all languages courses as well as all content as completed
+        if(enrolledCourse.status === 2){
+          this.content['completionPercentage'] = 100
+          this.content['completionStatus'] = 2
+          await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
           let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
-          let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
-          this.content['completionPercentage'] = enrolledCourse.completionPercentage
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
-          // this.tocSvc.contentLoader.next(false)
+        } else{
+          if (this.contentReadData && this.contentReadData.cumulativeTracking) {
+            await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
+            this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
+              if (res) {
+                this.resumeData = res
+                this.getLastPlayedResource()
+                this.generateResumeDataLinkNew()
+              }
+            })
+  
+            this.enrollBtnLoading = false
+            // this.tocSvc.contentLoader.next(false)
+          } else {
+            let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
+            let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
+            this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+            this.content['completionPercentage'] = enrolledCourse.completionPercentage
+            this.enrollBtnLoading = false
+            this.tocSvc.mapModuleCount(this.content)
+            // this.tocSvc.contentLoader.next(false)
+          }
         }
         this.batchData = {
           content: [enrolledCourse.batch],
@@ -1511,6 +1521,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         this.tocSvc.getSelectedBatchData(this.batchData)
         this.tocSvc.mapSessionCompletionPercentage(this.batchData, this.resumeData)
         this.routerChangeHandler(true)
+        this.tocSvc.contentLoader.next(false)
       } else {
         this.tocSvc.checkModuleWiseData(this.content)
         this.tocSvc.mapModuleCount(this.content)
@@ -1534,6 +1545,27 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
 
     this.skeletonLoader = false
+  }
+
+  bindCompletionPercentage() {
+    let completionPercentage = 0
+    let completionStatus = 0
+    if(this.languageMapProgress && Object.keys(this.languageMapProgress).length) {
+      let langPercentage = this.languageMapProgress[this.selectedLanguage.langId] || 0
+        completionPercentage = langPercentage
+        completionStatus = langPercentage >= 100 ? 2 : 0
+    } else {
+      let enrolledData = this.tocSvc.findEnrolmentByCollectionId(this.userEnrollmentList, (this.baseContentReadData?.identifier || ''))
+      if(enrolledData && enrolledData.completionPercentage) {
+        completionPercentage = enrolledData.completionPercentage
+        completionStatus = enrolledData.status
+      }
+    }
+
+    if(this.content) {
+      this.content.completionPercentage = completionPercentage
+      this.content.completionStatus = completionStatus
+    }
   }
 
   handleAcceptRelevent() {
@@ -2130,7 +2162,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
                          el.completionPercentage === 100
           );
           if (completedContentData) {
-            this.contentViewEventForNetCore('complete');
+            this.contentViewEventForNetCore('complete'); 
           }
           this.dataTransferSvc.setEnrollData(this.userEnrollmentList);
           // in case of back from player we need to check recent language and load
@@ -2138,7 +2170,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             let lang = this.baseContentReadData?.language.length ? this.baseContentReadData?.language[0] : ''
             let baseContentFromEnrollData = this.userEnrollmentList.find((el: any) => el.collectionId === this.baseContentReadData?.identifier)
             if(lang && baseContentFromEnrollData && baseContentFromEnrollData?.recent_language?.toLowerCase() !== lang){
-              this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, baseContentFromEnrollData?.recent_language))
+              let localLang = this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, baseContentFromEnrollData?.recent_language)
+              if(localLang && Object.keys(localLang).length){
+                this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, baseContentFromEnrollData?.recent_language))
+              } else {
+                this.processLanguageSelection(this.contentLangSvc.getSelectedLanguage(this.contentReadData))
+              }
             }
             return of(false)
           } else {
@@ -2218,7 +2255,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         } else {
           this.contentLibSvc.oneStepResumeEnable = false;
           // When coming from search page for particular language content, confirm first to one step resume or load the searched language
-          if(urlData?.queryParams?.ML !==  this.queryParamsData['ML']) {
+          if(urlData?.queryParams?.ML && (urlData?.queryParams?.ML !==  this.queryParamsData['ML'])) {
             this.showOneStepResumeConfirm(urlData)
           } else {
             this.router.navigate(
@@ -2300,34 +2337,39 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     if(this.userEnrollmentList && this.userEnrollmentList.length) {
       let data = {} 
       // TODO: Remove hardcode strings
-      if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
-        data = {
-          width: '500px',
-          height: 'auto',
-          data: {
-            from: 'languageSwitch',
-            icon: 'translate',
-            header: `Continue where you left off in ${lang.name}?`,
-            message: `You've already made some progress in this language.\n Would you like to resume from where you left off or start over`,
-            cancelButton: 'Cancel',
-            acceptButton: 'Change language',
-          }
-        }
+      const enrolledCourse = this.tocSvc.findEnrolmentByCollectionId(this.userEnrollmentList, (this.baseContentReadData?.identifier || ''))
+      if(enrolledCourse && enrolledCourse.status === 2) {
+        this.processLanguageSelection(lang)
       } else {
-        data = {
-          width: '500px',
-          height: 'auto',
-          data: {
-            from: 'languageSwitch',
-            icon: 'translate',
-            header: 'Are you sure you want to change the language?',
-            message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
-            cancelButton: 'Cancel',
-            acceptButton: 'Change language',
+        if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
+          data = {
+            width: '500px',
+            height: 'auto',
+            data: {
+              from: 'languageSwitch',
+              icon: 'translate',
+              header: `Continue where you left off in ${lang.name}?`,
+              message: `You've already made some progress in this language.\n Would you like to resume from where you left off or start over`,
+              cancelButton: 'Cancel',
+              acceptButton: 'Change language',
+            }
+          }
+        } else {
+          data = {
+            width: '500px',
+            height: 'auto',
+            data: {
+              from: 'languageSwitch',
+              icon: 'translate',
+              header: 'Are you sure you want to change the language?',
+              message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
+              cancelButton: 'Cancel',
+              acceptButton: 'Change language',
+            }
           }
         }
+        this.showLangSwitchPopup(lang, data)
       }
-      this.showLangSwitchPopup(lang, data)
     } else {
       this.processLanguageSelection(lang)
     }
@@ -2374,7 +2416,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     
     // Set skeleton loader to show loading state
     this.skeletonLoader = true;
-    
     // Check if language object has required properties
     if (lang && lang.identifier) {
       // Create a promise chain to fetch content data and hierarchy sequentially
@@ -2564,7 +2605,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.tocSvc.updateResumaData(this.resumeData)
             // this.tocSvc.mapModuleDurationAndProgress(this.content, this.content)
             this.getLastPlayedResource()
-            this.tocSvc.mapCompletionPercentage(this.content, this.resumeData)
+            if(this.content?.completionPercentage !== 100){
+              this.tocSvc.mapCompletionPercentage(this.content, this.resumeData)
+            }
             this.tocSvc.callHirarchyProgressHashmap(this.content)
             this.tocSvc.contentLoader.next(false)
           } else {
@@ -2574,6 +2617,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           }
 
           this.contentSvc.setProgramChildResumeData(this.resumeData, contentId)
+          if(this.content?.completionPercentage !== 100){
+            this.bindCompletionPercentage()
+          }
         },
         (error: any) => {
           this.loggerSvc.error('CONTENT HISTORY FETCH ERROR >', error)
@@ -2602,7 +2648,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     if (!this.selectedLanguage?.identifier || !this.languageList) {
       return false;
     }
-    return this.languageList.slice(2).some((lang:any) => 
+    return this.languageList.slice(5).some((lang:any) => 
       lang?.identifier === this.selectedLanguage?.identifier
     );
   }

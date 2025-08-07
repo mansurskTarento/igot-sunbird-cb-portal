@@ -20,7 +20,7 @@
       <ng-container *ngIf="isTypeOfCollection">
         <ng-container *ngIf="!loadAllHierarchyData">
           <viewer-viewer-toc [forPreview]="forPreview" [contentData]="hierarchyData" [tocStructure]="tocStructure" [config]="tocConfig"
-          [batchData]="batchData" (hidenav)="minimizeBar()"  [hierarchyMapData]="tocSvc?.hashmap" (pathSetEvent)="updatePathSet($event)">
+          [batchData]="batchData" (hidenav)="minimizeBar()"  [hierarchyMapData]="tocSvc?.hashmap" (pathSetEvent)="updatePathSet($event)" [baseContentReadData]="baseContentReadData">
           </viewer-viewer-toc>
         </ng-container>
       </ng-container> 
@@ -171,7 +171,7 @@
       <ng-container *ngIf="isTypeOfCollection">
         <ng-container *ngIf="!loadAllHierarchyData">
           <viewer-viewer-toc [forPreview]="forPreview" [isPreAssessment]="isPreAssessment" [contentData]="activatedRoute?.snapshot?.data['contentRead']['data']['result']['content']" [tocStructure]="tocStructure" [config]="tocConfig"
-          [batchData]="batchData" (hidenav)="minimizeBar()"  [hierarchyMapData]="tocSvc?.hashmap" (pathSetEvent)="updatePathSet($event)">
+          [batchData]="batchData" (hidenav)="minimizeBar()"  [hierarchyMapData]="tocSvc?.hashmap" (pathSetEvent)="updatePathSet($event)" [baseContentReadData]="baseContentReadData">
           </viewer-viewer-toc>
         </ng-container>
       </ng-container> 

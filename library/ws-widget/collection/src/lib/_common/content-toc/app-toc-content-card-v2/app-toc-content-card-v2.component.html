@@ -383,7 +383,7 @@
             [@panelInOut]>
             <div class="children-container" [ngClass]="{'module': isModule, '': !isModule}">
                 <ws-widget-app-toc-content-card-v2 [forPreview]="forPreview" [componentName]="componentName" [content]="child" [expandAll]="expandAll"
-                    [rootId]="rootId" [batchId]="batchId" [rootContentType]="rootContentType" [index]="j+1"
+                    [rootId]="rootId" [batchId]="batchId" [rootContentType]="rootContentType" [index]="j+1" [baseContentReadData]="baseContentReadData"
                     [pathSet]="pathSet" [hierarchyMapData]="hierarchyMapData" [batchData]="batchData"
                     *ngFor="let child of content?.children; trackBy: contentTrackBy; let j= index;let isFirst = first"
                     [ngClass]="{'moduleCard': checkIsModule(child), 'resourceCard': !checkIsModule(child), 'first': isFirst}">
