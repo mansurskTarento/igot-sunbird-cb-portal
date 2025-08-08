@@ -161,9 +161,9 @@ export class HtmlComponent implements OnInit, OnDestroy {
           //   data.content.data.artifactUrl.startsWith('/scorm-player') ?
           //     `/apis/proxies/v8${data.content.data.artifactUrl}` : data.content.data.artifactUrl
           data.content.data.artifactUrl =
-            data.content.data.artifactUrl?.indexOf('ScormCoursePlayer') > -1
+            data.content.data?.artifactUrl?.indexOf('ScormCoursePlayer') > -1
               ? `${data.content.data.artifactUrl?.replace(/%20/g, '')}&Param1=${this.uuid}`
-              : data.content.data.artifactUrl?.replace(/%20/g, '')
+              : data.content.data?.artifactUrl?.replace(/%20/g, '')
           const tempHtmlData = data.content.data
           if (this.alreadyRaised && tempHtmlData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, tempHtmlData)

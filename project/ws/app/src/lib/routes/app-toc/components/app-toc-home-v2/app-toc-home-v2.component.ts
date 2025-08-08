@@ -1755,22 +1755,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   routeToPreAssessent() {
     if (this.contentReadData) { 
-      console.log('this.content',this.contentReadData)  
-      console.log('this.content', this.contentReadData.preEnrolmentResources) 
       // this.generatePreAssessmentQuery('START')
       let firstResource  = this.contentReadData.preEnrolmentResources[0]
-
+      let mimeType = firstResource?.courseCategory === 'Pre Enrolment Assessment' ? 'application/vnd.sunbird.questionset' : firstResource.mimeType      
       this.firstResourceLink = viewerRouteGenerator(
         firstResource.identifier,
-        firstResource.mimeType,
-        this.baseContentReadData?.identifier,
-        this.baseContentReadData?.courseCategory,
+        mimeType,
+        this.contentReadData?.identifier,
+        this.contentReadData?.courseCategory,
         this.forPreview,
-        this.baseContentReadData && this.baseContentReadData.preEnrolmentResources[0]?.primaryCategory || '',
+        this.contentReadData && this.contentReadData.preEnrolmentResources[0]?.primaryCategory || '',
         '',
       )
-      console.log('this.firstResourceLink', this.firstResourceLink)
-      let routerLink =  this.firstResourceLink?.url  
+       let routerLink =  this.firstResourceLink?.url  
       let queryParams = this.generatePreAssessmentQuery('START')
       queryParams = { ...queryParams,  preAssessment: 'true' }
       this.router.navigate([`${routerLink}`], { queryParams })
