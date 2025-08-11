@@ -56,7 +56,7 @@ export interface state {
 
 export interface organisation {
   identifier: string;
-  channel: string;
+  orgName: string;
   imgUrl: string;
   isRootOrg?: boolean | null;
   rootOrgId?: string;

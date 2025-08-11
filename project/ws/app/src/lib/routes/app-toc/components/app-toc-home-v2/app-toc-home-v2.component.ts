@@ -1826,7 +1826,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.checkRegistrationStatus()
     this.setupRouterEventSubscription()
     this.getContentCreatorData()
-    this.getOrgIdForShare()
   }
 
   private initData(data: Data) {
@@ -2290,6 +2289,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         next: (response: any) => {
           if (response?.result?.content) {
             this.content = response.result.content;
+            this.getOrgIdForShare()
             this.getTocStructure()
             resolve(true);
           } else {
