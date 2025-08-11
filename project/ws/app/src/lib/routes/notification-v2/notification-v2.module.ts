@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MyNotificationsComponent } from './components/my-notifications/my-notifications.component'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
-import { AllNotificationsModule } from '@sunbird-cb/notification'
+import { AllNotificationsModule, LibNotificationsService } from '@sunbird-cb/notification'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
@@ -49,6 +49,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     ConfirmDialogModule
   ],
-  providers: [NotificationApiService, NotificationService, NotificationsService],
+  providers: [NotificationApiService, NotificationService, NotificationsService, LibNotificationsService],
 })
 export class NotificationV2Module { }

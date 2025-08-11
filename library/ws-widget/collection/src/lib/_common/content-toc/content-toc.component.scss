@@ -1,50 +1,49 @@
 ::ng-deep .content-tabs {
   .mat-tab-body-content {
-      overflow: hidden !important;
-      background-color: #eff3f9;
+    overflow: hidden !important;
+    background-color: #eff3f9;
   }
 
   .mat-tab-body.mat-tab-body-active {
-      overflow-y: hidden;
+    overflow-y: hidden;
   }
 }
 
 ::ng-deep .sticky-mat-tabs {
   .mat-tab-header {
-      top: 96px;
-      z-index: 1000;
-      position: sticky;
-      position: -webkit-sticky;
-      background: #eff3f9;
+    top: 96px;
+    z-index: 1000;
+    position: sticky;
+    position: -webkit-sticky;
+    background: #eff3f9;
   }
 }
 
 #commentsDiv {
-  max-width: 572px;
   margin: 1rem auto;
-  min-height: 500px;
+  min-height: 800px;
 }
 
 @media screen and (max-width: 768px) {
   ::ng-deep .sticky-mat-tabs {
-      .mat-tab-header {
-          top: 120px;
-          position: fixed;
-          width: calc(100%);
-      }
+    .mat-tab-header {
+      top: 120px;
+      position: fixed;
+      width: calc(100%);
+    }
   }
 
   .content-tabs {
-      border-radius: 16px 16px 0px 0px;
-      box-shadow: 0px -2px 9px rgba(0, 0, 0, 0.08);
-      background-color: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    box-shadow: 0px -2px 9px rgba(0, 0, 0, 0.08);
+    background-color: rgba(255, 255, 255, 1);
   }
 }
 
 
 ::ng-deep .contentSticky {
   .mat-tab-header {
-      top: 0px !important;
+    top: 0px !important;
   }
 }
 
@@ -53,8 +52,8 @@
   border: 2px solid transparent;
   border-radius: 20px;
   background:
-      linear-gradient(to right, white, white),
-      linear-gradient(to right, #EFA34F, #4881E4);
+    linear-gradient(to right, white, white),
+    linear-gradient(to right, #EFA34F, #4881E4);
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
   width: 114px;
@@ -64,8 +63,8 @@
   border: 2px solid transparent;
   border-radius: 20px;
   background:
-      linear-gradient(to right, white, white),
-      linear-gradient(to right, #EFA34F, #4881E4);
+    linear-gradient(to right, white, white),
+    linear-gradient(to right, #EFA34F, #4881E4);
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
   width: 100%;
@@ -76,8 +75,8 @@
   border: 2px solid transparent;
   border-radius: 20px;
   background:
-      linear-gradient(to right, white, white),
-      linear-gradient(to right, #EFA34F, #4881E4);
+    linear-gradient(to right, white, white),
+    linear-gradient(to right, #EFA34F, #4881E4);
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
   width: 96%;
@@ -102,7 +101,7 @@
 }
 
 .ai-tutor-label {
-  color: rgba(27, 76, 161, 1);   
+  color: rgba(27, 76, 161, 1);
   font-weight: bold;
 }
 
@@ -132,7 +131,7 @@
 }
 
 ::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
-  top:35% !important;
+  top: 35% !important;
   right: 15% !important;
 }
 
@@ -185,7 +184,7 @@
 }
 
 .blue-underline {
-  color:#1b4ca1;
+  color: #1b4ca1;
   text-decoration: underline;
   font-weight: 700;
 }
@@ -218,28 +217,32 @@
   //   background-color: white !important;
   // } 
 
-  
+
 }
 
 
 ::ng-deep .multiline-select.mat-form-field {
-  border-bottom: 1px solid #1b4ca1 !important; /* Blue border */
+  border-bottom: 1px solid #1b4ca1 !important;
+  /* Blue border */
 }
 
 
-::ng-deep .multiline-select-option .mat-mdc-option:focus.mdc-list-item, .mat-mdc-option.mat-mdc-option-active.mdc-list-item {
-    
-      background-color: #e3eeff !important;
-      color: #1b4ca1 !important;
-      font-weight: 700 !important;
-    
-  
+::ng-deep .multiline-select-option .mat-mdc-option:focus.mdc-list-item,
+.mat-mdc-option.mat-mdc-option-active.mdc-list-item {
+
+  background-color: #e3eeff !important;
+  color: #1b4ca1 !important;
+  font-weight: 700 !important;
+
+
 }
 
 .transcript-flex-container {
-    display: flex;
-    justify-content: flex-end; /* Align to the right */
-    width: 100%; /* Ensure it takes up the full width of the parent */
+  display: flex;
+  justify-content: flex-end;
+  /* Align to the right */
+  width: 100%;
+  /* Ensure it takes up the full width of the parent */
 }
 
 
@@ -277,13 +280,14 @@
 
 ::ng-deep {
   .mat-mdc-select-panel {
-    background:white !important;
+    background: white !important;
   }
 }
 
 @media (min-width: 1280px) and (max-width: 1280px) {
   .subtitle-time {
-    width: 30%; /* Slightly more space for readability */
+    width: 30%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -293,7 +297,8 @@
 
 @media (min-width: 1280px) and (max-width: 1280px) {
   .subtitle-time {
-    width: 30%; /* Slightly more space for readability */
+    width: 30%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -303,7 +308,8 @@
 
 @media (min-width: 1056px) and (max-width: 1232px) {
   .subtitle-time {
-    width: 30%; /* Slightly more space for readability */
+    width: 30%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -311,9 +317,10 @@
   }
 }
 
-@media  (min-width: 1024px) and (max-width:1024px) {
+@media (min-width: 1024px) and (max-width:1024px) {
   .subtitle-time {
-    width: 30%; /* Slightly more space for readability */
+    width: 30%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -321,9 +328,10 @@
   }
 }
 
-@media  (min-width: 768px) and (max-width:1023px) {
+@media (min-width: 768px) and (max-width:1023px) {
   .subtitle-time {
-    width: 25%; /* Slightly more space for readability */
+    width: 25%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -333,7 +341,8 @@
 
 @media (min-width: 360px) and (max-width: 360px) {
   .subtitle-time {
-    width: 50%; /* Slightly more space for readability */
+    width: 50%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -351,9 +360,10 @@
   }
 }
 
-@media (min-width: 361px)  and (max-width: 540px) {
+@media (min-width: 361px) and (max-width: 540px) {
   .subtitle-time {
-    width: 50%; /* Slightly more space for readability */
+    width: 50%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -361,7 +371,7 @@
   }
 
   .w-subtitle-20 {
-    width:40%
+    width: 40%
   }
 
   .disclaimer {
@@ -376,9 +386,10 @@
 }
 
 
-@media (min-width: 541px)  and (max-width: 767px) {
+@media (min-width: 541px) and (max-width: 767px) {
   .subtitle-time {
-    width: 40%; /* Slightly more space for readability */
+    width: 40%;
+    /* Slightly more space for readability */
   }
 
   .subtitle-text-slot {
@@ -386,7 +397,7 @@
   }
 
   .w-subtitle-20 {
-    width:40%
+    width: 40%
   }
 
   .disclaimer {
@@ -400,7 +411,7 @@
   }
 }
 
-@media  (min-width: 768px)  {
+@media (min-width: 768px) {
   ::ng-deep .tab-group-container .mdc-tab {
     min-width: auto;
     max-width: max-content;
@@ -409,7 +420,7 @@
     padding-left: 24px;
     padding-right: 24px;
   }
-  
+
   ::ng-deep .tab-group-container .mdc-tab {
     min-width: auto;
     max-width: max-content;
@@ -423,7 +434,7 @@
     width: 60%;
   }
 
-  
+
 
 }
 
@@ -447,15 +458,13 @@
 
   color: #1b4ca1 !important
 }
+
 /* 3. Add light blue hover background */
 :host ::ng-deep .multiline-select.mat-mdc-form-field:hover .mat-mdc-form-field-flex {
   background-color: #e3eeff !important;
-  
+
 }
 
 :host ::ng-deep .multiline-select .mat-mdc-select-arrow-wrapper {
   margin-right: 10px;
 }
-
-
-

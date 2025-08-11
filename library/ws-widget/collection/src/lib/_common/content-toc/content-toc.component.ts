@@ -51,7 +51,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() sideNavBarOpened = false
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
-  
+
+  commentId?: string = ''
   sticky = false
   menuPosition: any
   isMobile = false
@@ -61,21 +62,21 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   teacherNotesFlag = false
   referenceNotesFlag = false
   viewerPage = window.location.href.includes('/viewer/') ? true : false
-  resumeDataLink:any
+  resumeDataLink: any
   enableAITutorFlag = false
   enableTranscriptionFlag = false
   courseCategory = NsContent.ECourseCategory
-  subTitles$:Subscription | null = null
-  resourceIdentifier:any
-  resourceIdentifier$:Subscription | null = null
-  subTitles:any = []
-  keywordToHighlight:any= ''
-  highlightCondition  = false
-  vttLangArr:any = []
+  subTitles$: Subscription | null = null
+  resourceIdentifier: any
+  resourceIdentifier$: Subscription | null = null
+  subTitles: any = []
+  keywordToHighlight: any = ''
+  highlightCondition = false
+  vttLangArr: any = []
   transcriptionActiveLanguage = 'en'
-  defaultTranscriptLanguage  = 'en'
-  transriptionLanguageSub:Subscription | null = null
-  selectedTranscriptionStyle :any
+  defaultTranscriptLanguage = 'en'
+  transriptionLanguageSub: Subscription | null = null
+  selectedTranscriptionStyle: any
   fromAITutor = false
   totalResource = 0
   scormAssessmentCount = 0
@@ -96,16 +97,16 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private viewerDataSvc: ViewerDataService
   ) { }
 
-  ngOnInit() {    
+  ngOnInit() {
 
-    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
-      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
+      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
       // this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
     }
-    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
       // console.log('in')
       // this.resourceIdentifier$ = this.tocSvc.transriptionIdentifier.subscribe((value:any)=>{
       //   //  console.log('resource identifier', value)
@@ -113,25 +114,25 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       //     this.resourceIdentifier = value?.identifier //value?.identifier // do_1138891198489067521147
       //     this.parseVTT()
       //   }
-        
+
       // })
 
-      this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value:any)=>{
+      this.subTitles$ = this.tocSvc.transcriptionData$.subscribe((value: any) => {
         //  console.log('value', value)
         this.keywordToHighlight = value
       })
 
       this.transriptionLanguageSub = this.tocSvc.transriptionActiveLanguageDataObject$
-      .pipe(
-        tap((langvalue:any) => console.log('tap langvalue:', langvalue))
-      )
-      .subscribe((langvalue: any) => {
-        // console.log('langValue', langvalue);
-        if(langvalue) {
-         // this.renderSelectedLanguageTranscription();
-        }
+        .pipe(
+          tap((langvalue: any) => console.log('tap langvalue:', langvalue))
+        )
+        .subscribe((langvalue: any) => {
+          // console.log('langValue', langvalue);
+          if (langvalue) {
+            // this.renderSelectedLanguageTranscription();
+          }
 
-      });
+        });
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
@@ -142,47 +143,51 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (batchId) {
       this.selectedTabIndex = 1
     }
+    this.commentId = this.route.snapshot.queryParams.commentId ? this.route.snapshot.queryParams.commentId : ''
+    if (this.commentId) {
+      this.selectedTabIndex = 2
+    }
     if (this.configService && this.configService.userRoles) {
       // tslint:disable-next-line:max-line-length
       this.displayTeachersContent = (
         this.configService.userRoles.has('MENTOR') ||
         this.configService.userRoles.has('mentor') ||
         this.configService.userRoles.has('Mentor')
-      && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
+        && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
     } else {
-     
+
       this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
         this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
-      
+
     }
 
-   
-    
+
+
   }
 
   ngAfterViewInit() {
     this.isMobile = this.utilityService.isMobile
-    if(window.innerWidth < 1480) {
+    if (window.innerWidth < 1480) {
       this.isMobileForAI = true
     } else {
       this.isMobileForAI = false
     }
     this.menuPosition = this.tabElement._elementRef.nativeElement.offsetTop
 
-    this.route.queryParamMap.subscribe(async (params:any) => {
-   
+    this.route.queryParamMap.subscribe(async (params: any) => {
+
       let fromAITutor = params.get('fromAITutor')
-      
-      if((fromAITutor === 'true' || fromAITutor === true) && this.isMobile) {
-       setTimeout(()=>{
-        const tabsArray = this.tabs?.toArray();        
-        let index = tabsArray?.findIndex(tab => tab.textLabel.trim() === "AI Tutor".trim());
-        if(index > -1) {
-          this.selectedTabIndex = index
-          this.fromAISelectedTabIndex = true
-        }
-       },3000)
-        
+
+      if ((fromAITutor === 'true' || fromAITutor === true) && this.isMobile) {
+        setTimeout(() => {
+          const tabsArray = this.tabs?.toArray();
+          let index = tabsArray?.findIndex(tab => tab.textLabel.trim() === "AI Tutor".trim());
+          if (index > -1) {
+            this.selectedTabIndex = index
+            this.fromAISelectedTabIndex = true
+          }
+        }, 3000)
+
       }
     })
   }
@@ -190,28 +195,28 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
-    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
     }
 
-    if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
-      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.content?.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
+      this.enableAITutorFlag = this.onlyscormAssessmentExists(this.content?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
       // this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false
     }
 
-    if ( changes && changes['playResourceId']) {
-      if(changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
-        if(this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
+    if (changes && changes['playResourceId']) {
+      if (changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
+        if (this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
           this.parseVTT()
         }
       }
     }
-    if (changes.changeTab && changes.changeTab.currentValue && !this.fromAISelectedTabIndex ) {
+    if (changes.changeTab && changes.changeTab.currentValue && !this.fromAISelectedTabIndex) {
       this.selectedTabIndex = 1
     }
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
@@ -226,8 +231,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.baseContentReadData.identifier
         }
       }
-      
-      if(this.isEnrolled) {
+
+      if (this.isEnrolled) {
         this.discussWidgetData.enrolledContent = true
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       } else {
@@ -236,7 +241,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
-    
+
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
         if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
@@ -247,23 +252,23 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
-    if(this.sideNavBarOpened) {
-      if(window.innerWidth < 1480) {
-        if(this.isMobileForAI) {
+    if (this.sideNavBarOpened) {
+      if (window.innerWidth < 1480) {
+        if (this.isMobileForAI) {
           this.isMobileForAI = false
-        }        
+        }
       } else {
         this.isMobileForAI = false
       }
-     
+
     } else {
-      if(window.innerWidth < 1480) {
-          this.isMobileForAI = true
+      if (window.innerWidth < 1480) {
+        this.isMobileForAI = true
       } else {
         this.isMobileForAI = false
       }
     }
-    
+
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -282,37 +287,37 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     this.loadCheckService.componentLoaded(true)
     // console.log('event', event)
     // console.log('this.content', this.viewerDataSvc?.resourceId)
-    if(event && event.tab.textLabel === 'AI Tutor') {
+    if (event && event.tab.textLabel === 'AI Tutor') {
       this.showAITutorPopup = true
     }
-    if(event && event.index === 0 && event.tab.textLabel === 'Transcription') {
+    if (event && event.index === 0 && event.tab.textLabel === 'Transcription') {
       this.raiseTranscriptionTabStartTelemetry()
-      setTimeout(()=>{
+      setTimeout(() => {
         this.raiseTranscriptionTabInteractTelemetry()
-      },1000)
+      }, 1000)
     } else {
       this.raiseTranscriptionTabStopTelemetry()
     }
-    
+
   }
 
   showAiTutorConfirmPopup() {
     this.raiseAIPopupStartTelemetry()
-    if(this.isEnrolled) {
+    if (this.isEnrolled) {
       this.fromAITutor = true
-      setTimeout(()=>{
+      setTimeout(() => {
         this.raiseAIPopupInteractTelemetry()
-      },1000)
+      }, 1000)
 
-     
+
       this.generateResumeDataLinkNew()
-      setTimeout(()=>{
-        this.raiseAIPopupEndTelemetry() 
-      },1000)
+      setTimeout(() => {
+        this.raiseAIPopupEndTelemetry()
+      }, 1000)
     } else {
-      setTimeout(()=>{
+      setTimeout(() => {
         this.raiseAIPopupInteractTelemetry()
-      },1000)
+      }, 1000)
       const dialogConfig = new MatDialogConfig()
 
       dialogConfig.width = '421px'
@@ -321,18 +326,18 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
       const dialogRef = this.dialog.open(AiTutorConfirmPopupComponent, dialogConfig)
 
-      dialogRef.afterClosed().subscribe((response:any) => {
-        
-        if(response === 'enroll') {     
-          this.fromAITutor = true     
+      dialogRef.afterClosed().subscribe((response: any) => {
+
+        if (response === 'enroll') {
+          this.fromAITutor = true
           this.generateResumeDataLinkNew()
-        } else if(response === 'needToEnroll'){
+        } else if (response === 'needToEnroll') {
           this.enrollUserForAITutor()
         }
-        this.raiseAIPopupEndTelemetry() 
+        this.raiseAIPopupEndTelemetry()
       });
     }
-    
+
   }
 
   generateResumeDataLinkNew() {
@@ -412,13 +417,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`   },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}` },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      pageContext: { pageId: '/app/toc', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -430,13 +435,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`  },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}` },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      pageContext: { pageId: '/app/toc', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -448,13 +453,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}`  },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-toc-page", "pageid": `/app/toc/${this.content?.identifier}` },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/app/toc', module: 'Learn'},
+      pageContext: { pageId: '/app/toc', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -466,43 +471,43 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   async parseVTT() {
-    let identifier = this.resourceIdentifier 
+    let identifier = this.resourceIdentifier
     // console.log('identifier--', identifier)
-    await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async(datas:any)=>{
-      let data:any = datas?.data
-      if(data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
-       this.vttLangArr = data[0]['transcription_urls']
-      
-       this.enableTranscriptionFlag = true
-       // let url =  data[0]['transcription_urls'][0]['uri']
-      //  console.log('this.vttLangArr--',this.vttLangArr)
-       this.transcriptionActiveLanguage  = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
-       this.defaultTranscriptLanguage = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang']:'en'
-      //  console.log('this.transcriptionActiveLanguage--', this.transcriptionActiveLanguage)
-      let selectedTranscriptionStyle = this.vttLangArr.filter((item: any) => {
-        return item?.label === this.transcriptionActiveLanguage;
-      });
-      if(selectedTranscriptionStyle && selectedTranscriptionStyle.length) {
-        this.selectedTranscriptionStyle = selectedTranscriptionStyle[0]
-      } else {
-        this.selectedTranscriptionStyle =  this.vttLangArr[0]
-      }
-      // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
-       let url = this.vttLangArr.filter((item:any)=>item.label === this.transcriptionActiveLanguage)[0]['uri']
+    await this.tocSvc.aiGetResourceVttFile(identifier).subscribe(async (datas: any) => {
+      let data: any = datas?.data
+      if (data && data.length && data[0]['transcription_urls'] && data[0]['transcription_urls'].length) {
+        this.vttLangArr = data[0]['transcription_urls']
+
+        this.enableTranscriptionFlag = true
+        // let url =  data[0]['transcription_urls'][0]['uri']
+        //  console.log('this.vttLangArr--',this.vttLangArr)
+        this.transcriptionActiveLanguage = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang'] : 'en'
+        this.defaultTranscriptLanguage = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? this.vttLangArr[0]['default_lang'] : 'en'
+        //  console.log('this.transcriptionActiveLanguage--', this.transcriptionActiveLanguage)
+        let selectedTranscriptionStyle = this.vttLangArr.filter((item: any) => {
+          return item?.label === this.transcriptionActiveLanguage;
+        });
+        if (selectedTranscriptionStyle && selectedTranscriptionStyle.length) {
+          this.selectedTranscriptionStyle = selectedTranscriptionStyle[0]
+        } else {
+          this.selectedTranscriptionStyle = this.vttLangArr[0]
+        }
+        // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
+        let url = this.vttLangArr.filter((item: any) => item.label === this.transcriptionActiveLanguage)[0]['uri']
         // console.log('url--', url)
         const file = await VttFile.fromUrl(url);
-       let blocks:any = file.getBlocks();
-          
-          this.subTitles = blocks
-          // console.log('this.vttLangArr--',this.vttLangArr)
-          // if(this.vttLangArr && this.vttLangArr.length) {
-          //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
-          // } else {
-          //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
-          // }
-          this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:true})         
+        let blocks: any = file.getBlocks();
+
+        this.subTitles = blocks
+        // console.log('this.vttLangArr--',this.vttLangArr)
+        // if(this.vttLangArr && this.vttLangArr.length) {
+        //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
+        // } else {
+        //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
+        // }
+        this.tocSvc.changeTranscriptionLanguageEvent.next({ activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer: true })
       } else {
-        this.vttLangArr =  []
+        this.vttLangArr = []
         this.enableTranscriptionFlag = false
       }
 
@@ -510,71 +515,71 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
 
-  async renderSelectedLanguageTranscription(_langvalue:any)  {
+  async renderSelectedLanguageTranscription(_langvalue: any) {
     // this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
-    if(typeof _langvalue === 'string' && _langvalue) {
+    if (typeof _langvalue === 'string' && _langvalue) {
       this.transcriptionActiveLanguage = _langvalue
-      
+
     } else {
       this.selectedTranscriptionStyle = _langvalue?.value
       this.transcriptionActiveLanguage = this.selectedTranscriptionStyle?.label
       this.transcriptActiveLanguageText = _langvalue?.value?.language
     }
     this.raiseTranscriptionLanguageStartTelemetry()
-    setTimeout(()=>{
+    setTimeout(() => {
       this.raiseTranscriptionLanguageInteractTelemetry()
     })
-    let currentPath = this.vttLangArr.filter((item:any)=> item?.label === this.transcriptionActiveLanguage)
-    if(currentPath && currentPath.length) {
+    let currentPath = this.vttLangArr.filter((item: any) => item?.label === this.transcriptionActiveLanguage)
+    if (currentPath && currentPath.length) {
       this.selectedTranscriptionStyle = currentPath[0]
     }
     const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
-       let blocks:any = file.getBlocks();
+    let blocks: any = file.getBlocks();
     this.subTitles = blocks
     this.raiseTranscriptionLanguageStopTelemetry()
     // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
 
   }
 
-  playFromSlot(subtitle:any) {
-    if(subtitle) {
-      let startTime = subtitle.startTime/1000
-      let endTime = subtitle.endTime/1000
-      this.tocSvc.playTranscriptionVideo.next({startTime, endTime})
-    }    
+  playFromSlot(subtitle: any) {
+    if (subtitle) {
+      let startTime = subtitle.startTime / 1000
+      let endTime = subtitle.endTime / 1000
+      this.tocSvc.playTranscriptionVideo.next({ startTime, endTime })
+    }
   }
 
   formatMsToVttTime(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000);
-  //  const milliseconds = ms % 1000;
+    //  const milliseconds = ms % 1000;
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-  
+
     const pad = (num: number, size: number) => num.toString().padStart(size, '0');
-  
+
     // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
     return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
   }
 
-  onlyscormAssessmentExists(data:any, key:any, value:any) {
-   
-    for (let i=0; i<data?.length; i++) {
-      if (data[i] && data[i]['children'] && data[i]['children'].length) { 
+  onlyscormAssessmentExists(data: any, key: any, value: any) {
+
+    for (let i = 0; i < data?.length; i++) {
+      if (data[i] && data[i]['children'] && data[i]['children'].length) {
         // this.totalResource = this.totalResource + 1
-       // console.log('in children')
-        this.onlyscormAssessmentExists(data[i]?.children, key, value)      
+        // console.log('in children')
+        this.onlyscormAssessmentExists(data[i]?.children, key, value)
       } else {
-        
+
         this.totalResource = this.totalResource + 1
         if (value.includes(data[i][key])) {
           // this.showAITutorFlag = false;
           this.scormAssessmentCount = this.scormAssessmentCount + 1
-        } 
+        }
       }
     }
-    
-    if(this.totalResource === this.scormAssessmentCount) {
+
+    if (this.totalResource === this.scormAssessmentCount) {
       this.enableAITutorFlag = false;
     } else {
       this.enableAITutorFlag = true
@@ -587,13 +592,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-tab'  },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-tab' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -605,13 +610,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`,subType:  'transcript-tab'   },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-tab' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -623,13 +628,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-tab'   },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-viewer-page", "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-tab' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -641,13 +646,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'  },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-language' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -659,13 +664,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`,subType:  'transcript-language'   },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-language' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -677,37 +682,43 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType:  'transcript-language'   },
-        object: { "id": this.content?.identifier,"type": this.content?.courseCategory },
+        edata: { type: 'click', "id": this.transcriptActiveLanguageText, "pageid": `/viewer/video/${this.viewerDataSvc?.resourceId}`, subType: 'transcript-language' },
+        object: { "id": this.content?.identifier, "type": this.content?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn'},
+      pageContext: { pageId: `/viewer/video/${this.viewerDataSvc?.resourceId}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  closeAIPopup(event:any) {
-    if(event) {
+  closeAIPopup(event: any) {
+    if (event) {
       this.showAITutorPopup = false
       this.selectedTabIndex = 0
     }
   }
 
   ngOnDestroy() {
-    if(this.resourceIdentifier$) {
+    if (this.resourceIdentifier$) {
       this.resourceIdentifier$.unsubscribe()
     }
 
-    if(this.subTitles$) {
+    if (this.subTitles$) {
       this.subTitles$.unsubscribe()
     }
 
-    if(this.transriptionLanguageSub) {
+    if (this.transriptionLanguageSub) {
       this.transriptionLanguageSub.unsubscribe()
     }
+  }
+
+  clearCommentIdFromUrl(): void {
+    const currentQueryParams = { ...this.route.snapshot.queryParams }
+    delete currentQueryParams.commentId
+    this.commentId = ''
   }
 }
