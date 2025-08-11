@@ -151,6 +151,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
@@ -172,6 +173,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             courseName: this.courseName,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
