@@ -186,6 +186,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             channelId: this.channelId,
             ...(data.queryMLParams ? data.queryMLParams : null),
             ...(window.location.href.includes('editMode=true') ? { editMode: true } : {}),
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
@@ -223,6 +224,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             channelId: this.channelId,
             ...(data.queryMLParams ? data.queryMLParams : null),
             ...(window.location.href.includes('editMode=true') ? { editMode: true } : {}),
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }

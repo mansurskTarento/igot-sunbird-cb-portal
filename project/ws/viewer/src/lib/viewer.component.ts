@@ -137,10 +137,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.baseContentReadData = data?.result?.content
           })
       }else {
-        this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+        if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+          this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+        }
+        
       }
     } else {
-      this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+      if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+        this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+      }
     }
   }
 
