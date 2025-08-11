@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of} from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject} from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'
@@ -34,7 +34,7 @@ const API_END_POINTS = {
   CERT_DOWNLOAD: (certId: any) => `${PROTECTED_SLAG_V8}/cohorts/course/batch/cert/download/${certId}`,
   SERVER_DATE: 'apis/public/v8/systemDate',
   SHARE_CONTENT: '/apis/proxies/v8/user/v1/content/recommend',
-  GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?id=${formId}`,
+  GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?formId=${formId}`,
   // SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
   SUBMIT_FORM: `apis/proxies/v8/forms/v2/saveFormSubmit`,
   AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`
@@ -897,201 +897,7 @@ export class AppTocService {
   }
 
   getFormById(formId: string) {
-    console.log('getFormById', formId)
-    return of(
-            {
-        "id": "api.getFormById",
-        "ver": "2.0",
-        "ts": "2025-07-15T09:32:18.813",
-        "params": {
-            "resMsgId": "9e5ba2a8-14ec-416c-bf2b-38f6329d3017",
-            "msgId": "9e5ba2a8-14ec-416c-bf2b-38f6329d3017",
-            "err": null,
-            "status": "success",
-            "errMsg": null
-        },
-        "responseCode": "OK",
-        "result": {
-            "response": {
-                "formId": "1752571813107",
-                "id": "a17a6c41-348a-43a3-b020-7ebd41ce1aad",
-                "contextType": "form",
-                "title": "Program feedback form (5days)",
-                "status": "PUBLISH",
-                "version": 1.0,
-                "clientVersion": 1.1,
-                "createdBy": "57fd815a-85eb-4354-aef5-d3642f90b876",
-                "updatedBy": null,
-                "createdDate": 1752571813109,
-                "updatedDate": null,
-                "fields": [
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": false,
-                        "contextType": "heading",
-                        "values": [
-                            {
-                                "heading": "Did you receive advance intimation from the institution about the programme? If so, when did you respond to the institution?",
-                                "subHeading": "Please answer below:"
-                            }
-                        ],
-                        "name": "heading",
-                        "sectionId": "4026049e-3473-4e76-a015-5abf60682463",
-                        "id": "85cbb176-e462-4e71-bd49-d49b2aac4727",
-                        "fieldType": "heading",
-                        "order": 1
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "(a)\tWhen the intimation was received?",
-                        "id": "17528f65-0541-40c4-8615-94940c5ce206",
-                        "fieldType": "date",
-                        "notApplicable": false,
-                        "parentId": "4026049e-3473-4e76-a015-5abf60682463",
-                        "order": 2
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": false,
-                        "contextType": "separator",
-                        "values": [],
-                        "name": "separator",
-                        "id": "24ceaee4-71ba-4fea-bac4-42272a86da58",
-                        "fieldType": "separator",
-                        "order": 3
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": false,
-                        "contextType": "heading",
-                        "values": [
-                            {
-                                "heading": "Answer the following questions by ratings:",
-                                "subHeading": "5 star for highest and 1 star for lowest."
-                            }
-                        ],
-                        "name": "Answer the following questions by ratings:",
-                        "sectionId": "2f78261b-dfd1-4762-9877-56c810e83c65",
-                        "id": "bdec94d0-72e9-487a-a402-f8392694e680",
-                        "fieldType": "heading",
-                        "order": 4
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "What do you think about the structure and organization of the course to meet the objectives on a scale of 5?",
-                        "id": "12e58303-e990-4b4a-bc82-d8b8a6110c6a",
-                        "fieldType": "rating",
-                        "notApplicable": false,
-                        "parentId": "2f78261b-dfd1-4762-9877-56c810e83c65",
-                        "order": 5
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "How useful this training will be to you immediately in your job?",
-                        "id": "d85d0514-13df-40f2-90b0-1e44b432bbbf",
-                        "fieldType": "rating",
-                        "notApplicable": false,
-                        "parentId": "2f78261b-dfd1-4762-9877-56c810e83c65",
-                        "order": 6
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": false,
-                        "contextType": "separator",
-                        "values": [],
-                        "name": "separator",
-                        "id": "00ffba86-34e8-4b82-98d5-1ac551f6c123",
-                        "fieldType": "separator",
-                        "order": 7
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "Which parts of the course did you find most useful?",
-                        "id": "6fde0e30-f6fc-4999-a30a-dec4b682c60b",
-                        "fieldType": "textarea",
-                        "notApplicable": false,
-                        "order": 8
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "Which parts of the course did you find least helpful?",
-                        "id": "9b5e5851-79ac-496d-86f8-5ea47f7eb191",
-                        "fieldType": "textarea",
-                        "notApplicable": false,
-                        "order": 9
-                    },
-                    {
-                        "formId": "1752571813107",
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "contextType": "question",
-                        "values": [],
-                        "name": "Your overall impression of the course ?",
-                        "id": "29c9b84a-b094-4f9d-b8f5-24e713d862bf",
-                        "fieldType": "rating",
-                        "notApplicable": false,
-                        "order": 10
-                    }
-                ],
-                "mandatoryFields": [
-                    {
-                        "refApi": "",
-                        "logicalGroupCode": "",
-                        "isRequired": true,
-                        "values": [],
-                        "name": "Course ID and Name",
-                        "hidden": true,
-                        "additionalProperties": {},
-                        "fieldType": "text",
-                        "order": 99
-                    }
-                ],
-                "meta": [
-                    {
-                        "value": "",
-                        "key": ""
-                    }
-                ]
-            }
-        }
-    }
-          )
-    // of()
-    // return this.http.get(API_END_POINTS.GET_FORM_BYID(formId))
+    return this.http.get(API_END_POINTS.GET_FORM_BYID(formId))
   }
 
   submitForm(formData: any) {

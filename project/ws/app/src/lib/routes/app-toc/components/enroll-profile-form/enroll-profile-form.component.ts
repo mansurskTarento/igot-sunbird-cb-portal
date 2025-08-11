@@ -1253,7 +1253,7 @@ export class EnrollProfileFormComponent implements OnInit {
     //   formId: this.data.batchData.batchAttributes.profileSurveyId,
     //   timestamp: new Date().getTime(),
     // }
-      formId: this.surveyId,
+      formId: _.get(this.data, 'batchData.batchAttributes.profileSurveyId'),
       version: 4,
       status: 'SUBMITTED',
       responses: this.genereateSurveyPayload(status),
@@ -1261,7 +1261,7 @@ export class EnrollProfileFormComponent implements OnInit {
     this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
       this.addLoader = this.addLoader - 1
-      if (resp && resp.statusInfo && resp.statusInfo.statusCode === 200) {
+      if (_.get(resp, 'params.status') === 'success') {
         this.customForm = false
         this.snackBar.open("Form is submitted successfully")
         this.closePopup()
