@@ -129,7 +129,7 @@
         <div [ngClass]="isMobile ? 'toc-container-mobile' : 'toc-container'" *ngIf="viewerHeaderSideBarToggleFlag && !(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag" class="full-screen-block">
           <div class="pb-4 lg:py-4">
             <ws-widget-content-toc [sideNavBarOpened]="sideNavForAIOpened" [fromViewer]="true" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentReadData]="contentReadData" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
-            [resumeData]="resumeData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig" [playResourceId]="dataSvc?.resourceId"></ws-widget-content-toc>
+            [resumeData]="resumeData" [baseContentReadData]="baseContentReadData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig" [playResourceId]="dataSvc?.resourceId"></ws-widget-content-toc>
           </div>
         </div>
       </ng-container>
@@ -137,7 +137,7 @@
         <div class='toc-container full-screen-block' *ngIf="viewerHeaderSideBarToggleFlag">
           <div class="pb-4 lg:py-4 pl-4 pr-4">
             <ws-widget-content-toc [sideNavBarOpened]="sideNavForAIOpened" [contentReadData]="contentReadData" [fromViewer]="true" [isEnrolled]="batchData?.enrolled" [componentName]="'viewer'" [contentTabFlag]="isMobile" [tocStructure]="tocStructure" [content]="batchId ? hierarchyData : content" [initialRouteData]="initialrouteData" [forPreview]="forPreview"
-            [resumeData]="resumeData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig" [playResourceId]="dataSvc?.resourceId"></ws-widget-content-toc>
+            [resumeData]="resumeData" [baseContentReadData]="baseContentReadData" [batchData]="batchData" [hierarchyMapData]="tocSvc?.hashmap" [pathSet]="pathSet" [config]="tocConfig" [playResourceId]="dataSvc?.resourceId"></ws-widget-content-toc>
           </div>
         </div>
       </ng-container>

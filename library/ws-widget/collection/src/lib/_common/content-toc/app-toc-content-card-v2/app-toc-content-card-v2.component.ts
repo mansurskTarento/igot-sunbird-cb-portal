@@ -222,6 +222,7 @@ export class AppTocContentCardV2Component implements OnInit {
         this.forPreview,
         this.content.primaryCategory,
         this.batchId,
+         this.content?.name || this.baseContentReadData?.name,
         (selectedLanguage? selectedLanguage.langId : null),
         (selectedLanguage? selectedLanguage.identifier : null),
       )
