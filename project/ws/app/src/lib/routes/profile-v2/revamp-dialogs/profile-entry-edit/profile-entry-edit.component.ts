@@ -218,12 +218,12 @@ export class ProfileEntryEditComponent implements OnInit {
     if(orgNameControl) {
       orgNameControl.valueChanges.subscribe((value: string) => {
         if(value) {
-          const selectedOrgDetails = this.orgList.find(org => org.channel === value)
+          const selectedOrgDetails: any = this.orgList.find((org: any) => org.orgName === value)
           if(selectedOrgDetails) {
             this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
             this.selctedOrgDetails['rootOrgId'] = selectedOrgDetails.rootOrgId
             this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
-            this.selctedOrgDetails['orgName'] = selectedOrgDetails.channel
+            this.selctedOrgDetails['orgName'] = selectedOrgDetails.orgName
             this.designationsOffset = 0
             this.designationsMeta = [];
             if( searchDesignationControl) {
@@ -251,7 +251,7 @@ export class ProfileEntryEditComponent implements OnInit {
           isCbp: true
         },
         fields: [
-          'channel',
+          'orgName',
           'imgUrl',
           'identifier',
           'rootOrgId'
@@ -287,11 +287,11 @@ export class ProfileEntryEditComponent implements OnInit {
   
   checkCurrentOrganisationPresent() {
     if(this.selctedOrgDetails['orgName'] && this.orgList) {
-      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.channel === this.selctedOrgDetails['orgName']).length > 0
+      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.orgName === this.selctedOrgDetails['orgName']).length > 0
       if(!selectedOrgIsPresent) {
         const orgDetails: organisation = {
           identifier: this.selctedOrgDetails['orgId'],
-          channel: this.selctedOrgDetails['orgName'],
+          orgName: this.selctedOrgDetails['orgName'],
           imgUrl: this.selctedOrgDetails['orgLogo'],
           rootOrgId: this.selctedOrgDetails['rootOrgId']
         }
