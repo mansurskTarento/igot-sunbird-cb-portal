@@ -1,44 +1,64 @@
-<div class="w-full">
+<div class="p-4 md:p-0">
   <form>
     <!-- Public Section -->
     <div class="profile-visibility-section">
       <div class="profile-visibility-label">Public</div>
-      <mat-radio-group [(ngModel)]="selectedVisibility" name="visibility" class="w-full">
-        <div class="profile-visibility-option flex items-start justify-between">
-          <div class="flex flex-col gap-2">
-            <span class="option-text">Anyone</span>
-            <span class="option-description">Anyone can view data on your profile.</span>
+      <ng-container *ngIf="loadingDetails; else visibilityOptionsPublic">
+        <ws-widget-skeleton-loader
+          [width]="'100%'"
+          [height]="'75px'"
+          [bindingClass]="'flex rounded margin-bottom-xs'">
+        </ws-widget-skeleton-loader>
+      </ng-container>
+      <ng-template #visibilityOptionsPublic>
+        <mat-radio-group [(ngModel)]="selectedVisibility" name="visibility" class="w-full" (change)="onVisibilityChange($event.value)">
+          <div class="profile-visibility-option flex items-start justify-between">
+            <div class="flex flex-col gap-2">
+              <span class="option-text">Anyone</span>
+              <span class="option-description">Anyone can view data on your profile.</span>
+            </div>
+            <mat-radio-button value="public" class="custom-radio"></mat-radio-button>
           </div>
-          <mat-radio-button value="public" class="custom-radio"></mat-radio-button>
-        </div>
-      </mat-radio-group>
+        </mat-radio-group>
+      </ng-template>
     </div>
 
     <!-- Private Section -->
     <div class="profile-visibility-section">
       <div class="profile-visibility-label">Private</div>
-      <mat-radio-group [(ngModel)]="selectedVisibility" name="visibility" class="w-full">
-        <div class="w-full flex flex-col">
-          <div class="profile-visibility-option flex items-start justify-between">
-            <div class="flex flex-col gap-2">
-              <span class="option-text">Connections Only</span>
-              <span class="option-description">Only in my connections can see</span>
+      <ng-container *ngIf="loadingDetails; else visibilityOptionsPrivate">
+        <ws-widget-skeleton-loader
+          [width]="'100%'"
+          [height]="'75px'"
+          [bindingClass]="'flex rounded margin-bottom-xs'">
+        </ws-widget-skeleton-loader>
+        <ws-widget-skeleton-loader
+          [width]="'100%'"
+          [height]="'75px'"
+          [bindingClass]="'flex rounded margin-bottom-xs'">
+        </ws-widget-skeleton-loader>
+      </ng-container>
+      <ng-template #visibilityOptionsPrivate>
+        <mat-radio-group [(ngModel)]="selectedVisibility" name="visibility" class="w-full" (change)="onVisibilityChange($event.value)">
+          <div class="w-full flex flex-col">
+            <div class="profile-visibility-option flex items-start justify-between">
+              <div class="flex flex-col gap-2">
+                <span class="option-text">Connections Only</span>
+                <span class="option-description">Only in my connections can see</span>
+              </div>
+              <mat-radio-button value="connections" class="custom-radio"></mat-radio-button>
             </div>
-            <mat-radio-button value="connections" class="custom-radio"></mat-radio-button>
-          </div>
-          <div class="border-t border-gray-200 mx-4"></div>
-          <div class="profile-visibility-option flex items-start justify-between">
-            <div class="flex flex-col gap-2">
-              <span class="option-text">Lock My Profile</span>
-              <span class="option-description">No one can view data on your profile including your connections</span>
+            <div class="border-t border-gray-200 mx-4"></div>
+            <div class="profile-visibility-option flex items-start justify-between">
+              <div class="flex flex-col gap-2">
+                <span class="option-text">Lock My Profile</span>
+                <span class="option-description">No one can view data on your profile including your connections</span>
+              </div>
+              <mat-radio-button value="private" class="custom-radio"></mat-radio-button>
             </div>
-            <mat-radio-button value="private" class="custom-radio"></mat-radio-button>
           </div>
-        </div>
-      </mat-radio-group>
+        </mat-radio-group>
+      </ng-template>
     </div>
   </form>
-  <div class="flex justify-end mt-4">
-    <button mat-raised-button color="primary" (click)="saveVisibilitySettings()">Save</button>
-    </div>
 </div>

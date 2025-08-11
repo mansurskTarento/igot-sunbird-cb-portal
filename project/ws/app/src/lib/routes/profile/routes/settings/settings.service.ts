@@ -11,6 +11,7 @@ const API_END_POINTS = {
   GET_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/read`,
   UPDATE_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/upsert`,
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
+  UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch'
 }
 
 @Injectable()
@@ -47,5 +48,9 @@ export class SettingsService {
 
   fetchProfile(userId: string): Observable<NSProfileDataV2.IProfile> {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
+  }
+
+  updateProfileVisibility(form: any): Observable<any> {
+    return this.http.post<any>(`${API_END_POINTS.UPDATE_PROFILE_DETAILS}`, form)
   }
 }
