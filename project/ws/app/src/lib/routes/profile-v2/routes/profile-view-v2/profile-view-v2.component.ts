@@ -335,16 +335,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setProfileVisibilityStatus() {
-    const privacyStatus = _.get(this.profileData, 'privacyStatus', 'public')
+    const privacyStatus = _.get(this.profesionalDetails, 'profilePreference', 0)
     let blockedMessage = ''
     if(this.connectionStatus === 'Blocked Incoming' || this.connectionStatus === 'Blocked Outgoing') {
       this.showProfileSection = false;
       blockedMessage = this.connectionStatus === 'Blocked Outgoing' ? 'youBlockedThisProfile' : 'youAreNotAuthorisedToSeeThisProfile'
     } else {
-      if (privacyStatus === 'private') {
+      if (privacyStatus === 1) {
         this.showProfileSection = false;
         blockedMessage = 'thisProfileIsLocked'
-      } else if (privacyStatus === 'connections' && this.connectionStatus !== 'Approved') {
+      } else if (privacyStatus === 10 && this.connectionStatus !== 'Approved') {
         this.showProfileSection = false;
         blockedMessage = 'thisProfileIsLocked'
       } else {
