@@ -71,7 +71,7 @@ const flattenItems = (items: any[], key: string | number) => {
 }
 const SNACKBAR_DURATION = 3000
 @Component({
-  selector: 'ws-app-app-toc-home',
+  selector: 'ws-app-app-toc-home-v2',
   templateUrl: './app-toc-home-v2.component.html',
   styleUrls: ['./app-toc-home-v2.component.scss'],
   // tslint:disable-next-line: use-component-view-encapsulation
@@ -1775,6 +1775,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   getPreAssessmentCompletionStatus() {
+    debugger
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
     if(this.contentReadData?.preEnrolmentResources?.length) {
