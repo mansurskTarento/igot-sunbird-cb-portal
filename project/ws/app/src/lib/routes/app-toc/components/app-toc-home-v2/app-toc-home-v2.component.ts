@@ -1775,7 +1775,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   getPreAssessmentCompletionStatus() {
-    debugger
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
     if(this.contentReadData?.preEnrolmentResources?.length) {
