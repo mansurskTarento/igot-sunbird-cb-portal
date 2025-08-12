@@ -2307,6 +2307,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   getTocStructure() {
+    this.initializeTocStructure()
     if (this.content && this.tocStructure) {
       this.hasTocStructure = false
       this.tocStructure.learningModule = this.content.primaryCategory === this.primaryCategory.MODULE ? -1 : 0

@@ -44,6 +44,7 @@ export class AppTocContentCardV2Component implements OnInit {
   @Input() batchData: /**NsContent.IBatchListResponse */ any | null = null
   @Input() isPreAssessment = false
   @Input() baseContentReadData: NsContent.IContent | null = null
+  @Input() mlCourse: NsContent.IContent | null = null
   hasContentStructure = false
   downloadCertificateLoading = false
   enumContentTypes = NsContent.EDisplayContentTypes
@@ -213,7 +214,7 @@ export class AppTocContentCardV2Component implements OnInit {
       } else {
         mimeType = this.content.mimeType
       }
-      let selectedLanguage = this.contentLangSvc.getSelectedLanguage(this.content)
+      let selectedLanguage = this.mlCourse ? this.contentLangSvc.getSelectedLanguage(this.mlCourse) : undefined
       let url = viewerRouteGenerator(
        this.content.identifier,
         mimeType,
