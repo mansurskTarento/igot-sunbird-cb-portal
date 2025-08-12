@@ -17,8 +17,7 @@
             <ng-container *ngIf="jan26Change && jan26Change.isEnabled">
                 <div class="mob-logo items-center justify-center">
                     <img [src]="jan26Change?.mWeb?.logoUrl" alt="Application Logo" class="app-logo" />
-                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text"> {{
-                        jan26Change?.mWeb?.logoText}}</span>
+                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text" [innerHTML]="jan26Change?.mWeb?.logoText"></span>
                 </div>
             </ng-container>
             <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar>

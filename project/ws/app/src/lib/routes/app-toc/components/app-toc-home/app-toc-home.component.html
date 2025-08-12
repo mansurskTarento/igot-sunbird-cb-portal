@@ -479,7 +479,8 @@
     
 
     <div class="right-container" >
-      <div class="right-content" #rightContainer>
+      <!-- if needed sticky of right container add this to below div => #rightContainer -->
+      <div class="right-content">
         <div class="right-content-inner">
         <ng-container *ngIf="skeletonLoader">
           <ws-widget-skeleton-loader [width]="'384px'" [height]="'224px'"

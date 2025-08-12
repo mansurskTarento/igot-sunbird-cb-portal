@@ -42,8 +42,8 @@
                   autocomplete="off">
                 </div>
               </div>
-              <mat-option *ngFor="let option of orgList" [value]="option?.channel">
-                {{ option?.channel }}
+              <mat-option *ngFor="let option of orgList" [value]="option?.orgName">
+                {{ option?.orgName }}
               </mat-option>
               <div *ngIf="isLoadingMoreOrganisations" class="loading-indicator">
                 {{'NetworkV2Profile.loadingMore' | translate}}

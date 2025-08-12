@@ -137,10 +137,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.baseContentReadData = data?.result?.content
           })
       }else {
-        this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+        if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+          this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+        }
+        
       }
     } else {
-      this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+      if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+        this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
+      }
     }
   }
 
@@ -328,17 +333,14 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.error && this.error.errorType === this.errorType.previewUnAuthorised) {
       }
     })
-
-    if (this.collectionId) {
-      if (!this.forPreview) {
-        const enrollCourseData = this.enrolledCourseData
-        if (enrollCourseData && (enrollCourseData.completionPercentage === 100 || enrollCourseData.status === 2)) {
-          this.downloadCertificate(enrollCourseData)
-        }
-      }
-    }
-    
-    
+    // if (this.collectionId) {
+    //   if (!this.forPreview) {
+    //     const enrollCourseData = this.enrolledCourseData
+    //     if (enrollCourseData && (enrollCourseData.completionPercentage === 100 || enrollCourseData.status === 2)) {
+    //       this.downloadCertificate(enrollCourseData)
+    //     }
+    //   }
+    // }
   }
 
   ngAfterViewChecked() {

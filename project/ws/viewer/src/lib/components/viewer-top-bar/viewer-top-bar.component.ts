@@ -29,6 +29,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() leafNodesCount: any
   @Input() content: any
   @Input() hierarchyMapData: any = {}
+  @Input() contentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null
@@ -151,6 +152,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
@@ -172,6 +174,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             courseName: this.courseName,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
@@ -237,7 +240,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
           this.activatedRoute.snapshot.queryParams.collectionId : ''
-          this.ComputeCompletedNodesAndPercent(collectionId)
+          const MLID =  this.activatedRoute.snapshot.queryParams.MLId ?
+          this.activatedRoute.snapshot.queryParams.MLId : ''
+          this.ComputeCompletedNodesAndPercent(collectionId === MLID ? collectionId : MLID)
         }
       }
     }
@@ -260,6 +265,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
+    this.overallLeafNodes = this.leafNodesCount || 0
     if(this.hierarchyMapData  && this.hierarchyMapData[identifier]) {
       // tslint:disable
       const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
