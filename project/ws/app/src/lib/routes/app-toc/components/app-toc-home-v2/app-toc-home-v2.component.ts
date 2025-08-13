@@ -77,8 +77,8 @@ const SNACKBAR_DURATION = 3000
   // tslint:disable-next-line: use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-
 export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
+  queryParamsData: { [key: string]: string } = {}; // Initialize queryParamsData
   show = false
   changeTab = false
   skeletonLoader = true
@@ -230,7 +230,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   fromAITutor = false
   languageList: any = []
   selectedLanguage: any
-  queryParamsData: any = {}
   languageMapProgress: any
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
@@ -1487,7 +1486,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.content['completionStatus'] = 2
           await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
           let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes)
+          let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
+          this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId,leafNodes, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
         } else{
@@ -1963,14 +1963,16 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
   
   private setupRouteSubscriptions() {
+    let queryParamstemp: any = {}
     if (this.route) {
       this.skeletonLoader = true
       this.routeSubscription = this.route.data.subscribe(async (data: Data) => {
         if (data?.content?.data?.identifier) {
-          await this.processRouteData(data)
+          queryParamstemp = await this.processRouteData(data)
         }
       })
     }
+    this.queryParamsData = queryParamstemp
   }
   
   private async processRouteData(data: Data) {
@@ -1978,16 +1980,16 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const initData = this.tocSvc.initData(data, true);
     
     // Get query parameters
-    await this.getQueryParams();
+    const queryParamsData = await this.getQueryParams();
     
     // Handle multilingual content if mlId is present in query parameters
-    if (this.queryParamsData.mlId) {
+    if (queryParamsData.mlId) {
       // Store the original content data for reference
       this.baseContentReadData = initData.content;
       
       // Fetch the multilingual content
       try {
-        const success = await this.fetchContentRead(this.queryParamsData.mlId);
+        const success = await this.fetchContentRead(queryParamsData.mlId);
         if (!success) {
           // If multilingual content fetch fails, fall back to the original content
           this.contentReadData = initData.content;
@@ -2017,6 +2019,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.loadBannerAndTocConfig(data);
     this.fetchPostAssessmentStatusIfNeeded();
     this.initData(data);
+    return queryParamsData
   }
   
   private loadLanguageData() {
@@ -2655,21 +2658,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   async getQueryParams() {
-    
+    const tempQueryParamsData: any = {}
     this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
-      
-      // Create a plain object to store query parameters
-      this.queryParamsData = {};
       
       // Extract all parameters from the ParamMap
       qParamsMap.keys.forEach(key => {
-        this.queryParamsData[key] = qParamsMap.get(key);
+        tempQueryParamsData[key] = qParamsMap.get(key) ?? '';
       });
+      tempQueryParamsData
       
       // Process specific parameters
-      const contextId = this.queryParamsData['contextId'];
-      const contextPath = this.queryParamsData['contextPath'];
-      const recommendedCoursesId = this.queryParamsData['recommendationId'];
+      const contextId = tempQueryParamsData['contextId'];
+      const contextPath = tempQueryParamsData['contextPath'];
+      const recommendedCoursesId = tempQueryParamsData['recommendationId'];
       
       if (contextId && contextPath) {
         this.contextId = contextId;
@@ -2688,6 +2689,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         }
       }
     });
+    return tempQueryParamsData
   }
 
   getOrgIdForShare() {
@@ -2831,7 +2833,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   openLangDialog(_event: any) {
     const dialogRef = this.dialog.open(EnrollLanguageDialogueComponent, {
-      width: '400px',
+      width: '500px',
       height: 'auto',
       data: {
         preSelect: this.selectedLanguage,
