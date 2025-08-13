@@ -1797,9 +1797,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           ]
       }
       } 
-      console.log('req', req)
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-        console.log('data--', data)
         if(data && data.result && data.result.contentList) {
           if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
             for(let i=0; i<data.result.contentList.length; i++) {
