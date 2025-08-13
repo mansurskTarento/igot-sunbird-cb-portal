@@ -245,7 +245,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if ((window.scrollY + this.rcElem.BottomPos) >= this.scrollLimit) {
         this.rcElement.nativeElement.style.position = 'sticky'
       } else {
-        this.rcElement.nativeElement.style.position = 'fixed'
+        if(this.rcElement) {
+          this.rcElement.nativeElement.style.position = 'fixed'
+        }
+        
       }
     }
 
@@ -1794,15 +1797,23 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           ]
       }
       } 
+      console.log('req', req)
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        console.log('data--', data)
         if(data && data.result && data.result.contentList) {
-          for(let i=0; i<data.result.contentList.length; i++) {
-            if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
-              data.result.contentList[i]['status'] === 2 
-            ) {
-              this.preAssessmentCompletionStatus = true
+          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
+            for(let i=0; i<data.result.contentList.length; i++) {
+              if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
+                data.result.contentList[i]['status'] === 2 
+              ) {
+                this.preAssessmentCompletionStatus = true
+              } else {
+                this.preAssessmentCompletionStatus = false
+                break
+              }
             }
           }
+          
         }
       })
     }
