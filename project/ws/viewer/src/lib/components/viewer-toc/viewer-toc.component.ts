@@ -227,6 +227,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
           } else {
             if(this.isPreAssessment) {
               this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
+              this.queue.map((item) => {
+                if(this.collection) {
+                  item['collectionId'] = this.collection.identifier
+                  item['batchId'] = this.collection.batchId
+                }
+                
+              })
               if (this.resourceId && this.queue.length) {
                 this.processCurrentResourceChange()
               }
