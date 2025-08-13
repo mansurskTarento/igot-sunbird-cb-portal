@@ -437,7 +437,7 @@
                   <mat-menu #moreLanguagesMenu="matMenu">
                   <mat-radio-group class="mat-radio-group flex flex-col gap-2 p-3" [value]="selectedLanguage">
                     <mat-radio-button
-                    *ngFor="let lang of languageList | slice:2"
+                    *ngFor="let lang of languageList | slice:5"
                     [value]="lang"
                     [checked]="lang?.identifier === selectedLanguage?.identifier"
                     (change)="onLanguageSelect(lang)">
@@ -782,7 +782,7 @@
     <ng-container [ngTemplateOutlet]="enrollFunctionality"></ng-container>
   </div>
 
-  <ws-app-share-toc *ngIf="enableShare" [rootOrgId]="rootOrgId" [content]="content" (resetEnableShare)="resetEnableShare($event)"></ws-app-share-toc>
+  <ws-app-share-toc *ngIf="enableShare" [rootOrgId]="rootOrgId" [content]="content" (resetEnableShare)="resetEnableShare($event)" [baseContentReadData]="baseContentReadData"></ws-app-share-toc>
 </ng-container>
 <ng-template #noDataFound>
   <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
