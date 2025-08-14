@@ -31,7 +31,10 @@ import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/mat
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { ProfileVisibilitySettingsComponent } from './components/profile-visibility-settings/profile-visibility-settings.component';
+import { LeftMenuItemComponent } from './components/left-menu-item/left-menu-item.component'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module';
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
@@ -41,6 +44,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [SettingsComponent, NotificationSettingsComponent, LeftMenuComponent,
     PrivacySettingsComponent,
     AccountPasswordSettingsComponent,
+    ProfileVisibilitySettingsComponent,
+    LeftMenuItemComponent,
     // ProfileSettingsComponent
   ],
   imports: [
@@ -67,6 +72,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatRippleModule,
     MatTooltipModule,
     RouterModule,
+    SkeletonLoaderModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -75,7 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       },
     }),
   ],
-  exports: [SettingsComponent, LeftMenuComponent],
+  exports: [SettingsComponent, LeftMenuComponent, LeftMenuItemComponent],
   providers: [SettingsService],
 })
 export class SettingsModule { }
