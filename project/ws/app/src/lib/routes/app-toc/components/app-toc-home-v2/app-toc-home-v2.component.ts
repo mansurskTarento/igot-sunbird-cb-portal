@@ -1827,7 +1827,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.setupSelectedBatchSubscription()
     this.setChannelId()
     this.checkIframeContext()
-    this.setupRouteSubscriptions()
+    this.queryParamsData = this.setupRouteSubscriptions()
     this.setupFragmentSubscription()
     this.setupBatchSubscriptions()
     this.configureDefaultLogo()
@@ -1981,7 +1981,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         }
       })
     }
-    this.queryParamsData = queryParamstemp
+    return queryParamstemp
   }
   
   private async processRouteData(data: Data) {
@@ -1989,16 +1989,15 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const initData = this.tocSvc.initData(data, true);
     
     // Get query parameters
-    const queryParamsData = await this.getQueryParams();
-    
+    const queryParamsDataTemp = await this.getQueryParams();
     // Handle multilingual content if mlId is present in query parameters
-    if (queryParamsData.mlId) {
+    if (queryParamsDataTemp.MLId) {
       // Store the original content data for reference
       this.baseContentReadData = initData.content;
       
       // Fetch the multilingual content
       try {
-        const success = await this.fetchContentRead(queryParamsData.mlId);
+        const success = await this.fetchContentRead(queryParamsDataTemp.MLId);
         if (!success) {
           // If multilingual content fetch fails, fall back to the original content
           this.contentReadData = initData.content;
@@ -2017,6 +2016,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.contentReadData = initData.content;
       this.baseContentReadData = initData.content;
     }
+    // Added to make sure this reference was incorrect, assigning again to make sure global variable is properly updated
+    this.queryParamsData = queryParamsDataTemp;
   
     // Continue with the rest of the processing
     this.loadLanguageData();
@@ -2028,7 +2029,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.loadBannerAndTocConfig(data);
     this.fetchPostAssessmentStatusIfNeeded();
     this.initData(data);
-    return queryParamsData
+    return queryParamsDataTemp
   }
   
   private loadLanguageData() {
@@ -2418,7 +2419,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           [urlData.url],
           { queryParams: urlData.queryParams })
       } else {
-        this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, this.queryParamsData['ML']))
+        const lang = this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, this.queryParamsData['ML'])
+        this.processLanguageSelection(lang)
       }
     })
   }
