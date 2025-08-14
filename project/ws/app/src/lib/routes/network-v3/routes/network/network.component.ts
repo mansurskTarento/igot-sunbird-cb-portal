@@ -3,7 +3,7 @@ import { connectionUpdates, routesData } from '../../models/network-v3.model';
 import * as _ from 'lodash';
 import { NetworkingService } from '../../services/networking.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 import { TranslateService } from '@ngx-translate/core';
 import { MobileAppsService } from 'src/app/services/mobile-apps.service';
 import { Router } from '@angular/router';
@@ -71,9 +71,18 @@ export class NetworkComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private translateService: TranslateService,
     private mobileAppsSvc: MobileAppsService,
-    private router: Router
+    private router: Router,
+    private langtranslations: MultilingualTranslationsService,
   ) { 
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.next(false)
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      this.translateService.setDefaultLang('hi')
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translateService.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translateService.use(lang)
+      }
+    })
   }
 
 
