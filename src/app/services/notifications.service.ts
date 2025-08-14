@@ -124,7 +124,15 @@ export class NotificationsService {
     } else if (notification.category === 'EVENT') {
       this.router.navigate([`/app/event-hub/home/${notification.message.data.id}`])
     } else if (notification.category === 'DISCUSSION') {
-      this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
+      if (notification.sub_category === 'PROFANITY_CHECK') {
+        this.router.navigate([
+          `/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`
+        ], { queryParams: { profanity: notification.sub_category } })
+      } else {
+        this.router.navigate([
+          `/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`
+        ])
+      }
     } else if (notification.category === 'NETWORK') {
       this.handleNetworkRedirection(notification, snackBar)
     } else if (notification?.category?.includes('CONTENT')) {
