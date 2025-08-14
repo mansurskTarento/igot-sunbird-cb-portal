@@ -1,3 +1,7 @@
+// Mock missing ConfirmDialogComponent before any imports
+jest.mock('@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component', () => ({
+  ConfirmDialogComponent: jest.fn(),
+}))
 import { PrfileEditV2Component } from './prfile-edit-v2.component'
 import { FormBuilder } from '@angular/forms'
 import { of, throwError, Subject } from 'rxjs'
@@ -94,10 +98,13 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
   })
 
   it('should initialize form for Profile header', () => {
+    jest.useFakeTimers()
     component.header = 'Profile'
     component.ngOnInit()
+    jest.runAllTimers()
     expect(component.profileForm).toBeDefined()
     expect(component.initilisationInProgress).toBe(false)
+    jest.useRealTimers()
   })
 
   it('should initialize form for Primary Details header', () => {
@@ -199,11 +206,14 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
   })
 
   it('should create primary details form and handle designation search', () => {
+    jest.useFakeTimers()
     component.header = 'Primary Details'
     component.ngOnInit()
     const searchDesignationControl = component.profileForm.get('searchDesignation')
     searchDesignationControl.setValue('Test')
+    jest.runAllTimers()
     expect(component.designationSearchText).toBe('Test')
+    jest.useRealTimers()
   })
 
   it('should get designations meta', () => {
@@ -373,13 +383,16 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
   })
 
   it('should handle submit and cancel', () => {
+    jest.useFakeTimers()
     component.header = 'Profile'
     component.ngOnInit()
     component.profileForm.patchValue({ firstname: 'John', state: 'TestState', district: 'TestDistrict' })
+    jest.runAllTimers()
     component.handleSubmit()
     expect(mockDialogRef.close).toHaveBeenCalled()
     component.handleCancel()
     expect(mockDialogRef.close).toHaveBeenCalled()
+    jest.useRealTimers()
   })
 
   it('should not submit invalid form', () => {
@@ -394,13 +407,16 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     component.header = 'Profile'
     component.ngOnInit()
     component.markFormGroupTouched(component.profileForm)
-    expect(component.profileForm.touched).toBeFalsy() // Angular FormGroup doesn't set touched on itself
+    // Instead of checking formGroup.touched, check a control
+    expect(component.profileForm.get('firstname').touched).toBe(true)
   })
 
   it('should check hasError', () => {
     component.header = 'Profile'
     component.ngOnInit()
-    component.profileForm.get('firstname').markAsTouched()
+    const firstnameControl = component.profileForm.get('firstname')
+    firstnameControl.setValue('')
+    firstnameControl.markAsTouched()
     expect(component.hasError('firstname', 'required')).toBe(true)
   })
 
@@ -418,6 +434,26 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     const spy = jest.spyOn(component.destroySubject$, 'unsubscribe')
     component.ngOnDestroy()
     expect(spy).toHaveBeenCalled()
+  })
+
+  it('should return true for showCentralDeputation when all conditions are met', () => {
+    component.header = 'Other Details'
+    component.ngOnInit()
+    component.profileForm.get('civilServiceType').setValue('All India Services')
+    component.profileForm.get('isCadre').setValue(true)
+    component.profileForm.get('cadreName').setValue('IAS')
+    component.profileForm.get('cadreBatch').setValue('2020')
+    expect(component.showCentralDeputation).toBe(true)
+  })
+
+  it('should return false for showCentralDeputation when conditions are not met', () => {
+    component.header = 'Other Details'
+    component.ngOnInit()
+    component.profileForm.get('civilServiceType').setValue('Other Service')
+    component.profileForm.get('isCadre').setValue(false)
+    component.profileForm.get('cadreName').setValue('')
+    component.profileForm.get('cadreBatch').setValue('')
+    expect(component.showCentralDeputation).toBe(false)
   })
 
   // Use all variables to avoid lint errors
