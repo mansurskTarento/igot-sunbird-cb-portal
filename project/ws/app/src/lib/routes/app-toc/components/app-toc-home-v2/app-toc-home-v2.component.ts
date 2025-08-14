@@ -816,10 +816,17 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  navigateToPlayerPage(batchId: string) {
+  async navigateToPlayerPage(batchId: string) {
     if (this.content) {
       this.enrollBtnLoading = true
-      const firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      let firstPlayableContent
+      if(this.content && this.content.identifier === this.selectedLanguage.identifier) {
+        firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      } else {
+        // fetch hierarchy for the selected language in popup first, then get first playable content and redirect to it
+        await this.fetchContentHierarchy(this.selectedLanguage.identifier);
+        firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      }
       let primaryCategory
       if (this.content.secureSettings !== undefined) {
         primaryCategory = 'Learning Resource'
@@ -1490,7 +1497,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
           let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
           let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-          this.getContinueLearningData(this.content.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
         } else{
