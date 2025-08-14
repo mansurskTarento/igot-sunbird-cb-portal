@@ -572,7 +572,6 @@ export class AppTocService {
       const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, content?.identifier)
       if (foundParentContent && foundParentContent.completionPercentage === 100) {
         await this.mapCompletionChildPercentageProgram(content)
-        console.log('if program is 100 persent complete', content)
         totalCount = content.leafNodesCount
       } else {
         if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
@@ -604,7 +603,6 @@ export class AppTocService {
                   parentChild.completionPercentage = 100
                   parentChild.completionStatus = 2
                   await this.mapCompletionChildPercentageProgram(parentChild)
-                  console.log('if course is 100 persent complete', parentChild)
                 } else {
                   if (foundContent) {
                     this.contentLoader.next(true)
@@ -757,7 +755,6 @@ export class AppTocService {
       // // }
       // })
       // this.mapModuleDurationAndProgress(content, content)
-      console.log('content percentage bind final', content)
       this.callHirarchyProgressHashmap(content)
       this.checkModuleWiseData(content)
       this.contentLoader.next(false)

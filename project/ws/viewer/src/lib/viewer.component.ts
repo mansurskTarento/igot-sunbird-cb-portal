@@ -266,15 +266,14 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.error && this.error.errorType === this.errorType.previewUnAuthorised) {
       }
     })
-
-    if (this.collectionId) {
-      if (!this.forPreview) {
-        const enrollCourseData = this.enrolledCourseData
-        if (enrollCourseData && (enrollCourseData.completionPercentage === 100 || enrollCourseData.status === 2)) {
-          this.downloadCertificate(enrollCourseData)
-        }
-      }
-    }
+    // if (this.collectionId) {
+    //   if (!this.forPreview) {
+    //     const enrollCourseData = this.enrolledCourseData
+    //     if (enrollCourseData && (enrollCourseData.completionPercentage === 100 || enrollCourseData.status === 2)) {
+    //       this.downloadCertificate(enrollCourseData)
+    //     }
+    //   }
+    // }
   }
 
   ngAfterViewChecked() {
