@@ -134,13 +134,13 @@ export class NotificationsService {
   handleDiscussionRedirection(notification: any, environment: any, roles: any[]): void {
     if (notification.sub_category === 'LEARN_DISCUSSION_POST_COMMENT' || notification.sub_category === 'LEARN_DISCUSSION_POST_REPLY') {
       if (roles.includes('CONTENT_CREATOR')) {
-        let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?preview=true&editMode=true&commentId=${notification.message.data.id}`
+        let url = `${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?preview=true&editMode=true&commentId=${notification.message.data.commentId}`
         window.open(url, '_blank')
       } else {
         this.router.navigate([`/app/toc/${notification.message.data.id}`],
           {
             queryParams: {
-              commentId: notification.message.data.courseId
+              commentId: notification.message.data.commentId
             }
           })
       }
