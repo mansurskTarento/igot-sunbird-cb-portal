@@ -1847,11 +1847,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   private initData(data: Data) {
     const initData: any = this.tocSvc.initData(data, true)
     this.setErrorCode(initData.errorCode)
-    
-    if (!this.forPreview) {
-      this.getUserRating(false)
-    }
-    
     this.processContentBody()
     this.initializeTocStructure()
     this.setupBatchControlSubscription()
@@ -2311,6 +2306,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.content = response.result.content;
             this.getOrgIdForShare()
             this.getTocStructure()
+            if (!this.forPreview) {
+              this.getUserRating(false)
+            }
             resolve(true);
           } else {
             resolve(false);
