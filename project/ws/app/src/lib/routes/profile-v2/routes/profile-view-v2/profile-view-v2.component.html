@@ -250,7 +250,7 @@
       </ng-template>
       <!-- #region (user details ) -->
       <ng-template #profileSection>
-        <ng-container *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing'; else blocked">
+        <ng-container *ngIf="showProfileSection; else blocked">
           <div class="flex flex-col gap-4">
             <ng-container *ngIf="isCurrentUser && isMobile">
               <div>
@@ -379,7 +379,7 @@
           <div class="w-full flex flex-col gap-4 justify-center items-center blockedBlock">
             <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
             <div class="blocked-text">
-              {{ (connectionStatus === 'Blocked Outgoing' ? 'NetworkV2Profile.youBlockedThisProfile' : 'NetworkV2Profile.youAreNotAuthorisedToSeeThisProfile') | translate}}
+              {{ blockedMessage }}
             </div>
           </div>
         </ng-template>
