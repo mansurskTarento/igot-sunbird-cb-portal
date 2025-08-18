@@ -5,6 +5,8 @@ import { NetworkingService } from '../../services/networking.service';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { TranslateService } from '@ngx-translate/core';
+import { MobileAppsService } from 'src/app/services/mobile-apps.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -68,7 +70,12 @@ export class NetworkComponent implements OnInit {
     private snackBar: MatLegacySnackBar,
     private configSvc: ConfigurationsService,
     private translateService: TranslateService,
-  ) { }
+    private mobileAppsSvc: MobileAppsService,
+    private router: Router
+  ) { 
+    this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.next(false)
+  }
+
 
   //#region (initialization)
   ngOnInit() {
@@ -133,6 +140,10 @@ export class NetworkComponent implements OnInit {
         })
       }
     })
+  }
+
+  navigateHome() {
+    this.router.navigate(['/page/home']);
   }
 
   handleTranslateTo(menuName: string): string {

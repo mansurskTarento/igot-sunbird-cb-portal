@@ -71,6 +71,8 @@ export function viewerRouteGenerator(
   primaryCategory?: string,
   batchId?: string,
   courseName?: string,
+  ML?: string,
+  MLId?: string,
 ): { url: string; queryParams: { [key: string]: any } } {
   let collId = collectionId
   let collType = collectionType
@@ -102,6 +104,9 @@ export function viewerRouteGenerator(
   }
   if (forcreator) {
     queryParams = { ...queryParams, editMode: true }
+  }
+  if( ML && MLId) {
+    queryParams = { ...queryParams, ML, MLId }
   }
   return {
     queryParams,

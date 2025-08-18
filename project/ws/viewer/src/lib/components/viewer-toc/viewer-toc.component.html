@@ -1,5 +1,5 @@
 
-<mat-tab-group class="player-content" *ngIf="enableAITutorFlag" (selectedTabChange)="onTabChanged($event)">
+<mat-tab-group class="player-content" *ngIf="enableAITutorFlag && !isMobile" [selectedIndex]="defaultTabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Structured Content">
     <ng-container *ngIf="!isFetching; else Loading">
       <!-- commented course card in viewer toc as per new design, only content hierarchy to be shown -->
@@ -126,7 +126,7 @@
         </mat-tree>
       </ul> -->
       <ws-widget-app-toc-content [batchId]="batchId" [componentName]="'viewer'" [tocStructure]="tocStructure" [content]="contentData" [pathSet]="pathSet"   [forPreview]="false"
-       [batchData]="batchData"  [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData" [config]="config"></ws-widget-app-toc-content>
+       [batchData]="batchData"  [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData" [config]="config" [baseContentReadData]="baseContentReadData"></ws-widget-app-toc-content>
     </ng-container>
     
     <!-- Loading Template -->
@@ -350,7 +350,7 @@
       </mat-tree>
     </ul> -->
     <ws-widget-app-toc-content [batchId]="batchId" [componentName]="'viewer'" [tocStructure]="tocStructure" [content]="contentData" [pathSet]="pathSet"   [forPreview]="false"
-     [batchData]="batchData"  [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData" [config]="config"></ws-widget-app-toc-content>
+     [batchData]="batchData"  [skeletonLoader]="skeletonLoader" [hierarchyMapData]="hierarchyMapData" [config]="config" [baseContentReadData]="baseContentReadData"></ws-widget-app-toc-content>
   </ng-container>
   
   <!-- Loading Template -->
@@ -428,3 +428,8 @@
     </div>
   </ng-template>
 </ng-container>
+
+<!-- <div class="popup" *ngIf="enableAITutorFlag && isMobile">
+  Test
+  <viewer-ai-tutor [content]="aiTutorResourceId"></viewer-ai-tutor>
+</div> -->

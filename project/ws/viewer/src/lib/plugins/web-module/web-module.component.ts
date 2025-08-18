@@ -151,7 +151,13 @@ export class WebModuleComponent implements OnInit, OnChanges, OnDestroy {
           current: this.current,
           max_size: this.slides.length,
         }
-        this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest)
+        const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+        if(isPreAssessment) {
+          this.viewerSvc.realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
+        } else {
+          this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest)
+        }
+        
       }
     }
   }

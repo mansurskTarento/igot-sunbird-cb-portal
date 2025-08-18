@@ -662,15 +662,14 @@
   background-position: center;
   text-align: center;
 }
-.fullscreen-chat {
+.fullscreen {
   display: block;
 }
 .fullscreen-chat-exit {
   display: block;
 }
-
-@media only screen and (max-width: 767px) {
-  .fullscreen-chat {
+@media only screen and (min-width:240px) and (max-width: 360px) {
+  .fullscreen {
     display: none;
   }
   .fullscreen-chat-exit {
@@ -678,7 +677,7 @@
   }
 
   .cb-header .user-info-div {
-    width: 84%;
+    width: 75%;
     justify-content: space-between;
   }
   .chatbot-with-ai {
@@ -697,7 +696,7 @@
   }
 
   .cb-header-sarthi .user-info-div {
-    width: 80%;
+    width: 70%;
     justify-content: space-between;
   }
 
@@ -729,9 +728,83 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2392156863);  
     height: 70px;
   }
+  .lang-select[_ngcontent-ng-c68842119] {
+    width: 63px;
+  }
+
+ 
+}
+
+@media only screen and (min-width:361px) and (max-width: 767px) {
+  .fullscreen {
+    display: none;
+  }
+  .fullscreen-chat-exit {
+    display: none;
+  }
+
+  .cb-header .user-info-div {
+    width: 79%;
+    justify-content: space-between;
+  }
+  .chatbot-with-ai {
+    width: 100%;
+    position: fixed; /* fixed might be better for mobile full-screen */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+    height: 100%;
+  }
+
+  .cb-header-sarthi .user-info-div {
+    width: 70%;
+    justify-content: space-between;
+  }
+
+  .cb-content-sarthi {
+    background: url('/assets/ai-tutor/background.svg');
+    background-color: #F0F3F4;
+    overflow-y : auto;
+    overflow-x: hidden;
+    position: relative;
+    height: 100%;
+  
+    // background: url('your-image.jpg');
+    // background-size: contain;
+    // background-position: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    background-blend-mode: overlay;
+    padding:0 !important
+  }
+
+  .chatbot-with-ai-min {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left:0;
+    z-index: 9999;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2392156863);  
+    height: 70px;
+  }
+  
 }
 
 @media only screen and (min-width:768px) and (max-width: 1023px) {
+  .fullscreen {
+    display: none;
+  }
+  .fullscreen-chat-exit {
+    display: none;
+  }
   .chatbot-with-ai {
     width: 100%;
     position: fixed; /* fixed might be better for mobile full-screen */

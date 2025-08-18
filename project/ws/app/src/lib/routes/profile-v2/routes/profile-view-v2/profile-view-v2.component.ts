@@ -397,6 +397,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.primaryDetails['cadreName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreName', '')
       this.primaryDetails['cadreBatch'] = _.get(this.profesionalDetails, 'cadreDetails.cadreBatch', '')
       this.primaryDetails['cadreControllingAuthorityName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', '')
+      this.primaryDetails['isOnCentralDeputation'] = _.get(this.profesionalDetails, 'cadreDetails.isOnCentralDeputation', false)
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
@@ -820,6 +821,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             resultPath: 'cadreControllingAuthorityName',
             formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName',
             isCader: true
+          },
+          {
+            formField: 'isOnCentralDeputation',
+            resultPath: 'isOnCentralDeputation',
+            formBodyPath: 'profileDetails.cadreDetails.isOnCentralDeputation',
+            isCader: true
           }
         ]
         fieldMappings.push(...cadreDetailsFieldMappings)
@@ -831,7 +838,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       fieldMappings.forEach(mapping => {
         const currentValue = _.get(result, mapping.resultPath, null);
         let formValue = this.primaryDetails[mapping.formField];
-        if (mapping.formField === 'dob' && formValue) {
+        if (mapping.formField === 'dob' && (formValue || formValue === false)) {
           formValue = this.datePipe.transform(new Date(formValue), 'dd-MM-yyyy');
         }
 

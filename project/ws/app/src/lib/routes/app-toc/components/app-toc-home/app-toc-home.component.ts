@@ -225,6 +225,34 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif'
   recommendedCoursesId = ''
   feedbackGiven: any
+  preAssessmentCompletionStatus = false
+  fromAITutor = false
+  selectedLanguage: any; // Set this to the default/initial language
+  languageList = [
+    { name: "English", value: "English" },
+    { name: "ಕನ್ನಡ (Kannada)", value: "Kannada" },
+    { name: "తెలుగు (Telugu)", value: "Telugu" },
+    { name: "தமிழ் (Tamil)", value: "Tamil" },
+    { name: "മലയാളം (Malayalam)", value: "Malayalam" },
+    { name: "हिंदी (Hindi)", value: "Hindi" },
+    { name: "অসমীয়া (Assamese)", value: "Assamese" },
+    { name: "বাংলা (Bengali)", value: "Bengali" },
+    { name: "ગુજરાતી (Gujarati)", value: "Gujarati" },
+    { name: "मराठी (Marathi)", value: "Marathi" },
+    { name: "ଓଡିଆ (Odia)", value: "Odia" },
+    { name: "ਪੰਜਾਬੀ (Punjabi)", value: "Punjabi" },
+    { name: "कोंकणी (Konkani)", value: "Konkani" },
+    { name: "बड़ो (Bodo)", value: "Bodo" },
+    { name: "डोगरी (Dogri)", value: "Dogri" },
+    { name: "كشميري / कश्मीरी (Kashmiri)", value: "Kashmiri" },
+    { name: "मैथिली (Maithili)", value: "Maithili" },
+    { name: "মৈতৈলোন্  (Manipuri )", value: "Manipuri" },
+    { name: "नेपाली (Nepali)", value: "Nepali" },
+    { name: "संस्कृतम् (Sanskrit)", value: "Sanskrit" },
+    { name: "ᱥᱟᱱᱛᱟᱲᱤ (Santali)", value: "Santali" },
+    { name: "سنڌي / सिंधी (Sindhi)", value: "Sindhi" },
+    { name: "اُردُو (Urdu)", value: "Urdu" }
+  ]
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -360,6 +388,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           this.courseID = data.content.data.identifier
           this.tocSvc.fetchGetContentData(data.content.data.identifier).subscribe(res => {
             this.contentReadData = res.result.content
+            console.log('this.contentReadData', this.contentReadData)
+            this.getPreAssessmentCompletionStatus()
           }, (error: HttpErrorResponse) => {
             if (!error.ok) {
               this.matSnackBar.open('Unable to fetch content data, due to some error!')
@@ -1282,18 +1312,8 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
           }
           const batchId = this.getBatchId()
           if (batchId) {
-            // this.createCertTemplate(this.getBatchId(), this.content.identifier)
-
-            // this.router.navigate(
-            //   [],
-            //   {
-            //     relativeTo: this.route,
-            //     queryParams: { batchId: this.getBatchId() },
-            //     queryParamsHandling: 'merge',
-            //   })
             this.navigateToPlayerPage(batchId)
           }
-          // this.enrollBtnLoading = false
         },
         (_error: any) => {
           this.snackBar.open(_.get(_error, 'error.params.errmsg') || 'Please try again later');
@@ -1322,7 +1342,7 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
         primaryCategory,
         batchId,
       )
-      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams } })
+      this.router.navigate([`${this.firstResourceLink.url}`], { queryParams: { ...this.firstResourceLink.queryParams, fromAITutor: this.fromAITutor } })
     }
   }
 
@@ -1807,6 +1827,12 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
       this.route.snapshot.params.id : ''
     const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.route.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
+      
+    }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
@@ -2358,6 +2384,130 @@ export class AppTocHomeComponent implements OnInit, OnDestroy, AfterViewChecked,
   }
 
   enrollUserToAI() {
+    this.fromAITutor = true
     this.handleAutoBatchAssign()
   }
+
+  generatePreAssessmentQuery(type: 'RESUME' | 'START_OVER' | 'START'): { [key: string]: string } {
+    if (this.firstResourceLink && (type === 'START' || type === 'START_OVER')) {
+      let qParams: { [key: string]: string } = {
+        ...this.firstResourceLink.queryParams,
+        viewMode: type,
+        batchId: this.getBatchId(),
+      }
+      if (this.contextId && this.contextPath) {
+        qParams = {
+          ...qParams,
+          collectionId: this.contextId,
+          collectionType: this.contextPath,
+        }
+      }
+      if (this.forPreview) {
+        delete qParams.viewMode
+      }
+      qParams = {
+        ...qParams,
+        channelId: this.channelId,
+      }
+      return qParams
+    }
+
+    if (this.resumeDataLink && type === 'RESUME') {
+      let qParams: { [key: string]: string } = {
+        ...this.resumeDataLink.queryParams,
+        batchId: this.getBatchId(),
+        viewMode: 'RESUME',
+        // courseName: this.content ? this.content.name : '',
+      }
+      if (this.contextId && this.contextPath) {
+        qParams = {
+          ...qParams,
+          collectionId: this.contextId,
+          collectionType: this.contextPath,
+        }
+      }
+      if (this.forPreview) {
+        delete qParams.viewMode
+      }
+      qParams = {
+        ...qParams,
+        channelId: this.channelId,
+      }
+      return qParams
+    }
+    if (this.forPreview) {
+      return {}
+    }
+    return {
+      batchId: this.getBatchId(),
+      viewMode: type,
+    }
+  }
+
+  routeToPreAssessent() {
+    if (this.contentReadData) { 
+      console.log('this.content',this.contentReadData)  
+      console.log('this.content', this.contentReadData.preEnrolmentResources) 
+      // this.generatePreAssessmentQuery('START')
+      let firstResource  = this.contentReadData.preEnrolmentResources[0]
+
+      this.firstResourceLink = viewerRouteGenerator(
+        firstResource.identifier,
+        firstResource.mimeType,
+        this.contentReadData?.identifier,
+        this.contentReadData?.courseCategory,
+        this.forPreview,
+        this.contentReadData.preEnrolmentResources[0]?.primaryCategory,
+        '',
+      )
+      console.log('this.firstResourceLink', this.firstResourceLink)
+      let routerLink =  this.firstResourceLink?.url  
+      let queryParams = this.generatePreAssessmentQuery('START')
+      queryParams = { ...queryParams,  preAssessment: 'true' }
+      this.router.navigate([`${routerLink}`], { queryParams })
+    }
+  }
+
+  getPreAssessmentCompletionStatus() {
+    this.preAssessmentCompletionStatus = false
+    let preEnrollmentResourcesArr:any = []
+    if(this.contentReadData?.preEnrolmentResources?.length) {
+      this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
+        if(item && item?.isMandatory) {
+          preEnrollmentResourcesArr.push(item?.identifier)
+        }
+      })
+    }
+    if(preEnrollmentResourcesArr && preEnrollmentResourcesArr.length) {
+      let req ={
+        "request": {
+          "contentIds": preEnrollmentResourcesArr,
+          "fields": [
+              // "lastAccessTime",
+              // "completionPercentage"
+          ]
+      }
+      } 
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+        if(data && data.result && data.result.contentList) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+            if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
+              data.result.contentList[i]['status'] === 2 
+            ) {
+              this.preAssessmentCompletionStatus = true
+            }
+          }
+        }
+      })
+    }
+    
+  }
+
+
+  onLanguageSelect(lang: any) {
+    this.selectedLanguage = lang;
+    console.log('Selected language:', lang);
+    // Add your language change logic here
+  }
+
 }

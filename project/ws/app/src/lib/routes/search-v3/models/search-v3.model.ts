@@ -36,7 +36,9 @@ export class RequestParams {
       'mimeType',
       'contentId',
       'creatorLogo',
-      'sectorDetails_v1'
+      'sectorDetails_v1',
+      'languageMapV1',
+      'language'
     ];
     this.facets = [...SearchOthersFacet, ...competenciesKey];
     this.query = '';

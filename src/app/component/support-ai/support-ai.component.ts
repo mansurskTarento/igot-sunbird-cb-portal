@@ -126,6 +126,11 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+    this.aiSearchResultArr.push(
+      {type: 'incoming',  tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true},
+      {type: 'incoming',  tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false},
+      {type: 'incoming',  tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false}
+    )
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -554,7 +559,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
    }
    this.cloneSearchQuery = cloneDeep(this.searchQuery);
    this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
+   this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: '', showBot: true})
    
    if(this.aiSearchResultArr.length > 2) {
     setTimeout(()=>{
@@ -576,7 +581,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.iGOTAISearchResultArr = []
     let requestBody:any = {
       "channel_id": "web",
-      "session_id": this.chatId,
+      // "session_id": this.chatId,
       "text": this.cloneSearchQuery,
       "audio": "",
       "language": this.activeLaguage
@@ -622,13 +627,12 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     if(this.initiateSupportNewChat) {
       let requestBody:any = {
         "channel_id": "web",
-        "session_id": this.chatId,
+        // "session_id": this.chatId,
         "text": this.cloneSearchQuery,
         "audio": "",
         "language": this.activeLaguage
       }
         this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
-          console.log('data---', data)
           this.resultFetch = true
         this.aiSearchResult = data 
         
@@ -673,7 +677,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         // })
         let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
+        this.aiSearchResultArr.push({showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
@@ -805,7 +809,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
 
   callFromInternet(item:any, index:any) {
     this.resultFetch = false
-    this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
+    this.aiSearchResultArr.push({showBot: true, type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
     if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
@@ -849,7 +853,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]

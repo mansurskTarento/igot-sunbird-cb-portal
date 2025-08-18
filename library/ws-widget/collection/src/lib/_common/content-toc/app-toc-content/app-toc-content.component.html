@@ -1,5 +1,5 @@
 <div class="bggrey">
-    <div class="py-4 content-container" id="contentContainer">
+    <div class="py-4 content-container" id="contentContainer" *ngIf="!isPreAssessment">
         <div class="main-container flex flex-col gap-4">
             <ng-container *ngIf="content?.primaryCategory === nsContent?.EPrimaryCategory?.BLENDED_PROGRAM">
                 <div class="padding-left-m flex gap-4 tab-list" >
@@ -30,10 +30,10 @@
                 [ngClass]="{ 'content-active': pathSet && pathSet.has(card.identifier)  && isEnrolled}">
                     <!-- {{card|json}} -->
                     <ws-widget-app-toc-content-card-v2 [forPreview]="forPreview" [expandAll]="expandAll" [componentName]="componentName" [expandActive]="true" [rootId]="contextId" [batchId]="batchId"
-                    [rootContentType]="contextPath" [content]="card" [index]="i+1" [pathSet]="pathSet" [hierarchyMapData]="hierarchyMapData" [batchData]="batchData"></ws-widget-app-toc-content-card-v2>
+                    [rootContentType]="contextPath" [content]="card" [index]="i+1" [pathSet]="pathSet" [hierarchyMapData]="hierarchyMapData" [batchData]="batchData" [baseContentReadData]="baseContentReadData"></ws-widget-app-toc-content-card-v2>
                 </div>
             </ng-container>
-            <ng-template #noChildren>
+            <ng-template #noChildren>                
                 <div *ngIf="!isPlayable"
                     class="ws-mat-primary-default-text ws-mat-primary-lite-background px-6 py-8 font-normal text-base noChildren"
                    >
@@ -47,4 +47,12 @@
             <ws-widget-app-toc-content-card-v2-skeleton></ws-widget-app-toc-content-card-v2-skeleton>
         </ng-container>
     </ng-template>
+    <div *ngIf="isPreAssessment">
+            <div class="content-card " *ngFor="let card of content?.preEnrolmentResources; trackBy: identifier; let i = index;" 
+            [ngClass]="{ 'content-active': pathSet && pathSet.has(card.identifier)  && isEnrolled}">
+                <!-- {{card|json}} -->
+                <ws-widget-app-toc-content-card-v2 [forPreview]="forPreview" [expandAll]="expandAll" [componentName]="componentName" [expandActive]="true" [rootId]="contextId" [batchId]="batchId"
+                [rootContentType]="contextPath" [isPreAssessment]="isPreAssessment" [content]="card" [index]="i+1" [pathSet]="pathSet" [hierarchyMapData]="hierarchyMapData" [batchData]="batchData" [baseContentReadData]="baseContentReadData"></ws-widget-app-toc-content-card-v2>
+            </div>
+    </div>
 </div>

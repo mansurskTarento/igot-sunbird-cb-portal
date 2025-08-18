@@ -126,7 +126,34 @@
   </div>
 </div>
 </div> -->
-<div class="overflow-y-hidden">
+
+<div class="overflow-y-hidden" [ngClass]="(isMobile && !maximize ? 'ai-tutor-popup-minimize' : (isMobile ? 'ai-tutor-popup': ''))">
+<div *ngIf="isMobile">
+  <div class="flex flex-row ai-tutor-mobile-header">
+      <div class="flex flex-row">
+          <div class="flex">
+              <span class="font-bold">AI Tutor</span>
+            </div>        
+            <div class="red-circle ml-5">
+              New
+            </div>
+      </div>
+      <div class="flex flex-row justify-end">
+        <div *ngIf="maximize" (click)="minimizeAITutor()">
+          <mat-icon>minimize</mat-icon>
+        </div>
+        <div *ngIf="!maximize" (click)="maximizeAITutor()">
+          <mat-icon>maximize</mat-icon>
+        </div>
+        <div (click)="closeAITutorPopup()">
+            <mat-icon>close</mat-icon>
+        </div>
+      </div>
+      
+      
+  </div>
+</div>
+<div [hidden]="!maximize">
 <div class="header">
   <!-- <mat-form-field appearance="none" style="width:100%">
     <select  matNativeControl required class="section-dd" >
@@ -367,7 +394,7 @@
                   <div class="btn-default" (click)="redirectToToc(item)">{{item?.title}}
                     <mat-icon class="vertical-middle" *ngIf="!(item?.fromInternet)">navigate_next</mat-icon>
                   </div>
-                  <div *ngIf="!(item?.fromInternet)">
+                  <div class="recommended-question-desc" *ngIf="!(item?.fromInternet)">
                     <!-- {{item?.description}} -->
                      <markdown [data]="item?.description"></markdown>
                   </div>
@@ -445,14 +472,14 @@
   </div>
 </div>
 
-<div class="footer">
+<div class="footer" [ngClass]="isMobile ? 'ai-popup-mobile-footer':''">
   <div class="border-gradient-rounded" [style.height.px]="containerHeight">
     <div class="flex flex-row ml-5 mr-2 justify-between">
 
       <div class="query-box">
         <!-- <input class="width-500" type="text" placeholder="Ask anything..." [(ngModel)]="searchQueryAItutor" (keydown.enter)="submitSearchQuery()"/>  -->
         <textarea #autoResizeTextarea class="width-500"
-        placeholder="Ask anything..."
+        placeholder="Ask Me Anything..."
         (input)="resizeTextarea(autoResizeTextarea, 'fromInput')"
         [(ngModel)]="searchQueryAItutor" (keydown.enter)="submitSearchQuery(autoResizeTextarea, $event)"
         rows="1"
@@ -468,5 +495,6 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 </div>

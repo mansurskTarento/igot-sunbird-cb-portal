@@ -144,7 +144,13 @@ export class PlayerYoutubeComponent extends WidgetBaseComponent
       }
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      if (this.widgetData.identifier && identifier && data) {
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else if (this.widgetData.identifier && identifier && data) {
         this.viewerSvc
           .realTimeProgressUpdate(identifier, data)
       }
@@ -218,10 +224,17 @@ export class PlayerYoutubeComponent extends WidgetBaseComponent
                                                            this.activatedRoute.snapshot.queryParams.batchId, identifier)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       // const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
       //   this.activatedRoute.snapshot.queryParams.collectionId : this.widgetData.identifier
       // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       //   this.activatedRoute.snapshot.queryParams.batchId : this.widgetData.identifier
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else 
       if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
         this.viewerSvc
           .realTimeProgressUpdate(identifier, data, collectionId, batchId)
