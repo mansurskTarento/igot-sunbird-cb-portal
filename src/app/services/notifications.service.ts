@@ -144,6 +144,10 @@ export class NotificationsService {
             }
           })
       }
+    } else if (notification.sub_category === 'PROFANITY_CHECK') {
+      this.router.navigate([
+        `/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`
+      ], { queryParams: { profanity: notification.sub_category } })
     } else {
       this.router.navigate([`/app/discussion-forum-v2/community/${notification.message.data.communityId}/${notification.message.data.discussionId}`])
     }

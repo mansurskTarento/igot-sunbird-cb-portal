@@ -294,28 +294,28 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   }
   onClickOfShare() {
     this.enableShare = true
-    this.raiseTelemetryForShare('shareContent')
+    //this.raiseTelemetryForShare('shareContent')
   }
 
   /* tslint:disable */
-  raiseTelemetryForShare(subType: any) {
-    console.log(this.extContentReadData, this.events, subType)
-    // this.events.raiseInteractTelemetry(
-    // {
-    //   type: 'click',
-    //   subType,
-    //   id: this.content ? this.content.identifier : '',
-    // },
-    // {
-    //   id: this.content ? this.content.identifier : '',
-    //   type: this.content ? this.content.primaryCategory : '',
-    // },
-    // {
-    //   pageIdExt: `btn-${subType}`,
-    //   module: WsEvents.EnumTelemetrymodules.CONTENT,
-    // }
-    // )
-  }
+  // raiseTelemetryForShare(subType: any) {
+  //   //console.log(this.extContentReadData, this.events, subType)
+  //   // this.events.raiseInteractTelemetry(
+  //   // {
+  //   //   type: 'click',
+  //   //   subType,
+  //   //   id: this.content ? this.content.identifier : '',
+  //   // },
+  //   // {
+  //   //   id: this.content ? this.content.identifier : '',
+  //   //   type: this.content ? this.content.primaryCategory : '',
+  //   // },
+  //   // {
+  //   //   pageIdExt: `btn-${subType}`,
+  //   //   module: WsEvents.EnumTelemetrymodules.CONTENT,
+  //   // }
+  //   // )
+  // }
 
   resetEnableShare(_eventData: any) {
 
