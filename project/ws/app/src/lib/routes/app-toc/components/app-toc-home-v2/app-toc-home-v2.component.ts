@@ -1435,7 +1435,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
 
   async checkIfUserEnrolled() {
-    console.log(this.content, 'content in checkIfUserEnrolled')
     this.contentLibSvc.oneStepResumeEnable = false
     this.enrollBtnLoading = true
     this.tocSvc.contentLoader.next(true)
@@ -1847,11 +1846,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   private initData(data: Data) {
     const initData: any = this.tocSvc.initData(data, true)
     this.setErrorCode(initData.errorCode)
-    
-    if (!this.forPreview) {
-      this.getUserRating(false)
-    }
-    
     this.processContentBody()
     this.initializeTocStructure()
     this.setupBatchControlSubscription()
@@ -2311,6 +2305,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.content = response.result.content;
             this.getOrgIdForShare()
             this.getTocStructure()
+            if (!this.forPreview) {
+              this.getUserRating(false)
+            }
             resolve(true);
           } else {
             resolve(false);
@@ -2853,6 +2850,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const dialogRef = this.dialog.open(EnrollLanguageDialogueComponent, {
       width: '500px',
       height: 'auto',
+      autoFocus: false, 
+      restoreFocus: false,
       data: {
         preSelect: this.selectedLanguage,
         languageList: this.languageList,
