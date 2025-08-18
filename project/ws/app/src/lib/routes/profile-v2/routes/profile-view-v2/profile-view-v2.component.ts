@@ -16,7 +16,7 @@ import { AchievementsComponent } from '../../components/profile-revamp/achieveme
 import { forkJoin, Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'
-import { ConfigurationsService, EventService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, MultilingualTranslationsService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -216,7 +216,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private translateService: TranslateService,
     private datePipe: DatePipe,
     private events: EventService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      this.translateService.setDefaultLang('hi')
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translateService.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translateService.use(lang)
+      }
+    })
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
