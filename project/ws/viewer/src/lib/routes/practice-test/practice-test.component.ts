@@ -101,9 +101,11 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                     this.activatedRoute.snapshot.queryParams.collectionId,
                     this.activatedRoute.snapshot.queryParams.batchId,
                     identifier)
+                const language = this.viewerSvc.getResourceContentLanguage(identifier) 
                 const req: NsContent.IContinueLearningDataReq = {
                     request: {
                         userId,
+                        language,
                         batchId: requestCourse.batchId,
                         courseId: requestCourse.courseId || '',
                         contentIds: [],

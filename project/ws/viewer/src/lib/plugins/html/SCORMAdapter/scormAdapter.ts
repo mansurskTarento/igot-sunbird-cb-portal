@@ -185,7 +185,7 @@ export class SCORMAdapterService {
     }
     const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId, 
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
-    const ML = this.activatedRoute.snapshot.queryParams.ML || ''
+    const ML  = this.viewerSvc.getResourceContentLanguage(this.contentId)
     const req: NsContent.IContinueLearningDataReq = {
       request: {
         userId,
@@ -289,12 +289,14 @@ export class SCORMAdapterService {
     const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId, 
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
     if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId) {
+      const language = this.viewerSvc.getResourceContentLanguage(this.contentId) 
       req = {
         request: {
           userId: this.configSvc.userProfile.userId || '',
           contents: [
             {
               contentId: this.contentId,
+              language: language,
               batchId: (requestCourse && requestCourse.batchId) ?  requestCourse.batchId : '',
               courseId: (requestCourse && requestCourse.courseId) ?  requestCourse.courseId : '',
               status: this.getStatus(postData),
