@@ -377,7 +377,12 @@
         </ng-container>
         <ng-template #blocked>
           <div class="w-full flex flex-col gap-4 justify-center items-center blockedBlock">
-            <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
+            <ng-container *ngIf="connectionStatus === 'Blocked Incoming' || connectionStatus === 'Blocked Outgoing'; else lockedImg">
+              <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
+            </ng-container>
+            <ng-template #lockedImg>
+              <img class="emptyPageIcon" src="./assets/icons/locked.svg" alt="locked gif">
+            </ng-template>
             <div class="blocked-text">
               {{ blockedMessage }}
             </div>
