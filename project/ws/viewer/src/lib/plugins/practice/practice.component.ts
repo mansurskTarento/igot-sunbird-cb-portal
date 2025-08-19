@@ -1324,7 +1324,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.questionAnswerHash,
       this.quizSvc.mtfSrc.getValue() as any ,
     )
+    let language:string =  this.viewerSvc.getResourceContentLanguage(this.identifier)
     const request: NSPractice.IQuizSubmit = {
+      language,
       batchId: this.resBatchId,
       identifier: this.identifier,
       primaryCategory: this.primaryCategory,
