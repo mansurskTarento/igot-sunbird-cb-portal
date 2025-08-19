@@ -2455,7 +2455,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               this.checkIfUserEnrolled();
             }
           }
-          
+          // Update subject to notify rating summry component and load the sumamry of selected language
+          this.resetRatingsService.setRatingServiceUpdate(true)
           // Finally set loading state to false
           this.skeletonLoader = false;
         })
