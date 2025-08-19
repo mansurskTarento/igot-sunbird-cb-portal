@@ -3,7 +3,7 @@
         <div class="photo-container flex items-center justify-center cursor-pointer" (click)="goToUserProfile(user)">
 
             <ws-widget-avatar-photo i18n-aria-label role="link" tabindex="0" [name]="getUseravatarName()"
-                [photoUrl]="user?.photo" size="m">
+                [photoUrl]="user?.photo || user?.profileDetails?.profileImageUrl" [size]="'round-m'">
             </ws-widget-avatar-photo>
         </div>
         <div class="name-container text-center flex flex-col width-expand">

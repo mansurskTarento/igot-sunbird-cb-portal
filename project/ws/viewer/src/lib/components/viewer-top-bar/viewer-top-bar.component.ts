@@ -322,9 +322,11 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           userId = this.configSvc.userProfile.userId || ''
           this.userid = this.configSvc.userProfile.userId || ''
         }
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
         const req  = {
           request: {
             userId,
+            language,
             batchId: this.batchId,
             courseId: this.identifier || '',
             contentIds: [],

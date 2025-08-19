@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NsContent } from '@sunbird-cb/collection/src/public-api';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -24,8 +24,17 @@ export class GlobalSearchComponent implements OnInit {
     private translate: TranslateService,
     private configService: ConfigurationsService,
     private router: Router,
+    private langtranslations: MultilingualTranslationsService
 
   ) {
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      this.translate.setDefaultLang('hi')
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+      }
+    })
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
       const lang = localStorage.getItem('websiteLanguage')!;
