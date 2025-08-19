@@ -333,9 +333,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           userId = this.configSvc.userProfile.userId || ''
           this.userid = this.configSvc.userProfile.userId || ''
         }
+
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
         const req = {
           request: {
             userId,
+            language,
             batchId: this.batchId,
             courseId: this.identifier || '',
             contentIds: [],

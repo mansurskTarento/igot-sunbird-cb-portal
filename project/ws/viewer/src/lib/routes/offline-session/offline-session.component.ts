@@ -154,9 +154,12 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
         this.activatedRoute.snapshot.queryParams.collectionId,
         this.activatedRoute.snapshot.queryParams.batchId,
         this.activatedRoute.snapshot.params.resourceId)
+
+        const language = this.viewerSvc.getResourceContentLanguage(this.activatedRoute.snapshot.params.resourceId)  
       const req: NsContent.IContinueLearningDataReq = {
         request: {
           userId,
+          language,
           batchId: requestCourse.batchId,
           courseId: requestCourse.courseId || '',
           contentIds: [],
