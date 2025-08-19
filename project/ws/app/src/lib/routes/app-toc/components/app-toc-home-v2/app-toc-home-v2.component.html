@@ -437,7 +437,7 @@
                   <mat-menu #moreLanguagesMenu="matMenu">
                   <mat-radio-group class="mat-radio-group flex flex-col gap-2 p-3" [value]="selectedLanguage">
                     <mat-radio-button
-                    *ngFor="let lang of languageList | slice:2"
+                    *ngFor="let lang of languageList | slice:5"
                     [value]="lang"
                     [checked]="lang?.identifier === selectedLanguage?.identifier"
                     (change)="onLanguageSelect(lang)">
@@ -611,7 +611,10 @@
               </div>
             </ng-container>
             <ng-container *ngIf="!forPreview || isInIFrame; else authViewBtn">
-              <ng-container *ngIf="!mobile1200 && preAssessmentCompletionStatus">
+              <ng-container *ngIf="!mobile1200 && (
+         !contentReadData?.preEnrolmentResources?.length ||
+         (contentReadData?.preEnrolmentResources?.length && preAssessmentCompletionStatus)
+       )">
                 <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
                 [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
                 [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -766,11 +769,10 @@
 
   </div>
 </div>
-
   <div class="mobile-enroll-div" [ngClass]="{'bg-white': contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM }">
     <ng-container *ngIf="content && contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM ">
       <div class="mb-2" *ngIf="mobile1200 && !forPreview || isInIFrame; else authViewBtn">
-        test1
+        
         <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
           [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
           [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -780,7 +782,7 @@
     <ng-container [ngTemplateOutlet]="enrollFunctionality"></ng-container>
   </div>
 
-  <ws-app-share-toc *ngIf="enableShare" [rootOrgId]="rootOrgId" [content]="content" (resetEnableShare)="resetEnableShare($event)"></ws-app-share-toc>
+  <ws-app-share-toc *ngIf="enableShare" [rootOrgId]="rootOrgId" [content]="content" (resetEnableShare)="resetEnableShare($event)" [baseContentReadData]="baseContentReadData"></ws-app-share-toc>
 </ng-container>
 <ng-template #noDataFound>
   <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">

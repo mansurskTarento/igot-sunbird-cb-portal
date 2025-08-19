@@ -30,6 +30,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() content: any
   @Input() hierarchyMapData: any = {}
   @Input() contentReadData: any
+  @Input() baseContentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null

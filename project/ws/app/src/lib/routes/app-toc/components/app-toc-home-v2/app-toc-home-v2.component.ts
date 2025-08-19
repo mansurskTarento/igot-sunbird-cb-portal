@@ -71,14 +71,14 @@ const flattenItems = (items: any[], key: string | number) => {
 }
 const SNACKBAR_DURATION = 3000
 @Component({
-  selector: 'ws-app-app-toc-home',
+  selector: 'ws-app-app-toc-home-v2',
   templateUrl: './app-toc-home-v2.component.html',
   styleUrls: ['./app-toc-home-v2.component.scss'],
   // tslint:disable-next-line: use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-
 export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
+  queryParamsData: { [key: string]: string } = {}; // Initialize queryParamsData
   show = false
   changeTab = false
   skeletonLoader = true
@@ -230,7 +230,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   fromAITutor = false
   languageList: any = []
   selectedLanguage: any
-  queryParamsData: any = {}
   languageMapProgress: any
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
@@ -245,7 +244,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if ((window.scrollY + this.rcElem.BottomPos) >= this.scrollLimit) {
         this.rcElement.nativeElement.style.position = 'sticky'
       } else {
-        this.rcElement.nativeElement.style.position = 'fixed'
+        if(this.rcElement) {
+          this.rcElement.nativeElement.style.position = 'fixed'
+        }
+        
       }
     }
 
@@ -814,10 +816,17 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  navigateToPlayerPage(batchId: string) {
+  async navigateToPlayerPage(batchId: string) {
     if (this.content) {
       this.enrollBtnLoading = true
-      const firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      let firstPlayableContent
+      if(this.content && this.content.identifier === this.selectedLanguage.identifier) {
+        firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      } else {
+        // fetch hierarchy for the selected language in popup first, then get first playable content and redirect to it
+        await this.fetchContentHierarchy(this.selectedLanguage.identifier);
+        firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(this.content)
+      }
       let primaryCategory
       if (this.content.secureSettings !== undefined) {
         primaryCategory = 'Learning Resource'
@@ -1426,7 +1435,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
 
   async checkIfUserEnrolled() {
-    console.log(this.content, 'content in checkIfUserEnrolled')
     this.contentLibSvc.oneStepResumeEnable = false
     this.enrollBtnLoading = true
     this.tocSvc.contentLoader.next(true)
@@ -1487,7 +1495,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.content['completionStatus'] = 2
           await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
           let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes)
+          let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
         } else{
@@ -1796,13 +1805,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       } 
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
         if(data && data.result && data.result.contentList) {
-          for(let i=0; i<data.result.contentList.length; i++) {
-            if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
-              data.result.contentList[i]['status'] === 2 
-            ) {
-              this.preAssessmentCompletionStatus = true
+          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
+            for(let i=0; i<data.result.contentList.length; i++) {
+              if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
+                data.result.contentList[i]['status'] === 2 
+              ) {
+                this.preAssessmentCompletionStatus = true
+              } else {
+                this.preAssessmentCompletionStatus = false
+                break
+              }
             }
           }
+          
         }
       })
     }
@@ -1818,7 +1833,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.setupSelectedBatchSubscription()
     this.setChannelId()
     this.checkIframeContext()
-    this.setupRouteSubscriptions()
+    this.queryParamsData = this.setupRouteSubscriptions()
     this.setupFragmentSubscription()
     this.setupBatchSubscriptions()
     this.configureDefaultLogo()
@@ -1831,11 +1846,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   private initData(data: Data) {
     const initData: any = this.tocSvc.initData(data, true)
     this.setErrorCode(initData.errorCode)
-    
-    if (!this.forPreview) {
-      this.getUserRating(false)
-    }
-    
     this.processContentBody()
     this.initializeTocStructure()
     this.setupBatchControlSubscription()
@@ -1963,14 +1973,16 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
   
   private setupRouteSubscriptions() {
+    let queryParamstemp: any = {}
     if (this.route) {
       this.skeletonLoader = true
       this.routeSubscription = this.route.data.subscribe(async (data: Data) => {
         if (data?.content?.data?.identifier) {
-          await this.processRouteData(data)
+          queryParamstemp = await this.processRouteData(data)
         }
       })
     }
+    return queryParamstemp
   }
   
   private async processRouteData(data: Data) {
@@ -1978,16 +1990,15 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const initData = this.tocSvc.initData(data, true);
     
     // Get query parameters
-    await this.getQueryParams();
-    
+    const queryParamsDataTemp = await this.getQueryParams();
     // Handle multilingual content if mlId is present in query parameters
-    if (this.queryParamsData.mlId) {
+    if (queryParamsDataTemp.MLId) {
       // Store the original content data for reference
       this.baseContentReadData = initData.content;
       
       // Fetch the multilingual content
       try {
-        const success = await this.fetchContentRead(this.queryParamsData.mlId);
+        const success = await this.fetchContentRead(queryParamsDataTemp.MLId);
         if (!success) {
           // If multilingual content fetch fails, fall back to the original content
           this.contentReadData = initData.content;
@@ -2006,6 +2017,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.contentReadData = initData.content;
       this.baseContentReadData = initData.content;
     }
+    // Added to make sure this reference was incorrect, assigning again to make sure global variable is properly updated
+    this.queryParamsData = queryParamsDataTemp;
   
     // Continue with the rest of the processing
     this.loadLanguageData();
@@ -2017,6 +2030,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.loadBannerAndTocConfig(data);
     this.fetchPostAssessmentStatusIfNeeded();
     this.initData(data);
+    return queryParamsDataTemp
   }
   
   private loadLanguageData() {
@@ -2291,6 +2305,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.content = response.result.content;
             this.getOrgIdForShare()
             this.getTocStructure()
+            if (!this.forPreview) {
+              this.getUserRating(false)
+            }
             resolve(true);
           } else {
             resolve(false);
@@ -2307,6 +2324,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   getTocStructure() {
+    this.initializeTocStructure()
     if (this.content && this.tocStructure) {
       this.hasTocStructure = false
       this.tocStructure.learningModule = this.content.primaryCategory === this.primaryCategory.MODULE ? -1 : 0
@@ -2405,7 +2423,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           [urlData.url],
           { queryParams: urlData.queryParams })
       } else {
-        this.processLanguageSelection(this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, this.queryParamsData['ML']))
+        const lang = this.contentLangSvc.getRequiredLanguageDetails(this.baseContentReadData, this.queryParamsData['ML'])
+        this.processLanguageSelection(lang)
       }
     })
   }
@@ -2654,21 +2673,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   async getQueryParams() {
-    
+    const tempQueryParamsData: any = {}
     this.routeSubscription = this.route.queryParamMap.subscribe(async qParamsMap => {
-      
-      // Create a plain object to store query parameters
-      this.queryParamsData = {};
       
       // Extract all parameters from the ParamMap
       qParamsMap.keys.forEach(key => {
-        this.queryParamsData[key] = qParamsMap.get(key);
+        tempQueryParamsData[key] = qParamsMap.get(key) ?? '';
       });
+      tempQueryParamsData
       
       // Process specific parameters
-      const contextId = this.queryParamsData['contextId'];
-      const contextPath = this.queryParamsData['contextPath'];
-      const recommendedCoursesId = this.queryParamsData['recommendationId'];
+      const contextId = tempQueryParamsData['contextId'];
+      const contextPath = tempQueryParamsData['contextPath'];
+      const recommendedCoursesId = tempQueryParamsData['recommendationId'];
       
       if (contextId && contextPath) {
         this.contextId = contextId;
@@ -2687,6 +2704,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         }
       }
     });
+    return tempQueryParamsData
   }
 
   getOrgIdForShare() {
@@ -2830,8 +2848,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   openLangDialog(_event: any) {
     const dialogRef = this.dialog.open(EnrollLanguageDialogueComponent, {
-      width: '400px',
+      width: '500px',
       height: 'auto',
+      autoFocus: false, 
+      restoreFocus: false,
       data: {
         preSelect: this.selectedLanguage,
         languageList: this.languageList,
