@@ -11,11 +11,11 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./mentors.component.scss']
 })
 export class MentorsComponent implements OnInit {
-  paginationSize = 10;
-  paginationSizeOptions = [10, 20, 30, 40];
+  paginationSize = 12;
+  paginationSizeOptions = [12, 24, 36, 48];
   paginationPage = 1;
   totalItemsCount = 0;
-  defaultPaginationSize = 10;
+  defaultPaginationSize = 12;
   mentorsList: any[] = [
   ]
   mentorsListLoading = false;

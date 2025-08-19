@@ -12,6 +12,7 @@
         <div class="flex justify-between items-start certificate-name">
           <div class="achievement-title">{{achievement?.title}}</div>
           <ng-container *ngIf="isCurrentUser">
+            <mat-icon class="delete-icon mr-2" (click)="deleteAchievement(achievement)">delete</mat-icon>
             <mat-icon class="edit-icon" (click)="openEditDialog(achievement)">edit</mat-icon>
           </ng-container>
         </div>
