@@ -237,4 +237,8 @@ export class ProfileV2RevampService {
   //     return this.http.get(API_END_POINTS.ASSESSMENT_DATA)
   //   }
 
+  deleteAchievement(payload: any): Observable<any> {
+    return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, { body: payload })
+  }
+
 }
