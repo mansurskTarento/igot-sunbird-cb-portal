@@ -382,6 +382,7 @@ export namespace NSPractice {
     children: IRScratch[]
   }
   export interface IQuizSubmit {
+    language: string
     timeLimit: Number
     isAssessment: boolean
     identifier: string
