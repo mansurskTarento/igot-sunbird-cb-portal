@@ -46,7 +46,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private events: EventService,
     private certificateService: CertificateService,
     private router: Router,
-    private contSvc: WidgetContentLibService
+    private contSvc: WidgetContentLibService,
   ) {}
 
   ngOnInit(): void {

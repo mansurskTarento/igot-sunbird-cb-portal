@@ -16,7 +16,7 @@ import { AchievementsComponent } from '../../components/profile-revamp/achieveme
 import { forkJoin, Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'
-import { ConfigurationsService, EventService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
+import { ConfigurationsService, EventService, MultilingualTranslationsService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2';
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component';
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -201,6 +201,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   connectionStatus = 'Connect'
   isMobile = false;
+  showProfileSection = true;
+  blockedMessage = '';
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>;
   //#endregion
@@ -216,7 +218,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private translateService: TranslateService,
     private datePipe: DatePipe,
     private events: EventService,
+    private langtranslations: MultilingualTranslationsService,
   ) {
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      this.translateService.setDefaultLang('hi')
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translateService.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translateService.use(lang)
+      }
+    })
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
@@ -242,7 +253,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.selectRoute(lastSectionId);
       }, 100);
     }
-    this.getRecommendedUsers()
     this.getRecommendedCommunitesList()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
@@ -253,8 +263,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#region (initialization)
 
   getRecommendedUsers() {
+    const countOfRecommendations = 3
     const formBody = {
-      size: 3,
+      size: countOfRecommendations + 1,
       offset: 0,
     }
 
@@ -262,7 +273,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.getRecommendedUsers(formBody).subscribe({
       next: (response: any) => {
         this.suggestionsLoading = false;
-        this.peopleSuggestionsList = _.get(response, 'result.response', []);
+        const suggestedUser = _.get(response, 'result.response', []).filter((suggestedUser: any) => suggestedUser.id !== this.userId);
+        this.peopleSuggestionsList = suggestedUser.slice(0, countOfRecommendations);
       },
       error: () => {
         this.suggestionsLoading = false;
@@ -303,6 +315,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
+      this.getRecommendedUsers()
       this.userId = _.get(data, 'profile.userId', '')
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
@@ -328,7 +341,31 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   getConnectionStatus() {
     this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
+      this.setProfileVisibilityStatus()
     })
+  }
+
+  setProfileVisibilityStatus() {
+    const privacyStatus = _.get(this.profesionalDetails, 'profilePreference', 0)
+    let blockedMessage = ''
+    if(this.connectionStatus === 'Blocked Incoming' || this.connectionStatus === 'Blocked Outgoing') {
+      this.showProfileSection = false;
+      blockedMessage = this.connectionStatus === 'Blocked Outgoing' ? 'youBlockedThisProfile' : 'youAreNotAuthorisedToSeeThisProfile'
+    } else {
+      if (privacyStatus === 1) {
+        this.showProfileSection = false;
+        blockedMessage = 'thisProfileIsLocked'
+      } else if (privacyStatus === 10 && this.connectionStatus !== 'Approved') {
+        this.showProfileSection = false;
+        blockedMessage = 'thisProfileIsLocked'
+      } else {
+        this.showProfileSection = true;
+      }
+    }
+
+    if(blockedMessage) {
+      this.blockedMessage = this.handleTranslateTo(blockedMessage)
+    }
   }
 
   patchProfileDetails() {
@@ -371,6 +408,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.primaryDetails['cadreName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreName', '')
       this.primaryDetails['cadreBatch'] = _.get(this.profesionalDetails, 'cadreDetails.cadreBatch', '')
       this.primaryDetails['cadreControllingAuthorityName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', '')
+      this.primaryDetails['isOnCentralDeputation'] = _.get(this.profesionalDetails, 'cadreDetails.isOnCentralDeputation', false)
     }
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
@@ -794,6 +832,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             resultPath: 'cadreControllingAuthorityName',
             formBodyPath: 'profileDetails.cadreDetails.cadreControllingAuthorityName',
             isCader: true
+          },
+          {
+            formField: 'isOnCentralDeputation',
+            resultPath: 'isOnCentralDeputation',
+            formBodyPath: 'profileDetails.cadreDetails.isOnCentralDeputation',
+            isCader: true
           }
         ]
         fieldMappings.push(...cadreDetailsFieldMappings)
@@ -805,7 +849,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       fieldMappings.forEach(mapping => {
         const currentValue = _.get(result, mapping.resultPath, null);
         let formValue = this.primaryDetails[mapping.formField];
-        if (mapping.formField === 'dob' && formValue) {
+        if (mapping.formField === 'dob' && (formValue || formValue === false)) {
           formValue = this.datePipe.transform(new Date(formValue), 'dd-MM-yyyy');
         }
 

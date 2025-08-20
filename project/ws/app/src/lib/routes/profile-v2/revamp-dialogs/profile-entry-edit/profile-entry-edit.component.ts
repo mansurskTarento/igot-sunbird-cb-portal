@@ -57,6 +57,7 @@ export class ProfileEntryEditComponent implements OnInit {
   designationsOffset = 0
   isLoadingMoreDesignations = false;
   designationListLoadCount = 50
+  selectedOrgHasDesignations = false;
 
   statesList: state[] = [];
   districtsList: string[] = [];
@@ -130,7 +131,7 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails, 'startDate', '')],
       endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000), Validators.pattern(/^[a-zA-Z0-9\s.,()]*$/)]]
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000)]]
     });
     this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
     const orgDistrictControl = this.entryForm.get('orgDistrict');
@@ -153,7 +154,7 @@ export class ProfileEntryEditComponent implements OnInit {
       }
     }
     this.getOrgList('');
-    this.getdesignationsMeta();
+    this.checkSelectedOrgHasDesignations();
     this.getStatesList()
     if (_.get(this.entryDetails, 'startDate', '')) {
       this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
@@ -217,12 +218,12 @@ export class ProfileEntryEditComponent implements OnInit {
     if(orgNameControl) {
       orgNameControl.valueChanges.subscribe((value: string) => {
         if(value) {
-          const selectedOrgDetails = this.orgList.find(org => org.channel === value)
+          const selectedOrgDetails: any = this.orgList.find((org: any) => org.orgName === value)
           if(selectedOrgDetails) {
             this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
             this.selctedOrgDetails['rootOrgId'] = selectedOrgDetails.rootOrgId
             this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
-            this.selctedOrgDetails['orgName'] = selectedOrgDetails.channel
+            this.selctedOrgDetails['orgName'] = selectedOrgDetails.orgName
             this.designationsOffset = 0
             this.designationsMeta = [];
             if( searchDesignationControl) {
@@ -231,7 +232,7 @@ export class ProfileEntryEditComponent implements OnInit {
             if( designationControl) {
               designationControl.reset();
             }
-            this.getdesignationsMeta()
+            this.checkSelectedOrgHasDesignations()
           }
         }
       })
@@ -249,11 +250,8 @@ export class ProfileEntryEditComponent implements OnInit {
           isMdo: true,
           isCbp: true
         },
-        sort_by: {
-          orgName: 'asc'
-        },
         fields: [
-          'channel',
+          'orgName',
           'imgUrl',
           'identifier',
           'rootOrgId'
@@ -289,11 +287,11 @@ export class ProfileEntryEditComponent implements OnInit {
   
   checkCurrentOrganisationPresent() {
     if(this.selctedOrgDetails['orgName'] && this.orgList) {
-      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.channel === this.selctedOrgDetails['orgName']).length > 0
+      const selectedOrgIsPresent = this.orgList.filter((org: any) => org.orgName === this.selctedOrgDetails['orgName']).length > 0
       if(!selectedOrgIsPresent) {
         const orgDetails: organisation = {
           identifier: this.selctedOrgDetails['orgId'],
-          channel: this.selctedOrgDetails['orgName'],
+          orgName: this.selctedOrgDetails['orgName'],
           imgUrl: this.selctedOrgDetails['orgLogo'],
           rootOrgId: this.selctedOrgDetails['rootOrgId']
         }
@@ -344,51 +342,134 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (organisation)
 
   //#region (designations)
-  getdesignationsMeta() {
-    if (this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
-      const requestBody: any = {
+
+  checkSelectedOrgHasDesignations(): void {
+    if(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
+      const igotDesignationBody: any = {
         request: {
           filters: {
-            status: "Live",
-            category: "designation",
+            status: 'Live',
+            category: 'designation',
             categories: [
               this.selctedOrgDetails['rootOrgId'] + '_odcs_designation',
             ],
-            objectType: "Term"
+            objectType: 'Term',
           },
-          fields: [
-              "name"
-          ],
-          offset: this.designationsOffset,
-          limit: this.designationListLoadCount,
+          fields: ['name'],
+          offset: 0,
+          limit: 1,
           sort_by: {
-            lastUpdatedOn: "desc",
-            objectType: "Term"
+            lastUpdatedOn: 'desc',
+            objectType: 'Term',
           },
-          facets: []
-        }
-      }
-      if(this.designationSearchText){
-        requestBody['request']['query'] = this.designationSearchText
-      }
-      this.isLoadingMoreDesignations = true
-      this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
+          facets: [],
+        },
+      };
+      this.ProfileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
         next: (res: any) => {
-          this.isLoadingMoreDesignations = false
-          if(this.designationsOffset === 0) {
-            this.designationsMeta = _.get(res, 'result.Term', []) as designation[]
-          } else {
-            this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]]
-          }
-          this.designationsTotalCount = _.get(res, 'result.count', 0)
-          this.checkCurrentDesignationPresent()
-        }, error: (error: HttpErrorResponse) => {
-          if(error) {
-            this.openSnackbar('Something went wrong. Please refresh or try again later.')
-          }
+          const count = _.get(res, 'result.count', 0);
+          this.selectedOrgHasDesignations = count > 0;
+          this.getdesignationsMeta();
+        },
+        error: () => {
+          this.selectedOrgHasDesignations = false;
+          this.getdesignationsMeta();
         }
-      })
+      });
+    } else {
+      this.selectedOrgHasDesignations = false;
+      this.getdesignationsMeta();
     }
+  }
+  getdesignationsMeta() {
+    if (!(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId'])) {
+      return;
+    }
+    this.isLoadingMoreDesignations = true;
+    if (this.selectedOrgHasDesignations) {
+      this.getIgotDesignations();
+    } else {
+      this.getDefaultDesignations();
+    }
+  }
+
+  private getIgotDesignations() {
+    const requestBody: any = {
+      request: {
+        filters: {
+          status: "Live",
+          category: "designation",
+          categories: [
+            this.selctedOrgDetails['rootOrgId'] + '_odcs_designation',
+          ],
+          objectType: "Term"
+        },
+        fields: [
+          "name"
+        ],
+        offset: this.designationsOffset,
+        limit: this.designationListLoadCount,
+        sort_by: {
+          lastUpdatedOn: "desc",
+          objectType: "Term"
+        },
+        facets: []
+      }
+    };
+    if(this.designationSearchText){
+      requestBody['request']['query'] = this.designationSearchText;
+    }
+    this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false;
+        if(this.designationsOffset === 0) {
+          this.designationsMeta = _.get(res, 'result.Term', []) as designation[];
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]];
+        }
+        this.designationsTotalCount = _.get(res, 'result.count', 0);
+        this.checkCurrentDesignationPresent();
+      },
+      error: () => {
+        this.isLoadingMoreDesignations = false;
+        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+      }
+    });
+  }
+
+  private getDefaultDesignations() {
+    const requestBody: any = {
+      filterCriteriaMap: {
+        status: 'Active'
+      },
+      requestedFields: [],
+      pageNumber: this.designationsOffset,
+      pageSize: this.designationListLoadCount
+    }
+    if (this.designationSearchText) {
+      requestBody['searchString'] = this.designationSearchText
+    }
+    this.ProfileV2RevampService.searchDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false;
+        const content = _.get(res, 'result.result.data', []) as designation[];
+        const mapped = content.map((item: any) => ({
+          name: item.designation || '',
+          status: item.status || 'Active',
+        }));
+        if (this.designationsOffset === 0) {
+          this.designationsMeta = mapped;
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ...mapped];
+        }
+        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0);
+        this.checkCurrentDesignationPresent();
+      },
+      error: () => {
+        this.isLoadingMoreDesignations = false;
+        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+      }
+    });
   }
 
   setupScrollListener(opened: boolean): void {
@@ -884,7 +965,7 @@ export class ProfileEntryEditComponent implements OnInit {
       uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails, 'fileName', '')],
       url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500), Validators.pattern(/^[a-zA-Z0-9\s.,()&\-\/]*$/)]],
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     });
     if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url;

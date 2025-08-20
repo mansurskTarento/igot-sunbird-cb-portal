@@ -60,7 +60,7 @@ interface IStripUnitContentData {
   stripBackground?: string
   secondaryHeading?: any
   viewMoreUrl: any,
-  sectorWidgets?:any
+  sectorWidgets?: any
 }
 
 @Component({
@@ -96,6 +96,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() kparray: any
   @Input() content: NsContent.IContent | null = null
   @Input() contentReadData: NsContent.IContent | null = null
+  @Input() baseContentReadData: NsContent.IContent | null = null
   @Input() skeletonLoader = false
   @Input() sticky = false
   @Input() tocStructure: any
@@ -108,7 +109,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() fromViewer = false
   @Input() selectedBatchData: any
   @Input() selectedTabValue = 0
-  @Input() fromMarketPlace ? = false
+  @Input() fromMarketPlace? = false
   @Input() showMarketPlaceCertificate = false
   @ViewChild('summaryElem') summaryElem !: ElementRef
   @ViewChild('objectivesElem') objectivesElem !: ElementRef
@@ -166,7 +167,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       icon: '',
     },
     sliderConfig: {
-      showNavs : true,
+      showNavs: true,
       showDots: false,
     },
     loader: true,
@@ -190,7 +191,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   sectorsList: any[] = []
   subSectorsList: any[] = []
   userProfile: any = null
-  subSectorDetailArr:any = []
+  subSectorDetailArr: any = []
   selectedSector = ''
   selectedSectorId = ''
   ngOnInit() {
@@ -201,13 +202,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     } else {
       this.isMobile = false
     }
-    if (this.content && this.content.identifier) {     
+    if (this.content && this.content.identifier) {
       this.fetchRatingSummary()
       // this.loadCompetencies()
     }
 
     if (this.content && this.content.contentId && this.content.contentId.includes('ext_')) {
-     // this.loadCompetencies()
+      // this.loadCompetencies()
     }
 
     if (this.content) {
@@ -218,21 +219,21 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       this.disableCertificate = true
     }
 
-    if (this.content?.sectorDetails_v1) {
+    if (this.baseContentReadData?.sectorDetails_v1) {
       // Parse string to array if needed
-      let sectorDetailsArray = this.content.sectorDetails_v1
- 
+      let sectorDetailsArray = this.baseContentReadData.sectorDetails_v1
+
       // If it's a string, try to parse it into an array
       if (typeof sectorDetailsArray === 'string') {
         try {
           sectorDetailsArray = JSON.parse(sectorDetailsArray)
-          this.content.sectorDetails_v1 = sectorDetailsArray
+          this.baseContentReadData.sectorDetails_v1 = sectorDetailsArray
         } catch (e) {
           console.error('Error parsing sectorDetails_v1:', e)
           sectorDetailsArray = []
         }
       }
- 
+
       // Process only if we have a valid array with items
       if (Array.isArray(sectorDetailsArray) && sectorDetailsArray.length > 0) {
         this.sectorsList = _.uniqBy(
@@ -244,7 +245,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
             })),
           'sectorName'
         )
- 
+
         this.subSectorsList = _.uniqBy(
           sectorDetailsArray
             .filter((item: any) => item?.subSectorName && item?.subSectorId)
@@ -255,23 +256,23 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           'subSectorName'
         )
 
-        if(this.sectorsList && this.sectorsList.length && this.sectorsList[0]) {
+        if (this.sectorsList && this.sectorsList.length && this.sectorsList[0]) {
           if (!this.isMobile) {
             this.handleSubsector(this.sectorsList[0])
-          }          
+          }
         }
       }
     }
- 
+
 
   }
 
   ngAfterViewInit(): void {
     this.timerUnsubscribe = this.timerService.getTimerData()
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_timer: any) => {
-      this.timer = _timer
-    })
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_timer: any) => {
+        this.timer = _timer
+      })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -309,13 +310,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         if (this.searchTagElem && this.searchTagElem.nativeElement.offsetHeight > 64) {
           this.searchTagsEllipsis = true
         }
-      },         500)
+      }, 500)
     }
 
     if (changes.skeletonLoader && !changes.skeletonLoader.currentValue) {
       setTimeout(() => {
         this.loadCheckService.componentLoaded(true)
-      },         500)
+      }, 500)
     }
 
     if (this.content) {
@@ -351,13 +352,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         if (this.ratingSummary && Object.keys(this.ratingSummary).length === 0) {
           this.fetchRatingSummary()
         }
-        if (this.competenciesObject.length === 0) { 
+        if (this.competenciesObject.length === 0) {
           this.loadCompetencies()
         }
       }
 
       if (this.content && this.content.contentId && this.content.contentId.includes('ext_')) {
-        if (this.competenciesObject.length === 0) { 
+        if (this.competenciesObject.length === 0) {
           this.loadCompetencies()
         }
       }
@@ -373,7 +374,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       if (this.contentReadData?.sectorDetails_v1) {
         // Parse string to array if needed
         let sectorDetailsArray = this.contentReadData.sectorDetails_v1
-   
+
         // If it's a string, try to parse it into an array
         if (typeof sectorDetailsArray === 'string') {
           try {
@@ -384,7 +385,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
             sectorDetailsArray = []
           }
         }
-   
+
         // Process only if we have a valid array with items
         if (Array.isArray(sectorDetailsArray) && sectorDetailsArray.length > 0) {
           // Extract unique sectors using lodash
@@ -397,7 +398,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
               })),
             'sectorName'
           )
-   
+
           // Extract unique subsectors using lodash
           this.subSectorsList = _.uniqBy(
             sectorDetailsArray
@@ -430,33 +431,33 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   loadCompetencies(): void {
-    if (this.contentReadData && this.contentReadData[this.compentencyKey.vKey] && this.contentReadData[this.compentencyKey.vKey].length) {
+    if (this.baseContentReadData && this.baseContentReadData[this.compentencyKey.vKey] && this.baseContentReadData[this.compentencyKey.vKey].length) {
       const competenciesObject: any = {}
-      if (typeof this.contentReadData[this.compentencyKey.vKey] === 'string'
-        && this.checkValidJSON(this.contentReadData[this.compentencyKey.vKey])) {
-        this.contentReadData[this.compentencyKey.vKey] = JSON.parse(this.contentReadData[this.compentencyKey.vKey])
+      if (typeof this.baseContentReadData[this.compentencyKey.vKey] === 'string'
+        && this.checkValidJSON(this.baseContentReadData[this.compentencyKey.vKey])) {
+        this.baseContentReadData[this.compentencyKey.vKey] = JSON.parse(this.baseContentReadData[this.compentencyKey.vKey])
       }
-      this.contentReadData[this.compentencyKey.vKey].forEach((_obj: any) => {
+      this.baseContentReadData[this.compentencyKey.vKey].forEach((_obj: any) => {
         if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
           if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-            [_obj[this.compentencyKey.vCompetencyTheme]]) {
+          [_obj[this.compentencyKey.vCompetencyTheme]]) {
             const competencyTheme = competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-              [_obj[this.compentencyKey.vCompetencyTheme]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
             if (competencyTheme.indexOf(_obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
               competencyTheme.push(_obj[this.compentencyKey.vCompetencySubTheme])
             }
           } else {
             competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-              [_obj[this.compentencyKey.vCompetencyTheme]] = []
+            [_obj[this.compentencyKey.vCompetencyTheme]] = []
             competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-              [_obj[this.compentencyKey.vCompetencyTheme]]
+            [_obj[this.compentencyKey.vCompetencyTheme]]
               .push(_obj[this.compentencyKey.vCompetencySubTheme])
           }
         } else {
           competenciesObject[_obj[this.compentencyKey.vCompetencyArea]] = {}
           competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]] = []
           competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]]
-          .push(_obj[this.compentencyKey.vCompetencySubTheme])
+            .push(_obj[this.compentencyKey.vCompetencySubTheme])
         }
       })
 
@@ -622,10 +623,10 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         if (res && res.result && res.result.content) {
           const ratingAuthReplay = res.result.content
           _.forEach(ratingAuthReplay, value => {
-              if (this.authReplies[value.userId]) {
-                this.authReplies[value.userId]['comment'] = value.comment
-                this.authReplies[value.userId]['userId'] = value.userId
-              }
+            if (this.authReplies[value.userId]) {
+              this.authReplies[value.userId]['comment'] = value.comment
+              this.authReplies[value.userId]['userId'] = value.userId
+            }
           })
         }
 
@@ -686,7 +687,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     if (this.ratingSummary && this.ratingSummary.latest50Reviews) {
       const latest50Reviews = JSON.parse(this.ratingSummary.latest50Reviews)
       const modifiedReviews = _.map(latest50Reviews, rating => {
-        rating['userId'] =  rating.user_id
+        rating['userId'] = rating.user_id
         return rating
       })
       this.authReplies = []
@@ -705,7 +706,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
     if (this.ratingSummary && this.ratingSummary.total_number_of_ratings) {
       ratingSummaryPr.avgRating =
-      parseFloat((this.ratingSummary.sum_of_total_ratings / this.ratingSummary.total_number_of_ratings).toFixed(1))
+        parseFloat((this.ratingSummary.sum_of_total_ratings / this.ratingSummary.total_number_of_ratings).toFixed(1))
     }
 
     if (this.content) {
@@ -835,13 +836,13 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.downloadCertificateBool = true
     const certId = this.content && this.content.certificateObj.certId
     if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
-      if(this.content && this.content.primaryCategory && this.content.primaryCategory === 'Curated Program') {
+      if (this.content && this.content.primaryCategory && this.content.primaryCategory === 'Curated Program') {
         const payload = {
-         request : {
-          courseId: this.content.identifier,
-          batchId: this.batchData?.content[0]?.batchId || '',
-          userId: this.userProfile.userId,
-         }
+          request: {
+            courseId: this.content.identifier,
+            batchId: this.batchData?.content[0]?.batchId || '',
+            userId: this.userProfile.userId,
+          }
         }
         this.contentSvc.downloadCertV2(payload).subscribe(response => {
           if (this.content) {
@@ -852,7 +853,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
               data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
             })
           }
-        },                                             (error: any) => {
+        }, (error: any) => {
           this.downloadCertificateBool = false
           this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
           this.matSnackBar.open('Unable to View Certificate, due to some error!')
@@ -867,7 +868,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
               data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
             })
           }
-        },                                             (error: any) => {
+        }, (error: any) => {
           this.downloadCertificateBool = false
           this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
           this.matSnackBar.open('Unable to View Certificate, due to some error!')
@@ -883,37 +884,37 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   checkValidJSON(str: any) {
-      try {
-        JSON.parse(str)
-        return true
-      } catch (e) {
-        return false
-      }
+    try {
+      JSON.parse(str)
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
   handleSubsector(item: any): void {
     this.subSectorDetailArr = []
     this.selectedSector = ''
     this.selectedSectorId = ''
-    if(this.content) {
-      for(let i=0; i<this.content.sectorDetails_v1.length;i++) {
-        if(this.content.sectorDetails_v1[i]['sectorId'] === item.sectorId) {
-          if(this.content.sectorDetails_v1[i]['subSectorName']) {
+    if (this.baseContentReadData) {
+      for (let i = 0; i < this.baseContentReadData.sectorDetails_v1.length; i++) {
+        if (this.baseContentReadData.sectorDetails_v1[i]['sectorId'] === item.sectorId) {
+          if (this.baseContentReadData.sectorDetails_v1[i]['subSectorName']) {
             let obj = {}
             obj = {
-              'sectorId': this.content.sectorDetails_v1[i]['sectorId'],
-              'sectorName': this.content.sectorDetails_v1[i]['sectorName'],
-              'key': this.content.sectorDetails_v1[i]['subSectorName'],
-              'value':[this.content.sectorDetails_v1[i]['subSectorName']] 
+              'sectorId': this.baseContentReadData.sectorDetails_v1[i]['sectorId'],
+              'sectorName': this.baseContentReadData.sectorDetails_v1[i]['sectorName'],
+              'key': this.baseContentReadData.sectorDetails_v1[i]['subSectorName'],
+              'value': [this.baseContentReadData.sectorDetails_v1[i]['subSectorName']]
             }
             this.subSectorDetailArr.push(obj)
-          }         
+          }
         }
       }
-      this.selectedSector =  item.sectorName
+      this.selectedSector = item.sectorName
       this.selectedSectorId = item.sectorId
-      
-      
+
+
       const valueObj = item
       const subSectorArray = []
       for (const key in valueObj) {
@@ -924,11 +925,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           subSectorArray.push(_tempObj)
         }
       }
-      console.log('this.content.sectorDetails_v1', this.content.sectorDetails_v1)
-      console.log('this.subSectorDetailArr', this.subSectorDetailArr)
-     this.strip['sectorWidgets'] = this.transformCompetenciesToWidget('Behavioural', this.subSectorDetailArr, this.strip)
+      this.strip['sectorWidgets'] = this.transformCompetenciesToWidget('Behavioural', this.subSectorDetailArr, this.strip)
     }
-    
+
   }
 
   ngOnDestroy(): void {

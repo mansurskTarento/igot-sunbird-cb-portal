@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, HostListener } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
-import { takeUntil } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -14,7 +14,8 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 /* tslint:disable */
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
-import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
+// import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
+import { designation } from '../../../profile-v2/models/profile-revamp.model'
 
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
@@ -36,7 +37,7 @@ export class EnrollProfileFormComponent implements OnInit {
   groupData: any | undefined
   private destroySubject$ = new Subject()
   designationsMeta: any = []
-  filterDesignationsMeta: any = []
+  // filterDesignationsMeta: any = []
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   masterLanguages: any
   masterLanguageBackup: any
@@ -130,6 +131,11 @@ export class EnrollProfileFormComponent implements OnInit {
   isLoadingMoreDesignations = false;
   designationDefaultLoadCount =  50
   desigantionFilterEnable = false
+  organisationId = ''
+  selectedOrgHasDesignations = false;
+  designationsOffset = 0;
+  designationSearchText = '';
+  designationsTotalCount = 0;
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -143,7 +149,7 @@ export class EnrollProfileFormComponent implements OnInit {
     private otpService: OtpService,
     private npsSvc: NPSGridService,
     private translateService: TranslateService,
-    private signupService: SignupService,
+    // private signupService: SignupService,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
 
@@ -181,6 +187,7 @@ export class EnrollProfileFormComponent implements OnInit {
     })
     this.isLoading = true
     this.userProfileObject = this.configSrc.unMappedUser
+    this.organisationId = _.get(this.userProfileObject, 'rootOrgId', _.get(this.userProfileObject, 'personalDetails.rootOrgId', ''))
 
     this.otpForm = new FormGroup({
       otp: new FormControl('', Validators.required)
@@ -286,63 +293,63 @@ export class EnrollProfileFormComponent implements OnInit {
     this.openLanguageDropdown = true
   }
 
-  filterdesignation(value: any) {
-    if (value.length) {
-      this.desigantionFilterEnable =true
-      this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
-        val && val.name.trim().toLowerCase().includes(value.toLowerCase())
-      )
-      if (this.filterDesignationsMeta.length === 0) {
-        const usernameControl = this.userDetailsForm.get('designation')
-        if (usernameControl) {
-          usernameControl.setErrors({ required: true });
-        }
-      }
-    } else {
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
-      this.desigantionFilterEnable =false
+  // filterdesignation(value: any) {
+  //   if (value.length) {
+  //     this.desigantionFilterEnable =true
+  //     this.filterDesignationsMeta = this.designationsMeta.filter((val: any) =>
+  //       val && val.name.trim().toLowerCase().includes(value.toLowerCase())
+  //     )
+  //     if (this.filterDesignationsMeta.length === 0) {
+  //       const usernameControl = this.userDetailsForm.get('designation')
+  //       if (usernameControl) {
+  //         usernameControl.setErrors({ required: true });
+  //       }
+  //     }
+  //   } else {
+  //     this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+  //     this.desigantionFilterEnable =false
 
-      this.designationListLoadCount = this.designationDefaultLoadCount;
-    }
-    // this.openDesignationDropdown = true
-  }
+  //     this.designationListLoadCount = this.designationDefaultLoadCount;
+  //   }
+  //   // this.openDesignationDropdown = true
+  // }
 
-  async getMasterDesignation() {
-    this.signupService.getOrgReadData(this.userProfileObject.rootOrgId).subscribe((result: any) => {
-      if (result && result.frameworkid) {
-        this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
-          const frameworkDetails = _.get(res, 'result.framework')
-          const categoriesOfFramework = _.get(frameworkDetails, 'categories', [])
-          const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
-          const disOrderedList = _.get(organisationsList, '[0].children', [])
-          this.designationsMeta = _.sortBy(disOrderedList, 'name')
-          this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
-          if (this.canShowDesignation) {
-            let field = this.userDetailsForm.get('designation')
-            if (field && field.value) {
-              let _value = field.value.toLowerCase()
-              if (!this.designationsMeta.find((d: any) => d.name.toLowerCase() === _value)) {
-                field.patchValue('')
-              }
-            }
-          }
-        }, (error: any) => {
-          // tslint:disable-next-line
-          console.error('Error occurred:', error)
-        })
-      }
-    }, (error: any) => {
-      // tslint:disable-next-line
-      console.error('Error occurred:', error)
-    })
-  }
+  // async getMasterDesignation() {
+  //   this.signupService.getOrgReadData(this.userProfileObject.rootOrgId).subscribe((result: any) => {
+  //     if (result && result.frameworkid) {
+  //       this.signupService.getFrameworkInfo(result.frameworkid).subscribe((res: any) => {
+  //         const frameworkDetails = _.get(res, 'result.framework')
+  //         const categoriesOfFramework = _.get(frameworkDetails, 'categories', [])
+  //         const organisationsList = this.getTermsByCode(categoriesOfFramework, 'org')
+  //         const disOrderedList = _.get(organisationsList, '[0].children', [])
+  //         this.designationsMeta = _.sortBy(disOrderedList, 'name')
+  //         this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
+  //         if (this.canShowDesignation) {
+  //           let field = this.userDetailsForm.get('designation')
+  //           if (field && field.value) {
+  //             let _value = field.value.toLowerCase()
+  //             if (!this.designationsMeta.find((d: any) => d.name.toLowerCase() === _value)) {
+  //               field.patchValue('')
+  //             }
+  //           }
+  //         }
+  //       }, (error: any) => {
+  //         // tslint:disable-next-line
+  //         console.error('Error occurred:', error)
+  //       })
+  //     }
+  //   }, (error: any) => {
+  //     // tslint:disable-next-line
+  //     console.error('Error occurred:', error)
+  //   })
+  // }
 
-  private getTermsByCode(categories: any[], code: string) {
-    const selectedCategory = categories.filter(
-      (category: any) => category.code === code
-    );
-    return _.get(selectedCategory, '[0].terms', []);
-  }
+  // private getTermsByCode(categories: any[], code: string) {
+  //   const selectedCategory = categories.filter(
+  //     (category: any) => category.code === code
+  //   );
+  //   return _.get(selectedCategory, '[0].terms', []);
+  // }
 
   preventBlur(event: MouseEvent): void {
     event.preventDefault()
@@ -551,14 +558,41 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setValueChangeFunctions()
     this.fetchCadreData()
     this.getGroupData()
     this.getPendingDetails()
     setTimeout(() => {
-      this.loadDesignations()
+      // this.loadDesignations()
+      this.checkSelectedOrgHasDesignations();
       //this.getMasterDesignation()
       this.getMasterLanguage()
     }, 500)
+  }
+
+  setValueChangeFunctions() {
+    const searchDesignationControl = this.userDetailsForm.get('searchDesignation')
+    if (searchDesignationControl) {
+      let settingValueChange = true
+      searchDesignationControl.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        startWith(''),
+      ).subscribe(searchText => {
+          this.designationsOffset = 0
+          if (searchText && searchText.length > 1) {
+          this.designationSearchText = searchText
+            this.getdesignationsMeta()
+          } else if (!searchText) {
+          this.designationSearchText = searchText
+            if(!settingValueChange) {
+              this.getdesignationsMeta() 
+            }
+            this.checkCurrentDesignationPresent()
+          }
+          settingValueChange = false
+        })
+    }
   }
 
   fetchCadreData() {
@@ -1137,19 +1171,132 @@ export class EnrollProfileFormComponent implements OnInit {
     return this.userProfileService.handleTranslateTo(menuName)
   }
 
-  loadDesignations() {
-    this.userProfileService.getDesignations({}).subscribe(
-      (data: any) => {
-        this.designationsMeta = data.responseData
-        if (this.showDoptChanges) {
-          this.designationsMeta.push({ name: 'Others', id: 0, description: 'Others' })
+  checkSelectedOrgHasDesignations(): void {
+    if(this.organisationId) {
+      const igotDesignationBody: any = {
+        request: {
+          filters: {
+            status: 'Live',
+            category: 'designation',
+            categories: [
+              this.organisationId + '_odcs_designation',
+            ],
+            objectType: 'Term',
+          },
+          fields: ['name'],
+          offset: 0,
+          limit: 1,
+          sort_by: {
+            lastUpdatedOn: 'desc',
+            objectType: 'Term',
+          },
+          facets: [],
+        },
+      };
+      this.userProfileService.searchIgotDesignation(igotDesignationBody).subscribe({
+        next: (res: any) => {
+          const count = _.get(res, 'result.count', 0);
+          this.selectedOrgHasDesignations = count > 0;
+          this.getdesignationsMeta();
+        },
+        error: () => {
+          this.selectedOrgHasDesignations = false;
+          this.getdesignationsMeta();
         }
-        this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount)
-        this.checkCurrentDesignationPresent()
-      },
-      (_err: any) => {
-      })
+      });
+    } else {
+      this.selectedOrgHasDesignations = false;
+      this.getdesignationsMeta();
+    }
   }
+
+  getdesignationsMeta() {
+    this.isLoadingMoreDesignations = true;
+    if (this.selectedOrgHasDesignations) {
+      this.getIgotDesignations();
+    } else {
+      this.getDefaultDesignations();
+    }
+  }
+
+  private getIgotDesignations() {
+    const requestBody: any = {
+      request: {
+        filters: {
+          status: "Live",
+          category: "designation",
+          categories: [
+            this.organisationId + '_odcs_designation',
+          ],
+          objectType: "Term"
+        },
+        fields: [
+          "name"
+        ],
+        offset: this.designationsOffset,
+        limit: this.designationListLoadCount,
+        sort_by: {
+          lastUpdatedOn: "desc",
+          objectType: "Term"
+        },
+        facets: []
+      }
+    };
+    if(this.designationSearchText){
+      requestBody['request']['query'] = this.designationSearchText;
+    }
+    this.userProfileService.searchIgotDesignation(requestBody).subscribe({
+      next: (res: any) => {
+        this.isLoadingMoreDesignations = false;
+        if(this.designationsOffset === 0) {
+          this.designationsMeta = _.get(res, 'result.Term', []) as designation[];
+        } else {
+          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]];
+        }
+        this.designationsTotalCount = _.get(res, 'result.count', 0);
+        this.checkCurrentDesignationPresent();
+      },
+      error: () => {
+        this.isLoadingMoreDesignations = false;
+        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+      }
+    });
+  }
+  
+    private getDefaultDesignations() {
+      const requestBody: any = {
+        filterCriteriaMap: {
+          status: 'Active'
+        },
+        requestedFields: [],
+        pageNumber: this.designationsOffset,
+        pageSize: this.designationListLoadCount
+      }
+      if (this.designationSearchText) {
+        requestBody['searchString'] = this.designationSearchText
+      }
+      this.userProfileService.searchDesignation(requestBody).subscribe({
+        next: (res: any) => {
+          this.isLoadingMoreDesignations = false;
+          const content = _.get(res, 'result.result.data', []) as designation[];
+          const mapped = content.map((item: any) => ({
+            name: item.designation || '',
+            status: item.status || 'Active',
+          }));
+          if (this.designationsOffset === 0) {
+            this.designationsMeta = mapped;
+          } else {
+            this.designationsMeta = [...this.designationsMeta, ...mapped];
+          }
+          this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0);
+          this.checkCurrentDesignationPresent();
+        },
+        error: () => {
+          this.isLoadingMoreDesignations = false;
+          this.openSnackbar('Something went wrong. Please refresh or try again later.');
+        }
+      });
+    }
 
   getMasterLanguage(): void {
     this.userProfileService.getMasterLanguages()
@@ -1640,100 +1787,67 @@ export class EnrollProfileFormComponent implements OnInit {
         }
       })
   }
+
   setupScrollListener(opened: boolean): void {
-    if (opened) {
-      if (this.userDetailsForm.get('searchDesignation')) {
-        this.userDetailsForm.get('searchDesignation')!.setValue('');
+    const searchDesignationControl = this.userDetailsForm.get('searchDesignation');
+    if (opened && searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.designationsOffset = 0
+      this.designationsMeta = [];
+      this.getdesignationsMeta()
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.focus();
       }
-      this.desigantionFilterEnable = false
-      this.designationListLoadCount = this.designationDefaultLoadCount; // Reset the load count
-      this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationDefaultLoadCount);
-      this.checkCurrentDesignationPresent()
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-      // Wait for the panel to be rendered in the DOM
-      setTimeout(() => {
-        // Find the panel element
-        const panel = document.querySelector('.mat-select-panel');
-        if (panel) {
-          // Add scroll event listener to the panel
-          panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
-        }
-      
-      }, 100);
+      const panel = document.querySelector('.mat-select-panel');
+      if (panel) {
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+      }
     }
   }
 
   onDesignationSelectScroll(event: any): void {
     const element = event.target;
-    
-    if(!this.desigantionFilterEnable) {
-    // Check if user has scrolled to the bottom (with a small threshold)
+      // Check if user has scrolled to the bottom (with a small threshold)
       if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
         // Only load more if not already loading and if there are potentially more items
-        if (!this.isLoadingMoreDesignations && this.designationsMeta.length > this.filterDesignationsMeta.length) {
+        if (!this.isLoadingMoreDesignations && this.designationsMeta.length < this.designationsTotalCount) {
           this.isLoadingMoreDesignations = true;
-          
-          // Increase the load count by designationDefaultLoadCount
-          this.designationListLoadCount += this.designationDefaultLoadCount;
-          
-          // Update the filtered list with more items
-          setTimeout(() => {
-            this.filterDesignationsMeta = this.designationsMeta.slice(0, this.designationListLoadCount);
-            this.isLoadingMoreDesignations = false;
-          }, 200); // Small timeout to simulate loading and prevent multiple triggers
+          this.designationsOffset += 1;
+          this.getdesignationsMeta()
         }
       }
-    }
   }
+
   checkCurrentDesignationPresent() {
-       
     // Get the current designation value
-    const currentDesignation = this.userDetailsForm.get('designation')!.value;
+    const searchDesignationControl = this.userDetailsForm.get('designation');
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
     // Check if current designation exists in the list
     if (currentDesignation) {
-      const designationExists = this.filterDesignationsMeta.some(
+      const designationExists = this.designationsMeta.some(
         (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
       );
-      
+
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
         // Create a new designation object to match the structure of other items
-        const newDesignation = { 
+        const newDesignation = {
           name: currentDesignation,
-          // Add any other required properties matching your data structure
-          id: 'custom-' + Date.now(),
           status: 'Active'
         };
-        // Make sure the custom designation appears in the filtered list
-        if (this.filterDesignationsMeta.length >= this.designationListLoadCount) {
-          // Replace the last item with the new one to maintain the same number of items
-          this.filterDesignationsMeta.pop();
-        }
-        this.filterDesignationsMeta.unshift(newDesignation);
+        this.designationsMeta.unshift(newDesignation);
       }
     }
   }
 
   onDesignationDropdownClosed(): void {
-    // Keep the designation value but clear the search input
-    const currentDesignation = this.userDetailsForm.get('designation')!.value;
-    setTimeout(() => {
-      if (this.userDetailsForm.get('searchDesignation')) {
-        this.userDetailsForm.get('searchDesignation')!.setValue('');
-      }
-      // Ensure the designation value remains selected
-      if (currentDesignation) {
-        const designationControl = this.userDetailsForm.get('designation');
-        if (designationControl) {
-          designationControl.setValue(currentDesignation);
-        }
-      }
-    }, 100);
+    const searchDesignationControl = this.userDetailsForm.get('searchDesignation');
+    if (searchDesignationControl) {
+      searchDesignationControl.setValue('')
+      this.designationSearchText = ''
+    }
+    this.checkCurrentDesignationPresent()
   }
 
 }

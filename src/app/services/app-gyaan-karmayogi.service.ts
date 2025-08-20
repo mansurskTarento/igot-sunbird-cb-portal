@@ -17,6 +17,7 @@ resolve(
           'filters': {
               'status': ['Live'],
           },
+          "exists":["sectorDetails_v1.sectorName","resourceCategory"],
           'fields': ['identifier', 'courseCategory', 'status'],
           'offset': 0,
           'limit': 0,
@@ -25,9 +26,9 @@ resolve(
           },
           'facets': [
             'resourceCategory',
-            'sectorName',
-            'subSectorName',
             'createdFor',
+            'sectorDetails_v1.sectorName',
+            'sectorDetails_v1.subSectorName',
           ],
       },
   }

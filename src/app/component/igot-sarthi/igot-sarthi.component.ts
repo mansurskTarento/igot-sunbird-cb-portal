@@ -126,6 +126,16 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
+   
+    if(this.chatbotService.iGOTAIChatHistory && this.chatbotService.iGOTAIChatHistory.length) {
+      this.aiSearchResultArr = this.chatbotService.iGOTAIChatHistory 
+      this.aiSearchResultArr.map((item:any, index:any)=>{
+        if(item && (item?.newMessage === '')) {
+          // delete this.aiSearchResultArr[index]
+          this.aiSearchResultArr.splice(index,1)
+        }
+      })
+    }
   }
 
   ngAfterViewInit(): void {
@@ -658,14 +668,14 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       showFromInternet = true
     } 
     this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-      let startTime = 0
-      let endTime = 0
+      let startTime = -1
+      let endTime = -1
       let pageNumber:any = 1
-      if(item && item?.contentStart) {
+      if(item && item?.contentStart?.trim()) {
         startTime = item?.contentStart
         pageNumber= item?.contentStart
       }
-      if(item && item?.ContentEnd) {
+      if(item && item?.ContentEnd?.trim()) {
         endTime = item?.ContentEnd
         pageNumber= item?.ContentEnd
       }
@@ -680,7 +690,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         mimeType: item.mimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
-        description: item.Description,
+        description: item?.Description?.replace(/^\s{4,}/gm, ''),
         identifier: item.Identifier,    
         contentStart: startTime,
         contentEnd: endTime, 
@@ -688,7 +698,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         query: this.aiSearchResult.query,
         query_id: this.aiSearchResult.query_id,
         feedback: '',
-        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: 
+        (startTime <=0 && endTime <= 0) ? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true` :`https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       // arr.push(resultObj)
@@ -706,6 +717,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.aiSearchResultArr.splice(index,1)
       }
      })
+     this.chatbotService.iGOTAIChatHistory = this.aiSearchResultArr
     setTimeout(()=>{
      // this.scrollToBottomEvent.emit() 
     },0)
@@ -789,7 +801,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "ai-global-search", "pageid": "/page/home" ,"subType" : "ai-global-search"  },
         object: { },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -977,13 +989,14 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
         let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
+        this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false, fromInternet: true})
         this.aiSearchResultArr.map((item:any, index:any)=>{
           if(item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
             this.aiSearchResultArr.splice(index,1)
           }
          })
+         this.chatbotService.iGOTAIChatHistory = this.aiSearchResultArr
         setTimeout(()=>{
           this.scrollToBottomEvent.emit() 
         },0)
@@ -1010,7 +1023,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    if(item?.contentType === 'Resource') {
+      selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: 
+      (item?.contentStart <=0 && item?.contentEnd <= 0 ) ? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true` : `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    } else {
+      selBox.value = `https://portal.igotkarmayogi.gov.in/app/toc/${item?.identifier}/overview`
+    }
+    
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
@@ -1024,7 +1043,8 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   redirectToResource(item:any) {   
-    let path = (item.mimeType) === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    let path = (item.mimeType) === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: 
+    (item?.contentStart <=0 && item?.contentEnd <=0) ? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true` : `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     window.open(path, '_blank')
   }
 
@@ -1033,7 +1053,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home" ,"subType" : "ai-global-search"  },
         object: { id: chat?.identifier, type: chat?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
@@ -1106,7 +1126,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
+        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home","subType" : "ai-global-search"   },
         object: { id: item?.identifier, type: item?.contentType},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,

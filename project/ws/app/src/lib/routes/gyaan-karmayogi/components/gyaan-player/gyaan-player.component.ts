@@ -26,6 +26,13 @@ export class GyaanPlayerComponent implements OnInit {
   isInstructionsExpanded = false
   hasLongInstructions = false
 
+  sectorsList: any[] = []
+  subSectorsList: any[] = []
+  userProfile: any = null
+  subSectorDetailArr: any = []
+  selectedSector = ''
+  selectedSectorId = ''
+
   constructor(private viewerDataSvc: ViewerDataService,
               private configSvc: ConfigurationsService,
               private route: ActivatedRoute,
@@ -96,6 +103,8 @@ export class GyaanPlayerComponent implements OnInit {
     setTimeout(() => {
       this.checkInstructionsLength();
     }, 100);
+    
+    this.handleSubsector(this.resourceData?.sectorDetails_v1?.[0] || []);
   }
 
   // this method is used to close the share popup
@@ -192,5 +201,66 @@ export class GyaanPlayerComponent implements OnInit {
 
   toggleInstructions() {
     this.isInstructionsExpanded = !this.isInstructionsExpanded;
+  }
+
+  handleSubsector(item: any): void {
+    // Reset previous state
+    this.subSectorDetailArr = [];
+    this.selectedSector = item.sectorName;
+    this.selectedSectorId = item.sectorId;
+
+    if (!this.resourceData?.sectorDetails_v1?.length) {
+      return;
+    }
+
+    // Filter subsectors for the selected sector
+    const relevantSubSectors = this.resourceData.sectorDetails_v1.filter(
+      (sector: any) => sector.sectorId === this.selectedSectorId && sector.subSectorName
+    );
+
+    // Process subsector data
+    if (relevantSubSectors.length) {
+      // Map to the required structure
+      this.subSectorDetailArr = relevantSubSectors.map((sector: any) => ({
+        sectorId: sector.sectorId,
+        sectorName: sector.sectorName,
+        key: sector.subSectorName,
+        value: [sector.subSectorName]
+      }));
+
+      // Create card data for each subsector
+      this.subSectorsList = this.getUniqueArray(relevantSubSectors).map((sector: any) => ({
+        widgetType: "card",
+        widgetSubType: "competencyCard",
+        widgetHostClass: "mr-4",
+        widgetData: {
+          content: {
+            sectorId: this.selectedSectorId,
+            sectorName: this.selectedSector,
+            key: sector.subSectorName,
+            value: [sector.subSectorName]
+          },
+          competencyArea: "Behavioural",
+          cardCustomeClass: "",
+          context: {
+            pageSection: "blendedPrograms",
+            position: 0
+          }
+        }
+      }));
+    } else {
+      this.subSectorsList = [];
+    }
+  }
+
+  /**
+   * Returns an array with unique objects based on a specific property
+   */
+  getUniqueArray(arrayData: any[]): any[] {
+    if (!arrayData?.length) {
+      return [];
+    }
+    
+    return _.uniqBy(arrayData, 'subSectorName');
   }
 }

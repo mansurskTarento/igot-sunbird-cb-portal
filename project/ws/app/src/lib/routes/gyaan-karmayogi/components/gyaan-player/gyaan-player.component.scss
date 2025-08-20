@@ -157,3 +157,22 @@
 .view-toggle-btn:hover {
   text-decoration: underline;
 }
+
+
+.themes-button {
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: #E6E8EF;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 400;
+    letter-spacing: 0.25px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.theme-activated {
+    border: 1px solid $text-primary;
+    background-color: #DEE6F2;
+    color: $text-primary;
+    font-weight: 700;
+}

@@ -6,13 +6,14 @@
     <div class="fix-ww" id="root-tool-bar" *ngIf="isHubEnable">
       <ng-container *ngIf="mode === 'top'">
         <a [routerLink]="'/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home"
+         [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null"
           i18n-aria-title i18n-aria-label>
           <!-- <a [routerLink]="!isforPreview ? '/page/home' : '/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label> -->
           <ng-container *ngIf="jan26Data && jan26Data.isEnabled; else normalLogo">
             <div *ngIf="janDataEnable; else janDataDisabled" class="logo-box flex items-center">
               <img [src]="jan26Data.desktop.logoUrl" alt="Application Logo" class="app-logo-new" />
-              <span class="mat-subheading-2 ws-mat-default-text logo-text margin-left-xs"> {{
-                jan26Data.desktop.logoText}}</span>
+              <span class="mat-subheading-2 ws-mat-default-text logo-text margin-left-xs" [innerHTML]="jan26Data?.desktop?.logoText">
+              </span>
             </div>
             <ng-template #janDataDisabled>
               <img [src]="appIcon" alt="Application Logo" class="app-logo" />

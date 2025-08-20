@@ -349,6 +349,13 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
                                                          this.activatedRoute.snapshot.queryParams.batchId, id)
     const collectionId = (resData && resData.courseId) ? resData.courseId : ''
     const batchId = (resData && resData.batchId) ? resData.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+      if (id && collectionId) {
+        this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(id, status)
+      }
+    } else 
     if (collectionId && batchId && id) {
       this.viewerSvc.realTimeProgressUpdateQuiz(id, collectionId, batchId, status)
     }

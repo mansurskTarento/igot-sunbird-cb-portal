@@ -1,7 +1,7 @@
 <div class="w-full flex flex-col gap-4 network-connections">
   <div class="header">Connections</div>
 
-  <mat-tab-group class="w-full" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab-group class="w-full connections-tab-group" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
     <ng-container *ngFor="let tabDetails of tabDetailsList; let i = index">
       <mat-tab>
         <ng-template mat-tab-label>

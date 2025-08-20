@@ -51,6 +51,7 @@ export class EventDetailComponent implements OnInit {
   enrolledEvent: any
   batchId = ''
   isEnrolled = false
+  isretired = true
   downloadCertificateBool = false
   pageData!: any
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
@@ -128,7 +129,8 @@ export class EventDetailComponent implements OnInit {
       // this.data = this.route.snapshot.data.topic.data
     })
     this.eventSvc.getEventData(this.eventId).subscribe((data: any) => {
-      this.eventData = data.result.event
+      this.eventData = data?.result?.event
+      this.isretired = this.eventData?.status?.toLowerCase() !== 'live'
       this.eventSvc.eventData = data.result.event
       if (this.eventData && typeof this.eventData.batches === 'string') {
         this.eventData.batches = JSON.parse(this.eventData.batches)

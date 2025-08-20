@@ -58,7 +58,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     private translate: TranslateService,
     private contSvc: WidgetContentLibService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
 
   ) {
     super()
@@ -242,6 +242,7 @@ export class CardContentV2Component extends WidgetBaseComponent
         return ['description', this.widgetData.content.resourceType]
     }
   }
+  
 
   private modifySensibleContentRating() {
     if (this.widgetData.content)
@@ -452,7 +453,29 @@ export class CardContentV2Component extends WidgetBaseComponent
     }
     
   }
-
+  getUniqueArray(arrayData: any[]) {
+    if (!arrayData || !arrayData.length) {
+      return [];
+    }
+    
+    // For arrays of objects with 'sectorName' property
+    if (typeof arrayData[0] === 'object' && arrayData[0].sectorName) {
+      const uniqueValues = new Set<string>();
+      const result: any[] = [];
+      
+      arrayData.forEach(item => {
+        if (item.sectorName && !uniqueValues.has(item.sectorName)) {
+          uniqueValues.add(item.sectorName);
+          result.push(item);
+        }
+      });
+      
+      return result;
+    }
+    
+    // For arrays of primitive values
+    return Array.from(new Set(arrayData));
+  }
   get getMimeType() {
     let mimetype = this.widgetData && this.widgetData.content && this.widgetData.content.mimeType
     return VIEWER_ROUTE_FROM_MIME(mimetype)

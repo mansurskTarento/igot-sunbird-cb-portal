@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ContentLanguageService } from '@sunbird-cb/consumption'
 import { Observable, of, EMPTY, BehaviorSubject } from 'rxjs'
 import { catchError, retry, map, shareReplay } from 'rxjs/operators'
 import { NsContentStripMultiple } from '../content-strip-multiple/content-strip-multiple.model'
@@ -68,6 +69,7 @@ export class WidgetContentService {
   constructor(
     private http: HttpClient,
     private configSvc: ConfigurationsService,
+    private contentLangSvc: ContentLanguageService ,
   ) {
   }
 
@@ -189,8 +191,9 @@ export class WidgetContentService {
     )
   }
 
-  autoAssignBatchApi(identifier: any): Observable<NsContent.IBatchListResponse> {
-    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}`)
+  autoAssignBatchApi(identifier: any, language?: any): Observable<NsContent.IBatchListResponse> {
+    let enrollLang: string = language?.langId || 'english'
+    return this.http.get<NsContent.IBatchListResponse>(`${API_END_POINTS.AUTO_ASSIGN_BATCH}${identifier}?language=${enrollLang}`)
       .pipe(
         retry(1),
         map(
@@ -257,6 +260,9 @@ export class WidgetContentService {
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
     req.request.fields = ['progressdetails']
+    req.request.contentIds = req?.request?.contentIds && req?.request?.contentIds?.length ? req?.request?.contentIds : this.currentContentReadMetaData?.leafNodes || []
+    req.request["language"] =  req?.request?.language ? req?.request?.language : this.contentLangSvc.getContentLanguage(this.currentContentReadMetaData)
+    if(req.request.courseId) {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
     )
@@ -264,6 +270,8 @@ export class WidgetContentService {
     //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
     //     })
     return data
+  }
+  return of()
   }
 
   setProgramChildResumeData(contentList: any, courseId: any) {
@@ -599,5 +607,70 @@ export class WidgetContentService {
             && moment(endDate).isSameOrAfter(now)
           )
     } return true
+  }
+
+  getPreAssessmentFirstChildInHierarchy(content: NsContent.IContent): NsContent.IContent {
+    if (!(content.children || []).length) {
+      return content
+    }
+    if (
+      (content.primaryCategory === NsContent.EPrimaryCategory.PROGRAM &&
+        !(content.artifactUrl && content.artifactUrl.length)) ||
+      content.primaryCategory === NsContent.EPrimaryCategory.MANDATORY_COURSE_GOAL ||
+      (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM &&
+        !(content.artifactUrl && content.artifactUrl.length)) ||
+      (content.primaryCategory === NsContent.EPrimaryCategory.MODULE &&
+        !(content.artifactUrl && content.artifactUrl.length))
+    ) {
+      const child = content.children[0]
+      return this.getPreAssessmentFirstChildInHierarchy(child)
+    }
+    if (
+      content.primaryCategory === NsContent.EPrimaryCategory.RESOURCE ||
+      content.primaryCategory === NsContent.EPrimaryCategory.KNOWLEDGE_ARTIFACT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.PROGRAM ||
+      content.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE ||
+      content.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT ||
+      content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM ||
+      content.primaryCategory === NsContent.EPrimaryCategory.OFFLINE_SESSION
+    ) {
+      return content
+    }
+    const firstChild = content.children[0]
+    const resultContent = this.getPreAssessmentFirstChildInHierarchy(firstChild)
+    return resultContent
+  }
+
+  fetchHierarchyContent(contentId:string, hierarchyType: 'all' | 'minimal' | 'detail' = 'detail') {
+    let url = ''
+    const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+    if (!forPreview) {
+      url = `/apis/proxies/v8/action/content/v3/hierarchy/${contentId}?hierarchyType=${hierarchyType}`
+    } else {
+      const forcreator = window.location.href.includes('editMode=true')
+      if (forcreator) {
+        url = `apis/proxies/v8/action/content/v3/hierarchy/${contentId}?mode=edit`
+      } else {
+        url = `/api/course/v1/hierarchy/${contentId}?hierarchyType=${hierarchyType}`
+      }
+    }
+    return this.http.get<NsContent.IContent>(url).pipe(shareReplay(1))
+  }
+
+  fetchContentData(contentId: string): Observable<NsContent.IContent> {
+    let url = ''
+    const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+    if (!forPreview) {
+      return this.http.get<NsContent.IContent>(
+        API_END_POINTS.CONTENT_READ(contentId),
+      )
+    }
+    if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
+      url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
+    } else {
+        url = `/api/content/v1/read/${contentId}`
+    }
+      return this.http.get<NsContent.IContent>(url)
   }
 }

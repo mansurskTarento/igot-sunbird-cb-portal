@@ -138,6 +138,10 @@
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
 
+                <div class="mt-2">
+                    <sb-uic-available-languages [content]="content"></sb-uic-available-languages>
+                </div>
+
                 <div class="course-stats flex items-center gap-4 flex-wrap">
                     <div class="rating" *ngIf="content?.avgRating">
                         <mat-icon class="star-icon">star</mat-icon>

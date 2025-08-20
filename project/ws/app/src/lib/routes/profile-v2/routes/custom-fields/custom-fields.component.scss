@@ -201,3 +201,25 @@ $border-color: rgba(0, 0, 0, 0.0784313725);
     padding: 12px;
   }
 }
+
+.description-hint {
+  color: var(--accessbility-shades-with-opacity-kb-greys-black-60, rgba(0, 0, 0, 0.60));
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.font-red {
+  color: var(--borders-success-and-errors-border-error-light, #D13924);
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}

@@ -38,6 +38,7 @@ export class ShareTocComponent implements OnInit {
    @ViewChild('userInput') userInput: ElementRef<HTMLInputElement> | undefined
    @ViewChild('auto') matAutocomplete: MatAutocomplete | undefined
    @Output() resetEnableShare: any = new EventEmitter()
+   @Input() baseContentReadData: any 
   constructor(private userAutoComplete: UserAutocompleteService,
               private langtranslations: MultilingualTranslationsService,
               private translate: TranslateService,
@@ -192,7 +193,7 @@ export class ShareTocComponent implements OnInit {
         courseProvider = this.content.organisation && this.content.organisation[0]
         || this.content.contentPartner && this.content.contentPartner.partnerCode
         || this.content.source
-        courseId = this.content.identifier || this.content.contentId,
+        courseId = this.baseContentReadData ? this.baseContentReadData.identifier : this.content.identifier || this.content.contentId,
         courseName = this.content.name,
         coursePosterImageUrl = this.content.posterImage ||
          this.content.appIcon ||  'assets/instances/eagle/app_logos/KarmayogiBharat_Logo.svg',

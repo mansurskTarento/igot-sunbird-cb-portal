@@ -29,6 +29,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() leafNodesCount: any
   @Input() content: any
   @Input() hierarchyMapData: any = {}
+  @Input() contentReadData: any
+  @Input() baseContentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null
@@ -151,12 +153,13 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
-        if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.prevResource.identifier)
-        }
+        // if (data.prevResource.optionalReading && data.prevResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.prevResource.identifier)
+        // }
       } else {
         this.prevResourceUrl = null
       }
@@ -172,12 +175,13 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             courseName: this.courseName,
             preview: this.forPreview,
             channelId: this.channelId,
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
           },
           fragment: '',
         }
-        if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
-          this.updateProgress(2, data.nextResource.identifier)
-        }
+        // if (data.nextResource.optionalReading &&  data.nextResource.primaryCategory === 'Learning Resource') {
+        //   this.updateProgress(2, data.nextResource.identifier)
+        // }
       } else {
         this.nextResourceUrl = null
       }
@@ -237,7 +241,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
           this.activatedRoute.snapshot.queryParams.collectionId : ''
-          this.ComputeCompletedNodesAndPercent(collectionId)
+          const MLID =  this.activatedRoute.snapshot.queryParams.MLId ?
+          this.activatedRoute.snapshot.queryParams.MLId : ''
+          this.ComputeCompletedNodesAndPercent(collectionId === MLID ? collectionId : MLID)
         }
       }
     }
@@ -250,10 +256,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     // this.activatedRoute.snapshot.params.id : ''
     const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       this.activatedRoute.snapshot.queryParams.batchId : ''
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+        return this.viewerSvc
+          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
+      
+    }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
+    this.overallLeafNodes = this.leafNodesCount || 0
     if(this.hierarchyMapData  && this.hierarchyMapData[identifier]) {
       // tslint:disable
       const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
@@ -297,30 +310,6 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       window.history.back()
     }
   }
-
-  // getFetchHistory(batchId:any, identifier:any) {
-  //     if (this.configSvc.userProfile) {
-  //       this.userid = this.configSvc.userProfile.userId || ''
-  //     }
-  //   const req  = {
-  //     request: {
-  //       userId:this.userid,
-  //       batchId: batchId,
-  //       courseId: identifier || '',
-  //       contentIds: [],
-  //       fields: ['progressdetails'],
-  //     },
-  //   }
-  //   return this.widgetServ.fetchContentHistoryV2(req)
-  // }
-
-  //  getAuthDataIdentifer() {
-  //   const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
-  //   this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
-  //       this.leafNodesCount = data.result.content.leafNodesCount
-  //       console.log('this.leafNodesCount inside api call-------', this.leafNodesCount)
-  //   })
-  // }
   finishDialog() {
     if (!this.forPreview) {
       this.contentProgressHash = []
@@ -403,7 +392,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
   openFeedbackDialog(contentP?: any): void {
     const contentTmp = {
-      identifier: this.collectionId,
+      identifier: this.content.identifier || this.collectionId,
       primaryCategory: this.collectionType,
     }
     const content = contentP ? contentP : contentTmp

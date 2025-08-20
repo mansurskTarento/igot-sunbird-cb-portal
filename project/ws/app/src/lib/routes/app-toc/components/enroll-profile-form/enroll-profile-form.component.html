@@ -106,8 +106,8 @@
                                 placeholder="Search designation" 
                                 formControlName="searchDesignation" 
                                 class="search-input"
-                                (input)="filterdesignation($event.target.value)"
                                 (keydown)="$event.stopPropagation()"
+                                (click)="$event.stopPropagation()"
                                 autocomplete="off">
                     <button 
                                 *ngIf="searchDesignation?.value" 
@@ -119,7 +119,7 @@
                   </div>
                 </div>
                 <!-- Options list -->
-                <mat-option *ngFor="let option of filterDesignationsMeta " [value]="option?.name" (click)="selectDesignation(option?.name)">
+                <mat-option *ngFor="let option of designationsMeta " [value]="option?.name" (click)="selectDesignation(option?.name)">
                         {{ option?.name }}
                 </mat-option>
                  <!-- Loading indicator -->
@@ -127,7 +127,7 @@
                     Loading more...
                   </div>
                 <!-- No results message -->
-                <mat-option *ngIf="(filterDesignationsMeta )?.length === 0" disabled>
+                <mat-option *ngIf="(designationsMeta )?.length === 0" disabled>
                         No matches found
                 </mat-option>
               </mat-select>

@@ -64,7 +64,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   playerInitObj:any
   previousSubtitleLanguage = 'en'
   playTranscriptionVideoSubscription:Subscription | null = null
-  changeTranscriptionLanguageEventSubscription: Subscription | null = null
+  changeTranscriptionLanguageEventSubscription: Subscription | null = null  
   constructor(
     private eventSvc: EventService,
     private contentSvc: WidgetContentService,
@@ -98,10 +98,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       // setTimeout(()=>{
         // initObj.player.autoplay()
         if(this.videoTag && this.videoTag.nativeElement) {
-          this.videoTag.nativeElement.muted = true
+          this.videoTag.nativeElement.muted = false
           this.videoTag.nativeElement.play();
         } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
-          this.realvideoTag.nativeElement.muted = true
+          this.realvideoTag.nativeElement.muted = false
           this.realvideoTag.nativeElement.play();
         }
         
@@ -145,6 +145,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   // }
 
   async ngAfterViewInit() {
+    let playerInitialize = false
     //console.log('this.widgetData--', this.widgetData)
     this.widgetData = {
       ...this.widgetData,
@@ -157,6 +158,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
         if(!this.playerInitObj) {
+          playerInitialize = true
           this.initializePlayer()
         }
         
@@ -170,7 +172,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             if(this.transcriptionSubscriptionData?.loadPlayer) {
               this.initializePlayer()  
             } else {
-              if (Array.isArray(this.transcriptionLangArr)) {
+              if (Array.isArray(this.transcriptionLangArr) && !playerInitialize) {
   
                 let tracks = this.playerInitObj.player.textTracks()
                 //let allCues:any = []
@@ -365,8 +367,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               this.activatedRoute.snapshot.queryParams.collectionId : ''
       const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
               this.activatedRoute.snapshot.queryParams.batchId : ''
-
-      if (this.widgetData.identifier && identifier && data) {
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
@@ -451,7 +458,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                                                            this.activatedRoute.snapshot.queryParams.batchId, identifier)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
-        if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
           this.viewerSvc
             .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
@@ -486,6 +499,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     
 
     initObj.player.ready(() => {
+      let tracks = initObj.player.textTracks()
       setTimeout(() => {
         const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any;
         if (ccButton) {
@@ -530,7 +544,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               // Add custom layout
               span.innerHTML = `
                 <div class="custom-cc-wrapper">
-                  <img src="/assets/ai-tutor/subtitle.png" class="custom-cc-icon-img" alt="icon" />
+                  <img src="/assets/ai-tutor/subtitle-on.svg" id="custom-cc-icon-img" class="custom-cc-icon-img" alt="icon" />
                   <span class="custom-cc-label">Subtitle</span>
                 </div>
               `;
@@ -598,8 +612,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        const defaultTrack:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
-        // console.log('defaultTrack--', defaultTrack)
+        const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+        let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+          return item?.label === defaultTrackTemp?.default_lang
+        });
         this.transcriptionLangArr.forEach((track:any) => {
           // console.log(track?.label , defaultTrack?.label)
           // console.log('track--', track)
@@ -612,11 +628,9 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           }, false);
         });
         initObj.player.on('texttrackchange', () => {
-          const tracks = initObj.player.textTracks();
           
           for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
-            
             if (track.mode === 'showing') {
               const currentLang = track.language;
               if (currentLang !== this.previousSubtitleLanguage) {
@@ -635,6 +649,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 });
                 if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
                   this.replaceSubtitleTrack(newTrack);
+                } else {
+                  this.replaceSubtitleTrack(defaultTrack);
                 }
                 // if(newTrack) {
                 //   this.transcriptionLangArr.forEach((track:any) => {
@@ -657,15 +673,20 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 // this.appTocService.setActiveSubtitleLanguage(currentLang);
                // console.log('About to call next with:', currentLang);
                 this.appTocService.setActiveSubtitleLanguage(currentLang);
+                
                 //console.log('Called next');
               } 
-
+              
+              this.updateSubtitleButtonIcon(true)
               break; // Only one track should be 'showing'
+            } else {
+              this.previousSubtitleLanguage = ''
+              this.updateSubtitleButtonIcon(false)
             }
           }
         });
         // console.log('initObj--', initObj.player.textTracks())
-        let tracks = initObj.player.textTracks()
+        
         //let allCues:any = []
         for (let i = 0; i < tracks.length; i++) {
           const track = tracks[i];
@@ -767,6 +788,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   replaceSubtitleTrack(newTrack: any) {
+
+    // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+    // console.log('defaultTrack--', defaultTrackTemp)
+    // let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+    //   return item?.label === defaultTrackTemp?.default_lang
+    // });
+
     const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
     const existingTracks = videoEl.querySelectorAll('track');
     existingTracks.forEach((el: any) => el.remove());
@@ -778,22 +806,34 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     trackEl.label = newTrack.language;
     trackEl.default = true;
     videoEl.appendChild(trackEl);
+    let tracks = videoEl.textTracks;
 
 
-
-      setTimeout(() => {
-        const tracks = videoEl.textTracks;
+      // setTimeout(() => {
+        
         console.log('👉 Number of textTracks:', tracks.length);
 
         for (let i = 0; i < tracks.length; i++) {
           const t = tracks[i];
+          if (t.kind === 'subtitles') {
+            // Toggle and force reflow if needed
+            if (t.mode === 'showing') {
+              t.mode = 'hidden';
+            } else {
+              // Workaround: re-set mode after short delay to force repaint
+              t.mode = 'hidden';
+              setTimeout(() => {
+                t.mode = 'showing';
+              }, 1000); // or 10–50ms if needed
+            }
+          }
+          
           console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
         }
-      }, 10000);
+      // }, 1000);
   
     // Wait for the TextTrack to load
     const waitForTrack = () => {
-      const tracks = videoEl.textTracks;
       for (let i = 0; i < tracks.length; i++) {
         const track = tracks[i];
         if (
@@ -820,6 +860,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   
           console.log('✅ Cuechange listener attached');
           return; // Done
+        } else {
+         // track.mode = 'hidden'
         }
       }
   
@@ -828,6 +870,30 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     };
   
     waitForTrack();
+  }
+
+  updateSubtitleButtonIcon(subtitlesOn: boolean) {
+    let subtitleImage =  document.getElementById('custom-cc-icon-img') as HTMLImageElement
+    
+    if(subtitleImage) {
+      subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
+    }
+
+    if(!subtitlesOn) {
+      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
+      let tracks = videoEl.textTracks;
+      for (let i = 0; i < tracks.length; i++) {
+        const t = tracks[i];
+        if (t.kind === 'subtitles') {
+          // Toggle and force reflow if needed
+          if (t.mode === 'showing') {
+            t.mode = 'hidden';
+          }
+        }
+        
+       // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+      }
+    }
   }
   
 }
