@@ -78,6 +78,7 @@ export class WidgetContentService {
   currentBatchEnrollmentList!: NsContent.ICourse[]
   programChildCourseResumeData = new BehaviorSubject<any>({})
   programChildCourseResumeData$ = this.programChildCourseResumeData.asObservable()
+  languageMapProgress: any
   isResource(primaryCategory: string) {
     if (primaryCategory) {
       const isResource = (primaryCategory === NsContent.EResourcePrimaryCategories.LEARNING_RESOURCE) ||
@@ -261,6 +262,11 @@ export class WidgetContentService {
     if(req.request.courseId) {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
+    ).pipe(
+      map((rData: any) => {
+        this.languageMapProgress = rData?.result?.languageProgress || {}
+        return rData
+      }), //  (rData.responseData || []).map((p: any) => p.name)
     )
     // data.subscribe((subscribeData: any) => {
     //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })

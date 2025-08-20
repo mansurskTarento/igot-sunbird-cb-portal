@@ -12,7 +12,7 @@ import { CourseCompletionDialogComponent } from '../course-completion-dialog/cou
 import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
 /* tslint:disable*/
 import _ from 'lodash'
 
@@ -73,6 +73,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   primaryCategory = NsContent.EPrimaryCategory
   assessmentStart = false;
   enrollmentList: any = []
+  collectionLang: any 
   // primaryCategory = NsContent.EPrimaryCategory
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -83,14 +84,15 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private valueSvc: ValueService,
     private dialog: MatDialog,
     private router: Router,
-    private widgetServ: WidgetContentService,
+    public widgetServ: WidgetContentService,
     private viewerSvc: ViewerUtilService,
     private ratingSvc: RatingService,
     private loggerSvc: LoggerService,
     private events: EventService,
     private assessmentStartCheckService: ViewerHeaderSideBarToggleService,
     private resetRatingsService: ResetRatingsService,
-    private widgetLibSvc: WidgetContentLibService
+    private widgetLibSvc: WidgetContentLibService,
+    private contentLangSvc: ContentLanguageService
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -236,6 +238,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(props: SimpleChanges) {
     for (const prop in props) {
       if (prop === 'hierarchyMapData') {
+        this.collectionLang  = this.activatedRoute.snapshot.queryParams.ML ?
+          this.activatedRoute.snapshot.queryParams.ML : this.contentLangSvc.getContentLanguage(this.contentReadData)
         if(_.isEmpty(props['hierarchyMapData'].currentValue)){
           this.loadingOverallPRogress = true
         } else {
@@ -372,11 +376,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getUserRating(fireUpdate: boolean) {
+    let id = ''
     if (this.configSvc.userProfile) {
       this.userId = this.configSvc.userProfile.userId || ''
     }
     if (this.collectionId && this.collectionType) {
-      this.ratingSvc.getRating(this.collectionId, this.collectionType, this.userId).subscribe(
+      const MLID =  this.activatedRoute.snapshot.queryParams.MLId ?
+          this.activatedRoute.snapshot.queryParams.MLId : ''
+      // check if multilingual ID is there then hit the API with MLID
+      id = MLID ? MLID : this.collectionId
+      this.ratingSvc.getRating(id, this.collectionType, this.userId).subscribe(
         (res: any) => {
           if (res && res.result && res.result.response) {
             this.userRating = res.result.response
@@ -393,8 +402,13 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
+    debugger
+    const MLID =  this.activatedRoute.snapshot.queryParams.MLId ?
+          this.activatedRoute.snapshot.queryParams.MLId : ''
+      // check if multilingual ID is there then hit the API with MLID
+    const id = MLID ? MLID : this.collectionId
     const contentTmp = {
-      identifier: this.content.identifier || this.collectionId,
+      identifier: id,
       primaryCategory: this.collectionType,
     }
     const content = contentP ? contentP : contentTmp
@@ -441,7 +455,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
-    if (!this.userRating && this.overallProgress >= 100) {
+    if (!this.userRating && this.widgetServ?.languageMapProgress && this.collectionLang && 
+      this.widgetServ?.languageMapProgress[this.collectionLang] >= 100) {
       this.openFeedbackDialog(this.userRating)
     }
   }

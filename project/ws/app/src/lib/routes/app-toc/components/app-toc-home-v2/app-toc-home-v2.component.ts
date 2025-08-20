@@ -2304,6 +2304,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.getOrgIdForShare()
             this.getTocStructure()
             if (!this.forPreview) {
+              this.userRating = undefined
               this.getUserRating(false)
             }
             resolve(true);
