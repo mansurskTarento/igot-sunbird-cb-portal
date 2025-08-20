@@ -529,6 +529,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         (res: any) => {
           if (res && res.result && res.result.response) {
             this.ratingSummary = res.result.response
+          } else {
+            this.ratingSummary = undefined
           }
 
           // Hide loader for MatDialog...
