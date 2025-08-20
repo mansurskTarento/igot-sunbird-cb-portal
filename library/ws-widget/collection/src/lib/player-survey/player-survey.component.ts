@@ -255,7 +255,8 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
         version: 4,
         status: 'SUBMITTED',
         responses: this.dataObject,
-
+        contextId: this.courseId,
+        contextName: this.courseName,
       }
 
       this.addLoader = this.addLoader + 1

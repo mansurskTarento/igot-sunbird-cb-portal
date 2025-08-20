@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common'
 import { Component, OnInit, Inject, ViewChild, ElementRef, HostListener } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
@@ -149,6 +150,7 @@ export class EnrollProfileFormComponent implements OnInit {
     private otpService: OtpService,
     private npsSvc: NPSGridService,
     private translateService: TranslateService,
+    private datePipe: DatePipe,
     // private signupService: SignupService,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
@@ -1396,15 +1398,13 @@ export class EnrollProfileFormComponent implements OnInit {
 
   submitSurevy(status: any) {
     let surevyPayload = {
-    //   dataObject: this.genereateSurveyPayload(status),
-    //   formId: this.data.batchData.batchAttributes.profileSurveyId,
-    //   timestamp: new Date().getTime(),
-    // }
       formId: _.get(this.data, 'batchData.batchAttributes.profileSurveyId'),
       version: 4,
       status: 'SUBMITTED',
       responses: this.genereateSurveyPayload(status),
-    } 
+      contextId: _.get(this.data, 'batchData.courseId'),
+      contextName: _.get(this.data, 'courseName', ''),
+    }
     this.addLoader = this.addLoader + 1
     this.npsSvc.submitBpFormWithProfileDetails(surevyPayload).subscribe((resp: any) => {
       this.addLoader = this.addLoader - 1
@@ -1500,13 +1500,26 @@ export class EnrollProfileFormComponent implements OnInit {
     return payload
   }
 
-  formatDate(_dob: string): string {
-    const [day, month, year] = _dob.split('-')
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    const formattedDay = String(date.getDate()).padStart(2, '0')
-    const formattedMonth = String(date.getMonth() + 1).padStart(2, '0')
-    const formattedYear = date.getFullYear()
-    return `${formattedYear}-${formattedMonth}-${formattedDay}`
+  formatDate(_dob: string | Date): string {
+    let dateObj: Date | null = null;
+    if (_dob instanceof Date) {
+      dateObj = _dob;
+    } else if (typeof _dob === 'string') {
+      const parts = _dob.split('-');
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        dateObj = new Date(Number(year), Number(month) - 1, Number(day));
+      } else {
+        const parsed = new Date(_dob);
+        if (!isNaN(parsed.getTime())) {
+          dateObj = parsed;
+        }
+      }
+    }
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return '';
+    }
+    return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
 
   genereateSurveyPayload(status: any) {

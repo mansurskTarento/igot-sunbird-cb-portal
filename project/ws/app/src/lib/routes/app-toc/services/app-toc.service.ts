@@ -39,7 +39,6 @@ const API_END_POINTS = {
   SUBMIT_FORM: `apis/proxies/v8/forms/v2/saveFormSubmit`,
   AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
   // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
-  // SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
   PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`
 }
 

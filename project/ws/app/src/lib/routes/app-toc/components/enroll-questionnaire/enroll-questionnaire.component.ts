@@ -186,7 +186,8 @@ export class EnrollQuestionnaireComponent implements OnInit {
         version: 4,
         status: 'SUBMITTED',
         responses: this.dataObject,
-
+        contextId: _.get(this.data, 'batchData.courseId'),
+        contextName: _.get(this.data, 'courseName', ''),
       }
 
       this.addLoader = this.addLoader + 1
