@@ -23,7 +23,7 @@
               </ng-container>
             </ng-container>
             <ng-container *ngIf="content?.completionPercentage === 100 || certData">
-              {{ resumeData ? translateLabels('Start again', 'apptochome') : translateLabels('resume', 'apptochome') }}
+              {{ resumeData && languageMapProgress && selectedLanguage?.langId && languageMapProgress[selectedLanguage?.langId] === 100 ? translateLabels('Start again', 'apptochome') : translateLabels('resume', 'apptochome') }}
             </ng-container>
           </a>
 
@@ -161,7 +161,7 @@
                 </ng-container>
               </ng-container>
               <ng-container *ngIf="content?.completionPercentage === 100">
-                {{ resumeData || content?.completionPercentage === 100 ? "Start again" : "Start" }}
+                {{ (resumeData) || content?.completionPercentage === 100 ? "Start again" : "Start" }}
               </ng-container>
             </a>
             <a *ngIf="isPostAssessment && showTakeAssessment?.post_assessment" [routerLink]="firstResourceLink?.url"
@@ -318,7 +318,7 @@
         </div>
       </div>
 
-      <ng-container *ngIf="content?.completionPercentage >= 50">
+      <ng-container *ngIf="languageMapProgress && selectedLanguage?.langId && languageMapProgress[selectedLanguage?.langId] >= 50">
         <button mat-stroked-button color="accent" type="button" class="rate-button" (click)="openFeedbackDialog(content)">
           <mat-icon class="nodtranslate">star_purple500</mat-icon>
           <ng-container *ngIf="!userRating">
@@ -509,15 +509,15 @@
           <ng-container [ngTemplateOutlet]="progressFunctionality"></ng-container>
         </div>
         <!-- Overall progress functionality -->
-        <ws-widget-content-toc [content]="content" [componentName]="'toc'"  [pathSet]="pathSet" [tocStructure]="tocStructure" 
-        [forPreview]="forPreview"  [isEnrolled]="batchData?.enrolled" [resumeData]="resumeData" [batchData]="selectedBatchData" [skeletonLoader]="skeletonLoader" 
-        [changeTab]="changeTab" [hierarchyMapData]="tocSvc?.hashmap" [selectedBatchData]="selectedBatchData" [condition]="{isPostAssessment: isPostAssessment, content: content, isAcbpCourse: isAcbpCourse, isClaimed: isClaimed, monthlyCapExceed: monthlyCapExceed, isCompletedThisMonth: isCompletedThisMonth, showTakeAssessment: showTakeAssessment, userEnrollmentList: userEnrollmentList, resumeData: resumeData, userRating: userRating, enrollBtnLoading: enrollBtnLoading, primaryCategory: primaryCategory, currentCourseBatchId: currentCourseBatchId, isAcbpClaim: isAcbpClaim}" [kparray]="kparray"
-        (playResumeForAI)="playResumeForAI()" (enrollUserToAI)="enrollUserToAI()" [contentReadData]="contentReadData" [baseContentReadData]="baseContentReadData"></ws-widget-content-toc>
-        <div class="mob-tip-for-learner">
-          <div *ngIf="learnAdvisoryData && learnAdvisoryData?.length">
-            <ws-widget-tips-for-learner-card [learnAdvisoryData]="learnAdvisoryData"></ws-widget-tips-for-learner-card>
-        </div>
-        </div>
+           <ws-widget-content-toc [content]="content" [componentName]="'toc'"  [pathSet]="pathSet" [tocStructure]="tocStructure" 
+           [forPreview]="forPreview"  [isEnrolled]="batchData?.enrolled" [resumeData]="resumeData" [batchData]="selectedBatchData" [skeletonLoader]="skeletonLoader" 
+           [changeTab]="changeTab" [hierarchyMapData]="tocSvc?.hashmap" [selectedBatchData]="selectedBatchData" [condition]="{isPostAssessment: isPostAssessment, content: content, isAcbpCourse: isAcbpCourse, isClaimed: isClaimed, monthlyCapExceed: monthlyCapExceed, isCompletedThisMonth: isCompletedThisMonth, showTakeAssessment: showTakeAssessment, userEnrollmentList: userEnrollmentList, resumeData: resumeData, userRating: userRating, enrollBtnLoading: enrollBtnLoading, primaryCategory: primaryCategory, currentCourseBatchId: currentCourseBatchId, isAcbpClaim: isAcbpClaim}" [kparray]="kparray"
+           (playResumeForAI)="playResumeForAI()" (enrollUserToAI)="enrollUserToAI()" [contentReadData]="contentReadData" [baseContentReadData]="baseContentReadData"></ws-widget-content-toc>
+            <div class="mob-tip-for-learner">
+             <div *ngIf="learnAdvisoryData && learnAdvisoryData?.length">
+               <ws-widget-tips-for-learner-card [learnAdvisoryData]="learnAdvisoryData"></ws-widget-tips-for-learner-card>
+              </div>
+            </div>
       </div>
     </div>
     
