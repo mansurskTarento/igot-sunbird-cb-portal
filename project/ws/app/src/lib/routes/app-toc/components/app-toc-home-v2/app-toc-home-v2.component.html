@@ -23,7 +23,7 @@
               </ng-container>
             </ng-container>
             <ng-container *ngIf="content?.completionPercentage === 100 || certData">
-              {{ resumeData && languageMapProgress && selectedLanguage?.langId && languageMapProgress[selectedLanguage?.langId] === 100 ? translateLabels('Start again', 'apptochome') : translateLabels('resume', 'apptochome') }}
+              {{ resumeData && contentCompletionPercent >= 100 ? translateLabels('Start again', 'apptochome') : translateLabels('resume', 'apptochome') }}
             </ng-container>
           </a>
 
@@ -318,7 +318,7 @@
         </div>
       </div>
 
-      <ng-container *ngIf="languageMapProgress && selectedLanguage?.langId && languageMapProgress[selectedLanguage?.langId] >= 50">
+      <ng-container *ngIf="contentCompletionPercent >= 50">
         <button mat-stroked-button color="accent" type="button" class="rate-button" (click)="openFeedbackDialog(content)">
           <mat-icon class="nodtranslate">star_purple500</mat-icon>
           <ng-container *ngIf="!userRating">
