@@ -8,6 +8,7 @@ import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/dis
 import { environment } from 'src/environments/environment'
 // tslint:disable
 import _ from 'lodash'
+import { LibNotificationsService } from '@sunbird-cb/notification'
 // tslint:enable
 // import { AccessControlService } from '@ws/author/src/public-api'
 
@@ -66,7 +67,8 @@ export class CardHubsListComponent extends WidgetBaseComponent
     private router: Router,
     private valueSvc: ValueService,
     private langtranslations: MultilingualTranslationsService,
-    private events: EventService
+    private events: EventService,
+    private libNotificationsService: LibNotificationsService
     // private accessService: AccessControlService
   ) {
     super()
@@ -233,6 +235,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
     if (this.disableMenu) {
       return false
     }
+    this.libNotificationsService.updateUnreadCount()
     this.router.navigate([path])
   }
 
@@ -332,6 +335,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
   }
 
   exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
     this.raiseTelemetryExploreContent()
     const queryParams = {
       q: '',
