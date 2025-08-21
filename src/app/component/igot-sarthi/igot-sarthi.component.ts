@@ -730,6 +730,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
   //  }
     
     //let arr:any = []
+    console.log('this.aiSearchResultArr', this.aiSearchResultArr)
     let showSimiliarResultsFlag = false 
     let showFromInternet = false
     let showReterivedChunks = true
@@ -786,7 +787,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     if(this.aiSearchResultArr.length === 0) {
       this.aiSearchResultArr.push({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
     } else {
-      this.aiSearchResultArr[0]= ({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
+      this.aiSearchResultArr[this.aiSearchResultArr.length-1]= ({ wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: showFromInternet, showSimiliarResultsFlag : showSimiliarResultsFlag, showReterivedChunks: showReterivedChunks})
     }
     
     this.aiSearchResultArr.map((item:any, index:any)=>{
@@ -1070,7 +1071,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "is_liked":true,
       "rating": "5",
       "identifier": item.identifier ? item.identifier : '',
-      "query": item?.query
+      "query": item?.query,
+      "chat_id": this.chatId,
+      "userId": this.userId
 
    }
    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
@@ -1153,7 +1156,9 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "is_liked":false,
       "rating": "0",
       "identifier":item.identifier ? item.identifier : '',
-      "query": item?.query
+      "query": item?.query,
+      chat_id: this.chatId,
+      user_id: this.userId,
 
    }
    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {

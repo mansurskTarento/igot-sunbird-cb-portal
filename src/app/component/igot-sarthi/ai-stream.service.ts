@@ -64,7 +64,7 @@ export class AiStreamService {
       this.buffer += data;
       // console.log('this.buffer',this.buffer)
       // Try to parse when we see the end of a valid JSON
-      if (this.buffer.includes('retrieved_chunks') || this.buffer.trim().endsWith(']}')) {
+      if (this.buffer.includes('retrieved_chunks') || this.buffer.includes('Identifier') || this.buffer.trim().endsWith(']}')) {
         try {
 
         //   const fixedJson = this.extractValidJSON(this.buffer)['substring'];
@@ -85,7 +85,7 @@ export class AiStreamService {
         //   }
 
         const { parsedObjects, remaining } = this.extractValidJSON(this.buffer);
-        console.log('parsedObjects',parsedObjects)
+        //console.log('parsedObjects',parsedObjects)
         if (parsedObjects.length) {
           
           this.chunks.push(...parsedObjects);
@@ -101,6 +101,7 @@ export class AiStreamService {
         } catch (jsonErr) {
           console.warn('Waiting for full JSON… not ready yet.');
           // Do nothing — keep buffering
+          this.buffer += data
         }
       }
     }

@@ -918,7 +918,9 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       "is_liked":true,
       "rating": "5",
       "identifier":this.content,
-      "query": item.query
+      "query": item.query,
+      chat_id: this.chatId,
+      user_id: this.configSvc.unMappedUser.userId,
 
    }
    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
@@ -989,7 +991,9 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       "is_liked":false,
       "rating": "0",
       "identifier":this.content,
-      "query": item.query
+      "query": item.query,
+      chat_id: this.chatId,
+      user_id: this.configSvc.unMappedUser.userId,
 
    }
    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
