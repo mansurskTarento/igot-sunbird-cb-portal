@@ -115,9 +115,11 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
           this.identifierId) {
           const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
                                                                this.activatedRoute.snapshot.queryParams.batchId, this.identifierId)
+          const language = this.viewerSvc.getResourceContentLanguage(this.identifierId)
           const req = {
             request: {
               userId,
+              language,
               batchId: resData.batchId || '',
               courseId: resData.courseId || '',
               contentIds: [],

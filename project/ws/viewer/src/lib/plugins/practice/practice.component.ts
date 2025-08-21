@@ -1324,7 +1324,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.questionAnswerHash,
       this.quizSvc.mtfSrc.getValue() as any ,
     )
+    let language:string =  this.viewerSvc.getResourceContentLanguage(this.identifier)
     const request: NSPractice.IQuizSubmit = {
+      language,
       batchId: this.resBatchId,
       identifier: this.identifier,
       primaryCategory: this.primaryCategory,
@@ -2688,9 +2690,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               this.activatedRoute.snapshot.queryParams.collectionId,
               this.activatedRoute.snapshot.queryParams.batchId,
       this.identifier)
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
     const req:any = {
       request: {
         userId,
+        language,
         batchId: requestCourse.batchId,
         courseId: requestCourse.courseId || '',
         contentIds: [],

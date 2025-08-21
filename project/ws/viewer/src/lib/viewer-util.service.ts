@@ -7,7 +7,7 @@ import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-conte
 import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +36,7 @@ export class ViewerUtilService {
     private contentSvc: WidgetContentService,
     private tocSvc: AppTocService,
     private userSvc: WidgetUserServiceLib,
+    private contentLangSvc: ContentLanguageService,
     ) { }
 
   async fetchManifestFile(url: string) {
@@ -124,6 +125,7 @@ export class ViewerUtilService {
   realTimeProgressUpdate(contentId: string, request: any, collectionId?: string, batchId?: string) {
     let req: any
     if (this.configservice.userProfile) {
+      const language = this.getResourceContentLanguage(contentId) 
       req = {
         request: {
           userId: this.configservice.userProfile.userId || '',
@@ -131,6 +133,7 @@ export class ViewerUtilService {
             {
               contentId,
               batchId,
+              language,
               status: this.getStatus(request.current, request.max_size, request.mime_type),
               courseId: collectionId,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
@@ -216,6 +219,32 @@ export class ViewerUtilService {
     }
     return tempData
   }
+
+  getResourceContentLanguage(resourceId: string) {
+
+    let tempLanguage:any =  'english'
+    let languageFound = false
+    const tempContentData = this.contentSvc.currentMetaData
+     if (!this.forPreview) {
+      tempContentData.children.forEach(async (childList: NsContent.IContent) => {
+         if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+           // tslint:disable-next-line: max-line-length
+           if (childList.leafNodes && childList.leafNodes.indexOf(resourceId) !== -1) {
+            tempLanguage = this.contentLangSvc.getContentLanguage(childList)
+            languageFound = true
+           }
+         }
+       } 
+      )
+      if(!languageFound) {
+        if (tempContentData.leafNodes && tempContentData.leafNodes.indexOf(resourceId) !== -1) {
+              tempLanguage = this.contentLangSvc.getContentLanguage(tempContentData)
+        }
+      }
+    }
+    return tempLanguage
+  }
+
   async checkForCourseEnrollment(childList: NsContent.IContent, _resourceId: string, _enrollmentList: any, _tempData: any) {
     // tslint:disable-next-line: max-line-length
     const courseData: any  = await this.contentSvc.autoAssignBatchApi(childList.identifier).toPromise().then(async (data: NsContent.IBatchListResponse) => {
@@ -242,6 +271,7 @@ export class ViewerUtilService {
   realTimeProgressUpdateQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
     let req: any
     if (this.configservice.userProfile) {
+      const language = this.getResourceContentLanguage(contentId) 
       req = {
         request: {
           userId: this.configservice.userProfile.userId || '',
@@ -249,6 +279,7 @@ export class ViewerUtilService {
             {
               contentId,
               batchId,
+              language,
               status: status || 2,
               courseId: collectionId,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),

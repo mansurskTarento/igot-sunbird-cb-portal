@@ -1494,9 +1494,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.content['completionPercentage'] = 100
           this.content['completionStatus'] = 2
           await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
-          let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
           let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
         } else{
@@ -1513,9 +1512,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.enrollBtnLoading = false
             // this.tocSvc.contentLoader.next(false)
           } else {
-            let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
             let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-            this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+            this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
             this.content['completionPercentage'] = enrolledCourse.completionPercentage
             this.enrollBtnLoading = false
             this.tocSvc.mapModuleCount(this.content)
@@ -2306,6 +2304,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.getOrgIdForShare()
             this.getTocStructure()
             if (!this.forPreview) {
+              this.userRating = undefined
               this.getUserRating(false)
             }
             resolve(true);
@@ -2457,7 +2456,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               this.checkIfUserEnrolled();
             }
           }
-          
+          // Update subject to notify rating summry component and load the sumamry of selected language
+          this.resetRatingsService.setRatingServiceUpdate(true)
           // Finally set loading state to false
           this.skeletonLoader = false;
         })
@@ -2572,7 +2572,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  private getContinueLearningData(contentId: string, batchId?: string,resourceIds?: string[], lang?: string) {
+  private getContinueLearningData(contentId: string, batchId?: string, lang?: string) {
     this.tocSvc.contentLoader.next(true)
     this.resumeData = null
     let userId
@@ -2585,7 +2585,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         batchId,
         userId,
         courseId: contentId || '',
-        contentIds: resourceIds? resourceIds: [],
+        contentIds: [],
         fields: ['progressdetails'],
         ...(lang ? { language: lang }: null),
       },
