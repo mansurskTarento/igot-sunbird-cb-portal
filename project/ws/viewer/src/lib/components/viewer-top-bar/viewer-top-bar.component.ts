@@ -454,9 +454,21 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
-    if (!this.userRating && this.widgetServ?.languageMapProgress && this.collectionLang &&
-      this.widgetServ?.languageMapProgress[this.collectionLang] >= 100) {
+    if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
+    }
+  }
+
+  get contentCompletionPercent() {
+    if(this.contentReadData.primaryCategory === 'Course') {
+      if(this.widgetServ?.languageMapProgress && this.collectionLang && 
+        this.widgetServ?.languageMapProgress[this.collectionLang]) {
+          return this.widgetServ?.languageMapProgress[this.collectionLang]
+      } else {
+        return 0
+      }
+    } else {
+      return this.overallProgress
     }
   }
 }
