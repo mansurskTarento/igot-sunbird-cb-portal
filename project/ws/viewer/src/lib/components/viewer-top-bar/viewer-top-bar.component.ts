@@ -464,8 +464,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  get isMultilingual() {
+    if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
+      let languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
+      return languageList.length > 1
+    }
+    return false
+  }
+
   get contentCompletionPercent() {
-    if(this.contentReadData.primaryCategory === 'Course') {
+    if(this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
       if(this.widgetServ?.languageMapProgress && this.collectionLang && 
         this.widgetServ?.languageMapProgress[this.collectionLang]) {
           return this.widgetServ?.languageMapProgress[this.collectionLang]
