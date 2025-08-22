@@ -385,13 +385,18 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   showCompletionPopUp() {
+    let id = ''
+    const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+                  this.activatedRoute.snapshot.queryParams.MLId : ''
+    // check if multilingual ID is there then hit the API with MLID
+    id = MLID ? MLID : this.identifier
     const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
       autoFocus: false,
       panelClass: 'course-completion-dialog',
       data: {
         courseName: this.activatedRoute.snapshot.queryParams.courseName,
         userId: this.userid,
-        identifier: this.identifier,
+        identifier: id,
         primaryCategory: this.collectionType,
         courseCategory: this.currentDataFromEnrollList.content.courseCategory,
       },

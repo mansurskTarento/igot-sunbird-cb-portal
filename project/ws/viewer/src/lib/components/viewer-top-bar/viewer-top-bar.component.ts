@@ -315,6 +315,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   finishDialog() {
+    let id = ''
     if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
@@ -346,12 +347,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
               const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
 
               if (ipStatusCount.length === 0) {
+                const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+                  this.activatedRoute.snapshot.queryParams.MLId : ''
+                // check if multilingual ID is there then hit the API with MLID
+                id = MLID ? MLID : this.identifier
                 const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
                   autoFocus: false,
                   data: {
                     courseName: this.activatedRoute.snapshot.queryParams.courseName,
                     userId: this.userid,
-                    identifier: this.identifier,
+                    identifier: id,
                     primaryCategory: this.collectionType,
                     courseCategory: this.currentDataFromEnrollList.content.courseCategory
                   },
