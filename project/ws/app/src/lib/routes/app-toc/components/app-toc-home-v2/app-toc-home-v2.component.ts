@@ -2896,14 +2896,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   get contentCompletionPercent() {
     if(this.batchData?.enrolled) {
-      if(this.contentReadData && this.contentReadData.primaryCategory === 'Course') {
+      if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
         if(this.languageMapProgress && this.selectedLanguage?.langId && this.languageMapProgress[this.selectedLanguage?.langId]) {
             return this.languageMapProgress[this.selectedLanguage?.langId]
         } else {
           return 0
         }
       } else {
-        return this.content?.completionPercentage
+        return this.content?.completionPercentage || 0
       }
     }
   }
