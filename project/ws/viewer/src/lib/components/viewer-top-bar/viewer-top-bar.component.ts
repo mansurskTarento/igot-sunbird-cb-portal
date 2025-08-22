@@ -473,7 +473,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get contentCompletionPercent() {
-    if(this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+    if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
       if(this.widgetServ?.languageMapProgress && this.collectionLang && 
         this.widgetServ?.languageMapProgress[this.collectionLang]) {
           return this.widgetServ?.languageMapProgress[this.collectionLang]
