@@ -5,8 +5,6 @@ import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.serv
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
 import * as _ from 'lodash';
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component';
-import { ConfirmationDialogComponent } from '@sunbird-cb/consumption';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 
 @Component({
   selector: 'ws-app-achievements',
@@ -18,6 +16,7 @@ export class AchievementsComponent implements OnInit {
   @Input() achievementsList: achievement[] = [];
   @Input() isCurrentUser = false;
   @Output() openProfileEntryEditDialog = new EventEmitter();
+  @Output() openProfileEntryDeleteDialog = new EventEmitter();
 
   userId: string = '';
   isPopup: boolean = false;
@@ -28,8 +27,7 @@ export class AchievementsComponent implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private dialog: MatLegacyDialog,
-    private cdr: ChangeDetectorRef,
-    private configSvc: ConfigurationsService
+    private cdr: ChangeDetectorRef
   ) {
     if (this.data && this.data.userId) {
       this.userId = data.userId;
@@ -113,59 +111,10 @@ export class AchievementsComponent implements OnInit {
   }
   //#endregion (functions)
   deleteAchievement(achievement: achievement): void {
-    const dialgoData = {
-            description: 'Are you sure you want to delete this achievement?',
-            iconName: 'info',
-            type: 'warning',
-            buttonsPositionClass: 'justify-center items-center',
-            buttons: [
-              {
-                classes: 'btn-out-line',
-                text: 'No',
-                response: false
-              },
-              {
-                classes: 'succes-button',
-                text: 'Yes',
-                response: true
-              }
-            ]
+    if(this.isPopup) { 
+      this.dialogRef.close({achievement, action: 'delete'});
+    } else {
+      this.openProfileEntryDeleteDialog.emit(achievement);
     }
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: dialgoData,
-      disableClose: true,
-      width: '400px',
-      maxWidth: '90vw'
-    })
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.deleteAchievementCall(achievement)
-      }
-    })
-  }
-  deleteAchievementCall(achievement: any): void {
-    let userId = this.configSvc?.userProfile?.userId
-    let request ={
-    "request": {
-        "userId": userId,
-        "achievements": [{
-            "uuid": achievement.uuid
-        }]
-    }
-}
-    this.profileV2RevampSvc.deleteAchievement(request).subscribe({
-      next: (res: any) => {
-        if (res && res.result && res.result.response) {
-          this.openSnackbar('Achievement deleted successfully', 2000);
-          this.getAchievementsList(userId);
-          this.cdr.detectChanges();
-        } else {
-          this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000);
-        }
-      },
-      error: (_err: any) => {
-        this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000);
-      }
-    })
   }
 }
