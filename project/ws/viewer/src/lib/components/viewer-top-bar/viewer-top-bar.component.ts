@@ -247,7 +247,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             this.activatedRoute.snapshot.queryParams.collectionId : ''
           const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
             this.activatedRoute.snapshot.queryParams.MLId : ''
-          this.ComputeCompletedNodesAndPercent(collectionId === MLID ? collectionId : MLID)
+          const id = MLID ? MLID: collectionId
+          this.ComputeCompletedNodesAndPercent(id)
         }
       }
     }
