@@ -115,6 +115,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
     // this.aiGlobalSearch()
+   // this.startNewSupportAISearch()
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
@@ -126,11 +127,9 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
-    this.aiSearchResultArr.push(
-      {type: 'incoming',  tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true},
-      {type: 'incoming',  tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false},
-      {type: 'incoming',  tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false}
-    )
+    
+    
+    
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -537,6 +536,9 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   }
 
   submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+    if(!this.initiateSupportNewChat) {
+      return false
+    }
     if (!this.searchQuery.trim()) {
       event.preventDefault(); // Prevents Enter key from adding a new line
     }
@@ -593,6 +595,11 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         this.resultFetch = true
         if(data && data.message) {
           this.initiateSupportNewChat = true
+          this.aiSearchResultArr.push(
+            {type: 'incoming',  tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true},
+            {type: 'incoming',  tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false},
+            {type: 'incoming',  tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false}
+          )
         } else {
           this.initiateSupportNewChat = false
         }

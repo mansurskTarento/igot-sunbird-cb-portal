@@ -361,7 +361,7 @@
                 <ng-container
                   *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
                   <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
-                    [isCurrentUser]="isCurrentUser"
+                    [isCurrentUser]="isCurrentUser" (openProfileEntryDeleteDialog)="openProfileEntryDeleteDialog('Achievements',$event)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
                   <ng-container *ngIf="achievementsDetails?.count > 2">
                     <div class="flex flex-col justify-between items-center">
