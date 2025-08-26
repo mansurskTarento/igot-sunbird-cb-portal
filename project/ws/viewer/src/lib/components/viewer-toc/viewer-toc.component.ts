@@ -240,7 +240,6 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
               if (this.resourceId && this.queue.length) {
                 this.processCurrentResourceChange()
               }
-              console.log('this.queue---', this.queue)
             } else {
               this.queue = this.utilitySvc.getLeafNodes(this.collection, [])  
               if (this.resourceId) {
@@ -255,7 +254,6 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     })
     this.viewerDataServiceSubscription = this.viewerDataSvc.changedSubject.subscribe(_data => {
       if (this.resourceId !== this.viewerDataSvc.resourceId) {
-        console.log('this.viewerDataSvc', this.viewerDataSvc)
         if(this.viewerDataSvc && this.viewerDataSvc.resource && this.viewerDataSvc.resource.contextCategory && 
           this.viewerDataSvc.resource.contextCategory === 'Pre Enrolment Assessment' && 
           this.viewerDataSvc.resource.parent
@@ -352,9 +350,6 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
   }
   private processCurrentResourceChange() {
-    console.log('this.queue',this.queue)
-    console.log('this.collection',this.collection)
-    console.log('this.resourceId',this.resourceId)
     if (this.collection && this.resourceId) {      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
       // console.log('this.contentData', this.contentData)

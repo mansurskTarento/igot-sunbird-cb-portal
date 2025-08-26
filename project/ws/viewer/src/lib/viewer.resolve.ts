@@ -58,11 +58,7 @@ export class ViewerResolve
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       ))
-    ).pipe(map((data: any) => {
-      console.log('this.viewerDataSvc', this.viewerDataSvc)
-      console.log('pipeData--', data)
-      return data
-    })).pipe(
+    ).pipe(
       tap((content: any) => {
         // tslint:disable-next-line: no-parameter-reassignment
         content = content.result.content

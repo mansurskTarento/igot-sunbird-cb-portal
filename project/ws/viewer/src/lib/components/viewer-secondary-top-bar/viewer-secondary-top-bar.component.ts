@@ -162,7 +162,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     })
 
     this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
-      console.log('data--', data)
       if (data.prevResource) {
         if(data.prevResource && !data.prevResource.viewerUrl) {
           data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(

@@ -54,10 +54,8 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
         if (window.location.href.includes('preAssessment')) {
             this.dataSubscription = this.activatedRoute.data.subscribe(
                 async (data: any) => {
-                    console.log('data--', data)
                     this.isFetchingDataComplete = false
                     this.testData = data.content.data
-                    console.log('this.testData', this.testData)
                     if (data && data?.content && data?.content?.data && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
                         this.contentSvc.currentMetaData = data
                     }
