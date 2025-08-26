@@ -247,7 +247,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             this.activatedRoute.snapshot.queryParams.collectionId : ''
           const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
             this.activatedRoute.snapshot.queryParams.MLId : ''
-          this.ComputeCompletedNodesAndPercent(collectionId === MLID ? collectionId : MLID)
+          const id = MLID ? MLID: collectionId
+          this.ComputeCompletedNodesAndPercent(id)
         }
       }
     }
@@ -315,6 +316,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   finishDialog() {
+    let id = ''
     if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
@@ -346,12 +348,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
               const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
 
               if (ipStatusCount.length === 0) {
+                const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+                  this.activatedRoute.snapshot.queryParams.MLId : ''
+                // check if multilingual ID is there then hit the API with MLID
+                id = MLID ? MLID : this.identifier
                 const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
                   autoFocus: false,
                   data: {
                     courseName: this.activatedRoute.snapshot.queryParams.courseName,
                     userId: this.userid,
-                    identifier: this.identifier,
+                    identifier: id,
                     primaryCategory: this.collectionType,
                     courseCategory: this.currentDataFromEnrollList.content.courseCategory
                   },
@@ -454,9 +460,29 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
-    if (!this.userRating && this.widgetServ?.languageMapProgress && this.collectionLang &&
-      this.widgetServ?.languageMapProgress[this.collectionLang] >= 100) {
+    if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
+    }
+  }
+
+  get isMultilingual() {
+    if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
+      let languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
+      return languageList.length > 1
+    }
+    return false
+  }
+
+  get contentCompletionPercent() {
+    if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+      if(this.widgetServ?.languageMapProgress && this.collectionLang && 
+        this.widgetServ?.languageMapProgress[this.collectionLang]) {
+          return this.widgetServ?.languageMapProgress[this.collectionLang]
+      } else {
+        return 0
+      }
+    } else {
+      return this.overallProgress
     }
   }
 }

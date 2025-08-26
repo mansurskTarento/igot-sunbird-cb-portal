@@ -184,7 +184,7 @@ export class InsightSideBarComponent implements OnInit {
     this.getInsights()
     this.getPendingRequestData()
     this.noDataValue = noData
-    this.getDiscussionsData()
+    // this.getDiscussionsData()
     // this.displayRandomlearnAdvisoryData()
 
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data.assessmentData) {

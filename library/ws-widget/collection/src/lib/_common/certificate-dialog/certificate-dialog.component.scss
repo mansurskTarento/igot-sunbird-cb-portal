@@ -44,7 +44,7 @@ a.download_btn {
     font-size: 16px;
     vertical-align: text-top;
 }
-.close-button {
+::ng-deep .close-button {
     float: right;
     top: -16px;
     right: -12px;
@@ -55,12 +55,12 @@ a.download_btn {
     color: #fff !important;
 }
 
-.close-icon {
+::ng-deep .close-icon {
     transition: 1s ease-in-out;
     color:#fff !important
 }
 
-.close-icon:hover {
+::ng-deep .close-icon:hover {
     transform: rotate(180deg);
 }
 

@@ -78,6 +78,7 @@ export class CourseCompletionDialogComponent implements OnInit {
     this.userRating = {
       rating: index + 1 ,
       comment: null,
+      review: this.userRating?.review || '',
     }
     if (this.data && this.data.content) {
       this.events.raiseInteractTelemetry(

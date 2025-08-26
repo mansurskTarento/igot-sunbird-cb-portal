@@ -752,6 +752,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   public autoEnrollCuratedProgram(programType: any, batchData: any) {
+    if(!batchData){
+      this.enrollBtnLoading = false
+      this.snackBar.open('No bacthes found');
+      return
+    }
     if (this.content && this.content.identifier) {
       let userId = ''
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
@@ -762,7 +767,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           userId,
           programId: this.content.identifier,
           // as of now curated program only one batch is coming need to check and modify
-          batchId: batchData.batchId,
+          batchId: batchData?.batchId,
         },
       }
       this.contentSvc.autoAssignCuratedBatchApi(req, programType).subscribe(
@@ -795,7 +800,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   public autoAssignEnroll() {
-    if (this.baseContentReadData && this.baseContentReadData.identifier) {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * If the user is not enrolled in the course, auto-assigns a batch and navigates to the player page.
+   * If the user is already enrolled, does nothing.
+   */
+/*******  6d94c646-254c-44d6-a7c3-90bdb9507318  *******/    if (this.baseContentReadData && this.baseContentReadData.identifier) {
       this.contentSvc.autoAssignBatchApi(this.baseContentReadData.identifier, this.selectedLanguage).subscribe(
         (data: NsContent.IBatchListResponse) => {
           this.batchData = {
@@ -2882,5 +2892,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       MLId,
     )
     return resumeDataUrl
+  }
+
+  get contentCompletionPercent() {
+    if(this.batchData?.enrolled) {
+      if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+        if(this.languageMapProgress && this.selectedLanguage?.langId && this.languageMapProgress[this.selectedLanguage?.langId]) {
+            return this.languageMapProgress[this.selectedLanguage?.langId]
+        } else {
+          return 0
+        }
+      } else {
+        return this.content?.completionPercentage || 0
+      }
+    }
   }
 }

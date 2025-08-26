@@ -46,7 +46,7 @@ export class DiscussHubComponent implements OnInit {
   ngOnInit() {
     // tslint:disable-next-line: whitespace
     this.userData = this.configService && this.configService.userProfile
-    if (this.discussConfig.trendingDiscussions.active) { this.fetchTrendingDiscussions() }
+    // if (this.discussConfig.trendingDiscussions.active) { this.fetchTrendingDiscussions() }
     if (this.discussConfig.updatePosts.active) { this.fetchUpdatesOnPosts() }
   }
 
