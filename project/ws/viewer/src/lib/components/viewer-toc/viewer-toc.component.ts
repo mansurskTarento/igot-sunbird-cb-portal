@@ -134,8 +134,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("viewer toc component init========================")
-    console.log(this.enrolledCourseData, "enrolledCourseData===++++++++++=")
+    // console.log("viewer toc component init========================")
+    // console.log(this.enrolledCourseData, "enrolledCourseData===++++++++++=")
     if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -405,7 +405,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.collectionCard = this.createCollectionCard(content)
       const viewerTocCardContent = this.convertContentToIViewerTocCard(content)
       this.isFetching = false
-      console.log('content', content)
+      // console.log('content', content)
       return viewerTocCardContent
     } catch (err:any) {
       switch (err && err.status) {

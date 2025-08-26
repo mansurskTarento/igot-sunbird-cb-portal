@@ -112,7 +112,7 @@ export class WidgetContentService {
     _additionalFields: string[] = [],
     primaryCategory?: string | null,
   ): Observable<NsContent.IContent> {
-    console.log(`Fetching content for contentId: ${contentId}, hierarchyType: ${hierarchyType}, primaryCategory: ${primaryCategory}`)
+    // console.log(`Fetching content for contentId: ${contentId}, hierarchyType: ${hierarchyType}, primaryCategory: ${primaryCategory}`)
     // const url = `${API_END_POINTS.CONTENT}/${contentId}?hierarchyType=${hierarchyType}`
     let url = ''
     const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')

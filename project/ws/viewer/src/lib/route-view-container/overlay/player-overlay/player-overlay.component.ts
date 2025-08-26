@@ -13,7 +13,7 @@ export class PlayerOverlayComponent implements OnInit {
   constructor(){}
 
   ngOnInit() {
-    console.log(this.languageList, 'languageList from player overlay')
+    // console.log(this.languageList, 'languageList from player overlay')
   }
 
  onLanguageChange(lang: any) {

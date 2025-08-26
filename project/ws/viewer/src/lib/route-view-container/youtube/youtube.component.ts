@@ -83,9 +83,9 @@ export class YoutubeComponent implements OnInit {
   }
 
     getSelectedLanguage() {
-      console.log('getSelectedLanguage called')
+      // console.log('getSelectedLanguage called')
   this.activatedRoute.queryParams.subscribe((params: ILanguageQueryParams) => {
-    console.log('Query Params:', params) // Log all params
+    // console.log('Query Params:', params) // Log all params
     if (params) {
       this.selectedLanguage =  {
         'name': params.selectedMLCourse?.toLowerCase() ,
@@ -99,7 +99,7 @@ export class YoutubeComponent implements OnInit {
     //  this.selectedLanguage = langObj
     //  console.log(langObj, 'langObj')
     }
-    console.log(this.selectedLanguage, 'selectedLang from query params on youtube component') // Log selected language
+    // console.log(this.selectedLanguage, 'selectedLang from query params on youtube component') // Log selected language
   })
 }
 

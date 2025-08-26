@@ -281,20 +281,20 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
 getCourseLanguage() {
   this.route.queryParams.subscribe((params: ILanguageQueryParams) => {
-    console.log('Query Params:', params) // Log all params
+    // console.log('Query Params:', params) // Log all params
 
     this.selectedLang = params.selectedMLCourse || ''
     this.selectedLangCode = params.selectedMLCourseCode || ''
 
-    console.log('Language:', this.selectedLang)
-    console.log('Language Code:', this.selectedLangCode)
+    // console.log('Language:', this.selectedLang)
+    // console.log('Language Code:', this.selectedLangCode)
 
     if (this.selectedLangCode) {
-      console.log('Fetching content for language:', this.selectedLangCode)
+      // console.log('Fetching content for language:', this.selectedLangCode)
       this.widgetContentService?.fetchContent(this.selectedLangCode, 'detail').subscribe((data: any) => {
-        console.log(data, 'data from content service for language click on about page=======')
+        // console.log(data, 'data from content service for language click on about page=======')
         this.contentReadData = data?.result?.content
-        console.log(this.content, 'contData from content service for language click on about page=======')
+        // console.log(this.content, 'contData from content service for language click on about page=======')
       })
   
     }
@@ -961,8 +961,8 @@ getCourseLanguage() {
           subSectorArray.push(_tempObj)
         }
       }
-      console.log('this.content.sectorDetails_v1', this.content.sectorDetails_v1)
-      console.log('this.subSectorDetailArr', this.subSectorDetailArr)
+      // console.log('this.content.sectorDetails_v1', this.content.sectorDetails_v1)
+      // console.log('this.subSectorDetailArr', this.subSectorDetailArr)
      this.strip['sectorWidgets'] = this.transformCompetenciesToWidget('Behavioural', this.subSectorDetailArr, this.strip)
     }
     

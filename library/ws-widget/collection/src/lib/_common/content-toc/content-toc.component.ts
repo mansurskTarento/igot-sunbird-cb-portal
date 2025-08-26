@@ -89,8 +89,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    console.log(this.resumeData, 'resumeData data')
-    console.log(this.enrolledCourseData, 'enrolledCourseData data====')   
+    // console.log(this.resumeData, 'resumeData data')
+    // console.log(this.enrolledCourseData, 'enrolledCourseData data====')   
     if(this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor) {
       this.enableAITutorFlag = true
     } else {
@@ -176,9 +176,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
    onLanguageSelected(lang: any) {
     debugger
-    console.log('Language selected in parent:===========', lang);
+    // console.log('Language selected in parent:===========', lang);
     this.selectedLang = lang;
-    console.log('selectedLang=============', this.selectedLang)
+    // console.log('selectedLang=============', this.selectedLang)
     // this.languageSelected.emit(this.selectedLang)
     // if (this.resumeData && this.selectedLang) {
     //   console.log(this.selectedLang, "this.selectedLang");

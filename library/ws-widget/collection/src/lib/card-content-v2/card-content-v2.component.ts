@@ -142,9 +142,9 @@ export class CardContentV2Component extends WidgetBaseComponent
     const contentId = this.widgetData?.content?.identifier
     // console.log(this.widgetData, 'widget data')
     // const contentId = 'do_114349267477905408131'
-    if (contentId) {
-      this.widgetSvc?.getContent(contentId).subscribe((data: any) => {
-        if (data && data.result && data.result.content && data.result.content.languageMapV1) {
+    if (contentId && this.widgetSvc) {
+      this.widgetSvc.getContent(contentId).subscribe((data: any) => {
+        if (_.get(data, 'result.content.languageMapV1')) {
           // return data.result.content.language
           const languageMapV1 = data.result.content.languageMapV1
 
