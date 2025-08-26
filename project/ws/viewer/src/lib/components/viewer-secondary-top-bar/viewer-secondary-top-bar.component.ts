@@ -162,6 +162,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     })
 
     this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
+      console.log('data--', data)
       if (data.prevResource) {
         if(data.prevResource && !data.prevResource.viewerUrl) {
           data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
@@ -322,7 +323,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   finishDialog() {
-    if (!this.forPreview) {
+    if(window.location.href.includes('preAssessment=true')) {
+      this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+    }
+    else if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
       this.batchId = this.activatedRoute.snapshot.queryParams.batchId

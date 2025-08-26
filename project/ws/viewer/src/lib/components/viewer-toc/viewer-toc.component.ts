@@ -93,7 +93,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     this.nestedTreeControl = new NestedTreeControl<IViewerTocCard>(this._getChildren)
     this.nestedDataSource = new MatTreeNestedDataSource()
   }
-  resourceId: string | null = null
+  resourceId: any | null = null
   collection: IViewerTocCard | null = null
   collectionType = 'course'
   collectionId: string | null = ''
@@ -227,16 +227,20 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
           } else {
             if(this.isPreAssessment) {
               this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
-              this.queue.map((item) => {
+              this.queue.map((item:any) => {
                 if(this.collection) {
                   item['collectionId'] = this.collection.identifier
                   item['batchId'] = this.collection.batchId
+                  if (item?.courseCategory === 'Pre Enrolment Assessment') {
+                    item['mimeType'] = 'application/vnd.sunbird.questionset'
+                  }
                 }
                 
               })
               if (this.resourceId && this.queue.length) {
                 this.processCurrentResourceChange()
               }
+              console.log('this.queue---', this.queue)
             } else {
               this.queue = this.utilitySvc.getLeafNodes(this.collection, [])  
               if (this.resourceId) {
@@ -251,7 +255,16 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     })
     this.viewerDataServiceSubscription = this.viewerDataSvc.changedSubject.subscribe(_data => {
       if (this.resourceId !== this.viewerDataSvc.resourceId) {
-        this.resourceId = this.viewerDataSvc.resourceId
+        console.log('this.viewerDataSvc', this.viewerDataSvc)
+        if(this.viewerDataSvc && this.viewerDataSvc.resource && this.viewerDataSvc.resource.contextCategory && 
+          this.viewerDataSvc.resource.contextCategory === 'Pre Enrolment Assessment' && 
+          this.viewerDataSvc.resource.parent
+        ) {
+          this.resourceId = this.viewerDataSvc.resource.parent
+        } else {
+          this.resourceId = this.viewerDataSvc.resourceId
+        }
+        
         if(this.isPreAssessment) {
           this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
           if (this.resourceId && this.queue.length) {
@@ -339,6 +352,9 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
   }
   private processCurrentResourceChange() {
+    console.log('this.queue',this.queue)
+    console.log('this.collection',this.collection)
+    console.log('this.resourceId',this.resourceId)
     if (this.collection && this.resourceId) {      
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
       // console.log('this.contentData', this.contentData)

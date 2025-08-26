@@ -144,6 +144,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     })
 
     this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe(data => {
+      console.log('data--', data)
       if (data.prevResource) {
         this.prevResourceUrl = data.prevResource.viewerUrl
         this.prevResourceUrlParams = {

@@ -50,15 +50,19 @@ export class ViewerResolve
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       )
-      : ( route.queryParamMap.get('preAssessment')    ? this.contentSvc.fetchContentData(
-        this.viewerDataSvc.resourceId
+      : ( route.queryParamMap.get('preAssessment') && this.viewerDataSvc.resource && this.viewerDataSvc.resource.courseCategory === 'Pre Enrolment Assessment'  && this.viewerDataSvc.resource.childNodes?.length  ? this.contentSvc.fetchContentData(
+        this.viewerDataSvc.resource.childNodes[0]
       ) : this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
         'detail',
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       ))
-    ).pipe(
+    ).pipe(map((data: any) => {
+      console.log('this.viewerDataSvc', this.viewerDataSvc)
+      console.log('pipeData--', data)
+      return data
+    })).pipe(
       tap((content: any) => {
         // tslint:disable-next-line: no-parameter-reassignment
         content = content.result.content
