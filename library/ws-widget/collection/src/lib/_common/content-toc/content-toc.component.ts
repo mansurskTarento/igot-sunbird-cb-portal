@@ -57,7 +57,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobile = false
   selectedTabIndex = 0
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
-  displayTeachersContent = false
   teacherNotesFlag = false
   referenceNotesFlag = false
   viewerPage = window.location.href.includes('/viewer/') ? true : false
@@ -142,21 +141,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (batchId) {
       this.selectedTabIndex = 1
     }
-    if (this.configService && this.configService.userRoles) {
-      // tslint:disable-next-line:max-line-length
-      this.displayTeachersContent = (
-        this.configService.userRoles.has('MENTOR') ||
-        this.configService.userRoles.has('mentor') ||
-        this.configService.userRoles.has('Mentor')
-      && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
-    } else {
-     
-      this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
-        this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
-      
-    }
-
-   
+    
     
   }
 
@@ -239,8 +224,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
-        if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
-          this.teacherNotesFlag = true
+         let userRoles: Set<string> = this.configService?.userRoles || new Set() 
+        if (userRoles.has('MENTOR') ||
+          userRoles.has('mentor') ||
+          userRoles.has('Mentor')) {
+          if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
+            this.teacherNotesFlag = true
+          }
         }
         if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
           this.referenceNotesFlag = true
