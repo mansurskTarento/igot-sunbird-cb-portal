@@ -10,6 +10,7 @@ import _ from 'lodash'
 import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
+import { LibNotificationsService } from '@sunbird-cb/notification'
 /* tslint:enable*/
 interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
   featureWidgets: NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink>[]
@@ -56,7 +57,8 @@ export class BtnProfileComponent extends WidgetBaseComponent
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
-    private events: EventService
+    private events: EventService,
+    private libNotificationsService: LibNotificationsService
   ) {
     super()
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
@@ -236,6 +238,9 @@ export class BtnProfileComponent extends WidgetBaseComponent
   }
 
   raiseTelemetry(tabname: string) {
+    if (tabname === 'view profile') {
+      this.libNotificationsService.updateUnreadCount()
+    }
     const name = tabname.toLowerCase().split(' ').join('-')
     this.events.raiseInteractTelemetry(
       {
