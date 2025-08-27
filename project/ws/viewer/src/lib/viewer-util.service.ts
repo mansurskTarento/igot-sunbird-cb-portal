@@ -226,7 +226,7 @@ export class ViewerUtilService {
     let languageFound = false
     const tempContentData = this.contentSvc.currentMetaData
      if (!this.forPreview) {
-      tempContentData.children.forEach(async (childList: NsContent.IContent) => {
+      tempContentData.children?.forEach(async (childList: NsContent.IContent) => {
          if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
            // tslint:disable-next-line: max-line-length
            if (childList.leafNodes && childList.leafNodes.indexOf(resourceId) !== -1) {
@@ -491,7 +491,7 @@ export class ViewerUtilService {
           },
         }
         this.http
-          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}/${contentId}`, req)
+          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
           .subscribe(noop, noop)
         if (this.tocSvc.hashmap && this.tocSvc.hashmap[contentId] && req.request.contents[0]) {
           if (this.tocSvc.hashmap[contentId] &&

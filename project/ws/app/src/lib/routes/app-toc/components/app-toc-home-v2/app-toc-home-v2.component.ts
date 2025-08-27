@@ -1225,8 +1225,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         return this.viewerSvc
           .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
       
+    } else {
+      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
     }
-    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
+    
   }
 
   getProgramDuration(batchData: any) {
