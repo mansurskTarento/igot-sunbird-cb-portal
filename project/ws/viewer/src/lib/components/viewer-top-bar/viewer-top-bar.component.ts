@@ -266,10 +266,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       return this.viewerSvc
         .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
 
-    } else {
-      return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
     }
-    
+    return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {

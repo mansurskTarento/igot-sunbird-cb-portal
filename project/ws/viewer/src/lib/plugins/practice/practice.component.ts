@@ -1325,7 +1325,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.quizSvc.mtfSrc.getValue() as any ,
     )
     let language:string =  this.viewerSvc.getResourceContentLanguage(this.identifier)
-    console.log('this.widgetContentService.currentMetaData', this.widgetContentService.currentMetaData)
     let assessmentChildren:any = _.map(this.paperSections, (ps: NSPractice.IPaperSection) => {
       return {
         identifier: ps.identifier,
@@ -1335,10 +1334,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         children: this.getQuestions(ps, req),
       } as NSPractice.ISubSec
     })
-    console.log('assessmentChildren--', assessmentChildren)
-    if(assessmentChildren && assessmentChildren && assessmentChildren.length && assessmentChildren[0]['identifier']) {
-      console.log(assessmentChildren[0]['identifier'])
-    }
     const request: NSPractice.IQuizSubmit = {
       language,
       batchId: this.resBatchId,
@@ -1663,7 +1658,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if(!this.forPreview || this.forCreatorMode){
       if (this.selectedAssessmentCompatibilityLevel < 7) {
         let quizV4Res: any = {}
-        console.log('this.generateRequest--', this.generateRequest)
         quizV4Res = await this.quizSvc.submitQuizV4(this.generateRequest).toPromise().catch(_error => {})
         if (quizV4Res && quizV4Res.params && quizV4Res.params.status.toLowerCase() === 'success') {
           if (quizV4Res.result.primaryCategory === 'Course Assessment') {
@@ -2185,10 +2179,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       if(isPreAssessment) {
         if(res && res.pass) {
-          console.log('res--', res)
           const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
             this.activatedRoute.snapshot.queryParams.batchId, this.identifier)
-          console.log('resData', resData)
           const collectionId = (resData && resData.courseId) ? resData.courseId : ''
           const batchId = (resData && resData.batchId) ? resData.batchId : ''
           if (this.identifier && collectionId && batchId) {
