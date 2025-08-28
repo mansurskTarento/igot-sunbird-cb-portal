@@ -145,6 +145,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                     },
                     () => resolve(true),
                 )
+                resolve(true)
             }
             resolve(true)
 

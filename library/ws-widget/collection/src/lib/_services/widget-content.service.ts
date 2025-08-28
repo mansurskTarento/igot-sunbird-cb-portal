@@ -10,6 +10,7 @@ import { NSSearch } from './widget-search.model'
 import _ from 'lodash'
 import {  viewerRouteGenerator } from './viewer-route-util'
 import moment from 'moment'
+import { ActivatedRoute } from '@angular/router'
 // tslint:enable
 
 // TODO: move this in some common place
@@ -68,6 +69,7 @@ export class WidgetContentService {
   constructor(
     private http: HttpClient,
     private configSvc: ConfigurationsService,
+    private activatedRoute: ActivatedRoute,
   ) {
   }
 
@@ -258,8 +260,9 @@ export class WidgetContentService {
   }
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     req.request.fields = ['progressdetails']
-    if(req.request.courseId) {
+    if(req.request.courseId && !isPreAssessment) {
     const data = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
     ).pipe(

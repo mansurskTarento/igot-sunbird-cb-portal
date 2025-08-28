@@ -1072,6 +1072,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.startQuiz()
       // call content progress with status 1 i.e, started
       this.updateProgress(1)
+      this.updatePreEnrollmentProgress(1)
     } else if (event === 'skip') {
       // alert('skip quiz TBI')
     }
@@ -1088,18 +1089,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     //   this.activatedRoute.snapshot.queryParams.collectionId : ''
     // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
     //   this.activatedRoute.snapshot.queryParams.batchId : ''
-
-    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      if(isPreAssessment) {
-        if (this.identifier) {
-          if (this.selectedSection && 
-            this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
-            this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
-          ) {
-            this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, status)
-          }
-        }
-      } else if (this.identifier && collectionId && batchId) {
+    if (this.identifier && collectionId && batchId) {
       if (this.selectedSection && 
         this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
         this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
@@ -1108,7 +1098,15 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
   }
-
+  updatePreEnrollmentProgress(status:any){
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    if(isPreAssessment) {
+      if (this.identifier && this.widgetContentService.currentMetaData?.content?.data?.parent) {
+          console.log('pre enrollment assessment progress',status)
+          this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status)
+      }
+    }
+  }
   startQuiz() {
     if (this.isXsmall) {
       this.sidenavOpenDefault = true
@@ -1816,6 +1814,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
     }
+    this.updatePreEnrollmentProgress(2)
   }
 
   showAnswers() {
@@ -2177,24 +2176,10 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   assignQuizResult(res: NSPractice.IQuizSubmitResponseV2) {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      if(isPreAssessment) {
-        if(res && res.pass) {
-          const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-            this.activatedRoute.snapshot.queryParams.batchId, this.identifier)
-          const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-          const batchId = (resData && resData.batchId) ? resData.batchId : ''
-          if (this.identifier && collectionId && batchId) {
-            this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, 2)
-          // if (this.selectedSection && 
-          //   this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
-          //   this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
-          // ) {
-            
-          // }
-        }
-        }
-        
+    if(isPreAssessment) {
+      this.updatePreEnrollmentProgress(2)
     }
+    
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
      }  else {
