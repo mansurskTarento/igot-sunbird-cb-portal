@@ -402,6 +402,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         identifier: id,
         primaryCategory: this.collectionType,
         courseCategory: this.currentDataFromEnrollList.content.courseCategory,
+        collectionId: this.identifier // In case of multilingual course, redirection should happen to base collectionID
       },
     })
     dialogRef.afterClosed().subscribe(result => {
