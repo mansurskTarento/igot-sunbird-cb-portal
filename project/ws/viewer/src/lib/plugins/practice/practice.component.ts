@@ -1102,8 +1102,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if(isPreAssessment) {
       if (this.identifier && this.widgetContentService.currentMetaData?.content?.data?.parent) {
-          console.log('pre enrollment assessment progress',status)
-          this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status)
+          const MIME_TYPE = "application/vnd.ekstep.content-collection"
+          this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
       }
     }
   }
