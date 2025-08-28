@@ -50,8 +50,8 @@ export class ViewerResolve
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       )
-      : ( route.queryParamMap.get('preAssessment')    ? this.contentSvc.fetchContentData(
-        this.viewerDataSvc.resourceId
+      : ( route.queryParamMap.get('preAssessment') && this.viewerDataSvc.resource && this.viewerDataSvc.resource.courseCategory === 'Pre Enrolment Assessment'  && this.viewerDataSvc.resource.childNodes?.length  ? this.contentSvc.fetchContentData(
+        this.viewerDataSvc.resource.childNodes[0]
       ) : this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
         'detail',

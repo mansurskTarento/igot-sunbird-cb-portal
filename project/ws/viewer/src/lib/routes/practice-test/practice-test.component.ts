@@ -51,17 +51,31 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
     }
     ngOnInit(): void {
         this.isFetchingDataComplete = false
+        if (window.location.href.includes('preAssessment')) {
+            this.dataSubscription = this.activatedRoute.data.subscribe(
+                async (data: any) => {
+                    this.isFetchingDataComplete = false
+                    this.testData = data.content.data
+                    if (data && data?.content && data?.content?.data && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
+                        this.contentSvc.currentMetaData = data
+                    }
+                    //   console.log(this.testData)
+                    this.init()
+                })
+        } else {
+            this.dataSubscription = this.activatedRoute.data.subscribe(
+                async (data:any) => {
+                    this.isFetchingDataComplete = false
+                    this.testData = data.content.data
+                    if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
+                        this.contentSvc.currentMetaData = data
+                    }
+                    //   console.log(this.testData)
+                    this.init()
+                })
+        }
 
-        this.dataSubscription = this.activatedRoute.data.subscribe(
-            async (data:any) => {
-                this.isFetchingDataComplete = false
-                this.testData = data.content.data
-                if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
-                    this.contentSvc.currentMetaData = data
-                }
-                //   console.log(this.testData)
-                this.init()
-            })
+       
     }
     init() {
         if (this.testData) {

@@ -1091,7 +1091,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       if(isPreAssessment) {
-        if (this.identifier && collectionId && batchId) {
+        if (this.identifier) {
           if (this.selectedSection && 
             this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.FINAL_ASSESSMENT &&
             this.selectedSection.primaryCategory !== NsContent.EPrimaryCategory.PRACTICE_RESOURCE
@@ -1325,24 +1325,25 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.quizSvc.mtfSrc.getValue() as any ,
     )
     let language:string =  this.viewerSvc.getResourceContentLanguage(this.identifier)
+    let assessmentChildren:any = _.map(this.paperSections, (ps: NSPractice.IPaperSection) => {
+      return {
+        identifier: ps.identifier,
+        objectType: ps.objectType,
+        primaryCategory: ps.primaryCategory,
+        scoreCutoffType: ps.scoreCutoffType,
+        children: this.getQuestions(ps, req),
+      } as NSPractice.ISubSec
+    })
     const request: NSPractice.IQuizSubmit = {
       language,
       batchId: this.resBatchId,
-      identifier: this.identifier,
+      identifier: this.activatedRoute.snapshot.queryParams.preAssessment && this.widgetContentService.currentMetaData && this.widgetContentService.currentMetaData.content && this.widgetContentService.currentMetaData.content.data && this.widgetContentService.currentMetaData.content.data.identifier ? this.widgetContentService.currentMetaData?.content?.data?.identifier : this.identifier,
       primaryCategory: this.primaryCategory,
-      courseId: this.forPreview ? this.collectionId:  this.resCollectionId,
+      courseId: this.forPreview ? this.collectionId: (this.activatedRoute.snapshot.queryParams.preAssessment && this.activatedRoute.snapshot.queryParams.preAssessment && this.widgetContentService.currentMetaData && this.widgetContentService.currentMetaData.content && this.widgetContentService.currentMetaData.content.data && this.widgetContentService.currentMetaData.content.data.parent ?   this.widgetContentService.currentMetaData?.content.data.parent : this.resCollectionId),
       isAssessment: true,
       objectType: 'QuestionSet',
       timeLimit: this.quizJson.timeLimit,
-      children: _.map(this.paperSections, (ps: NSPractice.IPaperSection) => {
-        return {
-          identifier: ps.identifier,
-          objectType: ps.objectType,
-          primaryCategory: ps.primaryCategory,
-          scoreCutoffType: ps.scoreCutoffType,
-          children: this.getQuestions(ps, req),
-        } as NSPractice.ISubSec
-      }),
+      children: assessmentChildren,
     }
     // // tslint:disable-next-line
     // console.log(request)
@@ -2682,36 +2683,40 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   fetchProgressOfAssessment() {
-    let userId = ''
-    if (this.configSvc.userProfile) {
-      userId = this.configSvc.userProfile.userId || ''
-    }
-    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
-              this.activatedRoute.snapshot.queryParams.collectionId,
-              this.activatedRoute.snapshot.queryParams.batchId,
-      this.identifier)
-        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
-    const req:any = {
-      request: {
-        userId,
-        language,
-        batchId: requestCourse.batchId,
-        courseId: requestCourse.courseId || '',
-        contentIds: [],
-        fields: ['progressdetails'],
-      },
-    }
-    this.widgetContentService.fetchContentHistoryV2(req).subscribe(
-      data => {
-        if (data && data.result && data.result.contentList.length) {
-          this.widgetContentService.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
-          let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
-            return content.contentId === this.identifier})
-            if(contentProgressData && contentProgressData.length) {
-                this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
-            }
+    const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if(!isPreAssessment) { 
+        let userId = ''
+        if (this.configSvc.userProfile) {
+          userId = this.configSvc.userProfile.userId || ''
         }
-      },
-    )
+        const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
+                  this.activatedRoute.snapshot.queryParams.collectionId,
+                  this.activatedRoute.snapshot.queryParams.batchId,
+          this.identifier)
+            const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
+        const req:any = {
+          request: {
+            userId,
+            language,
+            batchId: requestCourse.batchId,
+            courseId: requestCourse.courseId || '',
+            contentIds: [],
+            fields: ['progressdetails'],
+          },
+        }
+        this.widgetContentService.fetchContentHistoryV2(req).subscribe(
+          data => {
+            if (data && data.result && data.result.contentList.length) {
+              this.widgetContentService.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
+              let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
+                return content.contentId === this.identifier})
+                if(contentProgressData && contentProgressData.length) {
+                    this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
+                }
+            }
+          },
+        )
+      } 
+    
   }
 }
