@@ -280,6 +280,7 @@ export class PdfComponent implements OnInit, OnDestroy {
           },
           () => resolve(true),
         )
+        resolve(true)
       } else {
          resolve(true)
       }
