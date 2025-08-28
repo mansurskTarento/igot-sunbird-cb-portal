@@ -179,7 +179,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
             collectionId: data.prevResource.collectionId,
-            collectionType: data.prevResource.collectionType,
+            collectionType: data.prevResource.collectionType || this.collectionType,
             batchId: data.prevResource.batchId,
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
@@ -216,7 +216,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
             collectionId: data.nextResource.collectionId,
-            collectionType: data.nextResource.collectionType,
+            collectionType: data.nextResource.collectionType || this.collectionType,
             batchId: data.nextResource.batchId,
             viewMode: data.nextResource.viewMode,
             courseName: this.courseName,
