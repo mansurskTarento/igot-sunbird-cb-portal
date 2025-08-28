@@ -322,7 +322,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   finishDialog() {
-    if (!this.forPreview) {
+    if(window.location.href.includes('preAssessment=true')) {
+      this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+    }
+    else if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
       this.batchId = this.activatedRoute.snapshot.queryParams.batchId
