@@ -81,20 +81,7 @@
           </ng-container>
         </ng-container>
       </ng-container>
-      <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM && !preAssessmentCompletionStatus">
-        <a class="flex action-button enroll-btn justify-center resume" *ngIf="contentReadData?.preEnrolmentResources?.length" (click)="routeToPreAssessent()">
-             <ng-container >
-               {{ 'apptochome.preEnroll' | translate }}
-             </ng-container>
-           </a>
-     </ng-container>
-      <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM && preAssessmentCompletionStatus">
-        <a class="flex preenrolldone-btn justify-center resume">
-             <ng-container >
-               {{ 'apptochome.preEnrollDone' | translate }}<img src="/assets/icons/Accept_icon.png" alt="tick" class="tick-icon">
-             </ng-container>
-           </a>
-     </ng-container>
+      
 
       <!-- PRogram & mandatory course block -->
       <ng-container *ngIf="!forPreview || isInIFrame; else authViewBtn">
@@ -116,7 +103,6 @@
             </ng-container>
             <ng-container *ngIf="!forPreview || isInIFrame">
               <ng-container *ngIf="((contentReadData?.primaryCategory !== primaryCategory.RESOURCE)  && !enrollBtnLoading) && contentReadData?.batches[0].endDate">
-                
                 <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
                 [userEnrollmentList]="userEnrollmentList"  [analytics]="analytics" (programEnrollCall)="programEnrollCall($event)"
                 [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -269,6 +255,7 @@
       </ng-container>
       <!-- BLENDED_PROGRAM block -->
       <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
+        
         <ng-container *ngIf="batchData?.workFlow?.wfInitiated &&
                       !(batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.APPROVED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REJECTED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.WITHDRAWN)">
           <div class="ws-mat-accent-text ws-mat-accent-light-bg flex items-center justify-center statusMsg">
@@ -558,8 +545,10 @@
             </div>
           </div>
         </ng-container>
+        
 
         <div class="flex flex-col gap-4 p-5 border-bottom">
+          
           <div class="flex flex-col gap-4" *ngIf="contentReadData && contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
             <div class="flex flex-row gap-3 justify-around">
               <div class="batch-info">
@@ -575,6 +564,20 @@
                 <div class="batch-label">{{ 'apptoc.totalEnrolled' | translate }}</div>
               </div>
             </div>
+            <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM && !preAssessmentCompletionStatus">
+              <a class="flex action-button enroll-btn justify-center resume" *ngIf="contentReadData?.preEnrolmentResources?.length" (click)="routeToPreAssessent()">
+                   <ng-container >
+                     {{ 'apptochome.preEnroll' | translate }}
+                   </ng-container>
+                 </a>
+           </ng-container>
+            <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM && preAssessmentCompletionStatus">
+              <a class="flex preenrolldone-btn justify-center resume">
+                   <ng-container >
+                     {{ 'apptochome.preEnrollDone' | translate }}<img src="/assets/icons/Accept_icon.png" alt="tick" class="tick-icon">
+                   </ng-container>
+                 </a>
+           </ng-container>
             <ng-container *ngIf="timer && timer.days >= 0 && contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
               <div class="flex flex-col gap-6 batch-timer">
                   <div class="flex flex-row">
@@ -613,8 +616,9 @@
             <ng-container *ngIf="!forPreview || isInIFrame; else authViewBtn">
               <ng-container *ngIf="!mobile1200 && (
          !contentReadData?.preEnrolmentResources?.length ||
-         (contentReadData?.preEnrolmentResources?.length && preAssessmentCompletionStatus)
+         (contentReadData?.preEnrolmentResources?.length && (preAssessmentCompletionStatus ||  !preAssessmentRequiredFlag))
        )">
+                
                 <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
                 [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
                 [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">
@@ -622,6 +626,7 @@
               </ng-container>
             </ng-container>
           </div>
+          
 
           <ng-container *ngIf="skeletonLoader">
             <ws-widget-skeleton-loader [width]="'336px'" [height]="'40px'"
@@ -772,7 +777,6 @@
   <div class="mobile-enroll-div" [ngClass]="{'bg-white': contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM }">
     <ng-container *ngIf="content && contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM ">
       <div class="mb-2" *ngIf="mobile1200 && !forPreview || isInIFrame; else authViewBtn">
-        
         <ws-app-toc-banner role="banner" [banners]="banners" [forPreview]="forPreview" [content]="content"
           [userEnrollmentList]="userEnrollmentList" (withdrawOrEnroll)="withdrawOrEnroll($event)" [analytics]="analytics"
           [resumeData]="resumeData" [batchData]="batchData" [contentReadData]="contentReadData">

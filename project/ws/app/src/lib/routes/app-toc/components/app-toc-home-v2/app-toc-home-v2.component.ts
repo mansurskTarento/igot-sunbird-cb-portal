@@ -231,6 +231,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   languageList: any = []
   selectedLanguage: any
   languageMapProgress: any
+  preAssessmentRequiredFlag:any = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1791,6 +1792,17 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
+  getPreAssessmentRequired() {
+    this.preAssessmentRequiredFlag = false
+    if(this.contentReadData?.preEnrolmentResources?.length) {
+      this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
+        if(item && item?.isMandatory) {
+          this.preAssessmentRequiredFlag = true          
+        }
+      })
+    }
+  }
+
   getPreAssessmentCompletionStatus() {
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
@@ -2031,6 +2043,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     // Continue with the rest of the processing
     this.loadLanguageData();
     this.getPreAssessmentCompletionStatus();
+    this.getPreAssessmentRequired()
     
     await this.handleContentPreviewOrEnrollment();
     
