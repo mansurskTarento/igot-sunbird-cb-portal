@@ -191,6 +191,7 @@ export class YoutubeComponent implements OnInit, OnDestroy {
           },
           () => resolve(true),
         )
+        resolve(true)
       } else {
        resolve(true)
       }
