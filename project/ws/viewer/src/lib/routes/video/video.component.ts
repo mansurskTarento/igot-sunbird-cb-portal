@@ -312,7 +312,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
         }
         this.contentSvc.fetchContentHistoryV2(req).subscribe(
-          data => {
+          (data:any) => {
             if (data && data.result && data.result.contentList.length) {
               this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
               for (const content of data.result.contentList) {
@@ -338,6 +338,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
           () => resolve(true),
         )
+        resolve(true)
       } else {
         resolve(true)
       }
