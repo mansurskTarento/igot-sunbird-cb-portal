@@ -92,6 +92,7 @@
   </div>
 <div>
 <mat-card class="no-shadow" *ngIf="showRating">
-  <ws-widget-content-rating-v2-dialog [isEditMode]="isEditMode" [ccuserRating]="userRating"  [navigatetoTOC]="true"></ws-widget-content-rating-v2-dialog>
+  <!-- In case of multilingual course, redirection should happen to base collectionID -->
+  <ws-widget-content-rating-v2-dialog [isEditMode]="isEditMode" [ccuserRating]="userRating"  [navigatetoTOC]="true" [collectionId]="collectionId"></ws-widget-content-rating-v2-dialog>
   </mat-card>
 </div>

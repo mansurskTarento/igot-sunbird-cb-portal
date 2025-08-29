@@ -226,7 +226,7 @@ export class ViewerUtilService {
     let languageFound = false
     const tempContentData = this.contentSvc.currentMetaData
      if (!this.forPreview) {
-      tempContentData.children.forEach(async (childList: NsContent.IContent) => {
+      tempContentData.children?.forEach(async (childList: NsContent.IContent) => {
          if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
            // tslint:disable-next-line: max-line-length
            if (childList.leafNodes && childList.leafNodes.indexOf(resourceId) !== -1) {
@@ -448,9 +448,13 @@ export class ViewerUtilService {
         // }
         // console.log('req', JSON.stringify(req))
         // console.log('req', req)
-        this.http
-        .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
-        .subscribe(noop, noop)
+        
+        const resourceStatus = this.getPreAssessmentResourceStatus(contentId)
+        if(resourceStatus < 2) {
+          this.http
+          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
+          .subscribe(noop, noop)
+        }
         if (this.tocSvc.hashmap[contentId] &&
           (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
@@ -469,7 +473,7 @@ export class ViewerUtilService {
       }
     }
 
-    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, status?: number) {
+    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, status?: number, mimeType?: string) {
       let req: any
       if (this.configservice.userProfile) {
         req = {
@@ -484,15 +488,18 @@ export class ViewerUtilService {
                 lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
                 completionPercentage: status === 2 ? 100.0 : 0,
                 progressdetails: {
-                    "mimeType": "application/vnd.sunbird.questionset"
+                    "mimeType": mimeType || "application/vnd.sunbird.questionset"
                 },
               },
             ],
           },
         }
-        this.http
-          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}/${contentId}`, req)
+        const resourceStatus = this.getPreAssessmentResourceStatus(contentId)
+        if(resourceStatus < 2) {
+          this.http
+          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
           .subscribe(noop, noop)
+        }
         if (this.tocSvc.hashmap && this.tocSvc.hashmap[contentId] && req.request.contents[0]) {
           if (this.tocSvc.hashmap[contentId] &&
             (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
@@ -505,6 +512,13 @@ export class ViewerUtilService {
         req = {}
         // do nothing
       }
+    }
+
+    getPreAssessmentResourceStatus(resourceId:string){
+      if(this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[resourceId]) {
+        return this.tocSvc.hashmap[resourceId]['completionStatus'] || 1
+      }
+      return 1
     }
 
    

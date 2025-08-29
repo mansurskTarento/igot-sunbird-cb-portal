@@ -34,7 +34,7 @@
     </div>
     <div class="flex" *ngIf="isTypeOfCollection">
       <div class="flex flex-1 flex-col  margin-right-l progress-container"
-        *ngIf="collectionId && hierarchyMapData && !loadingOverallPRogress && !forPreview">
+        *ngIf="collectionId && hierarchyMapData && !loadingOverallPRogress && !forPreview && !isPreAssessment ">
         <div class="flex flex-row justify-between w-ful">
           <div class="flex items-center mb-2">
             <span class="mat-body-2 mr-2">{{'playerbrief.items' | translate}}

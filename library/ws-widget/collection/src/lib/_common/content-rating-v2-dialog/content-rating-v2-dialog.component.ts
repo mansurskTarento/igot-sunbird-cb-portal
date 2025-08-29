@@ -20,6 +20,7 @@ export class ContentRatingV2DialogComponent implements OnInit {
   @Input() navigatetoTOC: any
   @Input() rateFromCompletionDialog: any
   @Input()  isEditMode = false
+  @Input()  collectionId = ''
   content: NsContent.IContent | null = null
   userRating = 0
   feedbackForm: UntypedFormGroup
@@ -170,7 +171,9 @@ export class ContentRatingV2DialogComponent implements OnInit {
   closeDialog(val: boolean) {
     if (this.navigatetoTOC) {
       this.dialogRef.close(val)
-      this.router.navigateByUrl(`app/toc/${this.data.content.identifier}/overview`)
+      // In case of multilingual course, redirection should happen to base collectionID
+      const id = this.collectionId || this.data.content.identifier
+      this.router.navigateByUrl(`app/toc/${id}/overview`)
     } else {
       this.dialogRef.close(val)
     }

@@ -15,6 +15,7 @@ export class CourseCompletionDialogComponent implements OnInit {
   userRating: any = {}
   showRating = false
   isEditMode = false
+  collectionId = ''
   constructor(
     private ratingSvc: RatingService,
     private tocSvc: AppTocService,
@@ -41,6 +42,8 @@ export class CourseCompletionDialogComponent implements OnInit {
     } else {
       this.courseName = 'course'
     }
+    // In case of multilingual course, redirection should happen to base collectionID
+    this.collectionId = this.data.collectionId
     this.getUserRating()
   }
 
