@@ -26,6 +26,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   @Input() leafNodesCount: any
   @Input() contentMIMEType: any
   @Input() completedCount: any
+  @Input() baseContentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null

@@ -112,5 +112,10 @@
             <img src="/assets/icons/toc/key.svg" width="20px" alt="free course image" />
             <div class="text-xs" >{{ baseContentReadData?.license || contentReadData?.license }} </div>
         </div>
+
+        <div class="flex flex-col kpi-values items-center gap-2" *ngIf="languageList?.length > 1">
+            <mat-icon class="icon-img">translate</mat-icon>
+            <div class="text-xs" >{{ languageList.length }} languages available </div>
+        </div>
     </ng-container>
 </div>
