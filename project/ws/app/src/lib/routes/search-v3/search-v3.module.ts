@@ -67,6 +67,7 @@ import { SkeletonLoaderModule } from '../../../../../../../library/ws-widget/col
 import { SkeletonLoaderContentComponent } from './components/skeleton-loader-content/skeleton-loader-content.component';
 import { SkeletonLoaderPeoplesComponent } from './components/skeleton-loader-peoples/skeleton-loader-peoples.component';
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { ShowAllComponent } from './routes/show-all/show-all.component';
 @NgModule({
   declarations: [
     GlobalSearchComponent,
@@ -82,7 +83,8 @@ import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy
     PaginationComponent,
     SearchSortInputComponent,
     SkeletonLoaderContentComponent,
-    SkeletonLoaderPeoplesComponent
+    SkeletonLoaderPeoplesComponent,
+    ShowAllComponent
   ],
   imports: [
     CommonModule,

@@ -494,9 +494,15 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           // if (viewMoreUrl && viewMoreUrl.queryParams) {
           //   viewMoreUrl.queryParams = viewMoreUrl.queryParams
           // }
+          let contentData = results.result.content
+          if(strip && strip?.key === "featuredCourses"){
+            contentData = contentData.filter((data: NsContent.IContent) => {
+              return data.primaryCategory === NsContent.EPrimaryCategory.COURSE
+            })
+          }
           this.processStrip(
             strip,
-            this.transformContentsToWidgets(results.result.content, strip),
+            this.transformContentsToWidgets(contentData, strip),
             'done',
             calculateParentStatus,
             viewMoreUrl,
@@ -1098,6 +1104,10 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
     // this.stripsResultDataMap[strip.key]
     if (results.length && strip.fetchLikes) {
       await this.processContentLikes(results)
+    }
+    if(viewMoreUrl && viewMoreUrl.queryParams) {
+    debugger
+      viewMoreUrl.queryParams = {...viewMoreUrl?.queryParams, stripKey: strip.key}  
     }
     const stripData = {
       viewMoreUrl,
