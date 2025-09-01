@@ -49,6 +49,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() isEnrolled!: boolean
   @Input() playResourceId = ''
   @Input() sideNavBarOpened = false
+  @Input() languageList = []
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   

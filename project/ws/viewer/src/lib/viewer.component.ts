@@ -6,7 +6,7 @@ import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb
 import { Subscription } from 'rxjs'
 import { RootService } from '../../../../../src/app/component/root/root.service'
 import { TStatus, ViewerDataService } from './viewer-data.service'
-import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
@@ -79,6 +79,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   isPreAssessment = false
   sideNavForAIOpened = false
   baseContentReadData: any
+  languageList: any = []
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -89,6 +90,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     private changeDetector: ChangeDetectorRef,
     private widgetServ: WidgetContentService,
     private widgetLibServ: WidgetContentLibService,
+    private contentLangSvc: ContentLanguageService,
     private configSvc: ConfigurationsService,
     private userSvc: WidgetUserServiceLib,
     private abc: MobileAppsService,
@@ -239,6 +241,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.resetAndFetchTocStructure()
       this.leafNodesCount = contentData.result.content.leafNodesCount
     }
+    this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
     this.checkMultilingual()
     if (this.collectionId && this.enrollmentList) {
       const enrolledCourseData = this.widgetLibServ.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId)
