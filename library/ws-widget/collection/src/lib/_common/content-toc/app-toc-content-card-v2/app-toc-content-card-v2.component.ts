@@ -415,8 +415,17 @@ export class AppTocContentCardV2Component implements OnInit {
     // console.log('getCompletionPercentage', identifier)
     // console.log('this.hierarchyMapData[identifier] : ', this.hierarchyMapData[identifier])
     // const item = this.updateChildParentMap(identifier)
-    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage  
+    let percent =  this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage || 0 
+    return this.roundIfDecimal(percent)
   }
+  
+  roundIfDecimal(value: number): number {
+    if (!Number.isInteger(value)) {
+      return parseFloat(value.toFixed(2));
+    }
+    return value;
+  }
+
 
   getCompletionStatus(identifier: string) {
     // console.log('getCompletionStatus')
