@@ -1104,6 +1104,10 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       if (this.identifier && this.widgetContentService.currentMetaData?.content?.data?.parent) {
           const MIME_TYPE = "application/vnd.ekstep.content-collection"
           this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
+          setTimeout(() => {
+              this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionPercentage'] = 100
+              this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionStatus'] = 2
+          }, 700)
       }
     }
   }
