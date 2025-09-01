@@ -3,6 +3,8 @@ import { SettingsService } from '../../settings.service';
 import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash';
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { TranslateService } from '@ngx-translate/core';
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
 
 @Component({
   selector: 'ws-app-profile-visibility-settings',
@@ -18,12 +20,27 @@ export class ProfileVisibilitySettingsComponent implements OnInit {
   constructor(
     private settingsService: SettingsService,
     private configSvc: ConfigurationsService,
-    private snackBar: MatLegacySnackBar
+    private snackBar: MatLegacySnackBar,
+    private translateService: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
   ) { }
 
   ngOnInit() {
     this.loadingDetails = true;
     this.getUserDetails();
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      this.translateService.setDefaultLang('hi')
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translateService.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translateService.use(lang)
+      }
+    })
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
   }
 
   getUserDetails() {
