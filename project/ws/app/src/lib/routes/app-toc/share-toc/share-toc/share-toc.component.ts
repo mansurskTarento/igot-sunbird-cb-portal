@@ -200,6 +200,11 @@ export class ShareTocComponent implements OnInit {
         primaryCategory = this.content.primaryCategory || this.content.contentId ? 'External Course' : '',
         courseLink = this.contentLink || ''
     }
+    let language = ''
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('ML')) {
+      language = urlParams.get('ML') || ''
+    }
     const obj = {
       request: {
         courseId,
@@ -209,6 +214,7 @@ export class ShareTocComponent implements OnInit {
         primaryCategory,
         courseLink,
         recipients: '',
+        ...(language && { language } ),
       },
     }
     const recipients: any = []
