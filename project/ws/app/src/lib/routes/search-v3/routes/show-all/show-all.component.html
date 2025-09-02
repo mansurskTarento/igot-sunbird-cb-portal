@@ -1,7 +1,8 @@
 <div class="learnsearch margin-top-l margin-bottom-l">
   <div class="container-balanced">
     <div class="result-meta flex items-center justify-between flex-wrap mb-4">
-        <div class="explore-all-content">
+       <div>
+         <div class="explore-all-content">
                             <span>{{'cardshublist.exploreAllContent' | translate}}</span>
                         </div>
       <div>
@@ -10,10 +11,11 @@
             >1 {{ 'learnsearch.content' | translate }}</span
           >
           <span *ngIf="courses.length > 1"
-            >{{ courses.length }} {{ 'learnsearch.contents' | translate }}</span
+            >{{ 'learnsearch.contents' | translate: { count: courses?.length } }}</span
           >
         </p>
       </div>
+       </div>
 
       <div class="sort-search ml-auto" *ngIf="customOptions.length > 0">
         <ws-app-search-sort-input

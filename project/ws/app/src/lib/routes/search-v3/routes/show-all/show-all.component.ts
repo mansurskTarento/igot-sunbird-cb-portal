@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core';
+import { NsContent } from '@sunbird-cb/utils-v2';
 
 @Component({
   selector: 'ws-app-show-all',
@@ -10,9 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class ShowAllComponent implements OnInit {
   courses: any[] = []
   pagedCourses: any[] = []
-  pageSize = 8
-  initialPaginationSize = 8;
-  initialPaginationSizeOptions = [8, 20, 50, 100];
+  initialPaginationSize = 10;
+  initialPaginationSizeOptions = [10, 20, 50, 100];
   currentPage = 1
   totalPages = 1
   sortKey = 'name'
@@ -41,7 +41,10 @@ export class ShowAllComponent implements OnInit {
     this.loading = true
     this.http.get<any>('/api/course/v1/explore', {}).subscribe(
       res => {
-        this.courses = res?.result?.content || []
+        this.courses = <any[]>res?.result?.content 
+        this.courses = this.courses.filter((data: any) => {
+          return data.primaryCategory === NsContent.EPrimaryCategory.COURSE
+        }) || []
         this.applySort()
         this.setPage(1)
         this.loading = false
@@ -87,17 +90,16 @@ export class ShowAllComponent implements OnInit {
 
   setPage(page: number) {
     this.currentPage = page
-    this.totalPages = Math.ceil(this.courses.length / this.pageSize)
-    const start = (page - 1) * this.pageSize
-    const end = start + this.pageSize
+    this.totalPages = Math.ceil(this.courses.length / this.initialPaginationSize)
+    const start = (page - 1) * this.initialPaginationSize
+    const end = start + this.initialPaginationSize
     this.pagedCourses = this.courses.slice(start, end)
   }
 
   onPageChange(event: any){
     console.log('page changed', event);
     this.currentPage = event.currentPage;
-    this.pageSize = event.limit;
-    this.initialPaginationSize = this.pageSize;
+    this.initialPaginationSize = event.limit;
     this.setPage(this.currentPage);
 
   }

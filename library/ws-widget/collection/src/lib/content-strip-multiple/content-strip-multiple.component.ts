@@ -471,7 +471,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           const showViewMore = Boolean(
             results.result.content && results.result.content.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
           )
-          const viewMoreUrl = showViewMore
+          const viewMoreUrl:any = showViewMore
             ? {
               path: '/app/globalsearch',
               queryParams: {
