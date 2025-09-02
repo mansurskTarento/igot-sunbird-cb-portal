@@ -327,7 +327,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   async searchCourses() {
     if(this.searchRequestCourse && this.searchRequestCourse['request'] && Object.keys(this.searchRequestCourse['request']['filters'])) {
-      this.searchRequestCourse['request']['filters']['courseCategory'] = {"!=":["pre enrolment assessment"]}
+      if(this.searchRequestCourse['request']['filters']['courseCategory'].length === 0) {
+        this.searchRequestCourse['request']['filters']['courseCategory'] = {"!=":["pre enrolment assessment"]}
+      }
+      
     }
     this.searchRequestCourse.request.query = this.statedata?.param;
     const result = await this.searchV3Service.searchCoursesv4(
