@@ -26,6 +26,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   @Input() leafNodesCount: any
   @Input() contentMIMEType: any
   @Input() completedCount: any
+  @Input() baseContentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null
@@ -179,7 +180,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
             collectionId: data.prevResource.collectionId,
-            collectionType: data.prevResource.collectionType,
+            collectionType: data.prevResource.collectionType || this.collectionType,
             batchId: data.prevResource.batchId,
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
@@ -216,7 +217,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
             collectionId: data.nextResource.collectionId,
-            collectionType: data.nextResource.collectionType,
+            collectionType: data.nextResource.collectionType || this.collectionType,
             batchId: data.nextResource.batchId,
             viewMode: data.nextResource.viewMode,
             courseName: this.courseName,

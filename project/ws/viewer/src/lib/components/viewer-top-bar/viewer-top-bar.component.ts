@@ -74,6 +74,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   assessmentStart = false;
   enrollmentList: any = []
   collectionLang: any
+  isPreAssessment:boolean = false
   // primaryCategory = NsContent.EPrimaryCategory
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -116,7 +117,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     if (window.location.href.includes('/channel/')) {
       this.forChannel = true
     }
-    this.isTypeOfCollection = this.activatedRoute.snapshot.queryParams.collectionType ? true : false
+    this.isPreAssessment=this.activatedRoute.snapshot.queryParams.preAssessment ? true:false
+    this.isTypeOfCollection =  this.activatedRoute.snapshot.queryParams.collectionType ? true : false
     this.collectionType = this.activatedRoute.snapshot.queryParams.collectionType
     this.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
     this.courseName = this.activatedRoute.snapshot.queryParams.courseName

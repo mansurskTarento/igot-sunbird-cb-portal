@@ -1806,10 +1806,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   getPreAssessmentCompletionStatus() {
     this.preAssessmentCompletionStatus = false
     let preEnrollmentResourcesArr:any = []
+    let preEnrollmentMandatoryResourcesArr:any = []
     if(this.contentReadData?.preEnrolmentResources?.length) {
       this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
-        if(item && item?.isMandatory) {
           preEnrollmentResourcesArr.push(item?.identifier)
+          if(item && item?.isMandatory) {
+            preEnrollmentMandatoryResourcesArr.push(item?.identifier)
         }
       })
     }
@@ -1818,32 +1820,31 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         "request": {
           "contentIds": preEnrollmentResourcesArr,
           "fields": [
-              // "lastAccessTime",
-              // "completionPercentage"
           ]
       }
       } 
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-        if(data && data.result && data.result.contentList) {
-          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
-            for(let i=0; i<data.result.contentList.length; i++) {
-              if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
-                data.result.contentList[i]['status'] === 2 
-              ) {
-                this.preAssessmentCompletionStatus = true
-              } else {
-                this.preAssessmentCompletionStatus = false
-                break
+        let mandatoryIdsCompleted = []
+        if(data && data.result && data.result.contentList && data.result.contentList.length) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+              if(data.result.contentList[i]['status'] === 2 && preEnrollmentMandatoryResourcesArr.includes(data.result.contentList[i]['contentId']))  {
+                mandatoryIdsCompleted.push(data.result.contentList[i]['contentId'])
               }
             }
+          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
+             this.preAssessmentCompletionStatus = true
+          } else if(mandatoryIdsCompleted.length === preEnrollmentMandatoryResourcesArr.length) {
+             this.preAssessmentCompletionStatus = true
+          } else {
+            this.preAssessmentCompletionStatus = false
           }
-          
+        } else {
+          this.preAssessmentCompletionStatus = false
         }
       })
     }
-    
   }
-
+  
   ngOnInit() {
     this.dataTransferSvc.setEnrollData(null)
     this.getServerDateTime()
