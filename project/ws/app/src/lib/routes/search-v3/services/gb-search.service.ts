@@ -32,6 +32,8 @@ const API_END_POINTS = {
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`;
   },
+
+    EXPLORE_API:'/api/course/v1/explore'
 };
 
 @Injectable({
@@ -125,6 +127,11 @@ export class GbSearchService {
   searchExternalContent(params: SearchExternalRequest): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_EXT_CONTENT, params).toPromise();
   }
+
+  exploreContent() {
+    return this.http.get(API_END_POINTS.EXPLORE_API); 
+  }
+
 
 
   getFirstSortOption(isExploreContentTab: boolean): any {

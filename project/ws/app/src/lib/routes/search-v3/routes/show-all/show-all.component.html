@@ -3,7 +3,7 @@
     <div class="result-meta flex items-center justify-between flex-wrap mb-4">
        <div>
          <div class="explore-all-content">
-                            <span>{{'cardshublist.exploreAllContent' | translate}}</span>
+                            <span >{{contentName ? contentName: 'cardshublist.exploreAllContent' | translate}}</span>
                         </div>
       <div>
         <p class="contents-title-top text-dark mb-0">
@@ -17,7 +17,7 @@
       </div>
        </div>
 
-      <div class="sort-search ml-auto" *ngIf="customOptions.length > 0">
+      <div class="sort-search ml-auto" *ngIf="customOptions?.length > 0">
         <ws-app-search-sort-input
           [category]="'courses'"
           [isExploreContentTab]="false"
@@ -33,7 +33,7 @@
       ></ws-app-skeleton-loader-content>
     </div>
 
-    <div *ngIf="!loading && pagedCourses.length === 0" class="text-center">
+    <div *ngIf="!loading && pagedCourses?.length === 0" class="text-center">
       <img
         src="/assets/icons/no-data.svg"
         wsUtilsImageResponsive
@@ -61,7 +61,7 @@
       <ws-app-pagination
         [defaultPaginationSize]="initialPaginationSize"
         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
-        [totalItemsCount]="courses.length"
+        [totalItemsCount]="courses?.length"
         [currentPage]="1"
         (pageChange)="onPageChange($event)"
       ></ws-app-pagination>

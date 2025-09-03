@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core';
 import { NsContent } from '@sunbird-cb/utils-v2';
+import { ActivatedRoute } from '@angular/router';
+import { GbSearchService } from '../../services/gb-search.service';
 
 @Component({
   selector: 'ws-app-show-all',
@@ -19,7 +20,8 @@ export class ShowAllComponent implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc'
   loading = false
   customOptions: any[] = []
-  constructor(private http: HttpClient,
+  contentName: string = ''
+  constructor(private gbSvc: GbSearchService, private activatedRoute:ActivatedRoute,
     private translate: TranslateService,) { 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -34,14 +36,16 @@ export class ShowAllComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.contentName = this.activatedRoute?.snapshot?.queryParams['name'] || '';
     this.fetchCourses()
   }
 
   fetchCourses() {
     this.loading = true
-    this.http.get<any>('/api/course/v1/explore', {}).subscribe(
-      res => {
-        this.courses = <any[]>res?.result?.content 
+    this.gbSvc.exploreContent().subscribe(
+      (res: any) => {
+        this.courses = res?.result?.content || []
         this.courses = this.courses.filter((data: any) => {
           return data.primaryCategory === NsContent.EPrimaryCategory.COURSE
         }) || []
