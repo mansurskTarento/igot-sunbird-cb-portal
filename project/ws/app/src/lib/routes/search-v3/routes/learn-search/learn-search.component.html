@@ -61,7 +61,7 @@
                         </div>
                     </ng-container>
                     <div class="sort-search ml-auto" *ngIf="!screenSizeIsLtMedium">
-                        <ws-app-search-sort-input #sortComponent [category]="seeAllResult" [isExploreContentTab]="isExploreContentTab"
+                        <ws-app-search-sort-input [category]="seeAllResult" [isExploreContentTab]="isExploreContentTab"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                         <mat-icon>menu</mat-icon>
                     </button>
                     <div class="sort-search ml-auto">
-                        <ws-app-search-sort-input #sortComponentMobile [category]="seeAllResult"
+                        <ws-app-search-sort-input [category]="seeAllResult"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
                 </div>
@@ -244,7 +244,7 @@
                                 'learnsearch.seeAllResults' | translate }}
                             </p>
                             <ng-container *ngIf="seeAllResult && communitiesSearchTotalCount > initialPaginationSize">
-                                <div [ngClass]="{'md:mt-72': communitiesSearchTotalCount < 3}">
+                                <div [ngClass]="{'md:mt-72': communitiesSearchResults.length < 3}">
                                 <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
                                     [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                     [totalItemsCount]="this.communitiesSearchTotalCount"

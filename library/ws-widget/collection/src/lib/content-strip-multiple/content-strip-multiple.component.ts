@@ -1105,10 +1105,6 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
     if (results.length && strip.fetchLikes) {
       await this.processContentLikes(results)
     }
-    if(viewMoreUrl && viewMoreUrl.queryParams) {
-    debugger
-      viewMoreUrl.queryParams = {...viewMoreUrl?.queryParams, stripKey: strip.key}  
-    }
     const stripData = {
       viewMoreUrl,
       key: strip.key,
