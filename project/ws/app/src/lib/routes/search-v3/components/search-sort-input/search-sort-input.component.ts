@@ -13,6 +13,7 @@ import {
   SEARCH_SORT_PEOPLES,
 } from '../../../../../../../author/src/lib/constants/constant';
 import { SearchCategory, SearchConstantLocalStorage, SortType } from '../../models/search-v3.model';
+import { GbSearchService } from '../../services/gb-search.service';
 
 @Component({
   selector: 'ws-app-search-sort-input',
@@ -29,7 +30,7 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('sortSelect') sortSelect!: ElementRef;
 
-  constructor() {}
+  constructor(private gBSearchSvc: GbSearchService) {}
 
   ngOnChanges(): void {
     if (this.customOptions && this.customOptions.length > 0) {
@@ -51,16 +52,17 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
         this.selectedOption = SortType.RecentlyAdded;
       }
       else {
-        this.options = SEARCH_SORT_DROPDOWN;
-        this.selectedOption = SortType.MostRelevent;
-        // this.searchSorter.emit(this.selectedOption);
-        if (this.isExploreContentTab) {
-          this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
-          this.selectedOption = SortType.RecentlyAdded;
-        } else {
-          this.options = SEARCH_SORT_DROPDOWN;
-          this.selectedOption = SortType.MostRelevent;
-        }
+        let sortData = this.gBSearchSvc.getFirstSortOption(this.isExploreContentTab);
+        this.options = sortData.options;
+        this.selectedOption = sortData.selectedOption;
+        // // this.searchSorter.emit(this.selectedOption);
+        // if (this.isExploreContentTab) {
+        //   this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+        //   this.selectedOption = SortType.RecentlyAdded;
+        // } else {
+        //   this.options = SEARCH_SORT_DROPDOWN;
+        //   this.selectedOption = SortType.MostRelevent;
+        // }
       }
     }
 
