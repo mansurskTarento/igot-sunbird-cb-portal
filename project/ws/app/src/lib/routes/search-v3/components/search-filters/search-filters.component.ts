@@ -668,7 +668,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         .includes(this.filterQueryOrganisation.toLowerCase())
     );
 
-    return this.showAllOrganisation ? filteredList : filteredList.slice(0, 4);
+    return this.showAllOrganisation ? filteredList : filteredList?.slice(0, 4);
   }
 
   get filteredContents() {
