@@ -245,9 +245,12 @@ export class PracticeService {
   }
 
   extractContent(htmlData: any) {
-    const spanData = document.createElement('span')
-    spanData.innerHTML = htmlData
-    return spanData.textContent || spanData.innerText
+    const spanData = document.createElement('span');
+    spanData.innerHTML = htmlData;
+    let text = spanData.textContent || spanData.innerText || "";
+    
+    // Replace non-breaking spaces (U+00A0) with regular spaces (U+0020)
+    return text.replace(/\u00A0/g, ' ');
   }
 
   sanitizeAssessmentSubmitRequest(requestData: NSPractice.IQuizSubmitRequest): NSPractice.IQuizSubmitRequest {
