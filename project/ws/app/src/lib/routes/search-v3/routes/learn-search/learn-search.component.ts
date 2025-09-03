@@ -150,7 +150,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       const lang = localStorage.getItem('websiteLanguage')!;
       this.translate.use(lang);
     }
-    this.checkIfExploreContentTab()
 
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey];
@@ -192,6 +191,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async ngOnChanges(changes: SimpleChanges) {
+    this.searchSortFilter = ''
+    this.checkIfExploreContentTab()
     if (
       this.configSvc.unMappedUser &&
       this.configSvc.unMappedUser.profileDetails
