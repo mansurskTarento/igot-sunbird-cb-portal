@@ -101,14 +101,12 @@ export class ShowAllComponent implements OnInit {
   }
 
   onPageChange(event: any){
-    console.log('page changed', event);
     this.currentPage = event.currentPage;
     this.initialPaginationSize = event.limit;
     this.setPage(this.currentPage);
 
   }
   onChangeSortSearch(event: any) {
-    console.log('sort changed', event);
     if(event === 'most_relevant'){
     } else if(event === 'recently_added_newest'){
     this.sortKey = 'createdOn';
