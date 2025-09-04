@@ -825,7 +825,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "identifier": item.identifier ? item.identifier : '',
       "query": item?.query,
       "chat_id": this.chatId,
-      "userId": this.userId
+      "user_id": this.userId
 
    }
    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
@@ -908,7 +908,7 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       "is_liked":false,
       "rating": "0",
       "chat_id": this.chatId,
-      "userId": this.userId,
+      "user_id": this.userId,
       "identifier":item.identifier ? item.identifier : '',
       "query": item?.query
 
