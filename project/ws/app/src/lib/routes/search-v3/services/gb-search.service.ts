@@ -13,7 +13,9 @@ import {
   SearchNLP,
   SearchPeoplesRequest,
   SearchV4Request,
+  SortType,
 } from '../models/search-v3.model';
+import { SEARCH_SORT_DROPDOWN } from '@ws/author/src/lib/constants/constant';
 
 const API_END_POINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
@@ -30,6 +32,8 @@ const API_END_POINTS = {
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`;
   },
+
+    EXPLORE_API:'/api/course/v1/explore'
 };
 
 @Injectable({
@@ -122,6 +126,25 @@ export class GbSearchService {
 
   searchExternalContent(params: SearchExternalRequest): Promise<any> {
     return this.http.post(API_END_POINTS.SEARCH_EXT_CONTENT, params).toPromise();
+  }
+
+  exploreContent() {
+    return this.http.get(API_END_POINTS.EXPLORE_API); 
+  }
+
+
+
+  getFirstSortOption(isExploreContentTab: boolean): any {
+    let options = SEARCH_SORT_DROPDOWN;
+    let selectedOption =  SortType.MostRelevent;
+    if (isExploreContentTab) {
+      options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+      selectedOption = SortType.RecentlyAdded;
+    } else {
+      options = SEARCH_SORT_DROPDOWN;
+      selectedOption = SortType.MostRelevent;
+    }
+    return { options, selectedOption }  ;
   }
 
 }
