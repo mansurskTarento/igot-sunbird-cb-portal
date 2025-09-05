@@ -2406,7 +2406,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               icon: 'translate',
               header: 'Are you sure you want to change the language?',
               message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
-              cancelButton: 'Cancel',
+              cancelButton: 'Back',
               acceptButton: 'Change language',
             }
           }
