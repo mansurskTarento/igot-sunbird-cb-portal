@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { MatLegacyDialog } from '@angular/material/legacy-dialog';
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component';
 import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'ws-app-profile-primary-details',
@@ -36,7 +37,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
   @Input() approvalPendingFields: any = []
 
-  @Output() openProfileEditDialog = new EventEmitter(); 
+  @Output() openProfileEditDialog = new EventEmitter();
   @Output() getApprovalStatus = new EventEmitter();
   @Output() updateWithdrawalStatus = new EventEmitter();
 
@@ -51,13 +52,19 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private matSnackBar: MatLegacySnackBar,
     private configService: ConfigurationsService,
-    private dialog: MatLegacyDialog
+    private dialog: MatLegacyDialog,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
     this.getApprovedFields();
     this.isNotMyUser = _.get(this.configService, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false;
     this.isIgotOrg = _.get(this.configService, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false;
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'primaryDetails') {
+        this.editPrimaryDetails('Primary Details')
+      }
+    })
   }
 
   getApprovedFields(): void {
@@ -65,21 +72,21 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
       serviceName: 'profile',
       applicationStatus: 'APPROVED',
     }
-      this.profileV2RevampSvc.fetchApprovalDetails(requesrtBody)
-        .subscribe((_res: any) => {
-          _res.result.data.filter((obj: any) => {
-            this.groupApprovedTime = (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.groupApprovedTime) ?
-              obj.lastUpdatedOn : this.groupApprovedTime
-  
-            this.designationApprovedTime = (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.designationApprovedTime) ?
-              obj.lastUpdatedOn : this.designationApprovedTime
-          })
-        }, (error: HttpErrorResponse) => {
-          if (!error.ok) {
-            this.openSnackbar(this.handleTranslateTo('somethingWentWrongPleaseTryAgain'))
-          }
+    this.profileV2RevampSvc.fetchApprovalDetails(requesrtBody)
+      .subscribe((_res: any) => {
+        _res.result.data.filter((obj: any) => {
+          this.groupApprovedTime = (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.groupApprovedTime) ?
+            obj.lastUpdatedOn : this.groupApprovedTime
+
+          this.designationApprovedTime = (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.designationApprovedTime) ?
+            obj.lastUpdatedOn : this.designationApprovedTime
         })
-    }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('somethingWentWrongPleaseTryAgain'))
+        }
+      })
+  }
 
   editPrimaryDetails(header: string) {
     this.openProfileEditDialog.emit(header)
@@ -88,7 +95,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
 
   get showPrimaryDetailsEdit(): boolean {
     const canEdit = false
-    if(!this.enableWTR && !this.enableWR && this.isCurrentUser && !(this.isNotMyUser || this.isIgotOrg)) {
+    if (!this.enableWTR && !this.enableWR && this.isCurrentUser && !(this.isNotMyUser || this.isIgotOrg)) {
       return true
     }
     return canEdit
@@ -103,7 +110,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
 
   get showWithdrawRequestBtn(): boolean {
-    if(this.enableWR && this.isCurrentUser && !(this.isNotMyUser && this.isIgotOrg)) {
+    if (this.enableWR && this.isCurrentUser && !(this.isNotMyUser && this.isIgotOrg)) {
       return true
     }
     return false
@@ -112,9 +119,9 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   get showApprovalStatus(): boolean {
     if (
       (this.groupApprovedTime < this.rejectedFields.groupRejectionTime ||
-      this.groupApprovedTime < this.unVerifiedObj.groupRequestTime ||
-      this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
-      this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
+        this.groupApprovedTime < this.unVerifiedObj.groupRequestTime ||
+        this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
+        this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
       this.isCurrentUser
     ) {
       return true
@@ -183,62 +190,62 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
 
   viewReason(comments: string) {
-      this.dialog.open(RejectionReasonPopupComponent, {
-        data: {
-          comments,
-          buttonText: 'OK',
-        },
-        disableClose: true,
-        width: '500px',
-        maxWidth: '90vw',
-      })
-    }
+    this.dialog.open(RejectionReasonPopupComponent, {
+      data: {
+        comments,
+        buttonText: 'OK',
+      },
+      disableClose: true,
+      width: '500px',
+      maxWidth: '90vw',
+    })
+  }
 
   showWithdrawRequestPopup() {
-      const dialogRef = this.dialog.open(WithdrawRequestComponent, {
-        data: {
-          withDrawType: 'primaryDetails',
-        },
-        disableClose: true,
-        panelClass: 'common-modal',
-      })
-  
-      dialogRef.afterClosed().subscribe((value: boolean) => {
-        if (value) {
-          this.handleWithdrawRequest()
-        }
-      })
-    }
+    const dialogRef = this.dialog.open(WithdrawRequestComponent, {
+      data: {
+        withDrawType: 'primaryDetails',
+      },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
 
-    handleWithdrawRequest(): void {
-        this.approvalPendingFields.forEach((_obj: any) => {
-          const userId = _.get(this.configService.unMappedUser, 'id')
-          const payload = {
-            action: 'WITHDRAW',
-            state: 'SEND_FOR_APPROVAL',
-            userId: userId,
-            applicationId: userId,
-            actorUserId: userId,
-            wfId: _obj.wfId,
-            serviceName: 'profile',
-            updateFieldValues: [],
-            comment: '',
-          }
-          this.profileV2RevampSvc.withDrawRequest(payload)
-            .subscribe((_res: any) => {
-              this.getApprovalStatus.emit('withdraw')
-              this.unVerifiedObj.group = ''
-              this.unVerifiedObj.designation = ''
-              this.openSnackbar(this.handleTranslateTo('withdrawRequestSuccess'))
-              this.enableWR = false
-              this.updateWithdrawalStatus.emit(false)
-            }, (error: HttpErrorResponse) => {
-              if (!error.ok) {
-                this.openSnackbar(this.handleTranslateTo('unableWithdrawRequest'))
-              }
-            })
-        })
+    dialogRef.afterClosed().subscribe((value: boolean) => {
+      if (value) {
+        this.handleWithdrawRequest()
       }
+    })
+  }
+
+  handleWithdrawRequest(): void {
+    this.approvalPendingFields.forEach((_obj: any) => {
+      const userId = _.get(this.configService.unMappedUser, 'id')
+      const payload = {
+        action: 'WITHDRAW',
+        state: 'SEND_FOR_APPROVAL',
+        userId: userId,
+        applicationId: userId,
+        actorUserId: userId,
+        wfId: _obj.wfId,
+        serviceName: 'profile',
+        updateFieldValues: [],
+        comment: '',
+      }
+      this.profileV2RevampSvc.withDrawRequest(payload)
+        .subscribe((_res: any) => {
+          this.getApprovalStatus.emit('withdraw')
+          this.unVerifiedObj.group = ''
+          this.unVerifiedObj.designation = ''
+          this.openSnackbar(this.handleTranslateTo('withdrawRequestSuccess'))
+          this.enableWR = false
+          this.updateWithdrawalStatus.emit(false)
+        }, (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.openSnackbar(this.handleTranslateTo('unableWithdrawRequest'))
+          }
+        })
+    })
+  }
 
   handleTranslateTo(menuName: string): string {
     return this.profileV2RevampSvc.handleTranslateTo(menuName)
