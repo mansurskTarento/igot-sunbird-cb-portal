@@ -74,13 +74,15 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     }
     this.profileV2RevampSvc.fetchApprovalDetails(requesrtBody)
       .subscribe((_res: any) => {
-        _res.result.data.filter((obj: any) => {
-          this.groupApprovedTime = (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.groupApprovedTime) ?
-            obj.lastUpdatedOn : this.groupApprovedTime
+        if (_res && _res.result && _res.result.data && Array.isArray(_res.result.data)) {
+          _res.result.data.filter((obj: any) => {
+            this.groupApprovedTime = (obj.hasOwnProperty('group') && obj.lastUpdatedOn > this.groupApprovedTime) ?
+              obj.lastUpdatedOn : this.groupApprovedTime
 
-          this.designationApprovedTime = (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.designationApprovedTime) ?
-            obj.lastUpdatedOn : this.designationApprovedTime
-        })
+            this.designationApprovedTime = (obj.hasOwnProperty('designation') && obj.lastUpdatedOn > this.designationApprovedTime) ?
+              obj.lastUpdatedOn : this.designationApprovedTime
+          })
+        }
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('somethingWentWrongPleaseTryAgain'))
