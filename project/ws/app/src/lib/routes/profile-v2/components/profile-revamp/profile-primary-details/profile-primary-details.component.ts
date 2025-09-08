@@ -61,7 +61,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     this.isNotMyUser = _.get(this.configService, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false;
     this.isIgotOrg = _.get(this.configService, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false;
     this.route.fragment.subscribe(fragment => {
-      if (fragment === 'primaryDetails') {
+      if (fragment === 'primaryDetails' && this.showPrimaryDetailsEdit) {
         setTimeout(() => {
           this.editPrimaryDetails('Primary Details')
         }, 500)
