@@ -62,7 +62,9 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     this.isIgotOrg = _.get(this.configService, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false;
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'primaryDetails') {
-        this.editPrimaryDetails('Primary Details')
+        setTimeout(() => {
+          this.editPrimaryDetails('Primary Details')
+        }, 500)
       }
     })
   }
