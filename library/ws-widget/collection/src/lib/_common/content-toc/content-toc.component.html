@@ -180,51 +180,16 @@
                         <a href="javascript:void(0)" (click)="showAiTutorConfirmPopup()"><img src="assets/ai-tutor/ai-icon.svg">&nbsp; &nbsp; <span class="ai-tutor-label">AI Tutor</span></a>
                     </div>
                 </div> -->
-            </div>
-            <ws-widget-app-toc-about 
-                [fromViewer]="fromViewer" 
-                [pathSet]="pathSet" 
-                [content]="content"
-                [contentReadData]="contentReadData" 
-                [baseContentReadData]="baseContentReadData"
-                [tocStructure]="tocStructure" 
-                [config]="config" 
-                [forPreview]="false" 
-                [sticky]="sticky" 
-                [selectedBatchData]="selectedBatchData" 
-                [selectedTabValue]="selectedTabIndex"
-                [resumeData]="resumeData" 
-                [batchData]="batchData" 
-                [skeletonLoader]="skeletonLoader" 
-                [condition]="condition" 
-                [kparray]="kparray" 
-                [showReviews]="'true'"
-                [languageList]="languageList">
-            </ws-widget-app-toc-about>
-        </ng-template>
-    </mat-tab>
-    
-    <!-- Content Tab -->
-    <ng-container *ngIf="content?.children?.length">
-        <mat-tab label="{{ 'apptocsinglepage.content' | translate }}" *ngIf="contentTabFlag">
-            <ng-template matTabContent>
-                <ws-widget-app-toc-content 
-                    [batchId]="batchId" 
-                    [componentName]="componentName" 
-                    [pathSet]="pathSet" 
-                    [content]="content" 
-                    [tocStructure]="tocStructure" 
-                    [config]="config" 
-                    [forPreview]="false"
-                    [resumeData]="resumeData" 
-                    [batchData]="batchData" 
-                    [skeletonLoader]="skeletonLoader" 
-                    [hierarchyMapData]="hierarchyMapData"
-                    [baseContentReadData]="baseContentReadData">
-                </ws-widget-app-toc-content>
+                </div>
+                <ws-widget-app-toc-about [fromViewer]="fromViewer" [pathSet]="pathSet" [content]="content"
+                    [contentReadData]="contentReadData" [baseContentReadData]="baseContentReadData"
+                    [tocStructure]="tocStructure" [config]="config" [forPreview]="false" [sticky]="sticky"
+                    [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
+                    [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
+                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList">
+                </ws-widget-app-toc-about>
             </ng-template>
         </mat-tab>
-    </ng-container>
 
         <!-- Content Tab -->
         <ng-container *ngIf="content?.children?.length">
@@ -239,7 +204,6 @@
             </mat-tab>
         </ng-container>
 
-        <!-- Comments Tab -->
         <ng-container *ngIf="config?.commentsTab && !forPreview">
             <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
                 <!-- <ng-template matTabContent> -->
