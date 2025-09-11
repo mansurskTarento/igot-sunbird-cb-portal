@@ -847,7 +847,7 @@ export class CustomFieldsComponent {
     console.log('Parent values found:', parentValues);
 
     if (Object.keys(parentValues).length === 0) {
-      console.log('No parent values found');
+      this.customAttrForm.get(childItem.fieldAttribute)?.setValue(childValue);
       return;
     }
 
