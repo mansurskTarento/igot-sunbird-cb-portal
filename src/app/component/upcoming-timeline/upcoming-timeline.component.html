@@ -1,4 +1,17 @@
 
+
+<ng-container *ngIf="aparList.length">
+    <div class="mt-8 mb-8 highlight-block hidden md:block">
+        <div class="flex flex-middle margin-bottom-s">
+            <p class="title">{{'cbpPlanStats.apar' | translate }}</p>
+            <!-- //NOSONAR --> <mat-icon aria-hidden="true" (click)="upComingMethod('apar')" class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color cursor-pointer" > chevron_right </mat-icon>
+        </div>
+        <div class="mb-5" *ngFor="let c of aparList  | slice:0:2">
+            <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
+        </div>
+     </div>
+</ng-container>
+
 <ng-container *ngIf="upcommingList.length">
     <div class="mt-8 mb-8 highlight-block hidden md:block">
         <div class="flex flex-middle margin-bottom-s">
@@ -22,10 +35,27 @@
         </div>
      </div>
 </ng-container>
+
 <div class=" block md:hidden">
-    <div class="mt-8 mb-8 highlight-block padding-remove "  *ngIf="upcommingList.length && overDueList.length;else nextTemplate">
+    <div class="mt-8 mb-8 highlight-block padding-remove "  *ngIf="upcommingList.length && overDueList.length && aparList.length;else nextTemplate">
         <div class="seeAll-home-container m-auto gap-4">
             <mat-tab-group  mat-stretch-tabs>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        {{'cbpPlanStats.apar' | translate }}&nbsp;
+                        <span *ngIf="aparList.length">({{aparList.length}})</span>
+                    </ng-template>
+                    <ng-container *ngIf="aparList.length">
+                        <div class="p-4 pb-0">
+                            <div class="mb-5" *ngFor="let c of aparList  | slice:0:2">
+                                <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
+                            </div>
+                            <div class="flex flex-center">
+                                <!-- //NOSONAR --> <p class="ws-mat-default-text" (click)="upComingMethod('apar');scroll('listPage')">Show all</p>
+                            </div>
+                        </div>
+                    </ng-container>
+                </mat-tab>
                 <mat-tab >
                     <ng-template mat-tab-label>
                         {{'cbpPlanStats.upcoming' | translate }}&nbsp;
@@ -58,12 +88,23 @@
                         </div>
                     </ng-container>
                 </mat-tab>
+               
             </mat-tab-group>
         </div>
 
     </div>
 
     <ng-template #nextTemplate>
+        <ng-container *ngIf="aparList.length">
+            <ng-container [ngTemplateOutlet]="detail"
+                            [ngTemplateOutletContext]="{ data:{
+                       data: aparList,
+                       title: 'APAR',
+                       subTitle:'',
+                       key:'apar'
+                      }}">
+            </ng-container>
+        </ng-container>
         <ng-container *ngIf="upcommingList.length">
             <ng-container [ngTemplateOutlet]="detail"
                             [ngTemplateOutletContext]="{ data:{
@@ -80,6 +121,15 @@
                        title: 'Overdue',
                        subTitle:'',
                        key:'overdue'
+                      }}"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="aparList.length">
+            <ng-container [ngTemplateOutlet]="detail"
+                            [ngTemplateOutletContext]="{ data:{
+                       data: aparList,
+                       title: 'APAR',
+                       subTitle:'',
+                       key:'apar'
                       }}"></ng-container>
         </ng-container>
     </ng-template>
