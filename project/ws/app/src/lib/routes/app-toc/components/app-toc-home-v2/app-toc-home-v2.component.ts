@@ -2382,6 +2382,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if(enrolledCourse && enrolledCourse.status === 2) {
         this.processLanguageSelection(lang)
       } else {
+        // If there is progress in the selected language,
         if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
           data = {
             width: '500px',
@@ -2390,12 +2391,13 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               from: 'languageSwitch',
               icon: 'translate',
               header: `Continue where you left off in ${lang.name}?`,
-              message: `You've already made some progress in this language.\n Would you like to resume from where you left off or start over`,
-              cancelButton: 'Cancel',
-              acceptButton: 'Change language',
+              message: `You've already made some progress in this language.\n If you continue it will resume from where you left off.`,
+              cancelButton: 'Back',
+              acceptButton: 'Resume',
             }
           }
         } else {
+          // If there is no progress in the selected language, or first time selection
           data = {
             width: '500px',
             height: 'auto',
