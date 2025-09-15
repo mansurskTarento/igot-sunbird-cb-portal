@@ -58,7 +58,7 @@
     "@sunbird-cb/discussion-v2": "0.0.6-cbrelease-4.8.28",
     "@sunbird-cb/discussions-ui-v8": "2.1.7-ang-9-12",
     "@sunbird-cb/micro-surveys": "2.0.20-ang-9-12",
-    "@sunbird-cb/notification": "0.0.5-cbrelease-4.8.28",
+    "@sunbird-cb/notification": "0.0.6-cbrelease-4.8.28",
     "@sunbird-cb/rain-dashboards": "0.0.36-ang-13-16",
     "@sunbird-cb/resolver-v2": "0.0.7-ang-13-16",
     "@sunbird-cb/utils-v2": "0.0.41-ang-13-16",
