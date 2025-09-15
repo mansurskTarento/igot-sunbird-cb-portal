@@ -47,7 +47,7 @@ export class ProfileVisibilitySettingsComponent implements OnInit {
     const userId = _.get(this.configSvc, 'userProfileV2.userId')
     this.settingsService.fetchProfile(userId).subscribe({
       next: (response) => {
-        const visibilityStatus = _.get(response, 'result.response.profileDetails.profilePreference', 'public');
+        const visibilityStatus = _.get(response, 'result.response.profileDetails.profilePreference', 0);
         this.selectedVisibility = this.getMapedValues(visibilityStatus);
         this.loadingDetails = false;
       },
