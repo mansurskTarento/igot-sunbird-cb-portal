@@ -1304,6 +1304,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestResources.request.sort_by = {};
         await this.searchResources();
       }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
+        await this.searchExternalContents();
+      }
     } else if (event === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
         this.searchRequestCourse.request.sort_by.createdOn = 'desc';
