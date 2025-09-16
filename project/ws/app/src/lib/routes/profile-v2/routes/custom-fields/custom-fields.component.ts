@@ -216,11 +216,11 @@ export class CustomFieldsComponent {
     });
 
     this.customAttrForm = this.fb.group(formControls);
-
+    console.log('this.masterListFormGroups', this.masterListFormGroups)
     // Add the nested form groups to the main form
     Object.keys(this.masterListFormGroups).forEach(fieldName => {
-      const nestedGroup = this.masterListFormGroups[fieldName];
-      this.customAttrForm.addControl(`${fieldName}_group`, nestedGroup);
+      // const nestedGroup = this.masterListFormGroups[fieldName];
+     // this.customAttrForm.addControl(`${fieldName}_group`, nestedGroup);
 
       // Set up change listeners for cascading dropdowns
       this.setupCascadingDropdownListeners(fieldName);
@@ -234,11 +234,11 @@ export class CustomFieldsComponent {
 
     // Debug form structure
     console.log("Form controls:", Object.keys(this.customAttrForm.controls));
-    Object.keys(this.hierarchyFields).forEach(fieldName => {
-      console.log(`Hierarchy for ${fieldName}:`, this.hierarchyFields[fieldName]);
-      console.log(`Form group controls for ${fieldName}:`,
-        Object.keys(this.customAttrForm.get(`${fieldName}_group`).controls));
-    });
+    // Object.keys(this.hierarchyFields).forEach(fieldName => {
+    //   // console.log(`Hierarchy for ${fieldName}:`, this.hierarchyFields[fieldName]);
+    //   // console.log(`Form group controls for ${fieldName}:`,
+    //   //   Object.keys(this.customAttrForm.get(`${fieldName}_group`)?.controls));
+    // });
 
     // Add to buildDynamicForm after setting up the form
     Object.keys(this.hierarchyFields).forEach(fieldName => {
@@ -246,6 +246,9 @@ export class CustomFieldsComponent {
         console.log(`- ${fieldName}: ${this.hierarchyFields[fieldName][0]}`);
       }
     });
+
+   
+    console.log('customAttrForm', this.customAttrForm)
   }
 
   // Determine whether to use reversed data
