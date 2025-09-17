@@ -43,7 +43,6 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
 import moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -188,11 +187,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.checkCourseEnrollmentAndCbpPlan();
     // this.fetchCbpPlan()
-    this.checkIfExploreContentTab()
     localStorage.removeItem(SearchConstantLocalStorage.SortType);
   }
 
   async ngOnChanges(changes: SimpleChanges) {
+    this.searchSortFilter = ''
+    this.checkIfExploreContentTab()
     if (
       this.configSvc.unMappedUser &&
       this.configSvc.unMappedUser.profileDetails
@@ -237,8 +237,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       
       if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || '';
-        
-        this.seeAllResults(category);
+        if( !this.searchSortFilter){
+            let sortType = this.searchV3Service.getFirstSortOption(this.isExploreContentTab);
+            this.searchSortFilter = sortType.selectedOption || '';
+        }
+        this.seeAllResult = category
+        this.onChangeSortSearch(this.searchSortFilter);
       } else {
         await this.searchCourses();
         await this.searchEvents();
@@ -981,11 +985,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private checkIfExploreContentTab(): void {
-    this.activated.queryParams
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        this.isExploreContentTab = !!params['tab'];
-      });
+    this.isExploreContentTab = !!this.activated.snapshot.queryParams['tab'];
   }
 
   async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {
@@ -1303,6 +1303,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by = {};
         await this.searchResources();
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
+        await this.searchExternalContents();
       }
     } else if (event === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {
