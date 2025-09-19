@@ -43,7 +43,8 @@ const API_END_POINTS = {
 
   INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
-  UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection'
+  UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
+  SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
 
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
@@ -152,6 +153,21 @@ export class ProfileV2RevampService {
 
   searchIgotDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GET_SUNBIRD_IGOT_SEARCH, _req)
+  }
+
+  fetchNodalDetails(rootOrgId: any, roles: string) {
+    console.log('rootOrgId', rootOrgId)
+  const reqBody = {
+    "request": {
+        "filters": {
+            "rootOrgId": rootOrgId,
+             "organisations.roles": roles
+        },
+        "fields": ["firstName", "profileDetails.personalDetails.primaryEmail"],
+        "limit": 1
+    }
+}
+     return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody)
   }
 
   getGroups(): Observable<any> {
