@@ -156,7 +156,6 @@ export class ProfileV2RevampService {
   }
 
   fetchNodalDetails(rootOrgId: any, roles: string) {
-    console.log('rootOrgId', rootOrgId)
   const reqBody = {
     "request": {
         "filters": {
