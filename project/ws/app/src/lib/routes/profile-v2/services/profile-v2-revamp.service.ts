@@ -70,6 +70,20 @@ export class ProfileV2RevampService {
         return res
       }))
   }
+fetchNodalDetailsV2(rootOrgId: any, roles: string): Promise<any> {
+  const reqBody = {
+    request: {
+      filters: {
+        rootOrgId: rootOrgId,
+        'organisations.roles': roles,
+      },
+      fields: ['firstName', 'profileDetails.personalDetails.primaryEmail'],
+      limit: 1,
+    },
+  }
+  return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody).toPromise()
+}
+
 
   configulreProfileDetails(requestBody: any) {
     if( this.configSvc && this.configSvc.userProfileV2) {
