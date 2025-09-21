@@ -39,6 +39,7 @@ import _ from 'lodash';
 import { IOrganizationDetails } from './models/public-crp-model';
 import { MobileAppsService } from '../../../services/mobile-apps.service';
 import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-reader.component';
+import { ProfileV2RevampService } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2-revamp.service';
 
 @Component({
   selector: 'ws-public-crp',
@@ -108,6 +109,8 @@ export class PublicCrpComponent {
   designationDefaultLoadCount =  50
   isLoadingMoreDesignations = false;
   desigantionFilterEnable = false
+  nodalEmail = ''
+  nodalName = ''
 
   mobileTopHeaderVisibilityStatus = true;
   @ViewChild('invalidLinkTemplate') invalidLinkTemplateRef!: TemplateRef<any>;
@@ -133,7 +136,8 @@ export class PublicCrpComponent {
     private sanitizer: DomSanitizer,
     public mobileAppsService: MobileAppsService,
     private eventService: EventService,
-    private telemetrySvc: TelemetryService
+    private telemetrySvc: TelemetryService,
+    private profileV2service: ProfileV2RevampService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en');
@@ -192,8 +196,8 @@ export class PublicCrpComponent {
     this.raiseImpressionTelemetry()
   }
 
-  ngOnInit() {
-    const instanceConfig = this.configSvc.instanceConfig;
+ ngOnInit() {
+     const instanceConfig = this.configSvc.instanceConfig;
     this.positionsOriginal =
       this.activatedRoute.snapshot.data.positions.data || [];
     if (this.activatedRoute.snapshot.data.group.data) {
@@ -225,26 +229,17 @@ export class PublicCrpComponent {
           });
         }, 200);
       } else if (
-        this.invalidLinkMessage &&
-        this.invalidLinkMessage == 'Registration link is not active'
-      ) {
-        setTimeout(() => {
-          const message = this.sanitizer.bypassSecurityTrustHtml(
-            'Registrations are closed as of now. Please reach out to your department MDO or write to us at ' +
-            '<a href="mailto:mission.karmayogi@gov.in?subject=Support Request&body=Please provide your organization and designation details." ' +
-            'target="_blank">mission.karmayogi@gov.in</a> with organization and designation name'
-          );
-          this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
-            width: '400px',
-            height: '200px',
-            data: { type: 'expiredLink', message: message },
-            disableClose: true,
-          });
-        }, 200)
-      }
+      this.invalidLinkMessage &&
+      this.invalidLinkMessage == 'Registration link is not active'
+    ) {
+      // Call function that returns a Promise and handle dialog after API
+      this.loadDynamicEmailPromise().then(() => {
+        this.showInvalidLinkDialog();
+      })
     }
+  }
 
-    this.getOrganization();
+  this.getOrganization();
     this.onPhoneChange();
     this.onEmailChange();
     if (instanceConfig) {
@@ -260,6 +255,64 @@ export class PublicCrpComponent {
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res);
     });
   }
+
+private loadDynamicEmailPromise(): Promise<void> {
+  const orgId = this.activatedRoute.snapshot.params['orgId'] || ''
+  const tryRoles = ['MDO_LEADER', 'MDO_ADMIN'];
+  let roleIdx = 0
+  return new Promise((resolve) => {
+    const fetchNextRole = () => {
+      if (roleIdx >= tryRoles.length) {
+        resolve(); // all roles failed, continue
+        return;
+      }
+
+      this.profileV2service
+        .fetchNodalDetailsV2(orgId, tryRoles[roleIdx])
+        .then((res) => {
+          if (res?.result?.response?.content?.length) {
+            const nodalPerson = res.result.response.content[0];
+            this.nodalEmail =
+              nodalPerson?.profileDetails?.personalDetails?.primaryEmail ||
+              this.nodalEmail;
+            this.nodalName = nodalPerson?.firstName || this.nodalName;
+            resolve(); // success, continue
+          } else {
+            roleIdx++;
+            fetchNextRole(); // try next role
+          }
+        })
+        .catch((_err) => {
+          roleIdx++;
+          fetchNextRole(); // try next role on error
+        });
+    };
+
+    fetchNextRole(); // start first role
+  });
+}
+
+private showInvalidLinkDialog() {
+  setTimeout(() => {
+    const nodalMail = this.nodalEmail
+      ? this.nodalEmail
+      : 'mission.karmayogi@gov.in';
+    const nodalUser = this.nodalName ? ` (${this.nodalName})` : '';
+    const message = this.sanitizer.bypassSecurityTrustHtml(
+      'Registrations are closed as of now. Please write to <b>' +
+        nodalUser +
+        '</b> at ' +
+        `<a href="mailto:${nodalMail}?subject=Support Request&body=request for designation" target="_blank">${nodalMail}</a>` +
+        ' with your organization and designation name.'
+    );
+    this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
+      width: '400px',
+      height: '200px',
+      data: { type: 'expiredLink', message },
+      disableClose: true,
+    });
+  }, 200);
+}
 
   emailVerification(emailId: string) {
     this.emailLengthVal = false;
