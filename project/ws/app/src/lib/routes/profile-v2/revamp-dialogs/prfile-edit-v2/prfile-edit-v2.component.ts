@@ -150,7 +150,7 @@ getDesignationHint(): string {
   const translatedString = this.translate.instant('NetworkV2Profile.designationHint')
   return translatedString
     .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
-    .replace('%NAME%', `<b>${this.nodalName}</b>`);
+    .replace('%NAME%', `<b>(${this.nodalName})</b>`);
 }
 
 
