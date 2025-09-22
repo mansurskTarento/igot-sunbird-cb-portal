@@ -19,6 +19,7 @@ import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload
 import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
 import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
 import { UserProfileService } from '../../../user-profile/services/user-profile.service';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -84,6 +85,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   exclusionYear: any;
   selectedCadreName: any;
   selectedCadre: any;
+  nodalEmail: string = ''
+  nodalName: string = ''
+
 
 
   constructor(
@@ -97,7 +101,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private pipeImgUrl: PipeCertificateImageURL,
     private userProfileService: UserProfileService,
-    private configSvc: ConfigurationsService
+    private configSvc: ConfigurationsService,
+    private translate: TranslateService,
   ) {
     this.header = _.get(this.data, 'header', '');
     this.profileDetails = _.get(this.data, 'profileDetails', {});
@@ -107,7 +112,47 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initForm();
+    this.loadDynamicEmail()
   }
+
+loadDynamicEmail() {
+  const rootOrgId = _.get(this.configSvc, 'userProfile.rootOrgId', '')
+  const tryRoles = ['MDO_LEADER', 'MDO_ADMIN']
+  let roleIdx = 0
+
+  const fetchEmailByRole = (role: string) => {
+    this.profileV2RevampService.fetchNodalDetails(rootOrgId, role).subscribe(res => {
+      if (res?.result?.response?.content?.length) {
+        const nodalPerson = res.result.response.content[0]
+        this.nodalEmail = nodalPerson?.profileDetails?.personalDetails?.primaryEmail || this.nodalEmail
+        this.nodalName = nodalPerson?.firstName
+        this.getDesignationHint()
+      } else if (roleIdx === 0) {
+        // If MDO_LEADER failed and this was the first attempt, try MDO_ADMIN
+        roleIdx++
+        fetchEmailByRole(tryRoles[roleIdx])
+      }
+    },
+    _err => {
+      if (roleIdx === 0) {
+        roleIdx++
+        fetchEmailByRole(tryRoles[roleIdx])
+      }
+      // If second role also errors, keep defaults (do nothing)
+    })
+  }
+
+  fetchEmailByRole(tryRoles[roleIdx])
+}
+
+
+getDesignationHint(): string {
+  const translatedString = this.translate.instant('NetworkV2Profile.designationHint')
+  return translatedString
+    .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
+    .replace('%NAME%', `<b>(${this.nodalName})</b>`);
+}
+
 
   private initForm(): void {
     switch (this.header) {

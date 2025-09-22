@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component';
+import { LibNotificationsService } from '@sunbird-cb/notification';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'ws-app-my-notifications',
   templateUrl: './my-notifications.component.html',
@@ -14,13 +16,16 @@ import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/c
 export class MyNotificationsComponent {
   selectedLanguage = 'en'
   roles: string[] = []
+  fragment: string = ''
   constructor(private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private notificationsService: NotificationsService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private configService: ConfigurationsService,
-    private events: EventService) {
+    private events: EventService,
+    private libNotificationsService: LibNotificationsService,
+    private route: ActivatedRoute) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -40,6 +45,16 @@ export class MyNotificationsComponent {
     if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.roles) {
       this.roles = this.configService.unMappedUser.roles
     }
+    this.libNotificationsService._handleClick.subscribe((content: any) => {
+      if (content && content.identifier) {
+        this.notificationsService.handleConetentRedirection(content)
+      }
+    })
+    this.route.fragment.subscribe((fragment: any) => {
+      if (fragment) {
+        this.fragment = fragment
+      }
+    })
   }
 
 

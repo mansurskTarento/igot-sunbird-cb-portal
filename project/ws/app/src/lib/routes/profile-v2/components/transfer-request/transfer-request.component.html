@@ -55,8 +55,8 @@
                       </div>
                     </div>
                     <!-- Options list -->
-                    <mat-option *ngFor="let org of deptFilterData;trackBy: trackByFn" [value]="org?.orgName" (onSelectionChange)="onOrgSelectionChange(org)">
-                            {{ org?.orgName }}
+                    <mat-option *ngFor="let org of deptFilterData;trackBy: trackByFn" [value]="org?.channel" (onSelectionChange)="onOrgSelectionChange(org)">
+                            {{ org?.channel }}
                     </mat-option>
                     <!-- Loading indicator -->
                     <div *ngIf="isLoadingMoreOrganization" class="loading-indicator">

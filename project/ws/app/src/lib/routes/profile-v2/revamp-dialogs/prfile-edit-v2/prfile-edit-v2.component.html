@@ -100,7 +100,7 @@
   <ng-template #primaryDetails>
     <form [formGroup]="profileForm" class="profile-editor-form">
       <div class="profile-editor-description">
-        {{'NetworkV2Profile.theseDetailsGoToKMSforApprovalPleaseFillTheseDetailsToViewYourUDISE' | translate}}
+        {{'NetworkV2Profile.pdTooltipMsg' | translate}}
       </div>
       <div class="flex flex-col profile-control">
         <div class="lable">{{'NetworkV2Profile.group' | translate}}</div>
@@ -137,8 +137,8 @@
         </mat-form-field>
         <div class="note-container p-2">
           <div class="flex flex-start items-center gap-2">
-            <mat-icon>info</mat-icon>
-            <div class="designation-note" [innerHTML]="'NetworkV2Profile.designationHint' | translate"></div>
+            <mat-icon class="info-icon-designation">info</mat-icon>
+            <div class="designation-note" [innerHTML]="getDesignationHint()"></div>
           </div>
         </div>
       </div>

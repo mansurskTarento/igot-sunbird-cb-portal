@@ -25,6 +25,7 @@ import { BadgesComponent } from './routes/badges/badges.component'
 import { GeneralGuard } from '../../../../../../../src/app/guards/general.guard'
 import { ProfileResolverService } from './resolvers/profile-resolver.service'
 import { NotificationSettingsComponent } from './routes/settings/components/notification-settings/notification-settings.component'
+import { ProfileVisibilitySettingsComponent } from './routes/settings/components/profile-visibility-settings/profile-visibility-settings.component'
 
 const routes: Routes = [
   {
@@ -211,6 +212,14 @@ const routes: Routes = [
     component: AccountPasswordSettingsComponent,
     data: {
       pageId: 'accountandpassword',
+      module: 'Profile',
+    },
+  },
+  {
+    path: 'profile-visibility',
+    component: ProfileVisibilitySettingsComponent,
+    data: {
+      pageId: 'profile-visibility',
       module: 'Profile',
     },
   },
