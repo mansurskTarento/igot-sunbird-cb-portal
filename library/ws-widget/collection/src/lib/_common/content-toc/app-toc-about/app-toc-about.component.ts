@@ -840,7 +840,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.downloadCertificateBool = true
     const certId = this.content && this.content.certificateObj.certId
     if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
-      if (this.content && this.content.primaryCategory && this.content.primaryCategory === 'Curated Program') {
+      if (this.content && this.content.primaryCategory && this.content.primaryCategory?.toLowerCase() !== 'course') {
         const payload = {
           request: {
             courseId: this.content.identifier,
