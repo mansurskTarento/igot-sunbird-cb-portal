@@ -70,28 +70,7 @@ interface IStripUnitContentData {
 })
 
 export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, OnChanges, OnDestroy {
-
-  constructor(
-    private ratingService: RatingService,
-    private loggerService: LoggerService,
-    private dialog: MatDialog,
-    private matSnackBar: MatSnackBar,
-    private loadCheckService: LoadCheckService,
-    private timerService: TimerService,
-    private tocSvc: AppTocService,
-    private configService: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
-    public router: Router,
-    private reviewDataService: ReviewComponentDataService,
-    private handleClaimService: HandleClaimService,
-    private resetRatingsService: ResetRatingsService,
-    private contentSvc: WidgetContentService,
-  ) {
-    this.resetRatingsService.resetRatings$.subscribe((_res: any) => {
-      this.fetchRatingSummary()
-    })
-  }
-
+  
   @Input() condition: any
   @Input() kparray: any
   @Input() content: NsContent.IContent | null = null
@@ -111,6 +90,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() selectedTabValue = 0
   @Input() fromMarketPlace? = false
   @Input() showMarketPlaceCertificate = false
+  @Input() languageList = []
   @ViewChild('summaryElem') summaryElem !: ElementRef
   @ViewChild('objectivesElem') objectivesElem !: ElementRef
   @ViewChild('descElem') descElem !: ElementRef
@@ -194,6 +174,28 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   subSectorDetailArr: any = []
   selectedSector = ''
   selectedSectorId = ''
+  refreshratingSub
+
+  constructor(
+    private ratingService: RatingService,
+    private loggerService: LoggerService,
+    private dialog: MatDialog,
+    private matSnackBar: MatSnackBar,
+    private loadCheckService: LoadCheckService,
+    private timerService: TimerService,
+    private tocSvc: AppTocService,
+    private configService: ConfigurationsService,
+    private discussUtilitySvc: DiscussUtilsService,
+    public router: Router,
+    private reviewDataService: ReviewComponentDataService,
+    private handleClaimService: HandleClaimService,
+    private resetRatingsService: ResetRatingsService,
+    private contentSvc: WidgetContentService,
+  ) {
+    this.refreshratingSub = this.resetRatingsService.resetRatings$.subscribe((_res: any) => {
+      this.fetchRatingSummary()
+    })
+  }
   ngOnInit() {
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     this.userProfile = this.configService.userProfile
@@ -528,6 +530,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         (res: any) => {
           if (res && res.result && res.result.response) {
             this.ratingSummary = res.result.response
+          } else {
+            this.ratingSummary = undefined
           }
 
           // Hide loader for MatDialog...
@@ -933,6 +937,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   ngOnDestroy(): void {
     this.destroySubject$.unsubscribe()
     this.timerUnsubscribe.unsubscribe()
+    if(this.refreshratingSub){
+      this.refreshratingSub.unsubscribe()
+    }
   }
 
 }

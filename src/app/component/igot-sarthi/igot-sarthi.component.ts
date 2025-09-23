@@ -819,9 +819,13 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
     let requestBody:any = {
       "query_id": item?.query_id,
       // "response": item?.description,
-      "comments": "accurate",
+      "comments": "",
       "is_liked":true,
-      "rating": "5"
+      "rating": "5",
+      "identifier": item.identifier ? item.identifier : '',
+      "query": item?.query,
+      "chat_id": this.chatId,
+      "user_id": this.userId
 
    }
    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
@@ -902,7 +906,11 @@ export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChec
       // "response": item?.description,
       "comments": result,
       "is_liked":false,
-      "rating": "0"
+      "rating": "0",
+      "chat_id": this.chatId,
+      "user_id": this.userId,
+      "identifier":item.identifier ? item.identifier : '',
+      "query": item?.query
 
    }
    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {

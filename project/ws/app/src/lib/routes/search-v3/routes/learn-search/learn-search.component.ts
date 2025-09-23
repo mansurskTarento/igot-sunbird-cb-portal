@@ -19,7 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 // tslint:disable-next-line
 import _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-
+import { takeUntil } from 'rxjs/operators';
 import {
   FacetType,
   PageChangeEmitter,
@@ -43,7 +43,6 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment';
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
 import moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -237,8 +236,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       
       if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || '';
-        
-        this.seeAllResults(category);
+         this.seeAllResults(category);
       } else {
         await this.searchCourses();
         await this.searchEvents();
@@ -326,7 +324,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async searchCourses() {
-  
+    if(this.searchRequestCourse && this.searchRequestCourse['request'] && Object.keys(this.searchRequestCourse['request']['filters'])) {
+      if(this.searchRequestCourse['request']['filters']['courseCategory']?.length === 0) {
+        this.searchRequestCourse['request']['filters']['courseCategory'] = {"!=":["pre enrolment assessment"]}
+      }
+      
+    }
     this.searchRequestCourse.request.query = this.statedata?.param;
     const result = await this.searchV3Service.searchCoursesv4(
       this.searchRequestCourse
@@ -1298,6 +1301,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by = {};
         await this.searchResources();
+      }
+      else if (this.seeAllResult === SearchCategory.ExternalContents) {
+        this.searchRequestExternal.orderBy = 'createdOn';
+        await this.searchExternalContents();
       }
     } else if (event === SortType.RecentlyAdded) {
       if (this.seeAllResult === '') {

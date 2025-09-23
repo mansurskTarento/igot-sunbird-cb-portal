@@ -1020,7 +1020,20 @@
   }
 }
 
+.text-center {
+  text-align: center !important;
+}
 
+.justify-around {
+  justify-content: space-around !important;
+}
+
+.blue-loader-animation{
+  width: 18px;
+  height: 18px;
+  animation: spin 2s linear infinite; /* Duration, timing, and loop */
+  transform-origin: center center; /* Ensure rotation happens from the center */
+}
 
   
 

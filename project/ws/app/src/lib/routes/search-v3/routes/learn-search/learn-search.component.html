@@ -104,7 +104,7 @@
                     
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
-                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark text-dark" 
+                            <p class="mat-subheading-1 mt-4 font-bold-imp text-dark" 
                                 *ngIf="(seeAllResult === '' || seeAllResult === 'courses') && isExploreContentTab"> 
                                 <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count: courseSearchTotalCount } }}</span>
                                 <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' | translate:{ count: courseSearchTotalCount } }}</span>

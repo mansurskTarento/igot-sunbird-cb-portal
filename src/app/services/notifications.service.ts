@@ -79,7 +79,9 @@ export class NotificationsService {
 
   handleEventRedirection(notification: any, environment: any): void {
     if (notification.sub_category === 'EVENT_PUBLISHED') {
-      this.router.navigate([`/app/event-hub/home/${notification.message.data.id}`])
+      this.router.navigateByUrl('/app/event-hub/home', { skipLocationChange: true }).then(() => {
+        this.router.navigate([`/app/event-hub/home/${notification.message.data.id}`])
+      })
     } else if (notification.sub_category === 'EVENT_ENROLLED') {
       let url = `${environment.portalsForNotifications.mdo}/app/home/events`
       window.open(url, '_blank')
@@ -154,7 +156,9 @@ export class NotificationsService {
   }
 
   handleConetentRedirection(content: any): void {
-    this.router.navigate([`/app/toc/${content.identifier}`])
+    this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`/app/toc/${content.identifier}`])
+    })
   }
 
   handleNetworkRedirection(notification: any, snackBar: any): void {
@@ -165,7 +169,9 @@ export class NotificationsService {
         if (res && res.length) {
           const connection = res.find((item: any) => item.userId === notification.message.data.id)
           if (connection) {
-            this.router.navigate([`/app/network-v2/connections`])
+            this.router.navigateByUrl('/app/network-v2', { skipLocationChange: true }).then(() => {
+              this.router.navigate([`/app/network-v2/connections`])
+            })
           } else {
             snackBar.open('This request has been resolved or is no longer available.')
           }
@@ -174,13 +180,17 @@ export class NotificationsService {
         }
       })
     } else {
-      this.router.navigate([`/app/network-v2/connections`])
+      this.router.navigateByUrl('/app/network-v2', { skipLocationChange: true }).then(() => {
+        this.router.navigate([`/app/network-v2/connections`])
+      })
     }
   }
 
   handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
     if (notification.category === 'LEARN') {
-      this.router.navigate([`/app/toc/${notification.message.data.id}`])
+      this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+        this.router.navigate([`/app/toc/${notification.message.data.id}`])
+      })
     } else if (notification.category === 'EVENT') {
       this.handleEventRedirection(notification, environment)
     } else if (notification.category === 'DISCUSSION') {

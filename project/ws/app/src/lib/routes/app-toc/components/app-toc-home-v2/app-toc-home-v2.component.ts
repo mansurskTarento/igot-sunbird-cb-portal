@@ -231,6 +231,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   languageList: any = []
   selectedLanguage: any
   languageMapProgress: any
+  preAssessmentRequiredFlag:any = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -752,6 +753,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   public autoEnrollCuratedProgram(programType: any, batchData: any) {
+    if(!batchData){
+      this.enrollBtnLoading = false
+      this.snackBar.open('No bacthes found');
+      return
+    }
     if (this.content && this.content.identifier) {
       let userId = ''
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
@@ -762,7 +768,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           userId,
           programId: this.content.identifier,
           // as of now curated program only one batch is coming need to check and modify
-          batchId: batchData.batchId,
+          batchId: batchData?.batchId,
         },
       }
       this.contentSvc.autoAssignCuratedBatchApi(req, programType).subscribe(
@@ -795,7 +801,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   }
 
   public autoAssignEnroll() {
-    if (this.baseContentReadData && this.baseContentReadData.identifier) {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * If the user is not enrolled in the course, auto-assigns a batch and navigates to the player page.
+   * If the user is already enrolled, does nothing.
+   */
+/*******  6d94c646-254c-44d6-a7c3-90bdb9507318  *******/    if (this.baseContentReadData && this.baseContentReadData.identifier) {
       this.contentSvc.autoAssignBatchApi(this.baseContentReadData.identifier, this.selectedLanguage).subscribe(
         (data: NsContent.IBatchListResponse) => {
           this.batchData = {
@@ -1494,9 +1505,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.content['completionPercentage'] = 100
           this.content['completionStatus'] = 2
           await this.tocSvc.mapCompletionChildPercentageProgram(this.content)
-          let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
           let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+          this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
         } else{
@@ -1513,9 +1523,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.enrollBtnLoading = false
             // this.tocSvc.contentLoader.next(false)
           } else {
-            let leafNodes = this.contentReadData && this.contentReadData.leafNodes || []
             let contentLag = this.contentLangSvc.getContentLanguage(this.contentReadData)
-            this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId,leafNodes, contentLag)
+            this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
             this.content['completionPercentage'] = enrolledCourse.completionPercentage
             this.enrollBtnLoading = false
             this.tocSvc.mapModuleCount(this.content)
@@ -1783,13 +1792,26 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  getPreAssessmentCompletionStatus() {
-    this.preAssessmentCompletionStatus = false
-    let preEnrollmentResourcesArr:any = []
+  getPreAssessmentRequired() {
+    this.preAssessmentRequiredFlag = false
     if(this.contentReadData?.preEnrolmentResources?.length) {
       this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
         if(item && item?.isMandatory) {
+          this.preAssessmentRequiredFlag = true          
+        }
+      })
+    }
+  }
+
+  getPreAssessmentCompletionStatus() {
+    this.preAssessmentCompletionStatus = false
+    let preEnrollmentResourcesArr:any = []
+    let preEnrollmentMandatoryResourcesArr:any = []
+    if(this.contentReadData?.preEnrolmentResources?.length) {
+      this.contentReadData?.preEnrolmentResources?.forEach((item:any)=>{
           preEnrollmentResourcesArr.push(item?.identifier)
+          if(item && item?.isMandatory) {
+            preEnrollmentMandatoryResourcesArr.push(item?.identifier)
         }
       })
     }
@@ -1798,32 +1820,31 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         "request": {
           "contentIds": preEnrollmentResourcesArr,
           "fields": [
-              // "lastAccessTime",
-              // "completionPercentage"
           ]
       }
       } 
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
-        if(data && data.result && data.result.contentList) {
-          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
-            for(let i=0; i<data.result.contentList.length; i++) {
-              if(Number(data.result.contentList[i]['completionPercentage']) === 100 || 
-                data.result.contentList[i]['status'] === 2 
-              ) {
-                this.preAssessmentCompletionStatus = true
-              } else {
-                this.preAssessmentCompletionStatus = false
-                break
+        let mandatoryIdsCompleted = []
+        if(data && data.result && data.result.contentList && data.result.contentList.length) {
+          for(let i=0; i<data.result.contentList.length; i++) {
+              if(data.result.contentList[i]['status'] === 2 && preEnrollmentMandatoryResourcesArr.includes(data.result.contentList[i]['contentId']))  {
+                mandatoryIdsCompleted.push(data.result.contentList[i]['contentId'])
               }
             }
+          if(preEnrollmentResourcesArr?.length === data.result.contentList?.length) {
+             this.preAssessmentCompletionStatus = true
+          } else if(mandatoryIdsCompleted.length === preEnrollmentMandatoryResourcesArr.length) {
+             this.preAssessmentCompletionStatus = true
+          } else {
+            this.preAssessmentCompletionStatus = false
           }
-          
+        } else {
+          this.preAssessmentCompletionStatus = false
         }
       })
     }
-    
   }
-
+  
   ngOnInit() {
     this.dataTransferSvc.setEnrollData(null)
     this.getServerDateTime()
@@ -2023,6 +2044,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     // Continue with the rest of the processing
     this.loadLanguageData();
     this.getPreAssessmentCompletionStatus();
+    this.getPreAssessmentRequired()
     
     await this.handleContentPreviewOrEnrollment();
     
@@ -2306,6 +2328,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
             this.getOrgIdForShare()
             this.getTocStructure()
             if (!this.forPreview) {
+              this.userRating = undefined
               this.getUserRating(false)
             }
             resolve(true);
@@ -2359,6 +2382,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       if(enrolledCourse && enrolledCourse.status === 2) {
         this.processLanguageSelection(lang)
       } else {
+        // If there is progress in the selected language,
         if (this.languageMapProgress && this.languageMapProgress[lang.langId] > 0) {
           data = {
             width: '500px',
@@ -2367,12 +2391,13 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               from: 'languageSwitch',
               icon: 'translate',
               header: `Continue where you left off in ${lang.name}?`,
-              message: `You've already made some progress in this language.\n Would you like to resume from where you left off or start over`,
-              cancelButton: 'Cancel',
-              acceptButton: 'Change language',
+              message: `You've already made some progress in this language.\n If you continue it will resume from where you left off.`,
+              cancelButton: 'Back',
+              acceptButton: 'Resume',
             }
           }
         } else {
+          // If there is no progress in the selected language, or first time selection
           data = {
             width: '500px',
             height: 'auto',
@@ -2381,7 +2406,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               icon: 'translate',
               header: 'Are you sure you want to change the language?',
               message: 'Switching the language will reset your progress. \n The course will restart from the beginning in the selected language.',
-              cancelButton: 'Cancel',
+              cancelButton: 'Back',
               acceptButton: 'Change language',
             }
           }
@@ -2457,7 +2482,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
               this.checkIfUserEnrolled();
             }
           }
-          
+          // Update subject to notify rating summry component and load the sumamry of selected language
+          this.resetRatingsService.setRatingServiceUpdate(true)
           // Finally set loading state to false
           this.skeletonLoader = false;
         })
@@ -2572,7 +2598,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  private getContinueLearningData(contentId: string, batchId?: string,resourceIds?: string[], lang?: string) {
+  private getContinueLearningData(contentId: string, batchId?: string, lang?: string) {
     this.tocSvc.contentLoader.next(true)
     this.resumeData = null
     let userId
@@ -2585,7 +2611,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         batchId,
         userId,
         courseId: contentId || '',
-        contentIds: resourceIds? resourceIds: [],
+        contentIds: [],
         fields: ['progressdetails'],
         ...(lang ? { language: lang }: null),
       },
@@ -2882,5 +2908,19 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       MLId,
     )
     return resumeDataUrl
+  }
+
+  get contentCompletionPercent() {
+    if(this.batchData?.enrolled) {
+      if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+        if(this.languageMapProgress && this.selectedLanguage?.langId && this.languageMapProgress[this.selectedLanguage?.langId]) {
+            return this.languageMapProgress[this.selectedLanguage?.langId]
+        } else {
+          return 0
+        }
+      } else {
+        return this.content?.completionPercentage || 0
+      }
+    }
   }
 }

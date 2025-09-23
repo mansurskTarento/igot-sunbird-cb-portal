@@ -186,7 +186,7 @@
                     [tocStructure]="tocStructure" [config]="config" [forPreview]="false" [sticky]="sticky"
                     [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
                     [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
-                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'">
+                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList">
                 </ws-widget-app-toc-about>
             </ng-template>
         </mat-tab>
@@ -204,7 +204,6 @@
             </mat-tab>
         </ng-container>
 
-        <!-- Comments Tab -->
         <ng-container *ngIf="config?.commentsTab && !forPreview">
             <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
                 <!-- <ng-template matTabContent> -->

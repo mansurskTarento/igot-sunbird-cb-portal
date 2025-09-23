@@ -24,6 +24,7 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @Input() category!: string;
   @Input() isExploreContentTab: boolean = false;
   selectedOption: string = SortType.MostRelevent;
+  @Input() customOptions: any[] = [];
   options = SEARCH_SORT_DROPDOWN;
 
   @ViewChild('sortSelect') sortSelect!: ElementRef;
@@ -31,29 +32,41 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   constructor() {}
 
   ngOnChanges(): void {
-    if (this.category === SearchCategory.People) {
+    if (this.customOptions && this.customOptions.length > 0) {
+      this.options = this.customOptions;
+      this.selectedOption = this.customOptions[0].value;
+    } else {
+
+      if (this.category === SearchCategory.People) {
       this.options = SEARCH_SORT_PEOPLES;
       this.selectedOption = SortType.MostRelevent;
       // this.searchSorter.emit(this.selectedOption);
-    } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
-      this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
-      this.selectedOption = SortType.MostRelevent;
-      // this.searchSorter.emit(this.selectedOption);
-    } else if(this.category === SearchCategory.ExternalContents) {
-      this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated && 
-        option.value !== SortType.MostRelevent);
-      this.selectedOption = SortType.RecentlyAdded;
-    }
-     else {
-      this.options = SEARCH_SORT_DROPDOWN;
-      this.selectedOption = SortType.MostRelevent;
-      // this.searchSorter.emit(this.selectedOption);
-      if (this.isExploreContentTab) {
-        this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+      } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
+        this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
+        this.selectedOption = SortType.MostRelevent;
+        // this.searchSorter.emit(this.selectedOption);
+      } else if(this.category === SearchCategory.ExternalContents) {
+        this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated && 
+          option.value !== SortType.MostRelevent);
         this.selectedOption = SortType.RecentlyAdded;
-      } else {
+      }
+      else {
         this.options = SEARCH_SORT_DROPDOWN;
         this.selectedOption = SortType.MostRelevent;
+        // this.searchSorter.emit(this.selectedOption);
+        if (this.isExploreContentTab) {
+          this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+          this.selectedOption = SortType.RecentlyAdded;
+        } else {
+          this.options = SEARCH_SORT_DROPDOWN;
+          this.selectedOption = SortType.MostRelevent;
+        }
+      }
+
+      const sortType = localStorage.getItem(SearchConstantLocalStorage.SortType);
+      if (sortType && this.options.some((option) => option.value === sortType)) {
+        this.selectedOption = sortType;
+        // this.searchSorter.emit(this.selectedOption);
       }
     }
 

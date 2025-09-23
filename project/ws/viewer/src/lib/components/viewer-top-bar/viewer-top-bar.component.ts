@@ -12,7 +12,7 @@ import { CourseCompletionDialogComponent } from '../course-completion-dialog/cou
 import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
 /* tslint:disable*/
 import _ from 'lodash'
 
@@ -73,6 +73,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   primaryCategory = NsContent.EPrimaryCategory
   assessmentStart = false;
   enrollmentList: any = []
+  collectionLang: any
+  isPreAssessment:boolean = false
   // primaryCategory = NsContent.EPrimaryCategory
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -83,14 +85,15 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private valueSvc: ValueService,
     private dialog: MatDialog,
     private router: Router,
-    private widgetServ: WidgetContentService,
+    public widgetServ: WidgetContentService,
     private viewerSvc: ViewerUtilService,
     private ratingSvc: RatingService,
     private loggerSvc: LoggerService,
     private events: EventService,
     private assessmentStartCheckService: ViewerHeaderSideBarToggleService,
     private resetRatingsService: ResetRatingsService,
-    private widgetLibSvc: WidgetContentLibService
+    private widgetLibSvc: WidgetContentLibService,
+    private contentLangSvc: ContentLanguageService
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -104,7 +107,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
-    && this.activatedRoute.snapshot.data.enrollmentData.data || []
+      && this.activatedRoute.snapshot.data.enrollmentData.data || []
     // this.getAuthDataIdentifer()
     if (window.innerWidth <= 1200) {
       this.isMobile = true
@@ -114,7 +117,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     if (window.location.href.includes('/channel/')) {
       this.forChannel = true
     }
-    this.isTypeOfCollection = this.activatedRoute.snapshot.queryParams.collectionType ? true : false
+    this.isPreAssessment=this.activatedRoute.snapshot.queryParams.preAssessment ? true:false
+    this.isTypeOfCollection =  this.activatedRoute.snapshot.queryParams.collectionType ? true : false
     this.collectionType = this.activatedRoute.snapshot.queryParams.collectionType
     this.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
     this.courseName = this.activatedRoute.snapshot.queryParams.courseName
@@ -191,16 +195,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.resourcePrimaryCategory = this.viewerDataSvc.resource ? this.viewerDataSvc.resource.primaryCategory : ''
       }
     })
-    if(this.paramSubscription) {
+    if (this.paramSubscription) {
       this.paramSubscription.unsubscribe()
-    } 
+    }
     this.getUserRating(false)
     this.paramSubscription = this.activatedRoute.queryParamMap.subscribe(async params => {
       this.collectionId = params.get('collectionId') as string
       this.collectionType = params.get('collectionType') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
       const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
-      this.currentDataFromEnrollList =  enrollList
+      this.currentDataFromEnrollList = enrollList
     })
 
     this.viewerDataServiceResourceSubscription = this.viewerDataSvc.changedSubject.subscribe(
@@ -211,8 +215,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       },
     )
 
-    this.assessmentStartCheckService.visibilityStatus.subscribe((visibilityStatus)=>{
-      if(!visibilityStatus) {
+    this.assessmentStartCheckService.visibilityStatus.subscribe((visibilityStatus) => {
+      if (!visibilityStatus) {
         this.assessmentStart = true
       } else {
         this.assessmentStart = false
@@ -236,14 +240,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(props: SimpleChanges) {
     for (const prop in props) {
       if (prop === 'hierarchyMapData') {
-        if(_.isEmpty(props['hierarchyMapData'].currentValue)){
+        this.collectionLang = this.activatedRoute.snapshot.queryParams.ML ?
+          this.activatedRoute.snapshot.queryParams.ML : this.contentLangSvc.getContentLanguage(this.contentReadData)
+        if (_.isEmpty(props['hierarchyMapData'].currentValue)) {
           this.loadingOverallPRogress = true
         } else {
           const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-          this.activatedRoute.snapshot.queryParams.collectionId : ''
-          const MLID =  this.activatedRoute.snapshot.queryParams.MLId ?
-          this.activatedRoute.snapshot.queryParams.MLId : ''
-          this.ComputeCompletedNodesAndPercent(collectionId === MLID ? collectionId : MLID)
+            this.activatedRoute.snapshot.queryParams.collectionId : ''
+          const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+            this.activatedRoute.snapshot.queryParams.MLId : ''
+          const id = MLID ? MLID: collectionId
+          this.ComputeCompletedNodesAndPercent(id)
         }
       }
     }
@@ -257,17 +264,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       this.activatedRoute.snapshot.queryParams.batchId : ''
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-    if(isPreAssessment) {
-        return this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
-      
+    if (isPreAssessment) {
+      return this.viewerSvc
+        .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
+
     }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
     this.overallLeafNodes = this.leafNodesCount || 0
-    if(this.hierarchyMapData  && this.hierarchyMapData[identifier]) {
+    if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
       // tslint:disable
       const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
       this.completedCount = completedItems.length
@@ -311,6 +318,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   finishDialog() {
+    let id = ''
     if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
@@ -322,9 +330,11 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           userId = this.configSvc.userProfile.userId || ''
           this.userid = this.configSvc.userProfile.userId || ''
         }
-        const req  = {
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)
+        const req = {
           request: {
             userId,
+            language,
             batchId: this.batchId,
             courseId: this.identifier || '',
             contentIds: [],
@@ -332,37 +342,41 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           },
         }
         this.widgetServ.fetchContentHistoryV2(req).subscribe(
-          (data:  any) => {
+          (data: any) => {
 
-          this.contentProgressHash = data.result.contentList
-          this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
-          if (this.leafNodesCount === this.contentProgressHash.length) {
-            const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
+            this.contentProgressHash = data.result.contentList
+            this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
+            if (this.leafNodesCount === this.contentProgressHash.length) {
+              const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
 
-            if (ipStatusCount.length === 0) {
-              const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
-                autoFocus: false,
-                data: {
-                  courseName: this.activatedRoute.snapshot.queryParams.courseName,
-                  userId: this.userid,
-                  identifier: this.identifier,
-                  primaryCategory: this.collectionType,
-                  courseCategory: this.currentDataFromEnrollList.content.courseCategory
-                },
-                panelClass: 'course-completion-dialog'
-              })
-              dialogRef.afterClosed().subscribe(result => {
-                if (result === true) {
-                  this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
-                }
-              })
+              if (ipStatusCount.length === 0) {
+                const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+                  this.activatedRoute.snapshot.queryParams.MLId : ''
+                // check if multilingual ID is there then hit the API with MLID
+                id = MLID ? MLID : this.identifier
+                const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
+                  autoFocus: false,
+                  data: {
+                    courseName: this.activatedRoute.snapshot.queryParams.courseName,
+                    userId: this.userid,
+                    identifier: id,
+                    primaryCategory: this.collectionType,
+                    courseCategory: this.currentDataFromEnrollList.content.courseCategory
+                  },
+                  panelClass: 'course-completion-dialog'
+                })
+                dialogRef.afterClosed().subscribe(result => {
+                  if (result === true) {
+                    this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+                  }
+                })
+              } else {
+                this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+              }
             } else {
               this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
             }
-          } else {
-            this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
-          }
-        })
+          })
       }
     } else {
       this.router.navigateByUrl(`public/toc/${this.collectionId}/overview`)
@@ -370,11 +384,16 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getUserRating(fireUpdate: boolean) {
+    let id = ''
     if (this.configSvc.userProfile) {
       this.userId = this.configSvc.userProfile.userId || ''
     }
     if (this.collectionId && this.collectionType) {
-      this.ratingSvc.getRating(this.collectionId, this.collectionType, this.userId).subscribe(
+      const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+        this.activatedRoute.snapshot.queryParams.MLId : ''
+      // check if multilingual ID is there then hit the API with MLID
+      id = MLID ? MLID : this.collectionId
+      this.ratingSvc.getRating(id, this.collectionType, this.userId).subscribe(
         (res: any) => {
           if (res && res.result && res.result.response) {
             this.userRating = res.result.response
@@ -391,8 +410,12 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
+    const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+      this.activatedRoute.snapshot.queryParams.MLId : ''
+    // check if multilingual ID is there then hit the API with MLID
+    const id = MLID ? MLID : this.collectionId
     const contentTmp = {
-      identifier: this.content.identifier || this.collectionId,
+      identifier: id,
       primaryCategory: this.collectionType,
     }
     const content = contentP ? contentP : contentTmp
@@ -439,8 +462,29 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
-    if (!this.userRating && this.overallProgress >= 100) {
+    if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
+    }
+  }
+
+  get isMultilingual() {
+    if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
+      let languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
+      return languageList.length > 1
+    }
+    return false
+  }
+
+  get contentCompletionPercent() {
+    if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+      if(this.widgetServ?.languageMapProgress && this.collectionLang && 
+        this.widgetServ?.languageMapProgress[this.collectionLang]) {
+          return this.widgetServ?.languageMapProgress[this.collectionLang]
+      } else {
+        return 0
+      }
+    } else {
+      return this.overallProgress
     }
   }
 }

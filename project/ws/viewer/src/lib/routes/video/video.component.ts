@@ -300,9 +300,11 @@ export class VideoComponent implements OnInit, OnDestroy {
           this.activatedRoute.snapshot.queryParams.collectionId,
           this.activatedRoute.snapshot.queryParams.batchId,
           videoId)
+        const language = this.viewerSvc.getResourceContentLanguage(videoId) 
         const req: NsContent.IContinueLearningDataReq = {
           request: {
             userId,
+            language,
             batchId: requestCourse.batchId,
             courseId: requestCourse.courseId || '',
             contentIds: [],
@@ -310,7 +312,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
         }
         this.contentSvc.fetchContentHistoryV2(req).subscribe(
-          data => {
+          (data:any) => {
             if (data && data.result && data.result.contentList.length) {
               this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
               for (const content of data.result.contentList) {
@@ -336,6 +338,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
           () => resolve(true),
         )
+        resolve(true)
       } else {
         resolve(true)
       }

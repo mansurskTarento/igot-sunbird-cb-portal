@@ -307,7 +307,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
               "isMdo": true,
               "isCbp": true
           },
-          "fields":[ "orgName", "rootOrgId"],
+          "fields":[ "channel", "rootOrgId"],
           "limit": this.organizationDefaultLoadCount,
           "offset": offsetValue
       }
@@ -482,10 +482,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   onOrgSelectionChange(org: any) {
-    if (org && org.orgName) {
+    if (org && org.channel) {
       this.selectedOrgId = org.rootOrgId
       this.checkOrgHasDesignations()
-      this.transferRequestForm.controls.organization.setValue(org.orgName)
+      this.transferRequestForm.controls.organization.setValue(org.channel)
     }
   }
   setupOrgScrollListener(opened: boolean): void {
@@ -540,6 +540,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
   trackByFn(_index: number, item: any): number {
-    return item.orgName
+    return item.channel
   }
 }

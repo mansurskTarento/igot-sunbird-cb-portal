@@ -49,6 +49,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() isEnrolled!: boolean
   @Input() playResourceId = ''
   @Input() sideNavBarOpened = false
+  @Input() languageList = []
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
 
@@ -58,7 +59,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobile = false
   selectedTabIndex = 0
   discussWidgetData!: NsDiscussionV2.ICommentWidgetData
-  displayTeachersContent = false
   teacherNotesFlag = false
   referenceNotesFlag = false
   viewerPage = window.location.href.includes('/viewer/') ? true : false
@@ -147,21 +147,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.commentId) {
       this.selectedTabIndex = 2
     }
-    if (this.configService && this.configService.userRoles) {
-      // tslint:disable-next-line:max-line-length
-      this.displayTeachersContent = (
-        this.configService.userRoles.has('MENTOR') ||
-        this.configService.userRoles.has('mentor') ||
-        this.configService.userRoles.has('Mentor')
-        && this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY) ? true : false
-    } else {
-
-      this.displayTeachersContent = this.route.snapshot.queryParams.editMode &&
-        this.content.courseCategory === NsContent.ECourseCategory.CASE_STUDY
-
-    }
-
-
 
   }
 
@@ -239,13 +224,21 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.discussWidgetData.enrolledContent = false
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
+      if (this.commentId) {
+        this.discussWidgetData.newCommentSection.show = false
+      }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
 
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
-        if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
-          this.teacherNotesFlag = true
+        let userRoles: Set<string> = this.configService?.userRoles || new Set()
+        if (userRoles.has('MENTOR') ||
+          userRoles.has('mentor') ||
+          userRoles.has('Mentor')) {
+          if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
+            this.teacherNotesFlag = true
+          }
         }
         if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
           this.referenceNotesFlag = true
@@ -720,5 +713,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     const currentQueryParams = { ...this.route.snapshot.queryParams }
     delete currentQueryParams.commentId
     this.commentId = ''
+    this.discussWidgetData.newCommentSection.show = true
   }
 }

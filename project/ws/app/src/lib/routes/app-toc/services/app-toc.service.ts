@@ -7,6 +7,7 @@ import { NsAppToc, NsCohorts } from '../models/app-toc.model'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
+import { ContentLanguageService } from '@sunbird-cb/consumption'
 
 // TODO: move this in some common place
 const PROTECTED_SLAG_V8 = '/apis/protected/v8'
@@ -71,7 +72,7 @@ export class AppTocService {
   public transriptionIdentifier = new Subject(); // Start with null
   changeTranscriptionLanguageEvent = new Subject()
   playTranscriptionVideo = new Subject()
-  constructor(private http: HttpClient, private configSvc: ConfigurationsService, private widgetSvc: WidgetContentService) {
+  constructor(private http: HttpClient, private contentLangSvc: ContentLanguageService, private configSvc: ConfigurationsService, private widgetSvc: WidgetContentService) {
     // this resume data subscription is for on load
     this.resumeDataSubscription = this.resumeData.subscribe(
       (_dataResult: any) => {
@@ -609,10 +610,12 @@ export class AppTocService {
                 } else {
                   if (foundContent) {
                     this.contentLoader.next(true)
+                    const language = this.contentLangSvc.getContentLanguage(parentChild)
                     const req = {
                       request: {
                         batchId: foundContent.batch.batchId,
                         userId: foundContent.userId,
+                        language: language,
                         courseId: foundContent.collectionId,
                         contentIds: [],
                         fields: [
@@ -685,12 +688,14 @@ export class AppTocService {
           || content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
           // this.mapCompletionPercentage(content, this.resumeData)
           const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList,  collectionId || content?.identifier)
+          const language = this.contentLangSvc.getContentLanguage(content)
           const req = {
             request: {
               batchId: foundParentContent?.batch?.batchId,
               userId: foundParentContent?.userId,
               courseId: foundParentContent?.collectionId,
-              contentIds: collectionId ? content?.leafNodes : [],
+              language: language,
+              contentIds: [],
               fields: [
                 'progressdetails',
               ],

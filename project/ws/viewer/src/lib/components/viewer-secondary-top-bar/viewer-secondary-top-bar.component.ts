@@ -26,6 +26,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   @Input() leafNodesCount: any
   @Input() contentMIMEType: any
   @Input() completedCount: any
+  @Input() baseContentReadData: any
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null
@@ -179,7 +180,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
             collectionId: data.prevResource.collectionId,
-            collectionType: data.prevResource.collectionType,
+            collectionType: data.prevResource.collectionType || this.collectionType,
             batchId: data.prevResource.batchId,
             viewMode: data.prevResource.viewMode,
             preview: this.forPreview,
@@ -216,7 +217,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
             collectionId: data.nextResource.collectionId,
-            collectionType: data.nextResource.collectionType,
+            collectionType: data.nextResource.collectionType || this.collectionType,
             batchId: data.nextResource.batchId,
             viewMode: data.nextResource.viewMode,
             courseName: this.courseName,
@@ -322,7 +323,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   finishDialog() {
-    if (!this.forPreview) {
+    if(window.location.href.includes('preAssessment=true')) {
+      this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+    }
+    else if (!this.forPreview) {
       this.contentProgressHash = []
       this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
       this.batchId = this.activatedRoute.snapshot.queryParams.batchId
@@ -333,9 +337,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           userId = this.configSvc.userProfile.userId || ''
           this.userid = this.configSvc.userProfile.userId || ''
         }
+
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
         const req = {
           request: {
             userId,
+            language,
             batchId: this.batchId,
             courseId: this.identifier || '',
             contentIds: [],
@@ -382,15 +389,21 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   showCompletionPopUp() {
+    let id = ''
+    const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+                  this.activatedRoute.snapshot.queryParams.MLId : ''
+    // check if multilingual ID is there then hit the API with MLID
+    id = MLID ? MLID : this.identifier
     const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
       autoFocus: false,
       panelClass: 'course-completion-dialog',
       data: {
         courseName: this.activatedRoute.snapshot.queryParams.courseName,
         userId: this.userid,
-        identifier: this.identifier,
+        identifier: id,
         primaryCategory: this.collectionType,
         courseCategory: this.currentDataFromEnrollList.content.courseCategory,
+        collectionId: this.identifier // In case of multilingual course, redirection should happen to base collectionID
       },
     })
     dialogRef.afterClosed().subscribe(result => {

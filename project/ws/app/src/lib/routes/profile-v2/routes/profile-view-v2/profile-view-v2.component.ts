@@ -1075,7 +1075,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.openProfileEntryEditDialog('Achievements', result)
+        if(result && result.action && result.action === 'delete') {
+          let achievement = result.achievement || {};
+          this.openProfileEntryDeleteDialog('Achievements', achievement)
+        } else {
+          this.openProfileEntryEditDialog('Achievements', result)
+        }
       }
     })
   }
@@ -1502,6 +1507,83 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
+  }
+
+  openProfileEntryDeleteDialog(header: string, entryDetails: any) {
+   let requestData: any = {}
+   let dialogTitle:string = ''
+    switch (header) {
+      case 'Achievements':
+        requestData = this.formDeleteRequest(header, entryDetails)
+        dialogTitle = 'Are you sure you want to delete this achievement?'
+        break;
+    }
+
+    const dialogData = {
+            description: dialogTitle,
+            iconName: 'info',
+            type: 'warning',
+            buttonsPositionClass: 'justify-center items-center',
+            buttons: [
+              {
+                classes: 'btn-out-line',
+                text: 'No',
+                response: false
+              },
+              {
+                classes: 'succes-button',
+                text: 'Yes',
+                response: true
+              }
+            ]
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      disableClose: true,
+      width: '400px',
+      maxWidth: '90vw'
+    })
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteProfileEntryCall(requestData)
+      }
+    })
+    
+  }
+
+  formDeleteRequest(header: string, entryDetails: any) {
+    let requestData: any = {}
+    switch (header) {
+      case 'Achievements':
+        requestData = {
+          "request": {
+              "userId": this.userId,
+              "achievements": [{
+                  "uuid": entryDetails.uuid
+              }]
+          }
+        }
+      break;
+    }
+
+    return requestData
+    
+  }
+
+   deleteProfileEntryCall(request: any): void {
+    this.profileV2RevampSvc.deleteAchievement(request).subscribe({
+      next: (res: any) => {
+        if (res && res.result && res.result.response) {
+          this.openSnackbar('Achievement deleted successfully', 2000);
+          this.fetchProfileEntries()
+        } else {
+          this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000);
+        }
+      },
+      error: (_err: any) => {
+        this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000);
+      }
+    })
   }
 
 }

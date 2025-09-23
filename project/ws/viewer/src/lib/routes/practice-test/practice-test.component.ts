@@ -51,17 +51,31 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
     }
     ngOnInit(): void {
         this.isFetchingDataComplete = false
+        if (window.location.href.includes('preAssessment')) {
+            this.dataSubscription = this.activatedRoute.data.subscribe(
+                async (data: any) => {
+                    this.isFetchingDataComplete = false
+                    this.testData = data.content.data
+                    if (data && data?.content && data?.content?.data && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
+                        this.contentSvc.currentMetaData = data
+                    }
+                    //   console.log(this.testData)
+                    this.init()
+                })
+        } else {
+            this.dataSubscription = this.activatedRoute.data.subscribe(
+                async (data:any) => {
+                    this.isFetchingDataComplete = false
+                    this.testData = data.content.data
+                    if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
+                        this.contentSvc.currentMetaData = data
+                    }
+                    //   console.log(this.testData)
+                    this.init()
+                })
+        }
 
-        this.dataSubscription = this.activatedRoute.data.subscribe(
-            async (data:any) => {
-                this.isFetchingDataComplete = false
-                this.testData = data.content.data
-                if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
-                    this.contentSvc.currentMetaData = data
-                }
-                //   console.log(this.testData)
-                this.init()
-            })
+       
     }
     init() {
         if (this.testData) {
@@ -101,9 +115,11 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                     this.activatedRoute.snapshot.queryParams.collectionId,
                     this.activatedRoute.snapshot.queryParams.batchId,
                     identifier)
+                const language = this.viewerSvc.getResourceContentLanguage(identifier) 
                 const req: NsContent.IContinueLearningDataReq = {
                     request: {
                         userId,
+                        language,
                         batchId: requestCourse.batchId,
                         courseId: requestCourse.courseId || '',
                         contentIds: [],
@@ -129,6 +145,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                     },
                     () => resolve(true),
                 )
+                resolve(true)
             }
             resolve(true)
 

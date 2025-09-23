@@ -19,8 +19,8 @@
         <div class="grid-containers">
           <!-- Text fields remain in their own grid cells -->
           <ng-container *ngFor="let field of customAttrList">
-            <div class="flex flex-col gap-2 pr-3" *ngIf="field?.type === 'text'">
-              <div class="profile-control mb-2">
+            <div class="flex flex-col pr-3" *ngIf="field?.type === 'text'">
+              <div class="profile-control">
                 <div class="label">{{field?.name}} <strong *ngIf="field?.isMandatory" class="text-red-700">*</strong>
                 </div>
                 <mat-form-field class="profile-form-field w-full">
@@ -36,6 +36,9 @@
                   </mat-error>
                 </mat-form-field>
               </div>
+              <div class="description-hint mb-3" *ngIf="field?.description">
+                Description: {{field?.description}}
+              </div>
             </div>
           </ng-container>
           <!-- MasterList fields - Each dropdown gets its own grid cell -->
@@ -46,7 +49,7 @@
                 <ng-container *ngFor="let hierarchyField of hierarchyFields[field.attributeName];
                            index as i">
                   <!-- Each dropdown is in its own grid cell -->
-                  <div class="grid-item profile-control mb-2">
+                  <div class="grid-item profile-control">
                     <div class="flex flex-col gap-2 pr-3 hierarchy-dropdown">
                       <div class="info-div">
                         <div class="label">
@@ -68,6 +71,9 @@
                   </div>
                 </ng-container>
               </ng-container>
+              <div class="description-hint mb-3" *ngIf="field?.description">
+                Description: {{field?.description}}
+              </div>
             </ng-container>
           </ng-container>
         </div>

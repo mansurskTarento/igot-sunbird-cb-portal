@@ -7,7 +7,7 @@ import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-conte
 import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentLanguageService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable({
   providedIn: 'root',
@@ -38,6 +38,7 @@ export class ViewerUtilService {
     private contentSvc: WidgetContentService,
     private tocSvc: AppTocService,
     private userSvc: WidgetUserServiceLib,
+    private contentLangSvc: ContentLanguageService,
     ) { }
 
   async fetchManifestFile(url: string) {
@@ -126,6 +127,7 @@ export class ViewerUtilService {
   realTimeProgressUpdate(contentId: string, request: any, collectionId?: string, batchId?: string) {
     let req: any
     if (this.configservice.userProfile) {
+      const language = this.getResourceContentLanguage(contentId) 
       req = {
         request: {
           userId: this.configservice.userProfile.userId || '',
@@ -133,6 +135,7 @@ export class ViewerUtilService {
             {
               contentId,
               batchId,
+              language,
               status: this.getStatus(request.current, request.max_size, request.mime_type),
               courseId: collectionId,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
@@ -218,6 +221,32 @@ export class ViewerUtilService {
     }
     return tempData
   }
+
+  getResourceContentLanguage(resourceId: string) {
+
+    let tempLanguage:any =  'english'
+    let languageFound = false
+    const tempContentData = this.contentSvc.currentMetaData
+     if (!this.forPreview) {
+      tempContentData.children?.forEach(async (childList: NsContent.IContent) => {
+         if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+           // tslint:disable-next-line: max-line-length
+           if (childList.leafNodes && childList.leafNodes.indexOf(resourceId) !== -1) {
+            tempLanguage = this.contentLangSvc.getContentLanguage(childList)
+            languageFound = true
+           }
+         }
+       } 
+      )
+      if(!languageFound) {
+        if (tempContentData.leafNodes && tempContentData.leafNodes.indexOf(resourceId) !== -1) {
+              tempLanguage = this.contentLangSvc.getContentLanguage(tempContentData)
+        }
+      }
+    }
+    return tempLanguage
+  }
+
   async checkForCourseEnrollment(childList: NsContent.IContent, _resourceId: string, _enrollmentList: any, _tempData: any) {
     // tslint:disable-next-line: max-line-length
     const courseData: any  = await this.contentSvc.autoAssignBatchApi(childList.identifier).toPromise().then(async (data: NsContent.IBatchListResponse) => {
@@ -244,6 +273,7 @@ export class ViewerUtilService {
   realTimeProgressUpdateQuiz(contentId: string, collectionId?: string, batchId?: string, status?: number) {
     let req: any
     if (this.configservice.userProfile) {
+      const language = this.getResourceContentLanguage(contentId) 
       req = {
         request: {
           userId: this.configservice.userProfile.userId || '',
@@ -251,6 +281,7 @@ export class ViewerUtilService {
             {
               contentId,
               batchId,
+              language,
               status: status || 2,
               courseId: collectionId,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
@@ -613,9 +644,13 @@ export class ViewerUtilService {
         // }
         // console.log('req', JSON.stringify(req))
         // console.log('req', req)
-        this.http
-        .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
-        .subscribe(noop, noop)
+        
+        const resourceStatus = this.getPreAssessmentResourceStatus(contentId)
+        if(resourceStatus < 2) {
+          this.http
+          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
+          .subscribe(noop, noop)
+        }
         if (this.tocSvc.hashmap[contentId] &&
           (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
@@ -634,7 +669,7 @@ export class ViewerUtilService {
       }
     }
 
-    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, status?: number) {
+    realTimeProgressUpdateForPreAssessmentQuiz(contentId: string, status?: number, mimeType?: string) {
       let req: any
       if (this.configservice.userProfile) {
         req = {
@@ -649,15 +684,18 @@ export class ViewerUtilService {
                 lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
                 completionPercentage: status === 2 ? 100.0 : 0,
                 progressdetails: {
-                    "mimeType": "application/vnd.sunbird.questionset"
+                    "mimeType": mimeType || "application/vnd.sunbird.questionset"
                 },
               },
             ],
           },
         }
-        this.http
-          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}/${contentId}`, req)
+        const resourceStatus = this.getPreAssessmentResourceStatus(contentId)
+        if(resourceStatus < 2) {
+          this.http
+          .patch(`${this.API_ENDPOINTS.PRE_ASSESSMENT_STATE_UPDATE}`, req)
           .subscribe(noop, noop)
+        }
         if (this.tocSvc.hashmap && this.tocSvc.hashmap[contentId] && req.request.contents[0]) {
           if (this.tocSvc.hashmap[contentId] &&
             (!this.tocSvc.hashmap[contentId]['completionStatus'] || this.tocSvc.hashmap[contentId]['completionStatus'] < 2)) {
@@ -670,6 +708,13 @@ export class ViewerUtilService {
         req = {}
         // do nothing
       }
+    }
+
+    getPreAssessmentResourceStatus(resourceId:string){
+      if(this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[resourceId]) {
+        return this.tocSvc.hashmap[resourceId]['completionStatus'] || 1
+      }
+      return 1
     }
 
    
