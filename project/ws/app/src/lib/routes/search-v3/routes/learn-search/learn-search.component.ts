@@ -19,7 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 // tslint:disable-next-line
 import _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-
+import { takeUntil } from 'rxjs/operators';
 import {
   FacetType,
   PageChangeEmitter,
@@ -187,12 +187,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.checkCourseEnrollmentAndCbpPlan();
     // this.fetchCbpPlan()
+    this.checkIfExploreContentTab()
     localStorage.removeItem(SearchConstantLocalStorage.SortType);
   }
 
   async ngOnChanges(changes: SimpleChanges) {
-    this.searchSortFilter = ''
-    this.checkIfExploreContentTab()
     if (
       this.configSvc.unMappedUser &&
       this.configSvc.unMappedUser.profileDetails
@@ -237,12 +236,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       
       if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || '';
-        if( !this.searchSortFilter){
-            let sortType = this.searchV3Service.getFirstSortOption(this.isExploreContentTab);
-            this.searchSortFilter = sortType.selectedOption || '';
-        }
-        this.seeAllResult = category
-        this.onChangeSortSearch(this.searchSortFilter);
+         this.seeAllResults(category);
       } else {
         await this.searchCourses();
         await this.searchEvents();
@@ -985,7 +979,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private checkIfExploreContentTab(): void {
-    this.isExploreContentTab = !!this.activated.snapshot.queryParams['tab'];
+    this.activated.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.isExploreContentTab = !!params['tab'];
+      });
   }
 
   async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {
