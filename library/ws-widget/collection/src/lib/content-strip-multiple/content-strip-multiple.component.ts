@@ -471,7 +471,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           const showViewMore = Boolean(
             results.result.content && results.result.content.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
           )
-          const viewMoreUrl = showViewMore
+          const viewMoreUrl:any = showViewMore
             ? {
               path: '/app/globalsearch',
               queryParams: {
@@ -494,9 +494,15 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           // if (viewMoreUrl && viewMoreUrl.queryParams) {
           //   viewMoreUrl.queryParams = viewMoreUrl.queryParams
           // }
+          let contentData = results.result.content
+          if(strip && strip?.key === "featuredCourses"){
+            contentData = contentData.filter((data: NsContent.IContent) => {
+              return data.primaryCategory === NsContent.EPrimaryCategory.COURSE
+            })
+          }
           this.processStrip(
             strip,
-            this.transformContentsToWidgets(results.result.content, strip),
+            this.transformContentsToWidgets(contentData, strip),
             'done',
             calculateParentStatus,
             viewMoreUrl,

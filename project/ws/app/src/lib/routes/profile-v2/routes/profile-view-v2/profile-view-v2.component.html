@@ -68,7 +68,8 @@
                       <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                     </button>
                   </ng-container>
-                  <ng-container *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
+                  <ng-container
+                    *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
                     <button mat-menu-item (click)="openConformationDialog('Blocked')">
                       <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                     </button>
@@ -127,6 +128,10 @@
                   </button>
                 </ng-container>
               </ng-template>
+              <button mat-menu-item [routerLink]="['/app/profile/settings']">
+                <span>{{ 'NetworkV2Profile.settings' | translate }}</span>
+              </button>
+
             </mat-menu>
           </div>
         </ng-container>
@@ -142,7 +147,8 @@
                   <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                 </button>
               </ng-container>
-              <ng-container *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
+              <ng-container
+                *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Blocked')">
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                 </button>
@@ -179,7 +185,7 @@
                     {{'NetworkV2Profile.connect' | translate}}
                   </button>
                 </ng-container>
-                
+
               </ng-container>
             </ng-container>
           </div>
@@ -237,9 +243,11 @@
             <ng-template #blocked>
             </ng-template>
           </mat-tab>
-          <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
-            <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
-          </mat-tab>
+          <ng-container *ngIf="isCurrentUser">
+            <mat-tab label="My activities" *ngIf="!(isNotMyUser && isIgotOrg)">
+              <ng-container [ngTemplateOutlet]="activitySection"></ng-container>
+            </mat-tab>
+          </ng-container>
         </mat-tab-group>
       </ng-container>
 
@@ -361,7 +369,8 @@
                 <ng-container
                   *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
                   <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
-                    [isCurrentUser]="isCurrentUser" (openProfileEntryDeleteDialog)="openProfileEntryDeleteDialog('Achievements',$event)"
+                    [isCurrentUser]="isCurrentUser"
+                    (openProfileEntryDeleteDialog)="openProfileEntryDeleteDialog('Achievements',$event)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
                   <ng-container *ngIf="achievementsDetails?.count > 2">
                     <div class="flex flex-col justify-between items-center">
@@ -377,7 +386,8 @@
         </ng-container>
         <ng-template #blocked>
           <div class="w-full flex flex-col gap-4 justify-center items-center blockedBlock">
-            <ng-container *ngIf="connectionStatus === 'Blocked Incoming' || connectionStatus === 'Blocked Outgoing'; else lockedImg">
+            <ng-container
+              *ngIf="connectionStatus === 'Blocked Incoming' || connectionStatus === 'Blocked Outgoing'; else lockedImg">
               <img class="emptyPageIcon" src="./assets/icons/no-data.svg" alt="blocked gif">
             </ng-container>
             <ng-template #lockedImg>
@@ -505,18 +515,14 @@
       </ng-container>
     </div>
     <ng-template #suggestionsLoader>
-      <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'"
-        [bindingClass]="'flex rounded margin-bottom-xs'">
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'" [bindingClass]="'flex rounded margin-bottom-xs'">
       </ws-widget-skeleton-loader>
 
-      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
-                [bindingClass]="'flex rounded margin-bottom-xs'">
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
       </ws-widget-skeleton-loader>
-      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
-        [bindingClass]="'flex rounded margin-bottom-xs'">
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
       </ws-widget-skeleton-loader>
-      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
-        [bindingClass]="'flex rounded margin-bottom-xs'">
+      <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
       </ws-widget-skeleton-loader>
     </ng-template>
   </div>

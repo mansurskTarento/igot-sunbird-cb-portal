@@ -13,6 +13,7 @@ import {
   SEARCH_SORT_PEOPLES,
 } from '../../../../../../../author/src/lib/constants/constant';
 import { SearchCategory, SearchConstantLocalStorage, SortType } from '../../models/search-v3.model';
+import { GbSearchService } from '../../services/gb-search.service';
 
 @Component({
   selector: 'ws-app-search-sort-input',
@@ -24,36 +25,44 @@ export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @Input() category!: string;
   @Input() isExploreContentTab: boolean = false;
   selectedOption: string = SortType.MostRelevent;
+  @Input() customOptions: any[] = [];
   options = SEARCH_SORT_DROPDOWN;
 
   @ViewChild('sortSelect') sortSelect!: ElementRef;
 
-  constructor() {}
+  constructor(private gBSearchSvc: GbSearchService) {}
 
   ngOnChanges(): void {
-    if (this.category === SearchCategory.People) {
-      this.options = SEARCH_SORT_PEOPLES;
-      this.selectedOption = SortType.MostRelevent;
-      // this.searchSorter.emit(this.selectedOption);
-    } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
-      this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
-      this.selectedOption = SortType.MostRelevent;
-      // this.searchSorter.emit(this.selectedOption);
-    } else if(this.category === SearchCategory.ExternalContents) {
-      this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated && 
-        option.value !== SortType.MostRelevent);
-      this.selectedOption = SortType.RecentlyAdded;
-    }
-     else {
-      this.options = SEARCH_SORT_DROPDOWN;
-      this.selectedOption = SortType.MostRelevent;
-      // this.searchSorter.emit(this.selectedOption);
-      if (this.isExploreContentTab) {
-        this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
-        this.selectedOption = SortType.RecentlyAdded;
-      } else {
-        this.options = SEARCH_SORT_DROPDOWN;
+    if (this.customOptions && this.customOptions.length > 0) {
+      this.options = this.customOptions;
+      this.selectedOption = this.customOptions[0].value;
+    } else {
+
+      if (this.category === SearchCategory.People) {
+        this.options = SEARCH_SORT_PEOPLES;
         this.selectedOption = SortType.MostRelevent;
+        // this.searchSorter.emit(this.selectedOption);
+      } else if(this.category === SearchCategory.Communities || this.category === SearchCategory.Events) {
+        this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated);
+        this.selectedOption = SortType.MostRelevent;
+        // this.searchSorter.emit(this.selectedOption);
+      } else if(this.category === SearchCategory.ExternalContents) {
+        this.options = SEARCH_SORT_DROPDOWN.filter((option) => option.value !== SortType.HighestRated && 
+          option.value !== SortType.MostRelevent);
+        this.selectedOption = SortType.RecentlyAdded;
+      }
+      else {
+        let sortData = this.gBSearchSvc.getFirstSortOption(this.isExploreContentTab);
+        this.options = sortData.options;
+        this.selectedOption = sortData.selectedOption;
+        // // this.searchSorter.emit(this.selectedOption);
+        // if (this.isExploreContentTab) {
+        //   this.options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
+        //   this.selectedOption = SortType.RecentlyAdded;
+        // } else {
+        //   this.options = SEARCH_SORT_DROPDOWN;
+        //   this.selectedOption = SortType.MostRelevent;
+        // }
       }
     }
 

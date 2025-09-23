@@ -147,7 +147,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.commentId) {
       this.selectedTabIndex = 2
     }
-    
+
   }
 
   ngAfterViewInit() {
@@ -224,12 +224,15 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.discussWidgetData.enrolledContent = false
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
+      if (this.commentId) {
+        this.discussWidgetData.newCommentSection.show = false
+      }
       this.discussWidgetData = { ...this.discussWidgetData }
     }
 
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
-         let userRoles: Set<string> = this.configService?.userRoles || new Set() 
+        let userRoles: Set<string> = this.configService?.userRoles || new Set()
         if (userRoles.has('MENTOR') ||
           userRoles.has('mentor') ||
           userRoles.has('Mentor')) {
@@ -710,5 +713,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     const currentQueryParams = { ...this.route.snapshot.queryParams }
     delete currentQueryParams.commentId
     this.commentId = ''
+    this.discussWidgetData.newCommentSection.show = true
   }
 }
