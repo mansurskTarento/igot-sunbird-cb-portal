@@ -1,6 +1,6 @@
 
 
-<ng-container *ngIf="aparList.length">
+<ng-container *ngIf="aparList?.length">
     <div class="mt-8 mb-8 highlight-block hidden md:block">
         <div class="flex flex-middle margin-bottom-s">
             <p class="title">{{'cbpPlanStats.apar' | translate }}</p>
@@ -37,15 +37,15 @@
 </ng-container>
 
 <div class=" block md:hidden">
-    <div class="mt-8 mb-8 highlight-block padding-remove "  *ngIf="upcommingList.length && overDueList.length && aparList.length;else nextTemplate">
+    <div class="mt-8 mb-8 highlight-block padding-remove "  *ngIf="upcommingList?.length && overDueList?.length && aparList?.length;else nextTemplate">
         <div class="seeAll-home-container m-auto gap-4">
             <mat-tab-group  mat-stretch-tabs>
                 <mat-tab>
                     <ng-template mat-tab-label>
                         {{'cbpPlanStats.apar' | translate }}&nbsp;
-                        <span *ngIf="aparList.length">({{aparList.length}})</span>
+                        <span *ngIf="aparList?.length">({{aparList?.length}})</span>
                     </ng-template>
-                    <ng-container *ngIf="aparList.length">
+                    <ng-container *ngIf="aparList?.length">
                         <div class="p-4 pb-0">
                             <div class="mb-5" *ngFor="let c of aparList  | slice:0:2">
                                 <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
@@ -59,9 +59,9 @@
                 <mat-tab >
                     <ng-template mat-tab-label>
                         {{'cbpPlanStats.upcoming' | translate }}&nbsp;
-                        <span *ngIf="upcommingList.length">({{upcommingList.length}})</span>
+                        <span *ngIf="upcommingList?.length">({{upcommingList?.length}})</span>
                       </ng-template>
-                    <ng-container *ngIf="upcommingList.length">
+                    <ng-container *ngIf="upcommingList?.length">
                         <div class="p-4 pb-0">
                             <div class="mb-5" *ngFor="let c of upcommingList  | slice:0:2">
                                 <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
@@ -95,7 +95,7 @@
     </div>
 
     <ng-template #nextTemplate>
-        <ng-container *ngIf="aparList.length">
+        <ng-container *ngIf="aparList?.length">
             <ng-container [ngTemplateOutlet]="detail"
                             [ngTemplateOutletContext]="{ data:{
                        data: aparList,
@@ -123,7 +123,7 @@
                        key:'overdue'
                       }}"></ng-container>
         </ng-container>
-        <ng-container *ngIf="aparList.length">
+        <ng-container *ngIf="aparList?.length">
             <ng-container [ngTemplateOutlet]="detail"
                             [ngTemplateOutletContext]="{ data:{
                        data: aparList,
