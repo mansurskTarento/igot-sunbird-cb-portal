@@ -4,7 +4,7 @@
         cbpConfig?.leftSection?.active &&  cbpConfig?.rightSection?.active ? 'left' : 
         (cbpConfig?.leftSection?.active &&  !cbpConfig?.rightSection?.active) ? 'full' : ''" *ngIf="cbpConfig?.leftSection?.active">
            <!-- Cbp Side bar component --> 
-           <ws-cbp-side-bar [cbpCount]="usersCbpCount" (filterValueEmit)="filterValueEmitMethod($event)" [cbpOriginalData]="cbpOriginalData" [upcommingList]="upcomingUncompleted" [cbpLoader]="cbpLoader" [overDueList]="overdueUncompleted"></ws-cbp-side-bar>
+           <ws-cbp-side-bar [cbpCount]="usersCbpCount" (filterValueEmit)="filterValueEmitMethod($event)" [cbpOriginalData]="cbpOriginalData" [upcommingList]="upcomingUncompleted" [cbpLoader]="cbpLoader" [overDueList]="overdueUncompleted" [aparList]="aparList"></ws-cbp-side-bar>
         </div>
 
         <div class="bg-primary" [ngClass]="
