@@ -32,6 +32,19 @@ const routes: Routes = [
     //   searchPageData: PageResolve,
     // },
   },
+  {
+    path: 'custom',
+    pathMatch: 'full',
+    component: SeeAllHomeComponent,
+    data: {
+      pageType: 'feature',
+      pageKey: 'seeAll',
+      pageId: '',
+    },
+    // resolve: {
+    //   searchPageData: PageResolve,
+    // },
+  },
 ]
 @NgModule({
   declarations: [],
