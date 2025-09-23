@@ -13,6 +13,8 @@ import { CustomHomeFormResolverService } from './resolvers/custom-home-form-reso
 import { FeedListModule } from 'src/app/home/home/feed-list/feed-list.module';
 import { AnnouncementsModule } from '@sunbird-cb/consumption';
 import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module';
+import { EventsCalendarModule } from '@ws/app/src/lib/routes/events/routes/events-calendar/events-calendar.module';
+
 
 const routes: Routes = [
   {
@@ -42,6 +44,7 @@ const routes: Routes = [
     FeedListModule,
     AnnouncementsModule,
     ProfileCardStatsModule,
+    EventsCalendarModule,
   ],
   exports: [CustomHomeComponent],
   providers: [CustomHomeFormResolverService ]
