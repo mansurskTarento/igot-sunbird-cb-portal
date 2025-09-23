@@ -265,7 +265,6 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   public tabClicked(tabIndex: any, stripMap: any) {
-    debugger
     const data: WsEvents.ITelemetryTabData = {
       label: `${stripMap.tabs[tabIndex].textLabel}`,
       index: tabIndex,
