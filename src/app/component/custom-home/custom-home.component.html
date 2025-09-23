@@ -152,21 +152,34 @@
             [hideCollapsible]="true"></ws-widget-profile-card-stats>
         </div>
         <!-- annoucements -->
-        <div class="block md:hidden col-span-12 mt-6">
-          <sb-uic-announcements [layoutType]="'mobile'" (openDialog)="triggerOpenDialog($event)"
-            [objectData]="data?.announcementSection?.data" [fetchDataFromApi]="false" [channelId]="orgId">
-          </sb-uic-announcements>
+        <div class=" col-span-12 mt-6 custom">
+          <div class="block sm:hidden md:block">
+            <sb-uic-announcements [layoutType]="'web'" (openDialog)="triggerOpenDialog($event)"
+              [objectData]="announcementData?.data" [fetchDataFromApi]="false" [channelId]="orgId">
+            </sb-uic-announcements>
+          </div>
+          <div class="sm:block md:hidden">
+            <sb-uic-announcements [layoutType]="'mobile'" (openDialog)="triggerOpenDialog($event)"
+             [objectData]="announcementData?.data" [fetchDataFromApi]="false" [channelId]="orgId">
+           </sb-uic-announcements>
+          </div>
           <div class="announcements-container" *ngIf="showModal">
             <div class="cursor-pointer close-share-dialog">
               <mat-icon (click)="onClose()" class="close-icon">close</mat-icon>
             </div>
             <div class="share-modal px-3 pt-8">
               <sb-uic-announcements [layoutType]="'web'" (openDialog)="triggerOpenDialog($event)"
-                [objectData]="data?.announcementSection?.data" [mobileHeight]="true" [fetchDataFromApi]="true"
+                [objectData]="announcementData?.data" [mobileHeight]="true" [fetchDataFromApi]="true"
                 [channelId]="orgId">
               </sb-uic-announcements>
             </div>
           </div>
+
+        </div>
+        <!-- events calendar -->
+        <div class="mt-8" *ngIf="eventsCalendarData?.enabled">
+            <ws-app-events-calendar
+                [eventCalendarDetails]="eventsCalendarData"></ws-app-events-calendar>
         </div>
         <!-- <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar> -->
       </div>

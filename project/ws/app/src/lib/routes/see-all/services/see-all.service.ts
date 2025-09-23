@@ -46,13 +46,13 @@ export class SeeAllService {
     }
   }
 
-  async getSeeAllConfigJson(): Promise<any> {
+  async getSeeAllConfigJson(pageType?: string, pageSubType?: string): Promise<any> {
     if (!this.getSeeAllConfig) {
       this.getSeeAllConfig = {}
       const requestData: any = {
         'request': {
-            'type': 'page',
-            'subType': 'home',
+            'type': pageType? pageType: 'page',
+            'subType': pageSubType? pageSubType: 'home',
             'action': 'page-configuration',
             'component': 'portal',
             'rootOrgId': '*',

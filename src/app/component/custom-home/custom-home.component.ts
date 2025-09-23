@@ -52,6 +52,8 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
   canShowSlwCard = false
   totalDays = 0
   daysCompleted = 0
+  announcementData: any
+  eventsCalendarData: any
   constructor(
     private activatedRoute: ActivatedRoute,
     private events: EventService,
@@ -70,6 +72,8 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
     ) {
       this.homeConfig = this.activatedRoute.snapshot.data.pageData.data.homeConfig
       this.profileCardData = this.activatedRoute.snapshot.data.pageData.data.profileCard
+      this.announcementData = this.activatedRoute.snapshot.data.pageData.data.announcementSection
+      this.eventsCalendarData = this.activatedRoute.snapshot.data.pageData.data.eventCalendar
 
         this.contentStripData = this.activatedRoute.snapshot.data.pageData.data || []
         // tslint:disable-next-line: prefer-template

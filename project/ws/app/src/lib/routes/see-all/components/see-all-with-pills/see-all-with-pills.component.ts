@@ -50,12 +50,16 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    let pageSubType = ''
+    let pageType = ''
     this.activated.queryParams.subscribe((res: any) => {
       this.keyData = (res.key) ? res.key : ''
       this.tabSelected = (res.tabSelected) ? res.tabSelected : ''
       this.pillSelected = (res.pillSelected) ? res.pillSelected : ''
+      pageSubType = (res.pageSubType) ? res.pageSubType : ''
+      pageType = (res.pageType) ? res.pageType : ''
     })
-    const configData = await this.seeAllSvc.getSeeAllConfigJson().catch(_error => { })
+    const configData = await this.seeAllSvc.getSeeAllConfigJson(pageType, pageSubType).catch(_error => { })
     // configData.homeStrips.forEach((ele: any) => {
     //   if (ele && ele.strips.length > 0) {
     //     ele.strips.forEach((subEle: any) => {
@@ -66,7 +70,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     //   }
     // })
     if (!this.seeAllPageConfig) {
-      if (configData) {
+      if (configData && configData.assessmentData) {
         configData.assessmentData.forEach((ele: any) => {
           if (ele && ele.strips && ele.strips.length > 0) {
             ele.strips.forEach((subEle: any) => {

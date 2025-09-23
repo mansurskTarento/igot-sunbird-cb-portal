@@ -51,7 +51,7 @@ import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { HttpClient } from '@angular/common/http';
 import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component';
-import { EventsCalendarComponent } from './routes/events-calendar/events-calendar.component';
+import { EventsCalendarModule } from './routes/events-calendar/events-calendar.module';
 import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
 import { MatLegacySnackBarModule } from '@angular/material/legacy-snack-bar'
 import { ContentStripWithTabsPillsModule, ContentStripWithTabsLibModule } from '@sunbird-cb/consumption'
@@ -86,7 +86,6 @@ import { MatRadioModule } from '@angular/material/radio'
     EventPdfPlayerComponent,
     EventYouTubeComponent,
     EventsHomeV2Component,
-    EventsCalendarComponent,
     EventsEngagementComponent,
     ViewAllComponent,
     MobileFiltersComponent,
@@ -145,6 +144,7 @@ import { MatRadioModule } from '@angular/material/radio'
     MatBottomSheetModule,
     MatTooltipModule,
     ShareDiscussionModule,
+    EventsCalendarModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
