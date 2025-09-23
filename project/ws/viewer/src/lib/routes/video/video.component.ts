@@ -270,24 +270,6 @@ export class VideoComponent implements OnInit, OnDestroy {
   }
   async fetchContinueLearning(videoId: string): Promise<boolean> {
     return new Promise(resolve => {
-      // this.contentSvc.fetchContentHistory(collectionId).subscribe(
-      //   data => {
-      //     if (data) {
-      //       if (
-      //         data.identifier === videoId &&
-      //         data.continueData &&
-      //         data.continueData.progress &&
-      //         this.widgetResolverVideoData
-      //       ) {
-      //         this.widgetResolverVideoData.widgetData.resumePoint = Number(
-      //           data.continueData.progress,
-      //         )
-      //       }
-      //     }
-      //     resolve(true)
-      //   },
-      //   () => resolve(true),
-      // )
       let userId
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId || ''
@@ -312,7 +294,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
         }
         this.contentSvc.fetchContentHistoryV2(req).subscribe(
-          (data:any) => {
+          (data: any) => {
             if (data && data.result && data.result.contentList.length) {
               this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
               for (const content of data.result.contentList) {
@@ -334,15 +316,16 @@ export class VideoComponent implements OnInit, OnDestroy {
                 }
               }
             }
-            resolve(true)
+            resolve(true) // Resolve when subscription completes successfully
           },
-          () => resolve(true),
+          (error) => {
+            console.error('Error fetching continue learning data:', error)
+            resolve(true) // Resolve even on error to prevent hanging
+          }
         )
-        resolve(true)
       } else {
-        resolve(true)
+        resolve(true) // Resolve immediately if conditions not met
       }
-
     })
   }
   private async setS3Cookie(contentId: string) {
