@@ -18,9 +18,9 @@ export class AppTocTeachersNotesComponent implements OnInit {
   downloadInProgress: { [key: string]: boolean } = {}
   isDownloadingAll = false
 
-  constructor(public router: Router) {}
+  constructor(public router: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   downloadPDF(contentData: any) {
     if (!contentData?.artifactUrl) {
@@ -48,7 +48,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
     }
 
     const teacherResources = this.content.referenceNodes.filter(
-      (ele:any) => ele?.resourceCategory === this.notesDisplayType && ele.artifactUrl
+      (ele: any) => ele?.resourceCategory === this.notesDisplayType && ele.artifactUrl
     );
 
     if (teacherResources.length === 0) {
@@ -81,7 +81,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
    * Check if content has any teacher resources
    */
   hasTeacherResources(): boolean {
-    return this.content?.referenceNodes?.some((node:any) => node?.resourceCategory === this.notesDisplayType) || false;
+    return this.content?.referenceNodes?.some((node: any) => node?.resourceCategory === this.notesDisplayType) || false;
   }
 
   /**

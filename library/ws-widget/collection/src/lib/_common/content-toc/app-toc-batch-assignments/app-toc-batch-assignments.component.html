@@ -1,0 +1,17 @@
+<div class="guide-container">
+  <ng-container *ngFor="let assignment of assignments; index as i">
+    <div class="guide-card flex gap-4 justify-between flex-middle">
+      <div class="note-title">{{i + 1}}. {{assignment.title}} </div>
+      <div class="flex  flex-middle gap-3">
+        <button mat-button class="download-btn  flex align-center justify-center ">Download</button>
+        <button mat-button class="upload-btn flex align-center justify-center">Upload</button>
+        <button mat-button class="view-btn  flex align-center justify-center ">View Feedback</button>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- No teachers resources message -->
+<div *ngIf="assignments?.length === 0" class="no-resources-message mt-4">
+  {{ 'apptocsinglepage.noTeachersResources' | translate }}
+</div>

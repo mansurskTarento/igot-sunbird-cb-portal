@@ -84,6 +84,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   fromAISelectedTabIndex = false
   isMobileForAI = false
   transcriptActiveLanguageText = 'English'
+  showAssignmentsTab = false
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -218,6 +219,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       }
 
       if (this.isEnrolled) {
+        if (this.content && this.content.primaryCategory === NsContent.ECourseCategory.BLENDED_PROGRAM) {
+          this.showAssignmentsTab = true
+        }
         this.discussWidgetData.enrolledContent = true
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
       } else {

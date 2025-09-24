@@ -8,8 +8,10 @@ import { NgCircleProgressModule } from 'ng-circle-progress'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { HttpLoaderFactory } from 'src/app/app.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
-import { PipeDurationTransformModule, HorizontalScrollerV2Module,
-  PipeRelativeTimeModule, PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
+import {
+  PipeDurationTransformModule, HorizontalScrollerV2Module,
+  PipeRelativeTimeModule, PipeSafeSanitizerModule
+} from '@sunbird-cb/utils-v2'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { AvatarPhotoModule } from '../avatar-photo/avatar-photo.module'
 import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
@@ -43,9 +45,10 @@ import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-t
 import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component';
 import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
 import { HighlightPipe } from '../../_pipes/highlight.pipe'
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
 import { MarkdownModule } from 'ngx-markdown';
+import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app-toc-batch-assignments.component'
 
 @NgModule({
   declarations: [
@@ -63,7 +66,8 @@ import { MarkdownModule } from 'ngx-markdown';
     ReplaceNbspPipe,
     AiTutorConfirmPopupComponent,
     HighlightPipe,
-    AiTutorComponent
+    AiTutorComponent,
+    AppTocBatchAssignmentsComponent,
   ],
   imports: [
     CommonModule,
@@ -111,7 +115,8 @@ import { MarkdownModule } from 'ngx-markdown';
     AppTocContentComponent,
     AppTocTeachersNotesComponent,
     ReviewsContentComponent,
-    AiTutorComponent
+    AiTutorComponent,
+    AppTocBatchAssignmentsComponent
   ]
 })
 export class ContentTocModule { }
