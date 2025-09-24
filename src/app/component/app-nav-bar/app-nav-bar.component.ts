@@ -151,9 +151,19 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (this.configSvc.instanceConfig) {
-      this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        this.configSvc.instanceConfig.logos.app,
-      )
+      // Check if subdomain is 'iiidem' and use different logo
+      const currentHostname = window.location.hostname;
+      const isIiidemSubdomain = currentHostname.includes('iiidem');
+      
+      if (isIiidemSubdomain && this.configSvc.instanceConfig.logos.iiidemApp) {
+        this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
+          this.configSvc.instanceConfig.logos.iiidemApp,
+        );
+      } else {
+        this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
+          this.configSvc.instanceConfig.logos.app,
+        );
+      }
 
       this.appIconSecondary = this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.configSvc.instanceConfig.logos.appSecondary,
