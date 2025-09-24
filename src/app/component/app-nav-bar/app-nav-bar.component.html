@@ -16,12 +16,12 @@
               </span>
             </div>
             <ng-template #janDataDisabled>
-              <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+              <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
             </ng-template>
           </ng-container>
 
           <ng-template #normalLogo>
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </ng-template>
         </a>
 
@@ -110,11 +110,11 @@
         <div class="flex flex-1">
           <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/page/home"
             *ngIf="isThisSetUpPage">
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </a>
           <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/static-home"
             *ngIf="!isThisSetUpPage && isforPreview">
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </a>
         </div>
       </ng-container>
