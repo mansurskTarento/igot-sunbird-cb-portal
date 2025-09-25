@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { ConfigurationsService, NsInstanceConfig, ValueService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, NsInstanceConfig, ValueService } from '@sunbird-cb/utils-v2'
 import 'rxjs/add/operator/toPromise'
 
 // tslint:disable-next-line
@@ -22,6 +22,8 @@ export class AppFooterComponent implements OnInit {
   termsOfUser = true
   environment!: any
   currentRoute = 'page/home'
+  redirectPath = '/page/home'
+  logoSrc = '/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg'
   hubsList!: NsInstanceConfig.IHubs[]
   portalUrls!: NsInstanceConfig.IPortalUrls
   private baseUrl = this.configSvc.baseUrl
@@ -31,6 +33,7 @@ export class AppFooterComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private translate: TranslateService,
+    private domainConfSvc: DomainConfService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -66,6 +69,8 @@ export class AppFooterComponent implements OnInit {
       const newInstance = await this.readAgain()
       this.hubsList = (newInstance.hubs || []).filter(i => i.active)
     }
+    this.logoSrc = this.domainConfSvc.getDomainAppLogo(environment)
+    this.redirectPath = this.domainConfSvc.getDomainRedirectPath(environment)
   }
   async readAgain() {
     const publicConfig: NsInstanceConfig.IConfig = await this.http
