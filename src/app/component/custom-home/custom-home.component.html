@@ -190,7 +190,7 @@
         *ngIf="homeConfig?.rightSection?.active">
         <div class="flex flex-col gap-1 mt-3">
           <ng-container *ngIf="enableLazyLoadingFlag">
-            <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+            <div class="slider margin-top-m" *ngIf="sliderData && sliderData[0]?.active">
               <ng-container *ngFor="let sectionItem of sectionList">
                 <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                   <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -229,7 +229,7 @@
         *ngIf="homeConfig?.rightSection?.active">
         <div class="flex flex-col gap-3 mt-8">
           sliderData --{{sliderData | json}}
-          <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+          <div class="slider margin-top-m" *ngIf="sliderData && sliderData[0]?.active">
             sectionList --{{sectionList | json}}
             <ng-container *ngFor="let sectionItem of sectionList">
               <div>sectionItem --{{sectionItem | json}}</div>
