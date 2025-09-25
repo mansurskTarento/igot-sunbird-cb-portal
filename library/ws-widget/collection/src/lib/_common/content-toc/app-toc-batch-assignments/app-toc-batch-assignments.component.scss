@@ -17,6 +17,17 @@
   /* stylelint-enable */
 }
 
+.c-icon {
+  color: #1B4CA1 !important;
+  font-size: 14px;
+  height: 14px;
+  width: 14px;
+  font-weight: 600;
+  border: 1px solid #1B4CA1;
+  border-radius: 11px;
+  padding: 2px;
+}
+
 .upload-btn {
   background-color: white;
   border: 1px solid #1B4CA1 !important;
@@ -24,6 +35,13 @@
   padding: 6px 16px;
   color: #1B4CA1;
   font-weight: 600;
+  font-size: 14px;
+  /* stylelint-disable */
+  font-family: Lato;
+  /* stylelint-enable */
+}
+
+.font-style {
   font-size: 14px;
   /* stylelint-disable */
   font-family: Lato;
@@ -56,5 +74,37 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+mat-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.download-btn .white-spinner {
+
+  ::ng-deep .mat-progress-spinner circle,
+  ::ng-deep .mat-spinner circle {
+    stroke: white !important;
+  }
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  .blue-spinner {
+
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+
+    ::ng-deep .mat-progress-spinner circle,
+    ::ng-deep .mat-spinner circle {
+      stroke: #1B4CA1 !important;
+    }
+
   }
 }

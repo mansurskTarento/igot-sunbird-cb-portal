@@ -1,15 +1,52 @@
 <div class="guide-container">
   <ng-container *ngFor="let assignment of assignments; index as i">
-    <div class="guide-card flex gap-4 justify-between flex-middle">
-      <div class="note-title">{{i + 1}}. {{assignment.title}} </div>
-      <div class="flex  flex-middle gap-3">
-        <button mat-button class="download-btn  flex align-center justify-center ">Download</button>
-        <button mat-button class="upload-btn flex align-center justify-center">Upload</button>
-        <button mat-button class="view-btn  flex align-center justify-center ">View Feedback</button>
+    <div class="guide-card">
+      <div class="content flex gap-4 justify-between flex-middle">
+        <div class="note-title">{{i + 1}}. {{assignment.title}} </div>
+        <div class="flex flex-middle gap-3 " *ngIf="!assignment.expand">
+          <button mat-button class="download-btn cursor-pointer flex align-center justify-center"
+            (click)="downloadFile(assignment)" [disabled]="assignment.downloading">
+            <span *ngIf="assignment.downloading" class="white-spinner">
+              <mat-spinner diameter="16" class="mr-2" [style.color]="'white'" strokeWidth="2"></mat-spinner>Download
+            </span>
+            <span *ngIf="!assignment.downloading">
+              Download
+            </span>
+          </button>
+          <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
+            (click)="triggerFileUpload()">
+            Upload
+          </button>
+          <input #resourceFile type="file" name="sResourceFile" id="sResourceFile" class="hidden"
+            (change)="fileInputEmit(resourceFile.files, assignment)">
+          <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
+            (click)="handleViewFeedback(assignment)">View Feedback</button>
+        </div>
+        <mat-icon class="cursor-pointer c-icon" *ngIf="assignment.expand"
+          (click)="assignment.expand = !assignment.expand">
+          close
+        </mat-icon>
       </div>
+      <div class="flex justify-between flex-col mt-4" *ngIf="assignment.expand">
+        <div class="font-bold font-style">
+          <div>Marks obtained - 20/25</div>
+        </div>
+        <div class="font-bold font-style">Instrcutor feedback</div>
+        <div class="font-style">
+          Once, there was a dog who wandered the streets night and day in search of food. One day, he found a big juicy
+          bone, and he immediately grabbed it in his mouth and took it home. On his way home, he crossed a river and saw
+          another dog with a bone in its mouth. He wanted that bone for himself, too. But as he opened his mouth, the
+          bone he was biting fell into the river and sank. That night, he went home hungry.
+        </div>
+      </div>
+
     </div>
   </ng-container>
 </div>
+<div class="flex justify-center items-center mt-4 loader" *ngIf="isLoading">
+  <mat-spinner strokeWidth="3" [diameter]="50" [style.stroke]="'#1B4CA1'" class="blue-spinner"></mat-spinner>
+</div>
+
 
 <!-- No teachers resources message -->
 <div *ngIf="assignments?.length === 0" class="no-resources-message mt-4">
