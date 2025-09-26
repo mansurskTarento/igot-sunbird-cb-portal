@@ -200,7 +200,7 @@
             <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
               <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                 <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                  <ws-feed-list [widgetData]="sectionItem.stripData"
+                  <ws-feed-list [widgetData]="sectionItem.stripData" [providerId]="getOrgId(sectionItem.stripData)"
                     (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                   </ws-feed-list>
                 </ng-container>
@@ -213,7 +213,7 @@
           <ng-container *ngIf="!enableLazyLoadingFlag">
             <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
               <ng-container *ngIf="item?.strips[0]?.active">
-                <ws-feed-list [widgetData]="item"
+                <ws-feed-list [widgetData]="item" [providerId]="getOrgId(sectionItem.stripData)"
                   (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
               </ng-container>
             </ng-container>
@@ -244,7 +244,7 @@
             <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
               <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                 <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                  <ws-feed-list [widgetData]="sectionItem.stripData"
+                  <ws-feed-list [widgetData]="sectionItem.stripData" [providerId]="getOrgId(sectionItem.stripData)"
                     (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                   </ws-feed-list>
                 </ng-container>
@@ -256,7 +256,7 @@
           <ng-container *ngIf="!enableLazyLoadingFlag">
             <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
               <ng-container *ngIf="item?.strips[0]?.active">
-                <ws-feed-list [widgetData]="item"
+                <ws-feed-list [widgetData]="item" [providerId]="getOrgId(sectionItem.stripData)"
                   (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
               </ng-container>
             </ng-container>

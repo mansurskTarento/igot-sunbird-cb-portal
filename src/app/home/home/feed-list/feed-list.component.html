@@ -15,13 +15,15 @@
  <ng-container *ngIf="widgetData?.stripType === 'withOutPils'  && (widgetData?.stripVisable === 'mobile' &&  isMobile)">
     <sb-uic-content-strip-with-tabs 
     (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-    [widgetData]="widgetData">
+    [widgetData]="widgetData"
+    [providerId]="providerId">
     </sb-uic-content-strip-with-tabs>
  </ng-container>
 <ng-container *ngIf="widgetData?.stripType === 'withOutPils' && widgetData?.stripVisable === 'responsive'">
     <sb-uic-content-strip-with-tabs 
     (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-    [widgetData]="widgetData">
+    [widgetData]="widgetData"
+    [providerId]="providerId">
     </sb-uic-content-strip-with-tabs>
 </ng-container>
 <ng-container *ngIf="widgetData?.stripType === 'oldPills'">
