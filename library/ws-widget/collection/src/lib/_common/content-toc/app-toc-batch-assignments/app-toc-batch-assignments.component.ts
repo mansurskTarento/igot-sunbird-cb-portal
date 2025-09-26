@@ -125,18 +125,18 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
   submitAssignment(assessment: any) {
     console.log('Submit assignment clicked', assessment)
     const dialgoData = {
-      description: 'You have already submitted your assignment. Do you want to continue with the same submission or reupload a new file?',
+      description: 'You have already uploaded an assignment. Choose an option below to either keep your current submission or upload a new file.',
       type: 'warning',
       buttonsPositionClass: 'justify-center items-center',
       buttons: [
         {
           classes: 'btn-out-line',
-          text: 'Upload',
+          text: 'Re-upload',
           response: 0
         },
         {
           classes: 'succes-button',
-          text: 'Continue',
+          text: 'Keep Submission',
           response: 1
         }
       ]
