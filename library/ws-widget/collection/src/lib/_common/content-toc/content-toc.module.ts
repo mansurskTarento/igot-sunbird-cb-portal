@@ -49,6 +49,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
 import { MarkdownModule } from 'ngx-markdown';
 import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app-toc-batch-assignments.component'
+import { AssignmentViewerComponent } from './app-toc-assignment-viewer/app-toc-assignment-viewer.component'
+import { DialogComponentsModule } from '@sunbird-cb/consumption'
 
 @NgModule({
   declarations: [
@@ -68,6 +70,7 @@ import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app
     HighlightPipe,
     AiTutorComponent,
     AppTocBatchAssignmentsComponent,
+    AssignmentViewerComponent,
   ],
   imports: [
     CommonModule,
@@ -97,6 +100,7 @@ import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app
     TocKpiValuesModule,
     KarmaPointsModule,
     TranslateModule,
+    DialogComponentsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

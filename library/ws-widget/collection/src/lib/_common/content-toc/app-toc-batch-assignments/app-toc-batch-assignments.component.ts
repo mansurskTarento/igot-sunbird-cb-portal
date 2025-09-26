@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { environment } from 'src/environments/environment'
+import { AssignmentViewerComponent } from '../app-toc-assignment-viewer/app-toc-assignment-viewer.component'
+import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 
 @Component({
   selector: 'ws-widget-app-batch-assignments-notes',
@@ -20,12 +24,15 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
   fileExtention: any
   resourceFileAdded: any
   isLoading: boolean = false
+  selectedAssignment: any
 
 
   constructor(public router: Router,
     private snackBar: MatLegacySnackBar,
     public tocSvc: AppTocService,
     public configSvc: ConfigurationsService,
+    private dialog: MatDialog,
+    private dialogLegacy: MatLegacyDialog,
   ) { }
 
   ngOnInit() {
@@ -42,7 +49,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
         description: 'Description for Assignment 2',
         expand: false,
         downloading: false,
-        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx'
+        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx',
+        answerURL: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx'
       },
       {
         title: 'Assignment 3',
@@ -100,11 +108,56 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
   }
 
-  triggerFileUpload() {
-    const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.click();
+
+  triggerFileUpload(assignment: any) {
+    if (assignment.answerURL) {
+      this.selectedAssignment = assignment
+      this.submitAssignment(assignment)
+    } else {
+      const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.click();
+      }
     }
+
+  }
+
+  submitAssignment(assessment: any) {
+    console.log('Submit assignment clicked', assessment)
+    const dialgoData = {
+      description: 'You have already submitted your assignment. Do you want to continue with the same submission or reupload a new file?',
+      type: 'warning',
+      buttonsPositionClass: 'justify-center items-center',
+      buttons: [
+        {
+          classes: 'btn-out-line',
+          text: 'Upload',
+          response: 0
+        },
+        {
+          classes: 'succes-button',
+          text: 'Continue',
+          response: 1
+        }
+      ]
+    }
+    const dialogRef = this.dialogLegacy.open(ConfirmationDialogComponent, {
+      data: dialgoData,
+      disableClose: true,
+      width: '400px',
+      maxWidth: '90vw'
+    })
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 1) {
+        this.viewAssignments(assessment.answerURL)
+      } else if (result === 0) {
+        const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
+        if (fileInput) {
+          fileInput.click()
+        }
+      }
+    })
   }
 
   fileInputEmit(fileInput: FileList | null, assignment: any): void {
@@ -140,7 +193,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
   }
 
-  constructPayload(assignment: any) {
+  constructPayload() {
     let requestBody: any
     if (this.configSvc.userProfile) {
       requestBody = {
@@ -155,7 +208,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
             duration: '90',
             framework: 'igot',
             mimeType: this.getMimeType(),
-            name: assignment.title,
+            name: this.selectedAssignment.title,
             organisation: [this.configSvc.userProfile.departmentName ? this.configSvc.userProfile.departmentName : ''],
             isExternal: false,
             primaryCategory: 'Learning Resource',
@@ -177,7 +230,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
 
   async createResource(file: File, assignment: any): Promise<void> {
     this.resourceFileAdded = file
-    let requestBody = this.constructPayload(assignment)
+    this.selectedAssignment = assignment
+    let requestBody = this.constructPayload()
     this.isLoading = true
     const createRes: any = await this.tocSvc.createContentV2(requestBody).toPromise().catch(async (_error: any) => {
       this.openSnackbar('File Type Should be Correct')
@@ -230,12 +284,28 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     const updateRes = await this.tocSvc.updateContentWithFewFields(requestPayload, identifier).toPromise().catch((_error: any) => { })
     if (updateRes && updateRes.params && updateRes.params.status === 'successful') {
       this.openSnackbar('File uploaded successfully')
+      this.viewAssignments(requestPayload.request.content.artifactUrl)
       this.resourceFileAdded = ''
       this.isLoading = false
     } else {
       this.isLoading = false
       this.openSnackbar('File update failed.')
     }
+  }
+
+  viewAssignments(downlaodUrl: any) {
+    const dialogRef = this.dialog.open(AssignmentViewerComponent, {
+      width: '40%',
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      data: {
+        assessment: this.selectedAssignment,
+        url: downlaodUrl
+      }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+    })
   }
 
   generateUrl(oldUrl: string) {
