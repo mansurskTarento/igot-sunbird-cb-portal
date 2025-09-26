@@ -26,7 +26,7 @@ import { HomeComponent } from './home/home.component'
 import { DiscussionInfoComponent } from '../component/discussion-info/discussion-info.component'
 import { PageContainerComponent } from '../component/page-container/page-container.component'
 import { ClientSliderComponent } from '../component/client-slider/client-slider.component'
-import { HomeOtherPortalComponent } from '../component/home-other-portal/home-other-portal.component'
+import { HomeOtherPortalModule } from '../component/home-other-portal/home-other-portal.module'
 import { HomeContainerComponent } from '../component/home-container/home-container.component'
 import { DiscussHubComponent } from './home/discuss-hub/discuss-hub.component'
 import { NetworkHubComponent } from './home/network-hub/network-hub.component'
@@ -55,7 +55,7 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
     declarations: [
         HomeComponent,
         PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
-        HomeOtherPortalComponent, HomeContainerComponent, DiscussHubComponent,
+        HomeContainerComponent, DiscussHubComponent,
         NetworkHubComponent, NotificationComponent, SurveyFormComponent
     ],
     imports: [
@@ -100,7 +100,8 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         SurveyFormModule,
         MatDialogModule,
         FeedListModule,
-        InSightSideBarModule
+        InSightSideBarModule,
+        HomeOtherPortalModule
     ],
     exports: [
         HeaderModule,
@@ -109,7 +110,7 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         TranslateModule,
         FeedListModule,
         InSightSideBarModule,
-        HomeOtherPortalComponent
+        HomeOtherPortalModule
     ],
     providers: [
         HomePageService,

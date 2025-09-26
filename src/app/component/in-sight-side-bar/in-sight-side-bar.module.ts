@@ -57,6 +57,9 @@ import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '
 // Import translate module
 import { TranslateModule } from '@ngx-translate/core'
 
+// Import home other portal module
+import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.module'
+
 @NgModule({
   declarations: [InsightSideBarComponent],
   imports: [
@@ -112,7 +115,10 @@ import { TranslateModule } from '@ngx-translate/core'
     HorizontalScrollerV2Module,
 
     // Translate module
-    TranslateModule
+    TranslateModule,
+
+    // Home other portal module
+    HomeOtherPortalModule
   ],
   exports: [InsightSideBarComponent]
 })
