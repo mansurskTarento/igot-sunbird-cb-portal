@@ -102,7 +102,7 @@ export class AssignmentViewerComponent implements OnInit {
     console.log('Submit assignment clicked', assessment)
     const dialgoData = {
       description: 'Are you sure you want to submit your assignment? Once submitted, you won’t be able to make any changes',
-      iconName: 'vega',
+      iconName: 'info_circle',
       type: 'warning',
       buttonsPositionClass: 'justify-center items-center',
       buttons: [
