@@ -228,19 +228,23 @@ export class PublicCrpComponent {
         this.invalidLinkMessage &&
         this.invalidLinkMessage == 'Registration link is not active'
       ) {
-        setTimeout(() => {
-          const message = this.sanitizer.bypassSecurityTrustHtml(
-            'Registrations are closed as of now. Please reach out to your department MDO or write to us at ' +
-            '<a href="mailto:mission.karmayogi@gov.in?subject=Support Request&body=Please provide your organization and designation details." ' +
-            'target="_blank">mission.karmayogi@gov.in</a> with organization and designation name'
-          );
-          this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
-            width: '400px',
-            height: '200px',
-            data: { type: 'expiredLink', message: message },
-            disableClose: true,
-          });
-        }, 200)
+      setTimeout(() => {
+      const staticURL = environment?.staticHomePageUrl || 'https://igotkarmayogi.gov.in/';
+      const redirectUrl = staticURL + '#/mdoList#mdoUserList';
+      const message = this.sanitizer.bypassSecurityTrustHtml(
+        'Registrations are closed as of now. You may reach out to your respective nodal officer for assistance. ' +
+        'Click on the below link to get the name and email of your respective Nodal officer.<br>' +
+        `<a href="${redirectUrl}" target="_blank" class="custom-link">Click Here</a>`
+      );
+    
+      this.dialogRef = this.dialog.open(this.invalidLinkTemplateRef, {
+        width: '400px',
+        height: '200px',
+        data: { type: 'expiredLink', message: message },
+        disableClose: true,
+      });
+     }, 200);
+
       }
     }
 
