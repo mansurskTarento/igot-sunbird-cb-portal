@@ -530,7 +530,8 @@ export class AppTocBannerComponent implements OnInit, OnChanges, OnDestroy {
       // const isDptUser = _.get(this.userProfileObject, 'rootOrgId') === doptorgID
 
     this.getDoptEligibleServicesList()
-      const civilServiceName = _.get(this.userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
+    const userProfileObject = this.configSvc?.unMappedUser || {}
+      const civilServiceName = _.get(userProfileObject, 'profileDetails.cadreDetails.civilServiceName', '')
       if (this.doptEligibleServicesList && this.doptEligibleServicesList.length > 0) {
         if (!civilServiceName) {
           this.openConformationDialog(`This program has eligibility criteria. Please update your service details in your profile before requesting to enroll.`)
