@@ -8,9 +8,10 @@ import { environment } from 'src/environments/environment'
 import { AssignmentViewerComponent } from '../app-toc-assignment-viewer/app-toc-assignment-viewer.component'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-widget-app-batch-assignments-notes',
+  selector: 'ws-widget-app-batch-assignments',
   templateUrl: './app-toc-batch-assignments.component.html',
   styleUrls: ['./app-toc-batch-assignments.component.scss'],
 })
@@ -18,7 +19,7 @@ import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 export class AppTocBatchAssignmentsComponent implements OnInit {
 
   @Input() content: any
-  @Input() currentCourseBatchId: any
+  @Input() batchId: any
   assignments: any[] = []
   allowType: string[] = ['.pdf', '.doc', '.docx']
   fileExtention: any
@@ -36,37 +37,27 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.assignments = [
-      {
-        title: 'Assignment 1',
-        description: 'Description for Assignment 1',
-        expand: false,
-        downloading: false,
-        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038388811530241163/artifact/do_1144038388811530241163_1758281114109_leave-policy_ver-4.1.docx1758281113936.pdf'
+    this.fetchAssignments()
+  }
+
+  fetchAssignments() {
+    const payload: any = {
+      query: '',
+      filters: {
+        "additionalProperties.batchId": this.batchId,
       },
-      {
-        title: 'Assignment 2',
-        description: 'Description for Assignment 2',
+    }
+    this.tocSvc.searchAssignments(payload).subscribe((response: any) => {
+      let assignments = _.get(response, 'result.response.content', [])
+      console.log('this.assignmentsList', this.assignments)
+      this.assignments = assignments.map((assignment: any) => ({
+        ...assignment,
         expand: false,
         downloading: false,
-        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx',
-        answerURL: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx'
-      },
-      {
-        title: 'Assignment 3',
-        description: 'Description for Assignment 3',
-        expand: false,
-        downloading: false,
-        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038206161797121162/artifact/do_1144038206161797121162_1758278884521_sravan.resume1758278884414.docx'
-      },
-      {
-        title: 'Assignment 4',
-        description: 'Description for Assignment 4',
-        expand: false,
-        downloading: false,
-        downloadUrl: 'https://portal.dev.karmayogibharat.net/content-store/content/do_1144038388811530241163/artifact/do_1144038388811530241163_1758281114109_leave-policy_ver-4.1.docx1758281113936.pdf'
-      }
-    ]
+      }))
+    }, error => {
+      console.error('Error fetching assignments', error)
+    })
   }
 
   handleViewFeedback(assignment: any) {
@@ -79,16 +70,16 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
   }
 
   downloadFileDirectly(assignment: any) {
-    if (assignment.downloadUrl) {
-      window.open(assignment.downloadUrl, '_blank')
+    if (assignment.additionalProperties.assignmentUrl) {
+      window.open(assignment.additionalProperties.assignmentUrl, '_blank')
       assignment.downloading = false
     }
   }
 
   async downloadFileWithFetch(assignment: any) {
-    if (!assignment.downloadUrl) return
+    if (!assignment.additionalProperties.assignmentUrl) return
     try {
-      const response = await fetch(assignment.downloadUrl)
+      const response = await fetch(assignment.additionalProperties.assignmentUrl)
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
@@ -96,7 +87,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = this.extractFilenameFromUrl(assignment.downloadUrl) || `${assignment.title}.pdf`
+      link.download = this.extractFilenameFromUrl(assignment.additionalProperties.assignmentUrl) || `${assignment.title}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)

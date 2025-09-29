@@ -43,7 +43,8 @@ const API_END_POINTS = {
   CREATE_RESOURCE: `apis/proxies/v8/action/content/v3/create`,
   READ_RESOURCE: `apis/proxies/v8/action/content/v3/`,
   UPLOAD_FILE: `apis/proxies/v8/upload/action/content/v3/`,
-  UPDATE_RESOURCE: `apis/proxies/v8/action/content/v3/update`
+  UPDATE_RESOURCE: `apis/proxies/v8/action/content/v3/update`,
+  SEARCH: `/apis/proxies/v8/assignment/v1/search`
 }
 
 @Injectable()
@@ -1069,4 +1070,9 @@ export class AppTocService {
       requestBody,
     )
   }
+
+  searchAssignments(request: any): Observable<any> {
+    return this.http.post(API_END_POINTS.SEARCH, request)
+  }
+
 }
