@@ -12,7 +12,6 @@ import { UrlService } from 'src/app/shared/url.service'
 import * as _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { Subscription } from 'rxjs'
-import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-nav-bar',
@@ -155,9 +154,9 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.configSvc.instanceConfig) {
       this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        this.domainConfSvc.getDomainAppLogo(environment)
+        this.domainConfSvc.getDomainAppLogo()
       )
-      this.redirectPath = this.domainConfSvc.getDomainRedirectPath(environment)
+      this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
         
 
       this.appIconSecondary = this.domSanitizer.bypassSecurityTrustResourceUrl(

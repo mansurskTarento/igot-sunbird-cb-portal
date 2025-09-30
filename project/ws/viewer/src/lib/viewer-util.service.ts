@@ -356,7 +356,7 @@ export class ViewerUtilService {
 
   getCdnUrl(url: string): string {
     const mainUrl = url.split('/content').pop() || ''
-    return `${this.domainConfSvc.getDomainCDNHost(environment)}/${environment.cdnContentBucket}/content${mainUrl}`    
+    return `${this.domainConfSvc.getDomainCDNHost()}/${environment.cdnContentBucket}/content${mainUrl}`    
   }
 
   //  fetchContent(
