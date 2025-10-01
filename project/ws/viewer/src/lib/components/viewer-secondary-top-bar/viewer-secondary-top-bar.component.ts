@@ -12,6 +12,9 @@ import { CourseCompletionDialogComponent } from '../course-completion-dialog/cou
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
+
+const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = ["Invite-Only Program", "Moderated Program", "Blended Program", "Curated Program", "Standalone Assessment", "Moderated Assessment", "Invite-Only Assessment"]
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
   templateUrl: './viewer-secondary-top-bar.component.html',
@@ -66,6 +69,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   enrollmentList: any = []
   pageScrollSubscription: Subscription | null = null
   // primaryCategory = NsContent.EPrimaryCategory
+  contentPrimaryCategory: any
   constructor(
     private activatedRoute: ActivatedRoute,
     private domSanitizer: DomSanitizer,
@@ -80,7 +84,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     private pdfScormDataService: PdfScormDataService,
     private events: EventService,
     private appTocSvc: AppTocService,
-    private widgetLibSvc: WidgetContentLibService
+    private widgetLibSvc: WidgetContentLibService,
+    private contentSvc: WidgetContentServiceUtils
+    
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -96,6 +102,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     // this.getAuthDataIdentifer()
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
     && this.activatedRoute.snapshot.data.enrollmentData.data || []
+    
+    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead && 
+      this.activatedRoute?.snapshot?.data?.contentRead?.data?.result?.content?.primaryCategory
+
     this.pageScrollSubscription = this.appTocSvc.updatePageScroll.subscribe((value: boolean) => {
       if (value) {
         setTimeout(() => {
@@ -353,6 +363,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           (data: any) => {
             this.contentProgressHash = data.result.contentList
             this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
+
+            if(this.contentProgressHash?.length && this.contentProgressHash[0]?.completionPercentage === 100 && this.contentProgressHash[0]?.status === 2) {
+              this.generateCertificate()
+            }
             if (this.content && ![
               NsContent.ECourseCategory.MODERATED_COURSE,
               NsContent.ECourseCategory.MODERATED_ASSESSEMENT,
@@ -360,6 +374,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
               NsContent.ECourseCategory.INVITE_ONLY_PROGRAM,
             ].includes(this.content.courseCategory)) {
               if (this.completedCount === this.leafNodesCount) {
+
                 this.showCompletionPopUp()
               } else {
                 this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
@@ -502,4 +517,26 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   //   console.log('data--', data)
   //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
   // }
+
+    generateCertificate() {
+      const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+        (cat: string) => cat?.toLowerCase()
+      );
+
+      if (
+        allowedPrimaryCategory &&
+        allowedPrimaryCategory.includes(
+          this.contentPrimaryCategory?.toLowerCase()
+        )
+      ) {
+        const payload = {
+          request: {
+            courseId: this.identifier,
+            batchId: this.batchId,
+            userId: this.userid,
+          },
+        };
+        this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+      } 
+  }
 }
