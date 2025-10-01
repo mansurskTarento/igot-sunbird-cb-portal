@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs'
 import { AccessControlService } from '@ws/author'
 import {
   NsContent,
-  IWidgetsPlayerMediaData,
   NsDiscussionForum,
   WidgetContentService,
 } from '@sunbird-cb/collection'
@@ -29,9 +28,7 @@ export class VideoComponent implements OnInit, OnDestroy {
   videoData: NsContent.IContent | null = null
   isFetchingDataComplete = false
   isNotEmbed = true
-  widgetResolverVideoData: NsWidgetResolver.IRenderConfigWithTypedData<
-    IWidgetsPlayerMediaData
-  > | null = null
+  widgetResolverVideoData: any = null
   discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
     NsDiscussionForum.IDiscussionForumInput
   > | null = null
@@ -48,6 +45,7 @@ export class VideoComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    console.log('this.videoData', this.videoData)
     this.screenSizeSubscription = this.valueSvc.isXSmall$.subscribe(data => {
       this.isScreenSizeSmall = data
     })
@@ -80,6 +78,7 @@ export class VideoComponent implements OnInit, OnDestroy {
         url = this.generateUrl(this.videoData!.artifactUrl)
         this.widgetResolverVideoData.widgetData.url = this.videoData ? url : ''
         this.widgetResolverVideoData.widgetData.disableTelemetry = false
+        console.log('this.videoData', this.videoData)
         if (this.videoData) {
           this.widgetResolverVideoData.widgetData.identifier = this.videoData.identifier
           this.widgetResolverVideoData.widgetData.mimeType = this.videoData.mimeType
@@ -88,6 +87,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           this.widgetResolverVideoData.widgetData.version = `${this.videoData.version}${''}`
           this.widgetResolverVideoData.widgetData.channel = this.channelId
           this.widgetResolverVideoData.widgetData.size = this.videoData.duration
+          this.widgetResolverVideoData.widgetData.streamingUrl = this.videoData.streamingUrl
         }
         if (this.widgetResolverVideoData && this.widgetResolverVideoData.widgetData) {
           this.widgetResolverVideoData.widgetData['hideUpNext'] = this.hideUpNext
@@ -122,6 +122,7 @@ export class VideoComponent implements OnInit, OnDestroy {
         async data => {
           this.widgetResolverVideoData = null
           this.videoData = data.content.data
+          console.log('this.videoData', this.videoData)
           if (this.videoData) {
             this.formDiscussionForumWidget(this.videoData)
           }
@@ -155,6 +156,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           this.widgetResolverVideoData.widgetData.channel = this.channelId
           this.widgetResolverVideoData.widgetData.version = `${data.content.data.version}${''}`
           this.widgetResolverVideoData.widgetData.size = data.content.data.duration
+          this.widgetResolverVideoData.widgetData.streamingUrl = data.content.data.streamingUrl
           if (this.widgetResolverVideoData && this.widgetResolverVideoData.widgetData) {
             this.widgetResolverVideoData.widgetData['hideUpNext'] = this.hideUpNext
           }
@@ -270,24 +272,6 @@ export class VideoComponent implements OnInit, OnDestroy {
   }
   async fetchContinueLearning(videoId: string): Promise<boolean> {
     return new Promise(resolve => {
-      // this.contentSvc.fetchContentHistory(collectionId).subscribe(
-      //   data => {
-      //     if (data) {
-      //       if (
-      //         data.identifier === videoId &&
-      //         data.continueData &&
-      //         data.continueData.progress &&
-      //         this.widgetResolverVideoData
-      //       ) {
-      //         this.widgetResolverVideoData.widgetData.resumePoint = Number(
-      //           data.continueData.progress,
-      //         )
-      //       }
-      //     }
-      //     resolve(true)
-      //   },
-      //   () => resolve(true),
-      // )
       let userId
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId || ''
@@ -312,7 +296,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           },
         }
         this.contentSvc.fetchContentHistoryV2(req).subscribe(
-          (data:any) => {
+          (data: any) => {
             if (data && data.result && data.result.contentList.length) {
               this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
               for (const content of data.result.contentList) {
@@ -334,15 +318,16 @@ export class VideoComponent implements OnInit, OnDestroy {
                 }
               }
             }
-            resolve(true)
+            resolve(true) // Resolve when subscription completes successfully
           },
-          () => resolve(true),
+          (error) => {
+            console.error('Error fetching continue learning data:', error)
+            resolve(true) // Resolve even on error to prevent hanging
+          }
         )
-        resolve(true)
       } else {
-        resolve(true)
+        resolve(true) // Resolve immediately if conditions not met
       }
-
     })
   }
   private async setS3Cookie(contentId: string) {

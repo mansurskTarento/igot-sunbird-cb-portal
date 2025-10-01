@@ -29,6 +29,7 @@ export class CbpPlanComponent implements OnInit {
   usersCbpCount: any
   upcommingList: any = []
   overDueList: any = []
+  aparList: any = []
   overdueUncompleted: any = []
   upcomingUncompleted: any = []
   completedList: any = []
@@ -75,6 +76,7 @@ export class CbpPlanComponent implements OnInit {
     }
     this.upcommingList = this.transformSkeletonToWidgets(this.cbpAllConfig.cbpUpcomingStrips)
     this.overDueList = this.transformSkeletonToWidgets(this.cbpAllConfig.cbpUpcomingStrips)
+    this.aparList = this.transformSkeletonToWidgets(this.cbpAllConfig.cbpUpcomingStrips)
     this.contentFeedList = this.transformSkeletonToWidgets(this.getFeedStrip())
     this.getCbPlans()
   }
@@ -88,6 +90,7 @@ export class CbpPlanComponent implements OnInit {
       this.upcommingList = []
       this.contentFeedList = []
       this.overDueList = []
+      this.aparList = []
       this.completedList = []
       response = response.sort((a: any, b: any): any => {
         if (a.planDuration === NsCardContent.ACBPConst.OVERDUE && b.planDuration === NsCardContent.ACBPConst.OVERDUE) {
@@ -102,12 +105,17 @@ export class CbpPlanComponent implements OnInit {
         } else {
           this.upcommingList.push(ele)
         }
+        if( ele.isApar === true) {
+          this.aparList.push(ele)
+        }
       })
       this.completedList = response.filter((allData: any) => allData.contentStatus === this.contentCompletedStatus)
       this.contentFeedListCopy = response
       this.contentFeedList = this.transformContentsToWidgets(response, this.getFeedStrip())
       this.upcommingList = this.transformContentsToWidgets(this.upcommingList, this.cbpAllConfig.cbpUpcomingStrips)
       this.overDueList = this.transformContentsToWidgets(this.overDueList, this.cbpAllConfig.cbpUpcomingStrips)
+      this.aparList = this.transformContentsToWidgets(this.aparList, this.cbpAllConfig.cbpUpcomingStrips)
+      
       const vall = this.overDueList.length + this.upcommingList.length
       this.upcommingList.filter((data: any) => {
         if (data && data.widgetData &&  data.widgetData.content && data.widgetData.content.contentStatus < this.contentCompletedStatus) {
@@ -125,6 +133,7 @@ export class CbpPlanComponent implements OnInit {
         upcoming: this.upcomingUncompleted.length,
         overdue: this.overdueUncompleted.length,
         completed: this.completedList.length,
+        apar: this.aparList.length,
         all: vall,
       }
     } else {
@@ -132,6 +141,7 @@ export class CbpPlanComponent implements OnInit {
       this.overDueList = []
       this.contentFeedList = []
       this.completedList = []
+      this.aparList = []
     }
     this.cbpLoader = false
     // this.widgetSvc.fetchCbpPlanList().subscribe(async (res: any) => {

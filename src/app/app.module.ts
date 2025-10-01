@@ -73,7 +73,7 @@ import {
 } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { SbUiResolverModule } from '@sunbird-cb/resolver-v2'
-import { LoggerService, PipeSafeSanitizerModule, ConfigurationsService, PipeOrderByModule, NPSGridService } from '@sunbird-cb/utils-v2'
+import { LoggerService, PipeSafeSanitizerModule, ConfigurationsService, PipeOrderByModule, NPSGridService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { SearchModule } from '@ws/app/src/public-api'
 import 'hammerjs'
 // import { KeycloakAngularModule } from 'keycloak-angular'
@@ -384,6 +384,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NPSGridService,
     AppPreAssessmentContentResolverService,
     HttpClient,
+    DomainConfService,
     {
       provide: APP_BASE_HREF,
       useFactory: getBaseHref,

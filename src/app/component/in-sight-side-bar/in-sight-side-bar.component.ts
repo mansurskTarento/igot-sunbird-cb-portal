@@ -1,6 +1,6 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
 import { Component, EventEmitter, OnInit, Output } from '@angular/core'
-import { HomePageService } from 'src/app/services/home-page.service'
+import { HomePageService } from '../../services/home-page.service'
 import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -8,7 +8,7 @@ import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/dis
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import moment from 'moment'
-import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
+import { SignupService } from '../../routes/public/public-signup/signup.service'
 import _ from 'lodash';
 import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'

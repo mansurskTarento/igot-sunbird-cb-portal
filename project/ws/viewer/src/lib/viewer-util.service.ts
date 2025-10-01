@@ -1,4 +1,4 @@
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { noop, Observable, of, Subject } from 'rxjs'
@@ -39,6 +39,7 @@ export class ViewerUtilService {
     private tocSvc: AppTocService,
     private userSvc: WidgetUserServiceLib,
     private contentLangSvc: ContentLanguageService,
+    private domainConfSvc: DomainConfService
     ) { }
 
   async fetchManifestFile(url: string) {
@@ -357,7 +358,7 @@ export class ViewerUtilService {
 
   getCdnUrl(url: string): string {
     const mainUrl = url.split('/content').pop() || ''
-    return `${environment.cdnContentHost}/${environment.cdnContentBucket}/content${mainUrl}`
+    return `${this.domainConfSvc.getDomainCDNHost()}/${environment.cdnContentBucket}/content${mainUrl}`    
   }
 
   //  fetchContent(

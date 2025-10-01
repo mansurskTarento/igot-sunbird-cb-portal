@@ -497,8 +497,20 @@ const routes: Routes = [
       pageData: PageResolve,
     },
   },
-
-  {
+    {
+    path: 'page/custom-home',
+    loadChildren: () => import('./routes/route-custom-home.module').then(m => m.RouteCustomHomeModule),
+    data: {
+      pageType: 'feature',
+      pageKey: 'custom-home',
+      pageId: 'app/custom-home',
+      module: 'CUSTOM_HOME'
+    },
+    resolve: {
+    },
+    canActivate: [GeneralGuard]
+},
+    {
     path: 'app/my-learning',
     loadChildren: () =>
       import('./routes/route-my-learning.module').then(u => u.RouteMyLearningModule),
@@ -507,8 +519,8 @@ const routes: Routes = [
       pageId: 'app/my-learning',
       module: 'Profile',
     },
-  },
-  {
+    },
+    {
     path: 'app/my-dashboard',
     loadChildren: () =>
       import('./routes/route-my-dashboard.module').then(u => u.RouteMyDashboardModule),
@@ -517,8 +529,8 @@ const routes: Routes = [
       pageId: '',
       module: 'Dashboard',
     },
-  },
-  {
+    },
+    {
     path: 'app/my-rewards',
     loadChildren: () =>
       import('./routes/route-my-rewards.module').then(u => u.RouteMyRewarddModule),
@@ -527,8 +539,8 @@ const routes: Routes = [
       pageId: 'app/my-rewards',
       module: 'Profile',
     },
-  },
-  {
+    },
+    {
     path: 'app/network-v2',
     loadChildren: () =>
       import('./routes/route-network-v3.module').then(u => u.RouteNetworkV3Module),

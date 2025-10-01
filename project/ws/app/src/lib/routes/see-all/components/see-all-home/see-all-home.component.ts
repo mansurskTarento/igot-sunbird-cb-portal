@@ -12,7 +12,7 @@ import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
 // import { WidgetUserService } from '@sunbird-cb/collection/src/lib/_services/widget-user.service'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+
 import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
 import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
@@ -51,22 +51,41 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    let pageSubType = ''
+    let pageType = ''
     this.activated.queryParams.subscribe((res: any) => {
       this.keyData = (res.key) ? res.key : ''
       this.tabSelected = (res.tabSelected) ? res.tabSelected : ''
+      pageSubType = (res.pageSubType) ? res.pageSubType : ''
+      pageType = (res.pageType) ? res.pageType : ''
     })
-    const configData = await this.seeAllSvc.getSeeAllConfigJson().catch(_error => {})
-    configData.homeStrips.forEach((ele: any) => {
-      if (ele && ele.strips.length > 0) {
-        ele.strips.forEach((subEle: any) => {
-          if (subEle.key === this.keyData) {
-            this.seeAllPageConfig = subEle
+    const configData = await this.seeAllSvc.getSeeAllConfigJson(pageType, pageSubType).catch(_error => { })
+    if(configData && configData.homeStrips){ 
+      configData.homeStrips.forEach((ele: any) => {
+       if (ele && ele.strips.length > 0) {
+         ele.strips.forEach((subEle: any) => {
+           if (subEle.key === this.keyData) {
+             this.seeAllPageConfig = subEle
+           }
+         })
+       }
+     })
+    }
+    if (!this.seeAllPageConfig) {
+      if (configData) {
+        configData.newHomeStrip.forEach((ele: any) => {
+          if (ele && ele.strips && ele.strips.length > 0) {
+            ele.strips.forEach((subEle: any) => {
+              if (subEle.key === this.keyData) {
+                this.seeAllPageConfig = subEle
+              }
+            })
           }
         })
       }
-    })
+    }
     if (!this.seeAllPageConfig) {
-      if (configData) {
+      if (configData && configData.assessmentData) {
         configData.assessmentData.forEach((ele: any) => {
           if (ele && ele.strips && ele.strips.length > 0) {
             ele.strips.forEach((subEle: any) => {
@@ -245,10 +264,10 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     return tabResults
   }
 
-  public tabClicked(tabEvent: MatTabChangeEvent, stripMap: any) {
+  public tabClicked(tabIndex: any, stripMap: any) {
     const data: WsEvents.ITelemetryTabData = {
-      label: `${tabEvent.tab.textLabel}`,
-      index: tabEvent.index,
+      label: `${stripMap.tabs[tabIndex].textLabel}`,
+      index: tabIndex,
     }
     this.eventSvc.raiseInteractTelemetry(
       {
@@ -261,15 +280,15 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
-    const currentTabFromMap = stripMap.tabs && stripMap.tabs[tabEvent.index]
+    const currentTabFromMap = stripMap.tabs && stripMap.tabs[tabIndex]
     const currentStrip = stripMap
     if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick) {
       if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
         // call API to get tab data and process
         if (currentTabFromMap.request.searchV6) {
-          this.getTabDataByNewReqSearchV6(currentStrip, tabEvent.index, currentTabFromMap, true)
+          this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, currentTabFromMap, true)
         } else if (currentTabFromMap.request.trendingSearch) {
-          this.getTabDataByNewReqTrending(currentStrip, tabEvent.index, currentTabFromMap, true)
+          this.getTabDataByNewReqTrending(currentStrip, tabIndex, currentTabFromMap, true)
         }
       }
     }

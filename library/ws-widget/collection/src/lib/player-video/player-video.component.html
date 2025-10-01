@@ -1,9 +1,9 @@
 <video  autoplay="true" muted="muted" crossorigin="Anonymous" id="videoTag" #videoTag *ngIf="widgetData?.isVideojs"
   class="video-js vjs-default-skin vjs-big-play-centered">
 
-  <source [src]="widgetData.url" />
-  <source [src]="widgetData.url" type="video/mp4" />
-  <source [src]="widgetData.url" type="application/x-mpegURL" />
+  <source [src]="widgetData.streamingUrl ? widgetData.streamingUrl : widgetData.url" />
+  <source [src]="widgetData.streamingUrl ? widgetData.streamingUrl : widgetData.url" type="video/mp4" />
+  <source [src]="widgetData.streamingUrl ? widgetData.streamingUrl : widgetData.url" type="application/x-mpegURL" />
   <!-- <track kind="captions"
     src="/apis/authContent/content-store/igot/dopt/Public/lex_auth_013114377081208832249/assets/sample1600885058308.vtt"
     srclang="en" label="English" default> -->

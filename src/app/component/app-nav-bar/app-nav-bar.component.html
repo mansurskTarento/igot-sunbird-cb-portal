@@ -5,7 +5,7 @@
     class="mat-elevation-z3 custom mobile-height" [ngClass]="{'mobile': isHubEnable}">
     <div class="fix-ww" id="root-tool-bar" *ngIf="isHubEnable">
       <ng-container *ngIf="mode === 'top'">
-        <a [routerLink]="'/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home"
+        <a [routerLink]="redirectPath" class="logo-dim  items-center hidden md:flex" role="link" title="Home"
          [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null"
           i18n-aria-title i18n-aria-label>
           <!-- <a [routerLink]="!isforPreview ? '/page/home' : '/page/home'" class="logo-dim  items-center hidden md:flex" role="link" title="Home" i18n-aria-title i18n-aria-label> -->
@@ -16,12 +16,12 @@
               </span>
             </div>
             <ng-template #janDataDisabled>
-              <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+              <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
             </ng-template>
           </ng-container>
 
           <ng-template #normalLogo>
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </ng-template>
         </a>
 
@@ -108,13 +108,13 @@
     <div class="fix-ww flex flex-row mt-3" id="root-tool-bar" title="toolbar" i18n-aria-label role="toolbar">
       <ng-container *ngIf="mode === 'top'">
         <div class="flex flex-1">
-          <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/page/home"
+          <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label [routerLink]="redirectPath"
             *ngIf="isThisSetUpPage">
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </a>
           <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/static-home"
             *ngIf="!isThisSetUpPage && isforPreview">
-            <img [src]="appIcon" alt="Application Logo" class="app-logo" />
+            <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
           </a>
         </div>
       </ng-container>
