@@ -364,7 +364,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             this.contentProgressHash = data.result.contentList
             this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
 
-            if(this.contentProgressHash?.length && this.contentProgressHash[0]?.completionPercentage === 100 && this.contentProgressHash[0]?.status === 2) {
+            const lastIndexData = this.contentProgressHash?.length && this.contentProgressHash[this.contentProgressHash?.length - 1]
+            if(lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
               this.generateCertificate()
             }
             if (this.content && ![
