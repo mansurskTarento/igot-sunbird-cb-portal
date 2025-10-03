@@ -17,6 +17,11 @@
   /* stylelint-enable */
 }
 
+.view-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .c-icon {
   color: #1B4CA1 !important;
   font-size: 14px;
@@ -75,6 +80,12 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+}
+
+.upload-btn:disabled {
+  cursor: not-allowed;
+  border: 1px solid #858181 !important;
+  color: #858181;
 }
 
 mat-spinner {

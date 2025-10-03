@@ -1,6 +1,7 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
@@ -30,6 +31,7 @@ export class AssignmentViewerComponent implements OnInit {
     public dialogRef: MatDialogRef<AssignmentViewerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogLegacy: MatLegacyDialog,
+    private snackBar: MatLegacySnackBar,
   ) { }
 
   ngOnInit() {
@@ -95,11 +97,42 @@ export class AssignmentViewerComponent implements OnInit {
   }
 
   handleClose() {
-    this.dialogRef.close()
+    this.submitAssignmentAsDraft()
   }
 
-  submitAssignment(assessment: any) {
-    console.log('Submit assignment clicked', assessment)
+  submitAssignmentAsDraft() {
+    const payload = {
+      submitUrl: this.documentUrl,
+      formId: this.data.assessment.formId,
+    }
+    this.tocSvc.submitDraftAssignment(payload).subscribe((res: any) => {
+      if (res && res.responseCode && res.responseCode === 'OK') {
+        this.openSnackbar('Assignment saved as a draft')
+        this.dialogRef.close()
+      }
+    }, error => {
+      this.dialogRef.close()
+      console.error('Error submitting assignment', error)
+    })
+  }
+
+  submitAssignment() {
+    const payload = {
+      submitUrl: this.documentUrl,
+      formId: this.data.assessment.formId,
+    }
+    this.tocSvc.submitAssignment(payload).subscribe((res: any) => {
+      if (res && res.responseCode && res.responseCode === 'OK') {
+        this.openSnackbar('Assignment Submitted Successfully')
+        this.dialogRef.close()
+      }
+    }, error => {
+      this.dialogRef.close()
+      console.error('Error submitting assignment', error)
+    })
+  }
+
+  handleSubmitAssignment() {
     const dialgoData = {
       description: 'Are you sure you want to submit your assignment? Once submitted, you won’t be able to make any changes',
       iconName: 'info_circle',
@@ -127,10 +160,16 @@ export class AssignmentViewerComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-
+        this.submitAssignment()
       } else {
         this.dialogRef.close()
       }
+    })
+  }
+
+  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+    this.snackBar.open(primaryMsg, 'X', {
+      duration,
     })
   }
 

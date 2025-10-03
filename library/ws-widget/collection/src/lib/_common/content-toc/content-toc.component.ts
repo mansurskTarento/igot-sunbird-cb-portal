@@ -85,7 +85,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobileForAI = false
   transcriptActiveLanguageText = 'English'
   showAssignmentsTab = false
-  batchId: any
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -140,9 +139,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.enableTranscriptionFlag = false
     }
 
-    this.batchId = this.route.snapshot.queryParams.batchId ?
+    const batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
-    if (this.batchId) {
+    if (batchId) {
       this.selectedTabIndex = 1
     }
     this.commentId = this.route.snapshot.queryParams.commentId ? this.route.snapshot.queryParams.commentId : ''

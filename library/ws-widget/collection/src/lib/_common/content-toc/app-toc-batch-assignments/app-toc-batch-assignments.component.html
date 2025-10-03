@@ -13,14 +13,33 @@
               Download
             </span>
           </button>
-          <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
-            (click)="triggerFileUpload(assignment)">
+          <ng-container *ngIf="assignment.status === 'DRAFT'">
+            <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
+              (click)="triggerFileUpload(assignment)">
+              Upload
+            </button>
+          </ng-container>
+          <ng-container *ngIf="assignment.status !== 'DRAFT'">
+            <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
+              (click)="triggerFileUpload(assignment)" [disabled]="!assignment.enableDownload">
+              Upload
+            </button>
+          </ng-container>
+          <!-- <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
+            (click)="triggerFileUpload(assignment)" [disabled]="!assignment.enableDownload">
             Upload
-          </button>
+          </button> -->
           <input #resourceFile type="file" name="sResourceFile" id="sResourceFile" class="hidden"
-            (change)="fileInputEmit(resourceFile.files, assignment)">
-          <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
-            (click)="handleViewFeedback(assignment)">View Feedback</button>
+            (change)="fileInputEmit(resourceFile.files)">
+          <ng-container *ngIf="assignment.status === 'SUBMITTED'">
+            <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
+              (click)="handleViewFeedback(assignment)" [disabled]="true">View Feedback</button>
+          </ng-container>
+          <ng-container *ngIf="assignment.status === 'EVALUATED'">
+            <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
+              (click)="handleViewFeedback(assignment)">View Feedback</button>
+          </ng-container>
+
         </div>
         <mat-icon class="cursor-pointer c-icon" *ngIf="assignment.expand"
           (click)="assignment.expand = !assignment.expand">

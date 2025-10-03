@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { environment } from 'src/environments/environment'
@@ -19,13 +19,14 @@ import * as _ from 'lodash'
 export class AppTocBatchAssignmentsComponent implements OnInit {
 
   @Input() content: any
-  @Input() batchId: any
   assignments: any[] = []
   allowType: string[] = ['.pdf', '.doc', '.docx']
   fileExtention: any
   resourceFileAdded: any
   isLoading: boolean = false
   selectedAssignment: any
+  batchId: any
+  submissions: any[] = []
 
 
   constructor(public router: Router,
@@ -34,12 +35,46 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     public configSvc: ConfigurationsService,
     private dialog: MatDialog,
     private dialogLegacy: MatLegacyDialog,
-  ) { }
+    private route: ActivatedRoute
+  ) {
+    this.batchId = this.route.snapshot.queryParams.batchId ?
+      this.route.snapshot.queryParams.batchId : ''
+  }
 
   ngOnInit() {
     this.fetchAssignments()
   }
 
+  getUserAssignmentStatus() {
+    if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
+      const request = {
+        filters: {
+          contextId: this.content.identifier,
+          submittedBy: this.configSvc.userProfile.userId
+        }
+      }
+      this.tocSvc.getAssignmentStatus(request).subscribe((response: any) => {
+        this.submissions = _.get(response, 'result.response.content', [])
+        console.log('submissions', this.submissions)
+        this.processAssignmentsWithStatus()
+      }, error => {
+        console.error('Error fetching assignment status', error)
+      })
+    }
+  }
+
+  processAssignmentsWithStatus() {
+    this.assignments = this.assignments.map((assignment: any) => ({
+      ...assignment,
+      expand: false,
+      downloading: false,
+      enableDownload: false,
+      answerURL: this.submissions.find(sub => sub.formId === assignment.formId)?.submitUrl || '',
+      status: this.submissions.find(sub => sub.formId === assignment.formId)?.status || 'PENDING',
+      enableView: this.submissions.find(sub => sub.formId === assignment.formId)?.status === 'EVALUATED',
+      submissionMeta: this.submissions.find(sub => sub.formId === assignment.formId)?.status === 'EVALUATED' ? this.submissions.find(sub => sub.formId === assignment.formId)?.submissionMeta : {}
+    }))
+  }
   fetchAssignments() {
     const payload: any = {
       query: '',
@@ -49,12 +84,17 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
     this.tocSvc.searchAssignments(payload).subscribe((response: any) => {
       let assignments = _.get(response, 'result.response.content', [])
-      console.log('this.assignmentsList', this.assignments)
       this.assignments = assignments.map((assignment: any) => ({
         ...assignment,
         expand: false,
         downloading: false,
+        enableView: false,
+        enableDownload: false,
+        answerURL: '',
+        status: '',
+        submissionMeta: {}
       }))
+      this.getUserAssignmentStatus()
     }, error => {
       console.error('Error fetching assignments', error)
     })
@@ -66,6 +106,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
 
   downloadFile(assignment: any) {
     assignment.downloading = true
+    assignment.enableDownload = true
+    this.selectedAssignment = assignment
     this.downloadFileWithFetch(assignment)
   }
 
@@ -101,8 +143,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
 
 
   triggerFileUpload(assignment: any) {
+    this.selectedAssignment = assignment
     if (assignment.answerURL) {
-      this.selectedAssignment = assignment
       this.submitAssignment(assignment)
     } else {
       const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
@@ -134,7 +176,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
     const dialogRef = this.dialogLegacy.open(ConfirmationDialogComponent, {
       data: dialgoData,
-      disableClose: true,
+      disableClose: false,
       width: '400px',
       maxWidth: '90vw'
     })
@@ -151,13 +193,13 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     })
   }
 
-  fileInputEmit(fileInput: FileList | null, assignment: any): void {
+  fileInputEmit(fileInput: FileList | null): void {
     if (!fileInput || fileInput.length === 0) {
       return
     }
     const file = fileInput[0]
     if (this.checkFileType(file)) {
-      this.createResource(file, assignment)
+      this.createResource(file, this.selectedAssignment)
     }
   }
 
@@ -295,6 +337,9 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
       }
     })
     dialogRef.afterClosed().subscribe(result => {
+      setTimeout(() => {
+        this.fetchAssignments()
+      }, 1000)
       console.log(result)
     })
   }

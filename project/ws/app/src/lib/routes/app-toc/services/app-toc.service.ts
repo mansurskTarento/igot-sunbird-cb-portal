@@ -44,7 +44,10 @@ const API_END_POINTS = {
   READ_RESOURCE: `apis/proxies/v8/action/content/v3/`,
   UPLOAD_FILE: `apis/proxies/v8/upload/action/content/v3/`,
   UPDATE_RESOURCE: `apis/proxies/v8/action/content/v3/update`,
-  SEARCH: `/apis/proxies/v8/assignment/v1/search`
+  SEARCH: `apis/proxies/v8/assignment/v1/search`,
+  SUBMIT_DRAFT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submitDraft`,
+  SUBMIT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submit`,
+  ASSIGNMENT_STATUS: `apis/proxies/v8/forms/v2/submissions/search`,
 }
 
 @Injectable()
@@ -1074,5 +1077,19 @@ export class AppTocService {
   searchAssignments(request: any): Observable<any> {
     return this.http.post(API_END_POINTS.SEARCH, request)
   }
+
+  submitDraftAssignment(request: any): Observable<any> {
+    return this.http.put(API_END_POINTS.SUBMIT_DRAFT_ASSIGNMENT, request)
+  }
+
+  submitAssignment(request: any): Observable<any> {
+    return this.http.post(API_END_POINTS.SUBMIT_ASSIGNMENT, request)
+  }
+
+  getAssignmentStatus(request: any): Observable<any> {
+    return this.http.post(`${API_END_POINTS.ASSIGNMENT_STATUS}`, request)
+  }
+
+
 
 }
