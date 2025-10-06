@@ -59,17 +59,15 @@ import { AppPreAssessmentContentResolverService } from './services/app-pre-asses
 const routes: Routes = [  
   {
     path: '',
-    redirectTo: 'page/home',
-    pathMatch: 'full',
-    // canActivate: [EmptyRouteGuard],
+    canActivate: [RedirectGuard],
+    component: RedirectGuard,
     data: {
+      dynamicRedirect: true,
+      fallbackPath: 'page/home',
       pageType: 'feature',
       pageKey: 'home',
       pageId: 'page/home',
       module: 'home',
-    },
-    resolve: {
-      pageData: PageResolve,
     },
   },
   // {
