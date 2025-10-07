@@ -10,19 +10,19 @@
               <mat-spinner diameter="16" class="mr-2" [style.color]="'white'" strokeWidth="2"></mat-spinner>Download
             </span>
             <span *ngIf="!assignment.downloading">
-              Download
+              {{ 'userAssignments.download' | translate }}
             </span>
           </button>
           <ng-container *ngIf="assignment.status === 'DRAFT'">
             <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
               (click)="triggerFileUpload(assignment)">
-              Upload
+              {{ 'userAssignments.upload' | translate }}
             </button>
           </ng-container>
           <ng-container *ngIf="assignment.status !== 'DRAFT'">
             <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
               (click)="triggerFileUpload(assignment)" [disabled]="!assignment.enableDownload">
-              Upload
+              {{ 'userAssignments.upload' | translate }}
             </button>
           </ng-container>
           <!-- <button mat-button class="upload-btn cursor-pointer flex align-center justify-center"
@@ -33,11 +33,12 @@
             (change)="fileInputEmit(resourceFile.files)">
           <ng-container *ngIf="assignment.status === 'SUBMITTED'">
             <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
-              (click)="handleViewFeedback(assignment)" [disabled]="true">View Feedback</button>
+              (click)="handleViewFeedback(assignment)" [disabled]="true">{{ 'userAssignments.viewFeedback' | translate
+              }}</button>
           </ng-container>
           <ng-container *ngIf="assignment.status === 'EVALUATED'">
             <button mat-button class="view-btn cursor-pointer flex align-center justify-center"
-              (click)="handleViewFeedback(assignment)">View Feedback</button>
+              (click)="handleViewFeedback(assignment)">{{ 'userAssignments.viewFeedback' | translate }}</button>
           </ng-container>
 
         </div>
@@ -46,14 +47,14 @@
           close
         </mat-icon>
       </div>
-      <div class="flex justify-between flex-col mt-4"
-        *ngIf="assignment.expand && assignment?.submissionMeta?.totalMarks">
+      <div class="flex justify-between flex-col mt-4 feedback-container"
+        *ngIf="assignment.expand && assignment?.submissionMeta?.marksGiven">
         <div class="font-bold font-style">
           <div>
-            Marks obtained - {{assignment?.submissionMeta?.totalMarks}}/{{assignment?.submissionMeta?.totalMarks}}
+            {{ 'userAssignments.marksObtained' | translate }} - {{getMarks(assignment?.submissionMeta)}}
           </div>
         </div>
-        <div class="font-bold font-style">Instructor feedback</div>
+        <div class="font-bold font-style">{{ 'userAssignments.instructorFeedback' | translate }}</div>
         <div class="font-style">
           {{assignment?.submissionMeta?.instructorFeedback}}
         </div>
@@ -69,5 +70,5 @@
 
 <!-- No teachers resources message -->
 <div *ngIf="assignments?.length === 0" class="no-resources-message mt-4">
-  No assignments available now.
+  {{ 'userAssignments.noAssignments' | translate }}
 </div>

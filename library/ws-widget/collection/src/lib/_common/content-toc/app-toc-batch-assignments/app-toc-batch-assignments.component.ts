@@ -394,6 +394,16 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     return flag
   }
 
+  getMarks(submissionMeta: any): string {
+    if (submissionMeta?.marksGiven != null && submissionMeta?.maximumMarks != null) {
+      return `${submissionMeta.marksGiven}` + '/' + `${submissionMeta.maximumMarks}`
+    } else if (submissionMeta?.marksGiven != null) {
+      return `${submissionMeta.marksGiven}`
+    } else {
+      return 'N/A'
+    }
+  }
+
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
