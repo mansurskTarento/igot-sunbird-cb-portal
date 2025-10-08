@@ -404,12 +404,12 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
   }
-  private extractFilenameFromUrl(url: string): string {
+  extractFilenameFromUrl(url: string): string {
     try {
       const urlParts = url.split('/')
       const filename = urlParts[urlParts.length - 1]

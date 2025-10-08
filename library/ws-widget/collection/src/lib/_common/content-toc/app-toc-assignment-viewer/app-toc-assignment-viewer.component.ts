@@ -48,7 +48,7 @@ export class AssignmentViewerComponent implements OnInit {
     this.processDocumentUrl()
   }
 
-  private processDocumentUrl() {
+  processDocumentUrl() {
     try {
       if (this.documentType === 'pdf') {
         const pdfUrlWithParams = this.documentUrl + '#toolbar=0&navpanes=0&scrollbar=0'
@@ -167,7 +167,7 @@ export class AssignmentViewerComponent implements OnInit {
     })
   }
 
-  private openSnackbar(primaryMsg: string, duration: number = 5000) {
+  openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,
     })
