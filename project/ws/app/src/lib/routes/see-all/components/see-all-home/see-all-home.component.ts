@@ -516,6 +516,12 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             userRootOrgId = this.configSvc.userProfile.rootOrgId
           }
           request.trendingSearch.request.filters.organisation = userRootOrgId
+        } else if (request.trendingSearch.request.filters.createdFor && request.trendingSearch.request.filters.createdFor.indexOf('<orgID>') >= 0) {
+          let userRootOrgId
+          if (this.configSvc.userProfile) {
+            userRootOrgId = this.configSvc.userProfile.rootOrgId
+          }
+          request.trendingSearch.request.filters.createdFor = userRootOrgId
         }
         request.trendingSearch['request']['limit'] = 50
         this.seeAllSvc.trendingContentSearch(request.trendingSearch).subscribe(results => {
