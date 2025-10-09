@@ -42,6 +42,7 @@ export class ViewAllComponent {
   private scrollSubject = new Subject<Event>()
   selectedValue: any
   totalCount = 0
+  totalEventsCount = 0
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -241,6 +242,7 @@ export class ViewAllComponent {
       this.total = this.contentDataList.length
       this.totalCount = this.totalCount + response.length
       this.showNextPage = this.totalCount < _.get(resp, 'result.count', 0)
+      this.totalEventsCount = _.get(resp, 'result.count', 0)
       if (response.length) {
         if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length) {
           response = this.processResult(response)
