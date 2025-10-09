@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { Subject } from 'rxjs'
@@ -175,7 +175,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   selectedSector = ''
   selectedSectorId = ''
   refreshratingSub
-
+  pageConfigData: any
   constructor(
     private ratingService: RatingService,
     private loggerService: LoggerService,
@@ -191,12 +191,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     private handleClaimService: HandleClaimService,
     private resetRatingsService: ResetRatingsService,
     private contentSvc: WidgetContentService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.refreshratingSub = this.resetRatingsService.resetRatings$.subscribe((_res: any) => {
       this.fetchRatingSummary()
     })
   }
   ngOnInit() {
+    this.pageConfigData = this.activatedRoute?.snapshot?.data?.pageData?.data
     this.compentencyKey = this.configService.compentency[environment.compentencyVersionKey]
     this.userProfile = this.configService.userProfile
     if (window.innerWidth <= 1200) {
@@ -836,54 +838,76 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.handleClaimService.setClaimData(event)
   }
 
-  handleOpenCertificateDialog() {
-    this.downloadCertificateBool = true
-    const certId = this.content && this.content.certificateObj.certId
-    if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
-      if (this.content && this.content.primaryCategory && this.content.primaryCategory?.toLowerCase() !== 'course') {
+   handleOpenCertificateDialog() {
+    this.downloadCertificateBool = true;
+    const certId = this.content && this.content?.certificateObj?.certId;
+
+    if (this.content && this.pageConfigData) {
+      const allowedPrimaryCategory =
+        this.pageConfigData?.dynamicCertificateGeneration?.allows &&
+        this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
+          (cat: string) => cat?.toLowerCase()
+        );
+
+      if (
+        allowedPrimaryCategory &&
+        allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase())
+      ) {
         const payload = {
           request: {
             courseId: this.content.identifier,
             batchId: this.batchData?.content[0]?.batchId || '',
             userId: this.userProfile.userId,
+          },
+        };
+        this.contentSvc.downloadCertV2(payload).subscribe(
+          (response) => {
+            if (response) {
+              this.downloadCertificateBool = false;
+             
+              this.dialog.open(CertificateDialogComponent, {
+                width: '1200px',
+                data: {
+                  cet: response.result.printUri,
+                  certId:
+                    (this.content && this.content.certificateObj.certId) || '',
+                },
+              });
+            }
+          },
+          (error: any) => {
+            this.downloadCertificateBool = false;
+            this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+            this.matSnackBar.open(
+              'Unable to View Certificate, due to some error!'
+            );
           }
-        }
-        this.contentSvc.downloadCertV2(payload).subscribe(response => {
-          if (this.content) {
-            this.downloadCertificateBool = false
-            this.content['certificateObj']['certData'] = response.result.printUri
-            this.dialog.open(CertificateDialogComponent, {
-              width: '1200px',
-              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
-            })
-          }
-        }, (error: any) => {
-          this.downloadCertificateBool = false
-          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
-          this.matSnackBar.open('Unable to View Certificate, due to some error!')
-        })
-      } else {
-        this.contentSvc.downloadCert(certId).subscribe(response => {
-          if (this.content) {
-            this.downloadCertificateBool = false
-            this.content['certificateObj']['certData'] = response.result.printUri
-            this.dialog.open(CertificateDialogComponent, {
-              width: '1200px',
-              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
-            })
-          }
-        }, (error: any) => {
-          this.downloadCertificateBool = false
-          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
-          this.matSnackBar.open('Unable to View Certificate, due to some error!')
-        })
+        );
       }
     } else {
-      this.downloadCertificateBool = false
-      this.dialog.open(CertificateDialogComponent, {
-        width: '1200px',
-        data: { cet: this.content && this.content.certificateObj.certData, certId: this.content && this.content.certificateObj.certId },
-      })
+      this.contentSvc.downloadCert(certId).subscribe(
+        (response) => {
+          if (this.content) {
+            this.downloadCertificateBool = false;
+            this.content['certificateObj']['certData'] =
+              response.result.printUri;
+            this.dialog.open(CertificateDialogComponent, {
+              width: '1200px',
+              data: {
+                cet: response.result.printUri,
+                certId: this.content && this.content.certificateObj.certId,
+              },
+            });
+          }
+        },
+        (error: any) => {
+          this.downloadCertificateBool = false;
+          this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+          this.matSnackBar.open(
+            'Unable to View Certificate, please check again later!'
+          );
+        }
+      );
     }
   }
 

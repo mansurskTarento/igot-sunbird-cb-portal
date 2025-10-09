@@ -31,6 +31,7 @@ export const environment = {
   quizResultTimeout: (window as { [key: string]: any })['env']['quizResultTimeout'] || '',
   meetingLinkDetail: (window as { [key: string]: any })['env']['meetingLinkDetail'] || '',
   karmayogiBharatLink: (window as { [key: string]: any })['env']['karmayogiBharatLink'] || '',
+  missionKarmayogiPath: (window as { [key: string]: any })['env']['missionKarmayogiPath'] || '',
   helpEmail: (window as { [key: string]: any })['env']['helpEmail'] || '',
   supportEmail: (window as { [key: string]: any })['env']['supportEmail'] || '',
   apiCache: (window as { [key: string]: any })['env']['apiCache'] || 0,

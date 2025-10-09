@@ -66,7 +66,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.userData = this.configSvc && this.configSvc.userProfile
-    this.orgId = this.configSvc && this.configSvc.unMappedUser.organisations[0].id
+    this.orgId = this.configSvc && this.configSvc.unMappedUser.organisations[0].organisationId  
     // Get department ID from route parameters
     this.departmentId = this.activatedRoute.snapshot.params['id']
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data

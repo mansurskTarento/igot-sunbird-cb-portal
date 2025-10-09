@@ -68,9 +68,9 @@ export class AppFooterComponent implements OnInit {
     } else {
       const newInstance = await this.readAgain()
       this.hubsList = (newInstance.hubs || []).filter(i => i.active)
-    }
-    this.logoSrc = this.domainConfSvc.getDomainAppLogo(environment)
-    this.redirectPath = this.domainConfSvc.getDomainRedirectPath(environment)
+    } 
+    this.logoSrc = this.domainConfSvc.getDomainAppLogo()
+    this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
   }
   async readAgain() {
     const publicConfig: NsInstanceConfig.IConfig = await this.http
