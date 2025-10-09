@@ -187,7 +187,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
     }
   }
   
-  rraiseTelemetryInteratEvent(event: any) {
+  raiseTelemetryInteratEvent(event: any) {
     if (event && event.viewMoreUrl) {
       this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
     }
