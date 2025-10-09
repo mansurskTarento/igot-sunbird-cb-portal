@@ -146,11 +146,13 @@ export class WidgetContentService {
     //   return apiData.result.content
     // }
   }
-  fetchAuthoringContent(contentId: string): Observable<NsContent.IContent> {
+  fetchAuthoringContent(contentId: string, apiType?: string): Observable<NsContent.IContent> {
     const forcreator = window.location.href.includes('editMode=true')
     let url = ''
     if (forcreator) {
       url = `apis/proxies/v8/action/content/v3/hierarchy/${contentId}?mode=edit`
+    } else if(apiType && apiType === 'read') {
+      url = `/api/content/v1/read/${contentId}`
     } else {
       url = `${API_END_POINTS.AUTHORING_CONTENT}/${contentId}?hierarchyType=detail`
     }
