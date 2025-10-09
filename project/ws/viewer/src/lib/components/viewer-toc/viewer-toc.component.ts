@@ -400,7 +400,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
           content =  this.hierarchyData
         } else {
           content = await (this.forPreview
-                  ? this.contentSvc.fetchAuthoringContent(collectionId)
+                  ? this.contentSvc.fetchAuthoringContent(collectionId,'read')
                   : this.contentSvc.fetchContent(collectionId, 'detail', [], _collectionType)
                 ).toPromise()
         }
