@@ -25,7 +25,6 @@ export class AppTocTeachersNotesComponent implements OnInit {
   ngOnInit() { }
 
   raiseDownloadAllTelemetry(subType: string) {
-    console.log(this.notesDisplayType)
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
