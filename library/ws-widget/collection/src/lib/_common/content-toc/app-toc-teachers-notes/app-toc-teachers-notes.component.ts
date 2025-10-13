@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection/src/public-api'
-import { NsContent } from '@sunbird-cb/utils-v2'
+import { EventService, NsContent, WsEvents } from '@sunbird-cb/utils-v2'
 import * as fileSaver from 'file-saver'
 
 @Component({
@@ -18,9 +18,40 @@ export class AppTocTeachersNotesComponent implements OnInit {
   downloadInProgress: { [key: string]: boolean } = {}
   isDownloadingAll = false
 
-  constructor(public router: Router) {}
+  constructor(public router: Router,
+    public eventSvc: EventService,
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
+
+  raiseDownloadAllTelemetry(subType: string) {
+    const event = {
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      data: {
+        edata: {
+          type: "click",
+          id: "teachers-note",
+          pageid: `/app/toc/${this.content?.identifier}`,
+          subType: subType,
+        },
+        object: {
+          id: this.content?.identifier,
+          type: this.content?.courseCategory,
+        },
+        state: WsEvents.EnumTelemetrySubType.Interact,
+        eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+        mode: 'view',
+      },
+      pageContext: {
+        pageId: `/app/toc/${this.content?.identifier}`,
+        module: this.notesDisplayType == 'Teachers Resource' ? 'Amrit Gyaan Kosh' : 'Learn'
+      },
+      from: '',
+      to: 'Telemetry',
+    }
+    this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  }
 
   downloadPDF(contentData: any) {
     if (!contentData?.artifactUrl) {
@@ -30,6 +61,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
 
     this.downloadInProgress[contentData.identifier] = true;
     this.downloadFile(contentData.artifactUrl, contentData.name || 'download', contentData.identifier);
+    this.raiseDownloadAllTelemetry('download')
   }
 
   previewContent(contentData: any) {
@@ -48,7 +80,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
     }
 
     const teacherResources = this.content.referenceNodes.filter(
-      (ele:any) => ele?.resourceCategory === this.notesDisplayType && ele.artifactUrl
+      (ele: any) => ele?.resourceCategory === this.notesDisplayType && ele.artifactUrl
     );
 
     if (teacherResources.length === 0) {
@@ -68,6 +100,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
           }
         });
     });
+    this.raiseDownloadAllTelemetry('download-all')
   }
 
   /**
@@ -81,7 +114,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
    * Check if content has any teacher resources
    */
   hasTeacherResources(): boolean {
-    return this.content?.referenceNodes?.some((node:any) => node?.resourceCategory === this.notesDisplayType) || false;
+    return this.content?.referenceNodes?.some((node: any) => node?.resourceCategory === this.notesDisplayType) || false;
   }
 
   /**
