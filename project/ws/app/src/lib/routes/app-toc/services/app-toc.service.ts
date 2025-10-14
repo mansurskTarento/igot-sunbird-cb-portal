@@ -48,6 +48,7 @@ const API_END_POINTS = {
   SUBMIT_DRAFT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submitDraft`,
   SUBMIT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submit`,
   ASSIGNMENT_STATUS: `apis/proxies/v8/forms/v2/submissions/search`,
+  UPLOAD_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer/`,
 }
 
 @Injectable()
@@ -1027,6 +1028,14 @@ export class AppTocService {
         }),
       )
   }
+
+
+  uploadAssignmentAnswer(contentId: string, batchId: string, assignmentId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name)
+    return this.http.post(`${API_END_POINTS.UPLOAD_ASSIGNMENT}/${contentId}/${batchId}/${assignmentId}`, formData);
+  }
+
 
   readContentV2(id: string): Observable<any> {
     return this.http.get<any>(

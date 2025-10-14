@@ -199,7 +199,23 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
     const file = fileInput[0]
     if (this.checkFileType(file)) {
-      this.createResource(file, this.selectedAssignment)
+      this.upload(file)
+      //this.createResource(file, this.selectedAssignment)
+    }
+  }
+
+
+  async upload(file: any) {
+    this.resourceFileAdded = file
+    this.isLoading = true
+    const uploadRes: any = await this.tocSvc.uploadAssignmentAnswer(
+      this.content.identifier,
+      this.batchId,
+      this.selectedAssignment.id,
+      file
+    ).toPromise()
+    if (uploadRes && uploadRes.responseCode === 'OK') {
+
     }
   }
 
