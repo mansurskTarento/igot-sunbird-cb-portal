@@ -31,7 +31,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
       data: {
         edata: {
           type: "click",
-          id: "teachers-note",
+          id: this.notesDisplayType == 'Reference Resource' ? "teachers-note" : "reference-note",
           pageid: `/app/toc/${this.content?.identifier}`,
           subType: subType,
         },
@@ -45,7 +45,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
       },
       pageContext: {
         pageId: `/app/toc/${this.content?.identifier}`,
-        module: this.notesDisplayType == 'Teachers Resource' ? 'Amrit Gyaan Kosh' : 'Learn'
+        module: this.notesDisplayType == 'Reference Resource' ? 'Amrit Gyaan Kosh' : 'Learn'
       },
       from: '',
       to: 'Telemetry',
