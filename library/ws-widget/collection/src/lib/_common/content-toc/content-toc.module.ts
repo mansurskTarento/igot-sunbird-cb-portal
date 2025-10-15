@@ -51,6 +51,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app-toc-batch-assignments.component'
 import { AssignmentViewerComponent } from './app-toc-assignment-viewer/app-toc-assignment-viewer.component'
 import { DialogComponentsModule } from '@sunbird-cb/consumption'
+import { AssignmentViewerV2Component } from './app-toc-assignment-viewerV2/app-toc-assignment-viewerV2.component'
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { DialogComponentsModule } from '@sunbird-cb/consumption'
     AiTutorComponent,
     AppTocBatchAssignmentsComponent,
     AssignmentViewerComponent,
+    AssignmentViewerV2Component,
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of } from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of, throwError } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'
@@ -8,7 +8,7 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { ContentLanguageService } from '@sunbird-cb/consumption'
-import { map } from 'rxjs/operators'
+import { map, catchError } from 'rxjs/operators'
 
 // TODO: move this in some common place
 const PROTECTED_SLAG_V8 = '/apis/protected/v8'
@@ -48,7 +48,8 @@ const API_END_POINTS = {
   SUBMIT_DRAFT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submitDraft`,
   SUBMIT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submit`,
   ASSIGNMENT_STATUS: `apis/proxies/v8/forms/v2/submissions/search`,
-  UPLOAD_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer/`,
+  UPLOAD_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer`,
+  READ_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer/read/file`,
 }
 
 @Injectable()
@@ -1099,6 +1100,25 @@ export class AppTocService {
     return this.http.post(`${API_END_POINTS.ASSIGNMENT_STATUS}`, request)
   }
 
+  readAssignmentFile(contentId: string, batchId: string, assignmentId: string, fileName: string): Observable<any> {
+    // Properly encode the parameters to avoid malformed request errors
+    const encodedParams = new URLSearchParams({
+      contentId: contentId || '',
+      batchId: batchId || '',
+      formId: assignmentId || '',
+      fileName: fileName || ''
+    });
 
+    return this.http.get(`${API_END_POINTS.READ_ASSIGNMENT}?${encodedParams.toString()}`, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/octet-stream, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }
+    }).pipe(
+      catchError((error: any) => {
+        return throwError(() => error);
+      })
+    );
+  }
 
 }

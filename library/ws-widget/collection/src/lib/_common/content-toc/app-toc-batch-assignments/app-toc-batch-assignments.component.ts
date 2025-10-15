@@ -4,11 +4,10 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
-import { environment } from 'src/environments/environment'
-import { AssignmentViewerComponent } from '../app-toc-assignment-viewer/app-toc-assignment-viewer.component'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import * as _ from 'lodash'
+import { AssignmentViewerV2Component } from '../app-toc-assignment-viewerV2/app-toc-assignment-viewerV2.component'
 
 @Component({
   selector: 'ws-widget-app-batch-assignments',
@@ -20,7 +19,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
 
   @Input() content: any
   assignments: any[] = []
-  allowType: string[] = ['.pdf', '.doc', '.docx']
+  allowType: string[] = ['.pdf']
   fileExtention: any
   resourceFileAdded: any
   isLoading: boolean = false
@@ -35,7 +34,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     public configSvc: ConfigurationsService,
     private dialog: MatDialog,
     private dialogLegacy: MatLegacyDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.batchId = this.route.snapshot.queryParams.batchId ?
       this.route.snapshot.queryParams.batchId : ''
@@ -183,7 +182,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result === 1) {
-        this.viewAssignments(assessment.answerURL)
+        //this.viewAssignments(assessment.answerURL)
+        this.previewAssignments(assessment.answerURL)
       } else if (result === 0) {
         const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
         if (fileInput) {
@@ -200,156 +200,50 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     const file = fileInput[0]
     if (this.checkFileType(file)) {
       this.upload(file)
-      //this.createResource(file, this.selectedAssignment)
     }
   }
-
 
   async upload(file: any) {
     this.resourceFileAdded = file
     this.isLoading = true
-    const uploadRes: any = await this.tocSvc.uploadAssignmentAnswer(
-      this.content.identifier,
-      this.batchId,
-      this.selectedAssignment.id,
-      file
-    ).toPromise()
-    if (uploadRes && uploadRes.responseCode === 'OK') {
 
-    }
-  }
+    try {
+      const uploadRes: any = await this.tocSvc.uploadAssignmentAnswer(
+        this.content.identifier,
+        this.batchId,
+        this.selectedAssignment.id,
+        file
+      ).toPromise()
 
-  getRandomNumber() {
-    let randomNumber = ''
-    // tslint:disable-next-line: no-increment-decrement
-    for (let i = 0; i < 16; i++) {
-      randomNumber += Math.floor(Math.random() * 10)
-    }
-    return randomNumber
-  }
-
-  getMimeType() {
-    if (this.fileExtention === '.pdf') {
-      return 'application/pdf'
-    } else if (this.fileExtention === '.doc' || this.fileExtention === '.docx') {
-      return 'application/msword'
-    } else if (this.fileExtention === '.mp4') {
-      return 'video/mp4'
-    } else if (this.fileExtention === '.mp3') {
-      return 'audio/mpeg'
-    } else {
-      return 'application/octet-stream'
-    }
-  }
-
-  constructPayload() {
-    let requestBody: any
-    if (this.configSvc.userProfile) {
-      requestBody = {
-        request: {
-          content: {
-            code: this.getRandomNumber(),
-            contentType: 'Resource',
-            createdBy: this.configSvc.userProfile.userId,
-            createdFor: [this.configSvc.userProfile.rootOrgId ? this.configSvc.userProfile.rootOrgId : ''],
-            creator: this.configSvc.userProfile.userName ? this.configSvc.userProfile.userName : '',
-            // description: '',
-            duration: '90',
-            framework: 'igot',
-            mimeType: this.getMimeType(),
-            name: this.selectedAssignment.title,
-            organisation: [this.configSvc.userProfile.departmentName ? this.configSvc.userProfile.departmentName : ''],
-            isExternal: false,
-            primaryCategory: 'Learning Resource',
-            license: 'CC BY 4.0',
-            ownershipType: ['createdFor'],
-            purpose: '',
-            visibility: 'Default',
-            language: ["English"],
-            resourceCategory: 'Learning Resource',
-            resourceType: ''
-          },
-        }
+      if (uploadRes && uploadRes.responseCode === 'OK') {
+        this.openSnackbar('File uploaded successfully')
+        this.previewAssignments(uploadRes.result.url)
+      } else {
+        this.isLoading = false
+        this.openSnackbar('File upload failed. Please try again.')
       }
-      return requestBody
+    } catch (error: any) {
+      this.isLoading = false
+      console.error('Upload API error:', error)
+      this.openSnackbar('File upload failed. Please try again.')
     }
   }
 
-
-
-  async createResource(file: File, assignment: any): Promise<void> {
-    this.resourceFileAdded = file
-    this.selectedAssignment = assignment
-    let requestBody = this.constructPayload()
-    this.isLoading = true
-    const createRes: any = await this.tocSvc.createContentV2(requestBody).toPromise().catch(async (_error: any) => {
-      this.openSnackbar('File Type Should be Correct')
-    })
-    if (createRes) {
-      let resData: any = await this.tocSvc.readContentV2(createRes).toPromise().catch((_error: any) => { })
-      if (resData && resData.identifier) {
-        await this.uploadResourceFile(createRes, resData)
-      }
-    } else {
-      this.isLoading = false
-    }
+  previewAssignments(result: any) {
+    this.isLoading = false
+    this.callingViewAssignments(result)
   }
 
-  async uploadResourceFile(identifier: string, resData: any) {
-    const formdata = new FormData()
-    formdata.append('content', this.resourceFileAdded, this.resourceFileAdded.name)
-    const uploadImgRes: any = await this.tocSvc.upload(
-      formdata,
-      {
-        contentId: identifier,
-        contentType:
-          this.resourceFileAdded.type === 'application/pdf'
-            ? '/artifacts'
-            : this.resourceFileAdded.type === 'application/vnd.ekstep.html-archive'
-              ? '/web-hosted'
-              : '/assets',
-      },
-      this.resourceFileAdded.type === 'application/vnd.ekstep.html-archive',
-    ).toPromise().catch((_error: any) => {
-    })
-    if (uploadImgRes && uploadImgRes.params && uploadImgRes.params.status.toLowerCase() === 'successful') {
-      const requestPayload: any = {
-        request: {
-          content: {
-            artifactUrl: this.generateUrl(uploadImgRes.result.artifactUrl),
-            downloadUrl: this.generateUrl(uploadImgRes.result.artifactUrl),
-            size: this.resourceFileAdded.size,
-            versionKey: resData.versionKey,
-          },
-        },
-      }
-      await this.updateResourceContent(identifier, requestPayload)
-    } else {
-      this.isLoading = false
-    }
-  }
-
-  async updateResourceContent(identifier: string, requestPayload: any) {
-    const updateRes = await this.tocSvc.updateContentWithFewFields(requestPayload, identifier).toPromise().catch((_error: any) => { })
-    if (updateRes && updateRes.params && updateRes.params.status === 'successful') {
-      this.openSnackbar('File uploaded successfully')
-      this.viewAssignments(requestPayload.request.content.artifactUrl)
-      this.resourceFileAdded = ''
-      this.isLoading = false
-    } else {
-      this.isLoading = false
-      this.openSnackbar('File update failed.')
-    }
-  }
-
-  viewAssignments(downlaodUrl: any) {
-    const dialogRef = this.dialog.open(AssignmentViewerComponent, {
+  callingViewAssignments(url: any) {
+    const dialogRef = this.dialog.open(AssignmentViewerV2Component, {
       width: '40%',
       disableClose: true,
       panelClass: 'dialog_sidenav',
       data: {
         assessment: this.selectedAssignment,
-        url: downlaodUrl
+        url: url,
+        contentId: this.content.identifier,
+        batchId: this.batchId,
       }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -358,23 +252,6 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
       }, 1000)
       console.log(result)
     })
-  }
-
-  generateUrl(oldUrl: string) {
-    const chunk = oldUrl ? oldUrl.split('/') : []
-    const newChunk = environment.azureHost.split('/')
-    const newLink = []
-    for (let i = 0; i < chunk.length; i += 1) {
-      if (i === 2) {
-        newLink.push(newChunk[i])
-      } else if (i === 3) {
-        newLink.push(environment.azureBucket)
-      } else {
-        newLink.push(chunk[i])
-      }
-    }
-    const newUrl = newLink.join('/')
-    return newUrl
   }
 
 
@@ -398,13 +275,13 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     }
     this.fileExtention = file.name.toLowerCase().substring(file.name.lastIndexOf('.'))
     if (file) {
-      if (['.doc', '.docx', '.pdf'].includes(this.fileExtention)) {
+      if (['.pdf'].includes(this.fileExtention)) {
         flag = true
       } else {
         flag = false
       }
       if (!flag) {
-        this.openSnackbar('Invalid file type uploaded. Please upload PDF or Doc format only.')
+        this.openSnackbar('Invalid file type uploaded. Please upload PDF format only.')
       }
     }
     return flag
