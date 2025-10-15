@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 import { NsContent } from '@sunbird-cb/collection'
-import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
@@ -78,6 +78,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   enrollmentList: any = []
   collectionLang: any
   isPreAssessment:boolean = false
+  redirectPath = '/page/home'
   // primaryCategory = NsContent.EPrimaryCategory
   contentPrimaryCategory: any
 
@@ -99,7 +100,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private resetRatingsService: ResetRatingsService,
     private widgetLibSvc: WidgetContentLibService,
     private contentLangSvc: ContentLanguageService,
-    private contentSvc: WidgetContentServiceUtils
+    private contentSvc: WidgetContentServiceUtils,
+    private domainConfSvc: DomainConfService
     
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
@@ -136,8 +138,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     this.channelId = this.activatedRoute.snapshot.queryParams.channelId
     if (this.configSvc.instanceConfig) {
       this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        this.configSvc.instanceConfig.logos.app,
+        this.domainConfSvc.getDomainAppLogo()
       )
+      this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
       if (this.configSvc.userProfile) {
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }

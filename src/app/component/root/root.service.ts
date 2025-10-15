@@ -21,7 +21,7 @@ const API_END_POINTS = {
 })
 
 export class RootService {
-
+  openSupportAIChatbot = new BehaviorSubject<boolean>(false)
   showNavbarDisplay$ = new BehaviorSubject<boolean>(true)
   discussionCnfig: any
   iGOTAIChatHistory:any
