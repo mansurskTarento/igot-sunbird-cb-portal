@@ -259,7 +259,8 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     let flag = false
     if (file && file.size) {
       const fileInMB = Math.floor(file.size / (1024 * 1024))
-      if (fileInMB > 1024) {
+      if (fileInMB > 5) {
+        this.openSnackbar('File size exceeds 5 MB limit. Please upload a smaller file.')
         return false
       }
     }

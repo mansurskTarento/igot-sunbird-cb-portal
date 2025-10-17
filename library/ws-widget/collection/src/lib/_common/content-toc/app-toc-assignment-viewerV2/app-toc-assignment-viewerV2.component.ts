@@ -40,13 +40,6 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    console.log('=== Assignment Viewer Debug ===', this.dialogLegacy);
-    console.log('Full data object:', this.data);
-    console.log('Result:', this.data.url);
-    console.log('Assessment:', this.data.assessment);
-    console.log('Content ID:', this.data.contentId);
-    console.log('Batch ID:', this.data.batchId);
-
     if (this.data.url) {
       const urlParts = this.data.url.split('/');
       this.fileName = urlParts[urlParts.length - 1];
