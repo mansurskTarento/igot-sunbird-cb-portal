@@ -13,6 +13,7 @@ export class UpcomingTimelineComponent implements OnInit {
   filterValueEmit = new EventEmitter()
   @Input() upcommingList: any
   @Input() overDueList: any
+  @Input() aparList: any
 
   tabResults: any[] = []
   tabSelected: any

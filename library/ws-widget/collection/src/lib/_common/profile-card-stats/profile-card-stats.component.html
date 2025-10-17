@@ -116,7 +116,7 @@
             </div>
           </div>
           <div class="divider-horizontal"></div>
-          <div class="text-center cursor-pointer" (click)="showMyActivities()">
+          <div class="text-center" (click)="showMyActivities()">
             <div class="flex items-center">
               <div class="stats-title-leader"> {{ 'weeklyclaps.leaderboard' | translate }}</div>
               <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.toolTip' | translate" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
@@ -127,7 +127,8 @@
           </div>
 
           <div class="divider-horizontal"></div>
-          <div class="text-center cursor-pointer" (click)="showWeeklyClapsSection()">
+          <div class="text-center " 
+          [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}" (click)="showWeeklyClapsSection()">
             <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
               <div class="flex items-center">
                 <span>{{ 'weeklyclaps.weeklyClapsTitle' | translate }}</span>

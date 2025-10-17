@@ -9,6 +9,7 @@ import {
   DefaultThumbnailModule,
   PipePartialContentModule,
   PipePublicURLModule,
+  DomainConfService,
 } from '@sunbird-cb/utils-v2'
 
 import {
@@ -120,6 +121,6 @@ import { MarkdownModule } from 'ngx-markdown';
     MatFormFieldModule,
     MarkdownModule.forRoot()
   ],
-  providers: [PdfScormDataService],
+  providers: [PdfScormDataService, DomainConfService],
 })
 export class ViewerModule { }

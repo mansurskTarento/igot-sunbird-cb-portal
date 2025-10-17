@@ -674,29 +674,43 @@ $nav-height: 40px;
 
 .calculate-overlay {
   position: fixed;
-  display: block;
-  width: 100%;
-  height: 100%;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0,0,0,0.5);
-  z-index: 2;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
   cursor: pointer;
-  color: #fff;;
 }
 
 .overlay {
-  width: 50%;
-  height: 50%;
-  position: absolute;
-  top: 40%;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent; /* no background to avoid cropping */
+  margin-bottom: 20px;
+}
+
+mat-spinner {
+  width: 150px !important;
+  height: 150px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: block;
+  overflow: visible;
+}
+
+.loader-message {
   color: #fff;
+  font-size: 1rem;
   text-align: center;
 }
 

@@ -12,6 +12,7 @@ import { NotificationsService } from 'src/app/services/notifications.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from '../../../environments/environment'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
+import { RootService } from '../root/root.service'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -53,13 +54,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   isMultiLangEnabled: any
   showDropdown: boolean = false
   roles: string[] = []
-
+  enableSupportAI = false
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
     private events: EventService, private snackBar: MatSnackBar,
-    private router: Router, private notificationsService: NotificationsService) {
+    private router: Router, private notificationsService: NotificationsService, 
+  private rootService: RootService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -244,5 +246,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     )
   }
 
+openSupportChatBot() {
+    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+      this.enableSupportAI = true
+      this.rootService.openSupportAIChatbot.next(true)  
+    } else {
+      this.getZohoForm()
+    }
 
+  }
+  
 }

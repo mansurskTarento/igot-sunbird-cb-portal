@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { IBtnAppsConfig, CustomTourService, WidgetUserService } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
-import { ConfigurationsService, EventService, MultilingualTranslationsService, NsInstanceConfig, NsPage, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, NsInstanceConfig, NsPage, WsEvents } from '@sunbird-cb/utils-v2'
 import { NotificationsService } from 'src/app/services/notifications.service'
 
 import { UrlService } from 'src/app/shared/url.service'
@@ -66,6 +66,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   showLangDropdown = true
   notificationsCount: number = 0
   private myNotificationsSubscription!: Subscription
+  redirectPath = '/page/home'
   constructor(
     private domSanitizer: DomSanitizer,
     private configSvc: ConfigurationsService,
@@ -77,7 +78,8 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     private urlService: UrlService,
     private userSvc: WidgetUserService,
     private notificationsService: NotificationsService,
-    private libNotificationsService: LibNotificationsService
+    private libNotificationsService: LibNotificationsService,
+    private domainConfSvc: DomainConfService
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
     if (this.configSvc.restrictedFeatures) {
@@ -151,19 +153,11 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (this.configSvc.instanceConfig) {
-      // Check if subdomain is 'iiidem' and use different logo
-      const currentHostname = window.location.hostname;
-      const isIiidemSubdomain = currentHostname.includes('iiidem');
-      
-      if (isIiidemSubdomain && this.configSvc.instanceConfig.logos.iiidemApp) {
-        this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-          this.configSvc.instanceConfig.logos.iiidemApp,
-        );
-      } else {
-        this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-          this.configSvc.instanceConfig.logos.app,
-        );
-      }
+      this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
+        this.domainConfSvc.getDomainAppLogo()
+      )
+      this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
+        
 
       this.appIconSecondary = this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.configSvc.instanceConfig.logos.appSecondary,

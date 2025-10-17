@@ -80,6 +80,10 @@
   </section> -->
 
   <section class="padding-xs">
+     <a *ngIf="!hideMenu && !isKbPortal" mat-menu-item role="link" (click)="redirectToKBPortal()" class="app-tour flex items-center">
+      <!-- <mat-icon>settings</mat-icon> -->
+      <span >{{'profileDropdown.igotKarmyogi' | translate }}</span>
+    </a>
     <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToTourPage()" class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span >{{'profileDropdown.getStarted' | translate }}</span>

@@ -54,6 +54,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
   daysCompleted = 0
   announcementData: any
   eventsCalendarData: any
+  orgId: any
   constructor(
     private activatedRoute: ActivatedRoute,
     private events: EventService,
@@ -65,6 +66,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.userData = this.configSvc && this.configSvc.userProfile
+    this.orgId = this.configSvc && this.configSvc.unMappedUser.organisations[0].organisationId  
     // Get department ID from route parameters
     this.departmentId = this.activatedRoute.snapshot.params['id']
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data
@@ -185,7 +187,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
     }
   }
   
-  rraiseTelemetryInteratEvent(event: any) {
+  raiseTelemetryInteratEvent(event: any) {
     if (event && event.viewMoreUrl) {
       this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
     }
@@ -390,4 +392,12 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
           }
         }
       }
+
+  getOrgId(stripData: any) {
+    if (stripData && stripData.orgIDNeeded) {
+      return this.orgId
+    } else {
+      return ''
+    }
+  }
 }

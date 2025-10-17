@@ -190,7 +190,7 @@
         *ngIf="homeConfig?.rightSection?.active">
         <div class="flex flex-col gap-1 mt-3">
           <ng-container *ngIf="enableLazyLoadingFlag">
-            <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+            <div class="slider margin-top-m" *ngIf="sliderData && sliderData[0]?.active">
               <ng-container *ngFor="let sectionItem of sectionList">
                 <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                   <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -200,7 +200,7 @@
             <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
               <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                 <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                  <ws-feed-list [widgetData]="sectionItem.stripData"
+                  <ws-feed-list [widgetData]="sectionItem.stripData" [providerId]="getOrgId(sectionItem.stripData)"
                     (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                   </ws-feed-list>
                 </ng-container>
@@ -213,7 +213,7 @@
           <ng-container *ngIf="!enableLazyLoadingFlag">
             <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
               <ng-container *ngIf="item?.strips[0]?.active">
-                <ws-feed-list [widgetData]="item"
+                <ws-feed-list [widgetData]="item" [providerId]="getOrgId(sectionItem.stripData)"
                   (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
               </ng-container>
             </ng-container>
@@ -229,7 +229,7 @@
         *ngIf="homeConfig?.rightSection?.active">
         <div class="flex flex-col gap-3 mt-8">
           sliderData --{{sliderData | json}}
-          <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+          <div class="slider margin-top-m" *ngIf="sliderData && sliderData[0]?.active">
             sectionList --{{sectionList | json}}
             <ng-container *ngFor="let sectionItem of sectionList">
               <div>sectionItem --{{sectionItem | json}}</div>
@@ -244,7 +244,7 @@
             <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
               <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                 <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                  <ws-feed-list [widgetData]="sectionItem.stripData"
+                  <ws-feed-list [widgetData]="sectionItem.stripData" [providerId]="getOrgId(sectionItem.stripData)"
                     (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                   </ws-feed-list>
                 </ng-container>
@@ -256,7 +256,7 @@
           <ng-container *ngIf="!enableLazyLoadingFlag">
             <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
               <ng-container *ngIf="item?.strips[0]?.active">
-                <ws-feed-list [widgetData]="item"
+                <ws-feed-list [widgetData]="item" [providerId]="getOrgId(sectionItem.stripData)"
                   (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
               </ng-container>
             </ng-container>
