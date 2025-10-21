@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
 import { NsContent } from '@sunbird-cb/collection'
-import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
@@ -13,6 +13,9 @@ import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/colle
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
 import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
+import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
+
+const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = ["Invite-Only Program", "Moderated Program", "Blended Program", "Curated Program", "Standalone Assessment", "Moderated Assessment", "Invite-Only Assessment"]
 /* tslint:disable*/
 import _ from 'lodash'
 
@@ -75,7 +78,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   enrollmentList: any = []
   collectionLang: any
   isPreAssessment:boolean = false
+  redirectPath = '/page/home'
   // primaryCategory = NsContent.EPrimaryCategory
+  contentPrimaryCategory: any
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private domSanitizer: DomSanitizer,
@@ -93,7 +99,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private assessmentStartCheckService: ViewerHeaderSideBarToggleService,
     private resetRatingsService: ResetRatingsService,
     private widgetLibSvc: WidgetContentLibService,
-    private contentLangSvc: ContentLanguageService
+    private contentLangSvc: ContentLanguageService,
+    private contentSvc: WidgetContentServiceUtils,
+    private domainConfSvc: DomainConfService
+    
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -108,6 +117,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
       && this.activatedRoute.snapshot.data.enrollmentData.data || []
+    
+    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead && 
+      this.activatedRoute?.snapshot?.data?.contentRead?.data?.result?.content?.primaryCategory
+
     // this.getAuthDataIdentifer()
     if (window.innerWidth <= 1200) {
       this.isMobile = true
@@ -125,8 +138,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     this.channelId = this.activatedRoute.snapshot.queryParams.channelId
     if (this.configSvc.instanceConfig) {
       this.appIcon = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        this.configSvc.instanceConfig.logos.app,
+        this.domainConfSvc.getDomainAppLogo()
       )
+      this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
       if (this.configSvc.userProfile) {
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }
@@ -346,6 +360,11 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
             this.contentProgressHash = data.result.contentList
             this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
+            
+            if(this.contentProgressHash?.length && this.contentProgressHash[0]?.completionPercentage === 100 && this.contentProgressHash[0]?.status === 2) {
+                this.generateCertificate()
+            }
+
             if (this.leafNodesCount === this.contentProgressHash.length) {
               const ipStatusCount = this.contentProgressHash.filter((item: any) => item.status === 1)
 
@@ -462,6 +481,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
+    this.checkProgressAndGenerateCertificate();
     if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
     }
@@ -486,5 +506,59 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       return this.overallProgress
     }
+  }
+
+  checkProgressAndGenerateCertificate() {
+    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
+    this.batchId = this.activatedRoute.snapshot.queryParams.batchId
+     if (this.identifier && this.batchId && this.configSvc.userProfile) {
+        let userId
+        if (this.configSvc.userProfile) {
+          userId = this.configSvc.userProfile.userId || ''
+          this.userid = this.configSvc.userProfile.userId || ''
+        }
+
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
+        const req = {
+          request: {
+            userId,
+            language,
+            batchId: this.batchId,
+            courseId: this.identifier || '',
+            contentIds: [],
+            fields: ['progressdetails'],
+          },
+        }
+        this.widgetServ.fetchContentHistoryV2(req).subscribe(
+          (data: any) => {
+            this.contentProgressHash = data.result.contentList
+            const lastIndexData = this.contentProgressHash?.length && this.contentProgressHash[this.contentProgressHash?.length - 1]
+            if(lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
+              this.generateCertificate()
+            }
+          })
+      }
+  }
+
+   generateCertificate() {
+      const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+        (cat: string) => cat?.toLowerCase()
+      );
+
+      if (
+        allowedPrimaryCategory &&
+        allowedPrimaryCategory.includes(
+          this.contentPrimaryCategory?.toLowerCase()
+        )
+      ) {
+        const payload = {
+          request: {
+            courseId: this.identifier,
+            batchId: this.batchId,
+            userId: this.userid,
+          },
+        };
+        this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+      } 
   }
 }

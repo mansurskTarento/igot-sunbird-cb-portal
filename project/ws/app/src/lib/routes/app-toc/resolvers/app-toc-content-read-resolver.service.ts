@@ -23,7 +23,7 @@ export class AppTocContentReadResolverService
     if (contentId) {
       const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
       return (forPreview
-        ? this.contentSvc.fetchAuthoringContent(contentId)
+        ? this.contentSvc.fetchAuthoringContent(contentId,'read')
         : this.contentSvc.fetchContentData(contentId)
       ).pipe(
         map(data => ({ data, error: null })),

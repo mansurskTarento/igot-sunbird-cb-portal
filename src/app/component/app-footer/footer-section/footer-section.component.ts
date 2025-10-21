@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 /* tslint:disable */
@@ -14,11 +14,16 @@ export class FooterSectionComponent implements OnInit {
   @Input() environment: any
   @Input() hubsList: any
   @Input() headerFooterConfigData: any
+  isKbPortal: boolean = true
   constructor(
     private configSvc: ConfigurationsService,
     private discussUtilitySvc: DiscussUtilsService,
     private router: Router,
-    private langtranslations: MultilingualTranslationsService) { }
+    private langtranslations: MultilingualTranslationsService,
+    private domainConfSvc:DomainConfService
+  ) { 
+      this.isKbPortal = this.domainConfSvc.isKbPortal()
+  }
   footerSectionConfig = [
     {
       id: 1 ,

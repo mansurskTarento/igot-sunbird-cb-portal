@@ -250,6 +250,16 @@
             </mat-tab>
         </ng-container>
 
+        <ng-container *ngIf="showAssignmentsTab && !forPreview">
+            <mat-tab label="{{ 'apptocsinglepage.assignments' | translate }}">
+                <ng-template matTabContent>
+                    <div class="flex flex-col ratings-div mt-5" id="takeAssessmentDiv">
+                        <ws-widget-app-batch-assignments [content]="content"></ws-widget-app-batch-assignments>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </ng-container>
+
         <!-- Transcription Tab -->
         <mat-tab label="AI Tutor" *ngIf="viewerPage && enableAITutorFlag && isMobile">
             <ng-template mat-tab-label>

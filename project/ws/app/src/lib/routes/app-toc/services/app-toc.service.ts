@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Data } from '@angular/router'
-import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of} from 'rxjs'
+import { Subject, Observable, EMPTY, Subscription, BehaviorSubject, of, throwError } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsContent, NsContentConstants, WidgetContentService } from '@sunbird-cb/collection'
 import { NsAppToc, NsCohorts } from '../models/app-toc.model'
@@ -8,6 +8,7 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { ContentLanguageService } from '@sunbird-cb/consumption'
+import { map, catchError } from 'rxjs/operators'
 
 // TODO: move this in some common place
 const PROTECTED_SLAG_V8 = '/apis/protected/v8'
@@ -40,7 +41,17 @@ const API_END_POINTS = {
   SUBMIT_FORM: `apis/proxies/v8/forms/v2/saveFormSubmit`,
   AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
   // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
-  PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`
+  PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`,
+  CREATE_RESOURCE: `apis/proxies/v8/action/content/v3/create`,
+  READ_RESOURCE: `apis/proxies/v8/action/content/v3/`,
+  UPLOAD_FILE: `apis/proxies/v8/upload/action/content/v3/`,
+  UPDATE_RESOURCE: `apis/proxies/v8/action/content/v3/update`,
+  SEARCH: `apis/proxies/v8/assignment/v1/search`,
+  SUBMIT_DRAFT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submitDraft`,
+  SUBMIT_ASSIGNMENT: `apis/proxies/v8/assignment/v1/submit`,
+  ASSIGNMENT_STATUS: `apis/proxies/v8/forms/v2/submissions/search`,
+  UPLOAD_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer`,
+  READ_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer/read/file`,
 }
 
 @Injectable()
@@ -66,7 +77,7 @@ export class AppTocService {
   updatePageScroll = this.getPageScroll.asObservable()
   public hashmap: any = {}
   private transriptionDataSubject = new BehaviorSubject<any>(null); // Start with null
-  transcriptionData$ = this.transriptionDataSubject.asObservable(); 
+  transcriptionData$ = this.transriptionDataSubject.asObservable();
   public transriptionActiveLanguageDataObject = new BehaviorSubject<any>(null);
   public transriptionActiveLanguageDataObject$ = this.transriptionActiveLanguageDataObject.asObservable();
   public transriptionIdentifier = new Subject(); // Start with null
@@ -77,7 +88,7 @@ export class AppTocService {
     this.resumeDataSubscription = this.resumeData.subscribe(
       (_dataResult: any) => {
       })
-   }
+  }
 
   get subtitleOnBanners(): boolean {
     return this.showSubtitleOnBanners
@@ -271,7 +282,7 @@ export class AppTocService {
       }
       getAllItemsPerChildren(content)
       const chld = _.first(_.filter(flatList, { identifier }))
-      return (chld &&  chld.mimeType) || ''
+      return (chld && chld.mimeType) || ''
     }
     // return chld.mimeType
     return NsContent.EMimeTypes.UNKNOWN
@@ -537,9 +548,9 @@ export class AppTocService {
     if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
       url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
     } else {
-        url = `/api/content/v1/read/${contentId}`
+      url = `/api/content/v1/read/${contentId}`
     }
-      return this.http.get<{ result: any }>(url)
+    return this.http.get<{ result: any }>(url)
 
   }
 
@@ -563,7 +574,7 @@ export class AppTocService {
     )
   }
 
-  async mapCompletionPercentageProgram(content: NsContent.IContent | null,  enrolmentList: any, collectionId?: string) {
+  async mapCompletionPercentageProgram(content: NsContent.IContent | null, enrolmentList: any, collectionId?: string) {
     this.contentLoader.next(true)
     let totalCount = 0
     let leafnodeCount = 0
@@ -578,116 +589,116 @@ export class AppTocService {
         await this.mapCompletionChildPercentageProgram(content)
         totalCount = content.leafNodesCount
       } else {
-        if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE ) {
+        if (content?.primaryCategory !== NsContent.EPrimaryCategory.COURSE) {
           for (let i = 0; i < content.children.length; i += 1) {
             // content.children.forEach(async (parentChild,index) => {
-              const parentChild = content.children[i]
-              if (parentChild.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
-                const foundContent = this.findEnrolmentByCollectionId(enrolmentList, parentChild?.identifier)
-                // tslint:disable-next-line: max-line-length
-                // totalCount = foundContent && foundContent.completionPercentage ? totalCount + foundContent.completionPercentage : totalCount + 0
-                // content.completionPercentage = Math.round(totalCount / leafnodeCount)
-                if (foundContent && foundContent.completionPercentage === 100) {
+            const parentChild = content.children[i]
+            if (parentChild.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
+              const foundContent = this.findEnrolmentByCollectionId(enrolmentList, parentChild?.identifier)
+              // tslint:disable-next-line: max-line-length
+              // totalCount = foundContent && foundContent.completionPercentage ? totalCount + foundContent.completionPercentage : totalCount + 0
+              // content.completionPercentage = Math.round(totalCount / leafnodeCount)
+              if (foundContent && foundContent.completionPercentage === 100) {
+                this.contentLoader.next(true)
+                totalCount = totalCount += parentChild.leafNodesCount
+                completedLeafNodes = [...completedLeafNodes, ...parentChild.leafNodes]
+                if (foundContent.issuedCertificates.length > 0) {
+                  const certificate: any = foundContent.issuedCertificates.sort((a: any, b: any) =>
+                    new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
+                  const certId: any = certificate[0].identifier
+                  parentChild.issuedCertificatesId = certId
+                  // const certData: any = await this.dowonloadCertificate(certId).toPromise().catch(_error => {
+                  //   this.contentLoader.next(false)
+                  // })
+                  // if (certData && certData.result) {
+                  //   parentChild.issuedCertificatesSVG = certData.result.printUri
+                  // }
+                  this.contentLoader.next(false)
+                }
+                parentChild.completionPercentage = 100
+                parentChild.completionStatus = 2
+                await this.mapCompletionChildPercentageProgram(parentChild)
+              } else {
+                if (foundContent) {
                   this.contentLoader.next(true)
-                  totalCount = totalCount += parentChild.leafNodesCount
-                  completedLeafNodes = [...completedLeafNodes, ...parentChild.leafNodes]
-                  if (foundContent.issuedCertificates.length > 0) {
-                    const certificate: any = foundContent.issuedCertificates.sort((a: any, b: any) =>
-                      new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
-                    const certId: any = certificate[0].identifier
-                    parentChild.issuedCertificatesId = certId
-                    // const certData: any = await this.dowonloadCertificate(certId).toPromise().catch(_error => {
-                    //   this.contentLoader.next(false)
-                    // })
-                    // if (certData && certData.result) {
-                    //   parentChild.issuedCertificatesSVG = certData.result.printUri
-                    // }
-                    this.contentLoader.next(false)
+                  const language = this.contentLangSvc.getContentLanguage(parentChild)
+                  const req = {
+                    request: {
+                      batchId: foundContent.batch.batchId,
+                      userId: foundContent.userId,
+                      language: language,
+                      courseId: foundContent.collectionId,
+                      contentIds: [],
+                      fields: [
+                        'progressdetails',
+                      ],
+                    },
                   }
-                  parentChild.completionPercentage = 100
-                  parentChild.completionStatus = 2
-                  await this.mapCompletionChildPercentageProgram(parentChild)
-                } else {
-                  if (foundContent) {
-                    this.contentLoader.next(true)
-                    const language = this.contentLangSvc.getContentLanguage(parentChild)
-                    const req = {
-                      request: {
-                        batchId: foundContent.batch.batchId,
-                        userId: foundContent.userId,
-                        language: language,
-                        courseId: foundContent.collectionId,
-                        contentIds: [],
-                        fields: [
-                          'progressdetails',
-                        ],
-                      },
-                    }
-                    firstUncompleteCourse = (parentChild.completionPercentage === 0 || !parentChild.completionPercentage) &&
+                  firstUncompleteCourse = (parentChild.completionPercentage === 0 || !parentChild.completionPercentage) &&
                     !firstUncompleteCourse ? parentChild : firstUncompleteCourse
-                    inprogressDataCheck = inprogressDataCheck
-                    await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-                      const data: any  = progressdata
-                      if (data.result && data?.result?.contentList?.length > 0) {
-                        const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-                        this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-                        totalCount = completedLeafNodes.length
-                        inprogressDataCheck = [...inprogressDataCheck, ...data.result.contentList]
-                        // inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-                        this.updateResumaData(inprogressDataCheck)
-                        this.mapCompletionPercentage(parentChild, data.result.contentList)
-                        this.mapModuleCount(parentChild)
-                      } else {
-                          this.mapModuleCount(parentChild)
-                      }
-                      return progressdata
-                    })
-                    this.contentLoader.next(false)
-                  }
+                  inprogressDataCheck = inprogressDataCheck
+                  await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+                    const data: any = progressdata
+                    if (data.result && data?.result?.contentList?.length > 0) {
+                      const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+                      this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+                      totalCount = completedLeafNodes.length
+                      inprogressDataCheck = [...inprogressDataCheck, ...data.result.contentList]
+                      // inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+                      this.updateResumaData(inprogressDataCheck)
+                      this.mapCompletionPercentage(parentChild, data.result.contentList)
+                      this.mapModuleCount(parentChild)
+                    } else {
+                      this.mapModuleCount(parentChild)
+                    }
+                    return progressdata
+                  })
+                  this.contentLoader.next(false)
                 }
               }
-              //  else {
-              //   if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-              //     this.contentLoader.next(true)
-              //     const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
-              //     if (foundContent) {
-              //       const req = {
-              //         request: {
-              //           batchId: foundContent.batch.batchId,
-              //           userId: foundContent.userId,
-              //           courseId: foundContent.collectionId,
-              //           contentIds: [],
-              //           fields: [
-              //             'progressdetails',
-              //           ],
-              //         },
-              //       }
-              //       await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-              //         const data: any  = progressdata
-              //         if (data.result && data.result.contentList.length > 0) {
-              //           const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
-              //           this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
-              //           totalCount = completedLeafNodes.length
-              //           inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
-              //           this.updateResumaData(inprogressDataCheck)
-              //           this.mapCompletionPercentage(content, data.result.contentList)
-              //         }
-              //         this.contentLoader.next(false)
-              //         return progressdata
-              //       })
-              //     }
-              //     this.contentLoader.next(false)
-              //   }
-              // }
-              this.contentLoader.next(false)
             }
+            //  else {
+            //   if (content.primaryCategory !== NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
+            //     this.contentLoader.next(true)
+            //     const foundContent = enrolmentList && enrolmentList.find((el: any) => el.collectionId === content.identifier)
+            //     if (foundContent) {
+            //       const req = {
+            //         request: {
+            //           batchId: foundContent.batch.batchId,
+            //           userId: foundContent.userId,
+            //           courseId: foundContent.collectionId,
+            //           contentIds: [],
+            //           fields: [
+            //             'progressdetails',
+            //           ],
+            //         },
+            //       }
+            //       await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
+            //         const data: any  = progressdata
+            //         if (data.result && data.result.contentList.length > 0) {
+            //           const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
+            //           this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
+            //           totalCount = completedLeafNodes.length
+            //           inprogressDataCheck = inprogressDataCheck ? inprogressDataCheck :  data.result.contentList
+            //           this.updateResumaData(inprogressDataCheck)
+            //           this.mapCompletionPercentage(content, data.result.contentList)
+            //         }
+            //         this.contentLoader.next(false)
+            //         return progressdata
+            //       })
+            //     }
+            //     this.contentLoader.next(false)
+            //   }
+            // }
+            this.contentLoader.next(false)
+          }
         }
         if (content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM
           || content.primaryCategory === NsContent.EPrimaryCategory.COURSE
           || content.primaryCategory === NsContent.EPrimaryCategory.STANDALONE_ASSESSMENT
           || content.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM) {
           // this.mapCompletionPercentage(content, this.resumeData)
-          const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList,  collectionId || content?.identifier)
+          const foundParentContent = this.findEnrolmentByCollectionId(enrolmentList, collectionId || content?.identifier)
           const language = this.contentLangSvc.getContentLanguage(content)
           const req = {
             request: {
@@ -702,7 +713,7 @@ export class AppTocService {
             },
           }
           await this.fetchContentHistoryV2(req).toPromise().then((progressdata: any) => {
-            const data: any  = progressdata
+            const data: any = progressdata
             if (data && data.result && data.result.contentList.length > 0) {
               const completedCount = data.result.contentList.filter((ele: any) => ele.progress === 100)
               this.checkCompletedLeafnodes(completedLeafNodes, completedCount)
@@ -720,7 +731,7 @@ export class AppTocService {
         if (inprogressDataCheck && inprogressDataCheck.length === 0 && firstUncompleteCourse) {
           const firstChildData = this.widgetSvc.getFirstChildInHierarchy(firstUncompleteCourse)
           const childEnrollmentData = enrolmentList.find((el: any) =>
-          el.collectionId === firstUncompleteCourse.identifier)
+            el.collectionId === firstUncompleteCourse.identifier)
           const resumeData = [{
             contentId: firstChildData.identifier,
             batchId: childEnrollmentData && childEnrollmentData.batchId,
@@ -738,12 +749,12 @@ export class AppTocService {
       }
       // const parentContent = enrolmentList.find((el: any) => el.collectionId === content.identifier)
       // if (!parentContent.completionPercentage) {
-        content.completionPercentage = Math.floor((totalCount / leafnodeCount) * 100)
-        content.completionStatus = content.completionPercentage <= 100 ? 1 : 2
+      content.completionPercentage = Math.floor((totalCount / leafnodeCount) * 100)
+      content.completionStatus = content.completionPercentage <= 100 ? 1 : 2
       if (content.completionPercentage === 100 && inprogressDataCheck && inprogressDataCheck.length === 0 && !firstUncompleteCourse) {
         const firstChildData = this.widgetSvc.getFirstChildInHierarchy(content)
         const childEnrollmentData = enrolmentList.find((el: any) =>
-        el.collectionId === content.children[0].identifier)
+          el.collectionId === content.children[0].identifier)
         const resumeData = [{
           contentId: firstChildData.identifier,
           batchId: childEnrollmentData && childEnrollmentData.batchId,
@@ -785,20 +796,20 @@ export class AppTocService {
   // }
   // }
 
-  findEnrolmentByCollectionId (enrolmentList: any, identifier: string) {
+  findEnrolmentByCollectionId(enrolmentList: any, identifier: string) {
     return enrolmentList && enrolmentList?.length && enrolmentList.find((el: any) => el?.collectionId === identifier)
   }
-  
+
   async mapCompletionChildPercentageProgram(course: any) {
     if (course && course.children) {
       await course.children.map(async (courseChild: any) => {
-          if ((courseChild && courseChild.children) || courseChild.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
-            this.mapCompletionChildPercentageProgram(courseChild)
-            course['moduleCount'] = course['moduleCount'] ? course['moduleCount'] + 1 : 1
-          } else {
-            courseChild['completionPercentage'] = 100
-            courseChild['completionStatus'] = 2
-          }
+        if ((courseChild && courseChild.children) || courseChild.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
+          this.mapCompletionChildPercentageProgram(courseChild)
+          course['moduleCount'] = course['moduleCount'] ? course['moduleCount'] + 1 : 1
+        } else {
+          courseChild['completionPercentage'] = 100
+          courseChild['completionStatus'] = 2
+        }
       })
     }
   }
@@ -807,8 +818,8 @@ export class AppTocService {
     if (content && content.children) {
       if (content.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
         // content.children.map((item: NsContent.IContent)=> {
-          /* tslint:disable-next-line */
-          content = this.getCalculationsFromChildren(content)
+        /* tslint:disable-next-line */
+        content = this.getCalculationsFromChildren(content)
         // })
       }
 
@@ -888,22 +899,23 @@ export class AppTocService {
         expectedDuration: hierarchyData.expectedDuration || 0,
       }
       if (hierarchyData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM &&
-        hierarchyData.compatibilityLevel >= 5 && hierarchyData.contextLockingType && 
+        hierarchyData.compatibilityLevel >= 5 && hierarchyData.contextLockingType &&
         hierarchyData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY) {
-        this.hashmap[hierarchyData.identifier] = { ...this.hashmap[hierarchyData.identifier] , 
+        this.hashmap[hierarchyData.identifier] = {
+          ...this.hashmap[hierarchyData.identifier],
           contextLockingType: hierarchyData.contextLockingType,
           compatibilityLevel: hierarchyData.compatibilityLevel,
         }
       }
       this.createHirarchyProgressHashmap(hierarchyData)
-      this.hashmap =  { ...this.hashmap }
+      this.hashmap = { ...this.hashmap }
     }
   }
 
   getCalculationsFromChildren(item: NsContent.IContent) {
     item['duration'] = item.children.reduce((sum, child) => {
       return sum + Number(child.duration || 0)
-    },                                      0)
+    }, 0)
     const completedItems = _.filter(item.children, r => r.completionStatus === 2 || r.completionPercentage === 100)
     const totalCount = _.toInteger(_.get(item, 'leafNodesCount')) || 1
     item['completionPercentage'] = Number(((completedItems.length / totalCount) * 100).toFixed())
@@ -913,18 +925,18 @@ export class AppTocService {
 
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
     req.request.fields = ['progressdetails']
-    
-     if(req.request.courseId) {
+
+    if (req.request.courseId) {
       const reslut: any = this.http.post<NsContent.IContinueLearningData>(
         `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
       )
-        // data.subscribe((subscribeData: any) => {
-        //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
-        //     })
-    return reslut
-      }
-      return of()
-    
+      // data.subscribe((subscribeData: any) => {
+      //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
+      //     })
+      return reslut
+    }
+    return of()
+
   }
 
   dowonloadCertificate(certId: any): Observable<any> {
@@ -975,11 +987,11 @@ export class AppTocService {
     if (contentData && contentData.children) {
       for (const ele of contentData.children) {
         if (ele.primaryCategory === NsContent.ECourseCategory.COURSE) {
-           await this.widgetSvc.fetchContent(ele.identifier).toPromise().then(async (subEle: any) => {
+          await this.widgetSvc.fetchContent(ele.identifier).toPromise().then(async (subEle: any) => {
             if (subEle.result && subEle.result.content
-              &&  subEle.result.content.children &&  subEle.result.content.children.length) {
-                 ele['children'] = subEle.result.content.children
-              }
+              && subEle.result.content.children && subEle.result.content.children.length) {
+              ele['children'] = subEle.result.content.children
+            }
           })
         }
       }
@@ -987,23 +999,128 @@ export class AppTocService {
   }
 
   setTranscriptionData(data: any) {
-  //  console.log('data--', data)
+    //  console.log('data--', data)
     this.transriptionDataSubject.next(data);
   }
 
-  setActiveSubtitleLanguage(activeLang:any) {
+  setActiveSubtitleLanguage(activeLang: any) {
     console.log('activeLang--', activeLang)
     this.transriptionActiveLanguageDataObject.next(activeLang)
   }
 
-  
 
-  aiGetResourceVttFile(resourceID:any) {
+
+  aiGetResourceVttFile(resourceID: any) {
     return this.http.get<any>(`${API_END_POINTS.AI_RESOURCE_VTT_FILE}?resource_id=${resourceID}`)
   }
 
-  readPreEnrollmentResourcesState(req:any) {
+  readPreEnrollmentResourcesState(req: any) {
     return this.http
       .post(`${API_END_POINTS.PRE_ENROLLMENT_STATE_READ}`, req)
   }
+
+  createContentV2(requestBody: any) {
+    return this.http
+      .post(
+        `${API_END_POINTS.CREATE_RESOURCE}`,
+        requestBody,
+      )
+      .pipe(
+        map((data: any) => {
+          return data.result.identifier
+        }),
+      )
+  }
+
+
+  uploadAssignmentAnswer(contentId: string, batchId: string, assignmentId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name)
+    return this.http.post(`${API_END_POINTS.UPLOAD_ASSIGNMENT}/${contentId}/${batchId}/${assignmentId}`, formData);
+  }
+
+
+  readContentV2(id: string): Observable<any> {
+    return this.http.get<any>(
+      `${API_END_POINTS.READ_RESOURCE}read/${id}?mode=edit`,
+    ).pipe(
+      map((data: any) => {
+        return data.result.content
+      })
+    )
+  }
+
+  upload(
+    data: FormData,
+    contentData: any,
+    options?: any,
+  ): Observable<any> {
+
+    const file = data.get('content') as File
+    let fileName = file.name
+    if (['channel.json'].indexOf(fileName) < 0) {
+      fileName = this.appendToFilename(fileName)
+    }
+    const newFormData = new FormData()
+    newFormData.append('data', file, fileName)
+    return this.http.post<any>(
+      `${API_END_POINTS.UPLOAD_FILE}upload/${contentData.contentId}`,
+      newFormData,
+      options
+    )
+  }
+
+  appendToFilename(filename: string) {
+    const timeStamp = new Date().getTime()
+    const dotIndex = filename.lastIndexOf('.')
+    if (dotIndex === -1) {
+      return filename + timeStamp
+    }
+    return filename.substring(0, dotIndex) + timeStamp + filename.substring(dotIndex)
+  }
+
+  updateContentWithFewFields(requestBody: any, identifier: string): Observable<any> {
+    return this.http.patch<any>(
+      `${API_END_POINTS.UPDATE_RESOURCE}/${identifier}`,
+      requestBody,
+    )
+  }
+
+  searchAssignments(request: any): Observable<any> {
+    return this.http.post(API_END_POINTS.SEARCH, request)
+  }
+
+  submitDraftAssignment(request: any): Observable<any> {
+    return this.http.put(API_END_POINTS.SUBMIT_DRAFT_ASSIGNMENT, request)
+  }
+
+  submitAssignment(request: any): Observable<any> {
+    return this.http.post(API_END_POINTS.SUBMIT_ASSIGNMENT, request)
+  }
+
+  getAssignmentStatus(request: any): Observable<any> {
+    return this.http.post(`${API_END_POINTS.ASSIGNMENT_STATUS}`, request)
+  }
+
+  readAssignmentFile(contentId: string, batchId: string, assignmentId: string, fileName: string): Observable<any> {
+    // Properly encode the parameters to avoid malformed request errors
+    const encodedParams = new URLSearchParams({
+      contentId: contentId || '',
+      batchId: batchId || '',
+      formId: assignmentId || '',
+      fileName: fileName || ''
+    });
+
+    return this.http.get(`${API_END_POINTS.READ_ASSIGNMENT}?${encodedParams.toString()}`, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/octet-stream, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }
+    }).pipe(
+      catchError((error: any) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
 }

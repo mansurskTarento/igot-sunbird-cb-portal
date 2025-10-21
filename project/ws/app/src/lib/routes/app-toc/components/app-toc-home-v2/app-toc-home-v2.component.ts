@@ -2084,7 +2084,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   
   private async loadContentForPreview() {
     this.tocSvc.contentLoader.next(true)
-    await this.tocSvc.fetchCourseHeirarchy(this.content)
+    await this.fetchContentHierarchy(this.contentReadData?.identifier || '')
     this.tocSvc.contentLoader.next(false)
     this.tocSvc.checkModuleWiseData(this.content)
     this.skeletonLoader = false
