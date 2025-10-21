@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { CommonModule, DatePipe } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { AppTocRoutingModule } from './app-toc-routing.module'
@@ -293,7 +293,8 @@ import { EnrollLanguageDialogueComponent } from './components/enroll-language-di
     UserProfileService,
     OtpService,
     ContentLanguageService,
-    TOCMultiLingualDialogModule
+    TOCMultiLingualDialogModule,
+    DatePipe,
   ],
   exports: [
     AppTocDiscussionComponent,

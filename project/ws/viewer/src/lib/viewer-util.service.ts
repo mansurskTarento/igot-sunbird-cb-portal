@@ -1,7 +1,7 @@
 import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { noop, Observable, Subject } from 'rxjs'
+import { noop, Observable, of, Subject } from 'rxjs'
 import dayjs from 'dayjs'
 import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
 import { environment } from 'src/environments/environment'
@@ -18,8 +18,10 @@ export class ViewerUtilService {
     // PROGRESS_UPDATE: `/apis/protected/v8/user/realTimeProgress/update`,
     PROGRESS_UPDATE: `/apis/proxies/v8/content-progres`,
     ASSESSMENT_SECTION: `/apis/proxies/v8/assessment/v5/read`,
-    GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
-    SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
+    GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?id=${formId}`,
+    SUBMIT_FORM: `/apis/proxies/v8/forms/v2/saveFormSubmit`,
+    // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
+    // SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
     PRE_ASSESSMENT_STATE_UPDATE: `/apis/proxies/v8/content/v2/state/update`
     
   }
