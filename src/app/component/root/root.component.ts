@@ -89,8 +89,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.getHeaderFooterConfiguration().subscribe((sectionData: any) => {
       // console.log('headerFooterConfigData',sectionData)
-      this.headerFooterConfigData = sectionData.data
-      this.showFooter = true
+      if (sectionData && sectionData.data) {
+        this.headerFooterConfigData = sectionData.data
+        this.showFooter = true
+        // Manually trigger change detection to ensure footer updates
+        this.changeDetector.detectChanges()
+      }
     })
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
@@ -209,7 +213,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   showTour = false
   currentRouteData: any = []
   loggedinUser = !!(this.configSvc.userProfile && this.configSvc.userProfile.userId)
-  headerFooterConfigData: any = {}
+  headerFooterConfigData: any = null
   mobileTopHeaderVisibilityStatus = true
   activeMenu: any = ''
   backGroundTheme: any
