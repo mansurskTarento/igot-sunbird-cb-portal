@@ -489,11 +489,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         const filteredArr = this.vttLangArr.filter(
           (item: any) => item.label === this.transcriptionActiveLanguage
         );
-        console.log('this.vttLangArr', this.vttLangArr)
-        console.log('this.vttLangArr', this.transcriptionActiveLanguage)
         let url = filteredArr.length > 0 ? filteredArr[0].uri : null; 
         //let url = this.vttLangArr.filter((item: any) => item.label === this.transcriptionActiveLanguage)[0]['uri']
-        console.log('url--', url)
         if(url) {
           const file = await VttFile.fromUrl(url);
         let blocks: any = file.getBlocks();
