@@ -26,11 +26,11 @@
                 <mat-form-field class="profile-form-field w-full">
                   <input type="text" class="input-text w-full" matInput [formControlName]="field?.attributeName"
                     [maxlength]="field?.attributeMaxLength" />
-                  <mat-error class="text-xs mt-3"
+                  <mat-error class="text-xs mt-6"
                     *ngIf="customAttrForm.get(field?.attributeName)?.touched && customAttrForm.get(field?.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
                     {{field?.name }} is required
                   </mat-error>
-                  <mat-error class="text-xs mt-3"
+                  <mat-error class="text-xs mt-6"
                     *ngIf="customAttrForm.get(field?.attributeName)?.touched && !customAttrForm.get(field?.attributeName)?.hasError('required') && customAttrForm.get(field.attributeName)?.hasError('pattern')">
                     Invalid input.
                   </mat-error>
@@ -78,14 +78,13 @@
           </ng-container>
         </div>
       </form>
-      <div class="description-hint">
+      <div class="description-hint mt-9">
         <span class="font-red">{{ 'profileInfo.disclaimer' | translate }}</span>
         <span> - {{ 'profileInfo.disclaimerHint' | translate }}</span>
       </div>
     </div>
     <hr class="solid">
     <div class="form-actions flex items-center gap-4 mt-4">
-      {{customAttrForm?.valid}}
       <button mat-button [disabled]="!customAttrForm.valid" class="save-btn flex align-center justify-center px-2"
         (click)="handleSaveCustomForm()">{{
         'NetworkV2Profile.save' | translate }}</button>
