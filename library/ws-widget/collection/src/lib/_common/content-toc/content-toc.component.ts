@@ -486,12 +486,17 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           this.selectedTranscriptionStyle = this.vttLangArr[0]
         }
         // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
-        let url = this.vttLangArr.filter((item: any) => item.label === this.transcriptionActiveLanguage)[0]['uri']
-        // console.log('url--', url)
-        const file = await VttFile.fromUrl(url);
+        const filteredArr = this.vttLangArr.filter(
+          (item: any) => item.label === this.transcriptionActiveLanguage
+        );
+        let url = filteredArr.length > 0 ? filteredArr[0].uri : null; 
+        //let url = this.vttLangArr.filter((item: any) => item.label === this.transcriptionActiveLanguage)[0]['uri']
+        if(url) {
+          const file = await VttFile.fromUrl(url);
         let blocks: any = file.getBlocks();
 
         this.subTitles = blocks
+        }
         // console.log('this.vttLangArr--',this.vttLangArr)
         // if(this.vttLangArr && this.vttLangArr.length) {
         //   this.transcriptionActiveLanguage = this.vttLangArr[0]['label']
@@ -499,6 +504,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
         // }
         this.tocSvc.changeTranscriptionLanguageEvent.next({ activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer: true })
+        
+        
       } else {
         this.vttLangArr = []
         this.enableTranscriptionFlag = false

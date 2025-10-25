@@ -71,6 +71,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   fullScreenChatFlag = false
   faqChatBotDisable = true
   footerClassName = 'cb-footer'
+  fromTopNavHelp = false
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -105,6 +106,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'sarthi'
       } 
 
+      if(this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
       if(this.enableSupportAI || this.enableIGOTAIFlag) {
         this.faqChatBotDisable = true
       } else {
@@ -113,7 +119,17 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       this.getFooterClass()
     }
    
-    
+    this.chatbotService.openSupportAIChatbot.subscribe((data)=> {
+      if(data) {
+        this.fromTopNavHelp = true
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+        this.iconClick('start')
+      } else {
+        this.fromTopNavHelp = false
+      }
+    })
+
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
@@ -141,6 +157,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'sarthi'
       } 
 
+      if(this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+      
       if(this.enableSupportAI || this.enableIGOTAIFlag) {
         this.faqChatBotDisable = true
       } else {
@@ -240,7 +261,12 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     this.maximizeChatFlag = true
     if(!this.dragEnabled) {
       this.showIcon = !this.showIcon
-      this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
+      if(this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else {
+        this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
+      } 
       this.expanded = false
       if (type === 'start') {
         const timestamp = Date.now();

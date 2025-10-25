@@ -21,7 +21,7 @@
         </div>
         <div class="flex flex-row flex-wrap content-container"
             *ngIf="tabResults.length > 0" infinite-scroll [infiniteScrollDistance]="scrollDistance"
-            [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()">
+            [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()" >
             <mat-tab-group animationDuration="0ms"
                   class="mat-tab-labels w-full strips-tabgroup" dynamicHeight
                   (selectedIndexChange)="tabClicked($event, seeAllPageConfig, seeAllPageConfig.key)" [selectedIndex]="dynamicTabIndex">

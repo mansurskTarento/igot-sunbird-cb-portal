@@ -165,10 +165,40 @@
 
   :host ::ng-deep .video-js .vjs-control {
     width: 3em;
-    font-size: 16px;
+    font-size: 12px;
     vertical-align: middle;
     margin:0.25em;
   
+  }
+
+    :host ::ng-deep .quality-wrapper  {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px ;
+    margin-top: -15px ;
+    font-weight: 700 ;
+
+  }
+
+  :host ::ng-deep .quality-wrapper .vjs-icon-placeholder {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+   font-size: 14px !important;
+        margin-top: -54px !important;
+        font-weight: 700 !important;
+        margin-left: 0px !important;
+
+  }
+
+  :host ::ng-deep .vjs-progress-control {
+    margin-top: -5px !important;
+  }
+
+  :host ::ng-deep .quality-icons {
+    color: white !important;
+    font-size:22px !important;
   }
 
   :host ::ng-deep .video-js.vjs-paused .vjs-play-control {
@@ -274,4 +304,81 @@
   width: 100%;
   bottom: 2.35em !important;
   max-height: 15em;
+}
+
+::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  background-color: #2b333f;
+  background-color: rgba(43, 51, 63, .7);
+  position: absolute;
+  width: 100%;
+  bottom: 2.35em !important;
+  max-height: 15em;
+}
+
+::ng-deep .vjs-quality-selector {
+
+
+    // .vjs-icon-placeholder {
+    //   font-size: 24px !important;
+    //   margin-top: -10px !important;
+    // }
+
+
+    // .vjs-icon-placeholder::before {
+    //   content: "🅠"; /* YouTube-like quality icon */
+    //   font-size: 14px;
+    //   margin-right: 6px;
+    // }
+    // span.vjs-menu-value {
+    //   display: inline-block;
+    //   vertical-align: middle;
+    // }
+
+    /* Flex wrapper inside the button */
+  .vjs-quality-button .quality-wrapper {
+    display: inline-flex; /* ✅ Make sure it's inline */
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Icon styling */
+  .vjs-quality-button .vjs-icon-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-top: -10px ;
+    font-weight: 700 ;
+
+  }
+
+  .quality-wrapper {
+    margin-top: -10px ;
+    .vjs-icon-placeholder {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      // margin-top: -10px !important;
+      font-weight: 700 ;
+      margin-left: 10px ;
+      text-transform: capitalize;
+    }
+  }
+
+  /* Optional: Style the material icon itself */
+  .vjs-quality-button .material-icons {
+    font-size: 18px;
+    color: white;
+  }
+
+  /* Button styling (already applied by Video.js) */
+  .vjs-quality-button {
+    /* Don't force display: flex here, Video.js manages it */
+  }
+
+  .quality-icons {
+    color: white;
+    font-size:30px;
+  }
 }

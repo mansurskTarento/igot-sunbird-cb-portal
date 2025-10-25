@@ -23,6 +23,11 @@
   margin-bottom: 60px;
 }
 
+::ng-deep sb-uic-horizontal-scroller-v2 .prevBtn,
+::ng-deep sb-uic-horizontal-scroller-v2 .nextBtn {
+  z-index: 1 !important;
+}
+
 .view-more:hover {
   background-color: #DCDFE5;
 
