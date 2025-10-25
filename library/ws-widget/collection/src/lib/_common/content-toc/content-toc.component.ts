@@ -178,6 +178,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
     if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.transcription) {
@@ -197,7 +198,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (changes && changes['playResourceId']) {
       if (changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
         if (this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
-          this.parseVTT()
+        this.parseVTT()
         }
       }
     }
@@ -207,11 +208,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
       this.config = this.route.snapshot.data.pageData.data
     }
-    if (this.config && this.config.discussWidgetData) {
+    if (changes && this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.baseContentReadData && this.baseContentReadData.identifier) {
         // console.log('this.content.identifier', this.content.identifier)
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
+      //  this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.baseContentReadData.identifier
         }
@@ -245,22 +246,22 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
-    if (this.sideNavBarOpened) {
-      if (window.innerWidth < 1480) {
-        if (this.isMobileForAI) {
-          this.isMobileForAI = false
-        }
-      } else {
-        this.isMobileForAI = false
-      }
+    // if (this.sideNavBarOpened) {
+    //   if (window.innerWidth < 1480) {
+    //     if (this.isMobileForAI) {
+    //       this.isMobileForAI = false
+    //     }
+    //   } else {
+    //     this.isMobileForAI = false
+    //   }
 
-    } else {
-      if (window.innerWidth < 1480) {
-        this.isMobileForAI = true
-      } else {
-        this.isMobileForAI = false
-      }
-    }
+    // } else {
+    //   if (window.innerWidth < 1480) {
+    //     this.isMobileForAI = true
+    //   } else {
+    //     this.isMobileForAI = false
+    //   }
+    // }
 
   }
 
