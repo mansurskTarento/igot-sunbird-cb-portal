@@ -208,7 +208,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.route.snapshot.data.pageData && this.route.snapshot.data.pageData.data) {
       this.config = this.route.snapshot.data.pageData.data
     }
-    if (changes && this.config && this.config.discussWidgetData) {
+    if (this.config && this.config.discussWidgetData) {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.baseContentReadData && this.baseContentReadData.identifier) {
         // console.log('this.content.identifier', this.content.identifier)
@@ -246,22 +246,22 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         }
       })
     }
-    // if (this.sideNavBarOpened) {
-    //   if (window.innerWidth < 1480) {
-    //     if (this.isMobileForAI) {
-    //       this.isMobileForAI = false
-    //     }
-    //   } else {
-    //     this.isMobileForAI = false
-    //   }
+    if (this.sideNavBarOpened) {
+      if (window.innerWidth < 1480) {
+        if (this.isMobileForAI) {
+          this.isMobileForAI = false
+        }
+      } else {
+        this.isMobileForAI = false
+      }
 
-    // } else {
-    //   if (window.innerWidth < 1480) {
-    //     this.isMobileForAI = true
-    //   } else {
-    //     this.isMobileForAI = false
-    //   }
-    // }
+    } else {
+      if (window.innerWidth < 1480) {
+        this.isMobileForAI = true
+      } else {
+        this.isMobileForAI = false
+      }
+    }
 
   }
 
