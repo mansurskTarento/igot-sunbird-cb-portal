@@ -15,8 +15,8 @@ import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
 const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
-  "Course",
-  "Moderated Course",
+  // "Course",
+  // "Moderated Course",
   "Invite-Only Program",
   "Moderated Program",
   "Blended Program",
@@ -24,7 +24,9 @@ const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
   "Standalone Assessment",
   "Moderated Assessment",
   "Invite-Only Assessment",
-  "External Redirect",
+  "Comprehensive Assessment Program",
+  "Pre Enrolment Assessment"
+  // "External Redirect",
 ];
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
