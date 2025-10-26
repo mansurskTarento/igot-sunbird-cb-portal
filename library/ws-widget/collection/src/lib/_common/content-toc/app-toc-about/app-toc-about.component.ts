@@ -851,7 +851,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
       if (
         allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase())
+       ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
+        allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase()))
       ) {
         const payload = {
           request: {
@@ -883,8 +884,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
             );
           }
         );
-      }
-    } else {
+      } else {
       this.contentSvc.downloadCert(certId).subscribe(
         (response) => {
           if (this.content) {
@@ -909,6 +909,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         }
       );
     }
+    } 
   }
 
   checkValidJSON(str: any) {
