@@ -560,9 +560,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
       if (
         allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(
-          this.contentPrimaryCategory?.toLowerCase()
-        )
+        (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
       ) {
         const payload = {
           request: {

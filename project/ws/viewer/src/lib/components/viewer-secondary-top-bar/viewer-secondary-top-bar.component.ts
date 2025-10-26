@@ -539,9 +539,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
       if (
         allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(
-          this.contentPrimaryCategory?.toLowerCase()
-        )
+        (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
       ) {
         const payload = {
           request: {
