@@ -106,7 +106,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'support-ai'
       } 
 
-      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI.all) {
+      if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
         this.enableIGOTAIFlag = true
         this.currentFilter = 'sarthi'
       } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg &&  this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length 
@@ -304,6 +304,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       // } else {
       //   this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
       // } 
+      this.currentFilter = 'information'
       if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
         this.enableSupportAI = true
         this.currentFilter = 'support-ai'
@@ -349,7 +350,17 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.chatInformation = []
         this.chatIssues = []
         this.selectedLaguage = 'en'
-        this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
+        this.currentFilter = 'information'
+        //this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
+        if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
+          //this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg &&  this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length 
+          && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
+        ) {
+         // this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
         this.checkForApiCalls()
         this.more = false
         

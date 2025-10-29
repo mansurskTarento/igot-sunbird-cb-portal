@@ -651,8 +651,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
       if (Array.isArray(this.transcriptionLangArr)) {
         const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.label === this.transcriptionSubscriptionData?.activeLang);
-        console.log('defaultTrackTemp', defaultTrackTemp)
-        console.log('this.transcriptionSubscriptionData', this.transcriptionSubscriptionData)
+        
         let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
           return item?.label === defaultTrackTemp?.label
         });
