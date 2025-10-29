@@ -139,7 +139,11 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isMobile = this.utilitySvc.isMobile
-    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.aiTutor) {
+    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor?.all) {
+      this.enableAITutorFlag = true
+    } else if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.length &&
+      this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.includes(this.configSvc.userProfile?.rootOrgId)
+    ) {
       this.enableAITutorFlag = true
     } else {
       this.enableAITutorFlag = false

@@ -247,13 +247,17 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
 openSupportChatBot() {
-    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI) {
-      this.enableSupportAI = true
-      this.rootService.openSupportAIChatbot.next(true)  
-    } else {
+  if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI.all) {
+    this.enableSupportAI = true
+    this.rootService.openSupportAIChatbot.next(true)  
+  } else if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.supportAI.forOrg && this.configSvc.iGOTAIConfig.supportAI.forOrg.length 
+    && this.configSvc.iGOTAIConfig.supportAI.forOrg.includes(this.configSvc.userProfile?.rootOrgId)
+  ) {
+    this.enableSupportAI = true
+    this.rootService.openSupportAIChatbot.next(true)  
+  } else {
       this.getZohoForm()
     }
-
   }
   
 }
