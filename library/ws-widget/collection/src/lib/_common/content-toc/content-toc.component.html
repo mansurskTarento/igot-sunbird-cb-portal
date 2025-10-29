@@ -208,7 +208,6 @@
             <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
                 <!-- <ng-template matTabContent> -->
                 <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData && discussWidgetData?.newCommentSection?.commentTreeData?.entityId">
-                    hiiii
                     <ng-container *ngIf="!commentId">
                         <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
                     </ng-container>
