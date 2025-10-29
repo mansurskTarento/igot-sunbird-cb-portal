@@ -99,12 +99,12 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
 
-    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor &&  this.configService.iGOTAIConfig.aiTutor?.all) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor &&  this.configService.iGOTAIConfig?.aiTutor?.all) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
       // this.enableAITutorFlag = true
-    }  else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor && this.configService.iGOTAIConfig.aiTutor?.forOrg && this.configService.iGOTAIConfig.aiTutor?.forOrg?.length && 
-      this.configService.iGOTAIConfig.aiTutor.forOrg.includes(this.configService.userProfile?.rootOrgId)
+    }  else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig?.aiTutor?.forOrg && this.configService.iGOTAIConfig.aiTutor?.forOrg?.length && 
+      this.configService.iGOTAIConfig?.aiTutor?.forOrg.includes(this.configService.userProfile?.rootOrgId)
     ) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
@@ -140,7 +140,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
         });
       this.enableTranscriptionFlag = true
-    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
       this.configService.iGOTAIConfig?.transcription?.forOrg?.includes(this.configService.userProfile?.rootOrgId)
     ) {
       // console.log('in')
@@ -219,7 +219,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
     if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription?.all) {
       this.enableTranscriptionFlag = true
-    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
       this.configService.iGOTAIConfig?.transcription?.forOrg?.includes(this.configService?.userProfile?.rootOrgId)
     ) { 
       this.enableTranscriptionFlag = true
@@ -227,11 +227,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.enableTranscriptionFlag = false
     }
 
-    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig.aiTutor && this.configService.iGOTAIConfig.aiTutor?.all) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig.aiTutor?.all) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.content?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
       // this.enableAITutorFlag = true
-    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig.aiTutor?.forOrg && this.configService.iGOTAIConfig.aiTutor?.forOrg?.length
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig?.aiTutor?.forOrg && this.configService.iGOTAIConfig?.aiTutor?.forOrg?.length
       && this.configService.iGOTAIConfig.aiTutor?.forOrg?.includes(this.configService?.userProfile?.rootOrgId)
     ) {
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.content?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
