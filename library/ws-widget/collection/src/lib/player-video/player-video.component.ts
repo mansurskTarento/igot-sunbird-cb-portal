@@ -650,9 +650,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+        const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.label === this.transcriptionSubscriptionData?.activeLang);
+        
         let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
-          return item?.label === defaultTrackTemp?.default_lang
+          return item?.label === defaultTrackTemp?.label
         });
         this.transcriptionLangArr.forEach((track:any) => {
           // console.log(track?.label , defaultTrack?.label)
@@ -662,7 +663,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             src: (track?.label === defaultTrack?.label) ? defaultTrack?.uri : "",
             srclang: this.titleCase(track.label),
             label: this.titleCase(track.language),
-            default: track.default_lang
+            default: track.label
           }, false);
         });
         initObj.player.on('texttrackchange', () => {
