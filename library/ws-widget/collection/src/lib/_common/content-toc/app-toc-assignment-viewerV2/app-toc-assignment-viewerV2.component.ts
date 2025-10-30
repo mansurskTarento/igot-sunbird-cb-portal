@@ -74,7 +74,7 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
     this.tocSvc.readAssignmentFile(
       this.data.contentId,
       this.data.batchId,
-      this.data.assessment.id,
+      this.data.assessment.formId,
       this.fileName
     ).subscribe({
       next: (res: any) => {
