@@ -219,8 +219,8 @@ export class CustomFieldsComponent {
     console.log('this.masterListFormGroups', this.masterListFormGroups)
     // Add the nested form groups to the main form
     Object.keys(this.masterListFormGroups).forEach(fieldName => {
-    //   const nestedGroup = this.masterListFormGroups[fieldName];
-    //  this.customAttrForm.addControl(`${fieldName}_group`, nestedGroup);
+      const nestedGroup = this.masterListFormGroups[fieldName];
+     this.customAttrForm.addControl(`${fieldName}_group`, nestedGroup);
 
       // Set up change listeners for cascading dropdowns
       this.setupCascadingDropdownListeners(fieldName);
