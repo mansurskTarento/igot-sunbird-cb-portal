@@ -593,3 +593,54 @@ $mob-title-line-count: 2;
     text-decoration: underline !important;
     
 }
+
+.locked-certificate-outer-div {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.certificate-lock {
+    border: 0.7px solid rgba(0, 0, 0, 0.16);
+    border-radius: 12px;
+
+    .certificate-lock-text {
+        color: #344054;
+        /* stylelint-disable-next-line */
+        font: 700 14px/20.074px Inter;
+    }
+
+    .locking-screen {
+        color: #fff;
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.86);
+    }
+
+    .certificateLockedText {
+        color: #FFF;
+        text-align: center;
+        /* stylelint-disable-next-line */
+        font: 700 11.72px/normal Lato;
+    }
+
+    .locking-screen-description{
+        color: #FFF;
+        text-align: center;
+        /* stylelint-disable-next-line */
+        font: 400 14px/normal Lato;
+
+        .surveyFormeText {
+            color: #F3962F;
+        }
+    }
+
+    .surveyFormeButton{
+        background-color: #1B4CA1;
+        height: 34px;
+        border-radius: 18px;
+        color: #FFFFFF;
+        /* stylelint-disable-next-line */
+        font: 700 12px Lato;
+        border: 0px;
+        cursor: pointer;
+    }
+}

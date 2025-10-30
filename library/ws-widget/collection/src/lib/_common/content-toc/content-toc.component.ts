@@ -50,8 +50,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() playResourceId = ''
   @Input() sideNavBarOpened = false
   @Input() languageList = []
+  @Input() lockCertificate = true // make it false before deployment
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
+  @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()
 
   commentId?: string = ''
   sticky = false
@@ -536,6 +538,10 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     this.raiseTranscriptionLanguageStopTelemetry()
     // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
 
+  }
+
+  openSurveyFormPopup(event: boolean) {
+    this.trigerCompletionSurveyForm.emit(event);
   }
 
   playFromSlot(subtitle: any) {

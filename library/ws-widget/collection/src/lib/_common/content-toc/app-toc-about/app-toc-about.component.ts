@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
+import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -91,6 +91,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() fromMarketPlace? = false
   @Input() showMarketPlaceCertificate = false
   @Input() languageList = []
+  @Input() lockCertificate = true // make it false before deployment
+  @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()
   @ViewChild('summaryElem') summaryElem !: ElementRef
   @ViewChild('objectivesElem') objectivesElem !: ElementRef
   @ViewChild('descElem') descElem !: ElementRef
@@ -909,6 +911,10 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         }
       );
     }
+  }
+
+  openSurveyFormPopup() {
+    this.trigerCompletionSurveyForm.emit(true);
   }
 
   checkValidJSON(str: any) {

@@ -51,6 +51,7 @@ import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 import { EnrollLanguageDialogueComponent } from '../enroll-language-dialogue/enroll-language-dialogue.component'
+import { CompletionSurveyFormComponent } from '../completion-survey-form/completion-survey-form.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -232,6 +233,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   selectedLanguage: any
   languageMapProgress: any
   preAssessmentRequiredFlag:any = false
+  lockCertificate = true // make it false before deployment
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1715,6 +1717,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.handleAutoBatchAssign()
   }
 
+  openSurveyFormPopup(event: boolean) {
+    if (event) {
+      this.openCompletionSurveyFormPopup();
+    }
+  }
+
   generatePreAssessmentQuery(type: 'RESUME' | 'START_OVER' | 'START'): { [key: string]: string } {
     if (this.firstResourceLink && (type === 'START' || type === 'START_OVER')) {
       let qParams: { [key: string]: string } = {
@@ -2038,6 +2046,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.contentReadData = initData.content;
       this.baseContentReadData = initData.content;
     }
+    this.openCompletionSurveyFormPopup()
     // Added to make sure this reference was incorrect, assigning again to make sure global variable is properly updated
     this.queryParamsData = queryParamsDataTemp;
   
@@ -2055,6 +2064,31 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     return queryParamsDataTemp
   }
   
+  openCompletionSurveyFormPopup() {
+    if(this.baseContentReadData && _.get(this.baseContentReadData, 'completionSurveyLink')) {
+      const sID = this.baseContentReadData.completionSurveyLink.split('surveys/')
+      const surveyId = sID[1]
+      const data = {
+        surveyId
+      }
+      const dialogRef = this.dialog.open(CompletionSurveyFormComponent, {
+        disableClose: true,
+        width: '750px',
+        maxWidth: '90vw',
+        data: data,
+        autoFocus: false,
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.lockCertificate = false
+          this.openSnackbar('Thanks for submitting the survey')
+        } else {
+          this.lockCertificate = true
+        }
+      });
+    }
+  }
+
   private loadLanguageData() {
     this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
     this.selectedLanguage = this.contentLangSvc.getSelectedLanguage(this.contentReadData)
