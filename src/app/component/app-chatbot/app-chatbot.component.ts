@@ -525,8 +525,25 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         from: '',
         to: 'Telemetry',
       }
-      console.log('event---', event)
       this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+
+      if(this.enableSupportAI) {
+        const event = {
+          eventType: WsEvents.WsEventType.Telemetry,
+          eventLogLevel: WsEvents.WsEventLogLevel.Info,
+          data: {
+            edata: { type: 'click',  "id": "ai-support-search", "pageid": "/page/home"   },
+            object: { },
+            state: WsEvents.EnumTelemetrySubType.Loaded,
+            eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+            mode: 'view',
+          },
+          pageContext: {pageId: '/page/home', module: 'Home'},
+          from: '',
+          to: 'Telemetry',
+        }
+        this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+      }
     }
     
   }
@@ -565,7 +582,25 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         to: 'Telemetry',
       }
       console.log('event--', event)
-      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)     
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)    
+      if(this.enableSupportAI) {
+        const event = {
+          eventType: WsEvents.WsEventType.Telemetry,
+          eventLogLevel: WsEvents.WsEventLogLevel.Info,
+          data: {
+            edata: { type: 'click',  "id": "ai-support-search", "pageid": "/page/home"   },
+            object: { },
+            state: WsEvents.EnumTelemetrySubType.Unloaded,
+            eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+            mode: 'view',
+          },
+          pageContext: {pageId: '/page/home', module: 'Home'},
+          from: '',
+          to: 'Telemetry',
+        }
+        console.log('event--', event)
+        this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)  
+      } 
     }
    
   }
@@ -814,7 +849,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     } else if (!this.enableSupportAI && this.enableIGOTAIFlag) {
       this.footerClassName = 'cb-footer-with-ai'
     } else if (this.enableSupportAI && !this.enableIGOTAIFlag) {
-      this.footerClassName = 'cb-footer-with-ai'
+      this.footerClassName = 'cb-footer-with-ai-support-only'
     } else if (!this.enableSupportAI && !this.enableIGOTAIFlag) {
       this.footerClassName = 'cb-footer'
     }
