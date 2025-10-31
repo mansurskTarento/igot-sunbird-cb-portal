@@ -522,31 +522,35 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkProgressAndGenerateCertificate() {
-    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId;
-    if (this.configSvc.userProfile) {
-      this.userid = this.configSvc.userProfile.userId || '';
-      let request: any = {
-        request: {
-          retiredCoursesEnabled: true,
-          courseId: [this.identifier],
-        },
-      };
+    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
+    this.batchId = this.activatedRoute.snapshot.queryParams.batchId
+     if (this.identifier && this.batchId && this.configSvc.userProfile) {
+        let userId
+        if (this.configSvc.userProfile) {
+          userId = this.configSvc.userProfile.userId || ''
+          this.userid = this.configSvc.userProfile.userId || ''
+        }
 
-      this.widgetServ.getUserEnrollmentData(this.userId, request).subscribe({
-        next: (response: any) => {
-          if (response?.data && response?.data?.courses.length) {
-            const course = response?.data?.courses[0];
-            if (
-              course?.completionPercentage >= 100 &&
-              course?.status === 2 &&
-              !course?.issuedCertificates?.length
-            ) {
-              this.generateCertificate();
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
+        const req = {
+          request: {
+            userId,
+            language,
+            batchId: this.batchId,
+            courseId: this.identifier || '',
+            contentIds: [],
+            fields: ['progressdetails'],
+          },
+        }
+        this.widgetServ.fetchContentHistoryV2(req).subscribe(
+          (data: any) => {
+            this.contentProgressHash = data.result.contentList
+            const lastIndexData = this.contentProgressHash?.length && this.contentProgressHash[this.contentProgressHash?.length - 1]
+            if(lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
+              this.generateCertificate()
             }
-          }
-        },
-      });
-    }
+          })
+      }
   }
 
    generateCertificate() {

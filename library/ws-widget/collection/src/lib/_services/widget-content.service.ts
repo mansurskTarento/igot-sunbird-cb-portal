@@ -60,7 +60,6 @@ const API_END_POINTS = {
   EXT_USER_COURSE_ENROLL : (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
   EXT_CONTENT_EROLL: `/apis/proxies/v8/cios-enroll/v1/create`,
   EXT_PUBLIC_CONTENT: (partent: any, contentId: any) => `/apis/proxies/v8/ciosIntegration/v1/read/content/${partent}/${contentId}`,
-  ENROLL_CONTENT_DATA: (userId: string,) => `/apis/proxies/v8/learner/course/v4/user/enrollment/details/${userId}`,
 }
 
 @Injectable({
@@ -680,17 +679,5 @@ export class WidgetContentService {
         url = `/api/content/v1/read/${contentId}`
     }
       return this.http.get<NsContent.IContent>(url)
-  }
-
-  getUserEnrollmentData(userId: string, request: any): Observable<{ data: any; error: any }> {
-    return this.http.post(API_END_POINTS.ENROLL_CONTENT_DATA(userId), request).pipe(
-      map((rData: any) => {
-        const result = rData?.result ?? null;
-        return { data: result, error: null };
-      }),
-      catchError((error: any) => {
-        return of({ data: null, error });
-      })
-    );
   }
 }
