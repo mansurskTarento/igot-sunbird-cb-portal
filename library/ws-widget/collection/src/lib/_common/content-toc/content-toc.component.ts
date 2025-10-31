@@ -275,9 +275,6 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.discussWidgetData.newCommentSection.show = false
       }
       this.discussWidgetData = { ...this.discussWidgetData }
-
-        console.log('entityId====content-toc', this.discussWidgetData.newCommentSection.commentTreeData.entityId)
-        console.log('userId====content-toc', this.configService?.userProfile?.userId)
     }
 
     if (this.contentReadData && this.contentReadData.referenceNodes) {

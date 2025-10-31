@@ -159,8 +159,6 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
       }
       this.discussWidgetData = { ...this.discussWidgetData }
-        console.log('entityId====cios-toc', this.discussWidgetData.newCommentSection.commentTreeData.entityId)
-        console.log('userId====cios-toc', this.configSvc?.userProfile?.userId)
     }
   }
 
