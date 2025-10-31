@@ -110,6 +110,8 @@ export class EventPlayerComponent implements OnInit {
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventId
         }
+        console.log('entityId', this.discussWidgetData.newCommentSection.commentTreeData.entityId)
+        console.log('userId', this.configSvc.userProfile?.userId)
       }
       this.discussWidgetData.enrolledContent = true
       this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
