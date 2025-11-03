@@ -2939,10 +2939,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           console.log('response of getApllicationsById',res)
           if(res.result.response && Object.keys(res.result.response).length > 0) {
             this.endSurveySubmitted = true
-            alert('Survey Submitted')
+            console.log('Survey Submitted')
           } else {
             this.endSurveySubmitted = false
-            alert('Survey NOT Submitted,')
+            console.log('Survey NOT Submitted,')
             // Trigger survey
           }
         })
