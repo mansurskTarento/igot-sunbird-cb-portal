@@ -232,6 +232,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   selectedLanguage: any
   languageMapProgress: any
   preAssessmentRequiredFlag:any = false
+  endSurveySubmitted: boolean = true
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1509,9 +1510,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
+          this.checkForSurveyTrigger()
         } else{
           if (this.contentReadData && this.contentReadData.cumulativeTracking) {
             await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
+            this.checkForSurveyTrigger()
             this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
               if (res) {
                 this.resumeData = res
@@ -2920,6 +2923,29 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         }
       } else {
         return this.content?.completionPercentage || 0
+      }
+    }
+  }
+
+  checkForSurveyTrigger() {
+    if(this.content && this.contentReadData) {
+      console.log('checkForSurveyTrigger this.content',this.contentReadData)
+      if(this.content.completionStatus === 1 && this.contentReadData.completionSurveyLink) {
+        const sID = this.contentReadData.completionSurveyLink.split('surveys/')
+        const surveyId = sID[1]
+        const courseId = this.contentReadData.identifier
+        // Call API to see if survey is submitted or not
+        this.tocSvc.getApllicationsById(surveyId, courseId).subscribe((res) => {
+          console.log('response of getApllicationsById',res)
+          if(res.result.response && Object.keys(res.result.response).length > 0) {
+            this.endSurveySubmitted = true
+            console.log('Survey Submitted')
+          } else {
+            this.endSurveySubmitted = false
+            console.log('Survey NOT Submitted,')
+            // Trigger survey
+          }
+        })
       }
     }
   }
