@@ -13,21 +13,8 @@ import { PdfScormDataService } from '../../pdf-scorm-data-service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
+import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
-const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
-  // "Course",
-  // "Moderated Course",
-  "Invite-Only Program",
-  "Moderated Program",
-  "Blended Program",
-  "Curated Program",
-  "Standalone Assessment",
-  "Moderated Assessment",
-  "Invite-Only Assessment",
-  "Comprehensive Assessment Program",
-  "Pre Enrolment Assessment"
-  // "External Redirect",
-];
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
   templateUrl: './viewer-secondary-top-bar.component.html',
@@ -532,15 +519,15 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
   // }
 
-    generateCertificate() {
+    generateCertificate(enableForAll = true) {
       const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
         (cat: string) => cat?.toLowerCase()
       );
 
-      if (
-        allowedPrimaryCategory &&
+      if (enableForAll || 
+        (allowedPrimaryCategory &&
         (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase())) )
       ) {
         const payload = {
           request: {

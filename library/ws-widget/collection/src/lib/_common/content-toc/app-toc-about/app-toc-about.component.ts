@@ -838,7 +838,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.handleClaimService.setClaimData(event)
   }
 
-   handleOpenCertificateDialog() {
+   handleOpenCertificateDialog(enableForAll = true) {
     this.downloadCertificateBool = true;
     const certId = this.content && this.content?.certificateObj?.certId;
 
@@ -849,10 +849,10 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           (cat: string) => cat?.toLowerCase()
         );
 
-      if (
-        allowedPrimaryCategory &&
+      if (enableForAll ||
+        (allowedPrimaryCategory &&
        ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
-        allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase()))
+        allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase())))
       ) {
         const payload = {
           request: {

@@ -17,21 +17,8 @@ import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/u
 
 /* tslint:disable*/
 import _ from 'lodash'
+import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
-const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
-  // "Course",
-  // "Moderated Course",
-  "Invite-Only Program",
-  "Moderated Program",
-  "Blended Program",
-  "Curated Program",
-  "Standalone Assessment",
-  "Moderated Assessment",
-  "Invite-Only Assessment",
-  "Comprehensive Assessment Program",
-  "Pre Enrolment Assessment"
-  // "External Redirect",
-];
 @Component({
   selector: 'viewer-viewer-top-bar',
   templateUrl: './viewer-top-bar.component.html',
@@ -549,15 +536,15 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-   generateCertificate() {
+   generateCertificate(enableForAll = true) {
       const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
         (cat: string) => cat?.toLowerCase()
       );
 
-      if (
-        allowedPrimaryCategory &&
+      if (enableForAll ||
+        (allowedPrimaryCategory &&
         (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) ))
       ) {
         const payload = {
           request: {
