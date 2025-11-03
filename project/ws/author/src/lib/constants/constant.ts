@@ -175,3 +175,15 @@ export const TypeOfEvents = [
     displayName: 'Past Events',
   },
 ];
+
+export const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
+  "Invite-Only Program",
+  "Moderated Program",
+  "Blended Program",
+  "Curated Program",
+  "Standalone Assessment",
+  "Moderated Assessment",
+  "Invite-Only Assessment",
+  "Comprehensive Assessment Program",
+  "Pre Enrolment Assessment"
+];

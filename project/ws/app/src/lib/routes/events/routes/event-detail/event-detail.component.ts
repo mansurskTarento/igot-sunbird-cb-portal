@@ -16,7 +16,7 @@ import { MultilingualTranslationsService, ConfigurationsService, WidgetContentSe
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 //import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+// import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
@@ -92,7 +92,7 @@ export class EventDetailComponent implements OnInit {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private configSvc: ConfigurationsService,
-    private contentSvc: WidgetContentLibService,
+    // private contentSvc: WidgetContentLibService,
     // private discussService: DiscussService,
     private snackBar: MatSnackBar,
     private netCoreService: NetCoreService,
@@ -316,53 +316,49 @@ export class EventDetailComponent implements OnInit {
   // }
 
   handleOpenCertificateDialog() {
-    this.downloadCertificateBool = true
-    const certId = this.enrolledEvent && this.enrolledEvent.certificateObj.certId
-    if (this.enrolledEvent && this.enrolledEvent.certificateObj && !this.enrolledEvent.certificateObj.certData) {
-      this.contentSvc.downloadCert(certId).subscribe(response => {
-        if (this.enrolledEvent) {
-          this.downloadCertificateBool = false
-          this.enrolledEvent['certificateObj']['certData'] = response.result.printUri
+    this.downloadCertificateBool = true;
+
+    if (!this.enrolledEvent?.contentId || !this.configSvc.userProfile?.userId) {
+      this.downloadCertificateBool = false;
+      this.snackBar.open('Missing required information to fetch certificate.');
+      return;
+    }
+
+    const payload = {
+      request: {
+        courseId: this.enrolledEvent.contentId,
+        batchId: this.enrolledEvent.batchId || '',
+        userId: this.configSvc.userProfile.userId,
+      },
+    };
+
+    this.contentService.downloadCertV2(payload).subscribe(
+      (response) => {
+        this.downloadCertificateBool = false;
+
+        if (response?.result?.printUri) {
+          const certId = this.enrolledEvent?.certificateObj?.certId || '';
+
+          if (this.enrolledEvent?.certificateObj) {
+            this.enrolledEvent.certificateObj.certData = response.result.printUri;
+          }
+
           this.dialog.open(CertificateDialogComponent, {
             width: '1200px',
-            data: { cet: response.result.printUri, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
-          })
+            data: {
+              cet: response.result.printUri,
+              certId,
+            },
+          });
+        } else {
+          this.snackBar.open('Certificate not available.');
         }
-      }, (_error: any) => {
-        this.downloadCertificateBool = false
-        // this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
-        this.snackBar.open('Unable to View Certificate, due to some error!')
-      })
-    } else {
-      const payload = {
-          request: {
-            courseId: this.enrolledEvent?.contentId,
-            batchId: this.enrolledEvent?.batchId || '',
-            userId:  this.configSvc.userProfile && this.configSvc.userProfile.userId || '',
-          },
-        };
-        this.contentService.downloadCertV2(payload).subscribe(
-          (response) => {
-            if (response) {
-              this.downloadCertificateBool = false;
-             
-              this.dialog.open(CertificateDialogComponent, {
-                width: '1200px',
-                data: {
-                  cet: response.result.printUri,
-                  certId:
-                    (this.enrolledEvent && this.enrolledEvent.certificateObj.certId) || '',
-                },
-              });
-            }
-          },
-        (_error: any) => {
-            this.downloadCertificateBool = false;
-            this.snackBar.open(
-              'Unable to View Certificate, due to some error!'
-            );
-          })
-    }
+      },
+      (_error: any) => {
+        this.downloadCertificateBool = false;
+        this.snackBar.open('Unable to view certificate due to an error.');
+      }
+    );
   }
 
   translateLabels(label: string, type: any) {

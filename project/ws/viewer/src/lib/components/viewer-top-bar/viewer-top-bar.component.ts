@@ -17,21 +17,8 @@ import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/u
 
 /* tslint:disable*/
 import _ from 'lodash'
+import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
-const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
-  // "Course",
-  // "Moderated Course",
-  "Invite-Only Program",
-  "Moderated Program",
-  "Blended Program",
-  "Curated Program",
-  "Standalone Assessment",
-  "Moderated Assessment",
-  "Invite-Only Assessment",
-  "Comprehensive Assessment Program",
-  "Pre Enrolment Assessment"
-  // "External Redirect",
-];
 @Component({
   selector: 'viewer-viewer-top-bar',
   templateUrl: './viewer-top-bar.component.html',
@@ -522,46 +509,42 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkProgressAndGenerateCertificate() {
-    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
-    this.batchId = this.activatedRoute.snapshot.queryParams.batchId
-     if (this.identifier && this.batchId && this.configSvc.userProfile) {
-        let userId
-        if (this.configSvc.userProfile) {
-          userId = this.configSvc.userProfile.userId || ''
-          this.userid = this.configSvc.userProfile.userId || ''
-        }
+    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId;
+    if (this.configSvc.userProfile) {
+      this.userid = this.configSvc.userProfile.userId || '';
+      let request: any = {
+        request: {
+          retiredCoursesEnabled: true,
+          courseId: [this.identifier],
+        },
+      };
 
-        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
-        const req = {
-          request: {
-            userId,
-            language,
-            batchId: this.batchId,
-            courseId: this.identifier || '',
-            contentIds: [],
-            fields: ['progressdetails'],
-          },
-        }
-        this.widgetServ.fetchContentHistoryV2(req).subscribe(
-          (data: any) => {
-            this.contentProgressHash = data.result.contentList
-            const lastIndexData = this.contentProgressHash?.length && this.contentProgressHash[this.contentProgressHash?.length - 1]
-            if(lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
-              this.generateCertificate()
+      this.widgetServ.getUserEnrollmentData(this.userId, request).subscribe({
+        next: (response: any) => {
+          if (response?.data && response?.data?.courses.length) {
+            const course = response?.data?.courses[0];
+            if (
+              course?.completionPercentage >= 100 &&
+              course?.status === 2 &&
+              !course?.issuedCertificates?.length
+            ) {
+              this.generateCertificate();
             }
-          })
-      }
+          }
+        },
+      });
+    }
   }
 
-   generateCertificate() {
+   generateCertificate(enableForAll = true) {
       const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
         (cat: string) => cat?.toLowerCase()
       );
 
-      if (
-        allowedPrimaryCategory &&
+      if (enableForAll ||
+        (allowedPrimaryCategory &&
         (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) ))
       ) {
         const payload = {
           request: {
