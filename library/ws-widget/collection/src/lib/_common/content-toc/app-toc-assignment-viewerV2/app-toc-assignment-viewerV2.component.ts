@@ -143,9 +143,10 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
   }
   async notifyAssignmentSubmission() {
     const payload = {
-      contentId: this.data.contentId,
+      courseId: this.data.contentId,
       batchId: this.data.batchId,
       assignmentTitle: this.data.assessment.title,
+      instructorId: this.data.assessment.createdBy,
     }
     this.tocSvc.notifyAssignmentSubmission(payload).subscribe((res: any) => {
       if (res && res.responseCode && res.responseCode === 'OK') {
