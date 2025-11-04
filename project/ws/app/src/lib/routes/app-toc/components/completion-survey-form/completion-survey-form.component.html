@@ -1,12 +1,12 @@
 <div class="preview-container">
   <div class="form-header">
     <div class="flex justify-start items-center">
-      <div>Complete Survey</div>
+      <div>{{'apptoc.completeSurvey' | translate}} </div>
     </div>
   </div>
   <div class="form-content">
     <div class="my-4 feedback-text">
-      Please share your feedback to help us improve future programs. Your certificate will unlock once you submit this survey.
+      {{'apptoc.takeSurveyToUnlock' | translate}}
     </div>
     <ng-container *ngIf="surveyForm">
       <form [formGroup]="surveyForm">
@@ -29,8 +29,8 @@
           </ng-container>
         </ng-container>
         <div class="flex justify-end m-4">
-          <button mat-button class="do-later-btn" (click)="doItLater()">Do it later</button>
-          <button mat-button class="submit-btn" [disabled]="!surveyFormIsValid" (click)="submitForm()">Submit</button>
+          <button mat-button class="do-later-btn" (click)="doItLater()">{{'apptoc.doItLater' | translate}}</button>
+          <button mat-button class="submit-btn" [disabled]="!surveyFormIsValid" (click)="submitForm()">{{'apptoc.submit' | translate}}</button>
         </div>
       </form>
     </ng-container>

@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { ContentLanguageService, TOCMultiLingualDialogComponent, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ConfirmationDialogComponent, ContentLanguageService, TOCMultiLingualDialogComponent, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -233,8 +233,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   selectedLanguage: any
   languageMapProgress: any
   preAssessmentRequiredFlag:any = false
-  lockCertificate = true // make it false before deployment
-  endSurveySubmitted: boolean = true
+  lockCertificate = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -2049,7 +2048,6 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.contentReadData = initData.content;
       this.baseContentReadData = initData.content;
     }
-    this.openCompletionSurveyFormPopup()
     // Added to make sure this reference was incorrect, assigning again to make sure global variable is properly updated
     this.queryParamsData = queryParamsDataTemp;
   
@@ -2083,13 +2081,48 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          this.lockCertificate = false
-          this.openSnackbar('Thanks for submitting the survey')
+          this.openConfirmationDialog();
         } else {
           this.lockCertificate = true
         }
       });
     }
+  }
+
+  openConfirmationDialog() {
+    const dialogData = {
+      messages: [
+        {
+          message: this.translate.instant('apptoc.surveySubmitted'),
+          classes: 'dialog-title'
+        },
+        {
+          message: this.translate.instant('apptoc.surveyCompletedCertificateGenerating'),
+          classes: 'dialog-description mb-2'
+        }
+      ],
+      iconName: 'check_circle',
+      type: 'primary',
+      buttonsPositionClass: 'justify-center items-center',
+      buttons: [
+        {
+          classes: 'succes-button width-full',
+          text: this.translate.instant('apptoc.returnToProgramPage'),
+          response: true
+        }
+      ]
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      disableClose: true,
+      width: '500px',
+      maxWidth: '90vw'
+    })
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.lockCertificate = false
+      }
+    })
   }
 
   private loadLanguageData() {
@@ -2964,7 +2997,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   checkForSurveyTrigger() {
     if(this.content && this.contentReadData) {
       console.log('checkForSurveyTrigger this.content',this.contentReadData)
-      if(this.content.completionStatus === 1 && this.contentReadData.completionSurveyLink) {
+      if(this.content.completionStatus === 2 && this.contentReadData.completionSurveyLink) {
         const sID = this.contentReadData.completionSurveyLink.split('surveys/')
         const surveyId = sID[1]
         const courseId = this.contentReadData.identifier
@@ -2972,12 +3005,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         this.tocSvc.getApllicationsById(surveyId, courseId).subscribe((res) => {
           console.log('response of getApllicationsById',res)
           if(res.result.response && Object.keys(res.result.response).length > 0) {
-            this.endSurveySubmitted = true
-            console.log('Survey Submitted')
+            this.lockCertificate = false
           } else {
-            this.endSurveySubmitted = false
-            console.log('Survey NOT Submitted,')
-            // Trigger survey
+            this.lockCertificate = true
+            this.openCompletionSurveyFormPopup()
           }
         })
       }

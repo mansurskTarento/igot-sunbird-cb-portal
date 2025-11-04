@@ -111,16 +111,16 @@
             <div class="certificate-outer-div locked-certificate-outer-div">
                 <div class="certificate-lock p-4 flex flex-col gap-4">
                     <div class="flex justify-center items-center certificate-lock-text">
-                        Certificate Locked
+                        {{'apptoc.certificateLocked' | translate}}
                     </div>
                     <div class="flex justify-center items-center flex-col p-4 gap-2 locking-screen">
                         <img src="/assets/icons/lock_wht.svg" alt="lock image" />
-                        <div class="certificateLockedText pb-2">Your certificate is currently locked.</div>
+                        <div class="certificateLockedText pb-2">{{'apptoc.certificateLockedMessage' | translate }}</div>
                         <div class="locking-screen-description">
-                            To unlock it, please complete the <span class="surveyFormeText">survey form</span> about this program. Once submitted, your certificate will be generated automatically.
+                            {{'apptoc.unlockCertificate' | translate}} <span class="surveyFormeText">{{'apptoc.surveyForm' | translate}}</span> {{ 'apptoc.unlockCertificate2' | translate }}
                         </div>
 
-                        <button mat-button class="surveyFormeButton px-7" (click)="openSurveyFormPopup()">Complete Survey Now</button>
+                        <button mat-button class="surveyFormeButton px-7" (click)="openSurveyFormPopup()">{{'apptoc.completeSurveyNow' | translate}}</button>
                     </div>
                 </div>
             </div>

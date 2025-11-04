@@ -91,7 +91,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() fromMarketPlace? = false
   @Input() showMarketPlaceCertificate = false
   @Input() languageList = []
-  @Input() lockCertificate = true // make it false before deployment
+  @Input() lockCertificate = false
   @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()
   @ViewChild('summaryElem') summaryElem !: ElementRef
   @ViewChild('objectivesElem') objectivesElem !: ElementRef

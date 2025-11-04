@@ -50,7 +50,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() playResourceId = ''
   @Input() sideNavBarOpened = false
   @Input() languageList = []
-  @Input() lockCertificate = true // make it false before deployment
+  @Input() lockCertificate = false 
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()

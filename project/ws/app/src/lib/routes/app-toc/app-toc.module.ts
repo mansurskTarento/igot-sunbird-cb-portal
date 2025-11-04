@@ -110,7 +110,7 @@ import { AppTocHomeDirective } from './routes/app-toc-home/app-toc-home.directiv
 import { AppTocCohortsDirective } from './routes/app-toc-cohorts/app-toc-cohorts.directive'
 import { AppTocSinglePageDirective } from './routes/app-toc-single-page/app-toc-single-page.directive'
 import { AppTocCiosHomeComponent } from './components/app-toc-cios-home/app-toc-cios-home.component'
-import { CommonMethodsService, ContentLanguageService, TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
+import { CommonMethodsService, ContentLanguageService, DialogComponentsModule, TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
 import { UserProfileService } from '../user-profile/services/user-profile.service'
 import { OtpService } from '../user-profile/services/otp.services'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
@@ -297,6 +297,7 @@ import { CompletionSurveyFormComponent } from './components/completion-survey-fo
     ContentLanguageService,
     TOCMultiLingualDialogModule,
     DatePipe,
+    DialogComponentsModule
   ],
   exports: [
     AppTocDiscussionComponent,

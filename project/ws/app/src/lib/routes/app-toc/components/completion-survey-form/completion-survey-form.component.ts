@@ -6,6 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
 import * as _ from 'lodash'
 import { AppTocService } from '../../services/app-toc.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 //#endregion (imports)
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
@@ -39,9 +40,15 @@ export class CompletionSurveyFormComponent implements OnInit {
     @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private appTocSvc: AppTocService,
+    private translate: TranslateService,
 
   ) {
     this.surveyId = data.surveyId
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
+    }
   }
   //#endregion (constructor)
 
