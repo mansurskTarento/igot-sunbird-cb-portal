@@ -136,10 +136,6 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           ...strip.request.searchV6.request,
           ...factes,
         }
-        if (this.selectedContent === 'otherResources') {
-          delete this.selectedFilter.createdFor
-          delete strip.request.searchV6.request.filters.createdFor
-        }
         if (this.selectedFilter[gyaanConstants.resourceCategory] &&
             this.selectedFilter[gyaanConstants.resourceCategory].toLowerCase() === 'case study' ||
             this.selectedContent !== 'otherResources'
@@ -153,6 +149,20 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             'Resource',
           ]
           delete strip.request.searchV6.request.filters.contextYear
+        }
+        if (this.selectedContent === 'otherResources') {
+          if (this.selectedFilter.createdFor) {
+            delete this.selectedFilter.createdFor
+          }
+          if (strip.request.searchV6.request.filters.createdFor) {
+            delete strip.request.searchV6.request.filters.createdFor
+          }
+          if (strip.request.searchV6.request.filters['courseCategory']) {
+            delete strip.request.searchV6.request.filters['courseCategory']
+          }
+          strip.request.searchV6.request.filters.contentType = [
+            'Resource',
+          ]
         }
         strip.request.searchV6.request.query = this.searchControl && this.searchControl.value
         if (!(this.selectedFilter[gyaanConstants.requestSectorName] &&
@@ -172,6 +182,12 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
           strip.request.searchV6.request.filters = {
             ...strip.request.searchV6.request.filters,
             ...{ [gyaanConstants.requestSectorName]: this.sectorNames },
+          }
+        }
+        if(this.selectedContent === 'agkCaseStudies') {
+          strip.request.searchV6.request.filters['courseCategory'] = this.selectedFilter[gyaanConstants.resourceCategory]
+          if(strip.request.searchV6.request.filters[gyaanConstants.requestSectorName]){
+            delete strip.request.searchV6.request.filters[gyaanConstants.requestSectorName]
           }
         }
         strip.request.searchV6['request']['limit'] = this.limit
