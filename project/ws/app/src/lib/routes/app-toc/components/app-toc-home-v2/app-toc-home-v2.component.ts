@@ -28,7 +28,7 @@ import {
   UtilityService, WidgetEnrollService, WsEvents,
 } from '@sunbird-cb/utils-v2'
 
-import { ContentLanguageService, TOCMultiLingualDialogComponent, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ConfirmationDialogComponent, ContentLanguageService, TOCMultiLingualDialogComponent, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { NsAppToc } from '../../models/app-toc.model'
 import { AppTocService } from '../../services/app-toc.service'
 import { AccessControlService } from '@ws/author/src/public-api'
@@ -51,6 +51,7 @@ import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 import { EnrollLanguageDialogueComponent } from '../enroll-language-dialogue/enroll-language-dialogue.component'
+import { CompletionSurveyFormComponent } from '../completion-survey-form/completion-survey-form.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -232,7 +233,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   selectedLanguage: any
   languageMapProgress: any
   preAssessmentRequiredFlag:any = false
-  endSurveySubmitted: boolean = true
+  lockCertificate = false
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -1718,6 +1719,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.handleAutoBatchAssign()
   }
 
+  openSurveyFormPopup(event: boolean) {
+    if (event) {
+      this.openCompletionSurveyFormPopup();
+    }
+  }
+
   generatePreAssessmentQuery(type: 'RESUME' | 'START_OVER' | 'START'): { [key: string]: string } {
     if (this.firstResourceLink && (type === 'START' || type === 'START_OVER')) {
       let qParams: { [key: string]: string } = {
@@ -2058,6 +2065,66 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     return queryParamsDataTemp
   }
   
+  openCompletionSurveyFormPopup() {
+    if(this.baseContentReadData && _.get(this.baseContentReadData, 'completionSurveyLink')) {
+      const sID = this.baseContentReadData.completionSurveyLink.split('surveys/')
+      const surveyId = sID[1]
+      const data = {
+        surveyId
+      }
+      const dialogRef = this.dialog.open(CompletionSurveyFormComponent, {
+        disableClose: true,
+        width: '750px',
+        maxWidth: '90vw',
+        data: data,
+        autoFocus: false,
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.openConfirmationDialog();
+        } else {
+          this.lockCertificate = true
+        }
+      });
+    }
+  }
+
+  openConfirmationDialog() {
+    const dialogData = {
+      messages: [
+        {
+          message: this.translate.instant('apptoc.surveySubmitted'),
+          classes: 'dialog-title'
+        },
+        {
+          message: this.translate.instant('apptoc.surveyCompletedCertificateGenerating'),
+          classes: 'dialog-description mb-2'
+        }
+      ],
+      iconName: 'check_circle',
+      type: 'primary',
+      buttonsPositionClass: 'justify-center items-center',
+      buttons: [
+        {
+          classes: 'succes-button width-full',
+          text: this.translate.instant('apptoc.returnToProgramPage'),
+          response: true
+        }
+      ]
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      disableClose: true,
+      width: '500px',
+      maxWidth: '90vw'
+    })
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.lockCertificate = false
+      }
+    })
+  }
+
   private loadLanguageData() {
     this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
     this.selectedLanguage = this.contentLangSvc.getSelectedLanguage(this.contentReadData)
@@ -2930,7 +2997,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   checkForSurveyTrigger() {
     if(this.content && this.contentReadData) {
       console.log('checkForSurveyTrigger this.content',this.contentReadData)
-      if(this.content.completionStatus === 1 && this.contentReadData.completionSurveyLink) {
+      if(this.content.completionStatus === 2 && this.contentReadData.completionSurveyLink) {
         const sID = this.contentReadData.completionSurveyLink.split('surveys/')
         const surveyId = sID[1]
         const courseId = this.contentReadData.identifier
@@ -2938,12 +3005,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         this.tocSvc.getApllicationsById(surveyId, courseId).subscribe((res) => {
           console.log('response of getApllicationsById',res)
           if(res.result.response && Object.keys(res.result.response).length > 0) {
-            this.endSurveySubmitted = true
-            console.log('Survey Submitted')
+            this.lockCertificate = false
           } else {
-            this.endSurveySubmitted = false
-            console.log('Survey NOT Submitted,')
-            // Trigger survey
+            this.lockCertificate = true
+            this.openCompletionSurveyFormPopup()
           }
         })
       }

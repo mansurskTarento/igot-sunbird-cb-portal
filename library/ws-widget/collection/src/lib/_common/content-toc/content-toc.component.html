@@ -186,7 +186,8 @@
                     [tocStructure]="tocStructure" [config]="config" [forPreview]="false" [sticky]="sticky"
                     [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
                     [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
-                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList">
+                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList"
+                    [lockCertificate]="lockCertificate" (trigerCompletionSurveyForm)="openSurveyFormPopup($event)">
                 </ws-widget-app-toc-about>
             </ng-template>
         </mat-tab>
