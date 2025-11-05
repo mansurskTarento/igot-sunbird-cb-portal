@@ -6,7 +6,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
 // tslint:disable-next-line
-import _ from 'lodash'
+import * as _ from 'lodash'
 import dayjs from 'dayjs'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
@@ -268,6 +268,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       }
     }
 
+   if (
+      this.content?.contentId &&
+      this.content?.certificateObj?.data &&
+      Object.keys(this.content.certificateObj.data).length === 0 &&
+      this.content.completionStatus === 2
+    ) {
+      this.handleOpenCertificateDialog();
+    }
 
   }
 
@@ -856,7 +864,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       ) {
         const payload = {
           request: {
-            courseId: this.content.identifier,
+            courseId: this.content.identifier || this.content?.contentId,
             batchId: this.batchData?.content[0]?.batchId || '',
             userId: this.userProfile.userId,
           },
