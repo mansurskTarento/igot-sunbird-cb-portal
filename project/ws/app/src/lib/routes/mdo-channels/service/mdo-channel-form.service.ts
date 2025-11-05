@@ -21,6 +21,14 @@ resolve(
     if (_route && _route.data && _route.data.pageId && _route.data.pageId.includes('v2')) {
       subTypeValue = 'microsite-v2'
     }
+    if (_route && _route.data && _route.data.pageId && _route.data.pageId.includes('v3')) {
+      subTypeValue = 'microsite-v3'
+    }
+    const localRedirectData:any = JSON.parse(localStorage.getItem('microSiteRedirectionData') || '{}')
+    if (localRedirectData) {
+      localRedirectData.enabled = false
+      localStorage.setItem('microSiteRedirectionData', JSON.stringify(localRedirectData))
+    }
     const requestData: any = {
       'request': {
       'type': 'MDO-channel',
@@ -30,13 +38,6 @@ resolve(
         'rootOrgId': orgId,
       },
   }
-        // 'request': {
-      //     'type': 'ATI-CTI',
-      //     'subType': 'microsite',
-      //     'action': 'page-configuration',
-      //     'component': 'portal',
-      //     'rootOrgId': orgId,
-      // },
     return this.formSvc.formReadData(requestData).pipe(
       map((rData: any) => ({ data: rData, error: null })),
       tap((resolveData: any) => {
