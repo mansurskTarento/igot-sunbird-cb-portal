@@ -678,7 +678,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
                   for (const status of statusList) {
                     const course = formRefMap[status.contextId];
                     if (course) {
-                      course['surveyCompletionStatus'] = status.status;
+                      course['surveyCompletionStatus'] = status.submitted;
                     }
                   }
 
