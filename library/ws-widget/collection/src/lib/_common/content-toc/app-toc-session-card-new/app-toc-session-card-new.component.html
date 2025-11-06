@@ -41,7 +41,7 @@
          </a>
          <ng-container *ngIf="batchData?.enrolled">
             <div *ngIf="session[content?.identifier]?.sessionHandouts?.length > 0">
-               <div class="flex flex-row font-bold py-2">
+               <div class="flex flex-row font-normal py-2">
                   {{'apptocsessionscards.sessionHandouts' | translate }}
                </div>
                <div class="flex gap-4 card justify-between flex-middle py-2 "
@@ -54,7 +54,7 @@
             </div>
          </ng-container>
          <ng-container *ngIf="batchData?.enrolled && session[content?.identifier]?.resources?.length > 0">
-            <div class="flex flex-row font-bold py-2">{{'apptocsessionscards.resources' | translate }}</div>
+            <div class="flex flex-row font-normal py-2">{{'apptocsessionscards.resources' | translate }}</div>
             <div class="flex gap-4 card justify-between flex-middle py-2 "
                *ngFor="let resource of session[content?.identifier]?.resources">
                <div class="mr-2">{{resource.resourceTitle}}</div>
