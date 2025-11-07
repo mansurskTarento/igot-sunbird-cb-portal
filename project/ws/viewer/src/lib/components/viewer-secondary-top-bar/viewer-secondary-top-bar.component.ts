@@ -14,7 +14,20 @@ import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.s
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
-const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = ["Invite-Only Program", "Moderated Program", "Blended Program", "Curated Program", "Standalone Assessment", "Moderated Assessment", "Invite-Only Assessment"]
+const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
+  // "Course",
+  // "Moderated Course",
+  "Invite-Only Program",
+  "Moderated Program",
+  "Blended Program",
+  "Curated Program",
+  "Standalone Assessment",
+  "Moderated Assessment",
+  "Invite-Only Assessment",
+  "Comprehensive Assessment Program",
+  "Pre Enrolment Assessment"
+  // "External Redirect",
+];
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
   templateUrl: './viewer-secondary-top-bar.component.html',
@@ -526,9 +539,8 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
 
       if (
         allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(
-          this.contentPrimaryCategory?.toLowerCase()
-        )
+        (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
       ) {
         const payload = {
           request: {

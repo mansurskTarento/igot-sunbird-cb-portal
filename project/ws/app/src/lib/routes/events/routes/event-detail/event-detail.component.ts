@@ -12,7 +12,7 @@ import * as fileSaver from 'file-saver'
 import { environment } from 'src/environments/environment'
 import { EventService } from '../../services/events.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, ConfigurationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 //import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
@@ -95,7 +95,8 @@ export class EventDetailComponent implements OnInit {
     private contentSvc: WidgetContentLibService,
     // private discussService: DiscussService,
     private snackBar: MatSnackBar,
-    private netCoreService: NetCoreService
+    private netCoreService: NetCoreService,
+    private contentService: WidgetContentService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -333,11 +334,34 @@ export class EventDetailComponent implements OnInit {
         this.snackBar.open('Unable to View Certificate, due to some error!')
       })
     } else {
-      this.downloadCertificateBool = false
-      this.dialog.open(CertificateDialogComponent, {
-        width: '1200px',
-        data: { cet: this.enrolledEvent && this.enrolledEvent.certificateObj.certData, certId: this.enrolledEvent && this.enrolledEvent.certificateObj.certId },
-      })
+      const payload = {
+          request: {
+            courseId: this.enrolledEvent?.contentId,
+            batchId: this.enrolledEvent?.batchId || '',
+            userId:  this.configSvc.userProfile && this.configSvc.userProfile.userId || '',
+          },
+        };
+        this.contentService.downloadCertV2(payload).subscribe(
+          (response) => {
+            if (response) {
+              this.downloadCertificateBool = false;
+             
+              this.dialog.open(CertificateDialogComponent, {
+                width: '1200px',
+                data: {
+                  cet: response.result.printUri,
+                  certId:
+                    (this.enrolledEvent && this.enrolledEvent.certificateObj.certId) || '',
+                },
+              });
+            }
+          },
+        (_error: any) => {
+            this.downloadCertificateBool = false;
+            this.snackBar.open(
+              'Unable to View Certificate, due to some error!'
+            );
+          })
     }
   }
 
