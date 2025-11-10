@@ -18,7 +18,7 @@ export class ViewerUtilService {
     // PROGRESS_UPDATE: `/apis/protected/v8/user/realTimeProgress/update`,
     PROGRESS_UPDATE: `/apis/proxies/v8/content-progres`,
     ASSESSMENT_SECTION: `/apis/proxies/v8/assessment/v5/read`,
-    GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?id=${formId}`,
+    GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?formId=${formId}`,
     SUBMIT_FORM: `/apis/proxies/v8/forms/v2/saveFormSubmit`,
     // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
     // SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,

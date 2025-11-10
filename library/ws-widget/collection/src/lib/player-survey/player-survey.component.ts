@@ -56,14 +56,14 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   wfClientVersion: any = '0'
 
   constructor(private activatedRoute: ActivatedRoute,
-              private eventSvc: EventService,
-              private viewerSvc: ViewerUtilService,
-              private snackBar: MatSnackBar,
-              private viewerDataSvc: ViewerDataService,
-              private configSvc: ConfigurationsService,
-              private widgetServ: WidgetContentService,
-              private fb: FormBuilder,
-    ) {
+    private eventSvc: EventService,
+    private viewerSvc: ViewerUtilService,
+    private snackBar: MatSnackBar,
+    private viewerDataSvc: ViewerDataService,
+    private configSvc: ConfigurationsService,
+    private widgetServ: WidgetContentService,
+    private fb: FormBuilder,
+  ) {
     super()
   }
 
@@ -111,15 +111,15 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
           this.userid = this.configSvc.userProfile.userId || ''
         }
         const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-        if(isPreAssessment) {
-          this.progressStatus  = this.viewerSvc.getPreAssessmentResourceStatus(this.identifierId)
+        if (isPreAssessment) {
+          this.progressStatus = this.viewerSvc.getPreAssessmentResourceStatus(this.identifierId)
         } else {
 
           if (this.activatedRoute.snapshot.queryParams.collectionId &&
             this.activatedRoute.snapshot.queryParams.batchId &&
             this.identifierId) {
             const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-                                                                this.activatedRoute.snapshot.queryParams.batchId, this.identifierId)
+              this.activatedRoute.snapshot.queryParams.batchId, this.identifierId)
             const language = this.viewerSvc.getResourceContentLanguage(this.identifierId)
             const req = {
               request: {
@@ -139,7 +139,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
                 }
                 this.widgetServ.setProgramChildResumeData(data.result.contentList, resData.courseId)
                 // console.log(this.progressStatus)
-            })
+              })
           }
         }
       }
@@ -290,27 +290,27 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   }
 
   get dataObject(): any {
-      const dataObject: any = []
-      const fields = _.get(this.surveyForm, 'value.fields', [])
-      if (fields) {
-        fields.forEach((field: any) => {
-          let value = field.isNA ? 'N/A' : field.answer
-          if (!field.isNA && field.fieldType === 'date' && value) {
-            const formattedYear = value.getFullYear()
-            const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
-            const formattedDay = String(value.getDate()).padStart(2, '0')
-            value = `${formattedYear}-${formattedMonth}-${formattedDay}`
-          }
-          dataObject.push({
-            questionId: field.questionId,
-            question: field.question,
-            answer: value,
-            answerType: field.fieldType
-          })
+    const dataObject: any = []
+    const fields = _.get(this.surveyForm, 'value.fields', [])
+    if (fields) {
+      fields.forEach((field: any) => {
+        let value = field.isNA ? 'N/A' : field.answer
+        if (!field.isNA && field.fieldType === 'date' && value) {
+          const formattedYear = value.getFullYear()
+          const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
+          const formattedDay = String(value.getDate()).padStart(2, '0')
+          value = `${formattedYear}-${formattedMonth}-${formattedDay}`
+        }
+        dataObject.push({
+          questionId: field.questionId,
+          question: field.question,
+          answer: value,
+          answerType: field.fieldType
         })
-      }
-      return dataObject
+      })
     }
+    return dataObject
+  }
 
   updateQuestionValues(event: any) {
     this.questionsArray.value[event.questionIndex] = event
@@ -353,22 +353,22 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
 
   updateProgress(status: number) {
     const id = this.activatedRoute.snapshot.data.content ?
-    this.activatedRoute.snapshot.data.content.data.identifier : this.widgetData.identifier
+      this.activatedRoute.snapshot.data.content.data.identifier : this.widgetData.identifier
     const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-                                                         this.activatedRoute.snapshot.queryParams.batchId, id)
+      this.activatedRoute.snapshot.queryParams.batchId, id)
     const collectionId = (resData && resData.courseId) ? resData.courseId : ''
     const batchId = (resData && resData.batchId) ? resData.batchId : ''
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-    if(isPreAssessment) {
+    if (isPreAssessment) {
       const MIME_TYPE = this.widgetData?.mimeType || "application/survey"
       if (id && collectionId) {
         this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(id, status,MIME_TYPE)
+          .realTimeProgressUpdateForPreAssessmentQuiz(id, status, MIME_TYPE)
       }
-    } else 
-    if (collectionId && batchId && id) {
-      this.viewerSvc.realTimeProgressUpdateQuiz(id, collectionId, batchId, status)
-    }
+    } else
+      if (collectionId && batchId && id) {
+        this.viewerSvc.realTimeProgressUpdateQuiz(id, collectionId, batchId, status)
+      }
   }
 
   // fireRealTimeProgress(id: string) {
