@@ -271,7 +271,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
       this.viewerSvc.submitForm(formBody).subscribe({
         next: res => {
           this.addLoader = this.addLoader - 1
-          if (_.get(res, 'statusInfo.statusCode') === 200) {
+          if (_.get(res, 'statusInfo.statusCode') === 200 || _.get(res, 'responseCode') === 'OK') {
             this.openSnackbar('Form is submitted successfully')
             this.progressStatus = 2
             this.updateProgress(2)
