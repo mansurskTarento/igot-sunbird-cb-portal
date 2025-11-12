@@ -70,7 +70,6 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   ngOnInit() {
     const identifier = this.activatedRoute.snapshot.queryParams.collectionId
     const batchId = this.activatedRoute.snapshot.queryParams.batchId
-    //this.wfClientVersion = this.widgetData.wfClientVersion
     this.courseId = this.widgetData.collectionId
     this.courseName = this.widgetData.courseName
     this.progressStatus = this.widgetData.progressStatus
