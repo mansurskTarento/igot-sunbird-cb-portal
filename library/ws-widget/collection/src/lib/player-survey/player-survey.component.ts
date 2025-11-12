@@ -70,7 +70,7 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   ngOnInit() {
     const identifier = this.activatedRoute.snapshot.queryParams.collectionId
     const batchId = this.activatedRoute.snapshot.queryParams.batchId
-    this.wfClientVersion = this.widgetData.wfClientVersion
+    //this.wfClientVersion = this.widgetData.wfClientVersion
     this.courseId = this.widgetData.collectionId
     this.courseName = this.widgetData.courseName
     this.progressStatus = this.widgetData.progressStatus
@@ -152,11 +152,14 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
     this.addLoader = this.addLoader + 1
     this.viewerSvc.getFormById(this.surveyId).subscribe((result: any) => {
       this.addLoader = this.addLoader - 1
+      this.wfClientVersion = _.get(result, 'result.response.clientVersion', 0).toString()
       this.formDetails = {
         title: _.get(result, 'result.response.title', ''),
         fields: _.get(result, 'result.response.fields', [])
       }
-      this.buildForm()
+      if (this.wfClientVersion === '1.1') {
+        this.buildForm()
+      }
     }, (error: HttpErrorResponse) => {
       if (error) {
         this.addLoader = this.addLoader - 1
