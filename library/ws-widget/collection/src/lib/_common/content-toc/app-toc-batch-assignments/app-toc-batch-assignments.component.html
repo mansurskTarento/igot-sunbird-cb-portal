@@ -1,4 +1,10 @@
 <div class="guide-container">
+  <div class="flex flex row">
+    <div class="info-banner info-banner-warning flex flex-row itm-center">
+      <mat-icon class="info-icon margin-right-s assignment-note-icon">info</mat-icon>
+      <span class="assignment-note"> {{ 'userAssignments.note' | translate }}</span>
+    </div>
+  </div>
   <ng-container *ngFor="let assignment of assignments; index as i">
     <div class="guide-card">
       <div class="content flex gap-4 justify-between flex-middle">
