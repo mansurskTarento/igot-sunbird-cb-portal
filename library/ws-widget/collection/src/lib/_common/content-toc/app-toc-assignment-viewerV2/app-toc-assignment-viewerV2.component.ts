@@ -134,13 +134,28 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
       if (res && res.responseCode && res.responseCode === 'OK') {
         this.openSnackbar('Assignment Submitted Successfully')
         this.dialogRef.close()
+        this.notifyAssignmentSubmission()
       }
     }, error => {
       this.dialogRef.close()
       console.error('Error submitting assignment', error)
     })
   }
-
+  async notifyAssignmentSubmission() {
+    const payload = {
+      courseId: this.data.contentId,
+      batchId: this.data.batchId,
+      assignmentTitle: this.data.assessment.title,
+      instructorId: this.data.assessment.createdBy,
+    }
+    this.tocSvc.notifyAssignmentSubmission(payload).subscribe((res: any) => {
+      if (res && res.responseCode && res.responseCode === 'OK') {
+        console.log('Notified assignment submission')
+      }
+    }, error => {
+      console.error('Error notifying assignment submission', error)
+    })
+  }
 
 
   private processFileData(fileData: any) {

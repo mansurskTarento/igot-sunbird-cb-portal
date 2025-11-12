@@ -21,7 +21,7 @@
           <div class="statPoints">{{stat?.totalPoints}}</div>
         </div>
 
-        <ng-container *ngIf="stat?.totalPoints > 0">
+        <ng-container *ngIf="stat?.totalPoints > 0 && !isNotMyUserAndIgotOrg">
           <div class="viewAll hidden md:block">
             <a (click)="viewAll(stat)" >{{'NetworkV2Profile.viewAll' | translate}}</a>
           </div>

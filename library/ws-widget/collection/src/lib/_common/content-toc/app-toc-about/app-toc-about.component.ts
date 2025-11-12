@@ -6,7 +6,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
 // tslint:disable-next-line
-import _ from 'lodash'
+import * as _ from 'lodash'
 import dayjs from 'dayjs'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
@@ -268,6 +268,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       }
     }
 
+   if (
+      this.content?.contentId &&
+      this.content?.certificateObj?.data &&
+      Object.keys(this.content.certificateObj.data).length === 0 &&
+      this.content.completionStatus === 2
+    ) {
+      this.handleOpenCertificateDialog();
+    }
 
   }
 
@@ -838,7 +846,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     this.handleClaimService.setClaimData(event)
   }
 
-   handleOpenCertificateDialog() {
+   handleOpenCertificateDialog(enableForAll = true) {
     this.downloadCertificateBool = true;
     const certId = this.content && this.content?.certificateObj?.certId;
 
@@ -849,13 +857,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
           (cat: string) => cat?.toLowerCase()
         );
 
-      if (
-        allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase())
+      if (enableForAll ||
+        (allowedPrimaryCategory &&
+       ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
+        allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase())))
       ) {
         const payload = {
           request: {
-            courseId: this.content.identifier,
+            courseId: this.content.identifier || this.content?.contentId,
             batchId: this.batchData?.content[0]?.batchId || '',
             userId: this.userProfile.userId,
           },
@@ -883,8 +892,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
             );
           }
         );
-      }
-    } else {
+      } else {
       this.contentSvc.downloadCert(certId).subscribe(
         (response) => {
           if (this.content) {
@@ -909,6 +917,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         }
       );
     }
+    } 
   }
 
   checkValidJSON(str: any) {
