@@ -847,16 +847,12 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
   
   getCourseIdForCertificate(): string {
+    const paramId = this.activatedRoute.snapshot.paramMap.get('id');
     if (this.content?.contentId?.includes('ext_')) {
       return this.content.contentId;
     }
-
-    if (this.content?.courseCategory === 'Multilingual Course') {
-      const paramId = this.activatedRoute.snapshot.paramMap.get('id');
-      return paramId || '';
-    }
-
-    return this.content?.identifier || '';
+    
+    return paramId || '';
   }
 
    handleOpenCertificateDialog(enableForAll = true) {
