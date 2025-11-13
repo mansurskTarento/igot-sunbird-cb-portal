@@ -845,6 +845,19 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   handleClickOfClaim(event: any): void {
     this.handleClaimService.setClaimData(event)
   }
+  
+  getCourseIdForCertificate(): string {
+    if (this.content?.contentId?.includes('ext_')) {
+      return this.content.contentId;
+    }
+
+    if (this.content?.courseCategory === 'Multilingual Course') {
+      const paramId = this.activatedRoute.snapshot.paramMap.get('id');
+      return paramId || '';
+    }
+
+    return this.content?.identifier || '';
+  }
 
    handleOpenCertificateDialog(enableForAll = true) {
     this.downloadCertificateBool = true;
@@ -856,7 +869,6 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
         this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
           (cat: string) => cat?.toLowerCase()
         );
-
       if (enableForAll ||
         (allowedPrimaryCategory &&
        ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
@@ -864,7 +876,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       ) {
         const payload = {
           request: {
-            courseId: this.content.identifier || this.content?.contentId,
+            courseId: this.getCourseIdForCertificate(),
             batchId: this.batchData?.content[0]?.batchId || '',
             userId: this.userProfile.userId,
           },
