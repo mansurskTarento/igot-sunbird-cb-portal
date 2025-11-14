@@ -330,7 +330,7 @@ private getDesignationSafe(): void {
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreDesignations = true
 
-    this.usersService.searchDesignation(requestBody).pipe(finalize(() => {
+    this.usersService.searchPublicDesignation(requestBody).pipe(finalize(() => {
       this.isLoadingMoreDesignations = false
       this.designationInitInProgress = false
     }))
