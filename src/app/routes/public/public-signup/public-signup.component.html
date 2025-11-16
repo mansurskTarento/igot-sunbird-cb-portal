@@ -289,16 +289,16 @@
                 </div>
               </div>
               <!-- Designation block inserted after Organisation -->
-              <div class="input-wrapper margin-top-s">
+              <!-- <div class="input-wrapper margin-top-s">
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.designation' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
                     <mat-select #designation formControlName="designation" placeholder="Select designation"
                       (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
-                      (openedChange)="setupScrollListener($event)">
+                      (openedChange)="setupScrollListener($event)"> -->
 
                       <!-- Sticky search input container -->
-                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                      <!-- <div class="sticky-search-container" (click)="$event.stopPropagation()">
                         <div class="search-input-wrapper">
                           <input type="text" placeholder="Search designation" formControlName="searchDesignation"
                             class="search-input" (keydown)="$event.stopPropagation()" (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
@@ -309,32 +309,32 @@
                             ✕
                           </button>
                         </div>
-                      </div>
+                      </div> -->
                       <!-- Options list -->
-                      <mat-option [value]="designation?.name" *ngFor="let designation of masterData?.designation">
+                      <!-- <mat-option [value]="designation?.name" *ngFor="let designation of masterData?.designation">
                         {{designation?.name}}
-                      </mat-option>
+                      </mat-option> -->
                       <!-- Loading indicator -->
-                      <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                      <!-- <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
                         {{ 'publicsignup.loadMore' | translate }}
-                      </div>
+                      </div> -->
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.designation )?.length === 0" disabled>
+                      <!-- <mat-option *ngIf="(masterData?.designation )?.length === 0" disabled> -->
                         <!-- No matches found -->
-                         <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>.</div>
+                         <!-- <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>.</div>
                       </mat-option>
-                    </mat-select>
-                    <mat-error class="text-xs"
+                    </mat-select> -->
+                    <!-- <mat-error class="text-xs"
                       *ngIf="registrationForm?.get('designation')?.touched && registrationForm?.get('designation')?.invalid">
                       {{ 'publicsignup.selectDesignationErrorMsg' | translate }}
                     </mat-error>
                   </mat-form-field>
                   <div *ngIf="(masterData?.designation )?.length === 0"> 
-                    <!-- <div class="mat-error txt-size">Designation not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
                 </div>
                 
-              </div>
+              </div> -->
+
 
               <ng-template #autocompleteCard let-organisation="organisation">
                 <div class="px-5 py-3">
