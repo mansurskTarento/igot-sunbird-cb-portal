@@ -1,11 +1,9 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID} from '@angular/core'
-// import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core'
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core'
 import { Subscription, Observable, interval } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService, WsEvents, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
-// import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators'
-import { startWith, map, pairwise } from 'rxjs/operators'
+import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
@@ -20,7 +18,7 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-// import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -97,7 +95,7 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 })
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
-  // @ViewChild('designation', { read: ElementRef }) designationRef?: ElementRef
+  @ViewChild('designation', { read: ElementRef }) designationRef?: ElementRef
   registrationForm!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
@@ -140,18 +138,18 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   environment!: any
-  // desigantionFilterEnable = false
-  // isLoadingMoreDesignations = false;
-  // designationOffset = 0
-  // odcsDesignationCount = 0
-  // defaultSearchDesignationCount = 0
-  // designationListLoadCount = 50
-  // designationDefaultLoadCount = 50
-  // noMoreLegacyDesignations = false
-  // designationSearchText = ''
-  // designationInitInProgress = false
-  // scrollListenerAttached = false
-  // nodalRedirectionUrl = ''
+  desigantionFilterEnable = false
+  isLoadingMoreDesignations = false;
+  designationOffset = 0
+  odcsDesignationCount = 0
+  defaultSearchDesignationCount = 0
+  designationListLoadCount = 50
+  designationDefaultLoadCount = 50
+  noMoreLegacyDesignations = false
+  designationSearchText = ''
+  designationInitInProgress = false
+  scrollListenerAttached = false
+  nodalRedirectionUrl = ''
   private subscriptionContact: Subscription | null = null
   private recaptchaSubscription!: Subscription
   private userdataSubscription!: Subscription
@@ -161,11 +159,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   selectedLanguage = 'en'
   multiLang: any = []
   isMultiLangEnabled: any
-  // masterData: any = {}
+  masterData: any = {}
 
   constructor(
     private signupSvc: SignupService,
-    // private usersService: UserProfileService,
+    private usersService: UserProfileService,
     private loggerSvc: LoggerService,
     private configSvc: ConfigurationsService,
     private snackBar: MatSnackBar,
@@ -219,38 +217,38 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       // organisation: new FormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
       organisation: new UntypedFormControl('', [Validators.required]),
       // recaptchaReactive: new FormControl(null, [Validators.required]),
-      // designation: new UntypedFormControl('', [Validators.required]),
-      // searchDesignation: new UntypedFormControl('', [])
+      designation: new UntypedFormControl('', [Validators.required]),
+      searchDesignation: new UntypedFormControl('', [])
     })
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       this.isMultiLangEnabled = this.configSvc.instanceConfig.isMultilingualEnabled
     }
-    //     if (this.registrationForm.get('searchDesignation')) {
-    //   // tslint:disable-next-line
-    //   this.registrationForm.get('searchDesignation')!.valueChanges
-    //     .pipe(
-    //       debounceTime(100),
-    //       distinctUntilChanged(),
-    //       startWith(''),
-    //     )
-    //     .subscribe(res => {
-    //       const txt = res?.toString()?.trim() ?? ''
-    //       if (txt?.length) {
-    //         this.desigantionFilterEnable = true
-    //         // If org has IGOT designations, call the IGOT API; otherwise filter from local backup
-    //         if (this.masterData && this.masterData.designationBackup) {
-    //           this.masterData.designation = this.masterData.designationBackup.filter((item: any) =>
-    //             item.name.toLowerCase().includes(txt.toLowerCase()))
-    //         }
-    //       } else {
-    //         if (this.masterData && this.masterData.designationBackup) {
-    //           this.masterData.designation = this.masterData.designationBackup.slice(0, this.designationDefaultLoadCount)
-    //           this.desigantionFilterEnable = false
-    //           this.checkCurrentDesignationPresent()
-    //         }
-    //       }
-    //     })
-    // }
+        if (this.registrationForm.get('searchDesignation')) {
+      // tslint:disable-next-line
+      this.registrationForm.get('searchDesignation')!.valueChanges
+        .pipe(
+          debounceTime(100),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          const txt = res?.toString()?.trim() ?? ''
+          if (txt?.length) {
+            this.desigantionFilterEnable = true
+            // If org has IGOT designations, call the IGOT API; otherwise filter from local backup
+            if (this.masterData && this.masterData.designationBackup) {
+              this.masterData.designation = this.masterData.designationBackup.filter((item: any) =>
+                item.name.toLowerCase().includes(txt.toLowerCase()))
+            }
+          } else {
+            if (this.masterData && this.masterData.designationBackup) {
+              this.masterData.designation = this.masterData.designationBackup.slice(0, this.designationDefaultLoadCount)
+              this.desigantionFilterEnable = false
+              this.checkCurrentDesignationPresent()
+            }
+          }
+        })
+    }
   }
 
   ngOnInit() {
@@ -281,254 +279,254 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe(res => {
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
     })
-    //  if (!this.masterData['designationBackup']) {
-    //   this.getDesignationSafe()
-    // }
+     if (!this.masterData['designationBackup']) {
+      this.getDesignationSafe()
+    }
   }
-// private getDesignationSafe(): void {
-//   if (this.designationInitInProgress || this.isLoadingMoreDesignations) {
-//     return
-//   }
-//   this.designationInitInProgress = true
-//   this.getDesignation()
-// }
+private getDesignationSafe(): void {
+  if (this.designationInitInProgress || this.isLoadingMoreDesignations) {
+    return
+  }
+  this.designationInitInProgress = true
+  this.getDesignation()
+}
 
-//     getDesignation(searchText?: string, offset?: number): void {
-//       // avoid running on server-side render
-//       if (!isPlatformBrowser(this._platformId)) {
-//         return
-//       }
+    getDesignation(searchText?: string, offset?: number): void {
+      // avoid running on server-side render
+      if (!isPlatformBrowser(this._platformId)) {
+        return
+      }
 
-//       // clear any previous debug hooks
-//       if (!searchText || searchText?.length === 0) {
-//         // noop
-//       }
+      // clear any previous debug hooks
+      if (!searchText || searchText?.length === 0) {
+        // noop
+      }
 
-//       const reqOffset = (typeof offset === 'number') ? offset : this.designationOffset
-//       const reqLimit = this.designationDefaultLoadCount
-//     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
-//     // if we're requesting from first page, clear the no-more-data guard
-//     if (pageIndex === 0) {
-//       this.noMoreLegacyDesignations = false
-//     }
-//     const requestBody: any = {
-//       filterCriteriaMap: {
-//         status: 'Active'
-//       },
-//       requestedFields: [],
-//       pageNumber: pageIndex,
-//       pageSize: reqLimit,
-//     }
-//     if (searchText?.length) {
-//       requestBody['searchString'] = searchText
-//       // when searching, start from first page
-//       requestBody.pageNumber = 0
-//       // allow larger page for search if needed
-//       requestBody.pageSize = this.designationListLoadCount
-//       // reset guard when performing a fresh search
-//       this.noMoreLegacyDesignations = false
-//     }
+      const reqOffset = (typeof offset === 'number') ? offset : this.designationOffset
+      const reqLimit = this.designationDefaultLoadCount
+    const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
+    // if we're requesting from first page, clear the no-more-data guard
+    if (pageIndex === 0) {
+      this.noMoreLegacyDesignations = false
+    }
+    const requestBody: any = {
+      filterCriteriaMap: {
+        status: 'Active'
+      },
+      requestedFields: [],
+      pageNumber: pageIndex,
+      pageSize: reqLimit,
+    }
+    if (searchText?.length) {
+      requestBody['searchString'] = searchText
+      // when searching, start from first page
+      requestBody.pageNumber = 0
+      // allow larger page for search if needed
+      requestBody.pageSize = this.designationListLoadCount
+      // reset guard when performing a fresh search
+      this.noMoreLegacyDesignations = false
+    }
 
-//     // indicate loading state so scroll handlers don't trigger parallel calls
-//     this.isLoadingMoreDesignations = true
+    // indicate loading state so scroll handlers don't trigger parallel calls
+    this.isLoadingMoreDesignations = true
 
-//     this.usersService.searchPublicDesignation(requestBody).pipe(finalize(() => {
-//       this.isLoadingMoreDesignations = false
-//       this.designationInitInProgress = false
-//     }))
-//       .subscribe({
-//         next: (res: any) => {
-//         const content = _.get(res, 'result.result.data', [])
-//         const mapped = content.map((item: any) => ({
-//           name: item?.designation || '',
-//           status: item?.status || 'Active',
-//         }))
+    this.usersService.searchPublicDesignation(requestBody).pipe(finalize(() => {
+      this.isLoadingMoreDesignations = false
+      this.designationInitInProgress = false
+    }))
+      .subscribe({
+        next: (res: any) => {
+        const content = _.get(res, 'result.result.data', [])
+        const mapped = content.map((item: any) => ({
+          name: item?.designation || '',
+          status: item?.status || 'Active',
+        }))
 
-//         // total count may be present in different keys depending on API version.
-//         // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
-//         const total = _.get(res, 'result.result.totalcount', _.get(res, 'result.result.data.totalCount', _.get(res, 'result.result.totalCount', 0)))
-//         this.defaultSearchDesignationCount = total
+        // total count may be present in different keys depending on API version.
+        // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+        const total = _.get(res, 'result.result.totalcount', _.get(res, 'result.result.data.totalCount', _.get(res, 'result.result.totalCount', 0)))
+        this.defaultSearchDesignationCount = total
 
-//         // If offset is zero (first page) replace backup, otherwise append + dedupe
-//         if (!this.masterData['designationBackup'] || reqOffset === 0) {
-//           this.masterData['designationBackup'] = mapped
-//         } else {
-//           const combined = (this.masterData['designationBackup'] || []).concat(mapped)
-//           this.masterData['designationBackup'] = _.uniqBy(combined, (it: any) => (it?.name || '').toLowerCase())
-//         }
+        // If offset is zero (first page) replace backup, otherwise append + dedupe
+        if (!this.masterData['designationBackup'] || reqOffset === 0) {
+          this.masterData['designationBackup'] = mapped
+        } else {
+          const combined = (this.masterData['designationBackup'] || []).concat(mapped)
+          this.masterData['designationBackup'] = _.uniqBy(combined, (it: any) => (it?.name || '').toLowerCase())
+        }
 
-//         // If server returned no new items, mark as no-more-data to stop further scroll requests
-//         if (!mapped || mapped?.length === 0) {
-//           this.noMoreLegacyDesignations = true
-//         }
+        // If server returned no new items, mark as no-more-data to stop further scroll requests
+        if (!mapped || mapped?.length === 0) {
+          this.noMoreLegacyDesignations = true
+        }
 
-//         // If we've loaded at least the total count, mark no-more-data
-//         if (this.defaultSearchDesignationCount && (this.masterData['designationBackup'] || []).length >= this.defaultSearchDesignationCount) {
-//           this.noMoreLegacyDesignations = true
-//         }
+        // If we've loaded at least the total count, mark no-more-data
+        if (this.defaultSearchDesignationCount && (this.masterData['designationBackup'] || []).length >= this.defaultSearchDesignationCount) {
+          this.noMoreLegacyDesignations = true
+        }
 
-//         // Ensure visible list matches the requested display count
-//         this.masterData['designation'] = (this.masterData['designationBackup'] || []).slice(0, this.designationListLoadCount)
-//         // loading flag cleared in finalize()
-//         this.checkCurrentDesignationPresent()
-//       },
-//       error: () => {
-//         // Stop further automatic calls on repeated errors to avoid tight loops
-//         // loading flag cleared in finalize()
-//         this.noMoreLegacyDesignations = true
-//         // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-//       }
-//     })
-//   }
-//    checkCurrentDesignationPresent() {
-//     // Get the current designation value
-//     const currentDesignation = this.registrationForm.get('designation')!.value
-//     // Check if current designation exists in the list
-//     if (currentDesignation) {
-//       const designationExists = this.masterData?.designation.some(
-//         (designation: any) => designation?.name.toLowerCase() === currentDesignation.toLowerCase()
-//       )
+        // Ensure visible list matches the requested display count
+        this.masterData['designation'] = (this.masterData['designationBackup'] || []).slice(0, this.designationListLoadCount)
+        // loading flag cleared in finalize()
+        this.checkCurrentDesignationPresent()
+      },
+      error: () => {
+        // Stop further automatic calls on repeated errors to avoid tight loops
+        // loading flag cleared in finalize()
+        this.noMoreLegacyDesignations = true
+        // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
+      }
+    })
+  }
+   checkCurrentDesignationPresent() {
+    // Get the current designation value
+    const currentDesignation = this.registrationForm.get('designation')!.value
+    // Check if current designation exists in the list
+    if (currentDesignation) {
+      const designationExists = this.masterData?.designation.some(
+        (designation: any) => designation?.name.toLowerCase() === currentDesignation.toLowerCase()
+      )
 
-//       // If designation doesn't exist in the list, add it
-//       if (!designationExists) {
-//         // Create a new designation object to match the structure of other items
-//         const newDesignation = {
-//           name: currentDesignation,
-//           // Add any other required properties matching your data structure
-//           id: 'custom-' + Date.now(),
-//           description: currentDesignation
-//         }
-//         // Make sure the custom designation appears in the filtered list
-//         if (this.masterData?.designation?.length >= this.designationListLoadCount) {
-//           // Replace the last item with the new one to maintain the same number of items
-//           this.masterData?.designation.pop()
-//         }
-//         this.masterData?.designation?.unshift(newDesignation)
-//         this.isLoadingMoreDesignations = false
-//       }
-//     }
-//   }
-//     onDesignationDropdownClosed(): void {
-//     // Keep the designation value but clear the search input
-//     const currentDesignation = this.registrationForm.get('designation')!.value
-//     setTimeout(() => {
-//       if (this.registrationForm.get('searchDesignation')) {
-//         this.registrationForm.get('searchDesignation')!.setValue('')
-//       }
-//       // Ensure the designation value remains selected
-//       if (currentDesignation) {
-//         const designationControl = this.registrationForm.get('designation')
-//         if (designationControl) {
-//           designationControl.setValue(currentDesignation)
-//         }
-//       }
-//     }, 100)
-//   }
+      // If designation doesn't exist in the list, add it
+      if (!designationExists) {
+        // Create a new designation object to match the structure of other items
+        const newDesignation = {
+          name: currentDesignation,
+          // Add any other required properties matching your data structure
+          id: 'custom-' + Date.now(),
+          description: currentDesignation
+        }
+        // Make sure the custom designation appears in the filtered list
+        if (this.masterData?.designation?.length >= this.designationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.masterData?.designation.pop()
+        }
+        this.masterData?.designation?.unshift(newDesignation)
+        this.isLoadingMoreDesignations = false
+      }
+    }
+  }
+    onDesignationDropdownClosed(): void {
+    // Keep the designation value but clear the search input
+    const currentDesignation = this.registrationForm.get('designation')!.value
+    setTimeout(() => {
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('')
+      }
+      // Ensure the designation value remains selected
+      if (currentDesignation) {
+        const designationControl = this.registrationForm.get('designation')
+        if (designationControl) {
+          designationControl.setValue(currentDesignation)
+        }
+      }
+    }, 100)
+  }
 
-//  designationSearch(evt: any) {
-//   const searchText = evt?.target?.value
-//   const txt = (searchText || '').toString().trim()
-//   if (this.isLoadingMoreDesignations) return
+ designationSearch(evt: any) {
+  const searchText = evt?.target?.value
+  const txt = (searchText || '').toString().trim()
+  if (this.isLoadingMoreDesignations) return
 
-//   this.designationSearchText = txt
-//   if (txt?.length) {
-//     this.desigantionFilterEnable = true
-//     this.isLoadingMoreDesignations = true
-//     this.getDesignation(txt, 0)
-//   } else if (this.masterData && this.masterData?.designationBackup) {
-//     this.masterData.designation = this.masterData?.designationBackup.slice(0, this.designationDefaultLoadCount)
-//     this.desigantionFilterEnable = false
-//     this.checkCurrentDesignationPresent()
-//   }
-// }
-// setupScrollListener(opened: boolean): void {
-//   if (opened) {
-//     if (!this.scrollListenerAttached) {
-//       this.scrollListenerAttached = true
+  this.designationSearchText = txt
+  if (txt?.length) {
+    this.desigantionFilterEnable = true
+    this.isLoadingMoreDesignations = true
+    this.getDesignation(txt, 0)
+  } else if (this.masterData && this.masterData?.designationBackup) {
+    this.masterData.designation = this.masterData?.designationBackup.slice(0, this.designationDefaultLoadCount)
+    this.desigantionFilterEnable = false
+    this.checkCurrentDesignationPresent()
+  }
+}
+setupScrollListener(opened: boolean): void {
+  if (opened) {
+    if (!this.scrollListenerAttached) {
+      this.scrollListenerAttached = true
 
-//       this.desigantionFilterEnable = false
-//       this.designationListLoadCount = this.designationDefaultLoadCount
-//       this.designationOffset = 0
+      this.desigantionFilterEnable = false
+      this.designationListLoadCount = this.designationDefaultLoadCount
+      this.designationOffset = 0
 
-//       this.isLoadingMoreDesignations = true
-//       this.getDesignation(undefined, 0)
+      this.isLoadingMoreDesignations = true
+      this.getDesignation(undefined, 0)
 
-//       // Clear search box once
-//       if (this.registrationForm.get('searchDesignation')) {
-//         this.registrationForm.get('searchDesignation')!.setValue('')
-//       }
+      // Clear search box once
+      if (this.registrationForm.get('searchDesignation')) {
+        this.registrationForm.get('searchDesignation')!.setValue('')
+      }
 
-//       setTimeout(() => {
-//         const searchInput = document.querySelector('.search-input') as HTMLInputElement
-//         if (searchInput) {
-//           searchInput.focus()
-//         }
-//       }, 100)
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement
+        if (searchInput) {
+          searchInput.focus()
+        }
+      }, 100)
 
-//       // Attach scroll listener safely
-//       setTimeout(() => {
-//         const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
-//         if (panel) {
-//           // align panel width to trigger
-//           try {
-//             const triggerEl = this.designationRef && this.designationRef.nativeElement as HTMLElement
-//             if (triggerEl) {
-//               const rect = triggerEl.getBoundingClientRect()
-//               // set width and left so panel aligns exactly below the trigger
-//               panel.style.width = `${Math.round(rect.width)}px`
-//               // leave left to overlay positioning but nudge if necessary
-//               // compute left relative to viewport and apply to panel
-//               const overlayLeft = rect.left
-//               panel.style.left = `${Math.round(overlayLeft)}px`
-//             }
-//           } catch (e) {
-//             // ignore DOM errors in SSR or unexpected cases
-//           }
+      // Attach scroll listener safely
+      setTimeout(() => {
+        const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
+        if (panel) {
+          // align panel width to trigger
+          try {
+            const triggerEl = this.designationRef && this.designationRef.nativeElement as HTMLElement
+            if (triggerEl) {
+              const rect = triggerEl.getBoundingClientRect()
+              // set width and left so panel aligns exactly below the trigger
+              panel.style.width = `${Math.round(rect.width)}px`
+              // leave left to overlay positioning but nudge if necessary
+              // compute left relative to viewport and apply to panel
+              const overlayLeft = rect.left
+              panel.style.left = `${Math.round(overlayLeft)}px`
+            }
+          } catch (e) {
+            // ignore DOM errors in SSR or unexpected cases
+          }
 
-//           const scrollHandler = this.onDesignationSelectScroll.bind(this)
-//           panel.addEventListener('scroll', scrollHandler, { passive: true })
-//         }
-//       }, 150)
-//     }
-//   } else {
-//     // Dropdown closed — reset scroll flag so it can reattach next time
-//     this.scrollListenerAttached = false
-//   }
-// }
+          const scrollHandler = this.onDesignationSelectScroll.bind(this)
+          panel.addEventListener('scroll', scrollHandler, { passive: true })
+        }
+      }, 150)
+    }
+  } else {
+    // Dropdown closed — reset scroll flag so it can reattach next time
+    this.scrollListenerAttached = false
+  }
+}
 
-//    onDesignationSelectScroll(event: any): void {
-//     const element = event?.target
-//     if (!this.desigantionFilterEnable) {
-//       // Check if user has scrolled to the bottom (with a small threshold)
-//       if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
-//         // Only load more if not already loading and if there are potentially more items
-//         if (!this.isLoadingMoreDesignations) {
-//           // If org uses IGOT designation taxonomy, request more from the API by increasing the limit
-//           if (this.masterData?.designationBackup?.length > this.masterData?.designation?.length) {
-//             // Local pagination: expand the sliced list
-//             this.isLoadingMoreDesignations = true
-//             this.designationListLoadCount += this.designationDefaultLoadCount
-//             // Update the filtered list with more items
-//             setTimeout(() => {
-//               this.masterData.designation = this.masterData?.designationBackup?.slice(0, this.designationListLoadCount)
-//               this.checkCurrentDesignationPresent()
-//               this.isLoadingMoreDesignations = false
-//             }, 500) // Small timeout to simulate loading and prevent multiple triggers
-//           } else {
-//             // Legacy (server) pagination: request next page if total not reached
-//             const loadedLegacy = (this.masterData?.designationBackup || []).length
-//             if (!this.noMoreLegacyDesignations && this.defaultSearchDesignationCount && loadedLegacy < this.defaultSearchDesignationCount) {
-//               this.isLoadingMoreDesignations = true
-//               this.designationOffset = (this.designationOffset || 0) + this.designationDefaultLoadCount
-//               // increase display count to include newly fetched items
-//               this.designationListLoadCount += this.designationDefaultLoadCount
-//               this.getDesignation(undefined, this.designationOffset)
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
+   onDesignationSelectScroll(event: any): void {
+    const element = event?.target
+    if (!this.desigantionFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDesignations) {
+          // If org uses IGOT designation taxonomy, request more from the API by increasing the limit
+          if (this.masterData?.designationBackup?.length > this.masterData?.designation?.length) {
+            // Local pagination: expand the sliced list
+            this.isLoadingMoreDesignations = true
+            this.designationListLoadCount += this.designationDefaultLoadCount
+            // Update the filtered list with more items
+            setTimeout(() => {
+              this.masterData.designation = this.masterData?.designationBackup?.slice(0, this.designationListLoadCount)
+              this.checkCurrentDesignationPresent()
+              this.isLoadingMoreDesignations = false
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+          } else {
+            // Legacy (server) pagination: request next page if total not reached
+            const loadedLegacy = (this.masterData?.designationBackup || []).length
+            if (!this.noMoreLegacyDesignations && this.defaultSearchDesignationCount && loadedLegacy < this.defaultSearchDesignationCount) {
+              this.isLoadingMoreDesignations = true
+              this.designationOffset = (this.designationOffset || 0) + this.designationDefaultLoadCount
+              // increase display count to include newly fetched items
+              this.designationListLoadCount += this.designationDefaultLoadCount
+              this.getDesignation(undefined, this.designationOffset)
+            }
+          }
+        }
+      }
+    }
+  }
 
   get typeValueStartCase() {
     // tslint:disable-next-line: no-non-null-assertion
