@@ -13,11 +13,11 @@ import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/colle
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
 import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
-import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
+// import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
 /* tslint:disable*/
 import _ from 'lodash'
-import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
+// import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
 @Component({
   selector: 'viewer-viewer-top-bar',
@@ -100,7 +100,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private resetRatingsService: ResetRatingsService,
     private widgetLibSvc: WidgetContentLibService,
     private contentLangSvc: ContentLanguageService,
-    private contentSvc: WidgetContentServiceUtils,
+    // private contentSvc: WidgetContentServiceUtils,
     private domainConfSvc: DomainConfService
     
   ) {
@@ -536,24 +536,24 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-   generateCertificate(enableForAll = true) {
-      const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
-        (cat: string) => cat?.toLowerCase()
-      );
+   generateCertificate() {
+      // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+      //   (cat: string) => cat?.toLowerCase()
+      // );
 
-      if (enableForAll ||
-        (allowedPrimaryCategory &&
-        (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-        allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) ))
-      ) {
-        const payload = {
-          request: {
-            courseId: this.identifier,
-            batchId: this.batchId,
-            userId: this.userid,
-          },
-        };
-        this.contentSvc.downloadCertV2(payload).subscribe(() => {});
-      } 
+      // if (
+      //   allowedPrimaryCategory &&
+      //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+      //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+      // ) {
+      //   const payload = {
+      //     request: {
+      //       courseId: this.identifier,
+      //       batchId: this.batchId,
+      //       userId: this.userid,
+      //     },
+      //   };
+      //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+      // } 
   }
 }

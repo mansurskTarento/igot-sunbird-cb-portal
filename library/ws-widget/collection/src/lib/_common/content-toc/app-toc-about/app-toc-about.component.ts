@@ -855,77 +855,107 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     return paramId || '';
   }
 
-   handleOpenCertificateDialog(enableForAll = true) {
-    this.downloadCertificateBool = true;
-    const certId = this.content && this.content?.certificateObj?.certId;
+  //  handleOpenCertificateDialog() {
+  //   this.downloadCertificateBool = true;
+  //   const certId = this.content && this.content?.certificateObj?.certId;
 
-    if (this.content && this.pageConfigData) {
-      const allowedPrimaryCategory =
-        this.pageConfigData?.dynamicCertificateGeneration?.allows &&
-        this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
-          (cat: string) => cat?.toLowerCase()
-        );
-      if (enableForAll ||
-        (allowedPrimaryCategory &&
-       ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
-        allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase())))
-      ) {
-        const payload = {
-          request: {
-            courseId: this.getCourseIdForCertificate(),
-            batchId: this.batchData?.content[0]?.batchId || '',
-            userId: this.userProfile.userId,
-          },
-        };
-        this.contentSvc.downloadCertV2(payload).subscribe(
-          (response) => {
-            if (response) {
-              this.downloadCertificateBool = false;
+  //   if (this.content && this.pageConfigData) {
+  //     const allowedPrimaryCategory =
+  //       this.pageConfigData?.dynamicCertificateGeneration?.allows &&
+  //       this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
+  //         (cat: string) => cat?.toLowerCase()
+  //       );
+
+  //     if (
+  //       allowedPrimaryCategory &&
+  //      ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
+  //       allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase()))
+  //     ) {
+  //       const payload = {
+  //         request: {
+  //           courseId: this.content.identifier,
+  //           batchId: this.batchData?.content[0]?.batchId || '',
+  //           userId: this.userProfile.userId,
+  //         },
+  //       };
+  //       this.contentSvc.downloadCertV2(payload).subscribe(
+  //         (response) => {
+  //           if (response) {
+  //             this.downloadCertificateBool = false;
              
-              this.dialog.open(CertificateDialogComponent, {
-                width: '1200px',
-                data: {
-                  cet: response.result.printUri,
-                  certId:
-                    (this.content && this.content.certificateObj.certId) || '',
-                },
-              });
-            }
-          },
-          (error: any) => {
-            this.downloadCertificateBool = false;
-            this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
-            this.matSnackBar.open(
-              'Unable to View Certificate, due to some error!'
-            );
-          }
-        );
-      } else {
-      this.contentSvc.downloadCert(certId).subscribe(
-        (response) => {
+  //             this.dialog.open(CertificateDialogComponent, {
+  //               width: '1200px',
+  //               data: {
+  //                 cet: response.result.printUri,
+  //                 certId:
+  //                   (this.content && this.content.certificateObj.certId) || '',
+  //               },
+  //             });
+  //           }
+  //         },
+  //         (error: any) => {
+  //           this.downloadCertificateBool = false;
+  //           this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+  //           this.matSnackBar.open(
+  //             'Unable to View Certificate, due to some error!'
+  //           );
+  //         }
+  //       );
+  //     } else {debugger
+  //     this.contentSvc.downloadCert(certId).subscribe(
+  //       (response) => {
+  //         if (this.content) {
+  //           this.downloadCertificateBool = false;
+  //           this.content['certificateObj']['certData'] =
+  //             response.result.printUri;
+  //           this.dialog.open(CertificateDialogComponent, {
+  //             width: '1200px',
+  //             data: {
+  //               cet: response.result.printUri,
+  //               certId: this.content && this.content.certificateObj.certId,
+  //             },
+  //           });
+  //         }
+  //       },
+  //       (error: any) => {
+  //         this.downloadCertificateBool = false;
+  //         this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+  //         this.matSnackBar.open(
+  //           'Unable to View Certificate, please check again later!'
+  //         );
+  //       }
+  //     );
+  //   }
+  //   } 
+  // }
+
+  handleOpenCertificateDialog() {
+    this.downloadCertificateBool = true
+    const certId = this.content && this.content.certificateObj.certId
+    if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
+     if (certId) {
+        this.contentSvc.downloadCert(certId).subscribe(response => {
           if (this.content) {
-            this.downloadCertificateBool = false;
-            this.content['certificateObj']['certData'] =
-              response.result.printUri;
+            this.downloadCertificateBool = false
+            this.content['certificateObj']['certData'] = response.result.printUri
             this.dialog.open(CertificateDialogComponent, {
               width: '1200px',
-              data: {
-                cet: response.result.printUri,
-                certId: this.content && this.content.certificateObj.certId,
-              },
-            });
+              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
+            })
           }
-        },
-        (error: any) => {
-          this.downloadCertificateBool = false;
-          this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
-          this.matSnackBar.open(
-            'Unable to View Certificate, please check again later!'
-          );
-        }
-      );
+        },                                             (error: any) => {
+          this.downloadCertificateBool = false
+          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
+          this.matSnackBar.open('Unable to View Certificate, due to some error!')
+        })
+      }
+    } else {
+      this.downloadCertificateBool = false
+      this.dialog.open(CertificateDialogComponent, {
+        width: '1200px',
+        data: { cet: this.content && this.content.certificateObj.certData, certId: this.content && this.content.certificateObj.certId },
+      })
     }
-    } 
   }
 
   checkValidJSON(str: any) {
