@@ -36,7 +36,7 @@
                     </table>
                 </div>
             </div>
-            <ng-container *ngIf="assessmentData?.canAttempt">
+            <ng-container *ngIf="assessmentData?.canAttempt && assessmentData?.primaryCategory !== 'Practice Question Set'">
                 <div class="mt-4 mb-4">
                     <b>You have only {{assessmentData?.canAttempt?.attemptsAllowed - assessmentData?.canAttempt?.attemptsMade}} attempt(s) left. Make sure to review before submitting.</b>
                 </div>

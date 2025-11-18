@@ -1285,7 +1285,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           this.submissionState = 'answered'
         }
         const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
-          width: '250px',
+          width: '350px',
           data: {submissionState: this.submissionState, canAttempt: this.canAttempt},
         })
         dialogRef.afterClosed().subscribe(result => {
@@ -2333,6 +2333,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     let popupData:any = {
       headerText: this.resourceName,
       assessmentType: this.assessmentType,
+      primaryCategory: this.primaryCategory,
       tableDetails: {
         tableColumns,
         tableData,

@@ -1,13 +1,18 @@
 <h2 mat-dialog-title >{{ 'practiceoverview.submitQuiz' | translate }}</h2>
 <mat-dialog-content>
-  <ng-container *ngIf="submissionState === 'answered'">
+  <ng-container *ngIf="data?.canAttempt">
+      <div class="mt-4 mb-4">
+          <b>You have only {{data?.canAttempt?.attemptsAllowed - data?.canAttempt?.attemptsMade}} attempt(s) left. Make sure to review before submitting.</b>
+      </div>
+  </ng-container>
+  <ng-container *ngIf="data?.submissionState === 'answered'">
     {{ 'practiceoverview.answeredMsg' | translate }}
   </ng-container>
-  <ng-container *ngIf="submissionState === 'unanswered'">
+  <ng-container *ngIf="data?.submissionState === 'unanswered'">
     <!-- You have not answered all the questions! Do you still want to submit? -->
     {{ 'practiceoverview.unansweredMsg' | translate }}
   </ng-container>
-  <ng-container *ngIf="submissionState === 'marked'">
+  <ng-container *ngIf="data?.submissionState === 'marked'">
     {{ 'practiceoverview.markedMsg' | translate }}
   </ng-container>
 </mat-dialog-content>

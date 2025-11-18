@@ -82,7 +82,7 @@
           </div>
         </div>
         <div>
-          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.maxAssessmentRetakeAttempts">
+          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.maxAssessmentRetakeAttempts && questionTYP.FINAL_ASSESSMENT === primaryCategory">
               <div class="flex items-center justify-center"><mat-icon class="text-blue-800">replay</mat-icon></div>
               <div>{{ canAttempt?.attemptsAllowed - canAttempt?.attemptsMade}} {{ 'playerbrief.attemptsLeft' | translate }}</div>
           </div>
