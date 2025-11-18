@@ -75,20 +75,20 @@
           </div>
         </div>
         <div>
-          <div class="flex flex-col stats-label ml-2" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory" 
+          <div class="flex flex-col stats-label ml-4" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory" 
           [ngClass]="selectedAssessmentCompatibilityLevel >= 7 ? 'ml-5':''">
             <div class="flex items-center justify-center" *ngIf="timeLimit"><img src="assets/icons/final-assessment/timer.svg"></div>
             <div>{{( timeLimit | pipeDurationTransform: 'hms')}}</div>
           </div>
         </div>
         <div>
-          <div class="flex flex-col stats-label ml-2" *ngIf="quizData?.maxAssessmentRetakeAttempts && canAttempt?.attemptsMade >= 0">
+          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.maxAssessmentRetakeAttempts">
               <div class="flex items-center justify-center"><mat-icon class="text-blue-800">replay</mat-icon></div>
-              <div>{{ canAttempt?.attemptsAllowed - canAttempt?.attemptsMade}} {{ 'playerbrief.reAttempts' | translate }}</div>
+              <div>{{ canAttempt?.attemptsAllowed - canAttempt?.attemptsMade}} {{ 'playerbrief.attemptsLeft' | translate }}</div>
           </div>
         </div>
         <div>
-          <div class="flex flex-col stats-label ml-2" *ngIf="quizData?.minimumPassPercentage">
+          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.minimumPassPercentage">
               <div class="flex items-center justify-center"><mat-icon class="text-blue-800">offline_pin</mat-icon></div>
               <div>{{quizData?.minimumPassPercentage}}% {{ 'playerbrief.passingCriteria' | translate }}</div>
           </div>
@@ -158,7 +158,7 @@
         </button>
       </ng-container>
     </div>
-    <div class="summary-detail mt-5">
+    <div class="summary-detail mt-5 mb-5">
       <!-- <p [innerHtml]="instructionAssessment"></p> -->
       <ng-container *ngIf="instructionAssessment && instructionAssessment[currentPage]">
         <div [innerHTML]="instructionAssessment[currentPage]"></div>

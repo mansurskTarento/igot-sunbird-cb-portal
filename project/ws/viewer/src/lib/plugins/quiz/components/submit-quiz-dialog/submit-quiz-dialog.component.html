@@ -1,13 +1,18 @@
 <h2 mat-dialog-title >Submit Quiz</h2>
 <mat-dialog-content>
-  <ng-container *ngIf="submissionState === 'answered'">
+  <ng-container *ngIf="data?.canAttempt">
+      <div class="mt-4 mb-4">
+          <b>You have only {{data?.canAttempt?.attemptsAllowed - data?.canAttempt?.attemptsMade}} attempt(s) left. Make sure to review before submitting.</b>
+      </div>
+  </ng-container>
+  <ng-container *ngIf="data?.submissionState === 'answered'">
     Do you want to submit?
   </ng-container>
-  <ng-container *ngIf="submissionState === 'unanswered'">
+  <ng-container *ngIf="data?.submissionState === 'unanswered'">
     <!-- You have not answered all the questions! Do you still want to submit? -->
     Oops! It looks like a few questions were missed, are you sure you want to submit?
   </ng-container>
-  <ng-container *ngIf="submissionState === 'marked'">
+  <ng-container *ngIf="data?.submissionState === 'marked'">
     You still have some questions marked for later! Do you still want to submit?
   </ng-container>
 </mat-dialog-content>

@@ -191,6 +191,10 @@
                 <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                 <div class="stats-label">{{ 'playerbrief.answered' | translate }}</div>
               </div>
+              <div class="flex flex-col align-center">
+                <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['minimumPassPercentage']}}</div>
+                <div class="stats-label">{{ 'playerbrief.passingCriteria' | translate }}</div>
+              </div>
               <!-- <div class="flex flex-col align-center">
                 <div class="ques-count">{{markedQuestions.size}}</div>
                 <div class="stats-label">Skipped</div>

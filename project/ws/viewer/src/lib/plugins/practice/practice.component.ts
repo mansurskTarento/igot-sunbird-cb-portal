@@ -1286,7 +1286,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
         const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
           width: '250px',
-          data: this.submissionState,
+          data: {submissionState: this.submissionState, canAttempt: this.canAttempt},
         })
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -2408,7 +2408,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  showAssessmentPopup(popupData: any) {    
+  showAssessmentPopup(popupData: any) { 
+    popupData['canAttempt'] = this.canAttempt   
     const dialogRef =  this.dialog.open(FinalAssessmentPopupComponent, {
       data: popupData,
       width: popupData.assessmentType === 'optionalWeightage' ? '300px' : '1000px',
@@ -2499,11 +2500,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getSectionTotalQuestionAndAnswerCount() {
+    debugger
     let obj:any = {totalCount:0, answered:0, notAnswered:0, markedForReview:0, notVisited:0}
     if(this.questionSectionTableData && this.questionSectionTableData.length) {      
       for(let i = 0; i<this.questionSectionTableData.length;i++) {
         if(this.questionSectionTableData[i]['identifier'] === this.selectedSectionIdentifier) {
-          const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
+          const sectionChildNodes: any = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
           obj = {
             section: this.questionSectionTableData[i]['name'],
             totalCount: this.questionSectionTableData[i]['childNodes'].length,
@@ -2511,6 +2513,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             notAnswered: sectionChildNodes.notAnsweredCount,
             markedForReview: sectionChildNodes.markedForReviewCount,
             notVisited: sectionChildNodes.notVisitedCount,
+            minimumPassPercentage: this.questionSectionTableData[i]['minimumPassPercentage'] || 0
           }
           break;
         }
