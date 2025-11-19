@@ -1286,7 +1286,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         }
         const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
           width: '350px',
-          data: {submissionState: this.submissionState, canAttempt: this.canAttempt},
+          data: {submissionState: this.submissionState, canAttempt: this.canAttempt, primaryCategory: this.primaryCategory},
         })
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -2501,7 +2501,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getSectionTotalQuestionAndAnswerCount() {
-    debugger
     let obj:any = {totalCount:0, answered:0, notAnswered:0, markedForReview:0, notVisited:0}
     if(this.questionSectionTableData && this.questionSectionTableData.length) {      
       for(let i = 0; i<this.questionSectionTableData.length;i++) {

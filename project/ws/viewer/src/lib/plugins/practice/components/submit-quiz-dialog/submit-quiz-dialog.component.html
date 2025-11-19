@@ -1,8 +1,8 @@
 <h2 mat-dialog-title >{{ 'practiceoverview.submitQuiz' | translate }}</h2>
 <mat-dialog-content>
-  <ng-container *ngIf="data?.canAttempt">
+  <ng-container *ngIf="data?.canAttempt && data?.primaryCategory !== 'Practice Question Set'">
       <div class="mt-4 mb-4">
-          <b>You have only {{data?.canAttempt?.attemptsAllowed - data?.canAttempt?.attemptsMade}} attempt(s) left. Make sure to review before submitting.</b>
+          <b>You have only {{data?.canAttempt?.attemptsAllowed - data?.canAttempt?.attemptsMade}} attempt(s) left. Make sure before submitting.</b>
       </div>
   </ng-container>
   <ng-container *ngIf="data?.submissionState === 'answered'">

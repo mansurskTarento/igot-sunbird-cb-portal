@@ -243,7 +243,7 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
       }
       const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
         width: '350px',
-        data: {submissionState: this.submissionState},
+        data: {submissionState: this.submissionState, primaryCategory: this.quizJson.primaryCategory,},
       })
 
       dialogRef.afterClosed().subscribe(result => {
