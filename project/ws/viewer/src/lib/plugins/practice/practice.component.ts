@@ -1285,8 +1285,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           this.submissionState = 'answered'
         }
         const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
-          width: '250px',
-          data: this.submissionState,
+          width: '350px',
+          data: {submissionState: this.submissionState, canAttempt: this.canAttempt, primaryCategory: this.primaryCategory},
         })
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -2333,6 +2333,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     let popupData:any = {
       headerText: this.resourceName,
       assessmentType: this.assessmentType,
+      primaryCategory: this.primaryCategory,
       tableDetails: {
         tableColumns,
         tableData,
@@ -2408,7 +2409,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  showAssessmentPopup(popupData: any) {    
+  showAssessmentPopup(popupData: any) { 
+    popupData['canAttempt'] = this.canAttempt   
     const dialogRef =  this.dialog.open(FinalAssessmentPopupComponent, {
       data: popupData,
       width: popupData.assessmentType === 'optionalWeightage' ? '300px' : '1000px',
@@ -2503,7 +2505,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if(this.questionSectionTableData && this.questionSectionTableData.length) {      
       for(let i = 0; i<this.questionSectionTableData.length;i++) {
         if(this.questionSectionTableData[i]['identifier'] === this.selectedSectionIdentifier) {
-          const sectionChildNodes = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
+          const sectionChildNodes: any = this.getSectionTableDataCounts(this.questionSectionTableData[i]['childNodes'])
           obj = {
             section: this.questionSectionTableData[i]['name'],
             totalCount: this.questionSectionTableData[i]['childNodes'].length,
@@ -2511,6 +2513,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             notAnswered: sectionChildNodes.notAnsweredCount,
             markedForReview: sectionChildNodes.markedForReviewCount,
             notVisited: sectionChildNodes.notVisitedCount,
+            minimumPassPercentage: this.questionSectionTableData[i]['minimumPassPercentage'] || 0
           }
           break;
         }
