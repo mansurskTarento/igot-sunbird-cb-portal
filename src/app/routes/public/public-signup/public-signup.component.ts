@@ -379,7 +379,6 @@ private getDesignationSafe(): void {
     })
   }
    checkCurrentDesignationPresent() {
-    debugger
     // Get the current designation value
     const currentDesignation = this.registrationForm.get('position')!.value
     // Check if current designation exists in the list
