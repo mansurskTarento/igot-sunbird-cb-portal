@@ -52,6 +52,7 @@ import { NonReleventFeedbackDialogComponent } from '../../../../../../../../../l
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 import { EnrollLanguageDialogueComponent } from '../enroll-language-dialogue/enroll-language-dialogue.component'
 import { CompletionSurveyFormComponent } from '../completion-survey-form/completion-survey-form.component'
+import { PublicSurveyFormComponent } from '../public-survey-form/public-survey-form.component'
 
 export enum ErrorType {
   internalServer = 'internalServer',
@@ -156,6 +157,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   showIntranetMessage = false
   firstResourceLink: { url: string; queryParams: { [key: string]: any } } | null = null
   resumeDataLink: { url: string; queryParams: { [key: string]: any } } | null = null
+  certData: any = null
   showTakeAssessment: NsAppToc.IPostAssessment | null = null
   checkRegistrationSources: Set<string> = new Set([
     'SkillSoft Digitalization',
@@ -234,6 +236,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   languageMapProgress: any
   preAssessmentRequiredFlag:any = false
   lockCertificate = false
+  environment: any
   @HostListener('window:scroll', ['$event'])
   handleScroll() {
     const windowScroll = window.pageYOffset
@@ -297,6 +300,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     public netCoreService: NetCoreService
   ) {
     this.historyData = history.state
+    this.environment = environment
     this.handleBreadcrumbs()
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.next(true)
     if (localStorage.getItem('websiteLanguage')) {
@@ -1434,7 +1438,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.autoEnrollCuratedProgram(NsContent.ECourseCategory.MODERATED_PROGRAM, batchData)
   }
 
-  raiseTelemetryForPublic() {
+  raiseTelemetryForPublic($event: any) {
+    // Check if we should first prevent navigation to player page
+    const shouldPreventNavigation = this.shouldShowSurveyPopup();
+    if (shouldPreventNavigation) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
@@ -1444,6 +1455,26 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       {
         module: 'Landing Page',
       })
+      console.log('raiseTelemetryForPublic $event', $event)
+
+      if (shouldPreventNavigation) {
+        // Prepare navigation details
+        const navigationUrl = (this.resumeData && !this.certData) ? this.resumeDataLink?.url : this.firstResourceLink?.url;
+        const queryParams = (this.resumeData && !this.certData) ? this.generateQuery('RESUME') : this.generateQuery('START');
+
+        // Open survey popup directly with navigation details
+        if (navigationUrl) {
+          this.openPublicSurveyPopup(navigationUrl, queryParams);
+        }
+        return false;
+      }
+  }
+
+  shouldShowSurveyPopup(): boolean {
+    // Single source of truth for survey popup condition
+    // Check if it's public view and content is a case study
+    return this.forPreview && this.content && this.contentReadData
+     && this.contentReadData.courseCategory === NsContent.ECourseCategory.CASE_STUDY;
   }
 
 
@@ -1511,11 +1542,11 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
           this.getContinueLearningData(this.baseContentReadData.identifier, enrolledCourse.batchId, contentLag)
           this.enrollBtnLoading = false
           this.tocSvc.mapModuleCount(this.content)
-          this.checkForSurveyTrigger()
+          this.checkForCompletionSurveyTrigger()
         } else{
           if (this.contentReadData && this.contentReadData.cumulativeTracking) {
             await this.tocSvc.mapCompletionPercentageProgram(this.content, this.userEnrollmentList)
-            this.checkForSurveyTrigger()
+            this.checkForCompletionSurveyTrigger()
             this.resumeDataSubscription = this.tocSvc.resumeData.subscribe((res: any) => {
               if (res) {
                 this.resumeData = res
@@ -2077,7 +2108,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         width: '750px',
         maxWidth: '90vw',
         data: data,
-        autoFocus: false,
+        autoFocus: false,        
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
@@ -2994,7 +3025,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  checkForSurveyTrigger() {
+  checkForCompletionSurveyTrigger() {
     if(this.content && this.contentReadData) {
       console.log('checkForSurveyTrigger this.content',this.contentReadData)
       if(this.content.completionStatus === 2 && this.contentReadData.completionSurveyLink) {
@@ -3013,5 +3044,32 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         })
       }
     }
+  }
+
+  openPublicSurveyPopup(navigationUrl?: string, queryParams?: any) {
+      // Get survey ID and course ID from environment and content data
+      const surveyId = this.environment.publicCaseStudySurveyId || '1761631749229';
+      const courseId = this.contentReadData?.identifier || '';
+
+      const data = {
+        surveyId: surveyId,
+        courseId: courseId
+      }
+      const dialogRef = this.dialog.open(PublicSurveyFormComponent, {
+        disableClose: true,
+        width: '750px',
+        maxWidth: '90vw',
+        height: '80vh',
+        data: data,
+        autoFocus: false,
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          // Navigate to the intended URL only when survey is submitted successfully
+          if (navigationUrl) {
+            this.router.navigate([navigationUrl], { queryParams: queryParams });
+          }
+        }
+      });
   }
 }
