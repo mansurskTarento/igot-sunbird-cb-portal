@@ -49,7 +49,8 @@ export const environment: IEnvironment = {
   providerDataKey: (window as { [key: string]: any })['env']['providerDataKey'] || '',
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
   cbcOrg: (window as { [key: string]: any })['env']['cbcOrg'] || '',
-  portalsForNotifications: (((window as { [key: string]: any })['env']['portalsForNotifications'] || {})) || {}
+  portalsForNotifications: (((window as { [key: string]: any })['env']['portalsForNotifications'] || {})) || {},
+  publicContentSurveyId: (window as { [key: string]: any })['env']['publicContentSurveyId'] || ''
 }
 interface IEnvironment {
   name: string,
@@ -94,7 +95,8 @@ interface IEnvironment {
   compentencyVersionKey: string,
   cbcOrg: string
   portalsForNotifications: any,
-  missionKarmayogiPath:string
+  missionKarmayogiPath:string,
+  publicContentSurveyId: string
 }
 
 // import { AnyCnameRecord } from 'dns'
