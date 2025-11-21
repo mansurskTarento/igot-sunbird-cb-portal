@@ -159,7 +159,14 @@
                       <div class="percentage">{{(percentage || 0) | number: '1.2-2'}}%</div>
                       <div class="level-text">{{levelText || ('playerbrief.failed' | translate)}}</div>
                   </div>
-                  <div class="mat-subheading-2 message">{{'playerbrief.tryAgainMessage' | translate}}</div>
+                  <div class="mat-subheading-2 message"  *ngIf="questionTYP?.FINAL_ASSESSMENT !== quizCategory || (canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1 === 0">
+                    <span>{{'playerbrief.tryAgainMessage' | translate}}</span>
+                  </div>
+                  <div class="mat-subheading-2 message" *ngIf="questionTYP?.FINAL_ASSESSMENT === quizCategory &&( (canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1 !== 0)">
+                    <span>{{'playerbrief.tryAgainMessage1' | translate}} </span>
+                    <span>{{ (canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1}} </span>
+                    <span>{{'playerbrief.tryAgainMessage2' | translate}}</span>
+                  </div>
                 </ng-container>
               </div>
               <mat-card class="result_box_time_container" *ngIf="quizResponse">
