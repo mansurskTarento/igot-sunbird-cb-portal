@@ -145,7 +145,8 @@ import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws
 import { AppTocContentReadResolverService } from './resolvers/app-toc-content-read-resolver.service'
 import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home-v2.component';
 import { EnrollLanguageDialogueComponent } from './components/enroll-language-dialogue/enroll-language-dialogue.component';
-import { CompletionSurveyFormComponent } from './components/completion-survey-form/completion-survey-form.component'
+import { CompletionSurveyFormComponent } from './components/completion-survey-form/completion-survey-form.component';
+import { PublicSurveyFormComponent } from './components/public-survey-form/public-survey-form.component'
 
 @NgModule({
   declarations: [
@@ -180,6 +181,7 @@ import { CompletionSurveyFormComponent } from './components/completion-survey-fo
     AppTocCiosHomeComponent,
     EnrollLanguageDialogueComponent,
     CompletionSurveyFormComponent,
+    PublicSurveyFormComponent,
   ],
   imports: [
     CommonModule,
