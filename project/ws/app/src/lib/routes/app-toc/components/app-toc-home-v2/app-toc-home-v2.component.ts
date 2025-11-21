@@ -3048,7 +3048,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
 
   openPublicSurveyPopup(navigationUrl?: string, queryParams?: any) {
       // Get survey ID and course ID from environment and content data
-      const surveyId = this.environment.publicCaseStudySurveyId || '1761631749229';
+      const surveyId = this.environment.publicContentSurveyId || '';
       const courseId = this.contentReadData?.identifier || '';
 
       const data = {
