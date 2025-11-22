@@ -408,7 +408,7 @@ private getDesignationSafe(): void {
   }
     onDesignationDropdownClosed(): void {
     // Keep the designation value but clear the search input
-    const currentDesignation = this.registrationForm.get('designation')!.value
+    const currentDesignation = this.registrationForm.get('position')!.value
     setTimeout(() => {
       if (this.registrationForm.get('searchDesignation')) {
         this.registrationForm.get('searchDesignation')!.setValue('')
@@ -963,7 +963,7 @@ setupScrollListener(opened: boolean): void {
               mapId: this.heirarchyObject.mapId || '',
               sbRootOrgId: this.heirarchyObject.sbRootOrgId,
               sbOrgId: this.heirarchyObject.sbOrgId,
-              position: this.registrationForm.value.designation || '',
+              position: this.registrationForm.value.position || '',
             }
           }
 
