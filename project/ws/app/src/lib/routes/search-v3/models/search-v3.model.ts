@@ -38,7 +38,8 @@ export class RequestParams {
       'creatorLogo',
       'sectorDetails_v1',
       'languageMapV1',
-      'language'
+      'language',
+      'difficultyLevel'
     ];
     this.facets = [...SearchOthersFacet, ...competenciesKey];
     this.query = '';
