@@ -137,6 +137,8 @@ export class EnrollProfileFormComponent implements OnInit {
   designationsOffset = 0;
   designationSearchText = '';
   designationsTotalCount = 0;
+  formId: string = '';
+  formsDetils: any;
   @ViewChild('textBox') textBox!: ElementRef
   @ViewChild('dropdown') dropdown!: ElementRef
   @ViewChild('languageTextBox') languageTextBox!: ElementRef
@@ -560,6 +562,8 @@ export class EnrollProfileFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.formId = _.get(this.data, 'batchData.batchAttributes.profileSurveyId')
+    this.getFormDetails()
     this.setValueChangeFunctions()
     this.fetchCadreData()
     this.getGroupData()
@@ -570,6 +574,16 @@ export class EnrollProfileFormComponent implements OnInit {
       //this.getMasterDesignation()
       this.getMasterLanguage()
     }, 500)
+  }
+
+  getFormDetails() {
+    if (this.formId) {
+      this.profileV2Svc.getFormV2ByID(this.formId).subscribe((responce: any) => {
+        if (responce) {
+          this.formsDetils = _.get(responce, 'result.response', {})
+        }
+      })
+    }
   }
 
   setValueChangeFunctions() {
@@ -1522,11 +1536,20 @@ export class EnrollProfileFormComponent implements OnInit {
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
 
+  getQuestionId(fieldName: string): string {
+    if (!fieldName || !this.formsDetils.fields) {
+      return '';
+    }
+
+    const field = this.formsDetils.fields.find((f: any) => f.field === fieldName) || {};
+    return field.id || '';
+  }
+
   genereateSurveyPayload(status: any) {
     let dataObject: any = []
     this.batchDetails.batchAttributes.bpEnrolMandatoryProfileFields.forEach((_field: any) => {
       const fieldToAdd = {
-        questionId: _field.identifier,
+        questionId: this.getQuestionId(_field.field),
         question: _field.displayName,
         answer: '',
         answerType: _field.fieldType
