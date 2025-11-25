@@ -112,10 +112,14 @@
                   </div>
                   </mat-form-field>
                 </div>
-                <a class="pos-hint help-request ws-mat-black60-text" id="org-field">
-                  {{ 'publicsignup.donotHaveGovernmentEmail' | translate }}
-                  <!-- //NOSONAR --> <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
-                    {{ 'publicsignup.requestForHelp' | translate }}</span></a>
+                <div class="pos-hint help-request ws-mat-black60-text" id="org-field">
+                  <!-- {{ 'publicsignup.donotHaveGovernmentEmail' | translate }} --> 
+                    <span>{{ 'publicsignup.emailMsg' | translate }} <a (click)="mdoRedirect()" target="_blank"><span class="text-cls">{{ 'publicsignup.clickHere' | translate }}</span></a> 
+                    {{ 'publicsignup.toviewNodalOfficers' | translate }}</span>
+                  <!-- //NOSONAR --> 
+                   <!-- <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
+                    {{ 'publicsignup.requestForHelp' | translate }}</span> -->
+                   </div>
 
                 <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
                   <button *ngIf="!otpEmailSend" mat-raised-button type="button" (click)="sendOtpEmail()"
