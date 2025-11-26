@@ -191,7 +191,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       courseId: content.contentId,
       partnerId: content.contentPartner.id,
     }
-    const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => { })
+    const enrollRes = await this.contentSvc.extContentEnroll(reqbody).toPromise().catch(_error => { return _error })
     if (enrollRes && enrollRes.result && Object.keys(enrollRes.result).length > 0) {
       this.discussWidgetData.enrolledContent = true
       this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
@@ -199,7 +199,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.contentViewEventForNetCore('enroll')
     } else {
       this.loader.changeLoad.next(false)
-      this.snackBar.open('Unable to enroll to the content')
+      this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content')
     }
   }
 

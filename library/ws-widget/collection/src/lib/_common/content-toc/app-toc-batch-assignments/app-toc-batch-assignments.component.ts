@@ -211,7 +211,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
       const uploadRes: any = await this.tocSvc.uploadAssignmentAnswer(
         this.content.identifier,
         this.batchId,
-        this.selectedAssignment.id,
+        this.selectedAssignment.formId,
         file
       ).toPromise()
 

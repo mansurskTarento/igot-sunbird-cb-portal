@@ -58,16 +58,12 @@ export class EventPlayerComponent implements OnInit {
   ngOnInit() {
     this.skeletonLoader = true
     this.route.params.subscribe(params => {
-
-      this.eventId = params.eventId
-
-      // if (this.fetchNewData) {
-      //   this.getTIDData()
-      // }
-      // this.data = this.route.snapshot.data.topic.data
+      this.eventId = params?.eventId || ''
+      this.callEventRead()
     })
+  }
+  callEventRead() {
     this.eventSvc.getEventData(this.eventId).subscribe((data: any) => {
-
       this.eventData = data.result.event
       const creatordata = this.eventData.creatorDetails
       const str = creatordata.replace(/\\/g, '')
@@ -76,10 +72,6 @@ export class EventPlayerComponent implements OnInit {
       }
       const eventDate = this.customDateFormat(this.eventData.startDate, this.eventData.startTime)
       const eventendDate = this.customDateFormat(this.eventData.endDate, this.eventData.endTime)
-      // const isToday = this.compareDate(eventDate, eventendDate, this.eventData)
-      // if (isToday) {
-      //   this.currentEvent = true
-      // }
       const sDate = this.customDateFormat(this.eventData.startDate, this.eventData.startTime)
       const eDate = this.customDateFormat(this.eventData.endDate, this.eventData.endTime)
       const msDate = Math.floor(moment(sDate).valueOf() / 1000)
@@ -100,37 +92,31 @@ export class EventPlayerComponent implements OnInit {
       if (Array.isArray(this.eventData.batches) && this.eventData.batches.length > 0) {
         this.batchId = this.eventData.batches[0].batchId || ''
       }
+      this.checkEnrollFlowItems()
       this.skeletonLoader = false
-      if (!this.batchId) {
-        this.router.navigateByUrl(`app/event-hub/home/${this.eventData.identifier}?batchId=${this.batchId}`)
-      } else {
-        this.getUserIsEnrolled()
-      }
-
     })
+  }
+  checkEnrollFlowItems() {
     this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
     this.enrollFlowItems = this.pageData.enrollFlowItems
-    if (this.isenrollFlow) {
+    if (this.batchId) {
       this.getUseEnrolled()
-    } else {
-      this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
-      this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
-      if (this.discussWidgetData) {
-        if (this.eventData && this.eventData.identifier) {
-          this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
-
-          if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-            this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
-          }
+    }
+    this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
+    this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+    if (this.discussWidgetData) {
+      if (this.eventId) {
+        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventId
+        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
+          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventId
         }
-        this.discussWidgetData.enrolledContent = true
-        this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-
-        this.discussWidgetData = { ...this.discussWidgetData }
       }
+      this.discussWidgetData.enrolledContent = true
+      this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
+
+      this.discussWidgetData = { ...this.discussWidgetData }
     }
   }
-
 
 
   getUseEnrolled() {
@@ -139,18 +125,6 @@ export class EventPlayerComponent implements OnInit {
       userId = this.configSvc.userProfile.userId || ''
     }
     this.discussWidgetData = (this.route.parent && this.route.parent.snapshot.data.pageData.data.discussWidgetData) || []
-
-    if (this.discussWidgetData) {
-      if (this.eventData && this.eventData.identifier) {
-        this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.eventData.identifier
-
-        if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
-          this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
-        }
-      }
-
-
-    }
     if (this.eventData && userId) {
       this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
         /* tslint:disable */
@@ -170,14 +144,11 @@ export class EventPlayerComponent implements OnInit {
           if (this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
           }
-
-          this.discussWidgetData.enrolledContent = true
-          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Start a discussion'
-
-
+          this.isEnrolled = true
+          this.navigateToSamePagewithEnroll()
         } else {
-          this.discussWidgetData.enrolledContent = false
-          this.discussWidgetData.newCommentSection.commentBox.placeholder = 'Enrol to add your comments'
+          this.isEnrolled = false
+          this.router.navigateByUrl(`app/event-hub/home/${this.eventData.identifier}?batchId=${this.batchId}`)
         }
         this.discussWidgetData = { ...this.discussWidgetData }
       })
@@ -188,25 +159,6 @@ export class EventPlayerComponent implements OnInit {
     if (this.eventData && this.enrollFlowItems && this.enrollFlowItems.length) {
       return this.eventData.resourceType && this.enrollFlowItems.includes(this.eventData.resourceType)
     } return false
-  }
-
-
-  getUserIsEnrolled() {
-    let userId = ''
-    if (this.configSvc.userProfile) {
-      userId = this.configSvc.userProfile.userId || ''
-    }
-    if (this.eventData && userId) {
-      this.eventSvc.getIsEnrolled(userId, this.eventData.identifier, this.batchId).subscribe((data: any) => {
-        if (data && data.result && data.result.events && data.result.events.length > 0) {
-          this.isEnrolled = true
-          this.navigateToSamePagewithEnroll()
-        } else {
-          this.isEnrolled = false
-          this.router.navigateByUrl(`app/event-hub/home/${this.eventData.identifier}?batchId=${this.batchId}`)
-        }
-      })
-    }
   }
 
   navigateToSamePagewithEnroll() {

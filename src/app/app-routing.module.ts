@@ -51,6 +51,7 @@ import { PublicCrpComponent } from './routes/public/public-crp/public-crp.compon
 import { AppPublicOrganizationResolver } from './routes/public/public-signup/organization.resolver'
 import { FormDataResolverService } from './services/form-data-resolver.service'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
+import { FormMicroSiteDataService } from './services/form-micro-site-data.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -874,6 +875,7 @@ const routes: Routes = [
       module: 'Home',
     },
     resolve: {
+      microSiteData: FormMicroSiteDataService,
       pageData: AppHomePageResolverService,
       // module: ModuleNameResolve,
       // pageId: PageNameResolve,

@@ -48,6 +48,17 @@ const routes: Routes = [
         },
     },
     {
+        path: ':channel/:orgId/v3/micro-sites',
+        component: MdoChannelsMicrositeV2Component,
+        data: {
+            pageId: ':channel/:orgId/v3/micro-sites',
+            module: 'Learn',
+        },
+        resolve: {
+            formData: MdoChannelFormService,
+        },
+    },
+    {
         path: ':channel/:orgId/all-content',
         component: MdoChannelsAllContentComponent,
         data: {

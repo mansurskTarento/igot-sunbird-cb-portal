@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core'
 import { ConfigurationsService, DomainConfService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
@@ -10,7 +10,7 @@ import _ from 'lodash'
   templateUrl: './footer-section.component.html',
   styleUrls: ['./footer-section.component.scss'],
 })
-export class FooterSectionComponent implements OnInit {
+export class FooterSectionComponent implements OnInit, OnChanges {
   @Input() environment: any
   @Input() hubsList: any
   @Input() headerFooterConfigData: any
@@ -56,19 +56,35 @@ export class FooterSectionComponent implements OnInit {
   ]
 
   ngOnInit() {
-    // console.log('this.headerFooterConfigData',this.headerFooterConfigData)
-    this.footerSectionConfig = this.headerFooterConfigData.footerSectionConfig
-    if (this.footerSectionConfig) {
-      this.footerSectionConfig = (this.footerSectionConfig).sort((a, b) => a.order - b.order)
+    this.updateFooterConfig()
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['headerFooterConfigData'] && changes['headerFooterConfigData'].currentValue) {
+      this.updateFooterConfig()
     }
-    this.environment.portals = this.environment.portals.filter(
-      (obj: any) => ((obj.name !== 'Frac Dictionary') &&
-       (obj.isPublic || this.isAllowed(obj.id))))
-        if (!this.environment.portals.length) {
-          if (this.footerSectionConfig) {
-            this.footerSectionConfig = this.footerSectionConfig.filter((obj: any) => obj.sectionHeading !== 'Related Links')
+  }
+
+  private updateFooterConfig() {
+    // Only update if headerFooterConfigData is available and has footerSectionConfig
+    if (this.headerFooterConfigData && this.headerFooterConfigData.footerSectionConfig) {
+      this.footerSectionConfig = this.headerFooterConfigData.footerSectionConfig
+      if (this.footerSectionConfig) {
+        this.footerSectionConfig = (this.footerSectionConfig).sort((a, b) => a.order - b.order)
+      }
+    }
+
+    // Only filter portals if environment is defined
+    if (this.environment && this.environment.portals) {
+      this.environment.portals = this.environment.portals.filter(
+        (obj: any) => ((obj.name !== 'Frac Dictionary') &&
+         (obj.isPublic || this.isAllowed(obj.id))))
+          if (!this.environment.portals.length) {
+            if (this.footerSectionConfig) {
+              this.footerSectionConfig = this.footerSectionConfig.filter((obj: any) => obj.sectionHeading !== 'Related Links')
+            }
           }
-        }
+    }
   }
 
   navigate() {
