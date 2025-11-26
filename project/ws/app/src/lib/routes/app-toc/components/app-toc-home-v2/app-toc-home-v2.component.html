@@ -283,9 +283,11 @@
       <!-- BLENDED_PROGRAM block -->
       <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
 
-        <ng-container
-          *ngIf="batchData?.workFlow?.wfInitiated &&
-                      !(batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.APPROVED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REJECTED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.WITHDRAWN)">
+        <ng-container *ngIf="batchData?.workFlow?.wfInitiated &&
+                      !(batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.APPROVED ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REJECTED ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.WITHDRAWN ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REMOVED)">
           <div class="ws-mat-accent-text ws-mat-accent-light-bg flex items-center justify-center statusMsg">
             <p class="margin-remove-bottom font-bold">
               {{ 'apptochome.requestUnderReview' | translate }}

@@ -12,9 +12,8 @@ import { CourseCompletionDialogComponent } from '../course-completion-dialog/cou
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
-import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
+// import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
-const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = ["Invite-Only Program", "Moderated Program", "Blended Program", "Curated Program", "Standalone Assessment", "Moderated Assessment", "Invite-Only Assessment"]
 @Component({
   selector: 'viewer-viewer-secondary-top-bar',
   templateUrl: './viewer-secondary-top-bar.component.html',
@@ -85,7 +84,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     private events: EventService,
     private appTocSvc: AppTocService,
     private widgetLibSvc: WidgetContentLibService,
-    private contentSvc: WidgetContentServiceUtils
+    // private contentSvc: WidgetContentServiceUtils
     
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
@@ -520,24 +519,23 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   // }
 
     generateCertificate() {
-      const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
-        (cat: string) => cat?.toLowerCase()
-      );
+      // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+      //   (cat: string) => cat?.toLowerCase()
+      // );
 
-      if (
-        allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(
-          this.contentPrimaryCategory?.toLowerCase()
-        )
-      ) {
-        const payload = {
-          request: {
-            courseId: this.identifier,
-            batchId: this.batchId,
-            userId: this.userid,
-          },
-        };
-        this.contentSvc.downloadCertV2(payload).subscribe(() => {});
-      } 
+      // if (
+      //   allowedPrimaryCategory &&
+      //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+      //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+      // ) {
+      //   const payload = {
+      //     request: {
+      //       courseId: this.identifier,
+      //       batchId: this.batchId,
+      //       userId: this.userid,
+      //     },
+      //   };
+      //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+      // } 
   }
 }

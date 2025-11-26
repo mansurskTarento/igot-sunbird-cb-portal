@@ -208,7 +208,11 @@ export class NotificationsService {
           localStorage.setItem('isStandaloneResource', 'false')
         }
         if (res.status === 'Live') {
-          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          if (notification.sub_category === 'BP_ASSIGNMENT_SUBMIT' || notification.sub_category === 'BP_ADD_INSTRUCTOR') {
+            window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/batches/${notification.message.data.batchId}/assignments`, '_blank')
+          } else {
+            window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          }
         } else if (res.status === 'Draft') {
           if (roles.includes('CONTENT_CREATOR')) {
             window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')

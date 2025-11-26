@@ -43,7 +43,7 @@ const API_END_POINTS = {
   SUBMIT_FORM_PUBLIC: `apis/public/v8/public/forms/v2/saveFormSubmit`,
   // get answers for form
   GET_APPLICATIONS_BY_ID: (formId: string,  contextId: string) =>`/apis/proxies/v8/forms/v2/getApplicationsById?formId=${formId}&contextId=${contextId}`,
-  AI_RESOURCE_VTT_FILE:`${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
+  AI_RESOURCE_VTT_FILE: `${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
   // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
   PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`,
   CREATE_RESOURCE: `apis/proxies/v8/action/content/v3/create`,
@@ -56,6 +56,7 @@ const API_END_POINTS = {
   ASSIGNMENT_STATUS: `apis/proxies/v8/forms/v2/submissions/search`,
   UPLOAD_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer`,
   READ_ASSIGNMENT: `apis/proxies/v8/storage/v1/bp/assignment/answer/read/file`,
+  NOTIFY_ASSIGNMENT_SUBMISSION: `apis/proxies/v8/v1/notifyAssignment/submit`,
 }
 
 @Injectable()
@@ -1112,6 +1113,10 @@ export class AppTocService {
 
   submitAssignment(request: any): Observable<any> {
     return this.http.post(API_END_POINTS.SUBMIT_ASSIGNMENT, request)
+  }
+
+  notifyAssignmentSubmission(payload: any): Observable<any> {
+    return this.http.post(API_END_POINTS.NOTIFY_ASSIGNMENT_SUBMISSION, payload)
   }
 
   getAssignmentStatus(request: any): Observable<any> {
