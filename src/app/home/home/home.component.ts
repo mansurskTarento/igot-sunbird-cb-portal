@@ -661,15 +661,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       this.getOrgDetails()
     }
-      
   }
   callExtPatchProfile() {
+    const currentEpoch = new Date().getTime().toString()
     let request = {
       "request": {
           "userId":this.configSvc.unMappedUser.id,
           "profileDetails": {
               "personalDetails": {
-                "lastProfileVerificationPromptDate": new Date().getTime().toString()
+                "lastProfileVerificationPromptDate": currentEpoch
               }
           }
       }
@@ -677,6 +677,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.userProfileService.editProfileDetails(request).subscribe((res: any) => {
       if(res && res.result && res.result.response?.toUpperCase() === 'SUCCESS') { 
         this.matSnackBar.open('Profile verification  updated successfully', 'X', this.configSuccess)
+        if (this.configSvc?.unMappedUser?.profileDetails?.personalDetails) {
+          this.configSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = currentEpoch
+        }
       }
       this.getOrgDetails()
     })
