@@ -85,9 +85,7 @@
                                         class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
                                         <mat-icon [svgIcon]="'download'" class="mb-1"
                                             *ngIf="!downloadCertificateLoading"></mat-icon>
-                                        <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
-                                            <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
-                                        </div>
+                                        <mat-spinner *ngIf="downloadCertificateLoading" strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
                                         <span>Download Certificate</span>
                                     </div>
                                 </ng-container>

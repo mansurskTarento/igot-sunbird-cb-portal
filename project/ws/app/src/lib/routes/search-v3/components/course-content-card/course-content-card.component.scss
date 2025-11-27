@@ -242,11 +242,12 @@
   align-items: flex-end;
 }
 
+// download icon Issue fixed
 .bookmark-section {
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  //   overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
 }
 
 .knowledge-level-container {
