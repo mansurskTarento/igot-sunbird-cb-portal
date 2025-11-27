@@ -1351,17 +1351,21 @@ getDesignationHint(): string {
       .subscribe({
         next: (res: any) => {
           if (res && res.result && res.result.response && res.result.response.content && res.result.response.content.length) {
+            const newData = res.result.response.content;
+
             if (onLoad) {
-              this.transferOrganizationData = [...res.result.response.content];
-              this.transferOrgDataTotalCount = res.result.response.count
+              // When dropdown is open, only show API results (no initial org prepended)
+              this.transferOrganizationData = [...newData];
+              this.transferOrgDataTotalCount = res.result.response.count;
             } else {
-              this.transferOrganizationData = [...this.transferOrganizationData, ...res.result.response.content];
+              this.transferOrganizationData = [...this.transferOrganizationData, ...newData];
             }
             this.transferOrgFilterData = this.transferOrganizationData;
           } else {
             if (onLoad) {
-              this.transferOrganizationData = []
-              this.transferOrgFilterData = []
+              // If no results from API, show empty list
+              this.transferOrganizationData = [];
+              this.transferOrgFilterData = [];
             }
           }
           this.isLoadingMoreTransferOrg = false
@@ -1379,6 +1383,37 @@ getDesignationHint(): string {
     if (org && org.channel) {
       this.selectedTransferOrgId = org.rootOrgId
       this.profileForm.controls['transferOrganization'].setValue(org.channel)
+    }
+  }
+
+   private getInitialOrgFromUnmappedUser(): any {
+    const rootOrg = _.get(this.configSvc, 'unMappedUser.rootOrg', null);
+    if (rootOrg && rootOrg.channel) {
+      return {
+        channel: rootOrg.channel,
+        isRootOrg: rootOrg.isRootOrg !== undefined ? rootOrg.isRootOrg : true,
+        rootOrgId: rootOrg.rootOrgId || rootOrg.id || ''
+      };
+    }
+    return null;
+  }
+
+  /**
+   * This method sets the initial unmapped user org if available.
+   */
+  private async loadTransferOrgAndSetValue() {
+    // Get the initial org from unmapped user
+    const initialOrg = this.getInitialOrgFromUnmappedUser();
+
+    // If no match or no departmentName, set the initial org from unmapped user
+    if (initialOrg) {
+      // Add the initial org to transferOrganizationData so it appears in the dropdown
+      this.transferOrganizationData = [initialOrg];
+      this.transferOrgFilterData = [initialOrg];
+
+      // Set the form value to the channel string (not the object) to match mat-option [value]
+      this.profileForm.get('transferOrganization')?.setValue(initialOrg.channel);
+      this.selectedTransferOrgId = initialOrg.rootOrgId;
     }
   }
 
@@ -1404,6 +1439,24 @@ getDesignationHint(): string {
           panel.addEventListener('scroll', this.onTransferOrgSelectScroll.bind(this));
         }
       }, 100);
+    } else {
+      // Dropdown is closed: if no selection was made, reset to the initial unmapped user org
+      const currentValue = this.profileForm.get('transferOrganization')?.value;
+      const initialOrg = this.getInitialOrgFromUnmappedUser();
+
+      // If nothing was selected or the user didn't select anything from the API results
+      if (!currentValue) {
+        // Reset to initial value from unmapped user
+        this.loadTransferOrgAndSetValue();
+      } else {
+        // Check if the selected value exists in the current data (API results)
+        const selectedOrgExists = this.transferOrganizationData.find((org: any) => org.channel === currentValue);
+
+        // If the selected value doesn't exist in API results and matches initial org, restore initial org
+        if (!selectedOrgExists && initialOrg && currentValue === initialOrg.channel) {
+          this.loadTransferOrgAndSetValue();
+        }
+      }
     }
   }
 
@@ -1784,6 +1837,8 @@ getDesignationHint(): string {
       searchTransferOrganization: [''],
     });
     this.checkCurrentDesignationPresent();
+
+    this.loadTransferOrgAndSetValue();
     
     // Set up value change listeners for email and mobile
     this.setupMandatorySectionValueChanges();
