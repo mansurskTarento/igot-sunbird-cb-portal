@@ -485,7 +485,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.videoTag.nativeElement,
       {
         ...videoJsOptions,
-        poster: this.viewerSvc.getPublicUrl(this.widgetData.posterImage || ''),
+        poster: this.widgetData.posterImage ? this.viewerSvc.getPublicUrl(this.widgetData.posterImage || '') : '',
         autoplay: this.widgetData.autoplay || false,
       },
       dispatcher,
