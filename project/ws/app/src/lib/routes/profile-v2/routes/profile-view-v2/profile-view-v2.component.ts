@@ -231,7 +231,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     this.activatedRoute.fragment.subscribe(fragment => {
       if (fragment === 'mandatorySection') {
-        debugger
+        
         setTimeout(() => {
               this.handleEditMandatoryDetails()
           
