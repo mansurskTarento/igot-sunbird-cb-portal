@@ -165,6 +165,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { PickerModule } from '@ctrl/ngx-emoji-mart'
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
+import {ProfileVerificationDialogComponent } from './profile-verification-dialog/profile-verification-dialog.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -218,6 +219,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SurveyShikshaComponent,
     PrivacyPolicyComponent,
     LearnerAdvisoryComponent,
+    ProfileVerificationDialogComponent
   ],
   imports: [
     FormsModule,

@@ -821,7 +821,9 @@ setupScrollListener(opened: boolean): void {
         this.startCountDownEmail()
         // tslint:disable-next-line: align
       }, (error: any) => {
-        this.snackBar.open(_.get(error, 'error.params.errmsg') || 'Please try again later')
+        const isError= _.get(error, 'error.params.errmsg')
+        const errMsg = isError ? "Your email domain isn’t recognised — please contact your department for registration." : "Please try again later"
+        this.snackBar.open(errMsg)
       })
     } else {
       this.snackBar.open(this.translateLabels('validEmail', 'publicsignup'))

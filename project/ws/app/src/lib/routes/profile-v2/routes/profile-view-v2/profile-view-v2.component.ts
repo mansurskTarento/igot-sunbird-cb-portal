@@ -229,6 +229,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.translateService.use(lang)
       }
     })
+    this.activatedRoute.fragment.subscribe(fragment => {
+      if (fragment === 'mandatorySection') {
+        debugger
+        setTimeout(() => {
+              this.handleEditMandatoryDetails()
+          
+        }, 500)
+      }
+    })
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
@@ -661,9 +670,29 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       }
     } else if (header === 'Primary Details') {
       dialogDetails['groupsList'] = this.groupsList
+    } else if (header === 'mandatorySection') {
+      dialogDetails['groupsList'] = this.groupsList
     }
+    
+    // For mandatorySection, wrap dialogDetails and include approval fields
+    let dialogData: any;
+    if (header === 'mandatorySection') {
+      dialogData = {
+        dialogDetails,
+        unVerifiedObj: this.unVerifiedObj,
+        rejectedFields: this.rejectedFields,
+        approvalPendingFields: this.approvalPendingFields,
+        enableWTR: this.enableWTR,
+        enableWR: this.enableWR,
+        isCurrentUser: this.isCurrentUser,
+        primaryDetails: this.primaryDetails
+      };
+    } else {
+      dialogData = dialogDetails;
+    }
+    
     const dialogRef = this.dialog.open(PrfileEditV2Component, {
-      data: dialogDetails,
+      data: dialogData,
       disableClose: true,
       panelClass: 'dialog_sidenav',
       autoFocus: false
@@ -1589,5 +1618,34 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       }
     })
   }
+
+
+   // Update handleEditCustomDetails to build the form and populate values
+  handleEditMandatoryDetails() {
+     const dialogDetails: any = {
+      header: 'Mandatory Section',
+      profileDetails: this.primaryDetails,
+      groupsList: this.groupsList
+    }
+     const dialogRef = this.dialog.open(PrfileEditV2Component, {
+      data: {dialogDetails,
+        unVerifiedObj: this.unVerifiedObj,
+        rejectedFields: this.rejectedFields,
+        approvalPendingFields: this.approvalPendingFields,
+        enableWTR: this.enableWTR,
+        isCurrentUser: this.isCurrentUser,
+        primaryDetails:this.primaryDetails
+      },
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        // this.getOrgDetails()
+      }
+    })
+  }
+
 
 }

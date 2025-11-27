@@ -1,0 +1,50 @@
+<div class="profile-verification-dialog">
+  <!-- Illustration positioned outside/above the dialog -->
+  <div class="illustration">
+    <img src="/fusion-assets/images/KarmaSahayogi.svg" alt="Profile Verification" class="verification-image">
+  </div>
+
+  <!-- Main dialog content -->
+  <div class="dialog-content">
+    <!-- Blue Header -->
+    <div class="dialog-header">
+      <h2 class="dialog-title">iGOT PROFILE</h2>
+    </div>
+
+    <!-- Dialog Body -->
+    <div class="dialog-body">
+      <p class="message-text">
+        Dear Learner, To enable role-based learning on iGOT platform, please update your profile.
+      </p>
+      
+      <p class="submission-note">
+        If below details are correct, click "Confirm" Otherwise, click "Update Profile"
+      </p>
+      <!-- Profile Information -->
+      <div class="profile-info">
+        <div class="info-row">
+          <span class="info-label">Organisation: {{ data?.userProfile?.departmentName    || 'Tarento' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Designation: {{ data?.userProfile?.professionalDetails[0].designation || 'UX Designer' }}</span>
+        </div>
+        <div class="info-row">  
+          <span class="info-label">Email: {{ data?.userProfile?.primaryEmail || 'abc@xyz.com' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Number: {{ data?.userProfile?.mobile || '99999 12345' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog Actions -->
+    <div class="dialog-actions">
+      <button mat-stroked-button class="confirm-btn" (click)="onVerify()">
+        Confirm
+      </button>
+      <button mat-raised-button class="update-btn" (click)="onUpdateProfile()">
+        Update Profile
+      </button>
+    </div>
+  </div>
+</div>
