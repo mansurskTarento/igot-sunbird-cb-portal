@@ -23,16 +23,16 @@
       <!-- Profile Information -->
       <div class="profile-info">
         <div class="info-row">
-          <span class="info-label">Organisation: {{ data?.userProfile?.departmentName    || 'Tarento' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.departmentName? '': 'danger-label'">Organisation: {{ data?.userProfile?.departmentName    || 'Not Filled' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Designation: {{ data?.userProfile?.professionalDetails[0]?.designation || 'UX Designer' }}</span>
+          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.designation ? '': 'danger-label'">Designation: {{ data?.userProfile?.professionalDetails[0]?.designation || 'Not Filled' }}</span>
         </div>
         <div class="info-row">  
-          <span class="info-label">Email: {{ data?.userProfile?.primaryEmail || 'abc@xyz.com' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.primaryEmail ? '': 'danger-label'">Email: {{ data?.userProfile?.primaryEmail || 'Not Filled' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Number: {{ data?.userProfile?.mobile || '99999 12345' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.mobile ? '': 'danger-label'">Number: {{ data?.userProfile?.mobile || 'Not Filled' }}</span>
         </div>
       </div>
     </div>
