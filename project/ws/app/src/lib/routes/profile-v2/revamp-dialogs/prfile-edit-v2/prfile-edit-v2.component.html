@@ -31,7 +31,7 @@
     </ng-template>
   </div>
   <div  class="form-actions flex justify-end items-center gap-4" *ngIf="header === 'Mandatory Section'">
-      <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit('mandatorySection')"
+      <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
         [ngClass]="{'disableBtn': !canSaveChanges}">{{ 'NetworkV2Profile.saveChanges' | translate }}</button>
 
   </div>
@@ -394,7 +394,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="hasError('transferOrganization', 'required')">
-              {{'NetworkV2Profile.organizationIsRequired' | translate}}
+              {{'NetworkV2Profile.chooseOrganization' | translate}}
             </mat-error>
           </mat-form-field>
           <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
@@ -410,7 +410,7 @@
               <mat-option value="" disabled>{{ 'NetworkV2Profile.chooseAGroup' | translate }}</mat-option>
               <mat-option *ngFor="let group of groupsList" value="{{group}}">{{ group }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('group', 'required')">{{'NetworkV2Profile.groupIsRequired' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('group', 'required')">{{'NetworkV2Profile.chooseAGroup' | translate}}</mat-error>
           </mat-form-field>
           <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
             <mat-icon class="warning-icon">info</mat-icon>
@@ -443,7 +443,7 @@
                 {{'NetworkV2Profile.noMatchesFound' | translate}}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('designation', 'required')">{{'NetworkV2Profile.designationIsRequired' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('designation', 'required')">{{'NetworkV2Profile.chooseADesignation' | translate}}</mat-error>
           </mat-form-field>
           <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
             <mat-icon class="warning-icon">info</mat-icon>

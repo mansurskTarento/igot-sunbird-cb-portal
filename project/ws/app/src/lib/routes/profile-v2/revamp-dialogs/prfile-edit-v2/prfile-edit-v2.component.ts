@@ -1100,7 +1100,7 @@ getDesignationHint(): string {
 
   //#endregion (end of other details)
 
-  handleSubmit(sectionType?:any): void {
+  handleSubmit(): void {
     if (this.profileForm) {
       if (this.canSaveChanges) {
         const profileData = this.profileForm.value;
@@ -1121,15 +1121,6 @@ getDesignationHint(): string {
       } else {
         this.markFormGroupTouched(this.profileForm);
       }
-    }
-    if(sectionType === 'mandatorySection') {
-      // const urlWithoutFragment = this.router.url.split('#')[0];
-      // console.log('urlWithoutFragment', urlWithoutFragment);
-      // this.location.replaceState(urlWithoutFragment);
-      // window.location.reload();
-      this.location.replaceState('/page/home');
-       window.location.reload();
-      // this.router.navigate(['/page/home']);
     }
   }
 
@@ -1165,9 +1156,9 @@ getDesignationHint(): string {
 
       if (groupChanged || designationChanged || orgChanged) {
         postData.request.profileDetails.professionalDetails = [{
-          'name': formValue.transferOrganization,
-          'designation': formValue.designation,
-          'group': formValue.group,
+          ...(orgChanged ? { name: formValue.transferOrganization } : null),
+          ...(designationChanged ? { designation: formValue.designation } : null),
+          ...(groupChanged ? { group: formValue.group } : null),
         }]
       }
 
@@ -1188,7 +1179,8 @@ getDesignationHint(): string {
         .subscribe({
           next: (_res: any) => {
             this.openSnackbar('Your request has been sent for approval')
-            this.dialogRef.close({ success: true });
+            this.location.replaceState('/page/home');
+            window.location.reload();
           },
           error: (error: HttpErrorResponse) => {
             if (!error.ok) {
