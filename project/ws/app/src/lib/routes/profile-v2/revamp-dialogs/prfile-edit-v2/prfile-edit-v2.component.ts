@@ -1130,7 +1130,7 @@ getDesignationHint(): string {
     if (this.profileForm.valid) {
       const formValue = this.profileForm.value;
       const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
-     
+  
       
       // MANDATORY: Always include userId and profileDetails with lastProfileVerificationPromptDate
       const postData: any = {
@@ -1145,16 +1145,16 @@ getDesignationHint(): string {
       }
 
       // Only add employmentDetails if transferOrganization changed
-      if (formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '')) {
+      if (formValue.transferOrganization && formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '')) {
         postData.request.employmentDetails = {
           'departmentName': formValue.transferOrganization,
         }
       }
 
       // Check if any professional details changed
-      const groupChanged = formValue.group !== _.get(primaryDetails, 'group', '');
-      const designationChanged = formValue.designation !== _.get(primaryDetails, 'designation', '');
-      const orgChanged = formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '');
+      const groupChanged = formValue.group && formValue.group !== _.get(primaryDetails, 'group', '');
+      const designationChanged = formValue.designation && formValue.designation !== _.get(primaryDetails, 'designation', '');
+      const orgChanged =  formValue.transferOrganization &&  formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '');
 
       if (groupChanged || designationChanged || orgChanged) {
         postData.request.profileDetails.professionalDetails = [{
