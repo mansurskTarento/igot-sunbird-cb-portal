@@ -155,7 +155,7 @@
   <!-- #region (Mandatory Section) -->
   <ng-template #mandatorySection>
     <!-- Withdraw Button - Show independently -->
-    <div class="flex justify-end items-center mb-3" *ngIf="showApprovalStatus">
+    <div class="flex justify-end items-center mb-3" *ngIf="showOrganizationPending || showGroupPending || showDesignationPending">
       <div class="withdraw-text edit-button" (click)="showWithdrawRequestPopup()">
         {{'NetworkV2Profile.withdrawRequest' | translate }}
       </div>
@@ -312,7 +312,7 @@
       </ng-container>
       <hr class="divider my-3" style="border-top: 1px solid #e0e0e0;" />
     </div>
-
+ <!-- <span *ngIf="profileForm">{{profileForm|json}}</span>  -->
     <form [formGroup]="profileForm" class="profile-editor-form">
       <div class="profile-editor-description">
         {{'NetworkV2Profile.pdTooltipMsg' | translate}}
@@ -397,12 +397,11 @@
               {{'NetworkV2Profile.chooseOrganization' | translate}}
             </mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
         </div>
-
         <div class="flex flex-col profile-control">
           <div class="lable required">{{'NetworkV2Profile.group' | translate}}</div>
           <mat-form-field appearance="outline">
@@ -412,7 +411,7 @@
             </mat-select>
             <mat-error *ngIf="hasError('group', 'required')">{{'NetworkV2Profile.chooseAGroup' | translate}}</mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
@@ -445,11 +444,11 @@
             </mat-select>
             <mat-error *ngIf="hasError('designation', 'required')">{{'NetworkV2Profile.chooseADesignation' | translate}}</mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
-          <div class="note-container p-2" *ngIf="!isDesignationPendingOrRejected && !isOrganizationPendingOrRejected && !isGroupPendingOrRejected">
+          <div class="note-container p-2" *ngIf="!isDesignationPending && !isOrganizationPending && !isGroupPending">
             <div class="flex flex-start items-center gap-2">
               <mat-icon class="info-icon-designation">info</mat-icon>
               <div class="designation-note" [innerHTML]="getDesignationHint()"></div>
