@@ -12,6 +12,7 @@ export class UserStatsComponent implements OnInit {
   //#region (global variables)
   @Input() userStats: UserStats[] = [];
   @Input() isMobile = false;
+  @Input() isNotMyUserAndIgotOrg = false;
   //#endregion
 
   constructor(

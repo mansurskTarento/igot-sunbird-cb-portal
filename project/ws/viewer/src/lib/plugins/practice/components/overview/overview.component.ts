@@ -77,11 +77,12 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   showAssessmentPopup() {
-    this.maxAttempPopup = true
+    this.maxAttempPopup = true  
     const popupData = {
       headerText: 'this.resourceName',
       assessmentType: 'maxAttemptReached',
-
+      primaryCategory: this.primaryCategory,
+      canAttempt: this.canAttempt,
       warningNote: 'Do you want to submit your test finally. After submitting test, you will have to start the test from beginning.',
       buttonsList: [
         {

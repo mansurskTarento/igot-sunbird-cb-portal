@@ -283,9 +283,11 @@
       <!-- BLENDED_PROGRAM block -->
       <ng-container *ngIf="contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
 
-        <ng-container
-          *ngIf="batchData?.workFlow?.wfInitiated &&
-                      !(batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.APPROVED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REJECTED || batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.WITHDRAWN)">
+        <ng-container *ngIf="batchData?.workFlow?.wfInitiated &&
+                      !(batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.APPROVED ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REJECTED ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.WITHDRAWN ||
+                      batchData?.workFlow?.wfItem?.currentStatus === WFBlendedProgramStatus.REMOVED)">
           <div class="ws-mat-accent-text ws-mat-accent-light-bg flex items-center justify-center statusMsg">
             <p class="margin-remove-bottom font-bold">
               {{ 'apptochome.requestUnderReview' | translate }}
@@ -906,9 +908,9 @@
 <ng-template #authView>{{'apptochome.view' | translate}}</ng-template>
 
 <ng-template #authViewBtn i18n>
-  <a (click)="raiseTelemetryForPublic()"
-    [routerLink]="(resumeData && !certData) ? resumeDataLink?.url : firstResourceLink?.url"
-    [queryParams]="(resumeData && !certData) ? generateQuery('RESUME') : generateQuery('START')"
+  <a (click)="raiseTelemetryForPublic($event)"
+    [routerLink]="shouldShowSurveyPopup() ? null : ((resumeData && !certData) ? resumeDataLink?.url : firstResourceLink?.url)"
+    [queryParams]="shouldShowSurveyPopup() ? null : ((resumeData && !certData) ? generateQuery('RESUME') : generateQuery('START'))"
     class="flex action-button justify-center">
     {{'apptochome.view' | translate}}
   </a>

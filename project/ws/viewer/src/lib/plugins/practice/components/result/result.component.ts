@@ -17,6 +17,7 @@ export class ResultComponent implements OnInit, OnChanges {
   @Input() quizResponse!: NSPractice.IQuizSubmitResponseV2
   @Input() coursePrimaryCategory: any
   @Input() selectedAssessmentCompatibilityLevel = 2
+  @Input() canAttempt : any
   @Output() userSelection = new EventEmitter<string>()
   @Output() fetchResult = new EventEmitter<string>()
   @ViewChild(MatAccordion, { static: true }) accordion: MatAccordion | undefined
