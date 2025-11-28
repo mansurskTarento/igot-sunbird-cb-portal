@@ -1653,7 +1653,7 @@ getDesignationHint(): string {
   showWithdrawRequestPopup() {
     // If organization transfer is pending, open withdraw dialog in 'department' mode so
     // the dialog itself performs the withdraw and emits an event on success.
-    if (this.showOrganizationPending || this.isOrganizationPendingOrRejected) {
+    if (this.showOrganizationPending || this.isOrganizationPending) {
       const dialogRef = this.dialog.open(WithdrawRequestComponent, {
         data: {
           withDrawType: 'department',
@@ -1775,11 +1775,10 @@ getDesignationHint(): string {
     const groupControl = this.profileForm.get('group');
     const designationControl = this.profileForm.get('designation');
     const transferOrgControl = this.profileForm.get('transferOrganization');
-
     // Check if ANY field has pending/rejected status
-    const anyFieldPendingOrRejected = this.isOrganizationPendingOrRejected || 
-                                      this.isGroupPendingOrRejected || 
-                                      this.isDesignationPendingOrRejected;
+    const anyFieldPendingOrRejected = this.isOrganizationPending || 
+                                      this.isGroupPending || 
+                                      this.isDesignationPending;
 
     if (anyFieldPendingOrRejected) {
       // Disable all three fields if any one is pending/rejected
@@ -1794,20 +1793,20 @@ getDesignationHint(): string {
     }
   }
 
-  get isOrganizationPendingOrRejected(): boolean {
+  get isOrganizationPending(): boolean {
     const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    // const rejectedFields = _.get(this.data, 'rejectedFields', {});
     
     // Check if organization field exists in pending or rejected
-    return !!(unVerifiedObj.organization || rejectedFields.organization);
+    return !!(unVerifiedObj.organization);
   }
 
-  get isGroupPendingOrRejected(): boolean {
-    return this.showGroupPending || this.showGroupRejection;
+  get isGroupPending(): boolean {
+    return this.showGroupPending;
   }
 
-  get isDesignationPendingOrRejected(): boolean {
-    return this.showDesignationPending || this.showDesignationRejection;
+  get isDesignationPending(): boolean {
+    return this.showDesignationPending;
   }
 
   ngOnDestroy() {
@@ -1866,6 +1865,7 @@ getDesignationHint(): string {
           }
           settingValueChange = false
         })
+        console.log(this.profileForm,'profileForm')
     }
 
     // Search Transfer Organization Control
