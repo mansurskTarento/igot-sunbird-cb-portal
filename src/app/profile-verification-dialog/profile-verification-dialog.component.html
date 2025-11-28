@@ -39,7 +39,7 @@
 
     <!-- Dialog Actions -->
     <div class="dialog-actions">
-      <button mat-stroked-button class="confirm-btn" (click)="onVerify()">
+      <button mat-stroked-button class="confirm-btn" (click)="onVerify()" *ngIf="data?.userProfile?.departmentName &&data?.userProfile?.professionalDetails[0]?.designation && data?.userProfile?.primaryEmail && data?.userProfile?.mobile">
         Confirm
       </button>
       <button mat-raised-button class="update-btn" (click)="onUpdateProfile()">

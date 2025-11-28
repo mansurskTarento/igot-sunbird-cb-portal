@@ -195,15 +195,6 @@
         <div class="flex flex-col gap-2 pr-3" *ngIf="data?.primaryDetails?.departmentName || profileDetails?.departmentName">
           <span class="label font-semibold">{{ 'NetworkV2Profile.organization' | translate }}</span>
           <span class="primaryDetailsvalue flex gap-2 items-center">{{ data?.primaryDetails?.departmentName || profileDetails?.departmentName }}
-            <ng-container *ngIf="data?.primaryDetails?.profileStatus === 'VERIFIED'; else organizationNotVerified">
-              <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="verified" style="width: 16px; height: 16px;">
-            </ng-container>
-            <ng-template #organizationNotVerified>
-              <div class="profile-not-verified flex gap-1 justify-center items-center" style="background: #FFF3E0; padding: 2px 8px; border-radius: 4px;">
-                <div class="text" style="font-size: 12px; color: #E65100;">{{ 'NetworkV2Profile.notVerified' | translate }}</div>
-                <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #E65100;">info_outline</mat-icon>
-              </div>
-            </ng-template>
           </span>
         </div>
       </div>
