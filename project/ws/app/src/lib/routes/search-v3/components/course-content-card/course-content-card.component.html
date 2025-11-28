@@ -96,7 +96,6 @@
                                     <div class="inprogress-course font-stats rounded">Completed</div>
                                 </ng-container>
                             </div>
-
                             <div *ngIf="content?.difficultyLevel" class="knowledge-level-container">
                                 <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -155,10 +154,10 @@
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
                         {{content?.creator}}</span> -->
-                    <span class="organization-name text-ellipse" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
+                    <span class="organization-name" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
                         translate}}
                         {{content?.organisation[0]}}</span>
-                    <span class="organization-name text-ellipse"
+                    <span class="organization-name"
                         *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
