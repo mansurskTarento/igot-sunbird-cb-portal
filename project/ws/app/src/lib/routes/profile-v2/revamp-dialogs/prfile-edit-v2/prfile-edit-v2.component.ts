@@ -110,6 +110,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   enableWTR = false
   enableWR = false
   approvalPendingFields: any[] = []
+  submitbtnLoading: boolean = false
 
 
   constructor(
@@ -1125,6 +1126,7 @@ getDesignationHint(): string {
   }
 
   generateMandatorySectionForm(): void {
+    this.submitbtnLoading = true
     if (this.profileForm.valid) {
       const formValue = this.profileForm.value;
       const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
@@ -1179,10 +1181,12 @@ getDesignationHint(): string {
         .subscribe({
           next: (_res: any) => {
             this.openSnackbar('Your request has been sent for approval')
+            this.submitbtnLoading = false
             this.location.replaceState('/page/home');
             window.location.reload();
           },
           error: (error: HttpErrorResponse) => {
+            this.submitbtnLoading = false
             if (error?.error?.params?.errmsg) {
               this.openSnackbar(error?.error?.params?.errmsg)
             } else {

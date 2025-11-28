@@ -32,7 +32,7 @@
   </div>
   <div  class="form-actions flex justify-end items-center gap-4" *ngIf="header === 'Mandatory Section'">
       <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
-        [ngClass]="{'disableBtn': !canSaveChanges}">{{ 'NetworkV2Profile.saveChanges' | translate }}</button>
+        [ngClass]="{'disableBtn': !canSaveChanges || submitbtnLoading}">{{ 'NetworkV2Profile.saveChanges' | translate }}</button>
 
   </div>
   <!-- #endregion (Footer Form Actions) -->
@@ -671,4 +671,8 @@
     </form>
   </ng-template>
   <!-- #endregion (Other Details) -->
+
 </div>
+  <div class="custom-loader" *ngIf="submitbtnLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
