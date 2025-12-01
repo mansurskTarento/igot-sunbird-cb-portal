@@ -1186,8 +1186,10 @@ getDesignationHint(): string {
             window.location.reload();
           },
           error: (error: HttpErrorResponse) => {
-            if (!error.ok) {
-              this.submitbtnLoading = false
+            this.submitbtnLoading = false
+            if (error?.error?.params?.errmsg) {
+              this.openSnackbar(error?.error?.params?.errmsg)
+            } else {
               this.openSnackbar('Request failed. Please try again.')
             }
           }
