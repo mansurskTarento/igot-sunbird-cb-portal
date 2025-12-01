@@ -23,6 +23,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
+import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service';
 //#endregion
 
 @Component({
@@ -220,6 +221,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private datePipe: DatePipe,
     private events: EventService,
     private langtranslations: MultilingualTranslationsService,
+    private commonSvc: CommonDataService
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -323,6 +325,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
               this.handleEditMandatoryDetails()
           
         }, 500)
+      } else {
+        this.commonSvc.mandatoryDetails()
       }
     })
   }

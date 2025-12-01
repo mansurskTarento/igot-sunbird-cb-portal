@@ -28,6 +28,9 @@
         <div class="info-row">
           <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.designation ? '': 'danger-label'">Designation: {{ data?.userProfile?.professionalDetails[0]?.designation || 'Not Filled' }}</span>
         </div>
+         <div class="info-row">
+          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.group ? '': 'danger-label'">Group: {{ data?.userProfile?.professionalDetails[0]?.group || 'Not Filled' }}</span>
+        </div>
         <div class="info-row">  
           <span class="info-label" [ngClass]="data?.userProfile?.primaryEmail ? '': 'danger-label'">Email: {{ data?.userProfile?.primaryEmail || 'Not Filled' }}</span>
         </div>
@@ -39,7 +42,7 @@
 
     <!-- Dialog Actions -->
     <div class="dialog-actions">
-      <button mat-stroked-button class="confirm-btn" (click)="onVerify()" *ngIf="data?.userProfile?.departmentName && data?.userProfile?.professionalDetails[0]?.designation && data?.userProfile?.primaryEmail && data?.userProfile?.mobile">
+      <button mat-stroked-button class="confirm-btn" (click)="onVerify()" *ngIf="data?.userProfile?.departmentName && data?.userProfile?.professionalDetails[0]?.designation && data?.userProfile?.professionalDetails[0]?.group  && data?.userProfile?.primaryEmail && data?.userProfile?.mobile">
         Confirm
       </button>
       <button mat-raised-button class="update-btn" (click)="onUpdateProfile()">
