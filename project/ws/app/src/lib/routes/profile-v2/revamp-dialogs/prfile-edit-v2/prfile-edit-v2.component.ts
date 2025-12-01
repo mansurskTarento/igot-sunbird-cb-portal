@@ -473,10 +473,14 @@ getDesignationHint(): string {
 
   getdesignationsMeta() {
     this.isLoadingMoreDesignations = true;
-    if (this.orgHasDesignations) {
-      this.getIgotDesignations();
+    if (this.header === 'Mandatory Section') {
+        this.getDefaultDesignations();
     } else {
-      this.getDefaultDesignations();
+      if (this.orgHasDesignations) {
+        this.getIgotDesignations();
+      } else {
+        this.getDefaultDesignations();
+      }
     }
   }
 
