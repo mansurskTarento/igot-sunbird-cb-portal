@@ -205,7 +205,7 @@
         </ng-container>
 
         <ng-container *ngIf="config?.commentsTab && !forPreview">
-            <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+            <mat-tab label="{{ 'apptocsinglepage.startDiscussion' | translate }}">
                 <ng-template matTabContent>
                 <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData && discussWidgetData?.newCommentSection?.commentTreeData?.entityId">
                     <ng-container *ngIf="!commentId">
