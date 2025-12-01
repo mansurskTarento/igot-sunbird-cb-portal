@@ -23,7 +23,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
-import { CommonDataService } from 'src/app/services/common-data.service';
+import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service';
 //#endregion
 
 @Component({

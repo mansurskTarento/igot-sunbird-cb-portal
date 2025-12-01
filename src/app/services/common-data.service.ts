@@ -5,8 +5,7 @@ import { ProfileVerificationDialogComponent } from '../profile-verification-dial
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service';
 import { MatLegacyDialog as MatDialog  } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
-import _ from 'lodash';
-
+import * as _ from 'lodash';
 @Injectable({
   providedIn: 'root'
 })
@@ -99,10 +98,10 @@ export class CommonDataService {
           request: { organisationId: this.rootOrgId },
         }
         this.userProfileService.readOrgData(request).subscribe((res: any) => {
-          const isPopupEnabled = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
-          const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
-          const customFieldsLength = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
-          if (isPopupEnabled && customFieldsCount && customFieldsLength.length > 0) {
+          const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
+          const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
+          const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
+          if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
             return this.readCustomattributeDetails()
           } else {
             return false
@@ -114,8 +113,8 @@ export class CommonDataService {
       }
    readCustomattributeDetails() {
       this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
-        let customFieldValues = _.get(res, 'result.response.customFieldValues', [])
-        if (customFieldValues.length === 0) {
+        let customFieldValues = _.get(res, 'result?.response?.customFieldValues', [])
+        if ( customFieldValues && customFieldValues.length === 0) {
           return this.redirectToCustomProfile()
         } else {
           //this.redirectToCustomProfile()

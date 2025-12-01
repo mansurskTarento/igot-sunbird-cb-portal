@@ -637,7 +637,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
     if((diffDays && diffDays> 90 ) || userProfileUpdateDate === null) {
-      console.log('diffDays',this.configSvc.userProfile)
       let userData = {
         ...this.configSvc.userProfile,
         mobile: this.configSvc.unMappedUser.profileDetails?.personalDetails?.mobile || '',
