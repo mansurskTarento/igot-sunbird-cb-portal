@@ -23,19 +23,19 @@
       <!-- Profile Information -->
       <div class="profile-info">
         <div class="info-row">
-          <span class="info-label" [ngClass]="data?.userProfile?.departmentName? '': 'danger-label'">Organisation: {{ data?.userProfile?.departmentName    || 'Not Filled' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.departmentName? '': 'danger-label'">{{'requestDialog.organisation' | translate}}: {{ data?.userProfile?.departmentName    || 'Not Filled' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.designation ? '': 'danger-label'">Designation: {{ data?.userProfile?.professionalDetails[0]?.designation || 'Not Filled' }}</span>
+          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.designation ? '': 'danger-label'">{{'userProfile.designation' | translate}}: {{ data?.userProfile?.professionalDetails[0]?.designation || 'Not Filled' }}</span>
         </div>
          <div class="info-row">
-          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.group ? '': 'danger-label'">Group: {{ data?.userProfile?.professionalDetails[0]?.group || 'Not Filled' }}</span>
+          <span class="info-label"  [ngClass]="data?.userProfile?.professionalDetails[0]?.group ? '': 'danger-label'">{{'userProfile.group' | translate}}: {{ data?.userProfile?.professionalDetails[0]?.group || 'Not Filled' }}</span>
         </div>
         <div class="info-row">  
-          <span class="info-label" [ngClass]="data?.userProfile?.primaryEmail ? '': 'danger-label'">Email: {{ data?.userProfile?.primaryEmail || 'Not Filled' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.primaryEmail ? '': 'danger-label'">{{'publicsignup.email' | translate}}: {{ data?.userProfile?.primaryEmail || 'Not Filled' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label" [ngClass]="data?.userProfile?.mobile ? '': 'danger-label'">Number: {{ data?.userProfile?.mobile || 'Not Filled' }}</span>
+          <span class="info-label" [ngClass]="data?.userProfile?.mobile ? '': 'danger-label'">{{'userProfile.mobileNumber' | translate}}: {{ data?.userProfile?.mobile || 'Not Filled' }}</span>
         </div>
       </div>
     </div>
