@@ -26,14 +26,15 @@ const API_END_POINTS = {
   SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
   SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
   RECENT_CREATE: `apis/proxies/v8/search/v1/recent/create`,
-  RECENT_READ:`apis/proxies/v8/search/v1/recent/read`,
+  RECENT_READ: `apis/proxies/v8/search/v1/recent/read`,
   RECENT_DELETE_BY_USERID: `apis/proxies/v8/search/v1/recent/delete`,
-  RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `apis/proxies/v8/search/v1/recent/delete/timestamp/${id}`},
+  RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `apis/proxies/v8/search/v1/recent/delete/timestamp/${id}` },
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`;
   },
 
-    EXPLORE_API:'/api/course/v1/explore'
+  EXPLORE_API: '/api/course/v1/explore',
+  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`
 };
 
 @Injectable({
@@ -50,7 +51,7 @@ export class GbSearchService {
     private http: HttpClient,
     private configSrv: ConfigurationsService,
     private searchApi: SearchApiService
-  ) {}
+  ) { }
 
   fetchSearchData(request: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SEARCH_V6, request);
@@ -107,17 +108,17 @@ export class GbSearchService {
     return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise();
   }
   recentCreate(req: any): Promise<any> {
-    return this.http.post(API_END_POINTS.RECENT_CREATE, req).toPromise(); 
+    return this.http.post(API_END_POINTS.RECENT_CREATE, req).toPromise();
   }
   recentRead() {
-    return this.http.get(API_END_POINTS.RECENT_READ); 
+    return this.http.get(API_END_POINTS.RECENT_READ);
   }
 
   recentDeleteByUser() {
-    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_USERID); 
+    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_USERID);
   }
-  recentDeleteByTime(id:any) {
-    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_TIMESTAMP(id)); 
+  recentDeleteByTime(id: any) {
+    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_TIMESTAMP(id));
   }
 
   enrollment(request: any, userId: string): any {
@@ -129,14 +130,14 @@ export class GbSearchService {
   }
 
   exploreContent() {
-    return this.http.get(API_END_POINTS.EXPLORE_API); 
+    return this.http.get(API_END_POINTS.EXPLORE_API);
   }
 
 
 
   getFirstSortOption(isExploreContentTab: boolean): any {
     let options = SEARCH_SORT_DROPDOWN;
-    let selectedOption =  SortType.MostRelevent;
+    let selectedOption = SortType.MostRelevent;
     if (isExploreContentTab) {
       options = SEARCH_SORT_DROPDOWN.filter(option => option.value !== SortType.MostRelevent);
       selectedOption = SortType.RecentlyAdded;
@@ -144,7 +145,12 @@ export class GbSearchService {
       options = SEARCH_SORT_DROPDOWN;
       selectedOption = SortType.MostRelevent;
     }
-    return { options, selectedOption }  ;
+    return { options, selectedOption };
+  }
+
+
+  microCredentialsSearch(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.MICRO_CREDENTIALS)
   }
 
 }

@@ -31,6 +31,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   @Input() content: any;
   @Input() enrollment: any[] = [];
   @Input() cbpPlans: any[] = [];
+  @Input() igotSpecializationPrograms: any[] = [];
   @Output() telemetry = new EventEmitter<any>();
   contentBookmarked = false;
   defaultThumbnail = '/assets/instances/eagle/app_logos/default.png';
@@ -40,6 +41,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   courseEnrollment: any;
   downloadCertificateLoading = false;
   isIgot = false;
+  igotSpecializationProgram: any;
   constructor(
     private configSvc: ConfigurationsService,
     private dialog: MatDialog,
@@ -47,7 +49,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private certificateService: CertificateService,
     private router: Router,
     private contSvc: WidgetContentLibService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.compentencyKey =
@@ -70,6 +72,16 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         );
       } else {
         this.isIgot = false;
+      }
+    }
+
+    if (changes['igotSpecializationPrograms'] && changes['igotSpecializationPrograms'].currentValue) {
+      if (this.igotSpecializationPrograms?.length && this.content) {
+        this.igotSpecializationProgram = this.igotSpecializationPrograms.some(
+          (ele: any) => ele.identifier === this.content.identifier
+        );
+      } else {
+        this.igotSpecializationProgram = false;
       }
     }
   }
@@ -130,11 +142,11 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   async getRedirectUrlData(content: any) {
-    if(content && content?.contentType === 'Resource' && content?.identifier) {
+    if (content && content?.contentType === 'Resource' && content?.identifier) {
       let resourceType;
-      if(!content?.resourceType) { 
+      if (!content?.resourceType) {
         resourceType = 'youtube';
-      }else {
+      } else {
         resourceType = content?.resourceType === 'MP4' ? 'video' : content?.resourceType.toLowerCase();
       }
       this.telemetry.emit(content);
@@ -152,9 +164,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
 
   generateCompetencySubThemeString(): string {
     if (this.content && this.content[this.compentencyKey?.vKey]) {
-        return this.content[this.compentencyKey?.vKey]
-            .map((keyword: any) => keyword[this.compentencyKey?.vCompetencySubTheme])
-            .join(' · ');
+      return this.content[this.compentencyKey?.vKey]
+        .map((keyword: any) => keyword[this.compentencyKey?.vCompetencySubTheme])
+        .join(' · ');
     }
     return '';
   }
