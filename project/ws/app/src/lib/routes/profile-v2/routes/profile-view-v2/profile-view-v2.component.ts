@@ -229,15 +229,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.translateService.use(lang)
       }
     })
-    this.activatedRoute.fragment.subscribe(fragment => {
-      if (fragment === 'mandatorySection') {
-        debugger
-        setTimeout(() => {
-              this.handleEditMandatoryDetails()
-          
-        }, 500)
-      }
-    })
+    
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
@@ -267,6 +259,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getRejectedStatus()
     this.getGroupData()
     this.getInsightsData()
+    
   }
 
   //#region (initialization)
@@ -315,11 +308,23 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
+        this.checkMandatory()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
         }
       })
+  }
+  checkMandatory() {
+    this.activatedRoute.fragment.subscribe(fragment => {
+      if (fragment === 'mandatorySection') {
+        
+        setTimeout(() => {
+              this.handleEditMandatoryDetails()
+          
+        }, 500)
+      }
+    })
   }
 
   getProfileDetailsFromRoutes() {
@@ -671,6 +676,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     } else if (header === 'Primary Details') {
       dialogDetails['groupsList'] = this.groupsList
     } else if (header === 'mandatorySection') {
+      console.log(this.groupsList,'=========> this.grouplist')
+      
       dialogDetails['groupsList'] = this.groupsList
     }
     
@@ -1622,6 +1629,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
    // Update handleEditCustomDetails to build the form and populate values
   handleEditMandatoryDetails() {
+    console.log(this.groupsList,'=========> this.grouplist' )
+    
      const dialogDetails: any = {
       header: 'Mandatory Section',
       profileDetails: this.primaryDetails,

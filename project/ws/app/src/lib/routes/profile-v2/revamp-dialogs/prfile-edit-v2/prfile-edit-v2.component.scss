@@ -534,7 +534,7 @@
 
   .warning-icon {
     font-size: 16px;
-    width: 16px;
+    width: 48px;
     height: 16px;
     color: #E65100;
   }
@@ -576,4 +576,49 @@
   color: #1B4CA1;
   cursor: pointer;
   font-size: 14px;
+}
+
+.search-org-input {
+  width: 100%;
+  height: 35px;
+  padding: 0 30px 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+::ng-deep .search-panel {
+  .sticky-search-container {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: white;
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+  .search-input {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding-left: 10px;
+    width: calc(100% - 10px);;
+    height: 30px;
+    &:focus {
+      outline: none;
+      border-color: #F3962F;
+      box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
+    }
+  }
+}
+
+.custom-loader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #00000030;
+      display: flex;
+  align-items: center;
+  justify-content: center;
 }

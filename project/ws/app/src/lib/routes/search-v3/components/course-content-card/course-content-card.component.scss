@@ -120,6 +120,9 @@
 
 .course-author {
   font-size: 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
 }
 
 .author-avatar {
@@ -133,6 +136,8 @@
   @extend .course-tags;
   font-size: 14px;
   line-height: 16.8px;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .course-stats {
@@ -187,6 +192,18 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .organization-name {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 992px) {
+  .organization-name {
+    max-width: 150px;
+  }
+}
+
 @media (max-width: 768px) {
   .card-container {
     flex-direction: column;
@@ -200,6 +217,22 @@
   .bookmark-container {
     top: 8px;
     bottom: auto;
+  }
+
+  .organization-name {
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 700px) {
+  .organization-name {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 576px) {
+  .organization-name {
+    max-width: 80px;
   }
 }
 
@@ -242,11 +275,12 @@
   align-items: flex-end;
 }
 
+// download icon Issue fixed
 .bookmark-section {
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  //   overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
 }
 
 .knowledge-level-container {

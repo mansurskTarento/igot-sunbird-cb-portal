@@ -31,8 +31,8 @@
     </ng-template>
   </div>
   <div  class="form-actions flex justify-end items-center gap-4" *ngIf="header === 'Mandatory Section'">
-      <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit('mandatorySection')"
-        [ngClass]="{'disableBtn': !canSaveChanges}">{{ 'NetworkV2Profile.saveChanges' | translate }}</button>
+      <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
+        [ngClass]="{'disableBtn': !canSaveChanges || submitbtnLoading}">{{ 'NetworkV2Profile.saveChanges' | translate }}</button>
 
   </div>
   <!-- #endregion (Footer Form Actions) -->
@@ -155,7 +155,7 @@
   <!-- #region (Mandatory Section) -->
   <ng-template #mandatorySection>
     <!-- Withdraw Button - Show independently -->
-    <div class="flex justify-end items-center mb-3" *ngIf="showApprovalStatus">
+    <div class="flex justify-end items-center mb-3" *ngIf="showOrganizationPending || showGroupPending || showDesignationPending">
       <div class="withdraw-text edit-button" (click)="showWithdrawRequestPopup()">
         {{'NetworkV2Profile.withdrawRequest' | translate }}
       </div>
@@ -195,15 +195,6 @@
         <div class="flex flex-col gap-2 pr-3" *ngIf="data?.primaryDetails?.departmentName || profileDetails?.departmentName">
           <span class="label font-semibold">{{ 'NetworkV2Profile.organization' | translate }}</span>
           <span class="primaryDetailsvalue flex gap-2 items-center">{{ data?.primaryDetails?.departmentName || profileDetails?.departmentName }}
-            <ng-container *ngIf="data?.primaryDetails?.profileStatus === 'VERIFIED'; else organizationNotVerified">
-              <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="verified" style="width: 16px; height: 16px;">
-            </ng-container>
-            <ng-template #organizationNotVerified>
-              <div class="profile-not-verified flex gap-1 justify-center items-center" style="background: #FFF3E0; padding: 2px 8px; border-radius: 4px;">
-                <div class="text" style="font-size: 12px; color: #E65100;">{{ 'NetworkV2Profile.notVerified' | translate }}</div>
-                <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #E65100;">info_outline</mat-icon>
-              </div>
-            </ng-template>
           </span>
         </div>
       </div>
@@ -312,7 +303,7 @@
       </ng-container>
       <hr class="divider my-3" style="border-top: 1px solid #e0e0e0;" />
     </div>
-
+ <!-- <span *ngIf="profileForm">{{profileForm|json}}</span>  -->
     <form [formGroup]="profileForm" class="profile-editor-form">
       <div class="profile-editor-description">
         {{'NetworkV2Profile.pdTooltipMsg' | translate}}
@@ -394,15 +385,14 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="hasError('transferOrganization', 'required')">
-              {{'NetworkV2Profile.organizationIsRequired' | translate}}
+              {{'NetworkV2Profile.chooseOrganization' | translate}}
             </mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
         </div>
-
         <div class="flex flex-col profile-control">
           <div class="lable required">{{'NetworkV2Profile.group' | translate}}</div>
           <mat-form-field appearance="outline">
@@ -410,9 +400,9 @@
               <mat-option value="" disabled>{{ 'NetworkV2Profile.chooseAGroup' | translate }}</mat-option>
               <mat-option *ngFor="let group of groupsList" value="{{group}}">{{ group }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('group', 'required')">{{'NetworkV2Profile.groupIsRequired' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('group', 'required')">{{'NetworkV2Profile.chooseAGroup' | translate}}</mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
@@ -443,13 +433,13 @@
                 {{'NetworkV2Profile.noMatchesFound' | translate}}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="hasError('designation', 'required')">{{'NetworkV2Profile.designationIsRequired' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('designation', 'required')">{{'NetworkV2Profile.chooseADesignation' | translate}}</mat-error>
           </mat-form-field>
-          <div class="field-disabled-note" *ngIf="isOrganizationPendingOrRejected || isGroupPendingOrRejected || isDesignationPendingOrRejected">
+          <div class="field-disabled-note" *ngIf="isOrganizationPending || isGroupPending || isDesignationPending">
             <mat-icon class="warning-icon">info</mat-icon>
             <span>{{ 'NetworkV2Profile.fieldDisabledDueToApprovalStatus' | translate }}</span>
           </div>
-          <div class="note-container p-2" *ngIf="!isDesignationPendingOrRejected && !isOrganizationPendingOrRejected && !isGroupPendingOrRejected">
+          <div class="note-container p-2" *ngIf="!isDesignationPending && !isOrganizationPending && !isGroupPending">
             <div class="flex flex-start items-center gap-2">
               <mat-icon class="info-icon-designation">info</mat-icon>
               <div class="designation-note" [innerHTML]="getDesignationHint()"></div>
@@ -681,4 +671,8 @@
     </form>
   </ng-template>
   <!-- #endregion (Other Details) -->
+
 </div>
+  <div class="custom-loader" *ngIf="submitbtnLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>

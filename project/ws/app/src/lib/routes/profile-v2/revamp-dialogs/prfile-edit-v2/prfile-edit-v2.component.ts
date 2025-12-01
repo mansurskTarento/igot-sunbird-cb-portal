@@ -110,6 +110,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   enableWTR = false
   enableWR = false
   approvalPendingFields: any[] = []
+  submitbtnLoading: boolean = false
 
 
   constructor(
@@ -1100,7 +1101,7 @@ getDesignationHint(): string {
 
   //#endregion (end of other details)
 
-  handleSubmit(sectionType?:any): void {
+  handleSubmit(): void {
     if (this.profileForm) {
       if (this.canSaveChanges) {
         const profileData = this.profileForm.value;
@@ -1122,22 +1123,14 @@ getDesignationHint(): string {
         this.markFormGroupTouched(this.profileForm);
       }
     }
-    if(sectionType === 'mandatorySection') {
-      // const urlWithoutFragment = this.router.url.split('#')[0];
-      // console.log('urlWithoutFragment', urlWithoutFragment);
-      // this.location.replaceState(urlWithoutFragment);
-      // window.location.reload();
-      this.location.replaceState('/page/home');
-       window.location.reload();
-      // this.router.navigate(['/page/home']);
-    }
   }
 
   generateMandatorySectionForm(): void {
+    this.submitbtnLoading = true
     if (this.profileForm.valid) {
       const formValue = this.profileForm.value;
       const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
-     
+  
       
       // MANDATORY: Always include userId and profileDetails with lastProfileVerificationPromptDate
       const postData: any = {
@@ -1152,22 +1145,22 @@ getDesignationHint(): string {
       }
 
       // Only add employmentDetails if transferOrganization changed
-      if (formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '')) {
+      if (formValue.transferOrganization && formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '')) {
         postData.request.employmentDetails = {
           'departmentName': formValue.transferOrganization,
         }
       }
 
       // Check if any professional details changed
-      const groupChanged = formValue.group !== _.get(primaryDetails, 'group', '');
-      const designationChanged = formValue.designation !== _.get(primaryDetails, 'designation', '');
-      const orgChanged = formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '');
+      const groupChanged = formValue.group && formValue.group !== _.get(primaryDetails, 'group', '');
+      const designationChanged = formValue.designation && formValue.designation !== _.get(primaryDetails, 'designation', '');
+      const orgChanged =  formValue.transferOrganization &&  formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '');
 
       if (groupChanged || designationChanged || orgChanged) {
         postData.request.profileDetails.professionalDetails = [{
-          'name': formValue.transferOrganization,
-          'designation': formValue.designation,
-          'group': formValue.group,
+          ...(orgChanged ? { name: formValue.transferOrganization } : null),
+          ...(designationChanged ? { designation: formValue.designation } : null),
+          ...(groupChanged ? { group: formValue.group } : null),
         }]
       }
 
@@ -1188,10 +1181,15 @@ getDesignationHint(): string {
         .subscribe({
           next: (_res: any) => {
             this.openSnackbar('Your request has been sent for approval')
-            this.dialogRef.close({ success: true });
+            this.submitbtnLoading = false
+            this.location.replaceState('/page/home');
+            window.location.reload();
           },
           error: (error: HttpErrorResponse) => {
-            if (!error.ok) {
+            this.submitbtnLoading = false
+            if (error?.error?.params?.errmsg) {
+              this.openSnackbar(error?.error?.params?.errmsg)
+            } else {
               this.openSnackbar('Request failed. Please try again.')
             }
           }
@@ -1351,17 +1349,21 @@ getDesignationHint(): string {
       .subscribe({
         next: (res: any) => {
           if (res && res.result && res.result.response && res.result.response.content && res.result.response.content.length) {
+            const newData = res.result.response.content;
+
             if (onLoad) {
-              this.transferOrganizationData = [...res.result.response.content];
-              this.transferOrgDataTotalCount = res.result.response.count
+              // When dropdown is open, only show API results (no initial org prepended)
+              this.transferOrganizationData = [...newData];
+              this.transferOrgDataTotalCount = res.result.response.count;
             } else {
-              this.transferOrganizationData = [...this.transferOrganizationData, ...res.result.response.content];
+              this.transferOrganizationData = [...this.transferOrganizationData, ...newData];
             }
             this.transferOrgFilterData = this.transferOrganizationData;
           } else {
             if (onLoad) {
-              this.transferOrganizationData = []
-              this.transferOrgFilterData = []
+              // If no results from API, show empty list
+              this.transferOrganizationData = [];
+              this.transferOrgFilterData = [];
             }
           }
           this.isLoadingMoreTransferOrg = false
@@ -1379,6 +1381,37 @@ getDesignationHint(): string {
     if (org && org.channel) {
       this.selectedTransferOrgId = org.rootOrgId
       this.profileForm.controls['transferOrganization'].setValue(org.channel)
+    }
+  }
+
+   private getInitialOrgFromUnmappedUser(): any {
+    const rootOrg = _.get(this.configSvc, 'unMappedUser.rootOrg', null);
+    if (rootOrg && rootOrg.channel) {
+      return {
+        channel: rootOrg.channel,
+        isRootOrg: rootOrg.isRootOrg !== undefined ? rootOrg.isRootOrg : true,
+        rootOrgId: rootOrg.rootOrgId || rootOrg.id || ''
+      };
+    }
+    return null;
+  }
+
+  /**
+   * This method sets the initial unmapped user org if available.
+   */
+  private async loadTransferOrgAndSetValue() {
+    // Get the initial org from unmapped user
+    const initialOrg = this.getInitialOrgFromUnmappedUser();
+
+    // If no match or no departmentName, set the initial org from unmapped user
+    if (initialOrg) {
+      // Add the initial org to transferOrganizationData so it appears in the dropdown
+      this.transferOrganizationData = [initialOrg];
+      this.transferOrgFilterData = [initialOrg];
+
+      // Set the form value to the channel string (not the object) to match mat-option [value]
+      this.profileForm.get('transferOrganization')?.setValue(initialOrg.channel);
+      this.selectedTransferOrgId = initialOrg.rootOrgId;
     }
   }
 
@@ -1404,6 +1437,24 @@ getDesignationHint(): string {
           panel.addEventListener('scroll', this.onTransferOrgSelectScroll.bind(this));
         }
       }, 100);
+    } else {
+      // Dropdown is closed: if no selection was made, reset to the initial unmapped user org
+      const currentValue = this.profileForm.get('transferOrganization')?.value;
+      const initialOrg = this.getInitialOrgFromUnmappedUser();
+
+      // If nothing was selected or the user didn't select anything from the API results
+      if (!currentValue) {
+        // Reset to initial value from unmapped user
+        this.loadTransferOrgAndSetValue();
+      } else {
+        // Check if the selected value exists in the current data (API results)
+        const selectedOrgExists = this.transferOrganizationData.find((org: any) => org.channel === currentValue);
+
+        // If the selected value doesn't exist in API results and matches initial org, restore initial org
+        if (!selectedOrgExists && initialOrg && currentValue === initialOrg.channel) {
+          this.loadTransferOrgAndSetValue();
+        }
+      }
     }
   }
 
@@ -1608,7 +1659,7 @@ getDesignationHint(): string {
   showWithdrawRequestPopup() {
     // If organization transfer is pending, open withdraw dialog in 'department' mode so
     // the dialog itself performs the withdraw and emits an event on success.
-    if (this.showOrganizationPending || this.isOrganizationPendingOrRejected) {
+    if (this.showOrganizationPending || this.isOrganizationPending) {
       const dialogRef = this.dialog.open(WithdrawRequestComponent, {
         data: {
           withDrawType: 'department',
@@ -1730,11 +1781,10 @@ getDesignationHint(): string {
     const groupControl = this.profileForm.get('group');
     const designationControl = this.profileForm.get('designation');
     const transferOrgControl = this.profileForm.get('transferOrganization');
-
     // Check if ANY field has pending/rejected status
-    const anyFieldPendingOrRejected = this.isOrganizationPendingOrRejected || 
-                                      this.isGroupPendingOrRejected || 
-                                      this.isDesignationPendingOrRejected;
+    const anyFieldPendingOrRejected = this.isOrganizationPending || 
+                                      this.isGroupPending || 
+                                      this.isDesignationPending;
 
     if (anyFieldPendingOrRejected) {
       // Disable all three fields if any one is pending/rejected
@@ -1749,20 +1799,20 @@ getDesignationHint(): string {
     }
   }
 
-  get isOrganizationPendingOrRejected(): boolean {
+  get isOrganizationPending(): boolean {
     const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    // const rejectedFields = _.get(this.data, 'rejectedFields', {});
     
     // Check if organization field exists in pending or rejected
-    return !!(unVerifiedObj.organization || rejectedFields.organization);
+    return !!(unVerifiedObj.organization);
   }
 
-  get isGroupPendingOrRejected(): boolean {
-    return this.showGroupPending || this.showGroupRejection;
+  get isGroupPending(): boolean {
+    return this.showGroupPending;
   }
 
-  get isDesignationPendingOrRejected(): boolean {
-    return this.showDesignationPending || this.showDesignationRejection;
+  get isDesignationPending(): boolean {
+    return this.showDesignationPending;
   }
 
   ngOnDestroy() {
@@ -1784,6 +1834,8 @@ getDesignationHint(): string {
       searchTransferOrganization: [''],
     });
     this.checkCurrentDesignationPresent();
+
+    this.loadTransferOrgAndSetValue();
     
     // Set up value change listeners for email and mobile
     this.setupMandatorySectionValueChanges();
@@ -1819,6 +1871,7 @@ getDesignationHint(): string {
           }
           settingValueChange = false
         })
+        console.log(this.profileForm,'profileForm')
     }
 
     // Search Transfer Organization Control
