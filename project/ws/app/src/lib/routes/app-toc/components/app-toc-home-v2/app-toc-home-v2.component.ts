@@ -3028,7 +3028,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   checkForCompletionSurveyTrigger() {
     if(this.content && this.contentReadData) {
       console.log('checkForSurveyTrigger this.content',this.contentReadData)
-      if(this.content.completionStatus === 2 && this.contentReadData.completionSurveyLink) {
+      if((this.content.completionStatus === 2 || this.content.completionPercentage === 100) && this.contentReadData.completionSurveyLink) {
         const sID = this.contentReadData.completionSurveyLink.split('surveys/')
         const surveyId = sID[1]
         const courseId = this.contentReadData.identifier
