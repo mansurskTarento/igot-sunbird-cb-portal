@@ -13,12 +13,20 @@
 
     <!-- Dialog Body -->
     <div class="dialog-body">
-      <p class="message-text">
-        Dear Learner, To enable role-based learning on iGOT platform, please update your profile.
+      <p class="message-text mb-2" >
+        <span *ngIf="ministryOrStateType === 'ministry' || ministryOrStateType === 'spv'">{{'NetworkV2Profile.ministryGreeting' | translate}}</span>
+        <span *ngIf="ministryOrStateType === 'state'">{{'NetworkV2Profile.stateGreeting' | translate}}</span>
+        
       </p>
       
       <p class="submission-note">
-        If below details are correct, click "Confirm" Otherwise, click "Update Profile"
+        <span *ngIf="data?.userProfile?.departmentName && data?.userProfile?.professionalDetails[0]?.designation && data?.userProfile?.professionalDetails[0]?.group  && data?.userProfile?.primaryEmail && data?.userProfile?.mobile;else missingDetails">
+          {{'NetworkV2Profile.confirmMsg' | translate}} "{{'playerbrief.assessmentBackConfirmBtn' | translate}}" {{'NetworkV2Profile.otherwise' | translate}}, {{'NetworkV2Profile.click' | translate}} "{{'userProfile.updateprofile' | translate}}"
+        </span>
+        <ng-template #missingDetails>
+          <span >{{'NetworkV2Profile.missingMsg' | translate}} "{{'userProfile.updateprofile' | translate}}"</span>
+        </ng-template>
+        
       </p>
       <!-- Profile Information -->
       <div class="profile-info">
