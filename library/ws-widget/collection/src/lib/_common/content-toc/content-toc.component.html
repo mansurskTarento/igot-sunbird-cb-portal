@@ -186,7 +186,8 @@
                     [tocStructure]="tocStructure" [config]="config" [forPreview]="false" [sticky]="sticky"
                     [selectedBatchData]="selectedBatchData" [selectedTabValue]="selectedTabIndex"
                     [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
-                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList">
+                    [condition]="condition" [kparray]="kparray" [showReviews]="'true'" [languageList]="languageList"
+                    [lockCertificate]="lockCertificate" (trigerCompletionSurveyForm)="openSurveyFormPopup($event)">
                 </ws-widget-app-toc-about>
             </ng-template>
         </mat-tab>
@@ -206,8 +207,8 @@
 
         <ng-container *ngIf="config?.commentsTab && !forPreview">
             <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
-                <!-- <ng-template matTabContent> -->
-                <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData">
+                <ng-template matTabContent>
+                <div class="flex flex-col ratings-div mt-5" id="commentsDiv" *ngIf="discussWidgetData && discussWidgetData?.newCommentSection?.commentTreeData?.entityId">
                     <ng-container *ngIf="!commentId">
                         <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
                     </ng-container>
@@ -220,7 +221,7 @@
                             [skeletonLoader]></d-v2-widget-comment>
                     </ng-container>
                 </div>
-                <!-- </ng-template> -->
+                </ng-template>
             </mat-tab>
         </ng-container>
 

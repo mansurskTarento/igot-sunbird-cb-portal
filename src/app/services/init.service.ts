@@ -611,6 +611,7 @@ export class InitService {
             profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
             profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
             professionalDetails: _.get(userPidProfile, 'profileDetails.professionalDetails') || [],
+            userRootOrg: _.get(userPidProfile, 'rootOrg') || null
           }
 
           this.configSvc.userProfileV2 = {
@@ -712,6 +713,7 @@ export class InitService {
             // _.set(res, 'result.response.roles', roles)
             return _.get(res, 'result.response')
           })).toPromise()
+          
         if (userPidProfile && userPidProfile.roles && userPidProfile.roles.length > 0 &&
           this.hasRole(userPidProfile.roles)) {
           // if (userPidProfile.result.response.organisations.length > 0) {
@@ -746,6 +748,7 @@ export class InitService {
             profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
             profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
             professionalDetails: _.get(userPidProfile, 'profileDetails.professionalDetails') || [],
+            userRootOrg: _.get(userPidProfile, 'rootOrg') || null
           }
           this.configSvc.userProfileV2 = {
             userId: _.get(profileV2, 'userId') || userPidProfile.userId,

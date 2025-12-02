@@ -46,6 +46,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   nameInitials: string = '';
   isIgotOrg = false
   isNotMyUser = false
+  isNotMyUserAndIgotOrg = false
   userStats: UserStats[] = [
     {
       state: 'NetworkV2Profile.myKarmaPoints',
@@ -253,7 +254,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.selectRoute(lastSectionId);
       }, 100);
     }
-    this.getRecommendedCommunitesList()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getGroupData()
@@ -315,10 +315,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   getProfileDetailsFromRoutes() {
     this.activatedRoute.data.subscribe(data => {
-      this.getRecommendedUsers()
       this.userId = _.get(data, 'profile.userId', '')
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
+      this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
+      if (!this.isNotMyUserAndIgotOrg) {
+        this.getRecommendedUsers()
+        this.getRecommendedCommunitesList()
+      }
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
         this.isCurrentUser = this.configSvc.userProfile.userId === this.userId
         if (!this.isCurrentUser) {

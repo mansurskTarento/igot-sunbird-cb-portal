@@ -163,7 +163,7 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="!skeletonLoader">
-                                <ws-widget-app-toc-about [contentReadData]="extContentReadData" [showReviews]="false"
+                                <ws-widget-app-toc-about [contentReadData]="extContentReadData" [showReviews]="false" [baseContentReadData]="extContentReadData"
                                     [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length >  0 && userExtCourseEnroll?.progress === 100"
                                     [content]="extContentReadData" [fromMarketPlace]="true"
                                     [skeletonLoader]="skeletonLoader">

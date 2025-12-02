@@ -110,7 +110,7 @@ import { AppTocHomeDirective } from './routes/app-toc-home/app-toc-home.directiv
 import { AppTocCohortsDirective } from './routes/app-toc-cohorts/app-toc-cohorts.directive'
 import { AppTocSinglePageDirective } from './routes/app-toc-single-page/app-toc-single-page.directive'
 import { AppTocCiosHomeComponent } from './components/app-toc-cios-home/app-toc-cios-home.component'
-import { CommonMethodsService, ContentLanguageService, TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
+import { CommonMethodsService, ContentLanguageService, DialogComponentsModule, TOCMultiLingualDialogModule } from '@sunbird-cb/consumption'
 import { UserProfileService } from '../user-profile/services/user-profile.service'
 import { OtpService } from '../user-profile/services/otp.services'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
@@ -144,7 +144,9 @@ import { SurveyFormSectionComponent } from './components/survey-form-section/sur
 import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
 import { AppTocContentReadResolverService } from './resolvers/app-toc-content-read-resolver.service'
 import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home-v2.component';
-import { EnrollLanguageDialogueComponent } from './components/enroll-language-dialogue/enroll-language-dialogue.component'
+import { EnrollLanguageDialogueComponent } from './components/enroll-language-dialogue/enroll-language-dialogue.component';
+import { CompletionSurveyFormComponent } from './components/completion-survey-form/completion-survey-form.component';
+import { PublicSurveyFormComponent } from './components/public-survey-form/public-survey-form.component'
 
 @NgModule({
   declarations: [
@@ -178,6 +180,8 @@ import { EnrollLanguageDialogueComponent } from './components/enroll-language-di
     EnrollProfileFormComponent,
     AppTocCiosHomeComponent,
     EnrollLanguageDialogueComponent,
+    CompletionSurveyFormComponent,
+    PublicSurveyFormComponent,
   ],
   imports: [
     CommonModule,
@@ -295,6 +299,7 @@ import { EnrollLanguageDialogueComponent } from './components/enroll-language-di
     ContentLanguageService,
     TOCMultiLingualDialogModule,
     DatePipe,
+    DialogComponentsModule
   ],
   exports: [
     AppTocDiscussionComponent,

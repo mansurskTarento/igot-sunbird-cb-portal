@@ -69,18 +69,30 @@
     <div class="flex flex-row justify-between">
       <div class="flex flex-row">
         <div>
-        <div class="flex flex-col stats-label">
-            <div><img src="assets/icons/final-assessment/assessment.svg"></div>
-            <div>{{noOfQuestions}} {{ 'playerbrief.questions' | translate }}</div>
+          <div class="flex flex-col stats-label">
+              <div class="flex items-center justify-center"><img src="assets/icons/final-assessment/assessment.svg"></div>
+              <div>{{noOfQuestions}} {{ 'playerbrief.questions' | translate }}</div>
+          </div>
         </div>
-      </div>
-      <div>
-        <div class="flex flex-col stats-label ml-2" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory" 
-         [ngClass]="selectedAssessmentCompatibilityLevel >= 7 ? 'ml-5':''">
-          <div *ngIf="timeLimit"><img src="assets/icons/final-assessment/timer.svg"></div>
-          <div>{{( timeLimit | pipeDurationTransform: 'hms')}}</div>
+        <div>
+          <div class="flex flex-col stats-label ml-4" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory" 
+          [ngClass]="selectedAssessmentCompatibilityLevel >= 7 ? 'ml-5':''">
+            <div class="flex items-center justify-center" *ngIf="timeLimit"><img src="assets/icons/final-assessment/timer.svg"></div>
+            <div>{{( timeLimit | pipeDurationTransform: 'hms')}}</div>
+          </div>
         </div>
-      </div>
+        <div>
+          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.maxAssessmentRetakeAttempts && questionTYP.FINAL_ASSESSMENT === primaryCategory">
+              <div class="flex items-center justify-center"><mat-icon class="text-blue-800">replay</mat-icon></div>
+              <div>{{ canAttempt?.attemptsAllowed - canAttempt?.attemptsMade}} {{ 'playerbrief.attemptsLeft' | translate }}</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex flex-col stats-label ml-4" *ngIf="quizData?.minimumPassPercentage">
+              <div class="flex items-center justify-center"><mat-icon class="text-blue-800">offline_pin</mat-icon></div>
+              <div>{{quizData?.minimumPassPercentage}}% {{ 'playerbrief.passingCriteria' | translate }}</div>
+          </div>
+        </div>
       <div>
         <div class="ml-5 start-assessment-cta-standalone block md:hidden" *ngIf="selectedAssessmentCompatibilityLevel >= 7">
           <button [disabled]="!consentGiven ? 'disabled': null" *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || forPreview || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" (click)="overviewed('start')" [ngClass]="consentGiven ? 'bg-blue-800 text-white' : 'secondary-standalone text-standalone-black'" class=" text-sm font-semibold  py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
@@ -146,13 +158,13 @@
         </button>
       </ng-container>
     </div>
-    <div class="summary-detail mt-5">
+    <div class="summary-detail mt-5 mb-5">
       <!-- <p [innerHtml]="instructionAssessment"></p> -->
       <ng-container *ngIf="instructionAssessment && instructionAssessment[currentPage]">
         <div [innerHTML]="instructionAssessment[currentPage]"></div>
       </ng-container>
     </div>
-    <ng-container *ngIf="instructionAssessment && currentPage + 1 === instructionAssessment.length">
+    <ng-container>
       <div class="consent-checkbox">
         <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOne' | translate}}<b>{{'playerbrief.instructionTwo' | translate}}</b>{{'playerbrief.instructionThree' | translate}}</mat-checkbox>
       </div>

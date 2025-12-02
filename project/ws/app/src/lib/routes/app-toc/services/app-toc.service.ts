@@ -39,6 +39,10 @@ const API_END_POINTS = {
   GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/v2/getFormById?formId=${formId}`,
   // SUBMIT_FORM: `/apis/proxies/v8/forms/v1/saveFormSubmit`,
   SUBMIT_FORM: `apis/proxies/v8/forms/v2/saveFormSubmit`,
+  GET_FORM_BYID_PUBLIC: (formId: string) => `apis/public/v8/public/forms/v2/getFormById?formId=${formId}`,
+  SUBMIT_FORM_PUBLIC: `apis/public/v8/public/forms/v2/saveFormSubmit`,
+  // get answers for form
+  GET_APPLICATIONS_BY_ID: (formId: string,  contextId: string) =>`/apis/proxies/v8/forms/v2/getApplicationsById?formId=${formId}&contextId=${contextId}`,
   AI_RESOURCE_VTT_FILE: `${PROXY_SLAG_V8}/chatbot/v3/transcoder/stats`,
   // GET_FORM_BYID: (formId: string) => `apis/proxies/v8/forms/getFormById?id=${formId}`,
   PRE_ENROLLMENT_STATE_READ: `/apis/proxies/v8/content/v2/state/read`,
@@ -956,6 +960,18 @@ export class AppTocService {
 
   submitForm(formData: any) {
     return this.http.post<any>(API_END_POINTS.SUBMIT_FORM, formData)
+  }
+
+  getFormByIdPublic(formId: string) {
+    return this.http.get(API_END_POINTS.GET_FORM_BYID_PUBLIC(formId))
+  }
+
+  submitFormPublic(formData: any) {
+    return this.http.post<any>(API_END_POINTS.SUBMIT_FORM_PUBLIC, formData)
+  }
+
+  getApllicationsById(formId: string, contextId: string): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.GET_APPLICATIONS_BY_ID(formId, contextId))
   }
 
   shareContent(reqBody: any) {

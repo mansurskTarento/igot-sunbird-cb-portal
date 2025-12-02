@@ -18,6 +18,7 @@ const API_END_POINTS = {
   getCadreDetails: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig',
   approvalDetails: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch',
   withDrawRequest: '/apis/protected/v8/workflowhandler/transition',
+  getFormV2ByID: (id: string) => `/apis/proxies/v8/forms/v2/getFormById?formId=${id}`,
 }
 
 @Injectable({
@@ -66,4 +67,9 @@ constructor(private http: HttpClient) { }
     }
     return this.http.post<any>(API_END_POINTS.withDrawRequest, payload)
   }
+
+  getFormV2ByID(formid: any) {
+    return this.http.get<any>(API_END_POINTS.getFormV2ByID(formid))
+  }
 }
+

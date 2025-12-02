@@ -12,7 +12,8 @@ import { FormExtService } from 'src/app/services/form-ext.service'
 const API_END_POINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
   TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
-  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`
+  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`,
+  GetApplicationsById: `apis/proxies/v8/forms/v2/bulkGetApplicationsById`,
 }
 
 @Injectable({
@@ -98,6 +99,10 @@ export class SeeAllService {
       errorMessage = `Error: ${error.error.message}`
     }
     return throwError(errorMessage)
+  }
+
+  getApplicationsById(formBody: any) {
+    return this.http.post<any>(API_END_POINTS.GetApplicationsById, formBody)
   }
 
 }

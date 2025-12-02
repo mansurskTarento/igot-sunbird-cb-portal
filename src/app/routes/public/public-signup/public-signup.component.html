@@ -74,7 +74,7 @@
                   {{ 'publicsignup.group' | translate }}
                 </label>
                 <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
-                  <mat-select placeholder="{{'publicsignup.selectYourGroup' | translate}}" id="group" #group i18n-placeholder="group" formControlName="group" >
+                  <mat-select placeholder="{{'publicsignup.selectYourGroup' | translate}}" id="group" #group i18n-placeholder="group" formControlName="group" panelClass="align-panel">
                     <mat-option *ngFor="let option of masterGroup" [value]="option">{{option}}</mat-option>
                   </mat-select>
                   <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
@@ -112,10 +112,14 @@
                   </div>
                   </mat-form-field>
                 </div>
-                <a class="pos-hint help-request ws-mat-black60-text" id="org-field">
-                  {{ 'publicsignup.donotHaveGovernmentEmail' | translate }}
-                  <!-- //NOSONAR --> <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
-                    {{ 'publicsignup.requestForHelp' | translate }}</span></a>
+                <div class="pos-hint help-request ws-mat-black60-text" id="org-field">
+                  <!-- {{ 'publicsignup.donotHaveGovernmentEmail' | translate }} --> 
+                    <span>{{ 'publicsignup.emailMsg' | translate }} <a (click)="mdoRedirect()" target="_blank"><span class="text-cls">{{ 'publicsignup.clickHere' | translate }}</span></a> 
+                    {{ 'publicsignup.toviewNodalOfficers' | translate }}</span>
+                  <!-- //NOSONAR --> 
+                   <!-- <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
+                    {{ 'publicsignup.requestForHelp' | translate }}</span> -->
+                   </div>
 
                 <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
                   <button *ngIf="!otpEmailSend" mat-raised-button type="button" (click)="sendOtpEmail()"
@@ -287,6 +291,53 @@
                     <a class="flex-1 ws-mat-accent-text text-right cursor-pointer font-bold pos-request" (click)="navigateTo('Organisation')"> {{ 'publicsignup.requestForHelp' | translate }}</a>
                   </div>
                 </div>
+              </div>
+              <!-- Designation block inserted after Organisation -->
+              <div class="input-wrapper margin-top-s">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.designation' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #position formControlName="position" placeholder="Select designation"
+                      (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
+                      (openedChange)="setupScrollListener($event)">
+
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search designation" formControlName="searchDesignation"
+                            class="search-input" (keydown)="$event.stopPropagation()" (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="designationSearch($event)"
+                            autocomplete="off">
+                          <button *ngIf="searchDesignation?.value" type="button" class="clear-button"
+                            (click)="searchDesignation?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Options list -->
+                      <mat-option [value]="designation?.name" *ngFor="let designation of masterData?.designation">
+                        {{designation?.name}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.designation )?.length === 0" disabled>
+                        <!-- No matches found -->
+                         <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationForm?.get('designation')?.touched && registrationForm?.get('designation')?.invalid">
+                      {{ 'publicsignup.selectDesignationErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.designation )?.length === 0"> 
+                    <!-- <div class="mat-error txt-size">Designation not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                  </div>
+                </div>
+                
               </div>
 
               <ng-template #autocompleteCard let-organisation="organisation">

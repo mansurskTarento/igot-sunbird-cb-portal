@@ -191,6 +191,10 @@
                 <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                 <div class="stats-label">{{ 'playerbrief.answered' | translate }}</div>
               </div>
+              <div class="flex flex-col align-center">
+                <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['minimumPassPercentage']}}%</div>
+                <div class="stats-label">{{ 'playerbrief.passingCriteria' | translate }}</div>
+              </div>
               <!-- <div class="flex flex-col align-center">
                 <div class="ques-count">{{markedQuestions.size}}</div>
                 <div class="stats-label">Skipped</div>
@@ -323,7 +327,7 @@
 
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
         [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
         [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
@@ -348,7 +352,7 @@
                   <div class="flex flex-1 flex-column">
                     <span class="flex mat-subheading-1 text-truncate ">{{section.name || 'Section'}}</span>
                     <span class="flex mat-body-2">Percentage to pass - <ng-container>
-                        {{section.minimumPassPercentage}}
+                        {{section.minimumPassPercentage}}%
                       </ng-container></span>
                     <span class="flex mat-body-2">Total questions - <ng-container>{{section?.maxQuestions ||
                         '0'}}
@@ -692,7 +696,7 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
         [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
         [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
@@ -716,7 +720,7 @@
                   <div class="flex flex-1 flex-column">
                     <span class="flex mat-subheading-1 text-truncate ">{{section.name || 'Section'}}</span>
                     <span class="flex mat-body-2">{{ 'practiceoverview.percentageToPass' | translate }} - <ng-container>
-                        {{section.minimumPassPercentage}}
+                        {{section.minimumPassPercentage}}%
                       </ng-container></span>
                     <span class="flex mat-body-2">{{ 'practiceoverview.totalQuestions' | translate }} -
                       <ng-container>{{section?.maxQuestions ||
@@ -1405,7 +1409,7 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
         [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
         [coursePrimaryCategory]="coursePrimaryCategory" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
@@ -1429,7 +1433,7 @@
                   <div class="flex flex-1 flex-column">
                     <span class="flex mat-subheading-1 text-truncate ">{{section.name || 'Section'}}</span>
                     <span class="flex mat-body-2">Percentage to pass - <ng-container>
-                        {{section.minimumPassPercentage}}
+                        {{section.minimumPassPercentage}}%
                       </ng-container></span>
                     <span class="flex mat-body-2">Total questions - <ng-container>{{section?.maxQuestions ||
                         '0'}}
@@ -2002,7 +2006,7 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
         [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
         [coursePrimaryCategory]="coursePrimaryCategory" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
@@ -2026,7 +2030,7 @@
                   <div class="flex flex-1 flex-column">
                     <span class="flex mat-subheading-1 text-truncate ">{{section.name || 'Section'}}</span>
                     <span class="flex mat-body-2">{{ 'practiceoverview.percentageToPass' | translate }} - <ng-container>
-                        {{section.minimumPassPercentage}}
+                        {{section.minimumPassPercentage}}%
                       </ng-container></span>
                     <span class="flex mat-body-2">{{ 'practiceoverview.totalQuestions' | translate }} -
                       <ng-container>{{section?.maxQuestions ||

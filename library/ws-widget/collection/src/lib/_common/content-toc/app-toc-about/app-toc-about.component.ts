@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
+import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -6,7 +6,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
 // tslint:disable-next-line
-import _ from 'lodash'
+import * as _ from 'lodash'
 import dayjs from 'dayjs'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
@@ -91,6 +91,8 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() fromMarketPlace? = false
   @Input() showMarketPlaceCertificate = false
   @Input() languageList = []
+  @Input() lockCertificate = false
+  @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()
   @ViewChild('summaryElem') summaryElem !: ElementRef
   @ViewChild('objectivesElem') objectivesElem !: ElementRef
   @ViewChild('descElem') descElem !: ElementRef
@@ -268,6 +270,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       }
     }
 
+   if (
+      this.content?.contentId &&
+      this.content?.certificateObj?.data &&
+      Object.keys(this.content.certificateObj.data).length === 0 &&
+      this.content.completionStatus === 2
+    ) {
+      this.handleOpenCertificateDialog();
+    }
 
   }
 
@@ -837,78 +847,121 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   handleClickOfClaim(event: any): void {
     this.handleClaimService.setClaimData(event)
   }
+  
+  getCourseIdForCertificate(): string {
+    const paramId = this.activatedRoute.snapshot.paramMap.get('id');
+    if (this.content?.contentId?.includes('ext_')) {
+      return this.content.contentId;
+    }
+    
+    return paramId || '';
+  }
 
-   handleOpenCertificateDialog() {
-    this.downloadCertificateBool = true;
-    const certId = this.content && this.content?.certificateObj?.certId;
+  //  handleOpenCertificateDialog() {
+  //   this.downloadCertificateBool = true;
+  //   const certId = this.content && this.content?.certificateObj?.certId;
 
-    if (this.content && this.pageConfigData) {
-      const allowedPrimaryCategory =
-        this.pageConfigData?.dynamicCertificateGeneration?.allows &&
-        this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
-          (cat: string) => cat?.toLowerCase()
-        );
+  //   if (this.content && this.pageConfigData) {
+  //     const allowedPrimaryCategory =
+  //       this.pageConfigData?.dynamicCertificateGeneration?.allows &&
+  //       this.pageConfigData?.dynamicCertificateGeneration?.allows?.map(
+  //         (cat: string) => cat?.toLowerCase()
+  //       );
 
-      if (
-        allowedPrimaryCategory &&
-        allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase())
-      ) {
-        const payload = {
-          request: {
-            courseId: this.content.identifier,
-            batchId: this.batchData?.content[0]?.batchId || '',
-            userId: this.userProfile.userId,
-          },
-        };
-        this.contentSvc.downloadCertV2(payload).subscribe(
-          (response) => {
-            if (response) {
-              this.downloadCertificateBool = false;
+  //     if (
+  //       allowedPrimaryCategory &&
+  //      ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
+  //       allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase()))
+  //     ) {
+  //       const payload = {
+  //         request: {
+  //           courseId: this.content.identifier,
+  //           batchId: this.batchData?.content[0]?.batchId || '',
+  //           userId: this.userProfile.userId,
+  //         },
+  //       };
+  //       this.contentSvc.downloadCertV2(payload).subscribe(
+  //         (response) => {
+  //           if (response) {
+  //             this.downloadCertificateBool = false;
              
-              this.dialog.open(CertificateDialogComponent, {
-                width: '1200px',
-                data: {
-                  cet: response.result.printUri,
-                  certId:
-                    (this.content && this.content.certificateObj.certId) || '',
-                },
-              });
-            }
-          },
-          (error: any) => {
-            this.downloadCertificateBool = false;
-            this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
-            this.matSnackBar.open(
-              'Unable to View Certificate, due to some error!'
-            );
-          }
-        );
-      }
-    } else {
-      this.contentSvc.downloadCert(certId).subscribe(
-        (response) => {
+  //             this.dialog.open(CertificateDialogComponent, {
+  //               width: '1200px',
+  //               data: {
+  //                 cet: response.result.printUri,
+  //                 certId:
+  //                   (this.content && this.content.certificateObj.certId) || '',
+  //               },
+  //             });
+  //           }
+  //         },
+  //         (error: any) => {
+  //           this.downloadCertificateBool = false;
+  //           this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+  //           this.matSnackBar.open(
+  //             'Unable to View Certificate, due to some error!'
+  //           );
+  //         }
+  //       );
+  //     } else {debugger
+  //     this.contentSvc.downloadCert(certId).subscribe(
+  //       (response) => {
+  //         if (this.content) {
+  //           this.downloadCertificateBool = false;
+  //           this.content['certificateObj']['certData'] =
+  //             response.result.printUri;
+  //           this.dialog.open(CertificateDialogComponent, {
+  //             width: '1200px',
+  //             data: {
+  //               cet: response.result.printUri,
+  //               certId: this.content && this.content.certificateObj.certId,
+  //             },
+  //           });
+  //         }
+  //       },
+  //       (error: any) => {
+  //         this.downloadCertificateBool = false;
+  //         this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
+  //         this.matSnackBar.open(
+  //           'Unable to View Certificate, please check again later!'
+  //         );
+  //       }
+  //     );
+  //   }
+  //   } 
+  // }
+
+  handleOpenCertificateDialog() {
+    this.downloadCertificateBool = true
+    const certId = this.content && this.content.certificateObj.certId
+    if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
+     if (certId) {
+        this.contentSvc.downloadCert(certId).subscribe(response => {
           if (this.content) {
-            this.downloadCertificateBool = false;
-            this.content['certificateObj']['certData'] =
-              response.result.printUri;
+            this.downloadCertificateBool = false
+            this.content['certificateObj']['certData'] = response.result.printUri
             this.dialog.open(CertificateDialogComponent, {
               width: '1200px',
-              data: {
-                cet: response.result.printUri,
-                certId: this.content && this.content.certificateObj.certId,
-              },
-            });
+              data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
+            })
           }
-        },
-        (error: any) => {
-          this.downloadCertificateBool = false;
-          this.loggerService.error('CERTIFICATE FETCH ERROR >', error);
-          this.matSnackBar.open(
-            'Unable to View Certificate, please check again later!'
-          );
-        }
-      );
+        },                                             (error: any) => {
+          this.downloadCertificateBool = false
+          this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
+          this.matSnackBar.open('Unable to View Certificate, due to some error!')
+        })
+      }
+    } else {
+      this.downloadCertificateBool = false
+      this.dialog.open(CertificateDialogComponent, {
+        width: '1200px',
+        data: { cet: this.content && this.content.certificateObj.certData, certId: this.content && this.content.certificateObj.certId },
+      })
     }
+  }
+
+  openSurveyFormPopup() {
+    this.trigerCompletionSurveyForm.emit(true);
   }
 
   checkValidJSON(str: any) {
