@@ -12,24 +12,26 @@
 
 <!-- <ws-widget-content-strip-with-tabs [widgetData]="widgetData"></ws-widget-content-strip-with-tabs> -->
 
- <ng-container *ngIf="widgetData?.stripType === 'withOutPils'  && (widgetData?.stripVisable === 'mobile' &&  isMobile)">
-    <sb-uic-content-strip-with-tabs 
-    (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-    [widgetData]="widgetData"
-    [providerId]="providerId">
+<ng-container *ngIf="widgetData?.stripType === 'withOutPils'  && (widgetData?.stripVisable === 'mobile' &&  isMobile)">
+    <sb-uic-content-strip-with-tabs (telemtryResponse)="raiseTelemetryInteratEvent($event)" [widgetData]="widgetData"
+        [providerId]="providerId">
     </sb-uic-content-strip-with-tabs>
- </ng-container>
+</ng-container>
 <ng-container *ngIf="widgetData?.stripType === 'withOutPils' && widgetData?.stripVisable === 'responsive'">
-    <sb-uic-content-strip-with-tabs 
-    (telemtryResponse)="raiseTelemetryInteratEvent($event)"
-    [widgetData]="widgetData"
-    [providerId]="providerId">
+    <sb-uic-content-strip-with-tabs (telemtryResponse)="raiseTelemetryInteratEvent($event)" [widgetData]="widgetData"
+        [providerId]="providerId">
     </sb-uic-content-strip-with-tabs>
 </ng-container>
 <ng-container *ngIf="widgetData?.stripType === 'oldPills'">
     <ws-widget-content-strip-with-tabs [widgetData]="widgetData"></ws-widget-content-strip-with-tabs>
 </ng-container>
-<ng-container *ngIf="widgetData?.stripType === 'withPils'  && (widgetData?.stripVisable === 'responsive' || (widgetData?.stripVisable === 'mobile' &&  isMobile))">
+<ng-container
+    *ngIf="widgetData?.stripType === 'withPils'  && (widgetData?.stripVisable === 'responsive' || (widgetData?.stripVisable === 'mobile' &&  isMobile))">
     <sb-uic-content-strip-with-tabs-pills [widgetData]="widgetData"
-    (telemtryResponse)="raiseTelemetryInteratEvent($event)"></sb-uic-content-strip-with-tabs-pills>
+        (telemtryResponse)="raiseTelemetryInteratEvent($event)"></sb-uic-content-strip-with-tabs-pills>
+</ng-container>
+<ng-container
+    *ngIf="widgetData?.stripType === 'withPilsNew'  && (widgetData?.stripVisable === 'responsive' || (widgetData?.stripVisable === 'mobile' &&  isMobile))">
+    <sb-uic-content-strip-with-tabs-pills-new [widgetData]="widgetData"
+        (telemtryResponse)="raiseTelemetryInteratEvent($event)"></sb-uic-content-strip-with-tabs-pills-new>
 </ng-container>

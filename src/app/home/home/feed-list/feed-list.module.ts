@@ -9,7 +9,7 @@ import {
   GridLayoutModule, SlidersModule, DiscussStripMultipleModule,
   NetworkStripMultipleModule, ContentStripWithTabsModule, AvatarPhotoModule,
 } from '@sunbird-cb/collection'
-import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
+import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, ContentStripWithTabsPillsNewModule } from '@sunbird-cb/consumption'
 
 @NgModule({
   declarations: [FeedListComponent],
@@ -27,6 +27,7 @@ import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '
     AvatarPhotoModule,
     ContentStripWithTabsLibModule,
     ContentStripWithTabsPillsModule,
+    ContentStripWithTabsPillsNewModule,
   ],
   exports: [FeedListComponent]
 })
