@@ -34,7 +34,7 @@ import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
-declare const smartech:any
+declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */
 // interface IDetailsResponse {
@@ -74,7 +74,7 @@ export class InitService {
   }
 
   isAnonymousTelemetry = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-  || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
+    || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
 
   constructor(
     private logger: LoggerService,
@@ -176,6 +176,11 @@ export class InitService {
       'course-cataloguee',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/course-cataloguee.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'approved-icon',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/approved.svg'),
+    )
+
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',
@@ -216,7 +221,7 @@ export class InitService {
     await this.profileNudgeConfig()
     await this.themeOverrideConfig()
     await this.netCoreConfig()
-    
+
     // const authenticated = await this.authSvc.initAuth()
     // if (!authenticated) {
     //   this.settingsSvc.initializePrefChanges(environment.production)
@@ -231,11 +236,11 @@ export class InitService {
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
-        await this.fetchStartUpDetails()        
-        await this.fetchUserEnrollDetails()        
+        await this.fetchStartUpDetails()
+        await this.fetchUserEnrollDetails()
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
-      } else if (window.location.href.includes('editMode=true')  && window.location.href.includes('_rc')) {
+      } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
         await this.fetchStartUpDetails()
       }
 
@@ -282,7 +287,7 @@ export class InitService {
     //   })
     if (
       !(
-        window.location.href.includes('/public/') || 
+        window.location.href.includes('/public/') ||
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
         window.location.href.includes('/viewer')
@@ -424,96 +429,96 @@ export class InitService {
     // const publicConfig: any = await this.http
     //   .get<any>(`${this.baseUrl}/netcore.json`)
     //   .toPromise()
-    let payload  = {
+    let payload = {
       "request": {
-        "type":"page",
-        "subType":"netcore",
-        "action":"page-configuration",
-        "component":"portal","rootOrgId":"*"
+        "type": "page",
+        "subType": "netcore",
+        "action": "page-configuration",
+        "component": "portal", "rootOrgId": "*"
       }
     }
-    const publicConfig:any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
+    const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     return publicConfig
   }
 
 
 
-  
+
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => { 
+    const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
-      if(res && res.result && res.result.userCourseEnrolmentInfo) {
-        
+      if (res && res.result && res.result.userCourseEnrolmentInfo) {
+
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
         userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
         userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
         userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
-        if(userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
-          if(Object.keys(userExternalCourseEnrolmentInfo).length > 0 
-          && userExternalCourseEnrolmentInfo.addinfo 
-          && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
+        if (userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
+          if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
+            && userExternalCourseEnrolmentInfo.addinfo
+            && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
             let addInfo = userExternalCourseEnrolmentInfo.addinfo
-            userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota']  + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
+            userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
             // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
           }
         }
-        let enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued'] 
+        let enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued']
         const userData = {
           enrolledCourseCount,
           userCourseEnrolmentInfo
         }
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
-        
+
       }
 
-      if(this.configSvc.userProfile) {
+      if (this.configSvc.userProfile) {
         let userProfile = this.configSvc && this.configSvc.userProfile
-        if(userProfile.rootOrgId) {
-          this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe((orgData)=>{
+        if (userProfile.rootOrgId) {
+          this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe((orgData) => {
             //console.log('orgData--', orgData)
-            if(orgData && orgData['netcoreDisabled']) {
+            if (orgData && orgData['netcoreDisabled']) {
 
             } else {
-              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00' , "tin");
+              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', "tin");
               smartech('register', 'b632681d782c843e187fd5447c97ed4d');
               smartech('identify', '');
-              smartech('dispatch',1,{});  
-              if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+              smartech('dispatch', 1, {});
+              if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
                 && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
               ) {
-                let netCoreUserSetupFlag:any = localStorage.getItem('netCoreUserSetup')  ? localStorage.getItem('netCoreUserSetup') : ''
+                let netCoreUserSetupFlag: any = localStorage.getItem('netCoreUserSetup') ? localStorage.getItem('netCoreUserSetup') : ''
                 if (netCoreUserSetupFlag === 'false' || netCoreUserSetupFlag === false || netCoreUserSetupFlag === '') {
                   this.netCoreUserLoginSetup()
                 }
               }
             }
-          })          
+          })
         }
-        
+
       }
 
 
-     
-      
-      return res 
-    }).catch((_err: any)=> {
+
+
+      return res
+    }).catch((_err: any) => {
       let userCourseEnrolmentInfo = {
-        enrolledCourseCount:0,
-        karmaPoints:0,
+        enrolledCourseCount: 0,
+        karmaPoints: 0,
         timeSpentOnCompletedCourses: 0,
         certificatesIssued: 0,
         coursesInProgress: 0,
-        addinfo :{}
+        addinfo: {}
       }
       localStorage.removeItem('userEnrollmentCount')
       localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
-    }) as NsInstanceConfig.IConfig || {}       
+    }) as NsInstanceConfig.IConfig || {}
     return publicConfig
   }
 
@@ -521,7 +526,7 @@ export class InitService {
     const publicConfig: NsInstanceConfig.IConfig = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/theme-override-config.json`)
       .toPromise()
-      this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
+    this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
     return publicConfig
   }
 
@@ -1007,17 +1012,17 @@ export class InitService {
           if (item.category === 'NPS' && item && item.data && item.data.actionData && item.data.actionData.formId) {
             feedId.push(item.id)
             // console.log(feedId, "feed id items============")
-              const currentTime = moment()
-              localStorage.platformratingTime = currentTime
-              localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
-              localStorage.setItem('ratingfeedID', JSON.stringify(feedId))
+            const currentTime = moment()
+            localStorage.platformratingTime = currentTime
+            localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
+            localStorage.setItem('ratingfeedID', JSON.stringify(feedId))
           } else if (item.category === 'NPS2' && item && item.data && item.data.actionData && item.data.actionData.formId) {
             feedId.push(item.id)
             // console.log(feedId, "feed id items============")
-              const currentTime = moment()
-              localStorage.platformratingTime = currentTime
-              localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
-              localStorage.setItem('ratingfeedID', JSON.stringify(feedId))
+            const currentTime = moment()
+            localStorage.platformratingTime = currentTime
+            localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
+            localStorage.setItem('ratingfeedID', JSON.stringify(feedId))
           }
         })
       }
@@ -1044,17 +1049,17 @@ export class InitService {
   async netCoreUserLoginSetup() {
     /* tslint:disable */
     localStorage.setItem('netCoreUserSetup', 'true')
-    console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)  
-    let userEnrollmentCount:any = await localStorage.getItem('userEnrollmentCount')
-    if(userEnrollmentCount) {
+    console.log('this.configSvc.unMappedUser', this.configSvc.unMappedUser)
+    let userEnrollmentCount: any = await localStorage.getItem('userEnrollmentCount')
+    if (userEnrollmentCount) {
       userEnrollmentCount = JSON.parse(userEnrollmentCount)
     }
     /* tslint:disable */
     console.log('userEnrollmentCount', userEnrollmentCount)
     /* tslint:enable */
-    const userInfoPayload:any = {}
+    const userInfoPayload: any = {}
     userInfoPayload['TOTAL_EXPERIENCE'] = ''
-    if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
       userInfoPayload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
     }
     // if(userEnrollmentCount && 
@@ -1062,9 +1067,9 @@ export class InitService {
     //   userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
     //   userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
     // }
-    if(this.configSvc && this.configSvc.unMappedUser 
-      && this.configSvc.unMappedUser.profileDetails 
-      && this.configSvc.unMappedUser.profileDetails.personalDetails 
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.personalDetails
     ) {
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.firstname) {
         userInfoPayload['FULL_NAME'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim())
@@ -1072,20 +1077,20 @@ export class InitService {
       // if (this.configSvc.unMappedUser.profileDetails.personalDetails.gender) {
       //   userInfoPayload['GENDER'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim())
       // }
-      
+
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium) {
         userInfoPayload['MOTHER_TONGUE'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim())
-      }  
-       
+      }
+
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail) {
         userInfoPayload['email'] = this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail.trim()
-      } 
+      }
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.mobile) {
         userInfoPayload['mobile'] = this.configSvc.unMappedUser.profileDetails.personalDetails.mobile
-      }    
+      }
     }
-    if(this.configSvc && this.configSvc.unMappedUser 
-      && this.configSvc.unMappedUser.profileDetails        
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
     ) {
       if (this.configSvc.unMappedUser.profileDetails.profileStatus) {
         userInfoPayload['PROFILE_STATUS'] = this.configSvc.unMappedUser.profileDetails.profileStatus.trim()
@@ -1095,37 +1100,37 @@ export class InitService {
       // } 
     }
 
-    if(this.configSvc && this.configSvc.unMappedUser 
-      && this.configSvc.unMappedUser.profileDetails 
-      && this.configSvc.unMappedUser.profileDetails.professionalDetails 
+    if (this.configSvc && this.configSvc.unMappedUser
+      && this.configSvc.unMappedUser.profileDetails
+      && this.configSvc.unMappedUser.profileDetails.professionalDetails
       && this.configSvc.unMappedUser.profileDetails.professionalDetails[0]
     ) {
       if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation) {
         userInfoPayload['PROFILE_DESIGNATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].designation.trim())
-      } 
+      }
       if (this.configSvc.unMappedUser.profileDetails && this.configSvc.unMappedUser.profileDetails.employmentDetails && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
         userInfoPayload['ORGANISATION'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.trim())
-      } 
+      }
       if (this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group) {
         userInfoPayload['PROFILE_GROUP'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.professionalDetails[0].group.trim())
-      }         
+      }
     }
     /* tslint:disable */
     console.log('userInfoPayload', userInfoPayload)
-    if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
       && this.configSvc.netcoreConfig.netcoreWebConfig.isActive) {
       this.netCoreService.netCoreUserLoginSetup(userInfoPayload)
     }
 
-    if(this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
-      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive 
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
       && this.configSvc.netcoreConfig.netcoreWebConfig.events
       && this.configSvc.netcoreConfig.netcoreWebConfig.events.user_signin
       && this.configSvc.netcoreConfig.netcoreWebConfig.events.user_signin.isActive
     ) {
       this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())
     }
-    
+
     // smartech('contact', '', {
     //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim().toLowerCase(),

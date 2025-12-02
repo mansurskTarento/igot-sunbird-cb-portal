@@ -12,6 +12,7 @@ import { FormExtService } from 'src/app/services/form-ext.service'
 const API_END_POINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
   TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
+  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`
 }
 
 @Injectable({
@@ -40,6 +41,14 @@ export class SeeAllService {
     return this.http.post<any>(API_END_POINTS.TRENDING_CONTENT_SEARCH, req)
   }
 
+  microCredentialsSearch(url: any): Observable<any> {
+    return this.http.get<any>(url || API_END_POINTS.MICRO_CREDENTIALS)
+  }
+
+  microCredentialsSearchWithoutUrl(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.MICRO_CREDENTIALS)
+  }
+
   public notifyOther(data: any) {
     if (data) {
       this.removeFilter.next(data)
@@ -51,14 +60,14 @@ export class SeeAllService {
       this.getSeeAllConfig = {}
       const requestData: any = {
         'request': {
-            'type': pageType? pageType: 'page',
-            'subType': pageSubType? pageSubType: 'home',
-            'action': 'page-configuration',
-            'component': 'portal',
-            'rootOrgId': '*',
+          'type': pageType ? pageType : 'page',
+          'subType': pageSubType ? pageSubType : 'home',
+          'action': 'page-configuration',
+          'component': 'portal',
+          'rootOrgId': '*',
         },
       }
-      this.getSeeAllConfig = await  this.formSvc.homeFormReadData(requestData).toPromise()
+      this.getSeeAllConfig = await this.formSvc.homeFormReadData(requestData).toPromise()
     }
     return of(this.getSeeAllConfig).toPromise()
   }
@@ -75,7 +84,7 @@ export class SeeAllService {
   fetchDesigantionsData(requestUrl: string) {
     const result: any = this.http.get(requestUrl).pipe(catchError(this.handleError), map(
       async (data: any) => {
-        if(data.result && data.result.courseList) {
+        if (data.result && data.result.courseList) {
           return data.result.courseList
         }
         return ''
