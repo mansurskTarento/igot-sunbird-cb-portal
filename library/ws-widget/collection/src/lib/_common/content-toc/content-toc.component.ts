@@ -11,7 +11,7 @@ import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig 
 import { viewerRouteGenerator } from '@sunbird-cb/collection'
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
-import { VttFile } from '@polyflix/vtt-parser';
+import { VttFile } from '@polyflix/vtt-parser'
 import { tap } from 'rxjs/operators'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { MatTab } from '@angular/material/tabs'
@@ -40,7 +40,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() fromViewer = false
   @Input() hierarchyMapData: any = {}
   @ViewChild('stickyMenu') tabElement!: MatTabGroup
-  @ViewChildren(MatTab) tabs!: QueryList<MatTab>;
+  @ViewChildren(MatTab) tabs!: QueryList<MatTab>
   @Input() condition: any
   @Input() kparray: any
   @Input() selectedBatchData: any
@@ -50,10 +50,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() playResourceId = ''
   @Input() sideNavBarOpened = false
   @Input() languageList = []
-  @Input() lockCertificate = false 
+  @Input() lockCertificate = false
   @Output() playResumeForAI = new EventEmitter()
   @Output() enrollUserToAI = new EventEmitter()
   @Output() trigerCompletionSurveyForm = new EventEmitter<boolean>()
+  @Output() resumeContent = new EventEmitter<void>()
 
   commentId?: string = ''
   sticky = false
@@ -101,12 +102,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   ) { }
 
   ngOnInit() {
-
-    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor &&  this.configService.iGOTAIConfig?.aiTutor?.all) {
+    if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig?.aiTutor?.all) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
       this.enableAITutorFlag = this.onlyscormAssessmentExists(this.route.snapshot?.data?.content?.data?.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
       // this.enableAITutorFlag = true
-    }  else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig?.aiTutor?.forOrg && this.configService.iGOTAIConfig.aiTutor?.forOrg?.length && 
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.aiTutor && this.configService.iGOTAIConfig?.aiTutor?.forOrg && this.configService.iGOTAIConfig.aiTutor?.forOrg?.length &&
       this.configService.iGOTAIConfig?.aiTutor?.forOrg.includes(this.configService.userProfile?.rootOrgId)
     ) {
       // console.log('this.contentReadData--', this.route.snapshot.data)
@@ -141,9 +141,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
             // this.renderSelectedLanguageTranscription();
           }
 
-        });
+        })
       this.enableTranscriptionFlag = true
-    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length &&
       this.configService.iGOTAIConfig?.transcription?.forOrg?.includes(this.configService.userProfile?.rootOrgId)
     ) {
       // console.log('in')
@@ -171,7 +171,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
             // this.renderSelectedLanguageTranscription();
           }
 
-        });
+        })
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
@@ -204,8 +204,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
 
       if ((fromAITutor === 'true' || fromAITutor === true) && this.isMobile) {
         setTimeout(() => {
-          const tabsArray = this.tabs?.toArray();
-          let index = tabsArray?.findIndex(tab => tab.textLabel.trim() === "AI Tutor".trim());
+          const tabsArray = this.tabs?.toArray()
+          let index = tabsArray?.findIndex(tab => tab.textLabel.trim() === "AI Tutor".trim())
           if (index > -1) {
             this.selectedTabIndex = index
             this.fromAISelectedTabIndex = true
@@ -217,14 +217,14 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
+
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
     if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription?.all) {
       this.enableTranscriptionFlag = true
-    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length && 
+    } else if (this.configService.iGOTAIConfig && this.configService.iGOTAIConfig?.transcription && this.configService.iGOTAIConfig?.transcription?.forOrg && this.configService.iGOTAIConfig?.transcription?.forOrg?.length &&
       this.configService.iGOTAIConfig?.transcription?.forOrg?.includes(this.configService?.userProfile?.rootOrgId)
-    ) { 
+    ) {
       this.enableTranscriptionFlag = true
     } else {
       this.enableTranscriptionFlag = false
@@ -245,7 +245,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (changes && changes['playResourceId']) {
       if (changes?.playResourceId?.previousValue !== changes?.playResourceId?.currentValue) {
         if (this.viewerPage && this.viewerDataSvc?.resourceId && this.enableTranscriptionFlag) {
-        this.parseVTT()
+          this.parseVTT()
         }
       }
     }
@@ -259,7 +259,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.discussWidgetData = this.config.discussWidgetData
       if (this.baseContentReadData && this.baseContentReadData.identifier) {
         // console.log('this.content.identifier', this.content.identifier)
-        if(!this.discussWidgetData.newCommentSection.commentTreeData.entityId) {
+        if (!this.discussWidgetData.newCommentSection.commentTreeData.entityId) {
           this.discussWidgetData.newCommentSection.commentTreeData.entityId = this.baseContentReadData.identifier
         }
         if (this.discussWidgetData.commentsList.repliesSection && this.discussWidgetData.commentsList.repliesSection.newCommentReply) {
@@ -381,7 +381,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           this.enrollUserForAITutor()
         }
         this.raiseAIPopupEndTelemetry()
-      });
+      })
     }
 
   }
@@ -415,7 +415,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
           ...this.resumeDataLink.queryParams,
           fromAITutor: this.fromAITutor
         }
-      });
+      })
       // this.router.navigateByUrl(
       //   [this.resumeDataLink.url],
       //   {
@@ -531,8 +531,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.defaultTranscriptLanguage = this.vttLangArr && this.vttLangArr.length && this.vttLangArr[0] && this.vttLangArr[0]['default_lang'] ? 'en' : 'en'
         //  console.log('this.transcriptionActiveLanguage--', this.transcriptionActiveLanguage)
         let selectedTranscriptionStyle = this.vttLangArr.filter((item: any) => {
-          return item?.label === this.transcriptionActiveLanguage;
-        });
+          return item?.label === this.transcriptionActiveLanguage
+        })
         if (selectedTranscriptionStyle && selectedTranscriptionStyle.length) {
           this.selectedTranscriptionStyle = selectedTranscriptionStyle[0]
         } else {
@@ -541,14 +541,14 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         // console.log('this.selectedTranscriptionStyle--', this.selectedTranscriptionStyle)
         const filteredArr = this.vttLangArr.filter(
           (item: any) => item.label === this.transcriptionActiveLanguage
-        );
-        let url = filteredArr.length > 0 ? filteredArr[0].uri : null; 
+        )
+        let url = filteredArr.length > 0 ? filteredArr[0].uri : null
         //let url = this.vttLangArr.filter((item: any) => item.label === this.transcriptionActiveLanguage)[0]['uri']
-        if(url) {
-          const file = await VttFile.fromUrl(url);
-        let blocks: any = file.getBlocks();
+        if (url) {
+          const file = await VttFile.fromUrl(url)
+          let blocks: any = file.getBlocks()
 
-        this.subTitles = blocks
+          this.subTitles = blocks
         }
         // console.log('this.vttLangArr--',this.vttLangArr)
         // if(this.vttLangArr && this.vttLangArr.length) {
@@ -557,8 +557,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         //   this.transcriptionActiveLanguage  = this.vttLangArr[0]['default_lang']
         // }
         this.tocSvc.changeTranscriptionLanguageEvent.next({ activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer: true })
-        
-        
+
+
       } else {
         this.vttLangArr = []
         this.enableTranscriptionFlag = false
@@ -586,8 +586,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (currentPath && currentPath.length) {
       this.selectedTranscriptionStyle = currentPath[0]
     }
-    const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri);
-    let blocks: any = file.getBlocks();
+    const file = await VttFile.fromUrl(currentPath && currentPath[0]?.uri)
+    let blocks: any = file.getBlocks()
     this.subTitles = blocks
     this.raiseTranscriptionLanguageStopTelemetry()
     // this.tocSvc.changeTranscriptionLanguageEvent.next({activeLang: this.transcriptionActiveLanguage, langData: this.vttLangArr, loadPlayer:false})
@@ -595,7 +595,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   openSurveyFormPopup(event: boolean) {
-    this.trigerCompletionSurveyForm.emit(event);
+    this.trigerCompletionSurveyForm.emit(event)
   }
 
   playFromSlot(subtitle: any) {
@@ -607,13 +607,13 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   formatMsToVttTime(ms: number): string {
-    const totalSeconds = Math.floor(ms / 1000);
+    const totalSeconds = Math.floor(ms / 1000)
     //  const milliseconds = ms % 1000;
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
 
-    const pad = (num: number, size: number) => num.toString().padStart(size, '0');
+    const pad = (num: number, size: number) => num.toString().padStart(size, '0')
 
     // return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(milliseconds, 3)}`;
     return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`
@@ -637,11 +637,11 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     if (this.totalResource === this.scormAssessmentCount) {
-      this.enableAITutorFlag = false;
+      this.enableAITutorFlag = false
     } else {
       this.enableAITutorFlag = true
     }
-    return this.enableAITutorFlag;
+    return this.enableAITutorFlag
   }
 
   raiseTranscriptionTabStartTelemetry() {
@@ -778,5 +778,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     delete currentQueryParams.commentId
     this.commentId = ''
     this.discussWidgetData.newCommentSection.show = true
+  }
+
+  resumeContentCall() {
+    this.resumeContent.emit()
   }
 }

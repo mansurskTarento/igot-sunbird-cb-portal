@@ -21,7 +21,7 @@ export class DialogConfirmComponent {
     }
   }
 
-  confirmed() {
-    this.dialogRef.close(true)
+  confirmed(item: any) {
+    this.dialogRef.close((item !== 'no' && item !== 'cancel') ? true : false)
   }
 }

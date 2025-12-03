@@ -42,16 +42,17 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { AppTocTeachersNotesComponent } from './app-toc-teachers-notes/app-toc-teachers-notes.component'
-import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component';
+import { AppTocReferenceNotesComponent } from './app-toc-reference-notes/app-toc-reference-notes.component'
 import { AiTutorConfirmPopupComponent } from './ai-tutor-confirm-popup/ai-tutor-confirm-popup.component'
 import { HighlightPipe } from '../../_pipes/highlight.pipe'
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select'
 import { AiTutorComponent } from '@ws/viewer/src/lib/components/ai-tutor/ai-tutor.component'
-import { MarkdownModule } from 'ngx-markdown';
+import { MarkdownModule } from 'ngx-markdown'
 import { AppTocBatchAssignmentsComponent } from './app-toc-batch-assignments/app-toc-batch-assignments.component'
 import { AssignmentViewerComponent } from './app-toc-assignment-viewer/app-toc-assignment-viewer.component'
-import { DialogComponentsModule } from '@sunbird-cb/consumption'
+import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
 import { AssignmentViewerV2Component } from './app-toc-assignment-viewerV2/app-toc-assignment-viewerV2.component'
+import { SamuhikCharchaContentComponent } from './samuhik-charcha-content/samuhik-charcha-content/samuhik-charcha-content.component'
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { AssignmentViewerV2Component } from './app-toc-assignment-viewerV2/app-t
     AppTocBatchAssignmentsComponent,
     AssignmentViewerComponent,
     AssignmentViewerV2Component,
+    SamuhikCharchaContentComponent,
   ],
   imports: [
     CommonModule,
@@ -113,7 +115,9 @@ import { AssignmentViewerV2Component } from './app-toc-assignment-viewerV2/app-t
     PipeSafeSanitizerModule,
     WidgetCommentModule,
     MatSelectModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    ContentStripWithTabsPillsModule,
+    ContentStripWithTabsLibModule,
   ],
   exports: [
     ContentTocComponent,

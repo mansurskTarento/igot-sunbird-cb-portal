@@ -92,47 +92,47 @@
   </div>
 </ng-template>
 <ng-container *ngIf="!isretired; else noDataFound">
-<div class="toc-banner">
-  <div class="flex flex-row gap-6 fixed-width section-container">
-    <div class="banner-details toc-content" #bannerDetails>
+  <div class="toc-banner">
+    <div class="flex flex-row gap-6 fixed-width section-container">
+      <div class="banner-details toc-content" #bannerDetails>
 
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center justify-between gap-4">
-          <div class="flex flex-row gap-2 ng-star-inserted">
-            <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2"><mat-icon
-                class="ws-mat-orange-text mat-icon notranslate material-icons mat-icon-no-color" role="img"
-                aria-hidden="true">video_library</mat-icon>
-              <div class="text-xs font-bold text-white leading-3 ng-star-inserted">{{eventData?.resourceType}}</div>
-            </div>
-            <!-- <div class="ml-2" *ngIf="eventData?.resourceType === 'Webinar'">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-row gap-2 ng-star-inserted">
+              <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2"><mat-icon
+                  class="ws-mat-orange-text mat-icon notranslate material-icons mat-icon-no-color" role="img"
+                  aria-hidden="true">video_library</mat-icon>
+                <div class="text-xs font-bold text-white leading-3 ng-star-inserted">{{eventData?.resourceType}}</div>
+              </div>
+              <!-- <div class="ml-2" *ngIf="eventData?.resourceType === 'Webinar'">
               <button mat-raised-button type="button"
                 class="ws-mat-primary-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.typoWebinar' |
                 translate }}</button>
             </div> -->
-            <div class="ml-2" *ngIf="enrollFlowItems?.includes(eventData?.resourceType) && currentEvent">
-              <button mat-raised-button type="button"
-                class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }}
-              </button>
+              <div class="ml-2" *ngIf="enrollFlowItems?.includes(eventData?.resourceType) && currentEvent">
+                <button mat-raised-button type="button"
+                  class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="flex flex-row">
-          <div class="banner-text text-base sm:text-4xl leading-6 sm:leading-10 font-bold ng-star-inserted">
-            {{eventData?.name}}</div>
+          <div class="flex flex-row">
+            <div class="banner-text text-base sm:text-4xl leading-6 sm:leading-10 font-bold ng-star-inserted">
+              {{eventData?.name}}</div>
 
-        </div>
-        <div class="flex flex-col gap-2">
+          </div>
+          <div class="flex flex-col gap-2">
 
-          <div class="text-sm sm:text-base source-text font-semibold break-words ng-star-inserted"
-            title="{{eventData?.owner}}">By
-            {{eventData?.owner}}</div>
+            <div class="text-sm sm:text-base source-text font-semibold break-words ng-star-inserted"
+              title="{{eventData?.owner}}">By
+              {{eventData?.owner}}</div>
+          </div>
+          <div class="text-xs leading-4 source-text ng-star-inserted">({{'apptocsinglepage.lastUpdatedOn' | translate}}
+            {{eventData?.lastStatusChangedOn |
+            date: 'MMM d, y'}})</div>
         </div>
-        <div class="text-xs leading-4 source-text ng-star-inserted">({{'apptocsinglepage.lastUpdatedOn' | translate}}
-          {{eventData?.lastStatusChangedOn |
-          date: 'MMM d, y'}})</div>
-      </div>
 
-      <!-- <div class="flex flex-row margin-top-xl margin-bottom-xl ">
+        <!-- <div class="flex flex-row margin-top-xl margin-bottom-xl ">
         <div class="flex flex-row top_banner_box">
           <div class="">
             <img src="{{eventData?.appIcon | pipePublicURL}}" class="event-card-image" *ngIf="eventData?.appIcon">
@@ -146,7 +146,7 @@
               <div class="margin-top-xs margin-bottom-xs" *ngIf="eventData?.resourceType === 'Karmayogi Talks'">
                 <img src="/assets/icons/karmayogi_TalksLogo.png" alt="Karmayogi Talks" width="153px">
               </div>
-              
+
               <div class="flex flex-col flex-auto mat-body-1">
                 <p class="flex margin-bottom-m word-break" role="link" tabindex="0" i18n-aria-label
                   *ngIf="eventData?.instructions">
@@ -160,15 +160,46 @@
           </div>
         </div>
       </div> -->
+      </div>
     </div>
   </div>
-</div>
-<div class="fixed-width flex flex-wrap section-container">
+  <ng-container *ngIf="linkedCourseData">
+    <div class="linked-course-container">
+      <div class="details-container">
+        <div class="flex items-center gap-4 p-4">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-600">play_circle_outline</mat-icon>
+            <div class="flex flex-col">
+              <span class="text-xs text-gray-500">Course</span>
+              <span class="text-sm font-semibold text-blue-600 course-name">{{linkedCourseData?.name}}</span>
+            </div>
+          </div>
+          <div class="seperator"></div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-600">calendar_today</mat-icon>
+            <div class="flex flex-col">
+              <span class="text-xs text-gray-500">Date</span>
+              <span class="text-sm font-semibold">{{eventData?.startDate | date}}</span>
+            </div>
+          </div>
+          <div class="seperator"></div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-600">schedule</mat-icon>
+            <div class="flex flex-col">
+              <span class="text-xs text-gray-500">Start Time</span>
+              <span class="text-sm font-semibold">11:00 AM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div class="fixed-width flex flex-wrap section-container">
 
-  <!-- main content -->
-  <div class="meta-section mt-4">
+    <!-- main content -->
+    <div class="meta-section mt-4">
 
-    <!-- <div class="flex flex-1 flex-column mt-5">
+      <!-- <div class="flex flex-1 flex-column mt-5">
       <div class="flex flex-1 filter">
           <a href="javascript:void(0)" role="button" class="filter-option" mat-button>
             OVERVIEW
@@ -178,164 +209,216 @@
           </a>
       </div>
   </div> -->
-    <mat-tab-group>
-      <mat-tab label="{{'events.eventInfo' | translate}}">
-        <ng-container>
-          <!-- *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace" -->
+      <mat-tab-group>
+        <mat-tab label="{{'events.eventInfo' | translate}}">
           <ng-container>
-            <div class="certificate-container" *ngIf="!skeletonLoader && (enrolledEvent?.status > 1 && pastEvent)">
-              <div class="flex flex-row earned-certificate-container">
-                <div class="ribbon"></div>
-                <div class="certificate-background">
-                  <div class="p-4">
+            <!-- *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace" -->
+            <ng-container>
+              <div class="certificate-container" *ngIf="!skeletonLoader && (enrolledEvent?.status > 1 && pastEvent)">
+                <div class="flex flex-row earned-certificate-container">
+                  <div class="ribbon"></div>
+                  <div class="certificate-background">
+                    <div class="p-4">
+                      <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                      <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mobile-certificate-container"
+                *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
+                <div class="earned-certificate-container">
+                  <div class="flex flex-row">
+                    <div class="ribbon"></div>
                     <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
                   </div>
-                  <div class="flex flex-col items-end">
+
+                  <div class="certificate-background">
                     <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="mobile-certificate-container"
-              *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
-              <div class="earned-certificate-container">
-                <div class="flex flex-row">
-                  <div class="ribbon"></div>
-                  <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
+            </ng-container>
+            <ng-container
+              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30)">
+              <div class="complete-course-section">
+                <div class="flex items-center justify-between p-6">
+                  <div class="flex items-center gap-4">
+                    <div class="icon-container">
+                      <mat-icon class="course-icon">video_library</mat-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <h3 class="section-title">Complete the Course to Enroll!</h3>
+                      <p class="section-description">
+                        You need to complete at least <strong>30% of the required course</strong> before enrolling in
+                        this event.
+                        Please visit the course page to continue your learning and unlock access to this event.
+                      </p>
+                    </div>
+                    <div>
+                      <button mat-button class="go-to-course-btn" type="button" (click)="navigateToLinkedCourse()">
+                        {{'events.goToCourse' | translate}}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-
-                <div class="certificate-background">
-                  <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <div class="flex flex-1 flex-column mb-2 mt-4">
-            <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
-          </div>
-          <div class="flex flex-wrap">
-            <ng-container>
-              <div class="flex mb-5">
-                <p class="word-break">{{eventData?.description}}</p>
               </div>
             </ng-container>
-          </div>
-          <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
-            <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
-          </div>
-          <ng-container *ngIf="eventData?.[compentencyKey.vKey] && skeletonLoader">
-            <div class="flex flex-col gap-3">
-              <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'"
-                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-              <div class="flex flex-row gap-3">
-                <ng-container *ngFor="let i of [1, 2]">
-                  <ws-widget-skeleton-loader [width]="'120px'" [height]="'32px'"
-                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                </ng-container>
-              </div>
-              <div class="flex flex-row gap-4">
-                <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
-                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
-                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-              </div>
+            <div class="flex flex-1 flex-column mb-2 mt-4">
+              <span class="f-medium mat-title">{{ 'event.eventDescription' | translate }} </span>
             </div>
-          </ng-container>
-          <ng-container *ngIf="!skeletonLoader">
-            <ng-container *ngIf="!strip?.loaderWidgets?.length || !competenciesObject">
-              <div class="flex flex-col">
-                <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
-                {{ 'apptocsinglepage.noCompetencyFound' | translate }}
-              </div>
-            </ng-container>
-            <ng-container *ngIf="strip?.loaderWidgets?.length > 0">
+            <div class="flex flex-wrap">
+              <ng-container>
+                <div class="flex mb-5">
+                  <p class="word-break">{{eventData?.description}}</p>
+                </div>
+              </ng-container>
+            </div>
+            <div class="flex flex-1 flex-column mb-2" *ngIf="eventData?.creatorDetails">
+              <span class="f-medium mat-title margin-bottom-xs">{{ 'event.eventPresenters' | translate }}</span>
+            </div>
+            <ng-container *ngIf="eventData?.[compentencyKey.vKey] && skeletonLoader">
               <div class="flex flex-col gap-3">
-                <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
-                <div class="flex flex-row gap-3 sm:gap-4 mb-3">
-                  <ng-container *ngFor="let item of competenciesObject">
-                    <div class="themes-button" [ngClass]="{'theme-activated': competencySelected === item.key}"
-                      (click)="handleShowCompetencies(item, 'selected')">{{ item.key }}</div>
+                <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'"
+                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <div class="flex flex-row gap-3">
+                  <ng-container *ngFor="let i of [1, 2]">
+                    <ws-widget-skeleton-loader [width]="'120px'" [height]="'32px'"
+                      [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
                   </ng-container>
                 </div>
-                <ng-container *ngFor="let item of competenciesObject">
-                  <div class="px-5 md:px-0" *ngIf="item?.key === competencySelected">
-                    <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
-                      <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
-                        <ng-container [wsResolverWidget]="widget"></ng-container>
-                      </ng-container>
-                    </ws-utils-horizontal-scroller-v2>
+                <div class="flex flex-row gap-4">
+                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!skeletonLoader">
+              <ng-container *ngIf="!strip?.loaderWidgets?.length || !competenciesObject">
+                <div class="flex flex-col">
+                  <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
+                  {{ 'apptocsinglepage.noCompetencyFound' | translate }}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="strip?.loaderWidgets?.length > 0">
+                <div class="flex flex-col gap-3">
+                  <ng-container [ngTemplateOutlet]="competencyLabel"></ng-container>
+                  <div class="flex flex-row gap-3 sm:gap-4 mb-3">
+                    <ng-container *ngFor="let item of competenciesObject">
+                      <div class="themes-button" [ngClass]="{'theme-activated': competencySelected === item.key}"
+                        (click)="handleShowCompetencies(item, 'selected')">{{ item.key }}</div>
+                    </ng-container>
                   </div>
-                </ng-container>
-              </div>
+                  <ng-container *ngFor="let item of competenciesObject">
+                    <div class="px-5 md:px-0" *ngIf="item?.key === competencySelected">
+                      <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
+                        <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
+                          <ng-container [wsResolverWidget]="widget"></ng-container>
+                        </ng-container>
+                      </ws-utils-horizontal-scroller-v2>
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
             </ng-container>
+            <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
+              <ng-container>
+                <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
+                  <app-presenter-card [userData]="user"
+                    class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
+                </div>
+              </ng-container>
+            </div>
+            <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.learningObjective">
+              <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
+            </div>
+            <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
+              <ng-container>
+                <div class="flex mb-5">
+                  <p class="word-break">{{eventData?.learningObjective}}</p>
+                </div>
+              </ng-container>
+            </div>
           </ng-container>
-          <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
-            <ng-container>
-              <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
-                <app-presenter-card [userData]="user"
-                  class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
+        </mat-tab>
+        <mat-tab label="{{'events.documents' | translate}}" *ngIf="eventData?.eventHandouts?.length">
+          <ng-container *ngFor="let handout of eventData?.eventHandouts">
+            <div class="reference-card flex gap-4 justify-between">
+              <div class="reference-inner-card">
+                <div class="reference-title flex align-icon gap-2">
+                  <div><img class="img-size" src="{{fileImage(handout?.content)}}" /></div>
+                  <div class="text-truncate">{{handout?.title}} </div>
+                </div>
+                <div class="flex gap-2">
+                  <mat-icon>visibility</mat-icon>
+                  <a target="_blank" href="{{handout?.content}}">
+                    <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
+                  </a>
+                </div>
               </div>
-            </ng-container>
-          </div>
-          <div class="flex flex-1 flex-column margin-top-l margin-bottom-s" *ngIf="eventData?.learningObjective">
-            <span class="f-medium mat-title">{{ 'event.eventAgenda' | translate }}</span>
-          </div>
-          <div class="flex flex-wrap margin-bottom-xl" *ngIf="eventData?.learningObjective">
-            <ng-container>
-              <div class="flex mb-5">
-                <p class="word-break">{{eventData?.learningObjective}}</p>
-              </div>
-            </ng-container>
-          </div>
-        </ng-container>
-      </mat-tab>
-      <mat-tab label="{{'events.documents' | translate}}" *ngIf="eventData?.eventHandouts?.length">
-        <ng-container *ngFor="let handout of eventData?.eventHandouts">
-          <div class="reference-card flex gap-4 justify-between">
-            <div class="reference-inner-card">
-              <div class="reference-title flex align-icon gap-2">
-                <div><img class="img-size" src="{{fileImage(handout?.content)}}" /></div>
-                <div class="text-truncate">{{handout?.title}} </div>
-              </div>
-              <div class="flex gap-2">
-                <mat-icon>visibility</mat-icon>
-                <a target="_blank" href="{{handout?.content}}">
-                  <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
-                </a>
+              <div>
+                <div class="reference-download-icon">
+                  <a download="{{handout?.title}}" (click)="downloadPDF(handout)">
+                    {{'events.downloadPdf' | translate}}
+                  </a>
+                </div>
               </div>
             </div>
-            <div>
-              <div class="reference-download-icon">
-                <a download="{{handout?.title}}" (click)="downloadPDF(handout)">
-                  {{'events.downloadPdf' | translate}}
-                </a>
+          </ng-container>
+        </mat-tab>
+        <mat-tab label="{{'events.preReads' | translate}}" *ngIf="eventData?.preEventReads?.length">
+          <ng-container *ngFor="let item of eventData?.preEventReads">
+            <div class="reference-card flex gap-4 justify-between">
+              <div class="reference-inner-card">
+                <div class="reference-title flex align-icon gap-2">
+                  <div><img class="img-size" src="{{fileImage(item)}}" /></div>
+                  <div class="text-truncate">{{'events.preReads' | translate}} {{'events.documents' | translate}} </div>
+                </div>
+                <div class="flex gap-2">
+                  <mat-icon>visibility</mat-icon>
+                  <a target="_blank" href="{{item}}">
+                    <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
+                  </a>
+                </div>
+              </div>
+              <div>
+                <div class="reference-download-icon">
+                  <a download="{{eventData?.identifier}}-PreReads" (click)="downloadPDF(item)">
+                    {{'events.downloadPdf' | translate}}
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        </ng-container>
-      </mat-tab>
-      <!-- <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
+          </ng-container>
+        </mat-tab>
+        <!-- <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
         <ng-container *ngIf="!skeletonLoader">
           <div class="flex flex-col ratings-div gap-10 mt-4" id="ratingsDiv" *ngIf="discussWidgetData">
             <d-v2-widget-comment [widgetData]="discussWidgetData"></d-v2-widget-comment>
           </div>
         </ng-container>
       </mat-tab> -->
-    </mat-tab-group>
-  </div>
+      </mat-tab-group>
+    </div>
 
 
-  <!-- right menu -->
-  <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
-    <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
-      [enrolledEvent]="enrolledEvent" *ngIf="eventData" (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
+    <!-- right menu -->
+    <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
+      <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
+        [enrolledEvent]="enrolledEvent" [courseProgress]="linkedCourseProgress" *ngIf="eventData"
+        (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
+    </div>
   </div>
-</div>
 </ng-container>
 
 <ng-template #noDataFound>
-  <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
+  <div
+    class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
     <div class="error-logo">
       <div class="error-message ws-mat-primary-text font-weight-bold">
         The page you requested cannot be found
