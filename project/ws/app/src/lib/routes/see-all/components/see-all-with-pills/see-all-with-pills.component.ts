@@ -33,6 +33,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   totalPages = 0
   tabResults: any[] = []
   tabSelected: any
+  userSelectedTab: any
   dynamicTabIndex = 0
   pillSelected: any
   pillResults: any[] = []
@@ -57,6 +58,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     this.activated.queryParams.subscribe((res: any) => {
       this.keyData = (res.key) ? res.key : ''
       this.tabSelected = (res.tabSelected) ? res.tabSelected : ''
+      this.userSelectedTab = (res.tabSelected) ? res.tabSelected : ''
       this.pillSelected = (res.pillSelected) ? res.pillSelected : ''
       pageSubType = (res.pageSubType) ? res.pageSubType : ''
       pageType = (res.pageType) ? res.pageType : ''
@@ -175,15 +177,13 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       widgetHostClass: 'mb-2',
       widgetData: {
         content,
-        ...(content.batch && {
-          batch: content.batch,
-        }),
         cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.stripConfig
           && strip.viewMoreUrl.stripConfig.cardSubType,
         context: {
           pageSection: strip.key,
           position: idx,
         },
+        isiGOTSpecialization: this.userSelectedTab === 'igotSpecializations' ? true : false,
         intranetMode: strip.stripConfig && strip.stripConfig.intranetMode,
         deletedMode: strip.stripConfig && strip.stripConfig.deletedMode,
         contentTags: strip.stripConfig && strip.stripConfig.contentTags,
@@ -302,7 +302,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     return this.langtranslations.translateLabel(label.toLowerCase(), type, '')
   }
 
-  fetchForYouData(strip: NsContentStripWithTabsAndPills.IContentStripUnit) {
+  async fetchForYouData(strip: NsContentStripWithTabsAndPills.IContentStripUnit) {
     if (strip && strip.type === 'forYou') {
       if (strip.tabs && strip.tabs.length) {
         const tabIndex: any = this.dynamicTabIndex || 0
@@ -318,10 +318,133 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
               this.getTabDataByNewReqSearchV6(strip, tabIndex, pillIndex, currenPillsFromMap, true)
             } else if (currenPillsFromMap.request.trendingSearch) {
               this.getTabDataByNewReqTrending(strip, tabIndex, pillIndex, currenPillsFromMap, true)
+            } else if (currenPillsFromMap.request.microSearch) {
+              this.getTabDataByNewReqMicroCreds(strip, tabIndex, pillIndex, currenPillsFromMap, true)
+            }
+            if (!currenPillsFromMap.request.microSearch) {
+              await this.fetchMicroCredentialsList(strip)
             }
           }
         }
 
+      }
+    }
+  }
+
+  async fetchMicroCredentialsList(strip: NsContentStripWithTabsAndPills.IContentStripUnit) {
+    if (strip && strip.tabs && strip.tabs.length) {
+      const microTabIndex = strip.tabs.findIndex((tab: any) => tab.value === 'igotSpecializations')
+
+      if (microTabIndex !== -1) {
+
+        this.seeAllSvc.microCredentialsSearchWithoutUrl().subscribe((response: any) => {
+          // Check if API returned data
+          const hasData = response && response.result && response.result.content &&
+            response.result.content.length > 0
+          if (!hasData) {
+            // Remove the igotSpecializations tab if no data
+            if (strip && strip.tabs) {
+              strip.tabs.splice(microTabIndex, 1)
+            }
+
+            // Update the seeAllPageConfig if it references the same tabs
+            if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+              const configTabIndex = this.seeAllPageConfig.tabs.findIndex((tab: any) => tab.value === 'igotSpecializations')
+              if (configTabIndex !== -1) {
+                this.seeAllPageConfig.tabs.splice(configTabIndex, 1)
+              }
+            }
+          }
+        }, error => {
+          console.error('Error fetching microcredentials', error)
+          if (strip && strip.tabs) {
+            strip.tabs.splice(microTabIndex, 1)
+          }
+          if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+            const configTabIndex = this.seeAllPageConfig.tabs.findIndex((tab: any) => tab.value === 'igotSpecializations')
+            if (configTabIndex !== -1) {
+              this.seeAllPageConfig.tabs.splice(configTabIndex, 1)
+            }
+          }
+        })
+      }
+    }
+  }
+
+  async getTabDataByNewReqMicroCreds(
+    strip: NsContentStripWithTabsAndPills.IContentStripUnit,
+    tabIndex: number,
+    pillIndex: number,
+    currentTab: NsContentStripWithTabsAndPills.IContentStripTab,
+    calculateParentStatus: boolean
+  ) {
+    try {
+      const response = await this.microCredentialsSearchRequest(strip, currentTab.request, calculateParentStatus)
+      if (response && response.results && response.results.length) {
+        const content = response.results || []
+        const widgets = this.transformContentsToWidgets(content, strip)
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+          const allTabs = this.seeAllPageConfig.tabs
+          const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
+          this.resetSelectedPill(allPills)
+          if (allTabs && allTabs.length && allTabs[tabIndex]) {
+            if (allPills && allPills.length && allPills[pillIndex]) {
+              allPills[pillIndex] = {
+                ...allPills[pillIndex],
+                widgets,
+                fetchTabStatus: 'done',
+                selected: true,
+              }
+            }
+            allTabs[tabIndex] = {
+              ...allTabs[tabIndex],
+              widgets,
+              fetchTabStatus: 'done',
+            }
+          }
+        }
+      } else {
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+          const allTabs = this.seeAllPageConfig.tabs
+          const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
+          this.resetSelectedPill(allPills)
+          if (allTabs && allTabs.length && allTabs[tabIndex]) {
+            if (allPills && allPills.length && allPills[pillIndex]) {
+              allPills[pillIndex] = {
+                ...allPills[pillIndex],
+                widgets: [],
+                fetchTabStatus: 'done',
+                selected: true,
+              }
+            }
+            allTabs[tabIndex] = {
+              ...allTabs[tabIndex],
+              widgets: [],
+              fetchTabStatus: 'done',
+            }
+          }
+        }
+      }
+    } catch (_error) {
+      if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+        const allTabs = this.seeAllPageConfig.tabs
+        const allPills = this.seeAllPageConfig.tabs[tabIndex].pillsData
+        this.resetSelectedPill(allPills)
+        if (allTabs && allTabs.length && allTabs[tabIndex]) {
+          if (allPills && allPills.length && allPills[pillIndex]) {
+            allPills[pillIndex] = {
+              ...allPills[pillIndex],
+              widgets: [],
+              fetchTabStatus: 'done',
+              selected: true,
+            }
+          }
+          allTabs[tabIndex] = {
+            ...allTabs[tabIndex],
+            widgets: [],
+            fetchTabStatus: 'done',
+          }
+        }
       }
     }
   }
@@ -491,6 +614,55 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       }
     })
   }
+
+  async microCredentialsSearchRequest(strip: any,
+    request: any,
+    _calculateParentStatus: boolean
+  ): Promise<any> {
+    const originalFilters: any = []
+    return new Promise<any>((resolve, reject) => {
+      if (request && request.microSearch && request.microSearch.request && request.microSearch.request.url) {
+        this.seeAllSvc.microCredentialsSearch(request.microSearch.request.url).subscribe((response: any) => {
+          let results: any = response && response.result && response.result.content ? response.result.content : []
+          const showViewMore = Boolean(
+            response.result &&
+            strip.request &&
+            results &&
+            results.length > 5 &&
+            strip.stripConfig && strip.microSearch.postCardForSearch,
+          )
+
+          const viewMoreUrl = showViewMore
+            ? {
+              path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
+              queryParams: {
+                tab: 'Learn',
+                q: strip.viewMoreUrl && strip.viewMoreUrl.queryParams,
+                f:
+                  request &&
+                    request.microSearch &&
+                    request.microSearch.request &&
+                    request.microSearch.request.filters
+                    ? JSON.stringify(
+                      this.transformSearchV6FiltersV2(
+                        originalFilters,
+                      )
+                    )
+                    : {},
+              },
+            }
+            : null
+          resolve({ results, viewMoreUrl })
+        }, (error: any) => {
+          if (error.error && error.error.status === 400) {
+            // this.processStrip(strip, [], 'done', calculateParentStatus, null);
+          }
+          //this.processStrip(strip, [], 'done', calculateParentStatus, null)
+          reject(error)
+        })
+      }
+    })
+  }
   resetSelectedPill(pillData: any) {
     if (pillData && pillData.length) {
       pillData.forEach((pill: any) => {
@@ -518,6 +690,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
         } else if (currentPillFromMap.request.trendingSearch) {
           this.getTabDataByNewReqTrending(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.microSearch) {
+          this.getTabDataByNewReqMicroCreds(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
         } else if (currentPillFromMap.request.type === 'enrollment') {
           this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
           stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
@@ -546,6 +720,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       stripMap.tabs[tabIndex].pillsData[pillIndex].fetchTabStatus = 'inprogress'
       stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = true
       stripMap.showOnLoader = true
+      this.userSelectedTab = stripMap.tabs[tabIndex].value
     }
     const data: WsEvents.ITelemetryTabData = {
       label: `${stripMap.tabs[tabIndex].textLabel}`,
@@ -575,6 +750,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, 0, currentPillFromMap, true)
         } else if (currentPillFromMap.request.trendingSearch) {
           this.getTabDataByNewReqTrending(currentStrip, tabIndex, 0, currentPillFromMap, true)
+        } else if (currentPillFromMap.request.microSearch) {
+          this.getTabDataByNewReqMicroCreds(currentStrip, tabIndex, 0, currentPillFromMap, true)
         } else if (currentPillFromMap.request.type === 'enrollment') {
           this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
           stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;

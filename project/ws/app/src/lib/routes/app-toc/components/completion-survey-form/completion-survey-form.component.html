@@ -7,7 +7,7 @@
   <div class="form-content">
     <div class="my-4 feedback-text flex gap-2">
       <mat-icon class="info-icon">info</mat-icon>
-      {{'apptoc.takeSurveyToUnlock' | translate}}
+      <p class="margin-remove">{{'apptoc.takeSurveyToUnlock' | translate}}</p>
     </div>
     <ng-container *ngIf="surveyForm">
       <form [formGroup]="surveyForm">
@@ -30,7 +30,7 @@
           </ng-container>
         </ng-container>
         <div class="flex justify-end m-4">
-          <!-- <button mat-button class="do-later-btn" (click)="doItLater()">{{'apptoc.doItLater' | translate}}</button> -->
+          <button mat-button class="do-later-btn" (click)="doItLater()">{{'apptoc.doItLater' | translate}}</button>
           <button mat-button class="submit-btn" [disabled]="!surveyFormIsValid" (click)="submitForm()">{{'apptoc.submit' | translate}}</button>
         </div>
       </form>

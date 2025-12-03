@@ -19,13 +19,19 @@
                 </ng-container>
 
                 <div class="course-badges flex items-center gap-2">
+                    <span class="badge language-badge font-normal" *ngIf="igotSpecializationProgram">
+                        <mat-icon class="mr-1 approved-icon" svgIcon="approved-icon"></mat-icon>
+                        {{'learnsearch.iGOTSpecializationProgram' | translate}}
+                    </span>
                     <span class="badge language-badge font-normal"
                         *ngIf="content?.language">{{content?.language}}</span>
-                    <span class="badge duration-badge font-normal" *ngIf="content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
+                    <span class="badge duration-badge font-normal"
+                        *ngIf="content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{checkForCiosDuration(content) | pipeDurationTransform: 'hms'}}
                     </span>
-                    <span class="badge duration-badge font-normal" *ngIf="content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
+                    <span class="badge duration-badge font-normal"
+                        *ngIf="content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{content?.programDuration}} {{content?.programDuration === 1 ? 'day' : 'days'}}
                     </span>
@@ -63,10 +69,12 @@
                                 *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
                             </mat-icon>
 
-                            <ng-container *ngIf="content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
+                            <ng-container
+                                *ngIf="content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.courseCategory}}
                             </ng-container>
-                            <ng-container *ngIf="!content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
+                            <ng-container
+                                *ngIf="!content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.primaryCategory}}
                             </ng-container>
                             <ng-container *ngIf="content?.primaryCategory == 'Learning Resource'">
@@ -113,7 +121,8 @@
                     {{content?.name}}
                 </h2>
 
-                <div class="course-tags mb-3 font-normal text-ellipse" *ngIf="content?.primaryCategory == 'Learning Resource'">
+                <div class="course-tags mb-3 font-normal text-ellipse"
+                    *ngIf="content?.primaryCategory == 'Learning Resource'">
                     {{content?.description}}
                 </div>
                 <!-- <div class="course-tags mb-3 font-normal text-ellipse"
@@ -130,7 +139,8 @@
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
                         {{content?.creator}}</span> -->
-                    <span class="organization-name text-ellipse" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
+                    <span class="organization-name text-ellipse"
+                        *ngIf="content?.organisation?.length">{{'learnsearch.by' |
                         translate}}
                         {{content?.organisation[0]}}</span>
                     <span class="organization-name text-ellipse"

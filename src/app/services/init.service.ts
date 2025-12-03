@@ -184,6 +184,10 @@ export class InitService {
       'content-locked',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/content-locked.svg'),
     )
+    iconRegistry.addSvgIcon(
+      'approved-icon',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/approved.svg'),
+    )
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',

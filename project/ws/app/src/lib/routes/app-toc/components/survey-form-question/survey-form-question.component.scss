@@ -44,3 +44,7 @@
     }
 
   }
+
+:host ::ng-deep .custom .mat-checkbox-layout {
+  white-space: normal !important;
+}
