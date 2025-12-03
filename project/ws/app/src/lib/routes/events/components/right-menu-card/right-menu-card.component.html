@@ -15,9 +15,24 @@
         <!--Not enrolled -->
         <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent || pastEvent)">
           <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId">
-            <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
-              <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
-            </a>
+            <ng-container *ngIf="eventData?.typeofEvent === 'live'">
+              <ng-container *ngIf="!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30">
+                <a mat-button class="flex-1 action-button" (click)="completeCourse()">
+                  <mat-icon>lock_outline</mat-icon>
+                  <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
+                </a>
+              </ng-container>
+              <ng-container *ngIf="courseProgress?.completionPercentage && courseProgress?.completionPercentage >= 30">
+                <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
+                  <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
+                </a>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="eventData?.typeofEvent !== 'live'">
+              <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
+                <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
+              </a>
+            </ng-container>
           </div>
           <ng-container *ngIf="!batchId">
             <ng-container
@@ -95,7 +110,7 @@
   </mat-card-content>
   <mat-card-content>
     <div class="right-side-content-container">
-      <!-- <div class="progressDiv mb-5" *ngIf="isEnrolled && enrolledEvent && enrolledEvent?.completionPercentage && 
+      <!-- <div class="progressDiv mb-5" *ngIf="isEnrolled && enrolledEvent && enrolledEvent?.completionPercentage &&
         !(enrolledEvent?.status !==2 && pastEvent) ">
           <div class="flex-1">
             <div class="flex flex-col gap-2">
@@ -121,7 +136,7 @@
       <div class="margin-top-m karma-points-div"
         *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) ">
         <ws-widget-karma-points [data]="kparray"
-          [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent, 
+          [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent,
           pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
       </div>
       <!-- <ng-container *ngIf="!completedAfterExpiry"> -->

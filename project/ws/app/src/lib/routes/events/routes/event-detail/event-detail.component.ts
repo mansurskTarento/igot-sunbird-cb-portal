@@ -1,12 +1,12 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core'
 // import { NSDiscussData } from '../../../discuss/models/discuss.model'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 // import { MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 // import { DiscussService } from '../../../discuss/services/discuss.service'
 /* tslint:disable */
-import _ from 'lodash'
+import _, { isString } from 'lodash'
 import moment from 'moment'
 import * as fileSaver from 'file-saver'
 import { environment } from 'src/environments/environment'
@@ -20,6 +20,8 @@ import { CertificateDialogComponent } from './../../../../../../../../../library
 import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { switchMap } from 'rxjs/operators'
+import { of } from 'rxjs'
 /* tslint:enable */
 
 @Component({
@@ -84,6 +86,8 @@ export class EventDetailComponent implements OnInit {
     tabs: [],
     filters: [],
   }
+  linkedCourseData: any
+  linkedCourseProgress: any
 
   constructor(
     public dialog: MatDialog,
@@ -97,6 +101,7 @@ export class EventDetailComponent implements OnInit {
     private snackBar: MatSnackBar,
     private netCoreService: NetCoreService,
     private contentService: WidgetContentService,
+    private router: Router,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -129,10 +134,35 @@ export class EventDetailComponent implements OnInit {
       // }
       // this.data = this.route.snapshot.data.topic.data
     })
-    this.eventSvc.getEventData(this.eventId).subscribe((data: any) => {
-      this.eventData = data?.result?.event
+    this.eventSvc.getEventData(this.eventId).pipe(
+      switchMap((data: any) => {
+        const tempEventData = data?.result?.event
+        if (tempEventData?.courseLinked) {
+          return this.eventSvc.getContentData(tempEventData?.courseLinked).pipe(
+            switchMap((contentRes: any) => {
+              const reqBody = {
+                request: {
+                  retiredCoursesEnabled: true,
+                  courseId: [tempEventData?.courseLinked],
+                }
+              }
+              const userId = this.configSvc.userProfile ? this.configSvc.userProfile.userId || '' : ''
+              return this.eventSvc.getCourseEnrollData(userId, reqBody).pipe(
+                switchMap((enrollRes: any) => {
+                  return of({ eventData: tempEventData, contentData: contentRes?.result?.content, enrollData: enrollRes?.data?.courses[0] || {} })
+                })
+              )
+            })
+          )
+        }
+        return of({ eventData: tempEventData })
+      })
+    ).subscribe((data: any) => {
+      this.eventData = data?.eventData
+      this.linkedCourseData = data?.contentData
+      this.linkedCourseProgress = data?.enrollData
       this.isretired = this.eventData?.status?.toLowerCase() !== 'live'
-      this.eventSvc.eventData = data.result.event
+      this.eventSvc.eventData = data?.eventData
       if (this.eventData && typeof this.eventData.batches === 'string') {
         this.eventData.batches = JSON.parse(this.eventData.batches)
       }
@@ -233,7 +263,7 @@ export class EventDetailComponent implements OnInit {
           }
           if (this.enrolledEvent && this.enrolledEvent.completionPercentage) {
             this.enrolledEvent['completionPercentage'] = Math.round(this.enrolledEvent.completionPercentage).toFixed(0)
-            if(this.enrolledEvent && this.enrolledEvent.status === 2) {
+            if (this.enrolledEvent && this.enrolledEvent.status === 2) {
               this.contentViewEventForNetCore('complete')
             }
           }
@@ -316,12 +346,12 @@ export class EventDetailComponent implements OnInit {
   // }
 
   handleOpenCertificateDialog() {
-    this.downloadCertificateBool = true;
+    this.downloadCertificateBool = true
 
     if (!this.enrolledEvent?.contentId || !this.configSvc.userProfile?.userId) {
-      this.downloadCertificateBool = false;
-      this.snackBar.open('Missing required information to fetch certificate.');
-      return;
+      this.downloadCertificateBool = false
+      this.snackBar.open('Missing required information to fetch certificate.')
+      return
     }
 
     const payload = {
@@ -330,17 +360,17 @@ export class EventDetailComponent implements OnInit {
         batchId: this.enrolledEvent.batchId || '',
         userId: this.configSvc.userProfile.userId,
       },
-    };
+    }
 
     this.contentService.downloadCertV2(payload).subscribe(
       (response) => {
-        this.downloadCertificateBool = false;
+        this.downloadCertificateBool = false
 
         if (response?.result?.printUri) {
-          const certId = this.enrolledEvent?.certificateObj?.certId || '';
+          const certId = this.enrolledEvent?.certificateObj?.certId || ''
 
           if (this.enrolledEvent?.certificateObj) {
-            this.enrolledEvent.certificateObj.certData = response.result.printUri;
+            this.enrolledEvent.certificateObj.certData = response.result.printUri
           }
 
           this.dialog.open(CertificateDialogComponent, {
@@ -349,16 +379,16 @@ export class EventDetailComponent implements OnInit {
               cet: response.result.printUri,
               certId,
             },
-          });
+          })
         } else {
-          this.snackBar.open('Certificate not available.');
+          this.snackBar.open('Certificate not available.')
         }
       },
       (_error: any) => {
-        this.downloadCertificateBool = false;
-        this.snackBar.open('Unable to view certificate due to an error.');
+        this.downloadCertificateBool = false
+        this.snackBar.open('Unable to view certificate due to an error.')
       }
-    );
+    )
   }
 
   translateLabels(label: string, type: any) {
@@ -391,7 +421,12 @@ export class EventDetailComponent implements OnInit {
   }
 
   downloadPDF(handout: any) {
-    fileSaver.saveAs(handout.content, handout.title)
+    if (isString(handout)) {
+      fileSaver.saveAs(handout, `${this.eventData.identifier}_pre_reads`)
+    } else {
+      fileSaver.saveAs(handout.content, handout.title)
+    }
+
   }
 
   checkValidJSON(str: any) {
@@ -485,57 +520,62 @@ export class EventDetailComponent implements OnInit {
       }
     ))
   }
-    contentViewEventForNetCore(eventType:any) {
-      if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
-        && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
-        && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
-        && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
-        && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
-      ) { 
-        let payload: any = {}
-        // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
-        //   payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
-        // }
-        if(this.eventData && this.eventData.name) {
-          payload['event_name'] = this.eventData.name
-        }
-        if(this.eventData && this.eventData.courseCategory) {
-          payload['event_category'] = this.eventData.resourceType
-        }
-        if(this.eventData && this.eventData.identifier) {
-          payload['event_id'] = this.eventData.identifier
-        }
-        //if(this.eventData && this.eventData.name) {
-          payload['event_url'] = window.location.href
-        //}
-        if(this.eventData && this.eventData.appIcon) {
-          payload['event_image'] = this.eventData.appIcon
-        }
-        // if(this.eventData && this.eventData.duration) {
-          payload['event_duration'] = this.eventData.duration > 0 ? Number(this.eventData.duration ): 0
-        // }
-        if(this.eventData && this.eventData.sourceName) {
-          payload['event_provider_name'] = this.eventData.sourceName
-        }
-        if(eventType === 'view') {
-         this.netCoreService.trackEventForContentAndEvent('event_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
-        } else if (eventType === 'enroll') {
-         this.netCoreService.trackEventForContentAndEvent('event_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
-        }
-        
+  contentViewEventForNetCore(eventType: any) {
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig  // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view // NOSONAR
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.content_view.isActive // NOSONAR
+    ) {
+      let payload: any = {}
+      // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) { // NOSONAR
+      //   payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      // }
+      if (this.eventData && this.eventData.name) {
+        payload['event_name'] = this.eventData.name
       }
+      if (this.eventData && this.eventData.courseCategory) {
+        payload['event_category'] = this.eventData.resourceType
+      }
+      if (this.eventData && this.eventData.identifier) {
+        payload['event_id'] = this.eventData.identifier
+      }
+      //if(this.eventData && this.eventData.name) {
+      payload['event_url'] = window.location.href
+      //}
+      if (this.eventData && this.eventData.appIcon) {
+        payload['event_image'] = this.eventData.appIcon
+      }
+      // if(this.eventData && this.eventData.duration) {
+      payload['event_duration'] = this.eventData.duration > 0 ? Number(this.eventData.duration) : 0
+      // }
+      if (this.eventData && this.eventData.sourceName) {
+        payload['event_provider_name'] = this.eventData.sourceName
+      }
+      if (eventType === 'view') {
+        this.netCoreService.trackEventForContentAndEvent('event_view', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      } else if (eventType === 'enroll') {
+        this.netCoreService.trackEventForContentAndEvent('event_enrolment', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+      }
+
     }
-  
-    secondsToTime(d:any)
-    {
-      d = Number(d);
-      var h = Math.floor(d / 3600);
-      var m = Math.floor(d % 3600 / 60);
-      var s = Math.floor(d % 3600 % 60);
-  
-      var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-      var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
-      var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-      return hDisplay + mDisplay + sDisplay; 
+  }
+
+  secondsToTime(d: any) {
+    d = Number(d)
+    var h = Math.floor(d / 3600)
+    var m = Math.floor(d % 3600 / 60)
+    var s = Math.floor(d % 3600 % 60)
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : ""
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : ""
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : ""
+    return hDisplay + mDisplay + sDisplay
+  }
+
+  navigateToLinkedCourse() {
+    if (this.linkedCourseData && this.linkedCourseData.identifier) {
+      this.router.navigate([`/app/toc/${this.linkedCourseData.identifier}`])
     }
+  }
 }

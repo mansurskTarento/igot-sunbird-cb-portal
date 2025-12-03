@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { EventService } from '../../services/events.service'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { DialogConfirmComponent } from '../../../../../../../../../src/app/component/dialog-confirm/dialog-confirm.component'
 // import { ActivatedRoute } from '@angular/router'
 // import { ConfigurationsService } from '@ws-widget/utils'
 // import { NSProfileDataV2 } from '../../models/profile-v2.model'
@@ -22,6 +24,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isenrollFlow: any
   @Input() enrollFlowItems: any
   @Input() enrolledEvent: any
+  @Input() courseProgress: any
   @Output() enrollEvent: any = new EventEmitter()
   startTime: any
   endTime: any
@@ -52,7 +55,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     private events: EventServiceGlobal,
     private translate: TranslateService,
     private router: Router,
-    private eventSvc: EventService
+    private eventSvc: EventService,
+    private dialog: MatDialog
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -219,7 +223,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     if (this.eventData && this.eventData.recordedLinks && this.eventData.recordedLinks.length > 0) {
       return this.eventData.recordedLinks[0]
     }
-    return this.eventData.registrationLink
+    return false
   }
 
   navigateToPLayer() {
@@ -344,9 +348,25 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     this.enableShare = false
   }
 
-
-
   public openSnackBar(message: string) {
     this.matSnackBar.open(message)
+  }
+
+  completeCourse() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '600px',
+      data: {
+        title: 'Course Completion Required',
+        body: 'Complete the linked course atleast 30% to enroll to this event.',
+        button: [{ type: 'primary', text: 'goToCourse' }, { type: 'secondary', text: 'cancel' }],
+      },
+      position: { top: '100px' },
+      autoFocus: false,
+    })
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.router.navigate([`/app/toc/${this.eventData.courseLinked}`])
+      }
+    })
   }
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject } from 'rxjs'
 import { environment } from 'src/environments/environment'
 import { FormExtService } from '../../../../../../../../src/app/services/form-ext.service'
+import { catchError, map } from 'rxjs/operators'
 const API_END_POINTS = {
   EVENT_READ: `/apis/proxies/v8/event/v4/read`,
   GET_EVENTS: '/apis/proxies/v8/sunbirdigot/search',
@@ -19,6 +20,8 @@ const API_END_POINTS = {
   FEATURED: `/apis/proxies/v8/user/featured/events`,
   MY_EVENTS: (userId: string) =>
     `/apis/proxies/v8/user/events/list/${userId}`,
+  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
+  ENROLL_CONTENT_DATA: (userId: string,) => `/apis/proxies/v8/learner/course/v4/user/enrollment/details/${userId}`,
 }
 
 @Injectable({
@@ -104,5 +107,21 @@ export class EventService {
       this.getKeySpeakerConfig = await this.formSvc.homeFormReadData(requestData).toPromise()
     }
     return of(this.getKeySpeakerConfig).toPromise()
+  }
+
+  getContentData(contentId: string): Observable<any> {
+    return this.http.get<any>(`${API_END_POINTS.CONTENT_READ(contentId)}`)
+  }
+
+  getCourseEnrollData(userId: string, request: any): Observable<{ data: any; error: any }> {
+    return this.http.post(API_END_POINTS.ENROLL_CONTENT_DATA(userId), request).pipe(
+      map((rData: any) => {
+        const result = rData?.result ?? null
+        return { data: result, error: null }
+      }),
+      catchError((error: any) => {
+        return of({ data: null, error })
+      })
+    )
   }
 }

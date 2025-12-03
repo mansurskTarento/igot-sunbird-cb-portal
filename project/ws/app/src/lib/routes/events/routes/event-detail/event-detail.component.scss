@@ -734,3 +734,97 @@ button.ws-mat-primary-background {
   width: 24px;
   height: 24px;
 }
+
+.linked-course-container {
+  width: 100%;
+  background: white;
+
+  .details-container {
+    width: 1202px;
+    margin: 0 auto;
+
+    .seperator {
+      width: 1px;
+      height: 40px;
+      background-color: #E0E0E0;
+    }
+
+    .course-name {
+      width: 300px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+  }
+}
+
+.complete-course-section {
+  background: #243257;
+  border-radius: 8px;
+  margin: 24px 0;
+  color: white;
+
+  .icon-container {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(180deg, #E05599 0%, #53A18F 27.28%, #F5EF9E 45.93%, #3865A5 73.37%, #C84E8D 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .course-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: white;
+  }
+
+  .section-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 700px;
+
+    strong {
+      font-weight: 600;
+      color: white;
+    }
+  }
+
+  .go-to-course-btn {
+    background-color: white;
+    color: #1B4CA1;
+    font-weight: 600;
+    height: 32px;
+    border-radius: 25px;
+    font-size: 15px;
+    line-height: 1.1px;
+  }
+}

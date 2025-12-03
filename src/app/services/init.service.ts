@@ -177,10 +177,17 @@ export class InitService {
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/hubs/course-cataloguee.svg'),
     )
     iconRegistry.addSvgIcon(
+      'chat',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/edit.svg'),
+    )
+    iconRegistry.addSvgIcon(
+      'content-locked',
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/content-locked.svg'),
+    )
+    iconRegistry.addSvgIcon(
       'approved-icon',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/approved.svg'),
     )
-
     ///
     // iconRegistry.addSvgIcon(
     //   'mdo',
@@ -485,10 +492,10 @@ export class InitService {
             if (orgData && orgData['netcoreDisabled']) {
 
             } else {
-              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', "tin");
-              smartech('register', 'b632681d782c843e187fd5447c97ed4d');
-              smartech('identify', '');
-              smartech('dispatch', 1, {});
+              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', "tin")
+              smartech('register', 'b632681d782c843e187fd5447c97ed4d')
+              smartech('identify', '')
+              smartech('dispatch', 1, {})
               if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
                 && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
               ) {
@@ -645,7 +652,7 @@ export class InitService {
           localStorage.setItem('login', 'true')
         } else {
           // this.authSvc.force_logout()
-          // await this.http.get('/apis/reset').toPromise()          
+          // await this.http.get('/apis/reset').toPromise()
           if (apiResponse && apiResponse.redirectUrl) {
             window.location.href = apiResponse.redirectUrl
           } else {
@@ -656,7 +663,7 @@ export class InitService {
         const details = {
           group: [],
           profileDetailsStatus: !!_.get(userPidProfile, 'profileDetails.mandatoryFieldsExists'),
-          roles: (userPidProfile.roles || []).map((v: { toLowerCase: () => void; }) => v.toLowerCase()),
+          roles: (userPidProfile.roles || []).map((v: { toLowerCase: () => void }) => v.toLowerCase()),
           tncStatus: !userPidProfile.promptTnC,
           isActive: !!!userPidProfile.isDeleted,
         }
@@ -713,7 +720,7 @@ export class InitService {
             // _.set(res, 'result.response.roles', roles)
             return _.get(res, 'result.response')
           })).toPromise()
-          
+
         if (userPidProfile && userPidProfile.roles && userPidProfile.roles.length > 0 &&
           this.hasRole(userPidProfile.roles)) {
           // if (userPidProfile.result.response.organisations.length > 0) {
@@ -786,7 +793,7 @@ export class InitService {
         const details = {
           group: [],
           profileDetailsStatus: !!_.get(userPidProfile, 'profileDetails.mandatoryFieldsExists'),
-          roles: (userPidProfile.roles || []).map((v: { toLowerCase: () => void; }) => v.toLowerCase()),
+          roles: (userPidProfile.roles || []).map((v: { toLowerCase: () => void }) => v.toLowerCase()),
           tncStatus: !userPidProfile.promptTnC,
           isActive: !!!userPidProfile.isDeleted,
         }
@@ -1065,8 +1072,8 @@ export class InitService {
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
       userInfoPayload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
     }
-    // if(userEnrollmentCount && 
-    //   userEnrollmentCount['userCourseEnrolmentInfo'] && 
+    // if(userEnrollmentCount &&
+    //   userEnrollmentCount['userCourseEnrolmentInfo'] &&
     //   userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
     //   userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
     // }
@@ -1100,7 +1107,7 @@ export class InitService {
       }
       // if (this.configSvc.unMappedUser.profileDetails.profileImageUrl) {
       //   userInfoPayload['PROFILE_PHOTO'] = this.configSvc.unMappedUser.profileDetails.profileImageUrl.trim()
-      // } 
+      // }
     }
 
     if (this.configSvc && this.configSvc.unMappedUser
@@ -1156,6 +1163,6 @@ export class InitService {
       .toLowerCase()
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .join(' ')
   }
 }
