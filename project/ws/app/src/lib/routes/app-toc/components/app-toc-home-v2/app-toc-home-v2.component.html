@@ -378,10 +378,10 @@
                       translateLabel(contentReadData?.primaryCategory, 'searchfilters') }}</div>
                   </ng-container>
                 </div>
-                <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2 relative"
+                <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2"
                   *ngIf="contentReadData?.additionalTags?.includes('iGOT Specialization')">
-                  <mat-icon class="mr-1 approved-icon" svgIcon="approved-icon"></mat-icon>
-                  <div class="text-xs font-bold text-white leading-3 ml-5 nodtranslate">{{
+                  <img class="approved-icon" src="./assets/icons/approved.svg" alt="approved">
+                  <div class="text-xs font-bold text-white leading-3 nodtranslate">{{
                     'cardcontentv2.iGOTSpecializationProgram' | translate }}</div>
                 </div>
                 <div class="flex items-center" *ngIf="cbPlanEndDate">

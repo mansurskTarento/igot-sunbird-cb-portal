@@ -2,7 +2,7 @@
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
         <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start"
             class="custom-sidenav filter-container-search"
-            *ngIf="((combinedFacets.length > 0 || 
+            *ngIf="((combinedFacets.length > 0 ||
         ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show') && !isMobileView">
             <ng-container>
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
@@ -280,6 +280,7 @@
                             <ng-container *ngFor="let course of resourcesSearchResults; let index = index">
                                 <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
                                     (telemetry)="applyTelemetry($event, index)"
+                                    [igotSpecializationPrograms]="igotSpecializationPrograms"
                                     [cbpPlans]="cbpPlanList"></ws-app-course-content-card>
                             </ng-container>
                             <p class="see-all-results text-center font-normal brand-color cursor-pointer"
