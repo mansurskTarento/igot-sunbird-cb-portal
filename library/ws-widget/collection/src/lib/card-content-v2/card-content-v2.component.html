@@ -1161,8 +1161,9 @@
             <img mat-card-image [src]="widgetData.content.posterImage | pipePublicURL" loading="lazy"
               class="card-image ws-mat-primary-lite-background margin-remove"
               [wsUtilsDefaultThumbnail]="defaultThumbnail" [alt]="widgetData.content.name" />
-            <div class="duration-box top-right-corner-portrait" *ngIf="widgetData?.isiGOTSpecialization">
-              <mat-icon class="mr-1" svgIcon="approved-icon"></mat-icon>
+            <div class="duration-box top-right-corner-portrait"
+              *ngIf="widgetData?.isiGOTSpecialization && widgetData?.content?.additionalTags?.includes('iGOT Specialization')">
+              <img class="approved-icon mr-1" src="./assets/icons/approved.svg" alt="approved">
               <span class=" ws-mat-white-text duration nodtranslate">
                 {{'cardcontentv2.iGOTSpecializationProgram' | translate}}
               </span>
@@ -1578,8 +1579,9 @@
               <img mat-card-image [src]="widgetData.content.posterImage | pipePublicURL" loading="lazy"
                 class="card-image ws-mat-primary-lite-background margin-remove"
                 [wsUtilsDefaultThumbnail]="defaultThumbnail" [alt]="widgetData.content.name" />
-              <div class="duration-box top-right-corner-portrait" *ngIf="widgetData?.isiGOTSpecialization">
-                <mat-icon class="mr-1" svgIcon="approved-icon"></mat-icon>
+              <div class="duration-box top-right-corner-portrait"
+                *ngIf="widgetData?.isiGOTSpecialization && widgetData?.content?.additionalTags?.includes('iGOT Specialization')">
+                <img class="approved-icon mr-1" src="./assets/icons/approved.svg" alt="approved">
                 <span class=" ws-mat-white-text duration nodtranslate">
                   {{'cardcontentv2.iGOTSpecializationProgram' | translate}}
                 </span>
@@ -1714,7 +1716,7 @@
       greyOut:
         widgetData.deletedMode === 'greyOut' && !isLiveOrMarkForDeletion
           ? true
-          : widgetData?.intranetMode === 'greyOut' && showIntranetContent    
+          : widgetData?.intranetMode === 'greyOut' && showIntranetContent
     }" (click)="(showIntranetContent || !isLiveOrMarkForDeletion) && showSnackbar()">
     <div class="display-contents" [ngClass]="{
         disableClick:
@@ -1823,7 +1825,7 @@
               </div>
               <div class="flex ml-5 flex-end course_v2" *ngIf="widgetData?.content?.subSectorName">
                 <span  class="content-type-class font-normal mat-caption" >
-                  
+
                 {{widgetData?.content?.subSectorName}}</span>
               </div> -->
                 </div>
