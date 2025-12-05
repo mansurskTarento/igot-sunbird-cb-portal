@@ -1,12 +1,12 @@
 //#region (imports)
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { Component, Inject, OnInit } from '@angular/core'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
 import * as _ from 'lodash'
-import { AppTocService } from '../../services/app-toc.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { AppTocService } from '../../services/app-toc.service'
+import { HttpErrorResponse } from '@angular/common/http'
+import { TranslateService } from '@ngx-translate/core'
 //#endregion (imports)
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
@@ -17,7 +17,7 @@ const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
   templateUrl: './public-survey-form.component.html',
   styleUrls: ['./public-survey-form.component.scss']
 })
-export class PublicSurveyFormComponent implements OnInit{
+export class PublicSurveyFormComponent implements OnInit {
 
   //#region (properties)
   rating = 0
@@ -141,11 +141,11 @@ export class PublicSurveyFormComponent implements OnInit{
     if (this.surveyForm && this.surveyForm.controls.fields) {
       const questionsArray = this.questionsArray
       const childQuestionsArray = questionsArray.controls.filter((question: any) => {
-        return question.value && question.value.parentId === sectionId;
-      });
+        return question.value && question.value.parentId === sectionId
+      })
 
       if (childQuestionsArray.length > 0) {
-        return this.fb.array(childQuestionsArray);
+        return this.fb.array(childQuestionsArray)
       }
     }
     return this.fb.array([]) as FormArray
@@ -167,7 +167,7 @@ export class PublicSurveyFormComponent implements OnInit{
   }
 
   getEmailFromsurvey() {
-    const answerObj =  this.dataObject.find((a:  any)=> a.question && a.question.toLowerCase() === 'email')
+    const answerObj = this.dataObject.find((a: any) => a.question && a.question.toLowerCase() === 'email')
     return answerObj ? answerObj.answer : ''
   }
 
