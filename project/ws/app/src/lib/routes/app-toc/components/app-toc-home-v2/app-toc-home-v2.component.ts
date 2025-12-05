@@ -3051,10 +3051,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     // Get survey ID and course ID from environment and content data
     const surveyId = this.environment.publicContentSurveyId || ''
     const courseId = this.contentReadData?.identifier || ''
+    const courseName = this.contentReadData?.name || ''
 
     const data = {
       surveyId: surveyId,
-      courseId: courseId
+      courseId: courseId,
+      courseName: courseName
     }
     const dialogRef = this.dialog.open(PublicSurveyFormComponent, {
       disableClose: true,
