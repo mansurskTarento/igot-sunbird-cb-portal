@@ -2103,7 +2103,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       const data = {
         surveyId,
         courseName: this.contentReadData?.name || '',
-        courseID: this.getBatchId() || this.contentReadData?.identifier || ''
+        courseID: this.contentReadData?.identifier || ''
       }
       const dialogRef = this.dialog.open(CompletionSurveyFormComponent, {
         disableClose: true,
