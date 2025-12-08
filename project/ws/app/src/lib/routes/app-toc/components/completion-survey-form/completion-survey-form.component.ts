@@ -1,12 +1,12 @@
 //#region (imports)
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { Component, Inject, OnInit } from '@angular/core'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
 import * as _ from 'lodash'
-import { AppTocService } from '../../services/app-toc.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { AppTocService } from '../../services/app-toc.service'
+import { HttpErrorResponse } from '@angular/common/http'
+import { TranslateService } from '@ngx-translate/core'
 //#endregion (imports)
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
@@ -141,11 +141,11 @@ export class CompletionSurveyFormComponent implements OnInit {
     if (this.surveyForm && this.surveyForm.controls.fields) {
       const questionsArray = this.questionsArray
       const childQuestionsArray = questionsArray.controls.filter((question: any) => {
-        return question.value && question.value.parentId === sectionId;
-      });
+        return question.value && question.value.parentId === sectionId
+      })
 
       if (childQuestionsArray.length > 0) {
-        return this.fb.array(childQuestionsArray);
+        return this.fb.array(childQuestionsArray)
       }
     }
     return this.fb.array([]) as FormArray
@@ -175,7 +175,7 @@ export class CompletionSurveyFormComponent implements OnInit {
         version: 4,
         status: 'SUBMITTED',
         responses: this.dataObject,
-        contextId: _.get(this.data, 'batchData.courseId'),
+        contextId: _.get(this.data, 'courseID', ''),
         contextName: _.get(this.data, 'courseName', ''),
       }
 
@@ -202,31 +202,31 @@ export class CompletionSurveyFormComponent implements OnInit {
 
   //#region (data processing)
   get dataObject(): any {
-      const dataObject: any = []
-      const fields = _.get(this.surveyForm, 'value.fields', [])
-      if (fields) {
-        fields.forEach((field: any) => {
-          let value = field.isNA ? 'N/A' : field.answer
-          if (!field.isNA && field.fieldType === 'date' && value) {
-            const formattedYear = value.getFullYear()
-            const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
-            const formattedDay = String(value.getDate()).padStart(2, '0')
-            value = `${formattedYear}-${formattedMonth}-${formattedDay}`
-          }
-          dataObject.push({
-            questionId: field.questionId,
-            question: field.question,
-            answer: value,
-            answerType: field.fieldType
-          })
+    const dataObject: any = []
+    const fields = _.get(this.surveyForm, 'value.fields', [])
+    if (fields) {
+      fields.forEach((field: any) => {
+        let value = field.isNA ? 'N/A' : field.answer
+        if (!field.isNA && field.fieldType === 'date' && value) {
+          const formattedYear = value.getFullYear()
+          const formattedMonth = String(value.getMonth() + 1).padStart(2, '0')
+          const formattedDay = String(value.getDate()).padStart(2, '0')
+          value = `${formattedYear}-${formattedMonth}-${formattedDay}`
+        }
+        dataObject.push({
+          questionId: field.questionId,
+          question: field.question,
+          answer: value,
+          answerType: field.fieldType
         })
-      }
-      return dataObject
+      })
     }
+    return dataObject
+  }
 
-    doItLater() {
-      this.dialogRef.close(false)
-    }
+  doItLater() {
+    this.dialogRef.close(false)
+  }
   //#endregion (data processing)
 
   updateQuestionValues(event: any) {
@@ -244,7 +244,7 @@ export class CompletionSurveyFormComponent implements OnInit {
   }
   //#endregion (UI Interactions)
 
-  
+
 
 
 
