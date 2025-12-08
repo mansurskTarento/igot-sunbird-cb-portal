@@ -625,11 +625,9 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         this.seeAllSvc.microCredentialsSearch(request.microSearch.request.url).subscribe((response: any) => {
           let results: any = response && response.result && response.result.content ? response.result.content : []
           const showViewMore = Boolean(
-            response.result &&
-            strip.request &&
             results &&
             results.length > 5 &&
-            strip.stripConfig && strip.microSearch.postCardForSearch,
+            strip.stripConfig && strip.stripConfig.postCardForSearch,
           )
 
           const viewMoreUrl = showViewMore
@@ -694,8 +692,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           this.getTabDataByNewReqMicroCreds(currentStrip, tabIndex, pillIndex, currentPillFromMap, true)
         } else if (currentPillFromMap.request.type === 'enrollment') {
           this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
-          stripMap.showOnLoader = false;
+          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
+          stripMap.showOnLoader = false
         } else if (currentPillFromMap.request.type === 'eventEnrollment') {
           this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
         }
@@ -754,8 +752,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           this.getTabDataByNewReqMicroCreds(currentStrip, tabIndex, 0, currentPillFromMap, true)
         } else if (currentPillFromMap.request.type === 'enrollment') {
           this.fetchFromInternalEnrollmentList(currentStrip, tabIndex, pillIndex, true)
-          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false;
-          stripMap.showOnLoader = false;
+          stripMap.tabs[tabIndex].pillsData[pillIndex].tabLoading = false
+          stripMap.showOnLoader = false
         } else if (currentPillFromMap.request.type === 'eventEnrollment') {
           this.fetchEventEnrollmentList(currentStrip, tabIndex, pillIndex, true)
         }
@@ -809,7 +807,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
-        userId = this.configSvc.userProfile.userId;
+        userId = this.configSvc.userProfile.userId
       }
       if (currentPillFromMap.request.payload
         && currentPillFromMap.request.payload.request
@@ -820,12 +818,12 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       this.enrollSvc.fetchInternalEnrollmentData(userId, currentPillFromMap.request.payload).pipe(
         mergeMap((res: any) => {
           if (_.get(res, 'result.courses', []).length > 0 && _.get(this.configSvc, 'userProfile.userId') && _.get(currentPillFromMap, 'request.payload.request.status') === 'Completed') {
-            const formContextList: any[] = [];
-            const formRefMap: Record<string, any> = {}; // contextId -> course reference map
+            const formContextList: any[] = []
+            const formRefMap: Record<string, any> = {} // contextId -> course reference map
 
             // Build formBody and maintain reference map
             for (const course of res.result.courses) {
-              const content = course.content;
+              const content = course.content
               if (content?.completionSurveyLink && content?.identifier) {
                 const sID = content.completionSurveyLink.split('surveys/')
                 const formId = sID[1]
@@ -834,8 +832,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
                   formContextList.push({
                     formId,
                     contextId: content.identifier,
-                  });
-                  formRefMap[content.identifier] = course; // direct reference to course
+                  })
+                  formRefMap[content.identifier] = course // direct reference to course
                 }
               }
             }
@@ -845,33 +843,33 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
               const formBody = {
                 userId: _.get(this.configSvc, 'userProfile.userId'),
                 formContextList
-              };
+              }
 
               return this.seeAllSvc.getApplicationsById(formBody).pipe(
                 map((response) => {
-                  const statusList = _.get(response, 'result.response', []);
+                  const statusList = _.get(response, 'result.response', [])
 
                   // Update course with survey status
                   for (const status of statusList) {
-                    const course = formRefMap[status.contextId];
+                    const course = formRefMap[status.contextId]
                     if (course) {
-                      course['surveyCompletionStatus'] = status.submitted;
+                      course['surveyCompletionStatus'] = status.submitted
                     }
                   }
 
-                  return res; // Return the updated original response
+                  return res // Return the updated original response
                 }),
                 catchError((error) => {
-                  console.error('Error fetching survey status:', error);
+                  console.error('Error fetching survey status:', error)
                   // Return the original response without survey status on error
-                  return of(res);
+                  return of(res)
                 })
-              );
+              )
             }
           }
 
           // Return existing response if no formContextList
-          return of(res);
+          return of(res)
         })
       ).subscribe((res: any) => {
         if (res && res.result && res.result.courses && res.result.courses.length) {
@@ -902,7 +900,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
-        userId = this.configSvc.userProfile.userId;
+        userId = this.configSvc.userProfile.userId
       }
       if (currentPillFromMap.request.payload
         && currentPillFromMap.request.payload.request
@@ -922,34 +920,34 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   formatNewEnrollmentData(strip: any, tabIndex: number, pillIndex: number, courses: any, _calculateParentStatus: any = true) {
-    let content: any = [];
+    let content: any = []
     if (courses && courses.length) {
       content = courses.map((c: any) => {
-        const contentTemp: any = c.content || c.event || {};
-        contentTemp.completionPercentage = c.completionPercentage || c.progress || 0;
-        contentTemp.completionStatus = c.completionStatus || c.status || 0;
-        contentTemp.enrolledDate = c.enrolledDate || '';
-        contentTemp.lastContentAccessTime = c.lastContentAccessTime || '';
-        contentTemp.lastReadContentStatus = c.lastReadContentStatus || '';
-        contentTemp.lastReadContentId = c.lastReadContentId || '';
-        contentTemp.lrcProgressDetails = c.lrcProgressDetails || '';
-        contentTemp.issuedCertificates = c.issuedCertificates || c.issued_certificates || [];
-        contentTemp.batchId = c.batchId || '';
-        contentTemp.content = c.content || c.event || {};
-        contentTemp.content.primaryCategory = c.content && c.content.primaryCategory || c.event && c.event.resourceType || '';
-        contentTemp.cType = c.event ? 'event' : '';
+        const contentTemp: any = c.content || c.event || {}
+        contentTemp.completionPercentage = c.completionPercentage || c.progress || 0
+        contentTemp.completionStatus = c.completionStatus || c.status || 0
+        contentTemp.enrolledDate = c.enrolledDate || ''
+        contentTemp.lastContentAccessTime = c.lastContentAccessTime || ''
+        contentTemp.lastReadContentStatus = c.lastReadContentStatus || ''
+        contentTemp.lastReadContentId = c.lastReadContentId || ''
+        contentTemp.lrcProgressDetails = c.lrcProgressDetails || ''
+        contentTemp.issuedCertificates = c.issuedCertificates || c.issued_certificates || []
+        contentTemp.batchId = c.batchId || ''
+        contentTemp.content = c.content || c.event || {}
+        contentTemp.content.primaryCategory = c.content && c.content.primaryCategory || c.event && c.event.resourceType || ''
+        contentTemp.cType = c.event ? 'event' : ''
         if (c.surveyCompletionStatus !== undefined) {
-          contentTemp.surveyCompletionStatus = c.surveyCompletionStatus;
+          contentTemp.surveyCompletionStatus = c.surveyCompletionStatus
         }
-        return contentTemp;
-      });
+        return contentTemp
+      })
     }
 
     let sortedContent: any = (content || []).sort((a: any, b: any) => {
-      const dateA: any = new Date(a.lastContentAccessTime || 0);
-      const dateB: any = new Date(b.lastContentAccessTime || 0);
-      return dateB - dateA;
-    });
+      const dateA: any = new Date(a.lastContentAccessTime || 0)
+      const dateB: any = new Date(b.lastContentAccessTime || 0)
+      return dateB - dateA
+    })
 
     if (strip && strip.tabs && strip.tabs.length) {
       if (strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length) {
