@@ -4,8 +4,7 @@
   [primaryCategory]="primaryCategory" [canAttempt]="canAttempt" [noOfQuestions]="noOfQuestions"
   (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory"
   [instructionAssessment]="instructionAssessment" [quizData]="quizData"
-  [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-  [forPreview]="forPreview">
+  [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [forPreview]="forPreview">
 </viewer-overview>
 
 <!-- Overlay Loader -->
@@ -14,7 +13,7 @@
     <mat-spinner [diameter]="150"></mat-spinner>
   </div>
   <div class="loader-message">
-    <span class="mat-heading" >{{'playerbrief.calculateResult' | translate}}</span>
+    <span class="mat-heading">{{'playerbrief.calculateResult' | translate}}</span>
   </div>
 </div>
 <!-- Course Assessment-->
@@ -23,15 +22,15 @@
   <div #quizContainer class="quiz-container"
     *ngIf="viewState !== 'initial' && !isMobile && fetchingQuestionsStatus === 'done'">
     <div class="flex flex-row margin-m"
-    *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
-    <div class="left-container">
-      <div class="flex flex-row justify-between align-center assessment-header">
-        <div>
-          <div (click)="back()" class="no-border flex cursor-pointer back_button">
-            <span class="subheading-back">{{resourceName}}</span>
+      *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
+      <div class="left-container">
+        <div class="flex flex-row justify-between align-center assessment-header">
+          <div>
+            <div (click)="back()" class="no-border flex cursor-pointer back_button">
+              <span class="subheading-back">{{resourceName}}</span>
+            </div>
           </div>
-        </div>
-        <!-- <div class="section-dd-container" *ngIf="assessmentType !== 'optionalWeightage'">
+          <!-- <div class="section-dd-container" *ngIf="assessmentType !== 'optionalWeightage'">
           <div class="flex flex-row"  [ngClass]="{'hide-section': paperSections.length < 2}">
             <div>
               <mat-form-field appearance="none">
@@ -48,163 +47,171 @@
             </div>
           </div>
         </div> -->
-        <div>
-          <div class="flex flex-1 flex-row-reverse butto_box end">
-            <ng-container
-              *ngIf="!allSecAttempted.full && allSecAttempted.next && ((currentQuestionIndex+1) === totalQCount)">
-              <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
-                (click)="nextSection(allSecAttempted.next)" i18n="button quiz submit">
-                {{ 'practiceoverview.nextSection' | translate }}
-              </button>
-            </ng-container>
-            <a *ngIf="(currentQuestionIndex+1) !== totalQCount"
-              class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button
-              (click)="getNextQuestion(currentQuestionIndex + 1)">
-              <ng-container *ngIf="!isXsmall">{{ 'playerbrief.next' | translate }}</ng-container>
-            </a>
-            &nbsp;&nbsp;
-            <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode"
-              class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button (click)="proceedToSubmit()">
-              <ng-container *ngIf="!isXsmall">{{ 'playerbrief.submit' | translate }}</ng-container>
-            </a>
-            &nbsp;&nbsp;
-            <a *ngIf="currentQuestionIndex !== 0" class="ws-mat-accent-border margin-xs quest_btn prev" mat-button
-              (click)="getNextQuestion(currentQuestionIndex - 1)">
-              <ng-container *ngIf="!isXsmall">{{ 'playerbrief.previous' | translate }}</ng-container>
-            </a>
+          <div>
+            <div class="flex flex-1 flex-row-reverse butto_box end">
+              <ng-container
+                *ngIf="!allSecAttempted.full && allSecAttempted.next && ((currentQuestionIndex+1) === totalQCount)">
+                <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
+                  (click)="nextSection(allSecAttempted.next)" i18n="button quiz submit">
+                  {{ 'practiceoverview.nextSection' | translate }}
+                </button>
+              </ng-container>
+              <a *ngIf="(currentQuestionIndex+1) !== totalQCount"
+                class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button
+                (click)="getNextQuestion(currentQuestionIndex + 1)">
+                <ng-container *ngIf="!isXsmall">{{ 'playerbrief.next' | translate }}</ng-container>
+              </a>
+              &nbsp;&nbsp;
+              <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode"
+                class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button (click)="proceedToSubmit()">
+                <ng-container *ngIf="!isXsmall">{{ 'playerbrief.submit' | translate }}</ng-container>
+              </a>
+              &nbsp;&nbsp;
+              <a *ngIf="currentQuestionIndex !== 0" class="ws-mat-accent-border margin-xs quest_btn prev" mat-button
+                (click)="getNextQuestion(currentQuestionIndex - 1)">
+                <ng-container *ngIf="!isXsmall">{{ 'playerbrief.previous' | translate }}</ng-container>
+              </a>
 
-            <!-- <button class="text-white ws-mat-primary-background" mat-raised-button i18n="button quiz submit"
+              <!-- <button class="text-white ws-mat-primary-background" mat-raised-button i18n="button quiz submit"
               (click)="proceedToSubmit()">
               Finish assessment
             </button> -->
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="border-outline">
-        <div class="flex flex-1">
-          <mat-progress-bar class="quiz-progress" [color]="secondary" [mode]="determinate"
-            [value]="((currentQuestionIndex + 1)/totalQCount)*100" [bufferValue]="100">
-          </mat-progress-bar>
-        </div>
-        <ng-container *ngIf="current_Question && !process">
-          <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
-            [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl" [questionNumber]="currentQuestionIndex + 1"
-            [total]="secQuestions.length" [viewState]="viewState" [question]="current_Question"
-            [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]" [primaryCategory]="primaryCategory"
-            [ePrimaryCategory]="ePrimaryCategory"
-            [totalQCount]="totalQCount"
-            (itemSelected)="fillSelectedItems(current_Question, $event)"
-            [showAnswer]="showAnswer"
-            [currentQuestion]="current_Question"
-            [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-            [showQuestionMarks]="showQuestionMarks"
-            >
-          </viewer-question>
-        </ng-container>
-        <div class="flex flex-1">
-          <!-- <ng-container
+        <div class="border-outline">
+          <div class="flex flex-1">
+            <mat-progress-bar class="quiz-progress" [color]="secondary" [mode]="determinate"
+              [value]="((currentQuestionIndex + 1)/totalQCount)*100" [bufferValue]="100">
+            </mat-progress-bar>
+          </div>
+          <ng-container *ngIf="current_Question && !process">
+            <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
+              [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
+              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
+              (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
+              [currentQuestion]="current_Question"
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+              [showQuestionMarks]="showQuestionMarks">
+            </viewer-question>
+          </ng-container>
+          <div class="flex flex-1">
+            <!-- <ng-container
             *ngIf="ePrimaryCategory.PRACTICE_RESOURCE === primaryCategory && ((currentQuestionIndex+1) <= totalQCount)">
             <button *ngIf="!showAnswer" class="text-white ws-mat-primary-background margin-xs quest_btn"
               mat-raised-button (click)="checkAns(currentQuestionIndex + 1)" i18n="button quiz correct answer">
               Check Answer
             </button>
           </ng-container> -->
-          <div class="flex flex-1 flex-row-reverse margin-right-m butto_box end">
-            <ng-container
-              *ngIf="!allSecAttempted.full && allSecAttempted.next && ((currentQuestionIndex+1) === totalQCount) &&
+            <div class="flex flex-1 flex-row-reverse margin-right-m butto_box end">
+              <ng-container *ngIf="!allSecAttempted.full && allSecAttempted.next && ((currentQuestionIndex+1) === totalQCount) &&
               allSecAttempted.next">
-              <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
-                (click)="nextSection(allSecAttempted.next)" i18n="button quiz submit">
-                {{ 'practiceoverview.nextSection' | translate }}
-              </button>
-            </ng-container>
+                <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
+                  (click)="nextSection(allSecAttempted.next)" i18n="button quiz submit">
+                  {{ 'practiceoverview.nextSection' | translate }}
+                </button>
+              </ng-container>
+            </div>
           </div>
+          <ng-template *ngIf="!(current_Question && !process)" [ngTemplateOutlet]="showLoading"></ng-template>
         </div>
-        <ng-template *ngIf="!(current_Question && !process)" [ngTemplateOutlet]="showLoading"></ng-template>
-      </div>
 
-    </div>
-    <div class="right-container">
-      <div class="question-list">
-        <div class="ques_stats_container">
-          <div class="flex flex-row justify-between ques_stats_container_box">
-            <div class="flex flex-row">
+      </div>
+      <div class="right-container">
+        <div class="question-list">
+          <div class="ques_stats_container">
+            <div class="flex flex-row justify-between ques_stats_container_box">
+              <div class="flex flex-row">
                 <div>
                   <p class="mat-subheading-1">
                     {{ 'playerbrief.questions' | translate | titlecase}}
                   </p>
                 </div>
                 <div class="question-info">
-                  <img src="assets/icons/final-assessment/question_info.svg"/>
+                  <img src="assets/icons/final-assessment/question_info.svg" />
                 </div>
                 <div class="info-hover">
                   <div class="info-tooltip-container">
-                      <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/blue-check-box.svg"><span>{{ 'playerbrief.answered' | translate }}</span></div>
-                      <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/not-answered-checkbox.svg"><span>{{ 'playerbrief.notAnswered' | translate }}</span></div>
-                      <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/flag-check-box.svg"><span>{{ 'playerbrief.flagged' | translate }}</span></div>
+                    <div class="info-tooltip-container-item"><img
+                        src="assets/icons/final-assessment/blue-check-box.svg"><span>{{ 'playerbrief.answered' |
+                        translate }}</span></div>
+                    <div class="info-tooltip-container-item"><img
+                        src="assets/icons/final-assessment/not-answered-checkbox.svg"><span>{{ 'playerbrief.notAnswered'
+                        | translate }}</span></div>
+                    <div class="info-tooltip-container-item"><img
+                        src="assets/icons/final-assessment/flag-check-box.svg"><span>{{ 'playerbrief.flagged' |
+                        translate }}</span></div>
                   </div>
                 </div>
+              </div>
+
+              <div class="timer" *ngIf="primaryCategory !== ePrimaryCategory.PRACTICE_RESOURCE">
+                <mat-chip-list><mat-chip class="light-blue"><span class="chip-text">
+                      <!-- <ng-container [ngTemplateOutlet]="timer"></ng-container> -->
+                      <div *ngIf="timeLeft" class="flex flex-1 flex-center">
+                        <img src="assets/icons/final-assessment/timer.svg">
+                        &nbsp;&nbsp;
+
+                        <ng-container *ngIf="quizJson.timeLimit >= 3600">
+
+                          <div *ngIf="timeLeft > 120">
+                            <span class="time-title ws-mat-default-text"> {{ timeLeft | pipeDurationTransform: 'hms2H'
+                              }}</span>
+                          </div>
+                          <div *ngIf="timeLeft <= 120" class="ws-mat-red-text">
+                            <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2H'
+                              }}</span>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="quizJson.timeLimit < 3600">
+                          <div *ngIf="timeLeft > 120">
+                            <span class="time-title ws-mat-default-text"> {{ timeLeft | pipeDurationTransform: 'hms2M'
+                              }}</span>
+                          </div>
+                          <div *ngIf="timeLeft <= 120" class="ws-mat-red-text">
+                            <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2M'
+                              }}</span>
+                          </div>
+                        </ng-container>
+
+                        <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong">
+                          <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate |
+                            titlecase}})</span>
+                        </div>
+                      </div>
+                    </span>
+                  </mat-chip></mat-chip-list>
+              </div>
             </div>
-            
-            <div class="timer" *ngIf="primaryCategory !== ePrimaryCategory.PRACTICE_RESOURCE">
-              <mat-chip-list><mat-chip class="light-blue"><span class="chip-text">
-                  <!-- <ng-container [ngTemplateOutlet]="timer"></ng-container> -->
-                  <div *ngIf="timeLeft" class="flex flex-1 flex-center">
-                    <img src="assets/icons/final-assessment/timer.svg">
-                    &nbsp;&nbsp; 
-                    
-                    <ng-container *ngIf="quizJson.timeLimit >= 3600">
-                      
-                      <div *ngIf="timeLeft > 120">
-                        <span class="time-title ws-mat-default-text"> {{ timeLeft | pipeDurationTransform: 'hms2H' }}</span>
-                      </div>
-                      <div *ngIf="timeLeft <= 120" class="ws-mat-red-text">
-                        <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2H' }}</span>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="quizJson.timeLimit < 3600">
-                      <div *ngIf="timeLeft > 120">
-                        <span class="time-title ws-mat-default-text"> {{ timeLeft | pipeDurationTransform: 'hms2M' }}</span>
-                      </div>
-                      <div *ngIf="timeLeft <= 120" class="ws-mat-red-text">
-                        <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2M' }}</span>
-                      </div>
-                    </ng-container>
-                
-                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
-                      <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate | titlecase}})</span>
-                    </div>
-                  </div>
-                </span>
-              </mat-chip></mat-chip-list>
-            </div>
-          </div>
-          <div class="seperator"></div>
-          <div class="mb-24">
-            <div class="flex flex-row justify-around">
-              <div class="flex flex-col align-center">
-                <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] - getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
-                <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
-              </div>
-              <div class="flex flex-col align-center">
-                <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
-                <div class="stats-label">{{ 'playerbrief.answered' | translate }}</div>
-              </div>
-              <div class="flex flex-col align-center">
-                <div class="ques-count">{{  getSectionTotalQuestionAndAnswerCount()['minimumPassPercentage']}}%</div>
-                <div class="stats-label">{{ 'playerbrief.passingCriteria' | translate }}</div>
-              </div>
-              <!-- <div class="flex flex-col align-center">
+            <div class="seperator"></div>
+            <div class="mb-24">
+              <div class="flex flex-row justify-around">
+                <div class="flex flex-col align-center">
+                  <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] -
+                    getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
+                  <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
+                </div>
+                <div class="flex flex-col align-center">
+                  <div class="ques-count">{{ getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
+                  <div class="stats-label">{{ 'playerbrief.answered' | translate }}</div>
+                </div>
+                <div class="flex flex-col align-center">
+                  <div class="ques-count">{{ getSectionTotalQuestionAndAnswerCount()['minimumPassPercentage']}}%</div>
+                  <div class="stats-label">{{ 'playerbrief.passingCriteria' | translate }}</div>
+                </div>
+                <!-- <div class="flex flex-col align-center">
                 <div class="ques-count">{{markedQuestions.size}}</div>
                 <div class="stats-label">Skipped</div>
               </div> -->
+              </div>
             </div>
-          </div>
-          <div class="seperate-text">
-            <span>{{ 'practiceoverview.questions' | translate | titlecase}}</span>
-          </div>
-          <!-- <div class="flex flex-row justify-between">
+            <div class="seperate-text">
+              <span>{{ 'practiceoverview.questions' | translate | titlecase}}</span>
+            </div>
+            <!-- <div class="flex flex-row justify-between">
 
             <div class="flex flex-row center-text">
               <div class="answer-stats-label">Answered&nbsp;</div>
@@ -219,10 +226,10 @@
               <div><mat-chip class="orange-small">&nbsp;&nbsp;&nbsp;&nbsp;</mat-chip></div>
             </div>
           </div> -->
-        </div>
-        <!-- <div class="seperator"></div> -->
+          </div>
+          <!-- <div class="seperator"></div> -->
 
-        <!-- 
+          <!--
            'white-border':
                   !isQuestionMarked(question?.questionId) &&
                   !isQuestionAttempted(question?.questionId) &&
@@ -232,49 +239,54 @@
                   !isQuestionAttempted(question?.questionId) &&
                   currentTheme !== 'black-theme'
         -->
-        <div *ngIf="!isSubmitted && !isXsmall && viewState === 'attempt'" class="flex flex-1 question-box-auto-height">
-          <ng-template *ngIf="fetchingQuestionsStatus === 'fetching'" [ngTemplateOutlet]="showLoading"></ng-template>
-          <div class="flex flex-wrap margin-right-s margin-left-s quest_num_box quest_num_box"
-            *ngIf="fetchingQuestionsStatus === 'done'">
-            <div class="col question-list-item" *ngFor="let question of secQuestions; let i = index">
-              <div (click)="scroll(i + 1)" [ngClass]="{
+          <div *ngIf="!isSubmitted && !isXsmall && viewState === 'attempt'"
+            class="flex flex-1 question-box-auto-height">
+            <ng-template *ngIf="fetchingQuestionsStatus === 'fetching'" [ngTemplateOutlet]="showLoading"></ng-template>
+            <div class="flex flex-wrap margin-right-s margin-left-s quest_num_box quest_num_box"
+              *ngIf="fetchingQuestionsStatus === 'done'">
+              <div class="col question-list-item" *ngFor="let question of secQuestions; let i = index">
+                <div (click)="scroll(i + 1)" [ngClass]="{
                 'marked-question': isQuestionMarked(question?.questionId),
                 'attempted-question':
                   !isQuestionMarked(question?.questionId) &&
-                  isQuestionAttempted(question?.questionId)               
+                  isQuestionAttempted(question?.questionId)
               }" class="margin-side-8">
-                <div *ngIf="!isQuestionMarked(question?.questionId) &&
-                  isQuestionAttempted(question?.questionId)"  class="light-blue-small" [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'">
-                  <img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg"/>
-                </div>
-                <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
-                  isQuestionAttempted(question?.questionId))">                  
-                  <mat-chip-list class="question-flag">
-                    <mat-chip class="orange-small">
-                      <ng-container *ngIf="!isQuestionAttempted(question?.questionId)">{{ i + 1 }}</ng-container>
-                      <ng-container *ngIf="isQuestionAttempted(question?.questionId)"><img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg"/></ng-container>
-                    </mat-chip>
-                  </mat-chip-list>
-                </div>
-                <div *ngIf="!(!isQuestionMarked(question?.questionId) &&
+                  <div *ngIf="!isQuestionMarked(question?.questionId) &&
+                  isQuestionAttempted(question?.questionId)" class="light-blue-small"
+                    [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'">
+                    <img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg" />
+                  </div>
+                  <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
+                  isQuestionAttempted(question?.questionId))">
+                    <mat-chip-list class="question-flag">
+                      <mat-chip class="orange-small">
+                        <ng-container *ngIf="!isQuestionAttempted(question?.questionId)">{{ i + 1 }}</ng-container>
+                        <ng-container *ngIf="isQuestionAttempted(question?.questionId)"><img class="margin-center"
+                            src="assets/icons/final-assessment/correct_arrow.svg" /></ng-container>
+                      </mat-chip>
+                    </mat-chip-list>
+                  </div>
+                  <div *ngIf="!(!isQuestionMarked(question?.questionId) &&
                   isQuestionAttempted(question?.questionId)) && (!isQuestionMarked(question?.questionId))"
-                  class="ovel question-number" [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'"><span [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'mat-body-2-bold': 'mat-body-2'">
-                    {{ i + 1 }}
-                  </span>
+                    class="ovel question-number"
+                    [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'"><span
+                      [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'mat-body-2-bold': 'mat-body-2'">
+                      {{ i + 1 }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!-- <div class="final-submit" *ngIf="(currentQuestionIndex + 1) === totalQCount" (click)="proceedToSubmit()">
+          <!-- <div class="final-submit" *ngIf="(currentQuestionIndex + 1) === totalQCount" (click)="proceedToSubmit()">
            <div class="final-submit-cta">
               <img src="assets/icons/final-assessment/correct_arrow.svg"> <span class="cta-label">{{ 'practiceoverview.finishAssessment' | translate }}</span>
            </div>
         </div> -->
+        </div>
       </div>
     </div>
-  </div>
-  <!-- 
+    <!--
     <div *ngIf="!isSubmitted && !isXsmall && viewState === 'attempt'" class="flex flex-1">
       <ng-template *ngIf="fetchingQuestionsStatus === 'fetching'" [ngTemplateOutlet]="showLoading"></ng-template>
       <div class="flex flex-nowrap margin-right-s margin-left-s quest_num_box"
@@ -308,7 +320,7 @@
 
 
 
-  <!-- <ng-container *ngIf="fetchingQuestionsStatus === 'done'  && current_Question && !process">
+    <!-- <ng-container *ngIf="fetchingQuestionsStatus === 'done'  && current_Question && !process">
       <ng-container *ngIf="viewState === 'attempt' && !isSubmitted">
         <div class="flex flex-1 flex-column margin-top-l margin-left-xs bottom_box margin-bottom-xs">
           <div class="flex flex-start margin-left-m  cen">
@@ -320,16 +332,16 @@
           <div class="flex flex-start margin-left-m  cen">
             <mat-icon class="flex margin-top-xs margin-bottom-xs">info_outline</mat-icon>
             <span class="flex mat-body-2 padding-xs" >Attempt all questions to finish assessment</span>
-          </div>          
+          </div>
         </div>
       </ng-container>
     </ng-container> -->
 
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
-        [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
-        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
     </ng-container>
     <!-- </div> -->
@@ -408,8 +420,9 @@
                       </div>
                     </ng-container>
 
-                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
-                      <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate | titlecase}})</span>
+                    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong">
+                      <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate |
+                        titlecase}})</span>
                     </div>
                   </div>
                 </span>
@@ -459,7 +472,8 @@
               <div class="mb-24 mt-4">
                 <div class="flex flex-row">
                   <div class="flex flex-col align-center w-full">
-                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] - getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
+                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] -
+                      getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                     <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
                   </div>
                   <div class="flex flex-col align-center w-full">
@@ -472,7 +486,7 @@
                 <span>{{ 'practiceoverview.questions' | translate | titlecase}}</span>
               </div>
             </div>
-            <!-- <div class="ques_stats_container">            
+            <!-- <div class="ques_stats_container">
                 <div class="mb-24">
                   <div class="flex flex-row justify-around">
                     <div class="flex flex-col align-center">
@@ -491,16 +505,16 @@
                 </div>
                 <div class="outer-border-box" id="toolTipSection">
                   <div class="label-source-box">
-                    <span class="box-title">{{'playerbrief.questions' | translate | titlecase}} 
+                    <span class="box-title">{{'playerbrief.questions' | translate | titlecase}}
                       <img (click)="showToolTip=!showToolTip" class="question-info"  src="assets/icons/final-assessment/question_info.svg"/>
-                    </span>               
+                    </span>
                     <div class="info-hover" id="infoToolTip" *ngIf="showToolTip">
                       <div class="info-tooltip-container">
                           <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/blue-check-box.svg"><span>{{'playerbrief.answered' | translate}}</span></div>
                           <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/not-answered-checkbox.svg"><span>{{'playerbrief.notAnswered' | translate}}</span></div>
                           <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/flag-check-box.svg"><span>{{'playerbrief.flagged' | translate}}</span></div>
                       </div>
-                    </div>   
+                    </div>
                   </div>
                 </div> -->
             <!-- <div class="seperate-text" id="toolTipSection">
@@ -514,15 +528,15 @@
                         <div class="info-tooltip-container-item"><img src="assets/icons/final-assessment/flag-check-box.svg"><span>{{'playerbrief.flagged' | translate}}</span></div>
                     </div>
                   </div>
-                
-                </span>            
-                
+
+                </span>
+
             </div> -->
 
             <!-- </div>    -->
             <div [ngClass]="!expandFalse ? 'my-2':''">
 
-              <!-- <div class="flex flex-row justify-between" *ngIf="!expandFalse">                  
+              <!-- <div class="flex flex-row justify-between" *ngIf="!expandFalse">
                 <div class="flex flex-row center-text">
                   <div class="answer-stats-label">Answered&nbsp;</div>
                   <div><mat-chip-list><mat-chip class="light-blue-small">&nbsp;&nbsp;&nbsp;&nbsp;</mat-chip></mat-chip-list></div>
@@ -583,24 +597,28 @@
                       'marked-question': isQuestionMarked(question?.questionId),
                       'attempted-question':
                         !isQuestionMarked(question?.questionId) &&
-                        isQuestionAttempted(question?.questionId)               
+                        isQuestionAttempted(question?.questionId)
                     }" class="margin-side-8">
                       <div *ngIf="!isQuestionMarked(question?.questionId) &&
-                        isQuestionAttempted(question?.questionId)"  class="light-blue-small" [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'">
-                        <img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg"/>
+                        isQuestionAttempted(question?.questionId)" class="light-blue-small"
+                        [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'">
+                        <img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg" />
                       </div>
                       <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
-                        isQuestionAttempted(question?.questionId))">                  
+                        isQuestionAttempted(question?.questionId))">
                         <mat-chip-list class="question-flag">
                           <mat-chip class="orange-small">
                             <ng-container *ngIf="!isQuestionAttempted(question?.questionId)">{{ i + 1 }}</ng-container>
-                            <ng-container *ngIf="isQuestionAttempted(question?.questionId)"><img class="margin-center" src="assets/icons/final-assessment/correct_arrow.svg"/></ng-container>
+                            <ng-container *ngIf="isQuestionAttempted(question?.questionId)"><img class="margin-center"
+                                src="assets/icons/final-assessment/correct_arrow.svg" /></ng-container>
                           </mat-chip>
                         </mat-chip-list>
                       </div>
                       <div *ngIf="!(!isQuestionMarked(question?.questionId) &&
                         isQuestionAttempted(question?.questionId)) && (!isQuestionMarked(question?.questionId))"
-                        class="ovel question-number" [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'"><span [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'mat-body-2-bold': 'mat-body-2'">
+                        class="ovel question-number"
+                        [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'current-question': 'dark-border'"><span
+                          [ngClass]="(currentQuestionIndex + 1) === i+1 ? 'mat-body-2-bold': 'mat-body-2'">
                           {{ i + 1 }}
                         </span>
                       </div>
@@ -633,11 +651,10 @@
                 [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
                 [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
                 [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
-                [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
-                [showAnswer]="showAnswer" [currentQuestion]="current_Question" [showOnlyQuestion]="false"
-                [mobileQuestionSetExpand]="!expandFalse" [showQuestionMarks]="showQuestionMarks"
-                [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-                >
+                [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
+                [currentQuestion]="current_Question" [showOnlyQuestion]="false" [mobileQuestionSetExpand]="!expandFalse"
+                [showQuestionMarks]="showQuestionMarks"
+                [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
               </viewer-question>
             </ng-container>
             <div class="flex flex-1">
@@ -685,8 +702,8 @@
             <ng-container>{{ 'playerbrief.next' | translate }}</ng-container>
           </a>
           &nbsp;&nbsp;
-          <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode" class="text-white ws-mat-primary-background quest_btn"
-            mat-button (click)="proceedToSubmit()">
+          <a *ngIf="(currentQuestionIndex + 1) === totalQCount && !forCreatorMode"
+            class="text-white ws-mat-primary-background quest_btn" mat-button (click)="proceedToSubmit()">
             <ng-container>{{ 'playerbrief.submit' | translate }}</ng-container>
           </a>
 
@@ -696,9 +713,9 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
-        [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
-        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
@@ -737,7 +754,7 @@
     </div>
   </div>
   <!-- Desktop Skeleton UI -->
-  <div class="flex flex-row quiz-container" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial' 
+  <div class="flex flex-row quiz-container" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial'
   && !(viewState === 'answer') && !isSubmitted">
     <div class="left-container">
       <div class="flex flex-row margin-m justify-between">
@@ -977,7 +994,7 @@
           </div>
           <div>
 
-            <!-- <div class="flex flex-row justify-between" *ngIf="!expandFalse">                  
+            <!-- <div class="flex flex-row justify-between" *ngIf="!expandFalse">
                 <div class="flex flex-row center-text">
                   <div class="answer-stats-label">Answered&nbsp;</div>
                   <div><mat-chip-list><mat-chip class="light-blue-small">&nbsp;&nbsp;&nbsp;&nbsp;</mat-chip></mat-chip-list></div>
@@ -1115,11 +1132,11 @@
 <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
   <div #quizContainer class="quiz-container-standalone"
     *ngIf="viewState !== 'initial' && !isMobile && fetchingQuestionsStatus === 'done'">
-    
+
     <div class="margin-m"
       *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
       <div class="standalone-left-container">
-        
+
         <div class="flex flex-row justify-between align-center assessment-header">
           <div>
             <div (click)="back()" class="no-border flex cursor-pointer back_button">
@@ -1127,26 +1144,31 @@
             </div>
           </div>
           <div>
-            <div class="flex flex-row">
+            <div class="flex flex-row gap-6">
+              <div class="flex flex-col stats-label-top" *ngIf="selectedSection?.minimumPassPercentage">
+                <div class="text-blue-800"><mat-icon class="text-blue-800">offline_pin</mat-icon></div>
+                <div>Passing Criteria: {{selectedSection?.minimumPassPercentage}}</div>
+              </div>
               <div class="flex flex-col stats-label-top">
                 <div><img src="assets/icons/final-assessment/assessment.svg"></div>
-                <div>{{noOfQuestions}} {{ 'playerbrief.questions' | translate }}</div>
+                <div>{{ 'playerbrief.questions' | translate }}: {{noOfQuestions}}</div>
               </div>
-              <div class="flex flex-col margin-left-64 stats-label-top" *ngIf="allSectionTimeLimit">
+              <div class="flex flex-col  stats-label-top" *ngIf="allSectionTimeLimit">
                 <div><img src="assets/icons/final-assessment/timer.svg"></div>
                 <div>{{( allSectionTimeLimit | pipeDurationTransform: 'hms')}}</div>
               </div>
             </div>
-          </div>          
+          </div>
         </div>
-        <div class="flex flex-row question-section-container" [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-between': 'justify-right'">
-          
+        <div class="flex flex-row question-section-container"
+          [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-between': 'justify-right'">
+
           <div class="section-dd-container" *ngIf="assessmentType !== 'optionalWeightage'">
-            <div class="flex flex-row"  [ngClass]="{'hide-section': paperSections.length < 2}">
+            <div class="flex flex-row" [ngClass]="{'hide-section': paperSections.length < 2}">
               <div>
                 <mat-form-field appearance="none">
-                  <select [disabled]="sectionalTimer && !forPreview  ? 'disabled': ''" matNativeControl required class="section-dd" #choosedValue
-                    (change)="changeSection($event.target.value)">
+                  <select [disabled]="sectionalTimer && !forPreview  ? 'disabled': ''" matNativeControl required
+                    class="section-dd" #choosedValue (change)="changeSection($event.target.value)">
                     <option [value]="section.identifier" [selected]="section.identifier === selectedSectionIdentifier"
                       *ngFor="let section of paperSections">{{section?.name}}</option>
                   </select>
@@ -1160,8 +1182,8 @@
           </div>
 
           <div *ngIf="!forCreatorMode">
-            <a [ngClass]="(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn justify-right ': 'text-white ws-mat-primary-background margin-xs quest_btn justify-right' "  
-            mat-button (click)="proceedToSubmit()">
+            <a [ngClass]="(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn justify-right ': 'text-white ws-mat-primary-background margin-xs quest_btn justify-right' "
+              mat-button (click)="proceedToSubmit()">
               <ng-container *ngIf="!isXsmall">{{ 'playerbrief.submitTheTest' | translate }}</ng-container>
             </a>
           </div>
@@ -1173,11 +1195,11 @@
               [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
-              (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"              
+              (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
               [showOnlyQuestion]="true" [showMarkForReview]="false" [showQuestionMarks]="showQuestionMarks"
-              [assessmentType]="assessmentType" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-              >
+              [assessmentType]="assessmentType"
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
             </viewer-question>
           </ng-container>
         </div>
@@ -1185,8 +1207,8 @@
       </div>
 
       <div class="standalone-quiz-container flex flex-row">
-        
-        <div 
+
+        <div
           [ngClass]="expandFalse ? ( assessmentType !== 'optionalWeightage' ? 'quiz-question-left-container' : 'quiz-question-left-container-full') : 'quiz-question-left-container-full'">
 
           <div class="border-outline">
@@ -1197,7 +1219,7 @@
               </mat-progress-bar>
             </div>
             <ng-container *ngIf="current_Question && !process">
-              
+
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
                 [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
@@ -1207,8 +1229,7 @@
                 [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
                 [showOnlyQuestion]="false" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
                 [questionAnswerHash]="questionAnswerHash" [showQuestionMarks]="showQuestionMarks"
-                [assessmentType]="assessmentType"
-                [questionParagraph]="questionParagraph">
+                [assessmentType]="assessmentType" [questionParagraph]="questionParagraph">
               </viewer-question>
             </ng-container>
             <div class="flex flex-1">
@@ -1224,7 +1245,8 @@
             </mat-icon>
           </div>
         </div>
-        <div *ngIf="assessmentType !== 'optionalWeightage'"  [ngClass]="(expandFalse && assessmentType !== 'optionalWeightage') ? 'quiz-question-right-container': 'quiz-question-right-container-hide'">
+        <div *ngIf="assessmentType !== 'optionalWeightage'"
+          [ngClass]="(expandFalse && assessmentType !== 'optionalWeightage') ? 'quiz-question-right-container': 'quiz-question-right-container-hide'">
           <div class="question-list">
             <div class="ques_stats_container">
               <div class="flex flex-row justify-between ques_stats_container_box">
@@ -1242,10 +1264,12 @@
                         <div *ngIf="timeLeft" class="flex flex-1 flex-center">
                           <img class="timerText" src="assets/icons/final-assessment/timer_white.svg">
                           &nbsp;&nbsp;
-                            <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform: 'hms2H'
-                              }}</span>
-                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
-                            <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' | translate}})</span>
+                          <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform:
+                            'hms2H'
+                            }}</span>
+                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong">
+                            <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' |
+                              translate}})</span>
                           </div>
                         </div>
                       </span>
@@ -1256,7 +1280,8 @@
               <div class="mb-24 mt-4">
                 <div class="flex flex-row justify-around">
                   <div class="flex flex-col align-center">
-                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] - getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
+                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] -
+                      getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                     <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
                   </div>
                   <div class="flex flex-col align-center">
@@ -1280,7 +1305,7 @@
                     'marked-question-standalone marked-question-standalone-background': isQuestionMarked(question?.questionId),
                     'attempted-question attempted-question-background':isQuestionAttempted(question?.questionId),
                     'not-attempted-question not-answered-background':!isQuestionAttempted(question?.questionId) && !isQuestionMarked(question?.questionId) && isQuestionVisited(question.questionId)
-                   
+
 
                   }"
                     class="margin-side-8 not-visited-question not-visited-background flex justify-center items-center">
@@ -1291,7 +1316,9 @@
                     </div>
                     <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
                       isQuestionAttempted(question?.questionId))">{{ getQuestionIndex(i)}}
-                      <ng-container *ngIf="!isQuestionAttempted(question?.questionId) && !isQuestionMarked(question?.questionId)">{{ getQuestionIndex(i)
+                      <ng-container
+                        *ngIf="!isQuestionAttempted(question?.questionId) && !isQuestionMarked(question?.questionId)">{{
+                        getQuestionIndex(i)
                         }}</ng-container>
 
                     </div>
@@ -1331,8 +1358,8 @@
                     <div class="question-guide-text">{{ 'practiceoverview.answered' | translate}}</div>
                   </div>
                   <div class="flex gap-2  align-center">
-                    <div class="flex justify-center items-center question-guide marked-question-standalone-background"><span
-                        class="question-guide-text-legend"></span></div>
+                    <div class="flex justify-center items-center question-guide marked-question-standalone-background">
+                      <span class="question-guide-text-legend"></span></div>
                     <div class="question-guide-text">{{ 'practiceoverview.marked' | translate}}</div>
                   </div>
                 </div>
@@ -1358,7 +1385,8 @@
     </div>
     <div class="standalone-quiz-container-controls"
       *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
-      <div class="flex flex-row mt-2" [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-between' : 'justify-right'">
+      <div class="flex flex-row mt-2"
+        [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-between' : 'justify-right'">
         <div class="flex" *ngIf="assessmentType !== 'optionalWeightage'">
           <div>
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
@@ -1368,13 +1396,11 @@
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-              [showOnlyQuestion]="false" [showMarkForReview]="true"
-              [questionAnswerHash]="questionAnswerHash"
+              [showOnlyQuestion]="false" [showMarkForReview]="true" [questionAnswerHash]="questionAnswerHash"
               (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)"
-              (clearQuestion)="clearQuestion(current_Question)"
-              [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-              >
+              (clearQuestion)="clearQuestion(current_Question)" [assessmentType]="assessmentType"
+              [showQuestionMarks]="showQuestionMarks"
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
             </viewer-question>
           </div>
 
@@ -1382,9 +1408,8 @@
         <div class="flex">
           <div>
             <div class="flex flex-1 flex-row-reverse butto_box end">
-              <ng-container
-                *ngIf="assessmentType !== 'optionalWeightage' && allSecAttempted.sectionsCount > 1">
-                <button class="text-white ws-mat-primary-background margin-xs quest_btn"  mat-raised-button
+              <ng-container *ngIf="assessmentType !== 'optionalWeightage' && allSecAttempted.sectionsCount > 1">
+                <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
                   (click)="openSectionPopup(false)" i18n="button quiz submit" [disabled]="!allSecAttempted.next"
                   [ngClass]="{'disableNextSection': !allSecAttempted.next}">
                   {{ 'practiceoverview.nextSection' | translate }}
@@ -1409,9 +1434,10 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
-        [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
-        [coursePrimaryCategory]="coursePrimaryCategory" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
+        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
@@ -1449,7 +1475,7 @@
     </div>
   </div>
   <!-- Desktop Skeleton UI -->
-  <div class="flex flex-row quiz-container-standalone" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial' 
+  <div class="flex flex-row quiz-container-standalone" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial'
   && !(viewState === 'answer') && !isSubmitted">
     <div class="standalone-left-container">
       <div class="flex flex-row margin-m justify-between">
@@ -1644,7 +1670,7 @@
                   <p> <ws-widget-skeleton-loader [width]="'64px'" [height]="'20px'"
                       [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader>
                 </div>
-              </div>             
+              </div>
             </div>
             <div class="flex flex-row justify-around">
 
@@ -1667,7 +1693,7 @@
                   <p> <ws-widget-skeleton-loader [width]="'64px'" [height]="'20px'"
                       [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader>
                 </div>
-              </div>             
+              </div>
             </div>
           </div>
 
@@ -1675,39 +1701,40 @@
       </div>
     </div>
     <div class="standalone-quiz-container-controls">
-    <div class="flex flex-row justify-between mt-4">
-      <div class="flex">
-        <div class="flex flex-row">
+      <div class="flex flex-row justify-between mt-4">
+        <div class="flex">
+          <div class="flex flex-row">
             <div i18n="question number label" class="ml-5"><span class="subheading-1">
                 <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
                   [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
             </div>
             <div i18n="question number label" class="ml-5"><span class="subheading-1">
-              <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
-                [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
+                <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
+                  [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
+            </div>
           </div>
-        </div>
 
-      </div>
-      <div class="flex">
-        <div class="flex flex-row">
+        </div>
+        <div class="flex">
+          <div class="flex flex-row">
             <div i18n="question number label" class="ml-5"><span class="subheading-1">
                 <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
                   [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
             </div>
-            <div i18n="question number label" class="ml-5 mr-5"    ><span class="subheading-1">
-              <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
-                [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
+            <div i18n="question number label" class="ml-5 mr-5"><span class="subheading-1">
+                <ws-widget-skeleton-loader [width]="'120px'" [height]="'28px'"
+                  [bindingClass]="'flex h-16'"></ws-widget-skeleton-loader></span>
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
+
     </div>
-
-  </div>
   </div>
   <!-- Mobile -->
-  <div #quizContainer class="standalone-assessment-mobile" [ngClass]="assessmentType !== 'optionalWeightage' ? 'quiz-container-standalone':'quiz-container-option-weightage'"
+  <div #quizContainer class="standalone-assessment-mobile"
+    [ngClass]="assessmentType !== 'optionalWeightage' ? 'quiz-container-standalone':'quiz-container-option-weightage'"
     *ngIf="viewState !== 'initial' && isMobile && fetchingQuestionsStatus === 'done'">
     <div class="flex flex-column overflow-hidden" *ngIf="!isSubmitted">
       <div>
@@ -1730,26 +1757,27 @@
               </div>
             </div>
           </div>
-          
+
         </div>
-        <div class="flex flex-row flex-wrap question-section-container" [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-around':'justify-center'">
+        <div class="flex flex-row flex-wrap question-section-container"
+          [ngClass]="assessmentType !== 'optionalWeightage' ? 'justify-around':'justify-center'">
           <div class="section-dd-container">
             <div class="flex flex-row">
               <div *ngIf="assessmentType !== 'optionalWeightage'">
                 <mat-form-field appearance="none">
-                  <select [disabled]="sectionalTimer && !forPreview ? 'disabled': ''" matNativeControl required class="section-dd" #choosedValue
-                    (change)="changeSection($event.target.value)">
+                  <select [disabled]="sectionalTimer && !forPreview ? 'disabled': ''" matNativeControl required
+                    class="section-dd" #choosedValue (change)="changeSection($event.target.value)">
                     <option [value]="section.identifier" [selected]="section.identifier === selectedSectionIdentifier"
                       *ngFor="let section of paperSections">{{section?.name}}</option>
                   </select>
                 </mat-form-field>
-              </div>              
+              </div>
             </div>
           </div>
 
           <div *ngIf="!forCreatorMode">
-            <a mat-button (click)="proceedToSubmit()" [ngClass]=
-            "(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn_option_weightage': 'text-white ws-mat-primary-background margin-xs quest_btn' ">
+            <a mat-button (click)="proceedToSubmit()"
+              [ngClass]="(totalQCount != getAllQuestionAnswer() && assessmentType === 'optionalWeightage') ? 'pointer-events-none secondary-standalone text-standalone-black margin-xs quest_btn_option_weightage': 'text-white ws-mat-primary-background margin-xs quest_btn' ">
               <ng-container>{{ 'playerbrief.submitTheTest' | translate }}</ng-container>
             </a>
           </div>
@@ -1763,11 +1791,9 @@
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
-              [showOnlyQuestion]="true" [showMarkForReview]="false"
-              [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [questionAnswerHash]="questionAnswerHash"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-              >
+              [showOnlyQuestion]="true" [showMarkForReview]="false" [assessmentType]="assessmentType"
+              [showQuestionMarks]="showQuestionMarks" [questionAnswerHash]="questionAnswerHash"
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
             </viewer-question>
           </ng-container>
         </div>
@@ -1790,10 +1816,12 @@
                         <div *ngIf="timeLeft" class="flex flex-1 flex-center">
                           <img class="timerText" src="assets/icons/final-assessment/timer_white.svg">
                           &nbsp;&nbsp;
-                            <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform: 'hms2H'
-                              }}</span>
-                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
-                            <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' | translate}})</span>
+                          <span class="timerText time-title flex align-center"> {{ timeLeft | pipeDurationTransform:
+                            'hms2H'
+                            }}</span>
+                          <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong">
+                            <span class="timerText time-title flex align-center"> ({{ 'practiceoverview.submitted' |
+                              translate}})</span>
                           </div>
                         </div>
                       </span>
@@ -1804,7 +1832,8 @@
               <div class="mb-24 mt-4">
                 <div class="flex flex-row gap-10">
                   <div class="flex flex-col align-center">
-                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] - getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
+                    <div class="ques-count">{{getSectionTotalQuestionAndAnswerCount()['totalCount'] -
+                      getSectionTotalQuestionAndAnswerCount()['answered']}}</div>
                     <div class="stats-label">{{ 'playerbrief.notAnswered' | translate }}</div>
                   </div>
                   <div class="flex flex-col align-center">
@@ -1830,9 +1859,9 @@
                        !isQuestionMarked(question?.questionId) &&
                        isQuestionAttempted(question?.questionId),
                        'not-attempted-question not-answered-background':
-                       !isQuestionAttempted(question?.questionId) && 
-                       !isQuestionMarked(question?.questionId) && 
-                       isQuestionVisited(question.questionId)            
+                       !isQuestionAttempted(question?.questionId) &&
+                       !isQuestionMarked(question?.questionId) &&
+                       isQuestionVisited(question.questionId)
                    }"
                       class="margin-side-8 not-visited-question not-visited-background flex justify-center items-center">
                       <div *ngIf="!isQuestionMarked(question?.questionId) &&
@@ -1842,8 +1871,10 @@
                       </div>
                       <div *ngIf="isQuestionMarked(question?.questionId) && !(!isQuestionMarked(question?.questionId) &&
                        isQuestionAttempted(question?.questionId))">{{ getQuestionIndex(i)
-                       }}
-                        <ng-container *ngIf="!isQuestionAttempted(question?.questionId) && !isQuestionMarked(question?.questionId)">{{ getQuestionIndex(i)
+                        }}
+                        <ng-container
+                          *ngIf="!isQuestionAttempted(question?.questionId) && !isQuestionMarked(question?.questionId)">{{
+                          getQuestionIndex(i)
                           }}</ng-container>
                       </div>
                       <div *ngIf="!(!isQuestionMarked(question?.questionId) &&
@@ -1881,7 +1912,9 @@
                         <div class="question-guide-text">{{ 'practiceoverview.answered' | translate | titlecase}}</div>
                       </div>
                       <div class="flex gap-2">
-                        <div class="flex justify-center items-center question-guide marked-question-standalone-background"></div>
+                        <div
+                          class="flex justify-center items-center question-guide marked-question-standalone-background">
+                        </div>
                         <div class="question-guide-text">{{ 'practiceoverview.marked' | translate | titlecase}}</div>
                       </div>
                     </div>
@@ -1927,10 +1960,9 @@
               [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
               [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [showOnlyQuestion]="false"
-              [coursePrimaryCategory]="coursePrimaryCategory"
-              [mobileQuestionSetExpand]="!expandFalse"
-              [questionAnswerHash]="questionAnswerHash"
-              [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
+              [coursePrimaryCategory]="coursePrimaryCategory" [mobileQuestionSetExpand]="!expandFalse"
+              [questionAnswerHash]="questionAnswerHash" [assessmentType]="assessmentType"
+              [showQuestionMarks]="showQuestionMarks"
               [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
               [questionParagraph]="questionParagraph">
             </viewer-question>
@@ -1965,10 +1997,9 @@
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
               [showOnlyQuestion]="false" [showMarkForReview]="true"
               (getNextQuestion)="getNextQuestion(currentQuestionIndex + 1)"
-              (clearQuestion)="clearQuestion(current_Question)"
-              [assessmentType]="assessmentType" [showQuestionMarks]="showQuestionMarks"
-              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
-              >
+              (clearQuestion)="clearQuestion(current_Question)" [assessmentType]="assessmentType"
+              [showQuestionMarks]="showQuestionMarks"
+              [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
             </viewer-question>
           </div>
 
@@ -1983,14 +2014,12 @@
                 </button>
               </ng-container>
               <ng-container *ngIf="(currentQuestionIndex+1) !== totalQCount">
-                <button 
-                  class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button
+                <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-button
                   (click)="getNextQuestion(currentQuestionIndex + 1)">
                   <ng-container>{{ 'practiceoverview.saveNext' | translate }}</ng-container>
                 </button>
               </ng-container>
-              <ng-container
-                *ngIf="assessmentType !== 'optionalWeightage' && allSecAttempted.sectionsCount > 1">
+              <ng-container *ngIf="assessmentType !== 'optionalWeightage' && allSecAttempted.sectionsCount > 1">
                 <button class="text-white ws-mat-primary-background margin-xs quest_btn" mat-raised-button
                   (click)="openSectionPopup(false)" i18n="button quiz submit" [disabled]="!allSecAttempted.next"
                   [ngClass]="{'disableNextSection': !allSecAttempted.next}">
@@ -2006,9 +2035,10 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result" [canAttempt]="canAttempt"
-        [isPassed]="finalResponse?.pass" (userSelection)="action($event)" (fetchResult)="getQuizResult()"
-        [coursePrimaryCategory]="coursePrimaryCategory" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
+        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
       </viewer-result>
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
@@ -2241,7 +2271,7 @@
         <span class="time-title ws-mat-red-text"> {{ timeLeft | pipeDurationTransform: 'hms2M' }}</span>
       </div>
     </ng-container>
-    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong" >
+    <div *ngIf="isSubmitted" class="margin-left-xs mat-body-strong">
       <span class="time-title ws-mat-default-text"> ({{ 'practiceoverview.submitted' | translate}})</span>
     </div>
   </div>
@@ -2282,7 +2312,7 @@
 
 
 <ng-template #publicUserDialog>
-  <div class="profile-box mr-8" >
+  <div class="profile-box mr-8">
     <div class="card">
       <h2 class="head py-2">Fill up the details</h2>
       <form class="user-login" [formGroup]="publicUserInfoForm" (ngSubmit)="submitpublicUserInfo()">
@@ -2295,14 +2325,14 @@
             </label>
             <mat-form-field appearance="outline" class="">
               <input id="name" matInput #name formControlName="name" i18n-placeholder
-                placeholder="{{'publicrequest.enterYourFullName' | translate}}" autocomplete="off" i18n-aria-label aria-label="First Name input" maxlength="150" />
+                placeholder="{{'publicrequest.enterYourFullName' | translate}}" autocomplete="off" i18n-aria-label
+                aria-label="First Name input" maxlength="150" />
               <mat-error [hidden]="false" i18n="First Name Error|Explains name is required" i18n-aria-label
                 aria-label="First Name Error|Explains name is required "
                 *ngIf="publicUserInfoForm?.controls['name'].errors?.required">
                 {{ 'publicrequest.fullNameMandatory' | translate }}
               </mat-error>
-              <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['name'].errors?.pattern"
-                i18n-aria-label
+              <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['name'].errors?.pattern" i18n-aria-label
                 aria-label="First name Error|Name fields cannot contain numbers and special characters except ">
                 {{ 'publicrequest.fullNameWitoutSp' | translate }}
               </mat-error>
@@ -2310,35 +2340,36 @@
           </div>
           <div class="input-wrapper ">
             <label for="email" class=" margin-remove-bottom form-label required"
-                  i18n="Email label|Label which explains the user to enter Email" i18n-aria-label
-                  aria-label="Email label">
-                  {{ 'publicrequest.email' | translate }}
-                </label>
-                <mat-form-field appearance="outline" class="" id="email">
-                  <input id="email" name="emailField" autocomplete="off" type="email" maxlength="320"  (input)="emailVerification($event.target.value)"
-                    matInput placeholder="{{'publicrequest.enterYourEmailAddress' | translate}}" #email
-                    formControlName="email" i18n-aria-label aria-label="Email input">
-                <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified" [hidden]="!isEmailVerified"></mat-icon>
-                  <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['email'].errors?.required"
-                  i18n="Email Error|Explains name is required">
-                  {{ 'publicrequest.pleaseEnterEmail' | translate }}
-                </mat-error>
-                <mat-error [hidden]="false"  *ngIf="publicUserInfoForm.controls['email'].touched && publicUserInfoForm?.controls['email'].errors?.pattern"
-                  i18n-aria-label aria-label="Please enter a valid email address">
-                  {{ 'publicrequest.validEmail' | translate }}
-                </mat-error>
-                <div *ngIf="publicUserInfoForm.controls['email'].touched && emailLengthVal" class="email-error"
-                  i18n="Email Error|Explains character validation">
-                  {{ 'publicrequest.emailLengthValidation' | translate }}
-                </div>
-                </mat-form-field>
+              i18n="Email label|Label which explains the user to enter Email" i18n-aria-label aria-label="Email label">
+              {{ 'publicrequest.email' | translate }}
+            </label>
+            <mat-form-field appearance="outline" class="" id="email">
+              <input id="email" name="emailField" autocomplete="off" type="email" maxlength="320"
+                (input)="emailVerification($event.target.value)" matInput
+                placeholder="{{'publicrequest.enterYourEmailAddress' | translate}}" #email formControlName="email"
+                i18n-aria-label aria-label="Email input">
+              <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified"
+                [hidden]="!isEmailVerified"></mat-icon>
+              <mat-error [hidden]="false" *ngIf="publicUserInfoForm?.controls['email'].errors?.required"
+                i18n="Email Error|Explains name is required">
+                {{ 'publicrequest.pleaseEnterEmail' | translate }}
+              </mat-error>
+              <mat-error [hidden]="false"
+                *ngIf="publicUserInfoForm.controls['email'].touched && publicUserInfoForm?.controls['email'].errors?.pattern"
+                i18n-aria-label aria-label="Please enter a valid email address">
+                {{ 'publicrequest.validEmail' | translate }}
+              </mat-error>
+              <div *ngIf="publicUserInfoForm.controls['email'].touched && emailLengthVal" class="email-error"
+                i18n="Email Error|Explains character validation">
+                {{ 'publicrequest.emailLengthValidation' | translate }}
+              </div>
+            </mat-form-field>
           </div>
-          </div>
+        </div>
         <div class="buttons text-center">
-          <button mat-flat-button type="submit"
-                    class="submitBtn text-white ws-mat-primary-background ws-mat-white-text"
-                    [disabled]="!publicUserInfoForm?.valid">
-                    {{ 'publicrequest.submit' | translate }}
+          <button mat-flat-button type="submit" class="submitBtn text-white ws-mat-primary-background ws-mat-white-text"
+            [disabled]="!publicUserInfoForm?.valid">
+            {{ 'publicrequest.submit' | translate }}
           </button>
         </div>
       </form>
