@@ -1167,15 +1167,17 @@ getDesignationHint(): string {
   get enableEditBtn(): boolean {
     const groupControl = this.profileForm.get('group');
     const designationControl = this.profileForm.get('designation');
-    if (groupControl && designationControl) {
-      if (
-        (groupControl.value && groupControl.value !== _.get(this.profileDetails, 'group', '')) ||
-        (designationControl.value && designationControl.value !== _.get(this.profileDetails, 'designation', ''))
-      ) {
-        return true
-      }
+    
+    // Check if both controls exist and form is valid
+    if (!groupControl || !designationControl || !this.profileForm.valid) {
+      return false;
     }
-    return false
+    
+    // Enable button if both group and designation have values (on load or after changes)
+    const hasGroupValue = groupControl.value && groupControl.value.trim() !== '';
+    const hasDesignationValue = designationControl.value && designationControl.value.trim() !== '';
+    
+    return hasGroupValue && hasDesignationValue;
   }
 
   handleTranslateTo(menuName: string): string {
