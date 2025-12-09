@@ -42,6 +42,7 @@ export class CbpPlanComponent implements OnInit {
   filterApplied = false
   filterCheckOnFilter = false
   filterObjData: any = {
+    isApar: false,
     primaryCategory: [],
     status: [],
     timeDuration: [],
@@ -59,20 +60,20 @@ export class CbpPlanComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService
 
-    ) {
-      this.langtranslations.languageSelectedObservable.subscribe(() => {
-        if (localStorage.getItem('websiteLanguage')) {
-          this.translate.setDefaultLang('en')
-          const lang = localStorage.getItem('websiteLanguage')!
-          this.translate.use(lang)
-        }
-      })
-    }
+  ) {
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+      }
+    })
+  }
 
   ngOnInit() {
     if (this.activatedRoute.snapshot.data.pageData) {
       this.cbpConfig = this.activatedRoute.snapshot.data.pageData.data.cbpConfig
-     this.cbpAllConfig = this.activatedRoute.snapshot.data.pageData.data
+      this.cbpAllConfig = this.activatedRoute.snapshot.data.pageData.data
     }
     this.upcommingList = this.transformSkeletonToWidgets(this.cbpAllConfig.cbpUpcomingStrips)
     this.overDueList = this.transformSkeletonToWidgets(this.cbpAllConfig.cbpUpcomingStrips)
@@ -96,7 +97,7 @@ export class CbpPlanComponent implements OnInit {
         if (a.planDuration === NsCardContent.ACBPConst.OVERDUE && b.planDuration === NsCardContent.ACBPConst.OVERDUE) {
           const firstDate: any = new Date(a.endDate)
           const secondDate: any = new Date(b.endDate)
-          return  firstDate > secondDate  ? -1 : 1
+          return firstDate > secondDate ? -1 : 1
         }
       })
       await response.forEach((ele: any) => {
@@ -105,7 +106,7 @@ export class CbpPlanComponent implements OnInit {
         } else {
           this.upcommingList.push(ele)
         }
-        if( ele.isApar === true) {
+        if (ele.isApar === true) {
           this.aparList.push(ele)
         }
       })
@@ -115,17 +116,17 @@ export class CbpPlanComponent implements OnInit {
       this.upcommingList = this.transformContentsToWidgets(this.upcommingList, this.cbpAllConfig.cbpUpcomingStrips)
       this.overDueList = this.transformContentsToWidgets(this.overDueList, this.cbpAllConfig.cbpUpcomingStrips)
       this.aparList = this.transformContentsToWidgets(this.aparList, this.cbpAllConfig.cbpUpcomingStrips)
-      
+
       const vall = this.overDueList.length + this.upcommingList.length
       this.upcommingList.filter((data: any) => {
-        if (data && data.widgetData &&  data.widgetData.content && data.widgetData.content.contentStatus < this.contentCompletedStatus) {
+        if (data && data.widgetData && data.widgetData.content && data.widgetData.content.contentStatus < this.contentCompletedStatus) {
           // if (data.widgetData.content.planDuration && data.widgetData.content.planDuration !== 'success') {
-            this.upcomingUncompleted.push(data)
+          this.upcomingUncompleted.push(data)
           // }
         }
       })
       this.overDueList.filter((data: any) => {
-        if (data && data.widgetData &&  data.widgetData.content && data.widgetData.content.contentStatus < this.contentCompletedStatus) {
+        if (data && data.widgetData && data.widgetData.content && data.widgetData.content.contentStatus < this.contentCompletedStatus) {
           this.overdueUncompleted.push(data)
         }
       })
@@ -196,8 +197,8 @@ export class CbpPlanComponent implements OnInit {
         ...(content.batch && {
           batch: content.batch,
         }),
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.stripConfig
-        && strip.viewMoreUrl.stripConfig.cardSubType,
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.stripConfig
+          && strip.viewMoreUrl.stripConfig.cardSubType,
         cardCustomeClass: strip.customeClass ? strip.customeClass : '',
         context: {
           pageSection: strip.key,
@@ -209,7 +210,7 @@ export class CbpPlanComponent implements OnInit {
       },
     }))
   }
-  private transformSkeletonToWidgets (
+  private transformSkeletonToWidgets(
     strip: any
   ) {
     return [1, 2, 3, 4, 5, 6, 7, 7, 8, 9, 10].map(_content => ({
@@ -218,8 +219,8 @@ export class CbpPlanComponent implements OnInit {
       widgetHostClass: 'mb-2',
       cardCustomeClass: strip.customeClass ? strip.customeClass : '',
       widgetData: {
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.loaderConfig
-        && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.loaderConfig
+          && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
       },
     }))
   }
@@ -244,110 +245,120 @@ export class CbpPlanComponent implements OnInit {
 
   filterData(filterValue: any) {
     let finalFilterValue: any = []
-    if (filterValue['primaryCategory'].length ||
-    filterValue['status'].length ||
-    filterValue['timeDuration'].length ||
-    filterValue['competencyArea'].length ||
-    filterValue['competencyTheme'].length ||
-    filterValue['competencySubTheme'].length ||
-    filterValue['providers'].length
+    if (filterValue['isApar'] ||
+      filterValue['primaryCategory'].length ||
+      filterValue['status'].length ||
+      filterValue['timeDuration'].length ||
+      filterValue['competencyArea'].length ||
+      filterValue['competencyTheme'].length ||
+      filterValue['competencySubTheme'].length ||
+      filterValue['providers'].length
     ) {
       let filterAppliedonLocal = false
       this.filteredData = this.cbpOriginalData
       this.filterApplied = true
-        if (filterValue['primaryCategory'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['primaryCategory'].includes(data.primaryCategory)) {
-              if (filterValue['primaryCategory'].includes('Moderated Courses') && data.secureSettings) {
-                return data
-              }
+      if (filterValue['isApar']) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (data.isApar === true) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
+      if (filterValue['primaryCategory'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['primaryCategory'].includes(data.primaryCategory)) {
+            if (filterValue['primaryCategory'].includes('Moderated Courses') && data.secureSettings) {
               return data
             }
-          })
-          filterAppliedonLocal = true
-        }
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
 
-        if (filterValue['status'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            const statusData = filterValue['status'].includes('all') ? ['0', '1', '2'] : filterValue['status']
-            if (statusData.includes(String(data.contentStatus))) {
-              return data
-            }
-          })
-          filterAppliedonLocal = true
-        }
+      if (filterValue['status'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          const statusData = filterValue['status'].includes('all') ? ['0', '1', '2'] : filterValue['status']
+          if (statusData.includes(String(data.contentStatus))) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
 
-        if (filterValue['timeDuration'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['timeDuration'].some((time: any) => {
-              const count = Number(time.slice(0, -2))
-              if (time.includes('sw')) {
-                // tslint:disable-next-line: max-line-length
-                return dayjs(data.endDate).isSameOrAfter(dayjs(dayjs().subtract(count, 'week'))) && dayjs(data.endDate).isSameOrBefore(dayjs())
-              }
-              if (time.includes('ad')) {
-                // tslint:disable-next-line: max-line-length
-                return dayjs(data.endDate).isSameOrBefore(dayjs(dayjs().add(count, 'day'))) && dayjs(data.endDate).isSameOrAfter(dayjs())
-              }
-              if (time.includes('sm')) {
-                // tslint:disable-next-line: max-line-length
-                return dayjs(data.endDate).isSameOrAfter(dayjs(dayjs().subtract(count, 'month'))) && dayjs(data.endDate).isSameOrBefore(dayjs())
-              }
-              return true
-              // tslint: disable-next-line: whitespace
-            })
-            ) {
-              return data
+      if (filterValue['timeDuration'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['timeDuration'].some((time: any) => {
+            const count = Number(time.slice(0, -2))
+            if (time.includes('sw')) {
+              // tslint:disable-next-line: max-line-length
+              return dayjs(data.endDate).isSameOrAfter(dayjs(dayjs().subtract(count, 'week'))) && dayjs(data.endDate).isSameOrBefore(dayjs())
             }
-          })
-          filterAppliedonLocal = true
-        }// tslint: disable-next-line: whitespace
-        if (filterValue['competencyArea'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['competencyArea'].some((r: any) => data.competencyArea.includes(r))) {
-              return data
+            if (time.includes('ad')) {
+              // tslint:disable-next-line: max-line-length
+              return dayjs(data.endDate).isSameOrBefore(dayjs(dayjs().add(count, 'day'))) && dayjs(data.endDate).isSameOrAfter(dayjs())
             }
-          })
-          filterAppliedonLocal = true
-        }
-        // tslint: disable-next-line: whitespace
-        if (filterValue['competencyTheme'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['competencyTheme'].some((r: any) => data.competencyTheme.includes(r))) {
-              return data
+            if (time.includes('sm')) {
+              // tslint:disable-next-line: max-line-length
+              return dayjs(data.endDate).isSameOrAfter(dayjs(dayjs().subtract(count, 'month'))) && dayjs(data.endDate).isSameOrBefore(dayjs())
             }
-          })
-          filterAppliedonLocal = true
-        }
-        // tslint: disable-next-line: whitespace
-        if (filterValue['competencySubTheme'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['competencySubTheme'].some((r: any) => data.competencySubTheme.includes(r))) {
-              // tslint: disable-next-line: whitespace
-              return data
-              // tslint: disable-next-line: whitespace
-            }
+            return true
             // tslint: disable-next-line: whitespace
           })
+          ) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }// tslint: disable-next-line: whitespace
+      if (filterValue['competencyArea'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['competencyArea'].some((r: any) => data.competencyArea.includes(r))) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
+      // tslint: disable-next-line: whitespace
+      if (filterValue['competencyTheme'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['competencyTheme'].some((r: any) => data.competencyTheme.includes(r))) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
+      // tslint: disable-next-line: whitespace
+      if (filterValue['competencySubTheme'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['competencySubTheme'].some((r: any) => data.competencySubTheme.includes(r))) {
+            // tslint: disable-next-line: whitespace
+            return data
+            // tslint: disable-next-line: whitespace
+          }
           // tslint: disable-next-line: whitespace
-          filterAppliedonLocal = true
-        }
+        })
+        // tslint: disable-next-line: whitespace
+        filterAppliedonLocal = true
+      }
 
-        if (filterValue['providers'].length) {
-          filterAppliedonLocal = filterAppliedonLocal ? true : false
-          finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-            if (filterValue['providers'].includes(data.organisation[0])) {
-              return data
-            }
-          })
-          filterAppliedonLocal = true
-        }
+      if (filterValue['providers'].length) {
+        filterAppliedonLocal = filterAppliedonLocal ? true : false
+        finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
+          if (filterValue['providers'].includes(data.organisation[0])) {
+            return data
+          }
+        })
+        filterAppliedonLocal = true
+      }
     } else {
       this.filterApplied = false
       finalFilterValue = this.cbpOriginalData
@@ -358,6 +369,7 @@ export class CbpPlanComponent implements OnInit {
 
   searchData(event: any) {
     this.filterObjData = {
+      isApar: false,
       primaryCategory: [],
       status: [],
       timeDuration: [],
@@ -378,9 +390,13 @@ export class CbpPlanComponent implements OnInit {
     this.contentFeedList = this.transformContentsToWidgets(searchFilterData, this.getFeedStrip())
   }
   closeFilterKey(data: any) {
-    const index = this.filterObjData[data.key].indexOf(data.value)
-    if (index > -1) { // only splice array when item is found
-      this.filterObjData[data.key].splice(index, 1) // 2nd parameter means remove one item only
+    if (data.key === 'isApar') {
+      this.filterObjData[data.key] = false
+    } else {
+      const index = this.filterObjData[data.key].indexOf(data.value)
+      if (index > -1) { // only splice array when item is found
+        this.filterObjData[data.key].splice(index, 1) // 2nd parameter means remove one item only
+      }
     }
     this.applyFilter(this.filterObjData)
   }
