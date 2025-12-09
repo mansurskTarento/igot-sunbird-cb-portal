@@ -96,7 +96,8 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
   @ViewChild('designation', { read: ElementRef }) designationRef?: ElementRef
-  registrationForm!: UntypedFormGroup
+  registrationFormStepOne!: UntypedFormGroup
+  registrationFormStepTwo!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
   // emailWhitelistPattern = `^[a-zA-Z0-9._-]{3,}\\b@\\b[a-zA-Z0-9]*|\\b(.gov|.nic)\b\\.\\b(in)\\b$`
@@ -160,7 +161,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   multiLang: any = []
   isMultiLangEnabled: any
   masterData: any = {}
-
+  currentStep = 'step1'
   constructor(
     private signupSvc: SignupService,
     private usersService: UserProfileService,
@@ -178,8 +179,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private eventService: EventService,
-    private telemetrySvc: TelemetryService,
+    private telemetrySvc: TelemetryService
   ) {
+   
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -197,20 +199,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     })
     this.isMobileVerified = userData && userData.isMobileVerified || false
     this.isEmailVerified = userData && userData.isEmailVerified || false
-    this.registrationForm = new UntypedFormGroup({
-      firstname: new UntypedFormControl(userData && userData.firstname || '', [Validators.required, Validators.pattern(this.namePatern)]),
-      // lastname: new FormControl('', [Validators.required, Validators.pattern(this.namePatern)]),
-      // tslint:disable-next-line:max-line-length
-      // position: new FormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterPositions)]),
-      // tslint:disable-next-line:max-line-length
-      group: new UntypedFormControl('', [Validators.required]),
-      // tslint:disable-next-line:max-line-length
+    this.registrationFormStepOne = new UntypedFormGroup({
+    
       email: new UntypedFormControl(userData && userData.email || '', [Validators.required, Validators.pattern(this.emailPattern)]),
-      // department: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterDepartments)]),
-      mobile: new UntypedFormControl(userData && userData.mobile || '', [Validators.required,
-        Validators.pattern(this.phoneNumberPattern), Validators.maxLength(12)]),
-      confirmBox: new UntypedFormControl(false, [Validators.required]),
-      confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       type: new UntypedFormControl('ministry', [Validators.required]),
       // ministry: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterMinisteries)]),
       // department: new FormControl('', [forbiddenNamesValidator(this.masterDepartments)]),
@@ -218,14 +209,33 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       organisation: new UntypedFormControl('', [Validators.required]),
       // recaptchaReactive: new FormControl(null, [Validators.required]),
       position: new UntypedFormControl('', [Validators.required]),
-      searchDesignation: new UntypedFormControl('', [])
+      searchDesignation: new UntypedFormControl('', []),
+      state: new UntypedFormControl('', []),
+      searchState: new UntypedFormControl('', []),
+      department: new UntypedFormControl('', []),
+      searchDepartment: new UntypedFormControl('', []),
+    })
+    this.registrationFormStepTwo = new UntypedFormGroup({
+      firstname: new UntypedFormControl(userData && userData.firstname || '', [Validators.required, Validators.pattern(this.namePatern)]),
+      // lastname: new FormControl('', [Validators.required, Validators.pattern(this.namePatern)]),
+      // tslint:disable-next-line:max-line-length
+      // position: new FormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterPositions)]),
+      // tslint:disable-next-line:max-line-length
+      group: new UntypedFormControl('', [Validators.required]),
+     
+      // department: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterDepartments)]),
+      mobile: new UntypedFormControl(userData && userData.mobile || '', [Validators.required,
+        Validators.pattern(this.phoneNumberPattern), Validators.maxLength(12)]),
+      confirmBox: new UntypedFormControl(false, [Validators.required]),
+      confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
+      type: new UntypedFormControl('ministry', [Validators.required]),
     })
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       this.isMultiLangEnabled = this.configSvc.instanceConfig.isMultilingualEnabled
     }
-        if (this.registrationForm.get('searchDesignation')) {
+        if (this.registrationFormStepOne.get('searchDesignation')) {
       // tslint:disable-next-line
-      this.registrationForm.get('searchDesignation')!.valueChanges
+      this.registrationFormStepOne.get('searchDesignation')!.valueChanges
         .pipe(
           debounceTime(100),
           distinctUntilChanged(),
@@ -380,7 +390,7 @@ private getDesignationSafe(): void {
   }
    checkCurrentDesignationPresent() {
     // Get the current designation value
-    const currentDesignation = this.registrationForm.get('position')!.value
+    const currentDesignation = this.registrationFormStepOne.get('position')!.value
     // Check if current designation exists in the list
     if (currentDesignation) {
       const designationExists = this.masterData?.designation.some(
@@ -408,14 +418,14 @@ private getDesignationSafe(): void {
   }
     onDesignationDropdownClosed(): void {
     // Keep the designation value but clear the search input
-    const currentDesignation = this.registrationForm.get('position')!.value
+    const currentDesignation = this.registrationFormStepOne.get('position')!.value
     setTimeout(() => {
-      if (this.registrationForm.get('searchDesignation')) {
-        this.registrationForm.get('searchDesignation')!.setValue('')
+      if (this.registrationFormStepOne.get('searchDesignation')) {
+        this.registrationFormStepOne.get('searchDesignation')!.setValue('')
       }
       // Ensure the designation value remains selected
       if (currentDesignation) {
-        const designationControl = this.registrationForm.get('designation')
+        const designationControl = this.registrationFormStepOne.get('designation')
         if (designationControl) {
           designationControl.setValue(currentDesignation)
         }
@@ -452,8 +462,8 @@ setupScrollListener(opened: boolean): void {
       this.getDesignation(undefined, 0)
 
       // Clear search box once
-      if (this.registrationForm.get('searchDesignation')) {
-        this.registrationForm.get('searchDesignation')!.setValue('')
+      if (this.registrationFormStepOne.get('searchDesignation')) {
+        this.registrationFormStepOne.get('searchDesignation')!.setValue('')
       }
 
       setTimeout(() => {
@@ -530,12 +540,12 @@ setupScrollListener(opened: boolean): void {
 
   get typeValueStartCase() {
     // tslint:disable-next-line: no-non-null-assertion
-    return _.startCase(this.registrationForm.get('type')!.value)
+    return _.startCase(this.registrationFormStepOne.get('type')!.value)
   }
 
   get typeValue() {
     // tslint:disable-next-line: no-non-null-assertion
-    return this.registrationForm.get('type')!.value
+    return this.registrationFormStepOne.get('type')!.value
   }
 
   emailVerification(emailId: string) {
@@ -554,7 +564,7 @@ setupScrollListener(opened: boolean): void {
 
   clearValues() {
     // tslint:disable-next-line: no-non-null-assertion
-    this.registrationForm.get('organisation')!.setValue('')
+    this.registrationFormStepOne.get('organisation')!.setValue('')
     this.heirarchyObject = null
   }
   mdoRedirect() {
@@ -567,7 +577,7 @@ setupScrollListener(opened: boolean): void {
 
   // onPositionsChange() {
   //   // tslint:disable-next-line: no-non-null-assertion
-  //   this.masterPositions = this.registrationForm.get('position')!.valueChanges
+  //   this.masterPositions = this.registrationFormStepOne.get('position')!.valueChanges
   //     .pipe(
   //       debounceTime(500),
   //       distinctUntilChanged(),
@@ -578,14 +588,14 @@ setupScrollListener(opened: boolean): void {
 
   //   this.masterPositions.subscribe((event: any) => {
   //     // tslint:disable-next-line: no-non-null-assertion
-  //     this.registrationForm.get('position')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
-  //     this.registrationForm.updateValueAndValidity()
+  //     this.registrationFormStepOne.get('position')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
+  //     this.registrationFormStepOne.updateValueAndValidity()
   //   })
   // }
 
   // onGroupChange() {
   //   // tslint:disable-next-line: no-non-null-assertion
-  //   this.masterGroup = this.registrationForm.get('group')!.valueChanges
+  //   this.masterGroup = this.registrationFormStepOne.get('group')!.valueChanges
   //     .pipe(
   //       debounceTime(500),
   //       distinctUntilChanged(),
@@ -596,8 +606,8 @@ setupScrollListener(opened: boolean): void {
 
   //   this.masterGroup.subscribe((event: any) => {
   //     // tslint:disable-next-line: no-non-null-assertion
-  //     this.registrationForm.get('group')!.setValidators([Validators.required])
-  //     this.registrationForm.updateValueAndValidity()
+  //     this.registrationFormStepOne.get('group')!.setValidators([Validators.required])
+  //     this.registrationFormStepOne.updateValueAndValidity()
   //   })
   // }
 
@@ -642,16 +652,16 @@ setupScrollListener(opened: boolean): void {
   // tslint:disable-next-line:function-name
   OrgsSearchChange() {
     // tslint:disable-next-line:no-non-null-assertion
-    this.registrationForm.get('organisation')!.valueChanges.subscribe(() => {
+    this.registrationFormStepOne.get('organisation')!.valueChanges.subscribe(() => {
       this.resultFetched = false
-      this.registrationForm.updateValueAndValidity()
+      this.registrationFormStepOne.updateValueAndValidity()
     })
   }
 
   orgClicked(event: any) {
     if (event) {
       if (event.option && event.option.value && event.option.value.orgName) {
-        const frmctr = this.registrationForm.get('organisation') as UntypedFormControl
+        const frmctr = this.registrationFormStepOne.get('organisation') as UntypedFormControl
         frmctr.setValue(_.get(event, 'option.value.orgName') || '')
         // frmctr.patchValue(_.get(event, 'option.value') || '')
         this.heirarchyObject = _.get(event, 'option.value')
@@ -679,7 +689,7 @@ setupScrollListener(opened: boolean): void {
   // }
 
   onPhoneChange() {
-    const ctrl = this.registrationForm.get('mobile')
+    const ctrl = this.registrationFormStepOne.get('mobile')
     if (ctrl) {
       ctrl
         .valueChanges
@@ -695,7 +705,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   onEmailChange() {
-    const ctrl = this.registrationForm.get('email')
+    const ctrl = this.registrationFormStepOne.get('email')
     if (ctrl) {
       ctrl
         .valueChanges
@@ -710,7 +720,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   sendOtp() {
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepOne.get('mobile')
     if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
       this.signupSvc.sendOtp(mob.value, 'phone').subscribe(() => {
         this.otpSend = true
@@ -726,7 +736,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   resendOTP() {
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepOne.get('mobile')
     if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
       this.signupSvc.resendOtp(mob.value, 'phone').subscribe((res: any) => {
         if ((_.get(res, 'result.response')).toUpperCase() === 'SUCCESS') {
@@ -746,7 +756,7 @@ setupScrollListener(opened: boolean): void {
 
   verifyOtp(otp: any) {
     // console.log(otp)
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepOne.get('mobile')
 
     if (otp && otp.value) {
       if (otp && otp.value.length < 4) {
@@ -813,7 +823,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   sendOtpEmail() {
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (email && email.value && email.valid) {
       this.signupSvc.sendOtp(email.value, 'email').subscribe(() => {
         this.otpEmailSend = true
@@ -831,7 +841,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   resendOTPEmail() {
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (email && email.value && email.valid) {
       this.signupSvc.resendOtp(email.value, 'email').subscribe((res: any) => {
         if ((_.get(res, 'result.response')).toUpperCase() === 'SUCCESS') {
@@ -850,7 +860,7 @@ setupScrollListener(opened: boolean): void {
 
   verifyOtpEmail(otp: any) {
     // console.log(otp)
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (otp && otp.value) {
       if (otp && otp.value.length < 4) {
         this.snackBar.open(this.translateLabels('pleaseEnterValidOtp', 'publicsignup'))
@@ -914,14 +924,14 @@ setupScrollListener(opened: boolean): void {
 
   public confirmChange() {
     this.confirm = !this.confirm
-    this.registrationForm.patchValue({
+    this.registrationFormStepOne.patchValue({
       confirmBox: this.confirm,
     })
   }
 
   public confirmTermsChange() {
     this.confirmTerms = !this.confirmTerms
-    this.registrationForm.patchValue({
+    this.registrationFormStepOne.patchValue({
       confirmTermsBox: this.confirmTerms,
     })
   }
@@ -951,12 +961,12 @@ setupScrollListener(opened: boolean): void {
           let req: any
           if (this.heirarchyObject) {
             req = {
-              firstName: this.registrationForm.value.firstname || '',
-              // lastName: this.registrationForm.value.lastname || '',
-              email: this.registrationForm.value.email || '',
-              phone: `${this.registrationForm.value.mobile}` || '',
-              // position: this.registrationForm.value.position.name || '',
-              group: this.registrationForm.value.group || '',
+              firstName: this.registrationFormStepOne.value.firstname || '',
+              // lastName: this.registrationFormStepOne.value.lastname || '',
+              email: this.registrationFormStepOne.value.email || '',
+              phone: `${this.registrationFormStepOne.value.mobile}` || '',
+              // position: this.registrationFormStepOne.value.position.name || '',
+              group: this.registrationFormStepOne.value.group || '',
               source: `${environment.name}.${this.portalID}` || '',
               orgName: this.heirarchyObject.orgName || '',
               channel: this.heirarchyObject.channel || '',
@@ -965,7 +975,7 @@ setupScrollListener(opened: boolean): void {
               mapId: this.heirarchyObject.mapId || '',
               sbRootOrgId: this.heirarchyObject.sbRootOrgId,
               sbOrgId: this.heirarchyObject.sbOrgId,
-              position: this.registrationForm.value.position || '',
+              position: this.registrationFormStepOne.value.position || '',
             }
           }
 
@@ -1047,17 +1057,17 @@ setupScrollListener(opened: boolean): void {
 
   // Getters
   // get ministry(): FormControl {
-  //   return this.registrationForm.get('ministry') as FormControl
+  //   return this.registrationFormStepOne.get('ministry') as FormControl
   // }
   // get department(): FormControl {
-  //   return this.registrationForm.get('department') as FormControl
+  //   return this.registrationFormStepOne.get('department') as FormControl
   // }
   // get organisation(): FormControl {
-  //   return this.registrationForm.get('organisation') as FormControl
+  //   return this.registrationFormStepOne.get('organisation') as FormControl
   // }
 
   navigateTo(param?: any) {
-    const formData = this.registrationForm.value
+    const formData = this.registrationFormStepOne.value
     const url = '/public/request'
     // tslint:disable-next-line: max-line-length
     this.router.navigate([url], {  queryParams: { type: param }, state: { userform: formData, isMobileVerified: this.isMobileVerified , isEmailVerified: this.isEmailVerified } })
@@ -1152,5 +1162,21 @@ setupScrollListener(opened: boolean): void {
           
         }, 2000);
     
+  }
+
+  goToNextStep() {
+    if(this.registrationFormStepOne.valid) {
+      this.currentStep = 'step2'
+    } else {
+      this.currentStep = 'step2'
+      this.snackBar.open('Please fill all required fields')
     }
+    
+  }
+
+  goToPrevStep() {
+    
+      this.currentStep = 'step1'
+    
+  }
 }

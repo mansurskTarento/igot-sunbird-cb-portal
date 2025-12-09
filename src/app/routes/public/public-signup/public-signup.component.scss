@@ -1116,3 +1116,94 @@ a.help-icon:hover .tooltiptext {
   cursor: pointer;
   font-weight: 700;
 }
+
+/* Stepper */
+.custom-stepper {
+  display: flex;
+  align-items: center;   /* Ensures circles and line align vertically */
+  justify-content: center;
+  margin: 10px 0 15px 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 28px 0 0 0;
+
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1b4ca1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  opacity: 0.5;
+}
+
+.circle.active {
+  background: orange; /* green */
+  opacity: 1;
+}
+
+.circle.completed {
+  background: #2e7d32 ;
+  opacity: 1;
+}
+.line {
+  flex-grow: 1;
+  height: 4px;         /* adjust thickness */
+  background: #1b4ca1;
+  margin: 0 15px;      /* spacing between circles */
+  align-self: center;  /* guarantees center alignment */
+}
+
+.stepper-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.stepper-label.active {
+  color:rgb(27, 76, 161);
+  font-weight: bold;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.btn-outline {
+  border: 2px solid #1b4ca1;
+  color: #1b4ca1;
+  opacity: 0.5;
+  background: white;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #1b4ca1;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.signin-text {
+  text-align: center;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
