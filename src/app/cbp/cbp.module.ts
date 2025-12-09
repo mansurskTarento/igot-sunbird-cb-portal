@@ -33,6 +33,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatLegacySlideToggleModule } from '@angular/material/legacy-slide-toggle'
+import { MatLegacySliderModule } from '@angular/material/legacy-slider'
+
 @NgModule({
     declarations: [CbpPlanComponent, CbpPlanStatsComponent, MyCompetencyPassbookComponent,
         UpcomingTimelineComponent,
@@ -66,6 +69,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
         FilterSearchPipeModule,
         MatMenuModule,
         MatRadioModule,
+        MatLegacySlideToggleModule,MatLegacySliderModule,
         TranslateModule,
     ],
     exports: [
