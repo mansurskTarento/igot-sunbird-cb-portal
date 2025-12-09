@@ -33,7 +33,9 @@ export class FilterComponent implements OnInit {
   competencySubThemeList: any[] = []
   competencyThemeOriginalList: any[] = []
   competencySubThemeOriginalList: any[] = []
+  isApar = false
   filterObjEmpty: any = {
+    isApar: false,
     primaryCategory: [],
     status: [],
     timeDuration: [],
@@ -271,6 +273,9 @@ export class FilterComponent implements OnInit {
 
   bindFilter() {
     if (!this.checkFilterEmpty()) {
+      if(this.filterObj['isApar']){
+        this.onAparChange(this.filterObj['isApar'])
+      }
       if (this.filterObj['primaryCategory'].length) {
         this.primaryCategoryList.forEach((content: any) => {
           content.checked = this.filterObj['primaryCategory'].includes(content.id)
@@ -345,7 +350,8 @@ export class FilterComponent implements OnInit {
   }
 
   checkFilterEmpty() {
-    if (this.filterObj['primaryCategory'].length ||
+    if (this.filterObj['isApar'] ||
+    this.filterObj['primaryCategory'].length ||
     this.filterObj['status'].length ||
     this.filterObj['timeDuration'].length ||
     this.filterObj['competencyArea'].length ||
@@ -364,5 +370,16 @@ export class FilterComponent implements OnInit {
 
   translateLabel(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
+  }
+
+  onAparChange(event: any) {
+    if (typeof event === 'object' && event.checked !== undefined) {
+      this.isApar = event.checked
+      this.filterObj['isApar'] = event.checked
+    } else if (typeof event === 'boolean') {
+      this.isApar = event
+      this.filterObj['isApar'] = event
+    }
+    this.checkFilterEmpty()
   }
 }

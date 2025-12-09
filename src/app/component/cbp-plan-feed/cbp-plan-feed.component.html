@@ -3,38 +3,53 @@
     <div class="flex flex-middle">
         <form class="w-full">
             <div appearance="none" class="w-full relative search-block">
-              <input name="search" [formControl]="searchControl"  placeholder="{{'cbpPlanFeed.search' | translate}}">
-              <mat-icon  aria-hidden="true" class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color absolute" role="img"> search </mat-icon>
+                <input name="search" [formControl]="searchControl" placeholder="{{'cbpPlanFeed.search' | translate}}">
+                <mat-icon aria-hidden="true"
+                    class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color absolute"
+                    role="img"> search </mat-icon>
             </div>
         </form>
         <div class=" position-relative ">
-            <mat-icon aria-hidden="true" (click)="openFilter()" class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer" role="img"> filter_list </mat-icon>
+            <mat-icon aria-hidden="true" (click)="openFilter()"
+                class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
+                role="img"> filter_list </mat-icon>
             <ng-container *ngIf="filterApplied">
-                <span  class="filter-dot"></span>
+                <span class="filter-dot"></span>
             </ng-container>
         </div>
     </div>
     <div class="flex flex-wrap" *ngIf="filterApplied">
-    <ng-container  *ngFor="let item of filterObject | keyvalue">
-        <ng-container *ngIf="item?.value?.length">
-                <ng-container  *ngFor="let item1 of item.value">
+        <ng-container *ngFor="let item of filterObject | keyvalue">
+            <ng-container *ngIf="item?.key === 'isApar'">
+                <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
+                    <p>{{'cbpPlanStats.apar' | translate}}</p>
+                    <mat-icon aria-hidden="true" (click)="closeFilter(item.value,item.key)"
+                        class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
+                        role="img"> close </mat-icon>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="item?.value?.length">
+                <ng-container *ngFor="let item1 of item.value">
                     <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
                         <ng-container *ngIf="item.key === 'status' || item.key === 'timeDuration' ;else allEle">
                             <p>{{translateLabel(filterValuesBinding[item.key][item1], 'searchfilters')}}</p>
                         </ng-container>
                         <ng-template #allEle>
                             <p *ngIf="(item.key !== 'competencyArea' && item.key !== 'competencyTheme' && 
-                            item.key !== 'competencySubTheme' && item.key !== 'providers'); else allThemeEle">{{translateLabel(item1, 'searchfilters')}}</p>
+                            item.key !== 'competencySubTheme' && item.key !== 'providers'); else allThemeEle">
+                                {{translateLabel(item1, 'searchfilters')}}</p>
                         </ng-template>
                         <ng-template #allThemeEle>
                             <p>{{item1}}</p>
                         </ng-template>
-                        <mat-icon aria-hidden="true" (click)="closeFilter(item1,item.key)" class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer" role="img"> close </mat-icon>
+                        <mat-icon aria-hidden="true" (click)="closeFilter(item1,item.key)"
+                            class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
+                            role="img"> close </mat-icon>
                     </div>
                 </ng-container>
+            </ng-container>
         </ng-container>
-    </ng-container>
-</div>
+    </div>
     <ng-container *ngIf="contenFeedList?.length;else emptyTemplate">
         <div class="mr-2 mb-5" *ngFor="let c of contenFeedList">
             <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
@@ -47,6 +62,6 @@
                 <p>{{'cbpPlanFeed.noResults' | translate}}</p>
                 <p class="search-help-text">{{'cbpPlanFeed.helpText' | translate}}</p>
             </div>
-          </div>
+        </div>
     </ng-template>
 </div>

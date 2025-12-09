@@ -42,6 +42,7 @@ export class UpcomingTimelineComponent implements OnInit {
 
   upComingMethod(event: any) {
     const upcomingData: any = {
+      isApar: false,
       primaryCategory: [],
       status: ['0', '1', '2'],
       timeDuration: ['30ad'],
@@ -51,6 +52,7 @@ export class UpcomingTimelineComponent implements OnInit {
       providers: [],
     }
     const overDue: any = {
+      isApar: false,
       primaryCategory: [],
       status: ['0', '1'],
       timeDuration: ['3sm'],
@@ -59,7 +61,18 @@ export class UpcomingTimelineComponent implements OnInit {
       competencySubTheme: [],
       providers: [],
     }
-    this.filterValueEmit.emit(event === 'upcoming' ? upcomingData : overDue)
+    const apar: any = {
+      isApar: true,
+      primaryCategory: [],
+      status: [],
+      timeDuration: [],
+      competencyArea: [],
+      competencyTheme: [],
+      competencySubTheme: [],
+      providers: [],
+    }
+    let finalFilterData: any = event === 'apar' ? apar : event === 'overDue' ? overDue : upcomingData
+    this.filterValueEmit.emit(finalFilterData)
   }
   scroll(el: any) {
     const element = el

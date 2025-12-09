@@ -18,6 +18,11 @@
         </div>
         <div class="filter-content-container">
         <ng-container *ngIf="showAdditionalFilters">
+            <div class="filter-content flex flex-1" style="align-items: center;">
+                    <span style="flex: 1;">{{'cbpPlanStats.apar' | translate}}</span>
+                    <mat-slide-toggle [checked]="filterObj?.isApar" (change)="onAparChange($event)" style="margin: 0;">
+                    </mat-slide-toggle>
+            </div>
             <div class="filter-content flex flex-1">
                 <mat-accordion>
                     <mat-expansion-panel disableRipple [expanded]="true">
@@ -99,7 +104,7 @@
                                 {{'widgetCbpFilters.competencyTheme' | translate}}
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                            <div class="search-container">
+                            <div class="search-filter-container">
                                 <div class="rsearch"><mat-icon
                                     class="color-60 search-icon mat-icon notranslate material-icons mat-icon-no-color">search</mat-icon>
                                 <input #searchInput id="searchInput" (keyup)="onCompetencyTheme($event)" class="sinput color-60" label=""
@@ -124,7 +129,7 @@
                                 {{'widgetCbpFilters.enterCompetencySubTheme' | translate}}
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <div class="search-container">
+                        <div class="search-filter-container">
                             <div class="rsearch"><mat-icon
                                 class="color-60 search-icon mat-icon notranslate material-icons mat-icon-no-color">search</mat-icon>
                             <input #searchThemeInput class="sinput color-60" (keyup)="onCompetencySubTheme($event)" label=""
