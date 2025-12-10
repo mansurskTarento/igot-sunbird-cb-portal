@@ -1035,10 +1035,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.firstResourceLink = this.getResumeUrl(firstPlayableContent,null, primaryCategory)
 
       /* tslint:disable-next-line */
-
-      if (firstPlayableContent.optionalReading && firstPlayableContent.primaryCategory === 'Learning Resource') {
-        this.updateProgress(2, firstPlayableContent.identifier)
-      }
+      // if (firstPlayableContent.optionalReading && firstPlayableContent.primaryCategory === 'Learning Resource') {
+      //   this.updateProgress(2, firstPlayableContent.identifier)
+      // }
     }
   }
 
@@ -2084,7 +2083,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   
   private async loadContentForPreview() {
     this.tocSvc.contentLoader.next(true)
-    await this.fetchContentHierarchy(this.contentReadData?.identifier || '')
+    await this.tocSvc.fetchCourseHeirarchy(this.content)
     this.tocSvc.contentLoader.next(false)
     this.tocSvc.checkModuleWiseData(this.content)
     this.skeletonLoader = false
