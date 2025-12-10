@@ -369,4 +369,28 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       }
     })
   }
+
+  public handleParseJsonData(s: any) {
+    try {
+      const parsedString = JSON.parse(s)
+      return parsedString
+    } catch {
+      return []
+    }
+  }
+
+  handleCapitalize(str: string, type?: string): string {
+    let returnValue = ''
+    if (str) {
+      if (type === 'name') {
+        returnValue = str.split(' ').map(_str => {
+          return _str.charAt(0).toUpperCase() + _str.slice(1)
+        }).join(' ')
+      } else {
+
+        returnValue = str && (str.charAt(0).toUpperCase() + str.slice(1))
+      }
+    }
+    return returnValue
+  }
 }
