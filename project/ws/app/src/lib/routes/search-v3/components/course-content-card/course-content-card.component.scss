@@ -235,6 +235,15 @@
   }
 }
 
+.lock-download-certificate-course {
+  background: #d1392429 !important;
+
+  span,
+  mat-icon {
+    color: #D13924 !important;
+  }
+}
+
 .inprogress-course {
   color: $brandAccentColor;
   background: $brandAccentDarkShade;
