@@ -1035,10 +1035,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       this.firstResourceLink = this.getResumeUrl(firstPlayableContent,null, primaryCategory)
 
       /* tslint:disable-next-line */
-
-      if (firstPlayableContent.optionalReading && firstPlayableContent.primaryCategory === 'Learning Resource') {
-        this.updateProgress(2, firstPlayableContent.identifier)
-      }
+      // if (firstPlayableContent.optionalReading && firstPlayableContent.primaryCategory === 'Learning Resource') {
+      //   this.updateProgress(2, firstPlayableContent.identifier)
+      // }
     }
   }
 
