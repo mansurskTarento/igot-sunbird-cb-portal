@@ -94,6 +94,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   downloadCertificate(certificateData: any) {
+    if (this.content.completionSurveyLink && this.content.surveyCompletionStatus === false) {
+      return
+    }
     this.events.raiseInteractTelemetry(
       {
         type: WsEvents.EnumInteractTypes.CLICK,

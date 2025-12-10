@@ -90,12 +90,19 @@
                             <ng-container
                                 *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                 <div matRipple (click)="downloadCertificate(courseEnrollment)"
-                                    class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
-                                    <mat-icon [svgIcon]="'download'" class="mb-1"
-                                        *ngIf="!downloadCertificateLoading"></mat-icon>
-                                    <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
-                                        <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
-                                    </div>
+                                    class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
+                                    [ngClass]="{'lock-download-certificate-course': content?.completionSurveyLink && content?.surveyCompletionStatus === false}">
+                                    <ng-container
+                                        *ngIf="!(content?.completionSurveyLink && content?.surveyCompletionStatus === false); else lockedSurvey">
+                                        <mat-icon [svgIcon]="'download'" class="mb-1"
+                                            *ngIf="!downloadCertificateLoading"></mat-icon>
+                                        <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
+                                            <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #lockedSurvey>
+                                        <mat-icon class="mb-1">lock</mat-icon>
+                                    </ng-template>
                                     <span>Download Certificate</span>
                                 </div>
                             </ng-container>
