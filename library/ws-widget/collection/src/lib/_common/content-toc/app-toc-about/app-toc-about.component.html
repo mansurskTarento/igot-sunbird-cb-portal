@@ -313,7 +313,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
+            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.learningOutcome' | translate }}</div>
             <div class="desc" [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}" #descElem>
               
                 <div [innerHTML]="contentReadData?.instructions | replaceNbsp" class="mob-text break-words nodtranslate"></div>
