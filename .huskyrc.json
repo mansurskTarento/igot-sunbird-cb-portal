@@ -1,7 +1,6 @@
 {
   "hooks": {
-    "pre-push": "",	
-    "pre-commit": "npm run lint:fix",	
+    "pre-push": "",
     "post-commit": "git status"
   }
 }

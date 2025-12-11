@@ -148,6 +148,25 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   batchControl = new UntypedFormControl('', Validators.required)
   contentProgress = 0
   bannerUrl: SafeStyle | null = null
+  selectedVersion: string = 'volume1'
+  versions: any[] = [
+    {
+      name: 'Volume 1',
+      value: 'volume1',
+    },
+    {
+      name: 'Volume 2',
+      value: 'volume2',
+    },
+    {
+      name: 'Volume 3',
+      value: 'volume3',
+    },
+    {
+      name: 'Volume 4',
+      value: 'volume4',
+    }
+  ]
   routePath = 'overview'
   validPaths = new Set(['overview', 'contents', 'analytics'])
   routerParamSubscription: Subscription | null = null
@@ -1926,6 +1945,12 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
         this.errorWidgetData.widgetData.errorType = ErrorType.somethingWrong
         break
     }
+  }
+
+  onVersionChange(event: any) {
+    console.log('Selected version:', event.value)
+    this.selectedVersion = event.value
+    // Add your custom logic here
   }
 
   private processContentBody() {

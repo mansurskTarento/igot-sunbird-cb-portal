@@ -118,6 +118,14 @@
     padding: 4px;
     border-radius: 2px;
   }
+
+  .new-version-pill {
+    background-color: rgba(249, 203, 151, 1);
+    border: 1px solid rgba(249, 203, 151, 1);
+    padding: 4px;
+    border-radius: 2px;
+
+  }
 }
 
 .text-info-div {
@@ -1057,4 +1065,21 @@ mat-divider {
   }
 
 
+}
+
+.new-version-chip {
+  gap: 10px;
+  padding-top: 2px;
+  padding-right: 8px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+  background-color: rgba(243, 150, 47, 1);
+  cursor: pointer;
+
+  .new-version-text {
+    font-family: Lato;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+  }
 }

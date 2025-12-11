@@ -393,7 +393,11 @@
                 </div>
               </div>
             </ng-container>
-
+            <ng-container *ngIf="!skeletonLoader">
+              <div class="new-version-chip rounded-2xl">
+                <span class="new-version-text nodtranslate">New Version Available</span>
+              </div>
+            </ng-container>
             <div class="flex items-center text-white mob-share" *ngIf="canShare">
               <mat-icon class="nodtranslate" (click)="onClickOfShare()">share</mat-icon>
             </div>
@@ -421,7 +425,7 @@
               [bindingClass]="'rounded blue-2-loader'"></ws-widget-skeleton-loader>
           </ng-container>
           <ng-container *ngIf="!skeletonLoader">
-            <div class="flex gap-4 items-center" *ngIf="content?.averageRating || content?.additionalTags?.length">
+            <div class="flex gap-4 items-center">
               <div class="flex flex-row rating-chip py-2 items-center cursor-pointer"
                 (click)="handleNavigateToReviews()" *ngIf="content?.averageRating">
                 <div class="flex flex-row gap-1 margin-left-s items-center">
@@ -438,6 +442,11 @@
                     translate }}</span>
                   <span *ngIf="content?.additionalTags?.includes('mostEnrolled')">{{ 'cardcontentv2.mostEnrolled' |
                     translate }}</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="new-version-pill text-xs leading-3">
+                  <span>Pending Retirement</span>
                 </div>
               </div>
             </div>
@@ -606,6 +615,17 @@
 
 
           <div class="flex flex-col gap-4 p-5 border-bottom">
+            <div class="flex flex-col gap-1 version-contoller">
+              <div class="font-bold">Select Version</div>
+              <mat-form-field appearance="outline">
+                <mat-select [(value)]="selectedVersion" (selectionChange)="onVersionChange($event)">
+                  <mat-option *ngFor="let version of versions" [value]="version.value">
+                    {{ version.name }} - {{ version.name }} - {{ version.name }} - {{ version.name }} - {{ version.name
+                    }} - {{ version.name }} - {{ version.name }} - {{ version.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
             <div class="flex flex-col gap-4"
               *ngIf="contentReadData && contentReadData?.primaryCategory === primaryCategory.BLENDED_PROGRAM">
