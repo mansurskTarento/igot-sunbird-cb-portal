@@ -1,7 +1,7 @@
 <ng-template #certificateCard>
     <ng-container *ngIf="!disableCertificate">
         <ng-container *ngIf="!lockCertificate; else certificateLock">
-            <div class="certificate-outer-div">        
+            <div class="certificate-outer-div">
                 <div class="certificate-card">
                     <div class="flex flex-col certificate-info p-4 gap-3">
                         <div class="flex flex-row">
@@ -70,7 +70,7 @@
                                         <img *ngIf="fromMarketPlace" class="ceritificate-image"
                                         [src]="'/assets/icons/toc/no-certificate-market-place.svg'"
                                         alt="certificate image" />
-                                        
+
                                         <div [ngClass]="{'view-certificate': downloadCertificateBool, 'view-cert': !downloadCertificateBool}">
                                             <button type="button" (click)="handleOpenCertificateDialog()">
                                                 <span *ngIf="!downloadCertificateBool">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
@@ -151,14 +151,14 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="mobile-certificate-container" *ngIf="!skeletonLoader">
             <div class="earned-certificate-container">
                 <div class="flex flex-row">
                     <div class="ribbon"></div>
                     <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
                 </div>
-               
+
                 <div class="certificate-background">
                     <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
                 </div>
@@ -179,14 +179,14 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="mobile-certificate-container" *ngIf="!skeletonLoader">
             <div class="earned-certificate-container">
                 <div class="flex flex-row">
                     <div class="ribbon"></div>
                     <div class="earned-certificate">{{ 'apptocsinglepage.certificateEarned' | translate }}</div>
                 </div>
-               
+
                 <div class="certificate-background">
                     <ng-container [ngTemplateOutlet]="certificateCard"></ng-container>
                 </div>
@@ -274,6 +274,33 @@
         </ng-container>
     </div>
 
+    <div class="flex flex-col" *ngIf="contentReadData?.summary && contentReadData?.contentId && contentReadData?.contentId.includes('ext_')">
+        <ng-container *ngIf="skeletonLoader">
+            <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
+                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+            <div class="flex flex-col gap-2 mt-4">
+                <ws-widget-skeleton-loader [width]="'80%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'95%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'65%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!skeletonLoader">
+            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
+            <div class="desc" [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}" #descElem>
+
+                <div [innerHTML]="contentReadData?.summary | replaceNbsp" class="mob-text break-words nodtranslate"></div>
+                <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="description.viewLess"
+                    (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
+            </div>
+            <div class="ws-mat-default-text font-bold text-sm" *ngIf="description.ellipsis">
+                <span class="cursor-pointer" (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">{{ 'apptocsinglepage.viewMore' | translate }}</span>
+            </div>
+        </ng-container>
+    </div>
+
     <div class="flex flex-col">
         <ng-container *ngIf="skeletonLoader">
             <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
@@ -287,8 +314,8 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
-            <!-- {{contentReadData | json}} -->
+            <div *ngIf="content?.contentId && content?.contentId.includes('ext_')" class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
+            <div *ngIf="!(content?.contentId && content?.contentId.includes('ext_'))" class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
             <div [ngClass]="{'mob-desc-ellipsis': summary.ellipsis && isMobile, 'desc-ellipsis': summary.ellipsis && !isMobile}" #summaryElem>
                 <div class="mob-text nodtranslate" [innerHtml]="handleCapitalize(contentReadData?.description | replaceNbsp)"></div>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="summary.viewLess" (click)="summary.ellipsis = !summary.ellipsis; summary.viewLess = !summary.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
@@ -315,7 +342,7 @@
         <ng-container *ngIf="!skeletonLoader">
             <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.learningOutcome' | translate }}</div>
             <div class="desc" [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}" #descElem>
-              
+
                 <div [innerHTML]="contentReadData?.instructions | replaceNbsp" class="mob-text break-words nodtranslate"></div>
                 <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="description.viewLess"
                     (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">&nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
@@ -397,7 +424,7 @@
         </ng-container>
     </ng-container>
 
-    
+
     <ng-container *ngIf="skeletonLoader">
         <ws-widget-skeleton-loader [width]="'48px'" [height]="'16px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
         <div class="flex flex-col gap-2 mt-4">
@@ -542,7 +569,7 @@
             <div class="flex flex-col gap-4" *ngFor="let i of [1, 2]">
                 <ws-widget-skeleton-loader [width]="'72px'" [height]="'20px'"
                     [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-        
+
                 <div class="flex flex-row items-center gap-3">
                     <ws-widget-skeleton-loader [width]="'36px'" [height]="'36px'"
                         [bindingClass]="'rounded-full'"></ws-widget-skeleton-loader>
@@ -572,7 +599,7 @@
                         <div class="text-xs leading-3 mob-text">{{ 'apptocsinglepage.author' | translate }}</div>
                     </div>
                 </div>
-    
+
                 <div class="flex flex-row gap-4" *ngFor="let creator of handleParseJsonData(contentReadData?.creatorContacts)">
                     <div class="flex items-center justify-center">
                         <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'" [photoUrl]="creator.photo || ''"
@@ -599,7 +626,7 @@
             </div>
         </div>
     </ng-container>
-    
+
     <ng-container *ngIf="skeletonLoader">
         <ws-widget-skeleton-loader [width]="'100%'" [height]="'400px'"
             [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
@@ -608,7 +635,7 @@
         <!-- <ng-container *ngIf="content?.averageRating"> -->
             <div class="flex flex-col ratings-div gap-10" id="ratingsDiv" *ngIf="showReviews">
                 <ws-widget-rating-summary [ratingSummary]="ratingSummaryProcessed"></ws-widget-rating-summary>
-        
+
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-row gap-4">
                         <div class="flex-1 mat-subheading-1 nodtranslate" id="reviewContainer">{{ 'apptocsinglepage.topReviews' | translate }}</div>
