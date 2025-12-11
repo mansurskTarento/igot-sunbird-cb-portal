@@ -1320,6 +1320,24 @@ $title-line-count: 2;
       border-radius: 16px;
     }
 
+    .igot-speilization {
+      border: 1px solid rgba(29, 137, 35, 1);
+      padding: 4px 8px;
+      align-items: center;
+      background-color: rgba(29, 137, 35, 0.16);
+      border-radius: 16px;
+
+      .igot-text {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+        font-family: Lato;
+        letter-spacing: normal;
+      }
+    }
+
+
+
     .video-icon {
       opacity: 1;
       color: rgba(239, 149, 30, 1);

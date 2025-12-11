@@ -1161,13 +1161,6 @@
             <img mat-card-image [src]="widgetData.content.posterImage | pipePublicURL" loading="lazy"
               class="card-image ws-mat-primary-lite-background margin-remove"
               [wsUtilsDefaultThumbnail]="defaultThumbnail" [alt]="widgetData.content.name" />
-            <div class="duration-box top-right-corner-portrait"
-              *ngIf="widgetData?.isiGOTSpecialization && widgetData?.content?.additionalTags?.includes('iGOT Specialization')">
-              <img class="approved-icon mr-1" src="./assets/icons/approved.svg" alt="approved">
-              <span class=" ws-mat-white-text duration nodtranslate">
-                {{'cardcontentv2.iGOTSpecializationProgram' | translate}}
-              </span>
-            </div>
             <div class="duration-box right-corner-portrait" *ngIf="widgetData?.content?.duration > 0">
               <mat-icon class="mat-icon main_icon mr-1">access_time</mat-icon>
               <span class=" ws-mat-white-text duration nodtranslate">
@@ -1561,7 +1554,7 @@
     role="link" i18n-aria-label>
     <mat-card class="card-portrait mr-2 card-portrait-clickable min-height-remove"
       [ngClass]="widgetData.cardCustomeClass ? widgetData.cardCustomeClass : ''">
-      <div class="course_widget portrait_widget flex  margin-bottom-xs">
+      <div class="course_widget portrait_widget flex margin-bottom-xs gap-3">
         <div class="flex flex-end flex-middle course_port">
           <mat-icon class="mat-icon main_icon  ws-mat-default-text margin-right-xs">video_library</mat-icon>
           <ws-widget-display-content-type i18n-title title="Content Type" *ngIf="widgetData.content?.primaryCategory"
@@ -1571,6 +1564,13 @@
            :widgetData.content?.courseCategory ? widgetData.content?.courseCategory:widgetData.content?.primaryCategory">
           </ws-widget-display-content-type>
         </div>
+        <div class="flex flex-end flex-middle igot-speilization"
+          *ngIf="widgetData?.isiGOTSpecialization && widgetData?.content?.additionalTags?.includes('iGOT Specialization')">
+          <img class="approved-icon mr-2" src="./assets/icons/approved.svg" alt="approved">
+          <span class="igot-text nodtranslate">
+            {{'cardcontentv2.iGOTSpecializationProgram' | translate}}
+          </span>
+        </div>
       </div>
       <div class="flex">
         <div class="margin-right-s">
@@ -1579,13 +1579,7 @@
               <img mat-card-image [src]="widgetData.content.posterImage | pipePublicURL" loading="lazy"
                 class="card-image ws-mat-primary-lite-background margin-remove"
                 [wsUtilsDefaultThumbnail]="defaultThumbnail" [alt]="widgetData.content.name" />
-              <div class="duration-box top-right-corner-portrait"
-                *ngIf="widgetData?.isiGOTSpecialization && widgetData?.content?.additionalTags?.includes('iGOT Specialization')">
-                <img class="approved-icon mr-1" src="./assets/icons/approved.svg" alt="approved">
-                <span class=" ws-mat-white-text duration nodtranslate">
-                  {{'cardcontentv2.iGOTSpecializationProgram' | translate}}
-                </span>
-              </div>
+
               <div class="duration-box right-corner-portrait" *ngIf="widgetData?.content?.duration > 0">
                 <mat-icon class="mat-icon main_icon mr-1">access_time</mat-icon>
                 <span class=" ws-mat-white-text duration nodtranslate">
