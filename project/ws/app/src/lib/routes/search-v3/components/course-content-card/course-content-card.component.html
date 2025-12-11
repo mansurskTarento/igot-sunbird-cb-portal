@@ -84,7 +84,7 @@
                                 {{content?.topic}}
                             </ng-container>
                         </div>
-                        <div [ngClass]="{'right-section-row': content?.difficultyLevel, 'right-section-column': !content?.difficultyLevel}">
+                        <div [ngClass]="{'right-section-row': content?.difficultyLevel || content?.knowledgeLevel, 'right-section-column': !content?.difficultyLevel || content?.knowledgeLevel}">
                             <div class="flex items-center gap-3 bookmark-section">
                                 <ng-container
                                     *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
@@ -103,23 +103,23 @@
                                     <div class="inprogress-course font-stats rounded">Completed</div>
                                 </ng-container>
                             </div>
-                            <div *ngIf="content?.difficultyLevel" class="knowledge-level-container">
-                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+                            <div *ngIf="content?.difficultyLevel || content?.knowledgeLevel" class="knowledge-level-container">
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'beginner' || content?.knowledgeLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
                                         <rect width="16" height="16" fill="#DBF4DC"/>
                                         <path d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z" fill="#49C951"/>
                                     </svg>
-                                    {{content?.difficultyLevel}}
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
                                 </span>
-                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'intermediate'" class="level-badge intermediate">
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'intermediate' || content?.knowledgeLevel?.toLowerCase() === 'intermediate'" class="level-badge intermediate">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
                                         <rect width="16" height="16" fill="#D1DBEC"/>
                                         <path d="M7.42267 2.66666C7.67927 2.22221 8.32077 2.22221 8.57737 2.66666L12.0415 8.66666C12.2981 9.1111 11.9773 9.66666 11.4641 9.66666H4.53592C4.02272 9.66666 3.70197 9.1111 3.95857 8.66666L7.42267 2.66666Z" fill="#1B4CA1"/>
                                         <path d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z" fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5"/>
                                     </svg>
-                                    {{content?.difficultyLevel}}
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
                                 </span>
-                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'advanced' || content?.knowledgeLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
                                         <g clip-path="url(#clip0)">
                                             <rect width="16" height="16" fill="#FFE6E1"/>
@@ -133,7 +133,7 @@
                                             </clipPath>
                                         </defs>
                                     </svg>
-                                    {{content?.difficultyLevel}}
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
                                 </span>
                             </div>
                         </div>
