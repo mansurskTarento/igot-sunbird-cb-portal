@@ -187,7 +187,8 @@
             <mat-icon class="text-gray-600">schedule</mat-icon>
             <div class="flex flex-col">
               <span class="text-xs text-gray-500">Start Time</span>
-              <span class="text-sm font-semibold">11:00 AM</span>
+              <span class="text-sm font-semibold">{{ formatEventTime(eventData?.startDate, eventData?.startTime)
+                }}</span>
             </div>
           </div>
         </div>
@@ -389,6 +390,31 @@
               <div>
                 <div class="reference-download-icon">
                   <a download="{{eventData?.identifier}}-PreReads" (click)="downloadPDF(item)">
+                    {{'events.downloadPdf' | translate}}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </mat-tab>
+        <mat-tab label="{{'events.summary' | translate}}" *ngIf="eventData?.postEventSummary?.length">
+          <ng-container *ngFor="let item of eventData?.postEventSummary">
+            <div class="reference-card flex gap-4 justify-between">
+              <div class="reference-inner-card">
+                <div class="reference-title flex align-icon gap-2">
+                  <div><img class="img-size" src="{{fileImage(item)}}" /></div>
+                  <div class="text-truncate">{{'events.summary' | translate}} {{'events.documents' | translate}} </div>
+                </div>
+                <div class="flex gap-2">
+                  <mat-icon>visibility</mat-icon>
+                  <a target="_blank" href="{{item}}">
+                    <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
+                  </a>
+                </div>
+              </div>
+              <div>
+                <div class="reference-download-icon">
+                  <a download="{{eventData?.identifier}}-Summary" (click)="downloadPDF(item)">
                     {{'events.downloadPdf' | translate}}
                   </a>
                 </div>

@@ -146,6 +146,18 @@
       </div>
       <!-- </ng-container> -->
 
+      <ng-container *ngIf="eventData?.typeofEvent?.toLowerCase() === 'live' && eventData?.meetingAgenda">
+        <div class="margin-top-m">
+          <span class="mat-subheading-2 ws-mat-accent-text" role="link" tabindex="0">{{ 'eventDetailsRightCard.agenda'
+            | translate }}</span>
+          <div class="flex flex-wrap" role="link" tabindex="0">
+            <span class="flex-wrap mat-body-2" role="link" tabindex="0">
+              {{eventData?.meetingAgenda}}
+            </span>
+          </div>
+        </div>
+      </ng-container>
+
       <div class="margin-top-m">
         <span class="mat-subheading-2 ws-mat-accent-text" role="link" tabindex="0">{{ 'eventDetailsRightCard.eventType'
           | translate }}</span>
@@ -164,7 +176,28 @@
           </span>
         </div>
       </div>
+
+      <ng-container *ngIf="handleParseJsonData(eventData?.speakerDetails)?.length">
+        <div class="flex flex-col gap-3 margin-top-m">
+          <span class="mat-subheading-2 ws-mat-accent-text margin-remove" role="link" tabindex="0">{{
+            'eventDetailsRightCard.speakers' |
+            translate }}</span>
+          <div class="flex flex-row gap-4 items-center"
+            *ngFor="let item of handleParseJsonData(eventData?.speakerDetails)">
+            <div class="flex items-center justify-center">
+              <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
+                [photoUrl]="item?.photo || ''" [name]="item?.name">
+              </ws-widget-avatar-photo>
+            </div>
+            <div class="flex flex-col gap-1 justify-center">
+              <div class="font-bold">{{ handleCapitalize(item?.name, 'name') }}</div>
+              <div class="text-xs leading-3">{{ 'eventDetailsRightCard.speaker' | translate }}</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
     </div>
+
     <!-- <div class="margin-top-m">
         <span class="mat-subheading-2 ws-mat-black60-text" role="link" tabindex="0">
         Last updated on {{eventData?.lastUpdatedOn | date}}
