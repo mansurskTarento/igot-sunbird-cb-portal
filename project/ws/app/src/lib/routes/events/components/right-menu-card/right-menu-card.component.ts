@@ -43,6 +43,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   pageConfig: any = {}
   enableShare = false
   rootOrgId: any
+  showEnrolledCount: boolean = true
+  totalUsersEnrolled: any = 0
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -119,7 +121,26 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         }
 
       }
+      if (this.eventData?.typeofEvent === 'live') {
+        this.getEnrolledUserCount()
+      }
     }
+  }
+
+  getEnrolledUserCount() {
+    const requestBody = {
+      request: {
+        filters: {
+          active: true,
+          batchId: this.batchId,
+          limit: 1,
+          currentOffSet: 0
+        }
+      }
+    }
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+      this.totalUsersEnrolled = response?.totalCount || 0
+    })
   }
 
   get progressVal() {
@@ -278,6 +299,9 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           this.openSnackBar('Enrolled Successfully')
           this.raiseTelemetry('enroll-now')
           this.enrollEvent.emit(true)
+          if (this.eventData?.typeofEvent === 'live') {
+            this.getEnrolledUserCount()
+          }
         }
         if (this.batchId) {
           // this.navigateToPlayerPage(batchId)

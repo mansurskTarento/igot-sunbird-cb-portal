@@ -398,29 +398,68 @@
           </ng-container>
         </mat-tab>
         <mat-tab label="{{'events.summary' | translate}}" *ngIf="eventData?.postEventSummary?.length">
-          <ng-container *ngFor="let item of eventData?.postEventSummary">
-            <div class="reference-card flex gap-4 justify-between">
-              <div class="reference-inner-card">
-                <div class="reference-title flex align-icon gap-2">
-                  <div><img class="img-size" src="{{fileImage(item)}}" /></div>
-                  <div class="text-truncate">{{'events.summary' | translate}} {{'events.documents' | translate}} </div>
+          <div class="summary-continer">
+            <ng-container *ngFor="let item of eventData?.postEventSummary">
+              <div class="reference-card flex gap-4 justify-between">
+                <div class="reference-inner-card">
+                  <div class="reference-title flex align-icon gap-2">
+                    <div><img class="img-size" src="{{fileImage(item)}}" /></div>
+                    <div class="text-truncate">{{'events.summary' | translate}} {{'events.documents' | translate}}
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <mat-icon>visibility</mat-icon>
+                    <a target="_blank" href="{{item}}">
+                      <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
+                    </a>
+                  </div>
                 </div>
-                <div class="flex gap-2">
-                  <mat-icon>visibility</mat-icon>
-                  <a target="_blank" href="{{item}}">
-                    <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
-                  </a>
+                <div>
+                  <div class="reference-download-icon">
+                    <a download="{{eventData?.identifier}}-Summary" (click)="downloadPDF(item)">
+                      {{'events.downloadPdf' | translate}}
+                    </a>
+                  </div>
                 </div>
               </div>
-              <div>
-                <div class="reference-download-icon">
-                  <a download="{{eventData?.identifier}}-Summary" (click)="downloadPDF(item)">
-                    {{'events.downloadPdf' | translate}}
-                  </a>
-                </div>
+            </ng-container>
+            <ng-container *ngIf="eventData?.noOfAttendes">
+              <div class="flex flex-1 flex-column mb-2 mt-4">
+                <span class="f-medium mat-title">{{ 'events.numberOfAttendees' | translate }} </span>
               </div>
-            </div>
-          </ng-container>
+              <div class="flex flex-wrap">
+                <ng-container>
+                  <div class="flex mb-5">
+                    <p class="word-break">{{eventData?.noOfAttendes}}</p>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="eventData?.eventDuration">
+              <div class="flex flex-1 flex-column mb-2 mt-4">
+                <span class="f-medium mat-title">{{ 'events.eventDuration' | translate }} </span>
+              </div>
+              <div class="flex flex-wrap">
+                <ng-container>
+                  <div class="flex mb-5">
+                    <p class="word-break">{{formatDuration(eventData?.eventDuration)}}</p>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="eventData?.meetingSummary">
+              <div class="flex flex-1 flex-column mb-2 mt-4">
+                <span class="f-medium mat-title">{{ 'events.keyTakeaways' | translate }} </span>
+              </div>
+              <div class="flex flex-wrap">
+                <ng-container>
+                  <div class="flex mb-5">
+                    <p class="word-break">{{eventData?.meetingSummary}}</p>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
         </mat-tab>
         <!-- <mat-tab label="{{'apptocsinglepage.comments' | translate}}" *ngIf="pageData && pageData?.commentsTab">
         <ng-container *ngIf="!skeletonLoader">

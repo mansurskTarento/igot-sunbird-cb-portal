@@ -54,6 +54,24 @@
   }
 }
 
+.enrollment-pill {
+  background: #FFF4E5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px;
+  margin-bottom: 8px;
+
+  .enrollment-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a1a1a;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+}
+
 .timediv {
   background: rgba(0, 0, 0, 0.04);
   padding: 15px;
