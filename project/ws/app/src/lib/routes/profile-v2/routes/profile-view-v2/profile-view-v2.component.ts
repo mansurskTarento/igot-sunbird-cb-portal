@@ -23,6 +23,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
+import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service';
 //#endregion
 
 @Component({
@@ -220,6 +221,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private datePipe: DatePipe,
     private events: EventService,
     private langtranslations: MultilingualTranslationsService,
+    private commonSvc: CommonDataService
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -229,6 +231,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.translateService.use(lang)
       }
     })
+    
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
@@ -258,6 +261,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.getRejectedStatus()
     this.getGroupData()
     this.getInsightsData()
+    
   }
 
   //#region (initialization)
@@ -306,11 +310,25 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
+        this.checkMandatory()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('groupDataFaile'))
         }
       })
+  }
+  checkMandatory() {
+    this.activatedRoute.fragment.subscribe(fragment => {
+      if (fragment === 'mandatorySection') {
+        
+        setTimeout(() => {
+              this.handleEditMandatoryDetails()
+          
+        }, 500)
+      } else {
+        this.commonSvc.mandatoryDetails()
+      }
+    })
   }
 
   getProfileDetailsFromRoutes() {
@@ -661,9 +679,31 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       }
     } else if (header === 'Primary Details') {
       dialogDetails['groupsList'] = this.groupsList
+    } else if (header === 'mandatorySection') {
+      console.log(this.groupsList,'=========> this.grouplist')
+      
+      dialogDetails['groupsList'] = this.groupsList
     }
+    
+    // For mandatorySection, wrap dialogDetails and include approval fields
+    let dialogData: any;
+    if (header === 'mandatorySection') {
+      dialogData = {
+        dialogDetails,
+        unVerifiedObj: this.unVerifiedObj,
+        rejectedFields: this.rejectedFields,
+        approvalPendingFields: this.approvalPendingFields,
+        enableWTR: this.enableWTR,
+        enableWR: this.enableWR,
+        isCurrentUser: this.isCurrentUser,
+        primaryDetails: this.primaryDetails
+      };
+    } else {
+      dialogData = dialogDetails;
+    }
+    
     const dialogRef = this.dialog.open(PrfileEditV2Component, {
-      data: dialogDetails,
+      data: dialogData,
       disableClose: true,
       panelClass: 'dialog_sidenav',
       autoFocus: false
@@ -1589,5 +1629,36 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       }
     })
   }
+
+
+   // Update handleEditCustomDetails to build the form and populate values
+  handleEditMandatoryDetails() {
+    console.log(this.groupsList,'=========> this.grouplist' )
+    
+     const dialogDetails: any = {
+      header: 'Mandatory Section',
+      profileDetails: this.primaryDetails,
+      groupsList: this.groupsList
+    }
+     const dialogRef = this.dialog.open(PrfileEditV2Component, {
+      data: {dialogDetails,
+        unVerifiedObj: this.unVerifiedObj,
+        rejectedFields: this.rejectedFields,
+        approvalPendingFields: this.approvalPendingFields,
+        enableWTR: this.enableWTR,
+        isCurrentUser: this.isCurrentUser,
+        primaryDetails:this.primaryDetails
+      },
+      disableClose: true,
+      panelClass: 'dialog_sidenav',
+      autoFocus: false
+    })
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        // this.getOrgDetails()
+      }
+    })
+  }
+
 
 }
