@@ -617,4 +617,27 @@ export class EventDetailComponent implements OnInit {
       this.router.navigate([`/app/toc/${this.linkedCourseData.identifier}`])
     }
   }
+
+  formatDuration(min: number): string {
+    if (!min || min <= 0) {
+      return '0m'
+    }
+
+    const hours = Math.floor(min / 60)
+    const minutes = Math.floor(min % 60)
+    const seconds = Math.floor((min % 1) * 60)
+
+    const parts = []
+    if (hours > 0) {
+      parts.push(`${hours}h`)
+    }
+    if (minutes > 0) {
+      parts.push(`${minutes}m`)
+    }
+    if (seconds > 0) {
+      parts.push(`${seconds}s`)
+    }
+
+    return parts.length > 0 ? parts.join(' ') : '0m'
+  }
 }

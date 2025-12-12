@@ -57,6 +57,12 @@ export class FormMicroSiteDataService implements Resolve<any> {
       return { data: localData, error: null };
     }
     
+    // If rootOrgId is empty, don't call API
+    if (!reqBody.request.rootOrgId || reqBody.request.rootOrgId.trim() === '') {
+      localStorage.removeItem('microSiteRedirectionData');
+      return { data: null, error: 'Root Organization ID is required' };
+    }
+    
     // Otherwise, fetch from API
     return this.formSvc.formReadData(reqBody).pipe(
       map((rData: any) => {

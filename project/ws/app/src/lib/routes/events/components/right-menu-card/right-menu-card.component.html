@@ -10,7 +10,13 @@
       </div>
     </div>
     <ng-container *ngIf="isenrollFlow">
-
+      <ng-container *ngIf="showEnrolledCount && eventData?.maxEnrolments">
+        <div class="enrollment-pill">
+          <span class="enrollment-text">Oh, only <strong>{{eventData?.maxEnrolments - totalUsersEnrolled}}</strong>
+            slots left... better
+            enroll now!</span>
+        </div>
+      </ng-container>
       <ng-container *ngIf="!enrollBtnLoading">
         <!--Not enrolled -->
         <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent || pastEvent)">
@@ -22,7 +28,8 @@
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
                 </a>
               </ng-container>
-              <ng-container *ngIf="courseProgress?.completionPercentage && courseProgress?.completionPercentage >= 30">
+              <ng-container *ngIf="courseProgress?.completionPercentage &&
+                courseProgress?.completionPercentage >= 30 && totalUsersEnrolled < eventData?.maxEnrolments">
                 <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
                 </a>

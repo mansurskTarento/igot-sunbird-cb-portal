@@ -1058,3 +1058,46 @@ mat-divider {
 
 
 }
+
+.knowledge-level-container {
+  margin-left: auto;
+}
+
+.level-badge {
+  display: inline-flex;
+  height: 24px;
+  padding: 2px 8px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.level-badge.beginner {
+  border: 1px solid #49C951;
+  background: linear-gradient(0deg, rgba(73, 201, 81, 0.20) 0%, rgba(73, 201, 81, 0.20) 100%), #FFF;
+  color: #2F8132;
+  border-radius: 16px;
+}
+
+.level-badge.intermediate {
+  border: 1px solid #1B4CA1;
+  background: linear-gradient(0deg, rgba(27, 76, 161, 0.20) 0%, rgba(27, 76, 161, 0.20) 100%), #FFF;
+  color: #1B4CA1;
+  border-radius: 16px;
+}
+
+.level-badge.advanced {
+  border: 1px solid #FF8268;
+  background: linear-gradient(0deg, rgba(255, 130, 104, 0.20) 0%, rgba(255, 130, 104, 0.20) 100%), #FFF;
+  color: #FF4B25;
+  border-radius: 16px;
+}
+
+.level-badge svg {
+  flex-shrink: 0;
+}
