@@ -33,6 +33,13 @@ export class SeeAllService {
 
   }
 
+  /**
+   * Fetch content using dynamic configuration
+   */
+  fetchDynamicContent(url: string, request: any): Observable<any> {
+    return this.http.post<any>(url, request)
+  }
+
   fetchSearchData(request: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SEARCH_V6, request)
   }
