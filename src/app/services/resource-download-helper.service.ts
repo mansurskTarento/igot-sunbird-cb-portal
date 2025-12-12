@@ -1,54 +1,39 @@
-import { Component, Input, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
-import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection/src/public-api'
+import { Injectable } from '@angular/core'
 import { EventService, NsContent, WsEvents } from '@sunbird-cb/utils-v2'
 import * as fileSaver from 'file-saver'
 
-@Component({
-  selector: 'ws-widget-app-toc-teachers-notes',
-  templateUrl: './app-toc-teachers-notes.component.html',
-  styleUrls: ['./app-toc-teachers-notes.component.scss'],
+@Injectable({
+  providedIn: 'root'
 })
-
-export class AppTocTeachersNotesComponent implements OnInit {
-
-  @Input() content!: NsContent.IContent
-  @Input() notesDisplayType!: string
-  primaryCategory = NsContent.EPrimaryCategory
+export class ResourceDownloadHelperService {
   downloadInProgress: { [key: string]: boolean } = {}
-  isDownloadingAll = false
-  forPreview = false
 
-  constructor(public router: Router,
+  constructor(
     public eventSvc: EventService,
-  ) {
-    this.forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-  }
+  ) { }
 
-  ngOnInit() { }
-
-  raiseDownloadAllTelemetry(subType: string) {
+  raiseDownloadAllTelemetry(subType: string, content: NsContent.IContent, pageId: string) {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: {
           type: "click",
-          id: this.notesDisplayType == 'Reference Resource' ? "teachers-note" : "reference-note",
-          pageid: `/app/toc/${this.content?.identifier}`,
+          id: content?.identifier || '',
+          pageid: pageId,
           subType: subType,
         },
         object: {
-          id: this.content?.identifier,
-          type: this.content?.courseCategory,
+          id: content?.identifier,
+          type: content?.courseCategory,
         },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
       pageContext: {
-        pageId: `/app/toc/${this.content?.identifier}`,
-        module: this.notesDisplayType == 'Reference Resource' ? 'Amrit Gyaan Kosh' : 'Learn'
+        pageId: `/app/toc/${content?.identifier}`,
+        module: 'Player'
       },
       from: '',
       to: 'Telemetry',
@@ -56,7 +41,7 @@ export class AppTocTeachersNotesComponent implements OnInit {
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  downloadPDF(contentData: any) {
+  downloadPDF(contentData: any, pageId: string) {
     if (!contentData?.artifactUrl) {
       console.error('No artifact URL provided')
       return
@@ -64,66 +49,13 @@ export class AppTocTeachersNotesComponent implements OnInit {
 
     this.downloadInProgress[contentData.identifier] = true
     this.downloadFile(contentData.artifactUrl, contentData.name || 'download', contentData.identifier)
-    this.raiseDownloadAllTelemetry('download')
-  }
-
-  previewContent(contentData: any) {
-    this.router.navigate([`/app/amrit-gyaan-kosh/player/${VIEWER_ROUTE_FROM_MIME(contentData.mimeType)}/${contentData.identifier}`], {
-      queryParams: {
-        primaryCategory: this.primaryCategory.RESOURCE,
-        playerPreview: true,
-        collectionId: this.content.identifier,
-      },
-    })
-  }
-
-  downloadAllContent() {
-    if (!this.content?.referenceNodes?.length) {
-      return
-    }
-
-    const teacherResources = this.content.referenceNodes.filter(
-      (ele: any) => ele?.resourceCategory === this.notesDisplayType && ele.artifactUrl
-    )
-
-    if (teacherResources.length === 0) {
-      return
-    }
-
-    this.isDownloadingAll = true
-    let completedCount = 0
-
-    teacherResources.forEach((ele: any) => {
-      this.downloadInProgress[ele.identifier] = true
-      this.downloadFile(ele.artifactUrl, ele.name || 'download', ele.identifier)
-        .finally(() => {
-          completedCount++
-          if (completedCount === teacherResources.length) {
-            this.isDownloadingAll = false
-          }
-        })
-    })
-    this.raiseDownloadAllTelemetry('download-all')
+    this.raiseDownloadAllTelemetry('download', contentData, pageId)
   }
 
   /**
-   * Check if any download is currently in progress
-   */
-  hasActiveDownloads(): boolean {
-    return this.isDownloadingAll || Object.values(this.downloadInProgress).some(status => status)
-  }
-
-  /**
-   * Check if content has any teacher resources
-   */
-  hasTeacherResources(): boolean {
-    return this.content?.referenceNodes?.some((node: any) => node?.resourceCategory === this.notesDisplayType) || false
-  }
-
-  /**
-   * Download file using multiple methods to ensure compatibility across browsers
-   * @returns Promise that resolves when download completes or fails
-   */
+     * Download file using multiple methods to ensure compatibility across browsers
+     * @returns Promise that resolves when download completes or fails
+     */
   private downloadFile(url: string, fileName: string, identifier: string): Promise<void> {
     // Add file extension if missing
     const fileExtension = this.getFileExtension(url)
