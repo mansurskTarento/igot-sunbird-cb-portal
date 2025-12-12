@@ -165,6 +165,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { PickerModule } from '@ctrl/ngx-emoji-mart'
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
+import { ResourceDownloadHelperService } from './services/resource-download-helper.service'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -400,6 +401,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     { provide: ErrorHandler, useClass: GlobalErrorHandlingService },
     { provide: 'environment', useValue: environment },
     GuidedTourService,
+    ResourceDownloadHelperService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
