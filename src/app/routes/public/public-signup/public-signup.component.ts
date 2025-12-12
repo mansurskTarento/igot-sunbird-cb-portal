@@ -1215,6 +1215,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // }
 
     //  console.log('req ===: ', req)
+    console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
+    console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
+    console.log('this.heirarchyObject',this.heirarchyObject)
     this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
       .subscribe(
         _token => {
