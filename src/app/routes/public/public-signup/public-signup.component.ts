@@ -1156,7 +1156,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   signup() {
     this.disableBtn = true
-    let req: any
+    // let req: any
     // let orgId= ''
     // console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
     // console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
@@ -1214,7 +1214,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     //   // )
     // }
 
-     console.log('req ===: ', req)
+    //  console.log('req ===: ', req)
     this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
       .subscribe(
         _token => {
