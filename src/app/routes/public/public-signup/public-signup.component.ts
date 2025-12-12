@@ -219,6 +219,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   organisationSearchText = ''
   organisationInitInProgress = false
 
+  currentMinistry:any = {}
 
   private subscriptionContact: Subscription | null = null
   private recaptchaSubscription!: Subscription
@@ -1156,89 +1157,54 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   signup() {
     this.disableBtn = true
-    // let req: any
-    // let orgId= ''
-    // console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
-    // console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
-    // console.log('this.heirarchyObject',this.heirarchyObject)
-    // if(this.registrationFormStepOne.value.type === 'ministry') {
-    //   if(this.heirarchyObject.orgName === 'N/A') {
-    //     orgId= this.registrationFormStepOne.value.ministry
-    //   } else {
-    //     orgId = this.heirarchyObject.identifier
-    //   }
-    // } else if(this.registrationFormStepOne.value.type === 'state') {
-    //   if(this.heirarchyObject.orgName === 'N/A') {
-    //     if(this.registrationFormStepOne.value.department === '-1') {
-    //       orgId = this.registrationFormStepOne.value.state
-    //     } else {
-    //       orgId = this.registrationFormStepOne.value.department
-    //     }
-    //   } else {
-    //     orgId = this.heirarchyObject.identifier
-    //   }
-    // }
-    // if (this.heirarchyObject) {
-    //   req = {
-    //     firstName: this.registrationFormStepTwo.value.firstname || '',
-    //     // lastName: this.registrationFormStepOne.value.lastname || '',
-    //     email: this.registrationFormStepOne.value.email || '',
-    //     phone: `${this.registrationFormStepTwo.value.mobile}` || '',
-    //     // position: this.registrationFormStepOne.value.position.name || '',
-    //     group: this.registrationFormStepTwo.value.group || '',
-    //     source: `${environment.name}.${this.portalID}` || '',
-    //     orgName: this.heirarchyObject.orgName || '',
-    //     channel: this.heirarchyObject.channel || '',
-    //     organisationType: this.heirarchyObject.sbOrgType || '',
-    //     organisationSubType: this.heirarchyObject.sbOrgSubType || '',
-    //     mapId: orgId,
-    //     sbOrgId: orgId,
-    //     position: this.registrationFormStepOne.value.position || '',
-    //   }
-    //   // this.signupSvc.register(req).subscribe(
-    //   //   (_res: any) => {
-    //   //     this.openDialog()
-    //   //     this.disableBtn = false
-    //   //     this.isMobileVerified = true
-    //   //     this.raiseSignupInteractTelementry()
-    //   //   },
-    //   //   (err: any) => {
-    //   //     this.disableBtn = false
-    //   //     this.loggerSvc.error('Error in registering new user >', err)
-    //   //     if (err.error && err.error.params && err.error.params.errmsg) {
-    //   //       this.openSnackbar(err.error.params.errmsg)
-    //   //     } else {
-    //   //       this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
-    //   //     }
-    //   //   }
-    //   // )
-    // }
-
-    //  console.log('req ===: ', req)
     this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
       .subscribe(
         _token => {
           // tslint:disable-next-line: no-console
           let req: any
           let orgId= ''
+          let orgName = ''
+          let channel = ''
+          let organisationType = ''
+          let organisationSubType = ''
           console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
           console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
           console.log('this.heirarchyObject',this.heirarchyObject)
           if(this.registrationFormStepOne.value.type === 'ministry') {
-            if(this.heirarchyObject.orgName === 'N/A') {
+            if(this.heirarchyObject.orgName === 'N/A') {            
               orgId= this.registrationFormStepOne.value.ministry
+              orgName = this.currentMinistry?.orgName
+              channel = this.currentMinistry?.channel
+              organisationType = this.currentMinistry.sbOrgType
+              organisationSubType = this.currentMinistry.sbOrgSubType
             } else {
               orgId = this.heirarchyObject.identifier
+              orgName = this.heirarchyObject.orgName
+              channel = this.heirarchyObject.channel
+              organisationSubType = this.heirarchyObject.sbOrgSubType 
+              organisationType = this.heirarchyObject.sbOrgType
             }
           } else if(this.registrationFormStepOne.value.type === 'state') {
             if(this.heirarchyObject.orgName === 'N/A') {
               if(this.registrationFormStepOne.value.department === '-1') {
                 orgId = this.registrationFormStepOne.value.state
+                orgName = this.currentMinistry?.orgName
+                channel = this.currentMinistry?.channel
+                organisationType = this.currentMinistry.sbOrgType
+                organisationSubType = this.currentMinistry.sbOrgSubType
               } else {
                 orgId = this.registrationFormStepOne.value.department
+                orgName = this.currentMinistry?.orgName
+                channel = this.currentMinistry?.channel
+                organisationType = this.currentMinistry.sbOrgType
+                organisationSubType = this.currentMinistry.sbOrgSubType
               }
             } else {
               orgId = this.heirarchyObject.identifier
+              orgName = this.heirarchyObject.orgName
+              channel = this.heirarchyObject.channel
+              organisationSubType = this.heirarchyObject.sbOrgSubType 
+              organisationType = this.heirarchyObject.sbOrgType
             }
           }
           if (this.heirarchyObject) {
@@ -1250,10 +1216,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               // position: this.registrationFormStepOne.value.position.name || '',
               group: this.registrationFormStepTwo.value.group || '',
               source: `${environment.name}.${this.portalID}` || '',
-              orgName: this.heirarchyObject.orgName || '',
-              channel: this.heirarchyObject.channel || '',
-              organisationType: this.heirarchyObject.sbOrgType || '',
-              organisationSubType: this.heirarchyObject.sbOrgSubType || '',
+              orgName:  orgName,
+              channel: channel ,
+              organisationType: organisationType ,
+              organisationSubType:  organisationSubType,
               mapId: orgId,
               sbOrgId: orgId,
               position: this.registrationFormStepOne.value.position || '',
@@ -1261,24 +1227,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           }
 
            console.log('req ===: ', req)
-
-          this.signupSvc.register(req).subscribe(
-            (_res: any) => {
-              this.openDialog()
-              this.disableBtn = false
-              this.isMobileVerified = true
-              this.raiseSignupInteractTelementry()
-            },
-            (err: any) => {
-              this.disableBtn = false
-              this.loggerSvc.error('Error in registering new user >', err)
-              if (err.error && err.error.params && err.error.params.errmsg) {
-                this.openSnackbar(err.error.params.errmsg)
-              } else {
-                this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
-              }
-            }
-          )
         },
         error => {
           this.disableBtn = false
@@ -1501,7 +1449,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkId",
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
-          "sbOrgSubType"
+          "sbOrgSubType",
+          "channel"
         ]
       }
     }
@@ -1741,7 +1690,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkId",
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
-          "sbOrgSubType"
+          "sbOrgSubType",
+          "channel"
         ]
       }
     }
@@ -2494,11 +2444,23 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }      
   }
 
-  onStateChanged() {
+  onStateChanged(event:any) {
+    if(event && event.value) {
+      if(event && event.value) {
+        if(this.masterData['stateBackup'] && this.masterData['stateBackup'].length) {         
+          this.currentMinistry = _.find(this.masterData.stateBackup, { identifier: event.value });
+        }
+      }      
+    }
     this.getDepartmentData()
   }
 
-  onMinistryChange() {
+  onMinistryChange(event:any) {
+    if(event && event.value) {
+      if(this.masterData['ministryBackup'] && this.masterData['ministryBackup'].length) {       
+        this.currentMinistry = _.find(this.masterData.ministryBackup, { identifier: event.value });
+      }      
+    }
     if (this.registrationFormStepOne.get('organisation')) {
       this.registrationFormStepOne.get('organisation')!.setValue('')
     }   
