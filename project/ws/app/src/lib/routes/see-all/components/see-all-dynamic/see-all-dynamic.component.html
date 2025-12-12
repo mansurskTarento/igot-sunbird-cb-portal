@@ -8,10 +8,10 @@
         <div>
           <p class="contents-title-top text-dark mb-0">
             <span *ngIf="contentItems.length === 1">
-              1 {{ 'learnsearch.content' | translate }}
+              {{ 'learnsearch.content' | translate : { count: contentItems?.length || 0 } }}
             </span>
             <span *ngIf="contentItems.length > 1">
-              {{ 'learnsearch.contents' | translate: { count: contentItems?.length } }}
+              {{ 'learnsearch.contents' | translate: { count: contentItems?.length || 0 } }}
             </span>
           </p>
         </div>
@@ -69,7 +69,7 @@
         alt="No results"
         class="margin-top-l margin-bottom-s"
       />
-      <div class="no-data-text font-bold text-sm my-4">{{ 'learnsearch.noContentFound' | translate }}</div>
+      <div class="no-data-text font-bold text-sm my-4">{{ 'home.noDataFound' | translate }}</div>
     </div>
 
     <!-- Loading with existing items -->
@@ -89,7 +89,7 @@
          [infiniteScrollThrottle]="throttle"
          (scrolled)="onScrollEnd()">
       <ng-container *ngFor="let item of contentItems; let index = index">
-         <sb-uic-card-landscape [widgetData]="item?.widgetData"> </sb-uic-card-landscape>
+         <sb-uic-card-landscape [widgetData]="item?.widgetData" (contentData)="getRedirectUrlData($event)"> </sb-uic-card-landscape>
       </ng-container>
     </div>
 

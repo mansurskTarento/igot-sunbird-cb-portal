@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
-import { CommonMethodsService } from '@sunbird-cb/consumption'
+import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 
 
 const configMap: any = {
@@ -26,9 +26,13 @@ const configMap: any = {
     extContentAssigned: {
       name: "Assigned Contents",
       url: 'apis/proxies/v8/user/v1/assigned/externalcourses',
-      request: {}
+      isGetApi: false,  // POST API but with local search (no pagination)
+      isLocalSearch: true,  // Flag to indicate local search only
+      request: {
+        "partnerId": ""
+      }
+    }
   }
-}
 @Component({
   selector: 'ws-app-see-all-dynamic',
   templateUrl: './see-all-dynamic.component.html',
@@ -60,7 +64,9 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private seeAllService: SeeAllService,
     private translate: TranslateService,
-    private commonSvc: CommonMethodsService
+    private commonSvc: CommonMethodsService,
+    private router: Router,
+    private contSvc: WidgetContentLibService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -96,22 +102,23 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.apiConfig = configMap[this.configKey]
 
     if (!this.apiConfig) {
-      console.error('No configuration found for key:', this.configKey)
       return
     }
 
     // Clone the config to avoid mutating the original
     this.apiConfig = JSON.parse(JSON.stringify(this.apiConfig))
 
-    // Update the filter criteria with the provider from URL if present
-    if (this.filterProvider && this.apiConfig.request.filterCriteriaMap) {
-      // this.apiConfig.request.filterCriteriaMap['contentPartner.partnerCode'] = this.filterProvider
+    // Update the filter criteria with the provider from URL if present (only for POST APIs with request object)
+    if (this.filterProvider && this.apiConfig.request && this.apiConfig.request.filterCriteriaMap) {
+      this.apiConfig.request.filterCriteriaMap['contentPartner.id'] = this.filterProvider
+    }
+    if (this.filterProvider && this.apiConfig.request) {
+      this.apiConfig.request.partnerId =  this.filterProvider
     }
   }
 
   fetchContent(isLoadMore = false) {
     if (!this.apiConfig) {
-      console.error('No configuration found for key:', this.configKey)
       return
     }
 
@@ -127,19 +134,19 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
     const url = this.apiConfig.url
     const request = this.apiConfig.request
+    const isLocalSearchApi = this.apiConfig.isLocalSearch === true
 
-    // Check if this is a GET API (no request body) or POST API (has request)
-    this.isGetApi = !request || Object.keys(request).length === 0
+    // Check if this is a GET API - first check explicit flag, then check if request is empty
+    this.isGetApi = this.apiConfig.isGetApi === true || !request || Object.keys(request).length === 0
 
     if (this.isGetApi) {
-      // For GET APIs - fetch all data at once (local handling)
       this.seeAllService
-        .fetchDynamicContent(url, {})
+        .fetchDynamicContent(url, {}, true)
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           (res: any) => {
             // Handle different response formats
-            const data = res?.result?.content || res?.content || res?.data || res?.data || []
+            const data = res?.result?.content || res?.content || res?.data || res || []
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Store original data for search filtering
             this.originalContentItems = [...transformed]
@@ -152,7 +159,36 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
             this.isLoadingMore = false
           },
           (_err) => {
-            console.error('Error fetching content:', _err)
+            this.contentItems = []
+            this.originalContentItems = []
+            this.totalCount = 0
+            this.loading = false
+            this.isLoadingMore = false
+          }
+        )
+    } else if (isLocalSearchApi) {
+      const localSearchRequest = JSON.parse(JSON.stringify(request))
+      // Don't add pageNumber, searchString, or pageSize for local search APIs
+
+      this.seeAllService
+        .fetchDynamicContent(url, localSearchRequest, false)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (res: any) => {
+            // Handle different response formats
+            const data = res?.result?.content || res?.content || res?.data || []
+            const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
+            // Store original data for search filtering
+            this.originalContentItems = [...transformed]
+            this.contentItems = [...transformed]
+            // Capture server-provided total count
+            this.totalCount = res?.result?.totalCount || res?.totalCount || transformed.length
+            this.applyLocalSearch()
+            this.applySort()
+            this.loading = false
+            this.isLoadingMore = false
+          },
+          (_err) => {
             this.contentItems = []
             this.originalContentItems = []
             this.totalCount = 0
@@ -161,7 +197,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
           }
         )
     } else {
-      // For POST APIs - use server-side pagination with infinite scroll
+      // For POST APIs with server-side pagination - use server-side pagination with infinite scroll
       const postRequest = JSON.parse(JSON.stringify(request))
       postRequest.searchString = this.searchString
       postRequest.pageNumber = this.currentPageNumber
@@ -176,7 +212,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
             const data = res?.result?.content || res?.content || res?.data || []
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Capture server-provided total count
-            this.totalCount = res?.result?.totalCount || res?.totalCount || 0
+            this.totalCount = res?.result?.totalCount || res?.totalCount ||res?.result?.content?.length ||0
 
             if (isLoadMore) {
               // Append new items for infinite scroll
@@ -191,7 +227,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
             this.isLoadingMore = false
           },
           (_err) => {
-            console.error('Error fetching content:', _err)
             if (!isLoadMore) {
               this.contentItems = []
             }
@@ -291,9 +326,10 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
   onSearch(searchValue: string) {
     this.searchString = searchValue
+    const isLocalSearchApi = this.apiConfig.isLocalSearch === true
 
-    if (this.isGetApi) {
-      // For GET APIs - apply local search on already fetched data
+    if (this.isGetApi || isLocalSearchApi) {
+      // For GET APIs and Local Search APIs - apply local search on already fetched data
       this.applyLocalSearch()
       this.applySort()
     } else {
@@ -304,14 +340,32 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
   clearSearch() {
     this.searchString = ''
+    const isLocalSearchApi = this.apiConfig.isLocalSearch === true
 
-    if (this.isGetApi) {
-      // For GET APIs - restore full data
+    if (this.isGetApi || isLocalSearchApi) {
+      // For GET APIs and Local Search APIs - restore full data
       this.applyLocalSearch()
       this.applySort()
     } else {
       // For POST APIs - fetch all data from first page
       this.fetchContent(false)
     }
+  }
+  async getRedirectUrlData(content: any) {
+    if (content.externalId) {
+      this.router.navigate(
+        [`app/toc/ext/${content.contentId}`])
+    } else {
+      let urlData = await this.contSvc.getResourseLink(content)
+      const queryParams = {
+        ...urlData.queryParams,
+      }
+      this.router.navigate(
+        [urlData.url],
+        // { queryParams: urlData.queryParams }
+        { queryParams }
+      )
+    }
+
   }
 }
