@@ -20,12 +20,12 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="zoho-form-box">
+    <!-- <div class="zoho-form-box">
       <a (click)="getZohoForm()" class="help-icon" id="help-icon">
         <img src="/assets/icons/top-nav/help_icon.svg" alt="Need Help">
         <span class="tooltiptext">Need Help</span>
       </a>
-    </div>
+    </div> -->
     <div class="right_inner_container profile-box">
       <div class="flex">
         <div class="flex items-center mr-5">
@@ -70,7 +70,7 @@
                   {{ 'publicsignup.centerOrState' | translate }}
                 </label>
                 <mat-radio-group #type class="margin-top-s" formControlName="type" i18n-aria-label
-                  aria-label="Signup as">
+                  aria-label="Signup as" (change)="onTypeChange($event)">
                   <mat-radio-button class="mat-radio-button radio-select" [value]="'ministry'">
                     {{ 'publicsignup.center' | translate }}
                   </mat-radio-button>
@@ -79,19 +79,70 @@
                   </mat-radio-button>
                 </mat-radio-group>
               </div>
-              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='state'">
+              <!-- Ministry/Department-->
+              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='ministry'">
                 <div class="input-container">
-                  <div class="label required">{{ 'publicsignup.state' | translate }}</div>
+                  <div class="label required">{{ 'publicsignup.ministry' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #state formControlName="state" placeholder="Select State"
-                      (closed)="onStateDropdownClosed()" panelClass="search-panel"
-                      (openedChange)="setupScrollListener($event)">
+                    <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
+                      (closed)="onMinistryDropdownClosed()" panelClass="search-panel-ministry"
+                      (openedChange)="setupScrollListenerForMinistry($event)" (selectionChange)="onMinistryChange()">
 
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
                         <div class="search-input-wrapper">
-                          <input type="text" placeholder="Search State" formControlName="searchState"
-                            class="search-input" (keydown)="$event.stopPropagation()"
+                          <input type="text" placeholder="Search ministry" formControlName="searchMinistry"
+                            class="search-input-ministry" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="ministrySearch($event)" autocomplete="off">
+                          <button *ngIf="searchMinistry?.value" type="button" class="clear-button"
+                            (click)="searchMinistry?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Options list -->
+                      <mat-option [value]="ministry.identifier" *ngFor="let ministry of masterData?.ministry">
+                        {{ministry?.orgName}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreMinistrys" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.ministry )?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.ministryNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('ministry')?.touched && registrationFormStepOne?.get('ministry')?.invalid">
+                      {{ 'publicsignup.selectMinistryErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.ministry )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                  </div>
+                </div>
+
+              </div>
+              <!-- State-->
+              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='state'">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.state' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #state formControlName="state" placeholder="Select state"
+                      (closed)="onStateDropdownClosed()" panelClass="search-panel-state"
+                      (openedChange)="setupScrollListenerForState($event)"
+                      (selectionChange)="onStateChanged($event)">
+
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search state" formControlName="searchState"
+                            class="search-input-state" (keydown)="$event.stopPropagation()"
                             (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
                             (keyup)="stateSearch($event)" autocomplete="off">
                           <button *ngIf="searchState?.value" type="button" class="clear-button"
@@ -101,8 +152,8 @@
                         </div>
                       </div>
                       <!-- Options list -->
-                      <mat-option [value]="state?.name" *ngFor="let state of masterData?.state">
-                        {{state?.name}}
+                      <mat-option [value]="state.identifier" *ngFor="let state of masterData?.state">
+                        {{state?.orgName}}
                       </mat-option>
                       <!-- Loading indicator -->
                       <div *ngIf="isLoadingMoreStates" class="loading-indicator">
@@ -122,42 +173,43 @@
                     </mat-error>
                   </mat-form-field>
                   <div *ngIf="(masterData?.state )?.length === 0">
-                    <!-- <div class="mat-error txt-size">State not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
                 </div>
 
               </div>
+              <!-- Department -->
               <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='state'">
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.department' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #department formControlName="department" placeholder="Select Department"
-                      (closed)="onDepartmentDropdownClosed()" panelClass="search-panel"
-                      (openedChange)="setupScrollListener($event)">
+                    <mat-select #department formControlName="department" placeholder="Select department"
+                      (closed)="onDepartmentDropdownClosed()" panelClass="search-panel-department"
+                      (openedChange)="setupScrollListenerForDepartment($event)" (selectionChange)="onDepartmentChange()">
 
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
                         <div class="search-input-wrapper">
-                          <input type="text" placeholder="Search Department" formControlName="searchDepartment"
-                            class="search-input" (keydown)="$event.stopPropagation()"
+                          <input type="text" placeholder="Search department" formControlName="searchDepartment"
+                            class="search-input-department" (keydown)="$event.stopPropagation()"
                             (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-                            (keyup)="department($event)" autocomplete="off">
+                            (keyup)="departmentSearch($event)" autocomplete="off">
                           <button *ngIf="searchDepartment?.value" type="button" class="clear-button"
-                            (click)="searchState?.setValue('')">
+                            (click)="searchDepartment?.setValue('')">
                             ✕
                           </button>
                         </div>
                       </div>
                       <!-- Options list -->
-                      <mat-option [value]="department.name" *ngFor="let department of masterData?.department">
-                        {{department?.name}}
+                      <mat-option [value]="department.identifier" *ngFor="let department of masterData?.department">
+                        {{department?.orgName}}
                       </mat-option>
                       <!-- Loading indicator -->
                       <div *ngIf="isLoadingMoreDepartments" class="loading-indicator">
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.department )?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.department)?.length === 0" disabled>
                         <!-- No matches found -->
                         <div class="mat-error txt-size">{{ 'publicsignup.departmentNotFound' | translate }} <a
                             class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
@@ -170,75 +222,61 @@
                     </mat-error>
                   </mat-form-field>
                   <div *ngIf="(masterData?.department )?.length === 0">
-                    <!-- <div class="mat-error txt-size">Department not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
                 </div>
 
               </div>
+              <!-- organisation with ministry/state/department -->
               <div class="input-wrapper margin-top-s">
-                <label for="organisation" class=" margin-remove-bottom form-label required"
-                  i18n="Organisation label|Label which explains the user to enter Surname" i18n-aria-label
-                  aria-label="Organisation label">
-                  {{ 'publicsignup.organisation' | translate }}
-                </label>
-                <mat-form-field appearance="outline" class="margin-top-s w-full" [hidden]="hideOrg">
-                  <mat-icon matPrefix class="search-home flex items-center justify-center">search</mat-icon>
-                  <input matInput onfocus="this.select()" aria-label="organisation" [matAutocomplete]="auto"
-                    #organisation name="organisation" formControlName="organisation" i18n-placeholder
-                    placeholder="{{ 'publicsignup.searchOrganisation' | translate }}" i18n-aria-label
-                    aria-label="Type here" required (keydown.enter)="searchOrgs($event.target.value)">
-                  <!-- //NOSONAR --> <span matSuffix class="ws-mat-accent-text margin-xs cursor-pointer"
-                    (click)="searchOrgs(organisation.value)">{{ 'publicsignup.search' | translate }}</span>
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.organisation' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #organisation formControlName="organisation" placeholder="Select organisation"
+                      (closed)="onOrganisationDropdownClosed()" panelClass="search-panel-organisation"
+                      (openedChange)="setupScrollListenerForOrganisation($event)"
+                      (selectionChange)="onOrganisationChanged($event)">
 
-                  <mat-error [hidden]="false" i18n="Organisation name Error|Explains organisation name is required"
-                    *ngIf="registrationFormStepOne?.controls['organisation'].errors?.required" i18n-aria-label
-                    aria-label="Please enter your organisation name">
-                    {{ 'publicsignup.enterOrganisationName' | translate }}
-                  </mat-error>
-
-                </mat-form-field>
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="orgClicked($event)"
-                  autoActiveFirstOption="true">
-                  <ng-container *ngIf="searching">
-                    <mat-option [value]="" class="custom">
-                      <div class="p-4 w-full flex items-center justify-center">
-                        <mat-spinner [diameter]="30"></mat-spinner>
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search organisation" formControlName="searchOrganisation"
+                            class="search-input-organisation" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="organisationSearch($event)" autocomplete="off">
+                          <button *ngIf="searchOrganisation?.value" type="button" class="clear-button"
+                            (click)="searchOrganisation?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
                       </div>
-                    </mat-option>
-                  </ng-container>
-                  <ng-container *ngIf="(filteredOrgList || filteredOrgList?.length > 0 ) && resultFetched">
-                    <mat-option class=" custom bordered" *ngFor="let organisation of filteredOrgList "
-                      [value]="organisation">
-                      <ng-container [ngTemplateOutlet]="autocompleteCard"
-                        [ngTemplateOutletContext]="{organisation: organisation}">
-                      </ng-container>
-                    </mat-option>
-                  </ng-container>
-                  <mat-option class="custom bordered"
-                    *ngIf="(!filteredOrgList || !filteredOrgList?.length) && resultFetched" [value]="">
-                    <ng-container [ngTemplateOutlet]="noResult" [ngTemplateOutletContext]="{type: 'Organisation'}">
-                    </ng-container>
-                  </mat-option>
-                </mat-autocomplete>
-                <ng-container *ngIf="hideOrg">
-                  <div class="orgBox margin-top-s px-4 py-3 relative">
-                    <div class="flex">
-                      <h3 class="mat-h2 margin-remove inline-block  flex-1">
-                        {{heirarchyObject?.orgName}}
-                      </h3>
-                      <!-- //NOSONAR --> <mat-icon matPrefix
-                        class="flex items-right justify-right cursor-pointer close-rounded"
-                        (click)="editOrg()">close</mat-icon>
-                    </div>
-                    <div class="flex flex-1 items-center flex-wrap text-left mat-body-2">
-                      <span *ngIf="heirarchyObject?.l1OrgName">{{ 'publicsignup.under' | translate }} &nbsp;</span>
-                      <span *ngIf="heirarchyObject?.l1OrgName">{{heirarchyObject?.l1OrgName}}</span>
-                      <span *ngIf="heirarchyObject?.l2OrgName"> <mat-icon matPrefix
-                          class=" flex items-center justify-center">navigate_next</mat-icon></span>
-                      <span *ngIf="heirarchyObject?.l2OrgName" class="flex-1">{{heirarchyObject?.l2OrgName}}</span>
-                    </div>
+
+                      
+                      <!-- Options list -->
+                      <mat-option [value]="organisation.identifier" *ngFor="let organisation of masterData?.organisation">
+                        {{organisation?.orgName}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreOrganisations" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.organisation )?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.organisationNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('organisation')?.touched && registrationFormStepOne?.get('organisation')?.invalid">
+                      {{ 'publicsignup.selectOrganisationErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.organisation )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
-                </ng-container>
+                </div>
                 <div class="w-full" id="org-field">
                   <div class="flex items-center flex-1">
                     <span class="flex-1 ws-mat-black60-text">{{ 'publicsignup.notFound' | translate }}</span>
@@ -247,6 +285,7 @@
                   </div>
                 </div>
               </div>
+             
               <!-- Designation block inserted after Organisation -->
               <div class="input-wrapper margin-top-s">
                 <div class="input-container">
@@ -297,36 +336,7 @@
 
               </div>
 
-              <ng-template #autocompleteCard let-organisation="organisation">
-                <div class="px-5 py-3">
-                  <div>
-                    <h3 class="mat-h3 margin-remove">
-                      {{organisation?.orgName}}
-                    </h3>
-                  </div>
-                  <div class="flex flex-1 items-center flex-wrap text-left mat-body-2">
-                    <span *ngIf="organisation?.l1OrgName">{{ 'publicsignup.under' | translate }} &nbsp;</span>
-                    <span *ngIf="organisation?.l1OrgName">{{organisation?.l1OrgName}}</span>
-                    <span *ngIf="organisation?.l2OrgName"> <mat-icon matPrefix
-                        class=" flex items-center justify-center">navigate_next</mat-icon></span>
-                    <span *ngIf="organisation?.l2OrgName" class="flex-1">{{organisation?.l2OrgName}}</span>
-                  </div>
-                </div>
-              </ng-template>
-              <ng-template #noResult let-type="type">
-                <div class="flex-col text-center items-center justify-center px-6 py-3">
-                  <div class="mat-body-2 px-6">{{ 'publicsignup.noMatchingSearch' | translate }}</div>
-                  <div class="mat-body-2 padding-top-xs">
-                    <a class="flex-1 ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo(type)"> {{
-                      'publicsignup.requestForHelp' | translate }}</a>
-                  </div>
-                </div>
-              </ng-template>
-              <ng-template #onlynoResult let-type="type">
-                <div class="flex-col text-center items-center justify-center px-6 py-3">
-                  <div class="mat-body-2 px-6">{{'publicsignup.noMatchingSearch' | translate}}</div>
-                </div>
-              </ng-template>
+              
                   
               <div class="input-wrapper  mobile-wrapper margin-top-l">
                 <label for="email" class=" margin-remove-bottom form-label required"
@@ -408,7 +418,7 @@
           <div class="button-row">
             <!-- <button class="btn-outline">Previous</button> -->
              <!-- [disabled]="registrationFormStepOne?.invalid" -->
-            <button class="btn-primary"  (click)="goToNextStep()">Next</button>
+            <button [disabled]="registrationFormStepOne?.invalid || !isEmailVerified" class="btn-primary"  (click)="goToNextStep()">Next</button>
           </div>
           <div class="w-full margin-top-l">
             <div class="flex items-center  mat-body-1 flex-1">
@@ -577,10 +587,11 @@
              
             </div>
           </div>
+          
           <div class="button-row">
             <button class="btn-outline" (click)="goToPrevStep()">Previous</button>
             <button class="btn-primary" type="submit"  (click)="signup()"
-            [disabled]="!registrationFormStepTwo?.valid || !confirm || disableBtn || !isMobileVerified || !isEmailVerified || !heirarchyObject || !confirmTerms">{{ 'publicsignup.signup' | translate }}</button>
+            [disabled]="!registrationFormStepTwo?.valid || !registrationFormStepOne?.valid || !confirm || disableBtn || !isMobileVerified || !isEmailVerified || !heirarchyObject || !confirmTerms">{{ 'publicsignup.signup' | translate }}</button>
           </div>
           <div class="w-full margin-top-l">
             <div class="flex items-center  mat-body-1 flex-1">
