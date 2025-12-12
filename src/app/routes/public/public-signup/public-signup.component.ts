@@ -96,7 +96,12 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
   @ViewChild('designation', { read: ElementRef }) designationRef?: ElementRef
-  registrationForm!: UntypedFormGroup
+  @ViewChild('ministry', { read: ElementRef }) ministryRef?: ElementRef
+  @ViewChild('state', { read: ElementRef }) stateRef?: ElementRef
+  @ViewChild('department', { read: ElementRef }) departmentRef?: ElementRef
+  @ViewChild('organisation', { read: ElementRef }) organisationRef?: ElementRef
+  registrationFormStepOne!: UntypedFormGroup
+  registrationFormStepTwo!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
   namePatern = `[a-zA-Z\\s\\']{1,32}$`
   // emailWhitelistPattern = `^[a-zA-Z0-9._-]{3,}\\b@\\b[a-zA-Z0-9]*|\\b(.gov|.nic)\b\\.\\b(in)\\b$`
@@ -129,7 +134,23 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   timeLeftforOTPEmail = 0
   timerSubscriptionEmail: Subscription | null = null
   OTP_TIMER_EMAIL = environment.resendOTPTIme
-  filteredOrgList!: any
+  filteredOrgList: any = [{
+    "id": -1,
+    "orgName": "N/A",
+    "channel": "N/A",
+    "mapId": "N/A",
+    "orgCode": null,
+    "parentMapId": null,
+    "sbOrgId": "N/A",
+    "sbRootOrgId": null,
+    "sbOrgType": "N/A",
+    "sbOrgSubType": "N/A",
+    "l1MapId": null,
+    "l2MapId": null,
+    "l3MapId": null,
+    "l1OrgName": null,
+    "l2OrgName": null
+}]
   orgList: any
   resultFetched = false
   heirarchyObject: any
@@ -150,6 +171,55 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   designationInitInProgress = false
   scrollListenerAttached = false
   nodalRedirectionUrl = ''
+
+  /* ministry variables */
+  ministryFilterEnable = false
+  isLoadingMoreMinistrys = false;
+  ministryOffset = 0
+  defaultSearchMinistryCount = 0
+  ministryListLoadCount = 50
+  ministryDefaultLoadCount = 50
+  noMoreLegacyMinistrys = false
+  ministrySearchText = ''
+  ministryInitInProgress = false
+
+  /* State Variables */
+
+  stateFilterEnable = false
+  isLoadingMoreStates = false;
+  stateOffset = 0
+  defaultSearchStateCount = 0
+  stateListLoadCount = 50
+  stateDefaultLoadCount = 50
+  noMoreLegacyStates = false
+  stateSearchText = ''
+  stateInitInProgress = false
+
+  /* Department variables */
+
+  departmentFilterEnable = false
+  isLoadingMoreDepartments = false;
+  departmentOffset = 0
+  defaultSearchDepartmentCount = 0
+  departmentListLoadCount = 50
+  departmentDefaultLoadCount = 50
+  noMoreLegacyDepartments = false
+  departmentSearchText = ''
+  departmentInitInProgress = false
+
+  /* Department variables */
+
+  organisationFilterEnable = false
+  isLoadingMoreOrganisations = false;
+  organisationOffset = 0
+  defaultSearchOrganisationCount = 0
+  organisationListLoadCount = 50
+  organisationDefaultLoadCount = 50
+  noMoreLegacyOrganisations = false
+  organisationSearchText = ''
+  organisationInitInProgress = false
+
+
   private subscriptionContact: Subscription | null = null
   private recaptchaSubscription!: Subscription
   private userdataSubscription!: Subscription
@@ -160,7 +230,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   multiLang: any = []
   isMultiLangEnabled: any
   masterData: any = {}
-
+  currentStep = 'step1'
   constructor(
     private signupSvc: SignupService,
     private usersService: UserProfileService,
@@ -178,8 +248,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private eventService: EventService,
-    private telemetrySvc: TelemetryService,
+    private telemetrySvc: TelemetryService
   ) {
+
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -197,35 +268,46 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     })
     this.isMobileVerified = userData && userData.isMobileVerified || false
     this.isEmailVerified = userData && userData.isEmailVerified || false
-    this.registrationForm = new UntypedFormGroup({
+    this.registrationFormStepOne = new UntypedFormGroup({
+
+      email: new UntypedFormControl(userData && userData.email || '', [Validators.required, Validators.pattern(this.emailPattern)]),
+      type: new UntypedFormControl('ministry', [Validators.required]),
+      // ministry: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterMinisteries)]),
+      // department: new FormControl('', [forbiddenNamesValidator(this.masterDepartments)]),
+      // organisation: new FormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
+      ministry: new UntypedFormControl('', [Validators.required]),
+      searchMinistry: new UntypedFormControl('', []),
+      organisation: new UntypedFormControl('', [Validators.required]),
+      searchOrganisation: new UntypedFormControl('', []),
+      // recaptchaReactive: new FormControl(null, [Validators.required]),
+      position: new UntypedFormControl('', [Validators.required]),
+      searchDesignation: new UntypedFormControl('', []),
+      state: new UntypedFormControl('', []),
+      searchState: new UntypedFormControl('', []),
+      department: new UntypedFormControl('', []),
+      searchDepartment: new UntypedFormControl('', []),
+    })
+    this.registrationFormStepTwo = new UntypedFormGroup({
       firstname: new UntypedFormControl(userData && userData.firstname || '', [Validators.required, Validators.pattern(this.namePatern)]),
       // lastname: new FormControl('', [Validators.required, Validators.pattern(this.namePatern)]),
       // tslint:disable-next-line:max-line-length
       // position: new FormControl('', [Validators.required,  Validators.pattern(this.customCharsPattern), forbiddenNamesValidatorPosition(this.masterPositions)]),
       // tslint:disable-next-line:max-line-length
       group: new UntypedFormControl('', [Validators.required]),
-      // tslint:disable-next-line:max-line-length
-      email: new UntypedFormControl(userData && userData.email || '', [Validators.required, Validators.pattern(this.emailPattern)]),
+
       // department: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterDepartments)]),
       mobile: new UntypedFormControl(userData && userData.mobile || '', [Validators.required,
-        Validators.pattern(this.phoneNumberPattern), Validators.maxLength(12)]),
+      Validators.pattern(this.phoneNumberPattern), Validators.maxLength(12)]),
       confirmBox: new UntypedFormControl(false, [Validators.required]),
       confirmTermsBox: new UntypedFormControl(false, [Validators.required]),
       type: new UntypedFormControl('ministry', [Validators.required]),
-      // ministry: new FormControl('', [Validators.required, forbiddenNamesValidator(this.masterMinisteries)]),
-      // department: new FormControl('', [forbiddenNamesValidator(this.masterDepartments)]),
-      // organisation: new FormControl('', [Validators.required, Validators.pattern(this.customCharsPattern)]),
-      organisation: new UntypedFormControl('', [Validators.required]),
-      // recaptchaReactive: new FormControl(null, [Validators.required]),
-      position: new UntypedFormControl('', [Validators.required]),
-      searchDesignation: new UntypedFormControl('', [])
     })
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       this.isMultiLangEnabled = this.configSvc.instanceConfig.isMultilingualEnabled
     }
-        if (this.registrationForm.get('searchDesignation')) {
+    if (this.registrationFormStepOne.get('searchDesignation')) {
       // tslint:disable-next-line
-      this.registrationForm.get('searchDesignation')!.valueChanges
+      this.registrationFormStepOne.get('searchDesignation')!.valueChanges
         .pipe(
           debounceTime(100),
           distinctUntilChanged(),
@@ -245,6 +327,110 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.designation = this.masterData.designationBackup.slice(0, this.designationDefaultLoadCount)
               this.desigantionFilterEnable = false
               this.checkCurrentDesignationPresent()
+            }
+          }
+        })
+    }
+    if (this.registrationFormStepOne.get('searchMinistry')) {
+      // tslint:disable-next-line
+      this.registrationFormStepOne.get('searchMinistry')!.valueChanges
+        .pipe(
+          debounceTime(100),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          const txt = res?.toString()?.trim() ?? ''
+          if (txt?.length) {
+            this.ministryFilterEnable = true
+            // If org has IGOT ministry, call the IGOT API; otherwise filter from local backup
+            if (this.masterData && this.masterData.ministryBackup) {
+              this.masterData.ministry = this.masterData.ministryBackup.filter((item: any) =>
+                item.identifier.toLowerCase().includes(txt.toLowerCase()))
+            }
+          } else {
+            if (this.masterData && this.masterData.ministryBackup) {
+              this.masterData.ministry = this.masterData.ministryBackup.slice(0, this.ministryDefaultLoadCount)
+              this.ministryFilterEnable = false
+              this.checkCurrentMinistryPresent()
+            }
+          }
+        })
+    }
+    if (this.registrationFormStepOne.get('searchState')) {
+      // tslint:disable-next-line
+      this.registrationFormStepOne.get('searchState')!.valueChanges
+        .pipe(
+          debounceTime(100),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          const txt = res?.toString()?.trim() ?? ''
+          if (txt?.length) {
+            this.stateFilterEnable = true
+            // If org has IGOT state, call the IGOT API; otherwise filter from local backup
+            if (this.masterData && this.masterData.stateBackup) {
+              this.masterData.state = this.masterData.stateBackup.filter((item: any) =>
+                item.identifier.toLowerCase().includes(txt.toLowerCase()))
+            }
+          } else {
+            if (this.masterData && this.masterData.stateBackup) {
+              this.masterData.state = this.masterData.stateBackup.slice(0, this.stateDefaultLoadCount)
+              this.stateFilterEnable = false
+              this.checkCurrentStatePresent()
+            }
+          }
+        })
+    }
+    if (this.registrationFormStepOne.get('searchDepartment')) {
+      // tslint:disable-next-line
+      this.registrationFormStepOne.get('searchDepartment')!.valueChanges
+        .pipe(
+          debounceTime(100),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          const txt = res?.toString()?.trim() ?? ''
+          if (txt?.length) {
+            this.departmentFilterEnable = true
+            // If org has IGOT department, call the IGOT API; otherwise filter from local backup
+            if (this.masterData && this.masterData.departmentBackup) {
+              this.masterData.department = this.masterData.departmentBackup.filter((item: any) =>
+                item.identifier.toLowerCase().includes(txt.toLowerCase()))
+            }
+          } else {
+            if (this.masterData && this.masterData.departmentBackup) {
+              this.masterData.department = this.masterData.departmentBackup.slice(0, this.departmentDefaultLoadCount)
+              this.departmentFilterEnable = false
+              this.checkCurrentDepartmentPresent()
+            }
+          }
+        })
+    }
+    if (this.registrationFormStepOne.get('searchOrganisation')) {
+      // tslint:disable-next-line
+      this.registrationFormStepOne.get('searchOrganisation')!.valueChanges
+        .pipe(
+          debounceTime(100),
+          distinctUntilChanged(),
+          startWith(''),
+        )
+        .subscribe(res => {
+          const txt = res?.toString()?.trim() ?? ''
+          if (txt?.length) {
+            this.organisationFilterEnable = true
+            // If org has IGOT organisation, call the IGOT API; otherwise filter from local backup
+            if (this.masterData && this.masterData.organisationBackup) {
+              this.masterData.organisation = this.masterData.organisationBackup.filter((item: any) =>
+                item.identifier.toLowerCase().includes(txt.toLowerCase()))
+            }
+          } else {
+            if (this.masterData && this.masterData.organisationBackup) {
+              this.masterData.organisation = this.masterData.organisationBackup.slice(0, this.organisationDefaultLoadCount)
+              this.organisationFilterEnable = false
+              this.checkCurrentOrganisationPresent()
             }
           }
         })
@@ -279,31 +465,56 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe(res => {
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
     })
-     if (!this.masterData['designationBackup']) {
+    if (!this.masterData['designationBackup']) {
       this.getDesignationSafe()
     }
+    if(!this.masterData['ministryBackup']) {
+      this.getMinistryData()
+    }
+
+    this.masterData.organisationBackup = []
+    this.masterData.departmentBackup = []
+    this.masterData.organisationBackup.push({
+      "identifier": "-1",
+      "orgHierarchyFrameworkStatus": null,
+      "orgName": "N/A",
+      "sbOrgType": null,
+      "description": null,
+      "sbOrgSubType": null,
+      "orgHierarchyFrameworkId": null
+  },)
+  this.masterData.departmentBackup.push({
+    "identifier": "-1",
+    "orgHierarchyFrameworkStatus": null,
+    "orgName": "N/A",
+    "sbOrgType": null,
+    "description": null,
+    "sbOrgSubType": null,
+    "orgHierarchyFrameworkId": null
+},)
+    
   }
-private getDesignationSafe(): void {
-  if (this.designationInitInProgress || this.isLoadingMoreDesignations) {
-    return
+  private getDesignationSafe(): void {
+    if (this.designationInitInProgress || this.isLoadingMoreDesignations) {
+      return
+    }
+    this.designationInitInProgress = true
+    this.getDesignation()
   }
-  this.designationInitInProgress = true
-  this.getDesignation()
-}
 
-    getDesignation(searchText?: string, offset?: number): void {
-      // avoid running on server-side render
-      if (!isPlatformBrowser(this._platformId)) {
-        return
-      }
+  getDesignation(searchText?: string, offset?: number): void {
+    // avoid running on server-side render
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
 
-      // clear any previous debug hooks
-      if (!searchText || searchText?.length === 0) {
-        // noop
-      }
+    // clear any previous debug hooks
+    if (!searchText || searchText?.length === 0) {
+      // noop
+    }
 
-      const reqOffset = (typeof offset === 'number') ? offset : this.designationOffset
-      const reqLimit = this.designationDefaultLoadCount
+    const reqOffset = (typeof offset === 'number') ? offset : this.designationOffset
+    const reqLimit = this.designationDefaultLoadCount
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
     if (pageIndex === 0) {
@@ -336,51 +547,51 @@ private getDesignationSafe(): void {
     }))
       .subscribe({
         next: (res: any) => {
-        const content = _.get(res, 'result.result.data', [])
-        const mapped = content.map((item: any) => ({
-          name: item?.designation || '',
-          status: item?.status || 'Active',
-        }))
+          const content = _.get(res, 'result.result.data', [])
+          const mapped = content.map((item: any) => ({
+            name: item?.designation || '',
+            status: item?.status || 'Active',
+          }))
 
-        // total count may be present in different keys depending on API version.
-        // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
-        const total = _.get(res, 'result.result.totalcount', _.get(res, 'result.result.data.totalCount', _.get(res, 'result.result.totalCount', 0)))
-        this.defaultSearchDesignationCount = total
+          // total count may be present in different keys depending on API version.
+          // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+          const total = _.get(res, 'result.result.totalcount', _.get(res, 'result.result.data.totalCount', _.get(res, 'result.result.totalCount', 0)))
+          this.defaultSearchDesignationCount = total
 
-        // If offset is zero (first page) replace backup, otherwise append + dedupe
-        if (!this.masterData['designationBackup'] || reqOffset === 0) {
-          this.masterData['designationBackup'] = mapped
-        } else {
-          const combined = (this.masterData['designationBackup'] || []).concat(mapped)
-          this.masterData['designationBackup'] = _.uniqBy(combined, (it: any) => (it?.name || '').toLowerCase())
-        }
+          // If offset is zero (first page) replace backup, otherwise append + dedupe
+          if (!this.masterData['designationBackup'] || reqOffset === 0) {
+            this.masterData['designationBackup'] = mapped
+          } else {
+            const combined = (this.masterData['designationBackup'] || []).concat(mapped)
+            this.masterData['designationBackup'] = _.uniqBy(combined, (it: any) => (it?.name || '').toLowerCase())
+          }
 
-        // If server returned no new items, mark as no-more-data to stop further scroll requests
-        if (!mapped || mapped?.length === 0) {
+          // If server returned no new items, mark as no-more-data to stop further scroll requests
+          if (!mapped || mapped?.length === 0) {
+            this.noMoreLegacyDesignations = true
+          }
+
+          // If we've loaded at least the total count, mark no-more-data
+          if (this.defaultSearchDesignationCount && (this.masterData['designationBackup'] || []).length >= this.defaultSearchDesignationCount) {
+            this.noMoreLegacyDesignations = true
+          }
+
+          // Ensure visible list matches the requested display count
+          this.masterData['designation'] = (this.masterData['designationBackup'] || []).slice(0, this.designationListLoadCount)
+          // loading flag cleared in finalize()
+          this.checkCurrentDesignationPresent()
+        },
+        error: () => {
+          // Stop further automatic calls on repeated errors to avoid tight loops
+          // loading flag cleared in finalize()
           this.noMoreLegacyDesignations = true
+          // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
         }
-
-        // If we've loaded at least the total count, mark no-more-data
-        if (this.defaultSearchDesignationCount && (this.masterData['designationBackup'] || []).length >= this.defaultSearchDesignationCount) {
-          this.noMoreLegacyDesignations = true
-        }
-
-        // Ensure visible list matches the requested display count
-        this.masterData['designation'] = (this.masterData['designationBackup'] || []).slice(0, this.designationListLoadCount)
-        // loading flag cleared in finalize()
-        this.checkCurrentDesignationPresent()
-      },
-      error: () => {
-        // Stop further automatic calls on repeated errors to avoid tight loops
-        // loading flag cleared in finalize()
-        this.noMoreLegacyDesignations = true
-        // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-      }
-    })
+      })
   }
-   checkCurrentDesignationPresent() {
+  checkCurrentDesignationPresent() {
     // Get the current designation value
-    const currentDesignation = this.registrationForm.get('position')!.value
+    const currentDesignation = this.registrationFormStepOne.get('position')!.value
     // Check if current designation exists in the list
     if (currentDesignation) {
       const designationExists = this.masterData?.designation.some(
@@ -406,16 +617,16 @@ private getDesignationSafe(): void {
       }
     }
   }
-    onDesignationDropdownClosed(): void {
+  onDesignationDropdownClosed(): void {
     // Keep the designation value but clear the search input
-    const currentDesignation = this.registrationForm.get('position')!.value
+    const currentDesignation = this.registrationFormStepOne.get('position')!.value
     setTimeout(() => {
-      if (this.registrationForm.get('searchDesignation')) {
-        this.registrationForm.get('searchDesignation')!.setValue('')
+      if (this.registrationFormStepOne.get('searchDesignation')) {
+        this.registrationFormStepOne.get('searchDesignation')!.setValue('')
       }
       // Ensure the designation value remains selected
       if (currentDesignation) {
-        const designationControl = this.registrationForm.get('designation')
+        const designationControl = this.registrationFormStepOne.get('designation')
         if (designationControl) {
           designationControl.setValue(currentDesignation)
         }
@@ -423,78 +634,78 @@ private getDesignationSafe(): void {
     }, 100)
   }
 
- designationSearch(evt: any) {
-  const searchText = evt?.target?.value
-  const txt = (searchText || '').toString().trim()
-  if (this.isLoadingMoreDesignations) return
+  designationSearch(evt: any) {
+    const searchText = evt?.target?.value
+    const txt = (searchText || '').toString().trim()
+    if (this.isLoadingMoreDesignations) return
 
-  this.designationSearchText = txt
-  if (txt?.length) {
-    this.desigantionFilterEnable = true
-    this.isLoadingMoreDesignations = true
-    this.getDesignation(txt, 0)
-  } else if (this.masterData && this.masterData?.designationBackup) {
-    this.masterData.designation = this.masterData?.designationBackup.slice(0, this.designationDefaultLoadCount)
-    this.desigantionFilterEnable = false
-    this.checkCurrentDesignationPresent()
-  }
-}
-setupScrollListener(opened: boolean): void {
-  if (opened) {
-    if (!this.scrollListenerAttached) {
-      this.scrollListenerAttached = true
-
-      this.desigantionFilterEnable = false
-      this.designationListLoadCount = this.designationDefaultLoadCount
-      this.designationOffset = 0
-
+    this.designationSearchText = txt
+    if (txt?.length) {
+      this.desigantionFilterEnable = true
       this.isLoadingMoreDesignations = true
-      this.getDesignation(undefined, 0)
-
-      // Clear search box once
-      if (this.registrationForm.get('searchDesignation')) {
-        this.registrationForm.get('searchDesignation')!.setValue('')
-      }
-
-      setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement
-        if (searchInput) {
-          searchInput.focus()
-        }
-      }, 100)
-
-      // Attach scroll listener safely
-      setTimeout(() => {
-        const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
-        if (panel) {
-          // align panel width to trigger
-          try {
-            const triggerEl = this.designationRef && this.designationRef.nativeElement as HTMLElement
-            if (triggerEl) {
-              const rect = triggerEl.getBoundingClientRect()
-              // set width and left so panel aligns exactly below the trigger
-              panel.style.width = `${Math.round(rect.width)}px`
-              // leave left to overlay positioning but nudge if necessary
-              // compute left relative to viewport and apply to panel
-              const overlayLeft = rect.left
-              panel.style.left = `${Math.round(overlayLeft)}px`
-            }
-          } catch (e) {
-            // ignore DOM errors in SSR or unexpected cases
-          }
-
-          const scrollHandler = this.onDesignationSelectScroll.bind(this)
-          panel.addEventListener('scroll', scrollHandler, { passive: true })
-        }
-      }, 150)
+      this.getDesignation(txt, 0)
+    } else if (this.masterData && this.masterData?.designationBackup) {
+      this.masterData.designation = this.masterData?.designationBackup.slice(0, this.designationDefaultLoadCount)
+      this.desigantionFilterEnable = false
+      this.checkCurrentDesignationPresent()
     }
-  } else {
-    // Dropdown closed — reset scroll flag so it can reattach next time
-    this.scrollListenerAttached = false
   }
-}
+  setupScrollListener(opened: boolean): void {
+    if (opened) {
+      if (!this.scrollListenerAttached) {
+        this.scrollListenerAttached = true
 
-   onDesignationSelectScroll(event: any): void {
+        this.desigantionFilterEnable = false
+        this.designationListLoadCount = this.designationDefaultLoadCount
+        this.designationOffset = 0
+
+        this.isLoadingMoreDesignations = true
+        this.getDesignation(undefined, 0)
+
+        // Clear search box once
+        if (this.registrationFormStepOne.get('searchDesignation')) {
+          this.registrationFormStepOne.get('searchDesignation')!.setValue('')
+        }
+
+        setTimeout(() => {
+          const searchInput = document.querySelector('.search-input') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 100)
+
+        // Attach scroll listener safely
+        setTimeout(() => {
+          const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
+          if (panel) {
+            // align panel width to trigger
+            try {
+              const triggerEl = this.designationRef && this.designationRef.nativeElement as HTMLElement
+              if (triggerEl) {
+                const rect = triggerEl.getBoundingClientRect()
+                // set width and left so panel aligns exactly below the trigger
+                panel.style.width = `${Math.round(rect.width)}px`
+                // leave left to overlay positioning but nudge if necessary
+                // compute left relative to viewport and apply to panel
+                const overlayLeft = rect.left
+                panel.style.left = `${Math.round(overlayLeft)}px`
+              }
+            } catch (e) {
+              // ignore DOM errors in SSR or unexpected cases
+            }
+
+            const scrollHandler = this.onDesignationSelectScroll.bind(this)
+            panel.addEventListener('scroll', scrollHandler, { passive: true })
+          }
+        }, 150)
+      }
+    } else {
+      // Dropdown closed — reset scroll flag so it can reattach next time
+      this.scrollListenerAttached = false
+    }
+  }
+
+  onDesignationSelectScroll(event: any): void {
     const element = event?.target
     if (!this.desigantionFilterEnable) {
       // Check if user has scrolled to the bottom (with a small threshold)
@@ -530,12 +741,12 @@ setupScrollListener(opened: boolean): void {
 
   get typeValueStartCase() {
     // tslint:disable-next-line: no-non-null-assertion
-    return _.startCase(this.registrationForm.get('type')!.value)
+    return _.startCase(this.registrationFormStepOne.get('type')!.value)
   }
 
   get typeValue() {
     // tslint:disable-next-line: no-non-null-assertion
-    return this.registrationForm.get('type')!.value
+    return this.registrationFormStepOne.get('type')!.value
   }
 
   emailVerification(emailId: string) {
@@ -554,7 +765,7 @@ setupScrollListener(opened: boolean): void {
 
   clearValues() {
     // tslint:disable-next-line: no-non-null-assertion
-    this.registrationForm.get('organisation')!.setValue('')
+    this.registrationFormStepOne.get('organisation')!.setValue('')
     this.heirarchyObject = null
   }
   mdoRedirect() {
@@ -567,7 +778,7 @@ setupScrollListener(opened: boolean): void {
 
   // onPositionsChange() {
   //   // tslint:disable-next-line: no-non-null-assertion
-  //   this.masterPositions = this.registrationForm.get('position')!.valueChanges
+  //   this.masterPositions = this.registrationFormStepOne.get('position')!.valueChanges
   //     .pipe(
   //       debounceTime(500),
   //       distinctUntilChanged(),
@@ -578,14 +789,14 @@ setupScrollListener(opened: boolean): void {
 
   //   this.masterPositions.subscribe((event: any) => {
   //     // tslint:disable-next-line: no-non-null-assertion
-  //     this.registrationForm.get('position')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
-  //     this.registrationForm.updateValueAndValidity()
+  //     this.registrationFormStepOne.get('position')!.setValidators([Validators.required, forbiddenNamesValidatorPosition(event)])
+  //     this.registrationFormStepOne.updateValueAndValidity()
   //   })
   // }
 
   // onGroupChange() {
   //   // tslint:disable-next-line: no-non-null-assertion
-  //   this.masterGroup = this.registrationForm.get('group')!.valueChanges
+  //   this.masterGroup = this.registrationFormStepOne.get('group')!.valueChanges
   //     .pipe(
   //       debounceTime(500),
   //       distinctUntilChanged(),
@@ -596,28 +807,29 @@ setupScrollListener(opened: boolean): void {
 
   //   this.masterGroup.subscribe((event: any) => {
   //     // tslint:disable-next-line: no-non-null-assertion
-  //     this.registrationForm.get('group')!.setValidators([Validators.required])
-  //     this.registrationForm.updateValueAndValidity()
+  //     this.registrationFormStepOne.get('group')!.setValidators([Validators.required])
+  //     this.registrationFormStepOne.updateValueAndValidity()
   //   })
   // }
 
   filterOrgsSearch(orgname: string = '') {
-      const filterValue = orgname.toLowerCase()
-      return this.signupSvc.searchOrgs(filterValue, this.typeValue).subscribe((res: any) => {
-        this.resultFetched = true
-        this.searching = false
-        this.filteredOrgList =  res.result.response.filter((org: any) => {
-          return org.orgName.toLowerCase().indexOf(filterValue) >= 0
-        })
-      },                                                                      (err: any) => {
-        this.searching = false
-        this.loggerSvc.error('Error in fetching organisations >', err)
-        if (err.error && err.error.params && err.error.params.errmsg) {
-          this.openSnackbar(err.error.params.errmsg)
-        } else {
-          this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
-        }
+    const filterValue = orgname.toLowerCase()
+    return this.signupSvc.searchOrgs(filterValue, this.typeValue).subscribe((res: any) => {
+      this.resultFetched = true
+      this.searching = false
+      
+      this.filteredOrgList = res.result.response.filter((org: any) => {
+        return org.orgName.toLowerCase().indexOf(filterValue) >= 0
       })
+    }, (err: any) => {
+      this.searching = false
+      this.loggerSvc.error('Error in fetching organisations >', err)
+      if (err.error && err.error.params && err.error.params.errmsg) {
+        this.openSnackbar(err.error.params.errmsg)
+      } else {
+        this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
+      }
+    })
   }
 
   async searchOrgs(searchValue: string) {
@@ -642,16 +854,16 @@ setupScrollListener(opened: boolean): void {
   // tslint:disable-next-line:function-name
   OrgsSearchChange() {
     // tslint:disable-next-line:no-non-null-assertion
-    this.registrationForm.get('organisation')!.valueChanges.subscribe(() => {
+    this.registrationFormStepOne.get('organisation')!.valueChanges.subscribe(() => {
       this.resultFetched = false
-      this.registrationForm.updateValueAndValidity()
+      this.registrationFormStepOne.updateValueAndValidity()
     })
   }
 
   orgClicked(event: any) {
     if (event) {
       if (event.option && event.option.value && event.option.value.orgName) {
-        const frmctr = this.registrationForm.get('organisation') as UntypedFormControl
+        const frmctr = this.registrationFormStepOne.get('organisation') as UntypedFormControl
         frmctr.setValue(_.get(event, 'option.value.orgName') || '')
         // frmctr.patchValue(_.get(event, 'option.value') || '')
         this.heirarchyObject = _.get(event, 'option.value')
@@ -679,7 +891,7 @@ setupScrollListener(opened: boolean): void {
   // }
 
   onPhoneChange() {
-    const ctrl = this.registrationForm.get('mobile')
+    const ctrl = this.registrationFormStepTwo.get('mobile')
     if (ctrl) {
       ctrl
         .valueChanges
@@ -695,7 +907,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   onEmailChange() {
-    const ctrl = this.registrationForm.get('email')
+    const ctrl = this.registrationFormStepOne.get('email')
     if (ctrl) {
       ctrl
         .valueChanges
@@ -710,7 +922,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   sendOtp() {
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepTwo.get('mobile')
     if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
       this.signupSvc.sendOtp(mob.value, 'phone').subscribe(() => {
         this.otpSend = true
@@ -726,7 +938,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   resendOTP() {
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepTwo.get('mobile')
     if (mob && mob.value && Math.floor(mob.value) && mob.valid) {
       this.signupSvc.resendOtp(mob.value, 'phone').subscribe((res: any) => {
         if ((_.get(res, 'result.response')).toUpperCase() === 'SUCCESS') {
@@ -746,7 +958,7 @@ setupScrollListener(opened: boolean): void {
 
   verifyOtp(otp: any) {
     // console.log(otp)
-    const mob = this.registrationForm.get('mobile')
+    const mob = this.registrationFormStepTwo.get('mobile')
 
     if (otp && otp.value) {
       if (otp && otp.value.length < 4) {
@@ -813,7 +1025,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   sendOtpEmail() {
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (email && email.value && email.valid) {
       this.signupSvc.sendOtp(email.value, 'email').subscribe(() => {
         this.otpEmailSend = true
@@ -821,7 +1033,7 @@ setupScrollListener(opened: boolean): void {
         this.startCountDownEmail()
         // tslint:disable-next-line: align
       }, (error: any) => {
-        const isError= _.get(error, 'error.params.errmsg')
+        const isError = _.get(error, 'error.params.errmsg')
         const errMsg = isError ? "Your email domain isn’t recognised — please contact your department for registration." : "Please try again later"
         this.snackBar.open(errMsg)
       })
@@ -831,7 +1043,7 @@ setupScrollListener(opened: boolean): void {
   }
 
   resendOTPEmail() {
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (email && email.value && email.valid) {
       this.signupSvc.resendOtp(email.value, 'email').subscribe((res: any) => {
         if ((_.get(res, 'result.response')).toUpperCase() === 'SUCCESS') {
@@ -850,7 +1062,7 @@ setupScrollListener(opened: boolean): void {
 
   verifyOtpEmail(otp: any) {
     // console.log(otp)
-    const email = this.registrationForm.get('email')
+    const email = this.registrationFormStepOne.get('email')
     if (otp && otp.value) {
       if (otp && otp.value.length < 4) {
         this.snackBar.open(this.translateLabels('pleaseEnterValidOtp', 'publicsignup'))
@@ -914,14 +1126,14 @@ setupScrollListener(opened: boolean): void {
 
   public confirmChange() {
     this.confirm = !this.confirm
-    this.registrationForm.patchValue({
+    this.registrationFormStepOne.patchValue({
       confirmBox: this.confirm,
     })
   }
 
   public confirmTermsChange() {
     this.confirmTerms = !this.confirmTerms
-    this.registrationForm.patchValue({
+    this.registrationFormStepOne.patchValue({
       confirmTermsBox: this.confirmTerms,
     })
   }
@@ -944,32 +1156,111 @@ setupScrollListener(opened: boolean): void {
 
   signup() {
     this.disableBtn = true
+    // let req: any
+    // let orgId= ''
+    // console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
+    // console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
+    // console.log('this.heirarchyObject',this.heirarchyObject)
+    // if(this.registrationFormStepOne.value.type === 'ministry') {
+    //   if(this.heirarchyObject.orgName === 'N/A') {
+    //     orgId= this.registrationFormStepOne.value.ministry
+    //   } else {
+    //     orgId = this.heirarchyObject.identifier
+    //   }
+    // } else if(this.registrationFormStepOne.value.type === 'state') {
+    //   if(this.heirarchyObject.orgName === 'N/A') {
+    //     if(this.registrationFormStepOne.value.department === '-1') {
+    //       orgId = this.registrationFormStepOne.value.state
+    //     } else {
+    //       orgId = this.registrationFormStepOne.value.department
+    //     }
+    //   } else {
+    //     orgId = this.heirarchyObject.identifier
+    //   }
+    // }
+    // if (this.heirarchyObject) {
+    //   req = {
+    //     firstName: this.registrationFormStepTwo.value.firstname || '',
+    //     // lastName: this.registrationFormStepOne.value.lastname || '',
+    //     email: this.registrationFormStepOne.value.email || '',
+    //     phone: `${this.registrationFormStepTwo.value.mobile}` || '',
+    //     // position: this.registrationFormStepOne.value.position.name || '',
+    //     group: this.registrationFormStepTwo.value.group || '',
+    //     source: `${environment.name}.${this.portalID}` || '',
+    //     orgName: this.heirarchyObject.orgName || '',
+    //     channel: this.heirarchyObject.channel || '',
+    //     organisationType: this.heirarchyObject.sbOrgType || '',
+    //     organisationSubType: this.heirarchyObject.sbOrgSubType || '',
+    //     mapId: orgId,
+    //     sbOrgId: orgId,
+    //     position: this.registrationFormStepOne.value.position || '',
+    //   }
+    //   // this.signupSvc.register(req).subscribe(
+    //   //   (_res: any) => {
+    //   //     this.openDialog()
+    //   //     this.disableBtn = false
+    //   //     this.isMobileVerified = true
+    //   //     this.raiseSignupInteractTelementry()
+    //   //   },
+    //   //   (err: any) => {
+    //   //     this.disableBtn = false
+    //   //     this.loggerSvc.error('Error in registering new user >', err)
+    //   //     if (err.error && err.error.params && err.error.params.errmsg) {
+    //   //       this.openSnackbar(err.error.params.errmsg)
+    //   //     } else {
+    //   //       this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
+    //   //     }
+    //   //   }
+    //   // )
+    // }
+
+    //  console.log('req ===: ', req)
     this.recaptchaSubscription = this.recaptchaV3Service.execute('importantAction')
       .subscribe(
         _token => {
           // tslint:disable-next-line: no-console
           let req: any
+          let orgId= ''
+          console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
+          console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
+          console.log('this.heirarchyObject',this.heirarchyObject)
+          if(this.registrationFormStepOne.value.type === 'ministry') {
+            if(this.heirarchyObject.orgName === 'N/A') {
+              orgId= this.registrationFormStepOne.value.ministry
+            } else {
+              orgId = this.heirarchyObject.identifier
+            }
+          } else if(this.registrationFormStepOne.value.type === 'state') {
+            if(this.heirarchyObject.orgName === 'N/A') {
+              if(this.registrationFormStepOne.value.department === '-1') {
+                orgId = this.registrationFormStepOne.value.state
+              } else {
+                orgId = this.registrationFormStepOne.value.department
+              }
+            } else {
+              orgId = this.heirarchyObject.identifier
+            }
+          }
           if (this.heirarchyObject) {
             req = {
-              firstName: this.registrationForm.value.firstname || '',
-              // lastName: this.registrationForm.value.lastname || '',
-              email: this.registrationForm.value.email || '',
-              phone: `${this.registrationForm.value.mobile}` || '',
-              // position: this.registrationForm.value.position.name || '',
-              group: this.registrationForm.value.group || '',
+              firstName: this.registrationFormStepTwo.value.firstname || '',
+              // lastName: this.registrationFormStepOne.value.lastname || '',
+              email: this.registrationFormStepOne.value.email || '',
+              phone: `${this.registrationFormStepTwo.value.mobile}` || '',
+              // position: this.registrationFormStepOne.value.position.name || '',
+              group: this.registrationFormStepTwo.value.group || '',
               source: `${environment.name}.${this.portalID}` || '',
               orgName: this.heirarchyObject.orgName || '',
               channel: this.heirarchyObject.channel || '',
               organisationType: this.heirarchyObject.sbOrgType || '',
               organisationSubType: this.heirarchyObject.sbOrgSubType || '',
-              mapId: this.heirarchyObject.mapId || '',
-              sbRootOrgId: this.heirarchyObject.sbRootOrgId,
-              sbOrgId: this.heirarchyObject.sbOrgId,
-              position: this.registrationForm.value.position || '',
+              mapId: orgId,
+              sbOrgId: orgId,
+              position: this.registrationFormStepOne.value.position || '',
             }
           }
 
-          // console.log('req ===: ', req)
+           console.log('req ===: ', req)
 
           this.signupSvc.register(req).subscribe(
             (_res: any) => {
@@ -996,7 +1287,7 @@ setupScrollListener(opened: boolean): void {
           this.openSnackbar(`reCAPTCHA validation failed: ${error}`)
         }
       )
-         
+
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -1026,7 +1317,7 @@ setupScrollListener(opened: boolean): void {
       if (_result) {
         this.confirmTerms = _result
       }
-     })
+    })
   }
 
   ngOnDestroy() {
@@ -1047,20 +1338,20 @@ setupScrollListener(opened: boolean): void {
 
   // Getters
   // get ministry(): FormControl {
-  //   return this.registrationForm.get('ministry') as FormControl
+  //   return this.registrationFormStepOne.get('ministry') as FormControl
   // }
   // get department(): FormControl {
-  //   return this.registrationForm.get('department') as FormControl
+  //   return this.registrationFormStepOne.get('department') as FormControl
   // }
   // get organisation(): FormControl {
-  //   return this.registrationForm.get('organisation') as FormControl
+  //   return this.registrationFormStepOne.get('organisation') as FormControl
   // }
 
   navigateTo(param?: any) {
-    const formData = this.registrationForm.value
+    const formData = this.registrationFormStepOne.value
     const url = '/public/request'
     // tslint:disable-next-line: max-line-length
-    this.router.navigate([url], {  queryParams: { type: param }, state: { userform: formData, isMobileVerified: this.isMobileVerified , isEmailVerified: this.isEmailVerified } })
+    this.router.navigate([url], { queryParams: { type: param }, state: { userform: formData, isMobileVerified: this.isMobileVerified, isEmailVerified: this.isEmailVerified } })
   }
 
   numericOnly(event: any): boolean {
@@ -1090,7 +1381,7 @@ setupScrollListener(opened: boolean): void {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    },         0)
+    }, 0)
   }
 
   callXMLRequest() {
@@ -1126,31 +1417,1104 @@ setupScrollListener(opened: boolean): void {
     webFormxhr.send()
   }
 
-   raiseSignupInteractTelementry() {
-        this.eventService.raiseInteractTelemetry(
-          {
-            type: WsEvents.EnumInteractTypes.CLICK,
-            id: 'sign-up',
-            pageid: "/public/signup" 
-          },
-          {},
-          {
-            module: "User Registration",
-          }
-        )
-  
-        setTimeout(() => {
-          this.telemetrySvc.end(
-            { 
-              type: WsEvents.EnumInteractTypes.CLICK,
-              id: 'sign-up',
-              pageid: "/public/signup" 
-          }, {},
-           {
-              module: "User Registration",
-            })
-          
-        }, 2000);
-    
+  raiseSignupInteractTelementry() {
+    this.eventService.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'sign-up',
+        pageid: "/public/signup"
+      },
+      {},
+      {
+        module: "User Registration",
+      }
+    )
+
+    setTimeout(() => {
+      this.telemetrySvc.end(
+        {
+          type: WsEvents.EnumInteractTypes.CLICK,
+          id: 'sign-up',
+          pageid: "/public/signup"
+        }, {},
+        {
+          module: "User Registration",
+        })
+
+    }, 2000);
+
+  }
+
+  goToNextStep() {
+    if (this.registrationFormStepOne.valid) {
+      this.currentStep = 'step2'
+    } else {
+      this.currentStep = 'step2'
+      this.snackBar.open('Please fill all required fields')
     }
+
+  }
+
+  goToPrevStep() {
+
+    this.currentStep = 'step1'
+
+  }
+
+
+  /** Ministry Data */
+
+  getMinistryData(searchText?: string, offset?: number): void {
+    // this.masterData['ministry'] = []
+    // avoid running on server-side render
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
+
+    // clear any previous debug hooks
+    if (!searchText || searchText?.length === 0) {
+      // noop
+    }
+
+    const reqOffset = (typeof offset === 'number') ? offset : this.ministryOffset
+    const reqLimit = this.ministryDefaultLoadCount
+    console.log('reqOffset--',reqOffset)
+    console.log('reqLimit--',reqLimit)
+    const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
+    // if we're requesting from first page, clear the no-more-data guard
+    if (pageIndex === 0) {
+      this.noMoreLegacyMinistrys = false
+    }
+    const requestBody:any = {
+      "request": {
+        "filters": {
+          "status": 1,
+          "sbOrgType": this.registrationFormStepOne.controls.type.value
+        },
+        "query": "",
+        "limit": reqLimit,
+        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.ministryDefaultLoadCount,
+        "fields": [
+          "identifier",
+          "orgName",
+          "description",
+          "orgHierarchyFrameworkId",
+          "orgHierarchyFrameworkStatus",
+          "sbOrgType",
+          "sbOrgSubType"
+        ]
+      }
+    }
+   
+    if (searchText?.length) {
+      requestBody["request"]['query'] = searchText      
+      this.noMoreLegacyMinistrys = false
+    }
+
+    // indicate loading state so scroll handlers don't trigger parallel calls
+    this.isLoadingMoreMinistrys = true
+    console.log('requestBody--', requestBody)
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+      this.isLoadingMoreMinistrys = false
+      this.ministryInitInProgress = false
+    }))
+      .subscribe({
+        next: (res: any) => {
+          const content = _.get(res, 'result.response.content', [])
+          
+          const mapped = content.filter(
+            (item: any) => item && item.sbOrgType === 'ministry'
+          );
+          
+          // total count may be present in different keys depending on API version.
+          // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+          const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
+          this.defaultSearchMinistryCount = total
+          
+          // If offset is zero (first page) replace backup, otherwise append + dedupe
+          // if (!this.masterData['ministry'] || reqOffset === 0) {
+          //   this.masterData['ministry'] = mapped
+          // } else {
+          //   const combined = (this.masterData['ministry'] || []).concat(mapped)
+          //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          // }
+          
+          if (!this.masterData['ministryBackup'] || reqOffset === 0) {
+            this.masterData['ministryBackup'] = mapped
+          } else {
+            const combined = (this.masterData['ministryBackup'] || []).concat(mapped)
+            this.masterData['ministryBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          }
+
+          // If server returned no new items, mark as no-more-data to stop further scroll requests
+          if (!mapped || mapped?.length === 0) {
+            this.noMoreLegacyMinistrys = true
+          }
+          // If we've loaded at least the total count, mark no-more-data
+          if (this.defaultSearchMinistryCount && (this.masterData['ministryBackup'] || []).length >= this.defaultSearchMinistryCount) {
+            this.noMoreLegacyMinistrys = true
+          }
+          // Ensure visible list matches the requested display count
+          this.masterData['ministry'] = (this.masterData['ministryBackup'] || []).slice(0, this.ministryListLoadCount)
+          // loading flag cleared in finalize()
+          this.checkCurrentMinistryPresent()
+        },
+        error: () => {
+          // Stop further automatic calls on repeated errors to avoid tight loops
+          // loading flag cleared in finalize()
+          this.noMoreLegacyMinistrys = true
+          // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
+        }
+      })
+  }
+
+  setupScrollListenerForMinistry(opened: boolean): void {
+    let scrollListenerAttached = false
+    if (opened) {
+      if (!scrollListenerAttached) {
+        scrollListenerAttached = true
+
+        this.ministryFilterEnable = false
+        this.ministryListLoadCount = this.ministryDefaultLoadCount
+        this.ministryOffset = 0
+
+        this.isLoadingMoreMinistrys = true
+        this.getMinistryData(undefined, 0)
+
+        // Clear search box once
+        if (this.registrationFormStepOne.get('searchMinistry')) {
+          this.registrationFormStepOne.get('searchMinistry')!.setValue('')
+        }
+
+        setTimeout(() => {
+          const searchInput = document.querySelector('.search-input-ministry') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 100)
+
+        // Attach scroll listener safely
+        setTimeout(() => {
+          const panel = document.querySelector('.mat-select-panel.search-panel-ministry') as HTMLElement | null
+          if (panel) {
+            // align panel width to trigger
+            try {
+              const triggerEl = this.ministryRef && this.ministryRef.nativeElement as HTMLElement
+              if (triggerEl) {
+                const rect = triggerEl.getBoundingClientRect()
+                // set width and left so panel aligns exactly below the trigger
+                panel.style.width = `${Math.round(rect.width)}px`
+                // leave left to overlay positioning but nudge if necessary
+                // compute left relative to viewport and apply to panel
+                const overlayLeft = rect.left
+                panel.style.left = `${Math.round(overlayLeft)}px`
+              }
+            } catch (e) {
+              // ignore DOM errors in SSR or unexpected cases
+            }
+
+            const scrollHandler = this.onMinistrySelectScroll.bind(this)
+            panel.addEventListener('scroll', scrollHandler, { passive: true })
+          }
+        }, 150)
+      }
+    } else {
+      // Dropdown closed — reset scroll flag so it can reattach next time
+      scrollListenerAttached = false
+    }
+  }
+
+  onMinistrySelectScroll(event: any): void {
+    const element = event?.target
+    if (!this.ministryFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreMinistrys) {
+          // If org uses IGOT ministry taxonomy, request more from the API by increasing the limit
+          if (this.masterData?.ministryBackup?.length > this.masterData?.ministry?.length) {
+            // Local pagination: expand the sliced list
+            this.isLoadingMoreMinistrys = true
+            this.ministryListLoadCount += this.ministryDefaultLoadCount
+            // Update the filtered list with more items
+            setTimeout(() => {
+              this.masterData.ministry = this.masterData?.ministryBackup?.slice(0, this.ministryListLoadCount)
+              this.checkCurrentMinistryPresent()
+              this.isLoadingMoreMinistrys = false
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+          } else {
+            // Legacy (server) pagination: request next page if total not reached
+            const loadedLegacy = (this.masterData?.ministryBackup || []).length
+            if (!this.noMoreLegacyMinistrys && this.defaultSearchMinistryCount && loadedLegacy < this.defaultSearchMinistryCount) {
+              this.isLoadingMoreMinistrys = true
+              this.ministryOffset = (this.ministryOffset || 0) + this.ministryDefaultLoadCount
+              // increase display count to include newly fetched items
+              this.ministryListLoadCount += this.ministryDefaultLoadCount
+              this.getMinistryData(undefined, this.ministryOffset)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  checkCurrentMinistryPresent() {
+    // Get the current designation value
+    const currentMinistry = this.registrationFormStepOne.get('ministry')!.value
+    // Check if current designation exists in the list
+    if (currentMinistry) {
+      const ministryExists = this.masterData?.ministry.some(
+        (ministry: any) => ministry?.identifier.toLowerCase() === currentMinistry.toLowerCase()
+      )
+
+      // If designation doesn't exist in the list, add it
+      if (!ministryExists) {
+        // Create a new designation object to match the structure of other items
+        const newMinistry = {
+          identifier: currentMinistry,
+          
+        }
+        // Make sure the custom designation appears in the filtered list
+        if (this.masterData?.ministry?.length >= this.ministryListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.masterData?.ministry.pop()
+        }
+        this.masterData?.ministry?.unshift(newMinistry)
+        this.isLoadingMoreMinistrys = false
+      }
+    }
+  }
+
+  ministrySearch(evt: any) {
+    const searchText = evt?.target?.value
+    const txt = (searchText || '').toString().trim()
+    if (this.isLoadingMoreMinistrys) return
+
+    this.ministrySearchText = txt
+    if (txt?.length) {
+      this.ministryFilterEnable = true
+      this.isLoadingMoreMinistrys = true
+      this.getMinistryData(txt, 0)
+    } else if (this.masterData && this.masterData?.ministryBackup) {
+      this.masterData.ministry = this.masterData?.ministryBackup.slice(0, this.ministryDefaultLoadCount)
+      this.ministryFilterEnable = false
+      this.checkCurrentMinistryPresent()
+    }
+  }
+
+  /** State Data */
+
+  getStateData(searchText?: string, offset?: number): void {
+    // avoid running on server-side render
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
+
+    // clear any previous debug hooks
+    if (!searchText || searchText?.length === 0) {
+      // noop
+    }
+
+    const reqOffset = (typeof offset === 'number') ? offset : this.stateOffset
+    const reqLimit = this.stateDefaultLoadCount
+    const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
+    // if we're requesting from first page, clear the no-more-data guard
+    console.log('reqOffset--',reqOffset)
+    console.log('reqLimit--',reqLimit)
+    console.log('stateDefaultLoadCount--',this.stateDefaultLoadCount)
+    if (pageIndex === 0) {
+      this.noMoreLegacyStates = false
+    }
+    const requestBody:any = {
+      "request": {
+        "filters": {
+          "status": 1,
+          "sbOrgType": this.registrationFormStepOne.controls.type.value
+        },
+        "query": "",
+        "limit": reqLimit,
+        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.stateDefaultLoadCount,
+        "fields": [
+          "identifier",
+          "orgName",
+          "description",
+          "orgHierarchyFrameworkId",
+          "orgHierarchyFrameworkStatus",
+          "sbOrgType",
+          "sbOrgSubType"
+        ]
+      }
+    }
+   
+    if (searchText?.length) {
+      requestBody["request"]['query'] = searchText      
+      this.noMoreLegacyStates = false
+    }
+
+    // indicate loading state so scroll handlers don't trigger parallel calls
+    this.isLoadingMoreStates = true
+
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+      this.isLoadingMoreStates = false
+      this.stateInitInProgress = false
+    }))
+      .subscribe({
+        next: (res: any) => {
+          const content = _.get(res, 'result.response.content', [])
+          
+          const mapped = content.filter(
+            (item: any) => item && item.sbOrgType === 'state'
+          );
+          
+          // total count may be present in different keys depending on API version.
+          // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+          const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
+          this.defaultSearchStateCount = total
+          
+          // If offset is zero (first page) replace backup, otherwise append + dedupe
+          // if (!this.masterData['ministry'] || reqOffset === 0) {
+          //   this.masterData['ministry'] = mapped
+          // } else {
+          //   const combined = (this.masterData['ministry'] || []).concat(mapped)
+          //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          // }
+
+          if (!this.masterData['stateBackup'] || reqOffset === 0) {
+            this.masterData['stateBackup'] = mapped
+          } else {
+            const combined = (this.masterData['stateBackup'] || []).concat(mapped)
+            this.masterData['stateBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          }
+
+          // If server returned no new items, mark as no-more-data to stop further scroll requests
+          if (!mapped || mapped?.length === 0) {
+            this.noMoreLegacyStates = true
+          }
+          console.log(this.masterData['state'])
+          // If we've loaded at least the total count, mark no-more-data
+          if (this.defaultSearchStateCount && (this.masterData['stateBackup'] || []).length >= this.defaultSearchStateCount) {
+            this.noMoreLegacyStates = true
+          }
+          console.log(this.masterData['state'])
+          // Ensure visible list matches the requested display count
+          this.masterData['state'] = (this.masterData['stateBackup'] || []).slice(0, this.stateListLoadCount)
+          console.log(this.masterData['state'])
+          // loading flag cleared in finalize()
+          this.checkCurrentStatePresent()
+        },
+        error: () => {
+          // Stop further automatic calls on repeated errors to avoid tight loops
+          // loading flag cleared in finalize()
+          this.noMoreLegacyStates = true
+          // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
+        }
+      })
+  }
+
+  setupScrollListenerForState(opened: boolean): void {
+    let scrollListenerAttached = false
+    if (opened) {
+      if (!scrollListenerAttached) {
+        scrollListenerAttached = true
+
+        this.stateFilterEnable = false
+        this.stateListLoadCount = this.stateDefaultLoadCount
+        this.stateOffset = 0
+
+        this.isLoadingMoreStates = true
+        this.getStateData(undefined, 0)
+
+        // Clear search box once
+        if (this.registrationFormStepTwo.get('searchState')) {
+          this.registrationFormStepTwo.get('searchState')!.setValue('')
+        }
+
+        setTimeout(() => {
+          const searchInput = document.querySelector('.search-input-state') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 100)
+
+        // Attach scroll listener safely
+        setTimeout(() => {
+          const panel = document.querySelector('.mat-select-panel.search-panel-state') as HTMLElement | null
+          if (panel) {
+            // align panel width to trigger
+            try {
+              const triggerEl = this.stateRef && this.stateRef.nativeElement as HTMLElement
+              if (triggerEl) {
+                const rect = triggerEl.getBoundingClientRect()
+                // set width and left so panel aligns exactly below the trigger
+                panel.style.width = `${Math.round(rect.width)}px`
+                // leave left to overlay positioning but nudge if necessary
+                // compute left relative to viewport and apply to panel
+                const overlayLeft = rect.left
+                panel.style.left = `${Math.round(overlayLeft)}px`
+              }
+            } catch (e) {
+              // ignore DOM errors in SSR or unexpected cases
+            }
+
+            const scrollHandler = this.onStateSelectScroll.bind(this)
+            panel.addEventListener('scroll', scrollHandler, { passive: true })
+          }
+        }, 150)
+      }
+    } else {
+      // Dropdown closed — reset scroll flag so it can reattach next time
+      scrollListenerAttached = false
+    }
+  }
+
+  onStateSelectScroll(event: any): void {
+    const element = event?.target
+    if (!this.stateFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreStates) {
+          // If org uses IGOT ministry taxonomy, request more from the API by increasing the limit
+          if (this.masterData?.stateBackup?.length > this.masterData?.state?.length) {
+            // Local pagination: expand the sliced list
+            this.isLoadingMoreStates = true
+            this.stateListLoadCount += this.stateDefaultLoadCount
+            // Update the filtered list with more items
+            setTimeout(() => {
+              this.masterData.state = this.masterData?.stateBackup?.slice(0, this.stateListLoadCount)
+              this.checkCurrentStatePresent()
+              this.isLoadingMoreStates = false
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+          } else {
+            // Legacy (server) pagination: request next page if total not reached
+            const loadedLegacy = (this.masterData?.stateBackup || []).length
+            if (!this.noMoreLegacyStates && this.defaultSearchStateCount && loadedLegacy < this.defaultSearchStateCount) {
+              this.isLoadingMoreStates = true
+              this.stateOffset = (this.stateOffset || 0) + this.stateDefaultLoadCount
+              // increase display count to include newly fetched items
+              this.stateListLoadCount += this.stateDefaultLoadCount
+              this.getStateData(undefined, this.stateOffset)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  checkCurrentStatePresent() {
+    // Get the current designation value
+    const currentState = this.registrationFormStepOne.get('state')!.value
+    // Check if current designation exists in the list
+    if (currentState) {
+      const stateExists = this.masterData?.state.some(
+        (state: any) => state?.identifier.toLowerCase() === currentState.toLowerCase()
+      )
+
+      // If designation doesn't exist in the list, add it
+      if (!stateExists) {
+        // Create a new designation object to match the structure of other items
+        const newState = {
+          identifier: currentState,
+          
+        }
+        // Make sure the custom designation appears in the filtered list
+        if (this.masterData?.state?.length >= this.stateListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.masterData?.state.pop()
+        }
+        this.masterData?.state?.unshift(newState)
+        this.isLoadingMoreStates = false
+      }
+    }
+  }
+
+  stateSearch(evt: any) {
+    const searchText = evt?.target?.value
+    const txt = (searchText || '').toString().trim()
+    if (this.isLoadingMoreStates) return
+
+    this.stateSearchText = txt
+    if (txt?.length) {
+      this.stateFilterEnable = true
+      this.isLoadingMoreStates = true
+      this.getStateData(txt, 0)
+    } else if (this.masterData && this.masterData?.stateBackup) {
+      this.masterData.state = this.masterData?.stateBackup.slice(0, this.stateDefaultLoadCount)
+      this.stateFilterEnable = false
+      this.checkCurrentStatePresent()
+    }
+  }
+
+  /** Department Data */
+
+  getDepartmentData(searchText?: string, offset?: number): void {
+    this.masterData['department'] = []
+    // avoid running on server-side render
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
+
+    // clear any previous debug hooks
+    if (!searchText || searchText?.length === 0) {
+      // noop
+    }
+
+    const reqOffset = (typeof offset === 'number') ? offset : this.departmentOffset
+    const reqLimit = this.departmentDefaultLoadCount
+    const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
+    // if we're requesting from first page, clear the no-more-data guard
+    if (pageIndex === 0) {
+      this.noMoreLegacyDepartments = false
+    }
+    const requestBody:any = {
+      "request": {
+        "filters": {
+          "status": 1,
+          "sbOrgType": this.registrationFormStepOne.controls.type.value,
+          "levelZeroOrgId": this.registrationFormStepOne.controls.state.value,
+        },
+        "query": "",
+        "limit": reqLimit,
+        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.departmentDefaultLoadCount,
+        "fields": [
+          "identifier",
+          "orgName",
+          "description",
+          "orgHierarchyFrameworkId",
+          "orgHierarchyFrameworkStatus",
+          "sbOrgType",
+          "sbOrgSubType"
+        ]
+      }
+    }
+   
+    if (searchText?.length) {
+      requestBody["request"]['query'] = searchText      
+      this.noMoreLegacyDepartments = false
+    }
+
+    // indicate loading department so scroll handlers don't trigger parallel calls
+    this.isLoadingMoreDepartments = true
+
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+      this.isLoadingMoreStates = false
+      this.stateInitInProgress = false
+    }))
+      .subscribe({
+        next: (res: any) => {
+         // const content = _.get(res, 'result.response.content', [])
+          const mapped = _.get(res, 'result.response.content', [])
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'state'
+          // );
+          
+          // total count may be present in different keys depending on API version.
+          // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+          const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
+          this.defaultSearchDepartmentCount = total
+          
+          // If offset is zero (first page) replace backup, otherwise append + dedupe
+          // if (!this.masterData['ministry'] || reqOffset === 0) {
+          //   this.masterData['ministry'] = mapped
+          // } else {
+          //   const combined = (this.masterData['ministry'] || []).concat(mapped)
+          //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          // }
+
+          if (!this.masterData['departmentBackup'] || reqOffset === 0) {
+            // this.masterData['departmentBackup'] = mapped
+            const combined = (this.masterData['departmentBackup'] || []).concat(mapped)
+            this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          } else {
+            const combined = (this.masterData['departmentBackup'] || []).concat(mapped)
+            this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          }
+
+          // If server returned no new items, mark as no-more-data to stop further scroll requests
+          if (!mapped || mapped?.length === 0) {
+            this.noMoreLegacyDepartments = true
+          }
+          // If we've loaded at least the total count, mark no-more-data
+          if (this.defaultSearchDepartmentCount && (this.masterData['departmentBackup'] || []).length >= this.defaultSearchDepartmentCount) {
+            this.noMoreLegacyDepartments = true
+          }
+          // Ensure visible list matches the requested display count
+          this.masterData['department'] = (this.masterData['departmentBackup'] || []).slice(0, this.departmentListLoadCount)
+          console.log(this.masterData['department'])
+          // loading flag cleared in finalize()
+          this.isLoadingMoreDepartments = false
+          this.checkCurrentDepartmentPresent()
+        },
+        error: () => {
+          // Stop further automatic calls on repeated errors to avoid tight loops
+          // loading flag cleared in finalize()
+          this.noMoreLegacyDepartments = true
+          // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
+        }
+      })
+  }
+
+  setupScrollListenerForDepartment(opened: boolean): void {
+    let scrollListenerAttached = false
+    if (opened) {
+      if (!scrollListenerAttached) {
+        scrollListenerAttached = true
+
+        this.departmentFilterEnable = false
+        this.departmentListLoadCount = this.departmentDefaultLoadCount
+        this.departmentOffset = 0
+
+        this.isLoadingMoreDepartments = true
+        this.getDepartmentData(undefined, 0)
+
+        // Clear search box once
+        if (this.registrationFormStepOne.get('searchDepartment')) {
+          this.registrationFormStepOne.get('searchDepartment')!.setValue('')
+        }
+
+        setTimeout(() => {
+          const searchInput = document.querySelector('.search-input-deaprtment') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 100)
+
+        // Attach scroll listener safely
+        setTimeout(() => {
+          const panel = document.querySelector('.mat-select-panel.search-panel-department') as HTMLElement | null
+          if (panel) {
+            // align panel width to trigger
+            try {
+              const triggerEl = this.departmentRef && this.departmentRef.nativeElement as HTMLElement
+              if (triggerEl) {
+                const rect = triggerEl.getBoundingClientRect()
+                // set width and left so panel aligns exactly below the trigger
+                panel.style.width = `${Math.round(rect.width)}px`
+                // leave left to overlay positioning but nudge if necessary
+                // compute left relative to viewport and apply to panel
+                const overlayLeft = rect.left
+                panel.style.left = `${Math.round(overlayLeft)}px`
+              }
+            } catch (e) {
+              // ignore DOM errors in SSR or unexpected cases
+            }
+
+            const scrollHandler = this.onDepartmentSelectScroll.bind(this)
+            panel.addEventListener('scroll', scrollHandler, { passive: true })
+          }
+        }, 150)
+      }
+    } else {
+      // Dropdown closed — reset scroll flag so it can reattach next time
+      scrollListenerAttached = false
+    }
+  }
+
+  onDepartmentSelectScroll(event: any): void {
+    const element = event?.target
+    if (!this.departmentFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreDepartments) {
+          // If org uses IGOT ministry taxonomy, request more from the API by increasing the limit
+          if (this.masterData?.departmentBackup?.length > this.masterData?.department?.length) {
+            // Local pagination: expand the sliced list
+            this.isLoadingMoreDepartments = true
+            this.departmentListLoadCount += this.departmentDefaultLoadCount
+            // Update the filtered list with more items
+            setTimeout(() => {
+              this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentListLoadCount)
+              this.checkCurrentDepartmentPresent()
+              this.isLoadingMoreDepartments = false
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+          } else {
+            // Legacy (server) pagination: request next page if total not reached
+            const loadedLegacy = (this.masterData?.departmentBackup || []).length
+            if (!this.noMoreLegacyDepartments && this.defaultSearchDepartmentCount && loadedLegacy < this.defaultSearchDepartmentCount) {
+              this.isLoadingMoreDepartments = true
+              this.departmentOffset = (this.stateOffset || 0) + this.departmentDefaultLoadCount
+              // increase display count to include newly fetched items
+              this.departmentListLoadCount += this.departmentDefaultLoadCount
+              this.getDepartmentData(undefined, this.departmentOffset)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  checkCurrentDepartmentPresent() {
+    // Get the current designation value
+    const currentDepartment = this.registrationFormStepOne.get('department')!.value
+    // Check if current designation exists in the list
+    if (currentDepartment) {
+      const departmentExists = this.masterData?.department.some(
+        (department: any) => department?.identifier.toLowerCase() === currentDepartment.toLowerCase()
+      )
+
+      // If designation doesn't exist in the list, add it
+      if (!departmentExists) {
+        // Create a new designation object to match the structure of other items
+        const newDepartment = {
+          identifier: currentDepartment,
+          
+        }
+        // Make sure the custom designation appears in the filtered list
+        if (this.masterData?.department?.length >= this.departmentListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.masterData?.deaprtment.pop()
+        }
+        this.masterData?.department?.unshift(newDepartment)
+        this.isLoadingMoreDepartments = false
+      }
+    }
+  }
+
+  departmentSearch(evt: any) {
+    const searchText = evt?.target?.value
+    const txt = (searchText || '').toString().trim()
+    if (this.isLoadingMoreDepartments) return
+
+    this.departmentSearchText = txt
+    if (txt?.length) {
+      this.departmentFilterEnable = true
+      this.isLoadingMoreDepartments = true
+      this.getDepartmentData(txt, 0)
+    } else if (this.masterData && this.masterData?.departmentBackup) {
+      this.masterData.department = this.masterData?.departmentBackup.slice(0, this.departmentDefaultLoadCount)
+      this.departmentFilterEnable = false
+      this.checkCurrentDepartmentPresent()
+    }
+  }
+
+   /** Organisation Data */
+
+   getOrganisationData(searchText?: string, offset?: number): void {
+    // this.masterData['organisation'] = []
+    // avoid running on server-side render
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
+
+    // clear any previous debug hooks
+    if (!searchText || searchText?.length === 0) {
+      // noop
+    }
+
+    const reqOffset = (typeof offset === 'number') ? offset : this.organisationOffset
+    const reqLimit = this.organisationDefaultLoadCount
+    const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
+    // if we're requesting from first page, clear the no-more-data guard
+    if (pageIndex === 0) {
+      this.noMoreLegacyOrganisations = false
+    }
+    let requestBody:any = {}
+    if(this.registrationFormStepOne.controls.type.value === 'ministry') {
+      requestBody = {
+        "request": {
+          "filters": {
+            "status": 1,
+            "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
+            "hierarchyRequestType": "All"
+          },
+          "query": "",
+          "limit": reqLimit,
+          "offset": reqLimit > 0 ? pageIndex*reqLimit : this.organisationDefaultLoadCount,
+          "fields": [
+            "identifier",
+            "orgName",
+            "description",
+            "parentOrgName",
+            "orgHierarchyFrameworkId",
+            "orgHierarchyFrameworkStatus",
+            "sbOrgType",
+            "sbOrgSubType",
+            "channel"
+          ]
+        }
+      }
+    } else if(this.registrationFormStepOne.controls.type.value === 'state'){
+      requestBody = {
+        "request": {
+          "filters": {
+            "status": 1,
+            "levelZeroOrgId": this.registrationFormStepOne.controls.state.value,
+            "levelOneOrgId": this.registrationFormStepOne.controls.department.value,
+            "hierarchyRequestType": "All"
+          },
+          "query": "",
+          "limit": reqLimit,
+          "offset": reqLimit > 0 ? pageIndex*reqLimit : this.organisationDefaultLoadCount,
+          "fields": [
+            "identifier",
+            "orgName",
+            "description",
+            "parentOrgName",
+            "orgHierarchyFrameworkId",
+            "orgHierarchyFrameworkStatus",
+            "sbOrgType",
+            "sbOrgSubType",
+            "channel"
+          ]
+        }
+      }
+    }
+    
+   
+    if (searchText?.length) {
+      requestBody["request"]['query'] = searchText      
+      this.noMoreLegacyOrganisations = false
+    }
+
+    // indicate loading organisation so scroll handlers don't trigger parallel calls
+    this.isLoadingMoreOrganisations = true
+
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+      this.isLoadingMoreOrganisations = false
+      this.organisationInitInProgress = false
+    }))
+      .subscribe({
+        next: (res: any) => {
+         // const content = _.get(res, 'result.response.content', [])
+          const mapped = _.get(res, 'result.response.content', [])
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'state'
+          // );
+          
+          // total count may be present in different keys depending on API version.
+          // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
+          const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
+          this.defaultSearchOrganisationCount = total
+          
+          // If offset is zero (first page) replace backup, otherwise append + dedupe
+          // if (!this.masterData['ministry'] || reqOffset === 0) {
+          //   this.masterData['ministry'] = mapped
+          // } else {
+          //   const combined = (this.masterData['ministry'] || []).concat(mapped)
+          //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          // }
+
+          if (!this.masterData['organisationBackup'] || reqOffset === 0) {
+            const combined = (this.masterData['organisationBackup'] || []).concat(mapped)
+            this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+           // this.masterData['organisationBackup'] = mapped
+          } else {
+            const combined = (this.masterData['organisationBackup'] || []).concat(mapped)
+            this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          }
+
+          // If server returned no new items, mark as no-more-data to stop further scroll requests
+          if (!mapped || mapped?.length === 0) {
+            this.noMoreLegacyOrganisations = true
+          }
+          // If we've loaded at least the total count, mark no-more-data
+          if (this.defaultSearchOrganisationCount && (this.masterData['organisationBackup'] || []).length >= this.defaultSearchOrganisationCount) {
+            this.noMoreLegacyOrganisations = true
+          }
+          // Ensure visible list matches the requested display count
+          this.masterData['organisation'] = (this.masterData['organisationBackup'] || []).slice(0, this.organisationListLoadCount)
+          console.log(this.masterData['organisation'])
+          // loading flag cleared in finalize()
+          this.isLoadingMoreOrganisations = false
+          this.checkCurrentOrganisationPresent()
+        },
+        error: () => {
+          // Stop further automatic calls on repeated errors to avoid tight loops
+          // loading flag cleared in finalize()
+          this.noMoreLegacyOrganisations = true
+          // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
+        }
+      })
+  }
+
+  setupScrollListenerForOrganisation(opened: boolean): void {
+    let scrollListenerAttached = false
+    if (opened) {
+      if (!scrollListenerAttached) {
+        scrollListenerAttached = true
+
+        this.organisationFilterEnable = false
+        this.organisationListLoadCount = this.organisationDefaultLoadCount
+        this.organisationOffset = 0
+
+        this.isLoadingMoreOrganisations = true
+        this.getOrganisationData(undefined, 0)
+
+        // Clear search box once
+        if (this.registrationFormStepOne.get('searchDepartment')) {
+          this.registrationFormStepOne.get('searchDepartment')!.setValue('')
+        }
+
+        setTimeout(() => {
+          const searchInput = document.querySelector('.search-input-organisation') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 100)
+
+        // Attach scroll listener safely
+        setTimeout(() => {
+          const panel = document.querySelector('.mat-select-panel.search-panel-organisation') as HTMLElement | null
+          if (panel) {
+            // align panel width to trigger
+            try {
+              const triggerEl = this.organisationRef && this.organisationRef.nativeElement as HTMLElement
+              if (triggerEl) {
+                const rect = triggerEl.getBoundingClientRect()
+                // set width and left so panel aligns exactly below the trigger
+                panel.style.width = `${Math.round(rect.width)}px`
+                // leave left to overlay positioning but nudge if necessary
+                // compute left relative to viewport and apply to panel
+                const overlayLeft = rect.left
+                panel.style.left = `${Math.round(overlayLeft)}px`
+              }
+            } catch (e) {
+              // ignore DOM errors in SSR or unexpected cases
+            }
+
+            const scrollHandler = this.onOrganisationSelectScroll.bind(this)
+            panel.addEventListener('scroll', scrollHandler, { passive: true })
+          }
+        }, 150)
+      }
+    } else {
+      // Dropdown closed — reset scroll flag so it can reattach next time
+      scrollListenerAttached = false
+    }
+  }
+
+  onOrganisationSelectScroll(event: any): void {
+    const element = event?.target
+    if (!this.organisationFilterEnable) {
+      // Check if user has scrolled to the bottom (with a small threshold)
+      if (element.scrollTop + element?.clientHeight >= element?.scrollHeight - 5) {
+        // Only load more if not already loading and if there are potentially more items
+        if (!this.isLoadingMoreOrganisations) {
+          // If org uses IGOT ministry taxonomy, request more from the API by increasing the limit
+          if (this.masterData?.organisationBackup?.length > this.masterData?.organisation?.length) {
+            // Local pagination: expand the sliced list
+            this.isLoadingMoreOrganisations = true
+            this.organisationListLoadCount += this.organisationDefaultLoadCount
+            // Update the filtered list with more items
+            setTimeout(() => {
+              this.masterData.organisation = this.masterData?.organisationBackup?.slice(0, this.organisationListLoadCount)
+              this.checkCurrentOrganisationPresent()
+              this.isLoadingMoreOrganisations = false
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+          } else {
+            // Legacy (server) pagination: request next page if total not reached
+            const loadedLegacy = (this.masterData?.organisationBackup || []).length
+            if (!this.noMoreLegacyOrganisations && this.defaultSearchOrganisationCount && loadedLegacy < this.defaultSearchOrganisationCount) {
+              this.isLoadingMoreOrganisations = true
+              this.organisationOffset = (this.stateOffset || 0) + this.organisationDefaultLoadCount
+              // increase display count to include newly fetched items
+              this.organisationListLoadCount += this.organisationDefaultLoadCount
+              this.getOrganisationData(undefined, this.organisationOffset)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  checkCurrentOrganisationPresent() {
+    // Get the current designation value
+    const currentOrganisation = this.registrationFormStepOne.get('organisation')!.value
+    // Check if current designation exists in the list
+    if (currentOrganisation) {
+      const organisationExists = this.masterData?.organisation.some(
+        (organisation: any) => organisation?.identifier.toLowerCase() === currentOrganisation.toLowerCase()
+      )
+
+      // If designation doesn't exist in the list, add it
+      if (!organisationExists) {
+        // Create a new designation object to match the structure of other items
+        const newOrganisation = {
+          identifier: currentOrganisation,
+          
+        }
+        // Make sure the custom designation appears in the filtered list
+        if (this.masterData?.organisation?.length >= this.organisationListLoadCount) {
+          // Replace the last item with the new one to maintain the same number of items
+          this.masterData?.organisation.pop()
+        }
+        this.masterData?.organisation?.unshift(newOrganisation)
+        this.isLoadingMoreOrganisations = false
+      }
+    }
+  }
+
+  organisationSearch(evt: any) {
+    const searchText = evt?.target?.value
+    const txt = (searchText || '').toString().trim()
+    if (this.isLoadingMoreOrganisations) return
+
+    this.organisationSearchText = txt
+    if (txt?.length) {
+      this.organisationFilterEnable = true
+      this.isLoadingMoreOrganisations = true
+      this.getOrganisationData(txt, 0)
+    } else if (this.masterData && this.masterData?.organisationBackup) {
+      this.masterData.organisation = this.masterData?.organisationBackup.slice(0, this.organisationDefaultLoadCount)
+      this.organisationFilterEnable = false
+      this.checkCurrentOrganisationPresent()
+    }
+  }
+
+  onTypeChange(event:any) {
+    if(event && event.value && event.value === 'state') {     
+      this.getStateData()
+      const control = this.registrationFormStepOne.get('ministry');
+      control?.clearValidators();
+      control?.updateValueAndValidity();
+      const stateControl = this.registrationFormStepOne.get('state');
+      stateControl?.setValidators([Validators.required]);
+      stateControl?.updateValueAndValidity();
+      const departmentControl = this.registrationFormStepOne.get('department');
+      departmentControl?.setValidators([Validators.required]);
+      departmentControl?.updateValueAndValidity();
+    } else {
+      const control = this.registrationFormStepOne.get('ministry');
+      control?.setValidators([Validators.required]);
+      control?.updateValueAndValidity();
+      const stateControl = this.registrationFormStepOne.get('state');
+      stateControl?.clearValidators();
+      stateControl?.updateValueAndValidity();
+      const departmentControl = this.registrationFormStepOne.get('department');
+      departmentControl?.clearValidators();
+      departmentControl?.updateValueAndValidity();
+      this.getMinistryData()
+    }
+    if (this.registrationFormStepOne.get('organisation')) {
+      this.registrationFormStepOne.get('organisation')!.setValue('')
+    }
+    if (this.registrationFormStepOne.get('designation')) {
+      this.registrationFormStepOne.get('designation')!.setValue('')
+    }      
+  }
+
+  onStateChanged() {
+    this.getDepartmentData()
+  }
+
+  onMinistryChange() {
+    if (this.registrationFormStepOne.get('organisation')) {
+      this.registrationFormStepOne.get('organisation')!.setValue('')
+    }   
+    this.getOrganisationData()
+  }
+
+  onDepartmentChange() {
+    this.getOrganisationData()
+  }
+
+  onOrganisationChanged(event:any) {   
+    console.log('this.masterData.organisation', this.masterData.organisation) 
+    console.log('event.value', this.masterData.organisation) 
+    if (event.value ) {      
+      this.heirarchyObject =_.find(this.masterData.organisation, { identifier: event.value });
+    } 
+    console.log('this.heirarchyObject',this.heirarchyObject)
+  }
 }
