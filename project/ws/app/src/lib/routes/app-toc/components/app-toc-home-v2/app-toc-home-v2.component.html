@@ -620,8 +620,7 @@
               <mat-form-field appearance="outline">
                 <mat-select [(value)]="selectedVersion" (selectionChange)="onVersionChange($event)">
                   <mat-option *ngFor="let version of versions" [value]="version.value">
-                    {{ version.name }} - {{ version.name }} - {{ version.name }} - {{ version.name }} - {{ version.name
-                    }} - {{ version.name }} - {{ version.name }} - {{ version.name }}
+                    {{ version.name }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>

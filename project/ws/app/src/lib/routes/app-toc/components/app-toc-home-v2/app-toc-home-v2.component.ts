@@ -148,25 +148,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   batchControl = new UntypedFormControl('', Validators.required)
   contentProgress = 0
   bannerUrl: SafeStyle | null = null
-  selectedVersion: string = 'volume1'
-  versions: any[] = [
-    {
-      name: 'Volume 1',
-      value: 'volume1',
-    },
-    {
-      name: 'Volume 2',
-      value: 'volume2',
-    },
-    {
-      name: 'Volume 3',
-      value: 'volume3',
-    },
-    {
-      name: 'Volume 4',
-      value: 'volume4',
-    }
-  ]
+  selectedVersion: any
+  versions: any[] = []
   routePath = 'overview'
   validPaths = new Set(['overview', 'contents', 'analytics'])
   routerParamSubscription: Subscription | null = null
@@ -2118,7 +2101,34 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.loadBannerAndTocConfig(data)
     this.fetchPostAssessmentStatusIfNeeded()
     this.initData(data)
+    this.loadVersionDataIfAvailable()
     return queryParamsDataTemp
+  }
+
+
+  loadVersionDataIfAvailable() {
+    if (this.contentReadData) {
+      this.versions = [
+        {
+          name: `${this.contentReadData?.name} 1` || 'Volume 1',
+          value: this.contentReadData?.identifier,
+        },
+        {
+          name: `${this.contentReadData?.name} 2` || 'Volume 2',
+          value: this.contentReadData?.identifier,
+        },
+        {
+          name: `${this.contentReadData?.name} 3` || 'Volume 3',
+          value: this.contentReadData?.identifier,
+        },
+        {
+          name: `${this.contentReadData?.name} 4` || 'Volume 4',
+          value: this.contentReadData?.identifier,
+        }
+      ]
+      this.selectedVersion = this.versions[0].value
+    }
+
   }
 
   openCompletionSurveyFormPopup() {

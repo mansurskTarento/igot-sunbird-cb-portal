@@ -164,6 +164,20 @@
     </ng-container>
 </div>
 
+<div class="flex flex-col mt-4 mx-4 block" *ngIf="isMobile">
+    <div class="flex flex-col gap-1 version-contoller-mobile">
+        <div class="font-bold">Select Version</div>
+        <mat-form-field appearance="outline">
+            <mat-select [(value)]="selectedVersion" (selectionChange)="onVersionChange($event)">
+                <mat-option *ngFor="let version of versions" [value]="version.value">
+                    {{ version.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+
+
 <div class="flex flex-col my-4 px-4" [class.mt60]="sticky" [ngClass]="isMobile ? '' : 'gap-10'">
     <ng-container
         *ngIf="(content?.completionStatus === 2 || content?.certificateObj?.certId) && !fromMarketPlace && !disableCertificate">
