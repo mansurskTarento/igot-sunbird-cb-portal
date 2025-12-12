@@ -86,7 +86,7 @@
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
                     <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
                       (closed)="onMinistryDropdownClosed()" panelClass="search-panel-ministry"
-                      (openedChange)="setupScrollListenerForMinistry($event)" (selectionChange)="onMinistryChange()">
+                      (openedChange)="setupScrollListenerForMinistry($event)" (selectionChange)="onMinistryChange($event)">
 
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
