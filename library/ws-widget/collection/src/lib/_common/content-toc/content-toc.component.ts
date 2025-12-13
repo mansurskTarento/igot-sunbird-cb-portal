@@ -15,6 +15,7 @@ import { VttFile } from '@polyflix/vtt-parser'
 import { tap } from 'rxjs/operators'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { MatTab } from '@angular/material/tabs'
+import { environment } from 'src/environments/environment'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -286,13 +287,44 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
         let userRoles: Set<string> = this.configService?.userRoles || new Set()
+        let hasEducatorRole = false
+
+        // Check if user has MENTOR role
         if (userRoles.has('MENTOR') ||
           userRoles.has('mentor') ||
           userRoles.has('Mentor')) {
+          hasEducatorRole = true
+        }
+
+        // Check local storage for survey response only if URL contains 'public' or 'preview=true'
+        if (!hasEducatorRole && this.forPreview) {
+          const surveyId = environment.publicContentSurveyId || ''
+          const courseId = this.contentReadData?.identifier || ''
+          const storageKey = `survey_${surveyId}_${courseId}`
+          const storedData = localStorage.getItem(storageKey)
+
+          if (storedData) {
+            try {
+              const surveyResponses = JSON.parse(storedData)
+              const educatorQuestion = surveyResponses.find((response: any) =>
+                response.question === 'Are you an Educator/Faculty member?'
+              )
+              if (educatorQuestion && educatorQuestion.answer === 'Yes') {
+                hasEducatorRole = true
+              }
+            } catch (error) {
+              console.error('Error parsing survey data from local storage:', error)
+            }
+          }
+        }
+
+        // Set teacherNotesFlag if user has educator role
+        if (hasEducatorRole) {
           if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
             this.teacherNotesFlag = true
           }
         }
+
         if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
           this.referenceNotesFlag = true
         }

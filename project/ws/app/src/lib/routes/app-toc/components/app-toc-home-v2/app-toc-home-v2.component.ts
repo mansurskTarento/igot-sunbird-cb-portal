@@ -2092,6 +2092,14 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     this.loadBannerAndTocConfig(data)
     this.fetchPostAssessmentStatusIfNeeded()
     this.initData(data)
+
+    // to clear public survey data if any on load,
+    // if not cleared then it will be cleared on popup close,
+    //  but the teachers notes will be visible on ciming back from player page
+    const surveyId = this.environment.publicContentSurveyId || ''
+    const courseId = this.contentReadData?.identifier || ''
+    this.clearExistingPublicSurveyData(surveyId, courseId)
+
     return queryParamsDataTemp
   }
 
@@ -3047,11 +3055,21 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
+  // Clear existing survey data from local storage before opening popup
+  clearExistingPublicSurveyData(surveyId: string, courseId: string) {
+    const storageKey = `survey_${surveyId}_${courseId}`
+    if (localStorage.getItem(storageKey)) {
+      localStorage.removeItem(storageKey)
+    }
+  }
+
   openPublicSurveyPopup(navigationUrl?: string, queryParams?: any) {
     // Get survey ID and course ID from environment and content data
     const surveyId = this.environment.publicContentSurveyId || ''
     const courseId = this.contentReadData?.identifier || ''
     const courseName = this.contentReadData?.name || ''
+
+    this.clearExistingPublicSurveyData(surveyId, courseId)
 
     const data = {
       surveyId: surveyId,
@@ -3059,7 +3077,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       courseName: courseName
     }
     const dialogRef = this.dialog.open(PublicSurveyFormComponent, {
-      disableClose: true,
+      // disableClose: true,
       width: '750px',
       maxWidth: '90vw',
       height: '80vh',
