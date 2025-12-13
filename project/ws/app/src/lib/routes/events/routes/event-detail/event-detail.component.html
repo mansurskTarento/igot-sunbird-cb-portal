@@ -171,7 +171,8 @@
             <mat-icon class="text-gray-600">play_circle_outline</mat-icon>
             <div class="flex flex-col">
               <span class="text-xs text-gray-500">Course</span>
-              <span class="text-sm font-semibold text-blue-600 course-name">{{linkedCourseData?.name}}</span>
+              <a class="text-sm font-semibold text-blue-600 course-name cursor-pointer"
+                (click)="navigateToLinkedCourse()">{{linkedCourseData?.name}}</a>
             </div>
           </div>
           <div class="seperator"></div>
@@ -423,7 +424,7 @@
                 </div>
               </div>
             </ng-container>
-            <ng-container *ngIf="eventData?.noOfAttendes">
+            <!-- <ng-container *ngIf="eventData?.noOfAttendes">
               <div class="flex flex-1 flex-column mb-2 mt-4">
                 <span class="f-medium mat-title">{{ 'events.numberOfAttendees' | translate }} </span>
               </div>
@@ -446,7 +447,7 @@
                   </div>
                 </ng-container>
               </div>
-            </ng-container>
+            </ng-container> -->
             <ng-container *ngIf="eventData?.meetingSummary">
               <div class="flex flex-1 flex-column mb-2 mt-4">
                 <span class="f-medium mat-title">{{ 'events.keyTakeaways' | translate }} </span>
