@@ -301,6 +301,40 @@
         </ng-container>
     </div>
 
+    <div class="flex flex-col"
+        *ngIf="contentReadData?.summary && contentReadData?.contentId && contentReadData?.contentId.includes('ext_')">
+        <ng-container *ngIf="skeletonLoader">
+            <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
+                [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+            <div class="flex flex-col gap-2 mt-4">
+                <ws-widget-skeleton-loader [width]="'80%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'95%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'65%'" [height]="'16px'"
+                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!skeletonLoader">
+            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
+            <div class="desc"
+                [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}"
+                #descElem>
+
+                <div [innerHTML]="contentReadData?.summary | replaceNbsp" class="mob-text break-words nodtranslate">
+                </div>
+                <div class="ws-mat-default-text font-bold cursor-pointer text-sm" *ngIf="description.viewLess"
+                    (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">
+                    &nbsp;{{ 'apptocsinglepage.viewLess' | translate }}</div>
+            </div>
+            <div class="ws-mat-default-text font-bold text-sm" *ngIf="description.ellipsis">
+                <span class="cursor-pointer"
+                    (click)="description.ellipsis = !description.ellipsis; description.viewLess = !description.viewLess">{{
+                    'apptocsinglepage.viewMore' | translate }}</span>
+            </div>
+        </ng-container>
+    </div>
+
     <div class="flex flex-col">
         <ng-container *ngIf="skeletonLoader">
             <ws-widget-skeleton-loader [width]="'80px'" [height]="'16px'"
@@ -315,8 +349,10 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
-            <!-- {{contentReadData | json}} -->
+            <div *ngIf="content?.contentId && content?.contentId.includes('ext_')"
+                class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
+            <div *ngIf="!(content?.contentId && content?.contentId.includes('ext_'))"
+                class="mat-subheading-1 font-bold nodtranslate">{{ 'apptocsinglepage.summary' | translate }}</div>
             <div [ngClass]="{'mob-desc-ellipsis': summary.ellipsis && isMobile, 'desc-ellipsis': summary.ellipsis && !isMobile}"
                 #summaryElem>
                 <div class="mob-text nodtranslate"
@@ -347,7 +383,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!skeletonLoader">
-            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.description' | translate }}</div>
+            <div class="mat-subheading-1 nodtranslate">{{ 'apptocsinglepage.learningOutcome' | translate }}</div>
             <div class="desc"
                 [ngClass]="{'mob-desc-ellipsis': description.ellipsis && isMobile, 'desc-ellipsis': description.ellipsis && !isMobile}"
                 #descElem>
@@ -693,36 +729,41 @@
                                         <div>{{ eachReview?.rating }}</div>
                                     </div>
                                 </div>
-                                <div class="flex flex-row gap-2 items-center text-sm">
-                                    <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
-                                        [photoUrl]="eachReview?.photo || ''"
-                                        [name]="eachReview?.firstName"></ws-widget-avatar-photo>
-                                    <div class="flex flex-wrap">
-                                        <div>{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
-                                        <div class="flex items-center mx-2">
-                                            <span class="period"></span>
-                                        </div>
-                                        <div>{{ eachReview?.date | pipeRelativeTime }}</div>
+                                <div class="flex flex-row gap-2 rating-start-value">
+                                    <mat-icon>star</mat-icon>
+                                    <div>{{ eachReview?.rating }}</div>
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-2 items-center text-sm">
+                                <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
+                                    [photoUrl]="eachReview?.photo || ''"
+                                    [name]="eachReview?.firstName"></ws-widget-avatar-photo>
+                                <div class="flex flex-wrap">
+                                    <div>{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
+                                    <div class="flex items-center mx-2">
+                                        <span class="period"></span>
                                     </div>
+                                    <div>{{ eachReview?.date | pipeRelativeTime }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </ng-container>
-                <div *ngIf="!topRatingReviews || !topRatingReviews?.length">
-                    <div class="flex flex-col text-center items-center justify-center bg-white p-4 rounded-md">
-                        <div class="font-base font-bold nodtranslate">{{ 'apptocsinglepage.noReviewsFound' | translate
-                            }}</div>
-                    </div>
-                </div>
             </div>
+    </ng-container>
+    <div *ngIf="!topRatingReviews || !topRatingReviews?.length">
+        <div class="flex flex-col text-center items-center justify-center bg-white p-4 rounded-md">
+            <div class="font-base font-bold nodtranslate">{{ 'apptocsinglepage.noReviewsFound' | translate
+                }}</div>
         </div>
-        <!-- </ng-container> -->
-        <!-- <ng-container *ngIf="!content?.averageRating">
+    </div>
+</div>
+</div>
+<!-- </ng-container> -->
+<!-- <ng-container *ngIf="!content?.averageRating">
             <div class="flex flex-col gap-3 justify-center ratings-div">
                 <img src="/assets/icons/toc/no-certificate.svg" alt="no ratings image" />
                 <div class="text-lg font-bol">Be the first one to rate this course and your <br/> learning experience</div>
             </div>
         </ng-container> -->
-    </ng-container>
+</ng-container>
 </div>

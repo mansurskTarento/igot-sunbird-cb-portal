@@ -1,8 +1,11 @@
 <div class="preview-container">
-  <div class="form-header">
-    <div class="flex justify-start items-center">
-      <div>{{'apptoc.completeSurvey' | translate}} </div>
+  <div class="form-header flex">
+    <div class="flex flex-1 justify-start items-center">
+      <div>{{'apptoc.AGKCaseStudySurveyForm' | translate}} </div>
     </div>
+    <button mat-icon-button class="close-button" [mat-dialog-close]="false">
+      <mat-icon class="close-icon" color="warn">close</mat-icon>
+    </button>
   </div>
   <div class="form-content">
     <ng-container *ngIf="surveyForm">
@@ -27,7 +30,8 @@
         </ng-container>
         <div class="flex justify-end m-4">
           <!-- <button mat-button class="do-later-btn" (click)="closeDialog()">{{'apptoc.doItLater' | translate}}</button> -->
-          <button mat-button class="submit-btn" [disabled]="!surveyFormIsValid" (click)="submitForm()">{{'apptoc.submit' | translate}}</button>
+          <button mat-button class="submit-btn" [disabled]="!surveyFormIsValid" (click)="submitForm()">{{'apptoc.submit'
+            | translate}}</button>
         </div>
       </form>
     </ng-container>

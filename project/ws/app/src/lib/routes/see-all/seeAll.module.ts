@@ -27,7 +27,7 @@ import { SeeAllHomeComponent } from './components/see-all-home/see-all-home.comp
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { SeeAllWithPillsComponent } from './components/see-all-with-pills/see-all-with-pills.component'
-import { CardsModule } from '@sunbird-cb/consumption'
+import { CardsModule, PaginationModule } from '@sunbird-cb/consumption'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
@@ -48,12 +48,14 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
 
 @NgModule({
     declarations: [
         SeeAllHomeComponent,
         SeeAllWithPillsComponent,
+        SeeAllDynamicComponent,
     ],
     imports: [
         CommonModule,
@@ -105,6 +107,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         InfiniteScrollModule,
         TranslateModule,
         CardsModule,
+        PaginationModule
     ],
     exports: [SeeAllHomeComponent],
     providers: [],

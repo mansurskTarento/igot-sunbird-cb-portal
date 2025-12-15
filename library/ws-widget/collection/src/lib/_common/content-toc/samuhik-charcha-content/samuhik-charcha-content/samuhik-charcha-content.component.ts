@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { SamuhikCharchaService } from './../../../../_services/samuhik-charcha.service'
-import { WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 
 @Component({
@@ -19,6 +19,7 @@ export class SamuhikCharchaContentComponent implements OnInit {
   constructor(
     private samuhikCharchaSvc: SamuhikCharchaService,
     private events: libEventService,
+    private configService: ConfigurationsService
   ) { }
 
   get getCurrentTimeInUTC(): string {
@@ -28,6 +29,7 @@ export class SamuhikCharchaContentComponent implements OnInit {
   }
 
   async ngOnInit() {
+    const orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
     await this.getSamuhikConfig()
     if (!this.conditionData?.userEnrollmentList?.length || this.conditionData?.userEnrollmentList[0]?.completionPercentage < 30) {
       this.locked = true
@@ -36,6 +38,7 @@ export class SamuhikCharchaContentComponent implements OnInit {
       const eventsLinked = this.content.eventLinked || []
       this.samuhikConfig.strips[0].tabs.forEach((ele: any) => {
         ele.request.searchV6.request.filters.identifier = eventsLinked
+        ele.request.searchV6.request.filters.createdFor = [orgId]
         if (ele.request.searchV6.request.filters.endDateTime.hasOwnProperty('>=')) {
           ele.request.searchV6.request.filters.endDateTime['>='] = this.getCurrentTimeInUTC
         }

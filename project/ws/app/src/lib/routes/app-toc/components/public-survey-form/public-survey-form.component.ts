@@ -186,6 +186,15 @@ export class PublicSurveyFormComponent implements OnInit {
         emailId: this.getEmailFromsurvey()
       }
 
+      // Remove existing survey data from local storage if present
+      const storageKey = `survey_${this.surveyId}_${_.get(this.data, 'courseId')}`
+      if (localStorage.getItem(storageKey)) {
+        localStorage.removeItem(storageKey)
+      }
+
+      // Store fresh dataObject in local storage
+      localStorage.setItem(storageKey, JSON.stringify(this.dataObject))
+
       this.addLoader = this.addLoader + 1
       this.appTocSvc.submitFormPublic(formBody).subscribe({
         next: res => {

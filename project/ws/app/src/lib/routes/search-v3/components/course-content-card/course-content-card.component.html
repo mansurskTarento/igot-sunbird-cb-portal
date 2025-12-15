@@ -83,43 +83,59 @@
                             <ng-container *ngIf="content?.topic && content?.externalId">
                                 {{content?.topic}}
                             </ng-container>
-
                         </div>
-                        <!-- Bookmark button -->
-                        <div class="flex items-center gap-3">
-                            <ng-container
-                                *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
-                                <div matRipple (click)="downloadCertificate(courseEnrollment)"
-                                    class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
-                                    [ngClass]="{'lock-download-certificate-course': content?.completionSurveyLink && content?.surveyCompletionStatus === false}">
-                                    <ng-container
-                                        *ngIf="!(content?.completionSurveyLink && content?.surveyCompletionStatus === false); else lockedSurvey">
+                        <div [ngClass]="{'right-section-row': content?.difficultyLevel || content?.knowledgeLevel, 'right-section-column': !content?.difficultyLevel || content?.knowledgeLevel}">
+                            <div class="flex items-center gap-3 bookmark-section">
+                                <ng-container
+                                    *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
+                                    <div matRipple (click)="downloadCertificate(courseEnrollment)"
+                                        class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer">
                                         <mat-icon [svgIcon]="'download'" class="mb-1"
                                             *ngIf="!downloadCertificateLoading"></mat-icon>
-                                        <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
-                                            <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
-                                        </div>
-                                    </ng-container>
-                                    <ng-template #lockedSurvey>
-                                        <mat-icon class="mb-1">lock</mat-icon>
-                                    </ng-template>
-                                    <span>Download Certificate</span>
-                                </div>
-                            </ng-container>
-                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
-                                <div class="inprogress-course font-stats rounded">In - Progress</div>
-                            </ng-container>
-                            <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
-                                <div class="inprogress-course font-stats rounded">Completed</div>
-                            </ng-container>
-                            <!-- <div class="bookmark-container">
-                                <button mat-icon-button aria-label="Bookmark this course"
-                                    (click)="contentBookmarked = !contentBookmarked">
-                                    <mat-icon [ngClass]="contentBookmarked ? 'marked':'unmarked'">{{contentBookmarked ?
-                                        'bookmark' :
-                                        'bookmark_border'}}</mat-icon>
-                                </button>
-                            </div> -->
+                                        <mat-spinner *ngIf="downloadCertificateLoading" strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
+                                        <span>Download Certificate</span>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
+                                    <div class="inprogress-course font-stats rounded">In - Progress</div>
+                                </ng-container>
+                                <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
+                                    <div class="inprogress-course font-stats rounded">Completed</div>
+                                </ng-container>
+                            </div>
+                            <div *ngIf="content?.difficultyLevel || content?.knowledgeLevel" class="knowledge-level-container">
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'beginner' || content?.knowledgeLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                                        <rect width="16" height="16" fill="#DBF4DC"/>
+                                        <path d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z" fill="#49C951"/>
+                                    </svg>
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
+                                </span>
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'intermediate' || content?.knowledgeLevel?.toLowerCase() === 'intermediate'" class="level-badge intermediate">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                                        <rect width="16" height="16" fill="#D1DBEC"/>
+                                        <path d="M7.42267 2.66666C7.67927 2.22221 8.32077 2.22221 8.57737 2.66666L12.0415 8.66666C12.2981 9.1111 11.9773 9.66666 11.4641 9.66666H4.53592C4.02272 9.66666 3.70197 9.1111 3.95857 8.66666L7.42267 2.66666Z" fill="#1B4CA1"/>
+                                        <path d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z" fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5"/>
+                                    </svg>
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
+                                </span>
+                                <span *ngIf="content?.difficultyLevel?.toLowerCase() === 'advanced' || content?.knowledgeLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                                        <g clip-path="url(#clip0)">
+                                            <rect width="16" height="16" fill="#FFE6E1"/>
+                                            <path d="M7.42264 2.33334C7.67924 1.8889 8.32074 1.8889 8.57734 2.33334L12.0414 8.33334C12.298 8.77779 11.9773 9.33334 11.4641 9.33334H4.53589C4.02269 9.33334 3.70194 8.77779 3.95854 8.33334L7.42264 2.33334Z" fill="#FF8268"/>
+                                            <path d="M7.42264 5C7.67924 4.55555 8.32074 4.55556 8.57734 5L12.0414 11C12.298 11.4444 11.9773 12 11.4641 12H4.53589C4.02269 12 3.70194 11.4444 3.95854 11L7.42264 5Z" fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5"/>
+                                            <path d="M7.42264 7.66669C7.67924 7.22224 8.32074 7.22224 8.57734 7.66669L12.0414 13.6667C12.298 14.1111 11.9773 14.6667 11.4641 14.6667H4.53589C4.02269 14.6667 3.70194 14.1111 3.95854 13.6667L7.42264 7.66669Z" fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5"/>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0">
+                                                <rect width="16" height="16" fill="white"/>
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    {{content?.difficultyLevel || content?.knowledgeLevel}}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </ng-container>
@@ -146,11 +162,10 @@
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
                         {{content?.creator}}</span> -->
-                    <span class="organization-name text-ellipse"
-                        *ngIf="content?.organisation?.length">{{'learnsearch.by' |
+                    <span class="organization-name" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
                         translate}}
                         {{content?.organisation[0]}}</span>
-                    <span class="organization-name text-ellipse"
+                    <span class="organization-name"
                         *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>

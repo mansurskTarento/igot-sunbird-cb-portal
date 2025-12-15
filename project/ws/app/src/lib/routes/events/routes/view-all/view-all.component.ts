@@ -1,17 +1,17 @@
-import { Component, HostListener } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2';
-import { EventService } from '../../services/events.service';
+import { Component, HostListener } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { ConfigurationsService, MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2'
+import { EventService } from '../../services/events.service'
 import * as _ from 'lodash'
-import { DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common'
 //import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { UntypedFormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { UntypedFormControl } from '@angular/forms'
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
+import { MatBottomSheet } from '@angular/material/bottom-sheet'
+import { MobileFiltersComponent } from '../events/mobile-filters/mobile-filters.component'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { TranslateService } from '@ngx-translate/core'
+import { Subject, Subscription } from 'rxjs'
 
 @Component({
   selector: 'ws-app-view-all',
@@ -43,11 +43,13 @@ export class ViewAllComponent {
   selectedValue: any
   totalCount = 0
   totalEventsCount = 0
+  orgId: any
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
     private translate: TranslateService, private router: Router,
     private langtranslations: MultilingualTranslationsService,
+    private configService: ConfigurationsService,
   ) {
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -83,6 +85,7 @@ export class ViewAllComponent {
   ngOnInit() {
     this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
     this.facetsData = _.get(this.pageConfigData, 'version2.filterFacetsData', {})
+    this.orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged()
@@ -131,6 +134,12 @@ export class ViewAllComponent {
         offset: (this.pageLimit * this.currentPage) || 0
       },
     }
+    if (this.selectedFilters?.resourceType?.includes('Samuhik Charcha')) {
+      requestBody.request.filters = {
+        ...requestBody.request.filters,
+        createdFor: [this.orgId],
+      }
+    }
     if (this.selectedFilters) {
       let startDate: any = ''
       let endDate: any = ''
@@ -163,46 +172,47 @@ export class ViewAllComponent {
         const today = new Date()
         today.setDate(today.getDate() + 1)
         // startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
-        startDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(), 
-        new Date().getUTCMonth(), 
-        new Date().getUTCDate(),
-        new Date().getUTCHours(), 
-        new Date().getUTCMinutes(), 
-        new Date().getUTCSeconds(), 
-        new Date().getUTCMilliseconds())
+        startDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          new Date().getUTCDate(),
+          new Date().getUTCHours(),
+          new Date().getUTCMinutes(),
+          new Date().getUTCSeconds(),
+          new Date().getUTCMilliseconds())
       }
       if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Past Events') {
         const today = new Date()
         today.setDate(today.getDate() - 1)
         // endDate = this.datePipe.transform(today, 'yyyy-MM-dd')
-        endDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(), 
-        new Date().getUTCMonth(), 
-        new Date().getUTCDate(),
-        new Date().getUTCHours(), 
-        new Date().getUTCMinutes(), 
-        new Date().getUTCSeconds(), 
-        new Date().getUTCMilliseconds())
+        endDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          new Date().getUTCDate(),
+          new Date().getUTCHours(),
+          new Date().getUTCMinutes(),
+          new Date().getUTCSeconds(),
+          new Date().getUTCMilliseconds())
       }
       if (this.selectedFilters.eventStatus && this.selectedFilters.eventStatus.length && this.selectedFilters.eventStatus[0] === 'Live Events') {
         const today = new Date()
         today.setDate(today.getDate())
         // startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
         // endDate = this.datePipe.transform(today, 'yyyy-MM-dd')
-        startDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(), 
-        new Date().getUTCMonth(), 
-        new Date().getUTCDate(),
-        new Date().getUTCHours(), 
-        new Date().getUTCMinutes(), 
-        new Date().getUTCSeconds(), 
-        new Date().getUTCMilliseconds())
-        endDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(), 
-        new Date().getUTCMonth(), 
-        new Date().getUTCDate(),
-        new Date().getUTCHours(), 
-        new Date().getUTCMinutes(), 
-        new Date().getUTCSeconds(), 
-        new Date().getUTCMilliseconds())
+        startDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          new Date().getUTCDate(),
+          new Date().getUTCHours(),
+          new Date().getUTCMinutes(),
+          new Date().getUTCSeconds(),
+          new Date().getUTCMilliseconds())
+        endDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          new Date().getUTCDate(),
+          new Date().getUTCHours(),
+          new Date().getUTCMinutes(),
+          new Date().getUTCSeconds(),
+          new Date().getUTCMilliseconds())
       }
+
       requestBody = {
         ...requestBody,
         request: {
@@ -212,15 +222,17 @@ export class ViewAllComponent {
             resourceType: this.selectedFilters.resourceType ? this.selectedFilters.resourceType : [],
             ...(startDate ? { "startDate": { ">=": [startDate] } } : {}),
             ...(endDate ? { "endDate": { "<=": [endDate] } } : {}),
-            ...(startDateTimeInEpoch ? { "startDateTimeInEpoch": 
-            (_.get(this.selectedFilters, 'eventStatus[0]') === 'Upcoming' ? { ">=": [startDateTimeInEpoch] } : { "<=": [startDateTimeInEpoch] } )
-          } : {}),
-            ...(endDateTimeInEpoch ? { "endDateTimeInEpoch": 
-            (_.get(this.selectedFilters, 'eventStatus[0]') === 'Past Events' ? { "<=": [endDateTimeInEpoch] } : { ">=": [endDateTimeInEpoch] }) } : {}),
+            ...(startDateTimeInEpoch ? {
+              "startDateTimeInEpoch":
+                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Upcoming' ? { ">=": [startDateTimeInEpoch] } : { "<=": [startDateTimeInEpoch] })
+            } : {}),
+            ...(endDateTimeInEpoch ? {
+              "endDateTimeInEpoch":
+                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Past Events' ? { "<=": [endDateTimeInEpoch] } : { ">=": [endDateTimeInEpoch] })
+            } : {}),
           },
         },
       }
-
 
     }
     return requestBody
@@ -518,7 +530,7 @@ export class ViewAllComponent {
       .replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) =>
         index === 0 ? match.toLowerCase() : match.toUpperCase()
       )
-      .replace(/\s+/g, '');
+      .replace(/\s+/g, '')
   }
 
 

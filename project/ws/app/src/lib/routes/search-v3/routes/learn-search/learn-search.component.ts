@@ -899,9 +899,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ]
         }
         else if (key === 'resourceType') {
+          const orgId = _.get(this.configSvc, 'userProfile.userRootOrg.id', '')
           this.searchRequestEvents.request.filters.resourceType = [
             ...selectedFilters[key],
           ]
+          if (selectedFilters[key].length && selectedFilters[key].includes('samuhik charcha')) {
+            this.searchRequestEvents.request.filters.createdFor = [orgId]
+          }
         }
         else if (key === 'sectorId') {
           this.searchRequestCourse.request.filters.sectorId = [

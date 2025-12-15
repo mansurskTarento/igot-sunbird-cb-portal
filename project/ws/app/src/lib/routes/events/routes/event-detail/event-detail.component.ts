@@ -159,6 +159,12 @@ export class EventDetailComponent implements OnInit {
       })
     ).subscribe((data: any) => {
       this.eventData = data?.eventData
+      if (this.eventData?.preEventReads?.length === 1 && this.eventData?.preEventReads?.[0] === '') {
+        this.eventData.preEventReads = []
+      }
+      if (this.eventData?.postEventSummary?.length === 1 && this.eventData?.postEventSummary?.[0] === '') {
+        this.eventData.postEventSummary = []
+      }
       this.linkedCourseData = data?.contentData
       this.linkedCourseProgress = data?.enrollData
       this.isretired = this.eventData?.status?.toLowerCase() !== 'live'
@@ -286,6 +292,39 @@ export class EventDetailComponent implements OnInit {
     const hour = stime.substr(0, 2)
     const min = stime.substr(2, 3)
     return `${date} ${hour}${min}`
+  }
+
+  formatEventTime(date: any, time: any): string {
+    if (!time) {
+      return ''
+    }
+    try {
+      const stime = (time || '').split('+')[0]
+      let hour = ''
+      let min = ''
+      if (stime.includes(':')) {
+        const parts = stime.split(':')
+        hour = parts[0]
+        min = parts[1]
+      } else if (stime.length >= 4) {
+        hour = stime.substr(0, 2)
+        min = stime.substr(2, 2)
+      } else {
+        return time
+      }
+      const combined = `${date} ${hour}:${min}`
+      const m = moment(combined, ['YYYY-MM-DD HH:mm', moment.ISO_8601])
+      if (!m.isValid()) {
+        const m2 = moment(`${hour}:${min}`, 'HH:mm')
+        if (!m2.isValid()) {
+          return time
+        }
+        return m2.format('hh:mm A')
+      }
+      return m.format('hh:mm A')
+    } catch (e) {
+      return time
+    }
   }
 
   compareDate(selectedStartDate: any, selectedEndDate: any, eventData: any) {
@@ -577,5 +616,28 @@ export class EventDetailComponent implements OnInit {
     if (this.linkedCourseData && this.linkedCourseData.identifier) {
       this.router.navigate([`/app/toc/${this.linkedCourseData.identifier}`])
     }
+  }
+
+  formatDuration(min: number): string {
+    if (!min || min <= 0) {
+      return '0m'
+    }
+
+    const hours = Math.floor(min / 60)
+    const minutes = Math.floor(min % 60)
+    const seconds = Math.floor((min % 1) * 60)
+
+    const parts = []
+    if (hours > 0) {
+      parts.push(`${hours}h`)
+    }
+    if (minutes > 0) {
+      parts.push(`${minutes}m`)
+    }
+    if (seconds > 0) {
+      parts.push(`${seconds}s`)
+    }
+
+    return parts.length > 0 ? parts.join(' ') : '0m'
   }
 }

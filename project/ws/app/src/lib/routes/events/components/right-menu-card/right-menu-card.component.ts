@@ -43,6 +43,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   pageConfig: any = {}
   enableShare = false
   rootOrgId: any
+  showEnrolledCount: boolean = true
+  totalUsersEnrolled: any = 0
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -84,27 +86,26 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
       const now = new Date()
       const today = moment(now).format('YYYY-MM-DD HH:mm')
 
-      const isToday = this.compareDate(eventDate, eventendDate, this.eventData)
-
       const spvOrgId = environment.spvorgID
       if (this.eventData.createdFor && this.eventData.createdFor[0] === spvOrgId) {
         this.isSpvEvent = true
       }
 
-      if (isToday) {
+      // Check if current date/time is between start and end date/time
+      if (today >= eventDate && today <= eventendDate) {
         this.currentEvent = true
         this.futureEvent = false
         this.pastEvent = false
-      } else {
+      } else if (today < eventDate) {
+        // Event hasn't started yet
         this.currentEvent = false
-        if (eventDate < today && eventendDate < today) {
-          this.pastEvent = true
-          this.futureEvent = false
-        }
-        if (eventDate > today && eventendDate > today) {
-          this.futureEvent = true
-          this.pastEvent = false
-        }
+        this.futureEvent = true
+        this.pastEvent = false
+      } else if (today > eventendDate) {
+        // Event has ended
+        this.currentEvent = false
+        this.futureEvent = false
+        this.pastEvent = true
       }
 
       if (this.eventData && this.eventData.registrationLink) {
@@ -119,11 +120,40 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         }
 
       }
+      if (this.eventData?.typeofEvent === 'live') {
+        this.getEnrolledUserCount()
+      }
     }
+  }
+
+  getEnrolledUserCount() {
+    const requestBody = {
+      request: {
+        filters: {
+          active: true,
+          batchId: this.batchId,
+          limit: 1,
+          currentOffSet: 0
+        }
+      }
+    }
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+      this.totalUsersEnrolled = response?.totalCount || 0
+    })
   }
 
   get progressVal() {
     return this.enrolledEvent && this.enrolledEvent.status === 2 ? 100 : this.enrolledEvent.completionPercentage
+  }
+
+  get isEnrollmentAllowed(): boolean {
+    if (!this.eventData || !this.eventData.endDate || !this.eventData.endTime) {
+      return true
+    }
+    const eventEndDateTime = this.customDateFormat(this.eventData.endDate, this.eventData.endTime)
+    const now = new Date()
+    const currentDateTime = moment(now).format('YYYY-MM-DD HH:mm')
+    return currentDateTime < eventEndDateTime
   }
 
   ngOnChanges() {
@@ -233,6 +263,8 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         const videoId = url.split('/').pop()
         const youtubeId = videoId?.split('?')[0] || videoId
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
+      } else if (this.eventData?.typeofEvent?.toLowerCase() === 'live') {
+        window.open(url, "_blank")
       } else {
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
       }
@@ -278,6 +310,9 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           this.openSnackBar('Enrolled Successfully')
           this.raiseTelemetry('enroll-now')
           this.enrollEvent.emit(true)
+          if (this.eventData?.typeofEvent === 'live') {
+            this.getEnrolledUserCount()
+          }
         }
         if (this.batchId) {
           // this.navigateToPlayerPage(batchId)
@@ -368,5 +403,29 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         this.router.navigate([`/app/toc/${this.eventData.courseLinked}`])
       }
     })
+  }
+
+  public handleParseJsonData(s: any) {
+    try {
+      const parsedString = JSON.parse(s)
+      return parsedString
+    } catch {
+      return []
+    }
+  }
+
+  handleCapitalize(str: string, type?: string): string {
+    let returnValue = ''
+    if (str) {
+      if (type === 'name') {
+        returnValue = str.split(' ').map(_str => {
+          return _str.charAt(0).toUpperCase() + _str.slice(1)
+        }).join(' ')
+      } else {
+
+        returnValue = str && (str.charAt(0).toUpperCase() + str.slice(1))
+      }
+    }
+    return returnValue
   }
 }

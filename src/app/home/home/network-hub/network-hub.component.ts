@@ -103,7 +103,7 @@ export class NetworkHubComponent implements OnInit {
         this.network.networkRecommended = res && res.result && res.result.response ? res.result.response : []
         if (this.network.networkRecommended.length) {
           this.network.networkRecommended = this.network.networkRecommended.map((obj: any) => {
-            obj.fullName = this.createInitials(obj.personalDetails.firstname)
+            obj.fullName = this.createInitials(obj?.personalDetails?.firstname || obj?.fullName || '' )
             obj.connecting = false
             return obj
           })

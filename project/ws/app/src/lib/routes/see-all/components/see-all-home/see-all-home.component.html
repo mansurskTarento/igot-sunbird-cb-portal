@@ -15,7 +15,8 @@
             </ng-container>
             <ng-container *ngIf="isCoisContent">
                 <div class="mr-2" *ngFor="let c of contentDataList">
-                    <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext>
+                    <sb-uic-provider-card  [isCardLoading]="false" [widgetData]="c.widgetData"></sb-uic-provider-card>
+                    <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
                 </div>
             </ng-container>
         </div>
@@ -31,9 +32,17 @@
                     <span *ngIf="tab?.showTabDataCount">({{tab?.widgets?.length}})</span>
                 </ng-template>
                 <div class="flex flex-row flex-wrap content-container mt-10 mb-10">
-                    <div class="mr-2 mb-5" *ngFor="let c of tab?.widgets">
-                        <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
-                    </div>
+                    <ng-container *ngIf="!isCoisContent">
+                        <div class="mr-2 mb-5" *ngFor="let c of tab?.widgets">
+                            <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="isCoisContent">
+                        <div class="mr-2" *ngFor="let c of tab?.widgets">
+                            <sb-uic-provider-card  [isCardLoading]="false" [widgetData]="c.widgetData"></sb-uic-provider-card>
+                            <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
+                        </div>
+                    </ng-container>
                 </div>
             </mat-tab>
         </mat-tab-group>
