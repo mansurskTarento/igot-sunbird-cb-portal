@@ -563,6 +563,16 @@ export class AppTocContentCardV2Component implements OnInit {
       return false
     }
 
+    //for public scenario check if its player plage then only enable download
+    if (this.forPreview && !window.location.href.includes('/viewer/')) {
+      return false
+    }
+
+    // for logged in user check if user enrolled then only allow download
+    if (!this.forPreview && !this.isEnrolled) {
+      return false
+    }
+
     // Define downloadable MIME types
     const downloadableMimeTypes = [
       NsContent.EMimeTypes.PDF
