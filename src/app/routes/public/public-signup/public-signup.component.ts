@@ -515,11 +515,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
 
     const reqOffset = (typeof offset === 'number') ? offset : this.designationOffset
-    const reqLimit = this.designationDefaultLoadCount
+    let reqLimit = this.designationDefaultLoadCount
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
     if (pageIndex === 0) {
       this.noMoreLegacyDesignations = false
+      reqLimit = 50
     }
     const requestBody: any = {
       filterCriteriaMap: {
@@ -534,7 +535,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       // when searching, start from first page
       requestBody.pageNumber = 0
       // allow larger page for search if needed
-      requestBody.pageSize = this.designationListLoadCount
+      requestBody.pageSize = pageIndex === 0 ? 50 : this.designationListLoadCount
       // reset guard when performing a fresh search
       this.noMoreLegacyDesignations = false
     }
@@ -1227,6 +1228,23 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           }
 
            console.log('req ===: ', req)
+           this.signupSvc.register(req).subscribe(
+            (_res: any) => {
+              this.openDialog()
+              this.disableBtn = false
+              this.isMobileVerified = true
+              this.raiseSignupInteractTelementry()
+            },
+            (err: any) => {
+              this.disableBtn = false
+              this.loggerSvc.error('Error in registering new user >', err)
+              if (err.error && err.error.params && err.error.params.errmsg) {
+                this.openSnackbar(err.error.params.errmsg)
+              } else {
+                this.openSnackbar(this.translateLabels('somethingWentWrong', 'common'))
+              }
+            }
+          )
         },
         error => {
           this.disableBtn = false
@@ -2143,6 +2161,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
    getOrganisationData(searchText?: string, offset?: number): void {
     // this.masterData['organisation'] = []
     // avoid running on server-side render
+    
     if (!isPlatformBrowser(this._platformId)) {
       return
     }
@@ -2231,7 +2250,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
-          
+          // if(res && res.result && res.result.response && res.result.response.content && res.result.response.content.length === 0) {
+            this.masterData['organisationBackup'] =
+            this.masterData['organisationBackup'].filter(
+              (item: any) => item.orgName === 'N/A'
+            );
+          // }
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
           const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
@@ -2401,7 +2425,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.isLoadingMoreOrganisations) return
 
     this.organisationSearchText = txt
-    if (txt?.length) {
+    if(txt.length === 0) {
+      this.organisationFilterEnable = true
+      this.isLoadingMoreOrganisations = true
+      this.getOrganisationData(txt, 0)
+    } else if (txt?.length) {
       this.organisationFilterEnable = true
       this.isLoadingMoreOrganisations = true
       this.getOrganisationData(txt, 0)
