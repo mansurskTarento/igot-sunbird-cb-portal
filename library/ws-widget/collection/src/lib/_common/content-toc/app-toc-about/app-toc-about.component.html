@@ -729,41 +729,36 @@
                                         <div>{{ eachReview?.rating }}</div>
                                     </div>
                                 </div>
-                                <div class="flex flex-row gap-2 rating-start-value">
-                                    <mat-icon>star</mat-icon>
-                                    <div>{{ eachReview?.rating }}</div>
-                                </div>
-                            </div>
-                            <div class="flex flex-row gap-2 items-center text-sm">
-                                <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
-                                    [photoUrl]="eachReview?.photo || ''"
-                                    [name]="eachReview?.firstName"></ws-widget-avatar-photo>
-                                <div class="flex flex-wrap">
-                                    <div>{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
-                                    <div class="flex items-center mx-2">
-                                        <span class="period"></span>
+                                <div class="flex flex-row gap-2 items-center text-sm">
+                                    <ws-widget-avatar-photo [randomColor]="true" [datalen]="1" [size]="'round-m'"
+                                        [photoUrl]="eachReview?.photo || ''"
+                                        [name]="eachReview?.firstName"></ws-widget-avatar-photo>
+                                    <div class="flex flex-wrap">
+                                        <div>{{ handleCapitalize(eachReview?.firstName.toLowerCase(), 'name') }}</div>
+                                        <div class="flex items-center mx-2">
+                                            <span class="period"></span>
+                                        </div>
+                                        <div>{{ eachReview?.date | pipeRelativeTime }}</div>
                                     </div>
-                                    <div>{{ eachReview?.date | pipeRelativeTime }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </ng-container>
+                <div *ngIf="!topRatingReviews || !topRatingReviews?.length">
+                    <div class="flex flex-col text-center items-center justify-center bg-white p-4 rounded-md">
+                        <div class="font-base font-bold nodtranslate">{{ 'apptocsinglepage.noReviewsFound' | translate
+                            }}</div>
+                    </div>
+                </div>
             </div>
-    </ng-container>
-    <div *ngIf="!topRatingReviews || !topRatingReviews?.length">
-        <div class="flex flex-col text-center items-center justify-center bg-white p-4 rounded-md">
-            <div class="font-base font-bold nodtranslate">{{ 'apptocsinglepage.noReviewsFound' | translate
-                }}</div>
         </div>
-    </div>
-</div>
-</div>
-<!-- </ng-container> -->
-<!-- <ng-container *ngIf="!content?.averageRating">
+        <!-- </ng-container> -->
+        <!-- <ng-container *ngIf="!content?.averageRating">
             <div class="flex flex-col gap-3 justify-center ratings-div">
                 <img src="/assets/icons/toc/no-certificate.svg" alt="no ratings image" />
                 <div class="text-lg font-bol">Be the first one to rate this course and your <br/> learning experience</div>
             </div>
         </ng-container> -->
-</ng-container>
+    </ng-container>
 </div>
