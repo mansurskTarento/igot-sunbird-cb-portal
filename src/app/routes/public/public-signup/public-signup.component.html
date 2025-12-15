@@ -4,26 +4,28 @@
     <div class="features-image img-pointer" (click)="mdoRedirect()">
       <img src="/assets/instances/eagle/banners/home/9/Sticky Notes.png" alt="What's New @ iGOT?">
     </div>
-    
+
   </div>
   <div class="right_container flex flex-col py-8">
     <div class="langdiv" *ngIf="isMultiLangEnabled">
       <mat-form-field class="custom-lang float-right margin-right-xl">
         <img src="/assets/icons/top-nav/translate_icon.svg" alt="Language" class="margin-right-xs">
-        <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage" (ngModelChange)="selectLanguage($event)">
+        <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage"
+          (ngModelChange)="selectLanguage($event)">
 
-            <span *ngFor="let lang of multiLang">
-              <mat-option *ngIf="lang.active" [value]="lang.key" [ngClass]="{'checkmark':lang.key == selectedLanguage}">{{lang.value}}</mat-option>
-            </span>
+          <span *ngFor="let lang of multiLang">
+            <mat-option *ngIf="lang.active" [value]="lang.key"
+              [ngClass]="{'checkmark':lang.key == selectedLanguage}">{{lang.value}}</mat-option>
+          </span>
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="zoho-form-box">
-      <a  (click)="getZohoForm()" class="help-icon" id="help-icon">
-        <img  src="/assets/icons/top-nav/help_icon.svg" alt="Need Help">
+    <!-- <div class="zoho-form-box">
+      <a (click)="getZohoForm()" class="help-icon" id="help-icon">
+        <img src="/assets/icons/top-nav/help_icon.svg" alt="Need Help">
         <span class="tooltiptext">Need Help</span>
       </a>
-    </div>
+    </div> -->
     <div class="right_inner_container profile-box">
       <div class="flex">
         <div class="flex items-center mr-5">
@@ -38,180 +40,29 @@
         <h1 class="mat-h1 margin-remove inline-block ng-star-inserted">
           {{ 'publicsignup.register' | translate }}
         </h1>
-       
+
       </div>
-      <form [formGroup]="registrationForm">
+
+      <div class="custom-stepper">
+        <div class="step">
+          <div class="circle" [ngClass]="(currentStep === 'step2') ? 'completed':'active'">1</div>
+          <span class="stepper-label active">Step - 1</span>
+        </div>
+    
+        <div class="line"></div>
+    
+        <div class="step">
+          <div class="circle" [ngClass]="(currentStep === 'step2') ? 'active':''">2</div>
+          <span class="stepper-label">Step - 2</span>
+        </div>
+      </div>
+
+      <form [formGroup]="registrationFormStepOne" *ngIf="currentStep == 'step1'">
         <div class="margin-top-l new-mobile">
           <div class="flex flex-wrap mobile-break">
             <div class="flex flex-col content-center flex-wrap">
-              <div class="input-wrapper margin-top-s">
-                <label for="firstName" class=" margin-remove-bottom form-label required"
-                  i18n="First name label|Label which explains the user to enter first name" i18n-aria-label
-                  aria-label="First name label">
-                  {{ 'publicsignup.fullName' | translate }}
-                </label>
-                <mat-form-field appearance="outline" class="margin-top-s">
-                  <input id="firstName" matInput #firstname formControlName="firstname" i18n-placeholder
-                    placeholder="{{'publicsignup.enterYourFullName' | translate}}" autocomplete="off" i18n-aria-label aria-label="First Name input" maxlength="150" />
-                  <mat-error [hidden]="false" i18n="First Name Error|Explains name is required" i18n-aria-label
-                    aria-label="First Name Error|Explains name is required "
-                    *ngIf="registrationForm?.controls['firstname'].errors?.required">
-                    {{ 'publicsignup.fullNameMandatory' | translate }}
-                  </mat-error>
-                  <mat-error [hidden]="false" *ngIf="registrationForm?.controls['firstname'].errors?.pattern"
-                    i18n-aria-label
-                    aria-label="First name Error|Name fields cannot contain numbers and special characters except ">
-                    {{ 'publicsignup.fullNameWitoutSp' | translate }}
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              
-
-              <div class="input-wrapper margin-top-s">
-                <label for="group" class=" margin-remove-bottom form-label required"
-                  i18n="Group | Label which explains the user to enter Group" i18n-aria-label
-                  aria-label="Group Field label">
-                  {{ 'publicsignup.group' | translate }}
-                </label>
-                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
-                  <mat-select placeholder="{{'publicsignup.selectYourGroup' | translate}}" id="group" #group i18n-placeholder="group" formControlName="group" panelClass="align-panel">
-                    <mat-option *ngFor="let option of masterGroup" [value]="option">{{option}}</mat-option>
-                  </mat-select>
-                  <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
-                    *ngIf="registrationForm?.controls['group'].errors?.required" i18n-aria-label
-                    aria-label="Group is mandatory">
-                    {{ 'publicsignup.groupMandatory' | translate }}
-                  </mat-error>
-                </mat-form-field>
-                
-              </div>
-              <div class="input-wrapper  mobile-wrapper margin-top-l">
-                <label for="email" class=" margin-remove-bottom form-label required"
-                  i18n="Email label|Label which explains the user to enter Email" i18n-aria-label
-                  aria-label="Email label">
-                  {{ 'publicsignup.email' | translate }}
-                </label>
-                <div class="flex flex-1">
-
-                  <mat-form-field appearance="outline" class="margin-top-s" id="email">
-                    <input id="email" name="emailField" autocomplete="off" type="email" maxlength="320"  (input)="emailVerification($event.target.value)"
-                      matInput placeholder="{{'publicsignup.enterYourEmailAddress' | translate}}" #email
-                      formControlName="email" i18n-aria-label aria-label="Email input">
-                  <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified" [hidden]="!isEmailVerified"></mat-icon>
-                    <mat-error [hidden]="false" *ngIf="registrationForm?.controls['email'].errors?.required"
-                    i18n="Email Error|Explains name is required">
-                    {{ 'publicsignup.pleaseEnterEmail' | translate }}
-                  </mat-error>
-                  <mat-error [hidden]="false"  *ngIf="registrationForm.controls['email'].touched && registrationForm?.controls['email'].errors?.pattern"
-                    i18n-aria-label aria-label="Please enter a valid email address">
-                    {{ 'publicsignup.validEmail' | translate }}
-                  </mat-error>
-                  <div *ngIf="registrationForm.controls['email'].touched && emailLengthVal" class="email-error"
-                    i18n="Email Error|Explains character validation">
-                    {{ 'publicsignup.emailLengthValidation' | translate }}
-                  </div>
-                  </mat-form-field>
-                </div>
-                <div class="pos-hint help-request ws-mat-black60-text" id="org-field">
-                  <!-- {{ 'publicsignup.donotHaveGovernmentEmail' | translate }} --> 
-                    <span>{{ 'publicsignup.emailMsg' | translate }} <a (click)="mdoRedirect()" target="_blank"><span class="text-cls">{{ 'publicsignup.clickHere' | translate }}</span></a> 
-                    {{ 'publicsignup.toviewNodalOfficers' | translate }}</span>
-                  <!-- //NOSONAR --> 
-                   <!-- <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
-                    {{ 'publicsignup.requestForHelp' | translate }}</span> -->
-                   </div>
-
-                <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
-                  <button *ngIf="!otpEmailSend" mat-raised-button type="button" (click)="sendOtpEmail()"
-                    class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive" [disabled]="registrationForm?.email?.invalid">
-                    <a class="text-white" >
-                      {{ 'publicsignup.sendOTP' | translate }}
-                    </a>
-                  </button>
-                  <div *ngIf="otpEmailSend" class="flex flex-1 flex-column">
-                      <mat-form-field appearance="outline" class="margin-top-xs w-full">
-                        <input  id="emailOTP" #emailotp type="password" minlength="4" maxlength="6"
-                          matInput placeholder="{{'publicsignup.enterOTP' | translate}}" i18n-aria-label aria-label="OTP input" onKeyPress="if(this.value.length === 8) return false;" autocomplete="new-password">
-                        <mat-hint *ngIf="timeLeftforOTPEmail > 0 ">
-                          <span>{{ 'publicsignup.resendOTPAfter' | translate }} {{timeLeftforOTPEmail | pipeDurationTransform: 'hms2M'}}</span>
-                        </mat-hint>
-                        <mat-hint *ngIf="timeLeftforOTPEmail <= 0 ">
-                          <!-- //NOSONAR --> <span class="cursor-pointer ws-mat-default-text" (click)="resendOTPEmail()">
-                            {{ 'publicsignup.resendOTP' | translate }}</span>
-                        </mat-hint>
-                      </mat-form-field>
-                      <div class="flex flex-1 margin-top-s justify-end">
-                        <button mat-raised-button type="button" (click)="verifyOtpEmail(emailotp)"
-                          class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
-                          [disabled]="registrationForm?.email?.invalid">
-                          <span class="text-white" >
-                            {{ 'publicsignup.verifyOTP' | translate }}
-                          </span>
-                        </button>
-                      </div>
-                  </div>
-                </div>
-
-              </div>
-              <div class="input-wrapper mobile-wrapper margin-top-l">
-                <label for="mobileNumber" class=" margin-remove-bottom form-label required"
-                  i18n="Mobile Number label|Label which explains the user to enter Mobile Number" i18n-aria-label
-                  aria-label="Mobile Number label">
-                  {{ 'publicsignup.mobileNumber' | translate }}
-                </label>
-                <div class="flex flex-1">
-
-                  <mat-form-field appearance="outline" class="margin-top-s w-full">
-                   
-                    <input  id="mobileNumber" #mobile matInput type="text" maxlength="10"  (keypress)="numericOnly($event)" (paste)="numericOnly($event)"
-                      placeholder="{{ 'publicsignup.mobileNumber' | translate }}" formControlName="mobile" i18n-aria-label
-                      aria-label="Mobile Number input">
-                    <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified" [hidden]="!isMobileVerified"></mat-icon>
-                    <mat-error [hidden]="false" i18n="Mobile Number Error|Explains Mobile no is required"
-                      *ngIf="registrationForm?.controls['mobile'].errors?.required" i18n-aria-label
-                      aria-label="Please enter your mobile number">
-                      {{ 'publicsignup.pleaseEnterMobileNumber' | translate }}
-                    </mat-error>
-                    <mat-error [hidden]="false" *ngIf="registrationForm?.controls['mobile'].errors?.pattern"
-                      i18n-aria-label aria-label="Please enter a valid 10 digit mobile number">
-                      {{ 'publicsignup.validMobilenumber' | translate }}
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div *ngIf="!isMobileVerified" class="flex flex-1 margin-top-s justify-end">
-                  <button *ngIf="!otpSend" mat-raised-button type="button" (click)="sendOtp()"
-                    class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive" [disabled]="registrationForm?.mobile?.invalid">
-                    <a class="text-white" >
-                      {{ 'publicsignup.sendOTP' | translate }}
-                    </a>
-                  </button>
-                  <div *ngIf="otpSend" class="flex flex-1 flex-column">
-                      <mat-form-field appearance="outline" class="margin-top-xs w-full">
-                        <input  id="mobileNumber" #otp type="password" minlength="4" maxlength="6"
-                          matInput placeholder="{{ 'publicsignup.enterOTP' | translate }}" i18n-aria-label aria-label="OTP input" onKeyPress="if(this.value.length === 8) return false;" autocomplete="new-password">
-                        <mat-hint *ngIf="timeLeftforOTP > 0 ">
-                          <span>{{ 'publicsignup.resendOTPAfter' | translate }} {{timeLeftforOTP | pipeDurationTransform: 'hms2M'}}</span>
-                        </mat-hint>
-                        <mat-hint *ngIf="timeLeftforOTP <= 0 ">
-                          <!-- //NOSONAR --> <span class="cursor-pointer ws-mat-default-text" (click)="resendOTP()">{{ 'publicsignup.resendOTP' | translate }}</span>
-                        </mat-hint>
-                        {{otp.errors}}
-                        <mat-error [hidden]="false" *ngIf="otp.errors?.minlength">
-                          {{ 'publicsignup.mobileOtp' | translate }}
-                        </mat-error>
-                      </mat-form-field>
-                      <div class="flex flex-1 margin-top-s justify-end">
-                        <button mat-raised-button type="button" (click)="verifyOtp(otp)"
-                          class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
-                          [disabled]="registrationForm?.mobile?.invalid || disableVerifyBtn">
-                          <span class="text-white" >
-                            {{ 'publicsignup.verifyOTP' | translate }}
-                          </span>
-                        </button>
-                      </div>
-                  </div>
-                </div>
-              </div>
+         
+             
               <div class="input-wrapper margin-top-m">
                 <label for="type" class=" margin-remove-bottom form-label required"
                   i18n="Department|Label which explains the user to enter Department" i18n-aria-label
@@ -219,7 +70,7 @@
                   {{ 'publicsignup.centerOrState' | translate }}
                 </label>
                 <mat-radio-group #type class="margin-top-s" formControlName="type" i18n-aria-label
-                  aria-label="Signup as">
+                  aria-label="Signup as" (change)="onTypeChange($event)">
                   <mat-radio-button class="mat-radio-button radio-select" [value]="'ministry'">
                     {{ 'publicsignup.center' | translate }}
                   </mat-radio-button>
@@ -228,70 +79,213 @@
                   </mat-radio-button>
                 </mat-radio-group>
               </div>
-              <div class="input-wrapper margin-top-s">
-                <label for="organisation" class=" margin-remove-bottom form-label required"
-                  i18n="Organisation label|Label which explains the user to enter Surname" i18n-aria-label
-                  aria-label="Organisation label">
-                  {{ 'publicsignup.organisation' | translate }}
-                </label>
-                  <mat-form-field appearance="outline" class="margin-top-s w-full" [hidden]="hideOrg">
-                    <mat-icon matPrefix class="search-home flex items-center justify-center">search</mat-icon>
-                    <input matInput onfocus="this.select()" aria-label="organisation" [matAutocomplete]="auto" #organisation
-                      name="organisation" formControlName="organisation" i18n-placeholder
-                      placeholder="{{ 'publicsignup.searchOrganisation' | translate }}" i18n-aria-label
-                      aria-label="Type here" required (keydown.enter)="searchOrgs($event.target.value)">
-                    <!-- //NOSONAR --> <span matSuffix class="ws-mat-accent-text margin-xs cursor-pointer" (click)="searchOrgs(organisation.value)" >{{ 'publicsignup.search' | translate }}</span>
+              <!-- Ministry/Department-->
+              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='ministry'">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.ministry' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
+                      (closed)="onMinistryDropdownClosed()" panelClass="search-panel-ministry"
+                      (openedChange)="setupScrollListenerForMinistry($event)" (selectionChange)="onMinistryChange($event)">
 
-                  <mat-error [hidden]="false" i18n="Organisation name Error|Explains organisation name is required"
-                    *ngIf="registrationForm?.controls['organisation'].errors?.required" i18n-aria-label
-                    aria-label="Please enter your organisation name">
-                    {{ 'publicsignup.enterOrganisationName' | translate }}
-                  </mat-error>
-
-                  </mat-form-field>
-                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="orgClicked($event)"
-                      autoActiveFirstOption="true" >
-                      <ng-container *ngIf="searching">
-                        <mat-option [value] = "" class="custom">
-                          <div  class="p-4 w-full flex items-center justify-center">
-                            <mat-spinner [diameter]="30"></mat-spinner>
-                          </div>
-                        </mat-option>
-                      </ng-container>
-                      <ng-container *ngIf="(filteredOrgList || filteredOrgList?.length > 0 ) && resultFetched">
-                        <mat-option class=" custom bordered" *ngFor="let organisation of filteredOrgList " [value]="organisation">
-                          <ng-container [ngTemplateOutlet]="autocompleteCard" [ngTemplateOutletContext]="{organisation: organisation}">
-                          </ng-container>
-                        </mat-option>
-                      </ng-container>
-                      <mat-option  class="custom bordered" *ngIf="(!filteredOrgList || !filteredOrgList?.length) && resultFetched" [value]="">
-                        <ng-container [ngTemplateOutlet]="noResult" [ngTemplateOutletContext]="{type: 'Organisation'}">
-                        </ng-container>
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search ministry" formControlName="searchMinistry"
+                            class="search-input-ministry" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="ministrySearch($event)" autocomplete="off">
+                          <button *ngIf="searchMinistry?.value" type="button" class="clear-button"
+                            (click)="searchMinistry?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Options list -->
+                      <mat-option [value]="ministry.identifier" *ngFor="let ministry of masterData?.ministry">
+                        {{ministry?.orgName}}
                       </mat-option>
-                    </mat-autocomplete>
-                <ng-container *ngIf="hideOrg">
-                  <div class="orgBox margin-top-s px-4 py-3 relative">
-                    <div class="flex">
-                      <h3 class="mat-h2 margin-remove inline-block  flex-1">
-                        {{heirarchyObject?.orgName}}
-                      </h3>
-                      <!-- //NOSONAR --> <mat-icon matPrefix class="flex items-right justify-right cursor-pointer close-rounded" (click)="editOrg()">close</mat-icon>
-                    </div>
-                    <div class="flex flex-1 items-center flex-wrap text-left mat-body-2">
-                      <span *ngIf="heirarchyObject?.l1OrgName">{{ 'publicsignup.under' | translate }} &nbsp;</span>
-                      <span *ngIf="heirarchyObject?.l1OrgName">{{heirarchyObject?.l1OrgName}}</span>
-                      <span *ngIf="heirarchyObject?.l2OrgName"> <mat-icon matPrefix class=" flex items-center justify-center">navigate_next</mat-icon></span>
-                      <span *ngIf="heirarchyObject?.l2OrgName" class="flex-1">{{heirarchyObject?.l2OrgName}}</span>
-                    </div>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreMinistrys" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.ministry )?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.ministryNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('ministry')?.touched && registrationFormStepOne?.get('ministry')?.invalid">
+                      {{ 'publicsignup.selectMinistryErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.ministry )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
-                </ng-container>
+                </div>
+
+              </div>
+              <!-- State-->
+              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='state'">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.state' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #state formControlName="state" placeholder="Select state"
+                      (closed)="onStateDropdownClosed()" panelClass="search-panel-state"
+                      (openedChange)="setupScrollListenerForState($event)"
+                      (selectionChange)="onStateChanged($event)">
+
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search state" formControlName="searchState"
+                            class="search-input-state" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="stateSearch($event)" autocomplete="off">
+                          <button *ngIf="searchState?.value" type="button" class="clear-button"
+                            (click)="searchState?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Options list -->
+                      <mat-option [value]="state.identifier" *ngFor="let state of masterData?.state">
+                        {{state?.orgName}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreStates" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.state )?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.stateNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('state')?.touched && registrationFormStepOne?.get('state')?.invalid">
+                      {{ 'publicsignup.selectStateErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.state )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                  </div>
+                </div>
+
+              </div>
+              <!-- Department -->
+              <div class="input-wrapper margin-top-s" *ngIf="registrationFormStepOne?.get('type')?.value==='state'">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.department' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #department formControlName="department" placeholder="Select department"
+                      (closed)="onDepartmentDropdownClosed()" panelClass="search-panel-department"
+                      (openedChange)="setupScrollListenerForDepartment($event)" (selectionChange)="onDepartmentChange()">
+
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search department" formControlName="searchDepartment"
+                            class="search-input-department" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="departmentSearch($event)" autocomplete="off">
+                          <button *ngIf="searchDepartment?.value" type="button" class="clear-button"
+                            (click)="searchDepartment?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Options list -->
+                      <mat-option [value]="department.identifier" *ngFor="let department of masterData?.department">
+                        {{department?.orgName}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreDepartments" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.department)?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.departmentNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('department')?.touched && registrationFormStepOne?.get('department')?.invalid">
+                      {{ 'publicsignup.selectDepartmentErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.department )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                  </div>
+                </div>
+
+              </div>
+              <!-- organisation with ministry/state/department -->
+              <div class="input-wrapper margin-top-s">
+                <div class="input-container">
+                  <div class="label required">{{ 'publicsignup.organisation' | translate }}</div>
+                  <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #organisation formControlName="organisation" placeholder="Select organisation"
+                      (closed)="onOrganisationDropdownClosed()" panelClass="search-panel-organisation"
+                      (openedChange)="setupScrollListenerForOrganisation($event)"
+                      (selectionChange)="onOrganisationChanged($event)">
+
+                      <!-- Sticky search input container -->
+                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                        <div class="search-input-wrapper">
+                          <input type="text" placeholder="Search organisation" formControlName="searchOrganisation"
+                            class="search-input-organisation" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="organisationSearch($event)" autocomplete="off">
+                          <button *ngIf="searchOrganisation?.value" type="button" class="clear-button"
+                            (click)="searchOrganisation?.setValue('')">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+
+                      
+                      <!-- Options list -->
+                      <mat-option [value]="organisation.identifier" *ngFor="let organisation of masterData?.organisation">
+                        {{organisation?.orgName}}
+                      </mat-option>
+                      <!-- Loading indicator -->
+                      <div *ngIf="isLoadingMoreOrganisations" class="loading-indicator">
+                        {{ 'publicsignup.loadMore' | translate }}
+                      </div>
+                      <!-- No results message -->
+                      <mat-option *ngIf="(masterData?.organisation )?.length === 0" disabled>
+                        <!-- No matches found -->
+                        <div class="mat-error txt-size">{{ 'publicsignup.organisationNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                      *ngIf="registrationFormStepOne?.get('organisation')?.touched && registrationFormStepOne?.get('organisation')?.invalid">
+                      {{ 'publicsignup.selectOrganisationErrorMsg' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                  <div *ngIf="(masterData?.organisation )?.length === 0">
+                    <!-- <div class="mat-error txt-size">Ministry not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
+                  </div>
+                </div>
                 <div class="w-full" id="org-field">
                   <div class="flex items-center flex-1">
                     <span class="flex-1 ws-mat-black60-text">{{ 'publicsignup.notFound' | translate }}</span>
-                    <a class="flex-1 ws-mat-accent-text text-right cursor-pointer font-bold pos-request" (click)="navigateTo('Organisation')"> {{ 'publicsignup.requestForHelp' | translate }}</a>
+                    <a class="flex-1 ws-mat-accent-text text-right cursor-pointer font-bold pos-request"
+                      (click)="navigateTo('Organisation')"> {{ 'publicsignup.requestForHelp' | translate }}</a>
                   </div>
                 </div>
               </div>
+             
               <!-- Designation block inserted after Organisation -->
               <div class="input-wrapper margin-top-s">
                 <div class="input-container">
@@ -305,9 +299,9 @@
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
                         <div class="search-input-wrapper">
                           <input type="text" placeholder="Search designation" formControlName="searchDesignation"
-                            class="search-input" (keydown)="$event.stopPropagation()" (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-                            (keyup)="designationSearch($event)"
-                            autocomplete="off">
+                            class="search-input" (keydown)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                            (keyup)="designationSearch($event)" autocomplete="off">
                           <button *ngIf="searchDesignation?.value" type="button" class="clear-button"
                             (click)="searchDesignation?.setValue('')">
                             ✕
@@ -325,55 +319,238 @@
                       <!-- No results message -->
                       <mat-option *ngIf="(masterData?.designation )?.length === 0" disabled>
                         <!-- No matches found -->
-                         <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>.</div>
+                        <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a
+                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                            translate }}</a>.</div>
                       </mat-option>
                     </mat-select>
                     <mat-error class="text-xs"
-                      *ngIf="registrationForm?.get('designation')?.touched && registrationForm?.get('designation')?.invalid">
+                      *ngIf="registrationFormStepOne?.get('designation')?.touched && registrationFormStepOne?.get('designation')?.invalid">
                       {{ 'publicsignup.selectDesignationErrorMsg' | translate }}
                     </mat-error>
                   </mat-form-field>
-                  <div *ngIf="(masterData?.designation )?.length === 0"> 
+                  <div *ngIf="(masterData?.designation )?.length === 0">
                     <!-- <div class="mat-error txt-size">Designation not found. Please reach out to your respective MDO Admin by clicking <a (click)="mdoRedirect()" target="_blank">here</a>.</div> -->
                   </div>
                 </div>
-                
+
               </div>
 
-              <ng-template #autocompleteCard let-organisation="organisation">
-                <div class="px-5 py-3">
-                  <div>
-                    <h3 class="mat-h3 margin-remove">
-                      {{organisation?.orgName}}
-                    </h3>
-                  </div>
-                  <div class="flex flex-1 items-center flex-wrap text-left mat-body-2">
-                    <span *ngIf="organisation?.l1OrgName">{{ 'publicsignup.under' | translate }} &nbsp;</span>
-                    <span *ngIf="organisation?.l1OrgName">{{organisation?.l1OrgName}}</span>
-                    <span *ngIf="organisation?.l2OrgName"> <mat-icon matPrefix class=" flex items-center justify-center">navigate_next</mat-icon></span>
-                    <span *ngIf="organisation?.l2OrgName" class="flex-1">{{organisation?.l2OrgName}}</span>
+              
+                  
+              <div class="input-wrapper  mobile-wrapper margin-top-l">
+                <label for="email" class=" margin-remove-bottom form-label required"
+                  i18n="Email label|Label which explains the user to enter Email" i18n-aria-label
+                  aria-label="Email label">
+                  {{ 'publicsignup.email' | translate }}
+                </label>
+                <div class="flex flex-1">
+
+                  <mat-form-field appearance="outline" class="margin-top-s" id="email">
+                    <input id="email" name="emailField" autocomplete="off" type="email" maxlength="320"
+                      (input)="emailVerification($event.target.value)" matInput
+                      placeholder="{{'publicsignup.enterYourEmailAddress' | translate}}" #email formControlName="email"
+                      i18n-aria-label aria-label="Email input">
+                    <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified"
+                      [hidden]="!isEmailVerified"></mat-icon>
+                    <mat-error [hidden]="false" *ngIf="registrationFormStepOne?.controls['email'].errors?.required"
+                      i18n="Email Error|Explains name is required">
+                      {{ 'publicsignup.pleaseEnterEmail' | translate }}
+                    </mat-error>
+                    <mat-error [hidden]="false"
+                      *ngIf="registrationFormStepOne.controls['email'].touched && registrationFormStepOne?.controls['email'].errors?.pattern"
+                      i18n-aria-label aria-label="Please enter a valid email address">
+                      {{ 'publicsignup.validEmail' | translate }}
+                    </mat-error>
+                    <div *ngIf="registrationFormStepOne.controls['email'].touched && emailLengthVal" class="email-error"
+                      i18n="Email Error|Explains character validation">
+                      {{ 'publicsignup.emailLengthValidation' | translate }}
+                    </div>
+                  </mat-form-field>
+                </div>
+                <div class="pos-hint help-request ws-mat-black60-text" id="org-field">
+                  <!-- {{ 'publicsignup.donotHaveGovernmentEmail' | translate }} -->
+                  <span>{{ 'publicsignup.emailMsg' | translate }} <a (click)="mdoRedirect()" target="_blank"><span
+                        class="text-cls">{{ 'publicsignup.clickHere' | translate }}</span></a>
+                    {{ 'publicsignup.toviewNodalOfficers' | translate }}</span>
+                  <!-- //NOSONAR -->
+                  <!-- <span class="float-right ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo('Domain')">
+                    {{ 'publicsignup.requestForHelp' | translate }}</span> -->
+                </div>
+
+                <div *ngIf="!isEmailVerified" class="flex flex-1 margin-top-s justify-end">
+                  <button *ngIf="!otpEmailSend" mat-raised-button type="button" (click)="sendOtpEmail()"
+                    class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive"
+                    [disabled]="registrationFormStepOne?.email?.invalid">
+                    <a class="text-white">
+                      {{ 'publicsignup.sendOTP' | translate }}
+                    </a>
+                  </button>
+                  <div *ngIf="otpEmailSend" class="flex flex-1 flex-column">
+                    <mat-form-field appearance="outline" class="margin-top-xs w-full">
+                      <input id="emailOTP" #emailotp type="password" minlength="4" maxlength="6" matInput
+                        placeholder="{{'publicsignup.enterOTP' | translate}}" i18n-aria-label aria-label="OTP input"
+                        onKeyPress="if(this.value.length === 8) return false;" autocomplete="new-password">
+                      <mat-hint *ngIf="timeLeftforOTPEmail > 0 ">
+                        <span>{{ 'publicsignup.resendOTPAfter' | translate }} {{timeLeftforOTPEmail |
+                          pipeDurationTransform: 'hms2M'}}</span>
+                      </mat-hint>
+                      <mat-hint *ngIf="timeLeftforOTPEmail <= 0 ">
+                        <!-- //NOSONAR --> <span class="cursor-pointer ws-mat-default-text" (click)="resendOTPEmail()">
+                          {{ 'publicsignup.resendOTP' | translate }}</span>
+                      </mat-hint>
+                    </mat-form-field>
+                    <div class="flex flex-1 margin-top-s justify-end">
+                      <button mat-raised-button type="button" (click)="verifyOtpEmail(emailotp)"
+                        class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
+                        [disabled]="registrationFormStepOne?.email?.invalid">
+                        <span class="text-white">
+                          {{ 'publicsignup.verifyOTP' | translate }}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </ng-template>
-              <ng-template #noResult let-type="type">
-                <div class="flex-col text-center items-center justify-center px-6 py-3">
-                  <div class="mat-body-2 px-6">{{ 'publicsignup.noMatchingSearch' | translate }}</div>
-                  <div class="mat-body-2 padding-top-xs">
-                    <a  class="flex-1 ws-mat-accent-text cursor-pointer font-bold" (click)="navigateTo(type)"> {{ 'publicsignup.requestForHelp' | translate }}</a>
+
+              </div>
+            </div>
+          </div>
+          <div class="button-row">
+            <!-- <button class="btn-outline">Previous</button> -->
+             <!-- [disabled]="registrationFormStepOne?.invalid" -->
+            <button [disabled]="registrationFormStepOne?.invalid || !isEmailVerified" class="btn-primary"  (click)="goToNextStep()">Next</button>
+          </div>
+          <div class="w-full margin-top-l">
+            <div class="flex items-center  mat-body-1 flex-1">
+              {{ 'publicsignup.haveAccount' | translate }} &nbsp;
+              <a href="/protected/v8/resource" class="ws-mat-accent-text text-center"> {{ 'publicsignup.signin' |
+                translate }}</a>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="registrationFormStepTwo" *ngIf="currentStep == 'step2'">
+        <div class="margin-top-l new-mobile">
+          <div class="flex flex-wrap mobile-break">
+            <div class="flex flex-col content-center flex-wrap">
+         
+             
+              <div class="input-wrapper margin-top-s">
+                <label for="firstName" class=" margin-remove-bottom form-label required"
+                  i18n="First name label|Label which explains the user to enter first name" i18n-aria-label
+                  aria-label="First name label">
+                  {{ 'publicsignup.fullName' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="margin-top-s">
+                  <input id="firstName" matInput #firstname formControlName="firstname" i18n-placeholder
+                    placeholder="{{'publicsignup.enterYourFullName' | translate}}" autocomplete="off" i18n-aria-label
+                    aria-label="First Name input" maxlength="150" />
+                  <mat-error [hidden]="false" i18n="First Name Error|Explains name is required" i18n-aria-label
+                    aria-label="First Name Error|Explains name is required "
+                    *ngIf="registrationFormStepTwo?.controls['firstname'].errors?.required">
+                    {{ 'publicsignup.fullNameMandatory' | translate }}
+                  </mat-error>
+                  <mat-error [hidden]="false" *ngIf="registrationFormStepTwo?.controls['firstname'].errors?.pattern"
+                    i18n-aria-label
+                    aria-label="First name Error|Name fields cannot contain numbers and special characters except ">
+                    {{ 'publicsignup.fullNameWitoutSp' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+
+              <div class="input-wrapper margin-top-s">
+                <label for="group" class=" margin-remove-bottom form-label required"
+                  i18n="Group | Label which explains the user to enter Group" i18n-aria-label
+                  aria-label="Group Field label">
+                  {{ 'publicsignup.group' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="margin-top-s w-full" id="group">
+                  <mat-select placeholder="{{'publicsignup.selectYourGroup' | translate}}" id="group" #group
+                    i18n-placeholder="group" formControlName="group" panelClass="align-panel">
+                    <mat-option *ngFor="let option of masterGroup" [value]="option">{{option}}</mat-option>
+                  </mat-select>
+                  <mat-error [hidden]="false" i18n="Group Error | Explains Group is required"
+                    *ngIf="registrationFormStepTwo?.controls['group'].errors?.required" i18n-aria-label
+                    aria-label="Group is mandatory">
+                    {{ 'publicsignup.groupMandatory' | translate }}
+                  </mat-error>
+                </mat-form-field>
+
+              </div>
+              <div class="input-wrapper mobile-wrapper margin-top-l">
+                <label for="mobileNumber" class=" margin-remove-bottom form-label required"
+                  i18n="Mobile Number label|Label which explains the user to enter Mobile Number" i18n-aria-label
+                  aria-label="Mobile Number label">
+                  {{ 'publicsignup.mobileNumber' | translate }}
+                </label>
+                <div class="flex flex-1">
+
+                  <mat-form-field appearance="outline" class="margin-top-s w-full">
+
+                    <input id="mobileNumber" #mobile matInput type="text" maxlength="10"
+                      (keypress)="numericOnly($event)" (paste)="numericOnly($event)"
+                      placeholder="{{ 'publicsignup.mobileNumber' | translate }}" formControlName="mobile"
+                      i18n-aria-label aria-label="Mobile Number input">
+                    <mat-icon matSuffix class="ws-mat-green-text margin-xs" svgIcon="verified"
+                      [hidden]="!isMobileVerified"></mat-icon>
+                    <mat-error [hidden]="false" i18n="Mobile Number Error|Explains Mobile no is required"
+                      *ngIf="registrationFormStepTwo?.controls['mobile'].errors?.required" i18n-aria-label
+                      aria-label="Please enter your mobile number">
+                      {{ 'publicsignup.pleaseEnterMobileNumber' | translate }}
+                    </mat-error>
+                    <mat-error [hidden]="false" *ngIf="registrationFormStepTwo?.controls['mobile'].errors?.pattern"
+                      i18n-aria-label aria-label="Please enter a valid 10 digit mobile number">
+                      {{ 'publicsignup.validMobilenumber' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div *ngIf="!isMobileVerified" class="flex flex-1 margin-top-s justify-end">
+                  <button *ngIf="!otpSend" mat-raised-button type="button" (click)="sendOtp()"
+                    class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text btn-responsive"
+                    [disabled]="registrationFormStepTwo?.mobile?.invalid">
+                    <a class="text-white">
+                      {{ 'publicsignup.sendOTP' | translate }}
+                    </a>
+                  </button>
+                  <div *ngIf="otpSend" class="flex flex-1 flex-column">
+                    <mat-form-field appearance="outline" class="margin-top-xs w-full">
+                      <input id="mobileNumber" #otp type="password" minlength="4" maxlength="6" matInput
+                        placeholder="{{ 'publicsignup.enterOTP' | translate }}" i18n-aria-label aria-label="OTP input"
+                        onKeyPress="if(this.value.length === 8) return false;" autocomplete="new-password">
+                      <mat-hint *ngIf="timeLeftforOTP > 0 ">
+                        <span>{{ 'publicsignup.resendOTPAfter' | translate }} {{timeLeftforOTP | pipeDurationTransform:
+                          'hms2M'}}</span>
+                      </mat-hint>
+                      <mat-hint *ngIf="timeLeftforOTP <= 0 ">
+                        <!-- //NOSONAR --> <span class="cursor-pointer ws-mat-default-text" (click)="resendOTP()">{{
+                          'publicsignup.resendOTP' | translate }}</span>
+                      </mat-hint>
+                      {{otp.errors}}
+                      <mat-error [hidden]="false" *ngIf="otp.errors?.minlength">
+                        {{ 'publicsignup.mobileOtp' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                    <div class="flex flex-1 margin-top-s justify-end">
+                      <button mat-raised-button type="button" (click)="verifyOtp(otp)"
+                        class="submitBtnSmall text-white ws-mat-primary-background ws-mat-white-text margin-top-s otp"
+                        [disabled]="registrationFormStepTwo?.mobile?.invalid || disableVerifyBtn">
+                        <span class="text-white">
+                          {{ 'publicsignup.verifyOTP' | translate }}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </ng-template>
-              <ng-template #onlynoResult let-type="type">
-                <div class="flex-col text-center items-center justify-center px-6 py-3">
-                  <div class="mat-body-2 px-6">{{'publicsignup.noMatchingSearch' | translate}}</div>
-                </div>
-              </ng-template>
+              </div>
+
               <div class="input-wrapper margin-top-s">
                 <div class="flex flex-middle">
                   <mat-checkbox aria-label="I confirm that the above provided information are accurate." id="confirm"
                     [checked]="confirm" (change)="confirmChange()" i18n-aria-label
                     aria-label="I confirm that the above provided information are accurate. checkbox" required>
-                    <!-- //NOSONAR --> <label class="margin-remove-bottom mat-body-2 ws-mat-black60-text" i18n-aria-label
+                    <!-- //NOSONAR --> <label class="margin-remove-bottom mat-body-2 ws-mat-black60-text"
+                      i18n-aria-label
                       aria-label="I confirm that the above provided information are accurate. checkbox label">
                       {{ 'publicsignup.confirmInfo' | translate }}
                     </label>
@@ -382,34 +559,45 @@
               </div>
               <div class="input-wrapper margin-top-s">
                 <div class="flex flex-middle">
-                  <mat-checkbox aria-label="I agree to the IGOT karmayogi's Terms of Service & Privacy Policy." id="confirmTerms" 
-                    [checked]="confirmTerms" (change)="confirmTermsChange()" i18n-aria-label
+                  <mat-checkbox aria-label="I agree to the IGOT karmayogi's Terms of Service & Privacy Policy."
+                    id="confirmTerms" [checked]="confirmTerms" (change)="confirmTermsChange()" i18n-aria-label
                     aria-label="I agree to the IGOT karmayogi's Terms of Service & Privacy Policy. checkbox" required>
 
                   </mat-checkbox>
-                  <!-- //NOSONAR --> <label class="margin-remove-bottom mat-body-2 ws-mat-black60-text ml-3" i18n-aria-label
-                  aria-label="I agree to the IGOT karmayogi's Terms of Service & Privacy Policy. checkbox label">
-                  {{ 'publicsignup.agree' | translate }} <a class="ws-mat-accent-text terms-text" (click)="termsAndConditionClick()">{{ 'publicsignup.terms' | translate }}</a> & 
-                  <a class="ws-mat-accent-text terms-text" href="/public/privacy-policy" target="_blank">{{ 'publicsignup.privacyPolicy' | translate }}</a>
-                
-                </label>
+                  <!-- //NOSONAR --> <label class="margin-remove-bottom mat-body-2 ws-mat-black60-text ml-3"
+                    i18n-aria-label
+                    aria-label="I agree to the IGOT karmayogi's Terms of Service & Privacy Policy. checkbox label">
+                    {{ 'publicsignup.agree' | translate }} <a class="ws-mat-accent-text terms-text"
+                      (click)="termsAndConditionClick()">{{ 'publicsignup.terms' | translate }}</a> &
+                    <a class="ws-mat-accent-text terms-text" href="/public/privacy-policy" target="_blank">{{
+                      'publicsignup.privacyPolicy' | translate }}</a>
+
+                  </label>
                 </div>
               </div>
-              <div class="w-full margin-top-l">
+              <!-- <div class="w-full margin-top-l">
                 <div class="button_box flex flex-col items-center justify-center">
                   <button mat-flat-button type="submit"
                     class="submitBtn text-white ws-mat-primary-background ws-mat-white-text" (click)="signup()"
-                    [disabled]="!registrationForm?.valid || !confirm || disableBtn || !isMobileVerified || !isEmailVerified || !heirarchyObject || !confirmTerms">
+                    [disabled]="!registrationFormStepTwo?.valid || !confirm || disableBtn || !isMobileVerified || !isEmailVerified || !heirarchyObject || !confirmTerms">
                     {{ 'publicsignup.signup' | translate }}
                   </button>
                 </div>
-              </div>
-              <div class="w-full margin-top-l">
-                <div class="flex items-center  mat-body-1 flex-1">
-                  {{ 'publicsignup.haveAccount' | translate }} &nbsp;
-                  <a href="/protected/v8/resource" class="ws-mat-accent-text text-center"> {{ 'publicsignup.signin' | translate }}</a>
-                </div>
-              </div>
+              </div> -->
+             
+            </div>
+          </div>
+          
+          <div class="button-row">
+            <button class="btn-outline" (click)="goToPrevStep()">Previous</button>
+            <button class="btn-primary" type="submit"  (click)="signup()"
+            [disabled]="!registrationFormStepTwo?.valid || !registrationFormStepOne?.valid || !confirm || disableBtn || !isMobileVerified || !isEmailVerified || !heirarchyObject || !confirmTerms">{{ 'publicsignup.signup' | translate }}</button>
+          </div>
+          <div class="w-full margin-top-l">
+            <div class="flex items-center  mat-body-1 flex-1">
+              {{ 'publicsignup.haveAccount' | translate }} &nbsp;
+              <a href="/protected/v8/resource" class="ws-mat-accent-text text-center"> {{ 'publicsignup.signin' |
+                translate }}</a>
             </div>
           </div>
         </div>
