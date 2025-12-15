@@ -638,6 +638,9 @@ span.optional-span {
   font-weight: 700;
   border: 1px solid #1B4CA1;
   display: inline-block;
+  pointer-events: auto; // Enable clicks even when parent anchor is disabled
+  position: relative; // Ensure it's above the disabled parent
+  z-index: 1; // Ensure it's above the disabled parent
 }
 
 .activeResource .download-btn {
