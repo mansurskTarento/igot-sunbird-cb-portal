@@ -77,6 +77,13 @@
   padding: 15px;
 }
 
+.no-space-text-overflow {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
 .comment-card {
   // width: 40%;
   min-width: 80px;

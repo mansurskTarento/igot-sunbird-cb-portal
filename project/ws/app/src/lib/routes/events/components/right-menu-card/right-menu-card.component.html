@@ -10,19 +10,27 @@
       </div>
     </div>
     <ng-container *ngIf="isenrollFlow">
-      <ng-container *ngIf="showEnrolledCount && eventData?.maxEnrolments">
+      <ng-container
+        *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed && isEnrolled">
         <div class="enrollment-pill">
           <span class="enrollment-text">Oh, only <strong>{{eventData?.maxEnrolments - totalUsersEnrolled}}</strong>
-            slots left... better
-            enroll now!</span>
+            {{(eventData?.maxEnrolments - totalUsersEnrolled < 1) ? 'slot' : 'slots' }} left... better enroll
+              now!</span>
+        </div>
+      </ng-container>
+      <ng-container
+        *ngIf="showEnrolledCount && totalUsersEnrolled >= eventData?.maxEnrolments && isEnrollmentAllowed && isEnrolled">
+        <div class="enrollment-pill">
+          <span>All Slots Filled</span>
         </div>
       </ng-container>
       <ng-container *ngIf="!enrollBtnLoading">
         <!--Not enrolled -->
         <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent || pastEvent)">
-          <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId">
+          <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId && isEnrollmentAllowed">
             <ng-container *ngIf="eventData?.typeofEvent === 'live'">
-              <ng-container *ngIf="!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30">
+              <ng-container
+                *ngIf="!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30 || totalUsersEnrolled >= eventData?.maxEnrolments">
                 <a mat-button class="flex-1 action-button" (click)="completeCourse()">
                   <mat-icon>lock_outline</mat-icon>
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
@@ -65,10 +73,17 @@
               <span i18n>{{ 'eventDetailsRightCard.joinEvent' | translate }}</span>
             </a>
           </div>
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all " *ngIf="pastEvent">
+          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all "
+            *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() !== 'live'">
             <a mat-button class="flex-1 action-button" target="_blank"
               (click)="navigateToPLayer();raiseTelemetry('view-recording')">
               <span i18n>{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
+            </a>
+          </div>
+          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all "
+            *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() === 'live'">
+            <a mat-button class="flex-1 action-button">
+              <span i18n>Event is completed</span>
             </a>
           </div>
           <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent">
@@ -158,7 +173,7 @@
           <span class="mat-subheading-2 ws-mat-accent-text" role="link" tabindex="0">{{ 'eventDetailsRightCard.agenda'
             | translate }}</span>
           <div class="flex flex-wrap" role="link" tabindex="0">
-            <span class="flex-wrap mat-body-2" role="link" tabindex="0">
+            <span class="flex-wrap mat-body-2 no-space-text-overflow" role="link" tabindex="0">
               {{eventData?.meetingAgenda}}
             </span>
           </div>
