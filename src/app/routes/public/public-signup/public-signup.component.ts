@@ -1975,6 +1975,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
+
+          this.masterData['departmentBackup'] =
+          this.masterData['departmentBackup'].filter(
+            (item: any) => item.orgName === 'N/A'
+          );
           
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
