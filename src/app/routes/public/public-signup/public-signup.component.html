@@ -185,7 +185,7 @@
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
                     <mat-select #department formControlName="department" placeholder="Select department"
                       (closed)="onDepartmentDropdownClosed()" panelClass="search-panel-department"
-                      (openedChange)="setupScrollListenerForDepartment($event)" (selectionChange)="onDepartmentChange()">
+                      (openedChange)="setupScrollListenerForDepartment($event)" (selectionChange)="onDepartmentChange($event)">
 
                       <!-- Sticky search input container -->
                       <div class="sticky-search-container" (click)="$event.stopPropagation()">
