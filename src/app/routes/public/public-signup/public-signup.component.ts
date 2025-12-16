@@ -2500,7 +2500,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.getOrganisationData()
   }
 
-  onDepartmentChange() {
+  onDepartmentChange(event:any) {
+    if(event && event.value) {
+      if(this.masterData['departmentBackup'] && this.masterData['departmentBackup'].length) {       
+        this.currentMinistry = _.find(this.masterData.departmentBackup, { identifier: event.value });
+      }      
+    }
     this.getOrganisationData()
   }
 
