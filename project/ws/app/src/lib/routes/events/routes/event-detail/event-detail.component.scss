@@ -782,10 +782,38 @@ button.ws-mat-primary-background {
     width: 1202px;
     margin: 0 auto;
 
+    @include breakpoint-xs {
+      width: 100%;
+
+      >.flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: flex-start !important;
+      }
+    }
+
+    @include breakpoint-s {
+      width: 100%;
+
+      >.flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: flex-start !important;
+      }
+    }
+
     .seperator {
       width: 1px;
       height: 40px;
       background-color: #E0E0E0;
+
+      @include breakpoint-xs {
+        display: none;
+      }
+
+      @include breakpoint-s {
+        display: none;
+      }
     }
 
     .course-name {
@@ -796,6 +824,14 @@ button.ws-mat-primary-background {
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.4;
+
+      @include breakpoint-xs {
+        width: 100%;
+      }
+
+      @include breakpoint-s {
+        width: 100%;
+      }
     }
   }
 }

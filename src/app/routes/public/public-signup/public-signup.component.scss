@@ -841,6 +841,8 @@
   width: 100%;
 }
 
+
+
 /* Responsive: on small screens let the panel be full width so it lines up with responsive mat-form-field */
 @media screen and (max-width: 600px) {
   ::ng-deep .mat-select-panel.search-panel {
@@ -850,6 +852,50 @@
     right: 0 !important;
   }
   ::ng-deep .mat-select-panel.search-panel .sticky-search-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ::ng-deep .mat-select-panel.search-panel-ministry {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  ::ng-deep .mat-select-panel.search-panel-ministry .sticky-search-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ::ng-deep .mat-select-panel.search-panel-state {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  ::ng-deep .mat-select-panel.search-panel-state .sticky-search-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ::ng-deep .mat-select-panel.search-panel-department {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  ::ng-deep .mat-select-panel.search-panel-department .sticky-search-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ::ng-deep .mat-select-panel.search-panel-organisation {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  ::ng-deep .mat-select-panel.search-panel-organisation .sticky-search-container {
     padding-left: 12px;
     padding-right: 12px;
   }
@@ -1115,4 +1161,448 @@ a.help-icon:hover .tooltiptext {
   color: rgb(27, 76, 161);
   cursor: pointer;
   font-weight: 700;
+}
+
+/* Stepper */
+.custom-stepper {
+  display: flex;
+  align-items: center;   /* Ensures circles and line align vertically */
+  justify-content: center;
+  margin: 10px 0 15px 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 28px 0 0 0;
+
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1b4ca1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  opacity: 0.5;
+}
+
+.circle.active {
+  background: orange; /* green */
+  opacity: 1;
+}
+
+.circle.completed {
+  background: #2e7d32 ;
+  opacity: 1;
+}
+.line {
+  flex-grow: 1;
+  height: 4px;         /* adjust thickness */
+  background: #1b4ca1;
+  margin: 0 15px;      /* spacing between circles */
+  align-self: center;  /* guarantees center alignment */
+}
+
+.stepper-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.stepper-label.active {
+  color:rgb(27, 76, 161);
+  font-weight: bold;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.btn-outline {
+  border: 2px solid #1b4ca1;
+  color: #1b4ca1;
+  opacity: 0.5;
+  background: white;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #1b4ca1;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.signin-text {
+  text-align: center;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+
+
+/** ministry panel **/ 
+
+::ng-deep .mat-select-panel.search-panel-ministry {
+  /* remove extra internal padding so our sticky container can align flush */
+  padding: 0 !important;
+  max-height: 360px !important;
+  overscroll-behavior: contain; /* prevent pull-to-refresh on mobile */
+  margin-left: 0 !important; /* override global mat-select margin for this panel only */
+  box-sizing: border-box;
+  /* match the mat-form-field width used in this component (desktop) so search input aligns */
+  min-width: 340px !important;
+  max-width: 340px !important;
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .sticky-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #fff;
+  /* align left/right padding with mat-form-field content */
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto; /* center inside panel when panel is wider */
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make sure the input and wrapper fill the constrained panel width */
+::ng-deep .mat-select-panel.search-panel-ministry .search-input-wrapper,
+::ng-deep .mat-select-panel.search-panel-ministry .search-input-ministry {
+  width: 100%;
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .search-input-ministry {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .search-input-ministry:focus {
+  border-color: #0074b6;
+  box-shadow: 0 0 0 3px rgba(0,116,182,0.06);
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  padding: 6px;
+  line-height: 1;
+}
+
+::ng-deep .mat-select-panel.search-panel-ministry .loading-indicator {
+  padding: 10px 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Ensure options don't get hidden behind sticky search and align option text with search input */
+::ng-deep .mat-select-panel.search-panel-ministry .mat-option {
+  padding-top: 10px;
+  padding-left: 16px;
+}
+
+/* Align disabled no-result message to the option padding and remove extra margins */
+::ng-deep .mat-select-panel.search-panel-ministry mat-option[disabled] {
+  padding: 8px 16px !important;
+}
+
+/** State Panel **/
+
+
+::ng-deep .mat-select-panel.search-panel-state {
+  /* remove extra internal padding so our sticky container can align flush */
+  padding: 0 !important;
+  max-height: 360px !important;
+  overscroll-behavior: contain; /* prevent pull-to-refresh on mobile */
+  margin-left: 0 !important; /* override global mat-select margin for this panel only */
+  box-sizing: border-box;
+  /* match the mat-form-field width used in this component (desktop) so search input aligns */
+  min-width: 340px !important;
+  max-width: 340px !important;
+}
+
+::ng-deep .mat-select-panel.search-panel-state .sticky-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #fff;
+  /* align left/right padding with mat-form-field content */
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto; /* center inside panel when panel is wider */
+}
+
+::ng-deep .mat-select-panel.search-panel-state .search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make sure the input and wrapper fill the constrained panel width */
+::ng-deep .mat-select-panel.search-panel-state .search-input-wrapper,
+::ng-deep .mat-select-panel.search-panel-state .search-input-state {
+  width: 100%;
+}
+
+::ng-deep .mat-select-panel.search-panel-state .search-input-state {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+}
+
+::ng-deep .mat-select-panel.search-panel-state .search-input-state:focus {
+  border-color: #0074b6;
+  box-shadow: 0 0 0 3px rgba(0,116,182,0.06);
+}
+
+::ng-deep .mat-select-panel.search-panel-state .clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  padding: 6px;
+  line-height: 1;
+}
+
+::ng-deep .mat-select-panel.search-panel-state .loading-indicator {
+  padding: 10px 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Ensure options don't get hidden behind sticky search and align option text with search input */
+::ng-deep .mat-select-panel.search-panel-state .mat-option {
+  padding-top: 10px;
+  padding-left: 16px;
+}
+
+/* Align disabled no-result message to the option padding and remove extra margins */
+::ng-deep .mat-select-panel.search-panel-state mat-option[disabled] {
+  padding: 8px 16px !important;
+}
+
+/** Department Panel **/
+
+
+::ng-deep .mat-select-panel.search-panel-department {
+  /* remove extra internal padding so our sticky container can align flush */
+  padding: 0 !important;
+  max-height: 360px !important;
+  overscroll-behavior: contain; /* prevent pull-to-refresh on mobile */
+  margin-left: 0 !important; /* override global mat-select margin for this panel only */
+  box-sizing: border-box;
+  /* match the mat-form-field width used in this component (desktop) so search input aligns */
+  min-width: 340px !important;
+  max-width: 340px !important;
+}
+
+::ng-deep .mat-select-panel.search-panel-department .sticky-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #fff;
+  /* align left/right padding with mat-form-field content */
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto; /* center inside panel when panel is wider */
+}
+
+::ng-deep .mat-select-panel.search-panel-department .search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make sure the input and wrapper fill the constrained panel width */
+::ng-deep .mat-select-panel.search-panel-department .search-input-wrapper,
+::ng-deep .mat-select-panel.search-panel-department .search-input-department {
+  width: 100%;
+}
+
+::ng-deep .mat-select-panel.search-panel-department .search-input-department {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+}
+
+::ng-deep .mat-select-panel.search-panel-department .search-input-department:focus {
+  border-color: #0074b6;
+  box-shadow: 0 0 0 3px rgba(0,116,182,0.06);
+}
+
+::ng-deep .mat-select-panel.search-panel-department .clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  padding: 6px;
+  line-height: 1;
+}
+
+::ng-deep .mat-select-panel.search-panel-department .loading-indicator {
+  padding: 10px 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Ensure options don't get hidden behind sticky search and align option text with search input */
+::ng-deep .mat-select-panel.search-panel-department .mat-option {
+  padding-top: 10px;
+  padding-left: 16px;
+}
+
+/* Align disabled no-result message to the option padding and remove extra margins */
+::ng-deep .mat-select-panel.search-panel-department mat-option[disabled] {
+  padding: 8px 16px !important;
+}
+
+
+/** Organisation Panel **/
+
+
+::ng-deep .mat-select-panel.search-panel-organisation {
+  /* remove extra internal padding so our sticky container can align flush */
+  padding: 0 !important;
+  max-height: 360px !important;
+  overscroll-behavior: contain; /* prevent pull-to-refresh on mobile */
+  margin-left: 0 !important; /* override global mat-select margin for this panel only */
+  box-sizing: border-box;
+  /* match the mat-form-field width used in this component (desktop) so search input aligns */
+  min-width: 340px !important;
+  max-width: 340px !important;
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .sticky-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #fff;
+  /* align left/right padding with mat-form-field content */
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto; /* center inside panel when panel is wider */
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make sure the input and wrapper fill the constrained panel width */
+::ng-deep .mat-select-panel.search-panel-organisation .search-input-wrapper,
+::ng-deep .mat-select-panel.search-panel-organisation .search-input-organisation {
+  width: 100%;
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .search-input-organisation {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .search-input-organisation:focus {
+  border-color: #0074b6;
+  box-shadow: 0 0 0 3px rgba(0,116,182,0.06);
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  padding: 6px;
+  line-height: 1;
+}
+
+::ng-deep .mat-select-panel.search-panel-organisation .loading-indicator {
+  padding: 10px 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Ensure options don't get hidden behind sticky search and align option text with search input */
+::ng-deep .mat-select-panel.search-panel-organisation .mat-option {
+  padding-top: 10px;
+  padding-left: 16px;
+}
+
+/* Align disabled no-result message to the option padding and remove extra margins */
+::ng-deep .mat-select-panel.search-panel-organisation mat-option[disabled] {
+  padding: 8px 16px !important;
 }

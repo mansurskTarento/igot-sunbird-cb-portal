@@ -19,11 +19,11 @@ export class GyaanFilterComponent implements OnInit {
     step: 1,
     showTicks: false,
     draggableRange: true,
-    onlyBindHandles : true,
+    onlyBindHandles: true,
   }
   categoryValue = ''
   mobileSelectedFilter: any = {}
-  @Input()  filterDataLoading = false
+  @Input() filterDataLoading = false
   localFilterData: any
   @Input() facetsData: any
   @Input() private facetsDataCopy: any
@@ -36,12 +36,12 @@ export class GyaanFilterComponent implements OnInit {
     public translate: TranslateService,
     private route: ActivatedRoute,
     private bottomSheetRef: MatBottomSheetRef<any>) {
-      if (localStorage.getItem('websiteLanguage')) {
-        this.translate.setDefaultLang('en')
-        const lang = localStorage.getItem('websiteLanguage')!
-        this.translate.use(lang)
-      }
-     }
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
+    }
+  }
 
   ngOnInit() {
 
@@ -56,25 +56,43 @@ export class GyaanFilterComponent implements OnInit {
       this.facetsDataCopy = this.data.facetsDataCopy
       this.filterDataLoading = this.data.filterDataLoading
       this.localFilterData = JSON.parse(JSON.stringify(Object.keys(this.data.selectedFilter).length ?
-      this.data.facetsDataCopy : {}))
+        this.data.facetsDataCopy : {}))
+      // Sanitize localFilterData to ensure all values are objects with values array
+      this.sanitizeFacetsData()
       yearsData = this.localFilterData[gyaanConstants.contextYear]
       this.mobileSelectedFilter = JSON.parse(JSON.stringify(
         Object.keys(this.data.selectedFilter).length ? this.data.selectedFilter : {}))
       this.bindSelectedValue()
     } else {
       this.localFilterData = JSON.parse(JSON.stringify(this.facetsDataCopy))
+      // Sanitize localFilterData to ensure all values are objects with values array
+      this.sanitizeFacetsData()
       yearsData = this.localFilterData[gyaanConstants.contextYear]
     }
 
-    if (yearsData.values && yearsData.values.length) {
+    if (yearsData && yearsData.values && yearsData.values.length) {
       this.minValue = Number(yearsData.values[0].name)
       this.maxValue = Number(yearsData.values[yearsData.values.length - 1].name)
-      this.options  = {
+      this.options = {
         floor: Number(yearsData.values[0].name),
         ceil: Number(yearsData.values[yearsData.values.length - 1].name),
         step: 1,
         showTicks: false,
       }
+    }
+  }
+
+  sanitizeFacetsData() {
+    // Remove any facet entries that don't have the expected structure
+    if (this.localFilterData) {
+      Object.keys(this.localFilterData).forEach((key: string) => {
+        const facet = this.localFilterData[key]
+        // Check if facet value is not an object or doesn't have values array
+        if (!facet || typeof facet !== 'object' || !Array.isArray(facet.values)) {
+          console.warn(`Invalid facet data for key "${key}":`, facet)
+          delete this.localFilterData[key]
+        }
+      })
     }
   }
 
@@ -150,8 +168,8 @@ export class GyaanFilterComponent implements OnInit {
           }
         }
         keyData['checked'] = event
-    }
-  } else {
+      }
+    } else {
       keyData['checked'] = event
       if (key === gyaanConstants.requestSectorName || key === gyaanConstants.requestSubSectorName
         || key === gyaanConstants.contextStateOrUTs || key === gyaanConstants.contextSDGs
@@ -178,32 +196,42 @@ export class GyaanFilterComponent implements OnInit {
     }
   }
 
-    getSearch(searchValue: any, keyData: any) {
-      const facetCopy: any = { ...this.facetsDataCopy }
-      const itemData = facetCopy[keyData]
-      const filteredValue =  itemData.values.filter((ele: any) => {
-        return ele.name.toLowerCase().includes(searchValue.toLowerCase())
-      })
+  getSearch(searchValue: any, keyData: any) {
+    const facetCopy: any = { ...this.facetsDataCopy }
+    const itemData = facetCopy[keyData]
+
+    // Add safety check to ensure itemData and values exist
+    if (!itemData || !Array.isArray(itemData.values)) {
+      console.warn(`Invalid facet data for search on key "${keyData}":`, itemData)
+      return
+    }
+
+    const filteredValue = itemData.values.filter((ele: any) => {
+      return ele.name && ele.name.toLowerCase().includes(searchValue.toLowerCase())
+    })
+
+    if (this.localFilterData[keyData]) {
       this.localFilterData[keyData].values = filteredValue
     }
+  }
 
-    onContentChange(event: any) {
+  onContentChange(event: any) {
 
-      this.selectedContent = event.value
-      this.filterChange.emit({ event: true, key: 'content', keyData: event.value })
+    this.selectedContent = event.value
+    this.filterChange.emit({ event: true, key: 'content', keyData: event.value })
+  }
+
+  formatLabel(value: number): string {
+    return `${value}`
+  }
+
+  changeSlider(sliderData: any) {
+    const yearsList = []
+    for (let i = sliderData.value; i <= sliderData.highValue; i = i + 1) {
+      yearsList.push(i)
     }
-
-    formatLabel(value: number): string {
-      return `${value}`
-    }
-
-    changeSlider(sliderData: any) {
-      const yearsList = []
-      for (let i = sliderData.value; i <= sliderData.highValue; i = i + 1) {
-        yearsList.push(i)
-      }
-      this.minValue = sliderData.value
-      this.maxValue = sliderData.highValue
-      this.filterChange.emit({ event: true, key: gyaanConstants.contextYear, keyData: yearsList })
-    }
+    this.minValue = sliderData.value
+    this.maxValue = sliderData.highValue
+    this.filterChange.emit({ event: true, key: gyaanConstants.contextYear, keyData: yearsList })
+  }
 }
