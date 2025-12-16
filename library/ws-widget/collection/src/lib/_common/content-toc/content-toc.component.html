@@ -197,7 +197,7 @@
             <mat-tab label="{{ 'apptocsinglepage.content' | translate }}" *ngIf="contentTabFlag">
                 <ng-template matTabContent>
                     <ws-widget-app-toc-content [batchId]="batchId" [componentName]="componentName" [pathSet]="pathSet"
-                        [content]="content" [tocStructure]="tocStructure" [config]="config" [forPreview]="false"
+                        [content]="content" [tocStructure]="tocStructure" [config]="config" [forPreview]="forPreview"
                         [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
                         [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData">
                     </ws-widget-app-toc-content>
