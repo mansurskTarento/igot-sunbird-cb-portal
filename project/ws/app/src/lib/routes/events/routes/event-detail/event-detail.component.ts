@@ -119,6 +119,9 @@ export class EventDetailComponent implements OnInit {
   }
 
   get isenrollFlow() {
+    console.log(this.eventData)
+    console.log(this.enrollFlowItems)
+    console.log(this.enrollFlowItems.length)
     if (this.eventData && this.enrollFlowItems && this.enrollFlowItems.length) {
       return this.eventData.resourceType && this.enrollFlowItems.includes(this.eventData.resourceType)
     } return false
@@ -207,6 +210,7 @@ export class EventDetailComponent implements OnInit {
         this.pastEvent = true
       }
       this.pageData = (this.route.parent && this.route.parent.snapshot.data.pageData.data) || {}
+      console.log('this.pageData', this.pageData)
       this.enrollFlowItems = this.pageData.enrollFlowItems
       if (this.isenrollFlow) {
         this.getUserIsEnrolled()

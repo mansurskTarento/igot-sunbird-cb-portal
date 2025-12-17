@@ -34,6 +34,8 @@ export class SamuhikCharchaContentComponent implements OnInit {
     if (!this.conditionData?.userEnrollmentList?.length || this.conditionData?.userEnrollmentList[0]?.completionPercentage < 30) {
       this.locked = true
     }
+    console.log('this.samuhikConfig--', this.samuhikConfig)
+
     if (this.content) {
       const eventsLinked = this.content.eventLinked || []
       this.samuhikConfig.strips[0].tabs.forEach((ele: any) => {
@@ -47,6 +49,12 @@ export class SamuhikCharchaContentComponent implements OnInit {
         }
       })
       this.samuhikConfigLoaded = true
+    }
+    if (this.samuhikConfig && this.samuhikConfig.strips && this.samuhikConfig.strips.length) {
+      if (this.samuhikConfig.strips[0] && this.samuhikConfig.strips[0]['viewMoreUrl'] && this.samuhikConfig.strips[0]['viewMoreUrl']['path']) {
+        this.samuhikConfig.strips[0]['viewMoreUrl']['path'] = this.samuhikConfig.strips[0]['viewMoreUrl']['path'].split('?')[0]
+      }
+
     }
   }
 
