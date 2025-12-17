@@ -34,8 +34,6 @@ export class SamuhikCharchaContentComponent implements OnInit {
     if (!this.conditionData?.userEnrollmentList?.length || this.conditionData?.userEnrollmentList[0]?.completionPercentage < 30) {
       this.locked = true
     }
-    console.log('this.samuhikConfig--', this.samuhikConfig)
-
     if (this.content) {
       const eventsLinked = this.content.eventLinked || []
       this.samuhikConfig.strips[0].tabs.forEach((ele: any) => {
