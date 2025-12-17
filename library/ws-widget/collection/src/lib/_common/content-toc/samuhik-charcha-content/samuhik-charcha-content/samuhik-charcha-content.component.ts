@@ -48,6 +48,12 @@ export class SamuhikCharchaContentComponent implements OnInit {
       })
       this.samuhikConfigLoaded = true
     }
+    if (this.samuhikConfig && this.samuhikConfig.strips && this.samuhikConfig.strips.length) {
+      if (this.samuhikConfig.strips[0] && this.samuhikConfig.strips[0]['viewMoreUrl'] && this.samuhikConfig.strips[0]['viewMoreUrl']['path']) {
+        this.samuhikConfig.strips[0]['viewMoreUrl']['path'] = this.samuhikConfig.strips[0]['viewMoreUrl']['path'].split('?')[0]
+      }
+
+    }
   }
 
   ngOnDestroy(): void {
