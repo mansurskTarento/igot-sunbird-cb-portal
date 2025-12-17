@@ -153,27 +153,22 @@
             matTooltip="{{ 'apptocsinglepage.competenciesTooltip' | translate }}">info_outline</mat-icon>
     </div>
 </ng-template>
-
-<div class="flex flex-col mt-4" [ngClass]="isMobile ? 'mx-4' : ''">
+<div class="flex flex-col mt-4" [ngClass]="isMobile ? 'mx-4' : ''"
+    *ngIf="contentReadData?.retirementDate && contentReadData?.lastEnrollmentDate">
     <ng-container *ngIf="!skeletonLoader">
         <div class="flex items-center content-retire-container">
             <mat-icon class="material-icons retire-info-icon">warning</mat-icon>
-            <div class="body-1">This course has been set on retirement, and it will be retired on August 15, 2024
+            <div class="body-1">This course is scheduled for retirement. The last date to enroll is
+                {{contentReadData?.lastEnrollmentDate | date: 'MMMM d, y'}}, and
+                the course will be retired on {{contentReadData?.retirementDate | date: 'MMMM d, y'}}.
             </div>
         </div>
     </ng-container>
 </div>
-
-<div class="flex flex-col mt-4 mx-4 block" *ngIf="isMobile">
-    <div class="flex flex-col gap-1 version-contoller-mobile">
-        <div class="font-bold">Select Version</div>
-        <mat-form-field appearance="outline">
-            <mat-select [(value)]="selectedVersion" (selectionChange)="onVersionChange($event)">
-                <mat-option *ngFor="let version of versions" [value]="version.value">
-                    {{ version.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+<div class="flex flex-col mt-4 mx-4 block" *ngIf="isMobile && contentReadData?.contentVersionInfo?.identifier">
+    <div class="flex flex-col gap-1  cursor-pointer switch-version" (click)="navigateToNewVersion()"
+        (keydown)="navigateToNewVersion()">
+        <span class="btn-switch">{{ 'apptoc.switchToNewVersion' | translate }}</span>
     </div>
 </div>
 

@@ -70,7 +70,7 @@
                       !(contentReadData?.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL)">
           <ng-container *ngIf="contentReadData?.primaryCategory !== primaryCategory.RESOURCE  && !enrollBtnLoading">
             <a class="flex action-button justify-center resume" *ngIf="!forPreview || isInIFrame"
-              (click)="handleEnrollment()">
+              (click)="handleEnrollment()" [ngClass]="{'disable-start-btn': !canEnroll()}">
               <ng-container>
                 {{ 'apptochome.enroll' | translate }}
               </ng-container>
@@ -393,9 +393,10 @@
                 </div>
               </div>
             </ng-container>
-            <ng-container *ngIf="!skeletonLoader">
-              <div class="new-version-chip rounded-2xl">
-                <span class="new-version-text nodtranslate">New Version Available</span>
+            <ng-container *ngIf="!skeletonLoader && contentReadData?.contentVersionInfo?.identifier">
+              <div class="new-version-chip rounded-2xl" (click)="navigateToNewVersion()"
+                (keydown)="navigateToNewVersion()">
+                <span class="new-version-text nodtranslate">{{ 'apptoc.newVersion' | translate }}</span>
               </div>
             </ng-container>
             <div class="flex items-center text-white mob-share" *ngIf="canShare">
@@ -444,9 +445,9 @@
                     translate }}</span>
                 </div>
               </div>
-              <div class="flex items-center">
+              <div class="flex items-center" *ngIf="contentReadData?.retirementDate">
                 <div class="new-version-pill text-xs leading-3">
-                  <span>Pending Retirement</span>
+                  <span>{{ 'apptoc.pendingRetirement' | translate }}</span>
                 </div>
               </div>
             </div>
@@ -615,15 +616,10 @@
 
 
           <div class="flex flex-col gap-4 p-5 border-bottom">
-            <div class="flex flex-col gap-1 version-contoller">
-              <div class="font-bold">Select Version</div>
-              <mat-form-field appearance="outline">
-                <mat-select [(value)]="selectedVersion" (selectionChange)="onVersionChange($event)">
-                  <mat-option *ngFor="let version of versions" [value]="version.value">
-                    {{ version.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+            <div class="flex flex-col gap-1  cursor-pointer switch-version"
+              *ngIf="!skeletonLoader && contentReadData?.contentVersionInfo?.identifier"
+              (click)="navigateToNewVersion()" (keydown)="navigateToNewVersion()">
+              <span class="btn-switch">{{ 'apptoc.switchToNewVersion' | translate }}</span>
             </div>
 
             <div class="flex flex-col gap-4"

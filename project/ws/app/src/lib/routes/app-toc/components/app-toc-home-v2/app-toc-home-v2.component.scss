@@ -455,6 +455,10 @@ a.action-button {
   .new-version-text {
     font-size: 12px !important;
   }
+
+  .new-version-chip {
+    padding-top: 0px !important;
+  }
 }
 
 @media screen and (min-width: 1201px) {
@@ -1081,6 +1085,19 @@ mat-divider {
   padding-left: 8px;
   background-color: rgba(243, 150, 47, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 25%;
+    height: 100%;
+    background: linear-gradient(314deg, transparent, rgb(213 210 210 / 60%), transparent);
+    animation: shimmer 1s infinite;
+  }
 
   .new-version-text {
     font-family: Lato;
@@ -1090,40 +1107,28 @@ mat-divider {
   }
 }
 
-.version-contoller .mat-form-field-wrapper {
-  padding-bottom: 0px !important;
+.btn-switch {
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  border-radius: 64px;
+  padding: 8px 16px;
+  border: none;
+  border: 1px solid rgba(243, 150, 47, 1);
+  color: rgba(243, 150, 47, 1);
 }
 
-.version-contoller .mat-form-field-appearance-outline .mat-form-field-flex {
-  height: 45px;
-}
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
 
-
-.mat-form-field-appearance-outline .mat-form-field-outline-end {
-  border-radius: 36px !important;
-  border-left-style: solid !important;
-}
-
-.version-contoller .mat-form-field-appearance-outline .mat-form-field-outline-start {
-  display: none !important;
-}
-
-.version-contoller .mat-form-field-appearance-outline .mat-form-field-infix {
-  padding: 11px 0px 0px !important;
-}
-
-.version-contoller .mat-form-field-infix {
-  border-top: 0.7em !important;
-}
-
-.version-contoller .mat-form-field-appearance-outline .mat-form-field-suffix {
-  top: 0px !important;
-}
-
-.version-contoller .mat-select-value {
-  padding-top: 4px !important;
-}
-
-.version-contoller .mat-select-arrow-wrapper {
-  padding-top: 20px !important;
+  100% {
+    left: 100%;
+  }
 }
