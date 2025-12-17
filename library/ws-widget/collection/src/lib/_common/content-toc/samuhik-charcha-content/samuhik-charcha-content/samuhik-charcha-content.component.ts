@@ -48,7 +48,6 @@ export class SamuhikCharchaContentComponent implements OnInit {
       })
       this.samuhikConfigLoaded = true
     }
-    console.log('this.samuhikConfig---', this.samuhikConfig)
     if (this.samuhikConfig && this.samuhikConfig.strips && this.samuhikConfig.strips.length) {
       if (this.samuhikConfig.strips[0] && this.samuhikConfig.strips[0]['viewMoreUrl'] && this.samuhikConfig.strips[0]['viewMoreUrl']['path']) {
         this.samuhikConfig.strips[0]['viewMoreUrl']['path'] = this.samuhikConfig.strips[0]['viewMoreUrl']['path'].split('?')[0]
