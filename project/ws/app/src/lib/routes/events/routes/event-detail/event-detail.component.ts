@@ -163,6 +163,8 @@ export class EventDetailComponent implements OnInit {
       if (this.eventData?.preEventReads?.length === 1 && this.eventData?.preEventReads?.[0] === '') {
         this.eventData.preEventReads = []
       }
+
+      this.setDocumentName()
       if (this.eventData?.postEventSummary?.length === 1 && this.eventData?.postEventSummary?.[0] === '') {
         this.eventData.postEventSummary = []
       }
@@ -233,6 +235,35 @@ export class EventDetailComponent implements OnInit {
       this.getEnrolledUserCount()
     })
 
+  }
+
+  setDocumentName() {
+    if (this.eventData && this.eventData.preEventReads && this.eventData.preEventReads.length > 0) {
+      const preEventReadsDetails: { documentName: string, url: string }[] = []
+      this.eventData.preEventReads.forEach((eventReads: any) => {
+        preEventReadsDetails.push({
+          documentName: this.uploadedFileName(eventReads),
+          url: eventReads
+        })
+      })
+      this.eventData.preEventReads = preEventReadsDetails
+    }
+  }
+
+  uploadedFileName(url: string): string {
+    if (!url) {
+      return ''
+    }
+    try {
+      const cleanUrl = url.replace(/['"]/g, '')
+      const parts = cleanUrl.split('/')
+      const lastPart = parts[parts.length - 1]
+      const filenameParts = lastPart.split('_')
+      return filenameParts[filenameParts.length - 1] || lastPart
+    } catch (error) {
+      console.error('Error extracting filename:', error)
+      return url
+    }
   }
 
   getUserIsEnrolled() {
