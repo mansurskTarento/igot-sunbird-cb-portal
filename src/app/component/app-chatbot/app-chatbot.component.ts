@@ -72,7 +72,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   faqChatBotDisable = true
   footerClassName = 'cb-footer'
   fromTopNavHelp = false
-  userDepartmentId = ''
+  userDesignation = ''
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -98,8 +98,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
     // console.log()
     if (this.rootOrgId && this.iGOTAIConfigLoaded) {
-      if (this.userInfo?.userRootOrg?.id) {
-        this.userDepartmentId = this.userInfo?.userRootOrg?.id
+      if (this.userInfo?.professionalDetails && this.userInfo?.professionalDetails?.length) {
+        this.userDesignation = this.userInfo?.professionalDetails[0]['designation']?.trim()
       }
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       this.currentFilter = 'information'
@@ -115,11 +115,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
@@ -127,11 +127,11 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length
         && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
       ) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
@@ -190,9 +190,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       this.currentFilter = 'information'
       this.userInfo = this.configSvc && this.configSvc.userProfile
-      if (this.userInfo?.userRootOrg?.id) {
-        this.userDepartmentId = this.userInfo?.userRootOrg?.id
-        console.log('this.userDepartmentId--', this.userDepartmentId)
+      if (this.userInfo?.professionalDetails && this.userInfo?.professionalDetails?.length) {
+        this.userDesignation = this.userInfo?.professionalDetails[0]['designation']?.trim()
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
@@ -206,22 +205,22 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
       } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig.iGOTAI?.forOrg?.length
         && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
       ) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
@@ -354,22 +353,22 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
       } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length
         && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
       ) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
@@ -405,20 +404,20 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
           //this.enableIGOTAIFlag = true
 
-          if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+          if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
             this.currentFilter = 'sarthi'
           }
-          else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+          else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
             this.currentFilter = 'sarthi'
           }
         } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length
           && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
         ) {
           // this.enableIGOTAIFlag = true
-          if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDepartment) {
+          if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
             this.currentFilter = 'sarthi'
           }
-          else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDepartment?.includes(this.userDepartmentId)) {
+          else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
             this.currentFilter = 'sarthi'
           }
         }

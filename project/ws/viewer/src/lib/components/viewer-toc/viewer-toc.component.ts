@@ -131,7 +131,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   fromAITutor: any = false
   isMobile = false
   userInfo: any
-  userDepartmentId: any = ''
+  userDesignation: any = ''
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -142,23 +142,23 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isMobile = this.utilitySvc.isMobile
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    if (this.userInfo?.userRootOrg?.id) {
-      this.userDepartmentId = this.userInfo?.userRootOrg?.id
+    if (this.userInfo?.professionalDetails && this.userInfo?.professionalDetails?.length) {
+      this.userDesignation = this.userInfo?.professionalDetails[0]['designation']?.trim()
     }
     if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor?.all) {
-      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDepartment) {
+      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDesignation) {
         this.enableAITutorFlag = true
       }
-      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDepartment?.includes(this.userDepartmentId)) {
+      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDesignation?.includes(this.userDesignation)) {
         this.enableAITutorFlag = true
       }
     } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.length &&
       this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.includes(this.configSvc.userProfile?.rootOrgId)
     ) {
-      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDepartment) {
+      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDesignation) {
         this.enableAITutorFlag = true
       }
-      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDepartment?.includes(this.userDepartmentId)) {
+      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDesignation?.includes(this.userDesignation)) {
         this.enableAITutorFlag = true
       }
     } else {
