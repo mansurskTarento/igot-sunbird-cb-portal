@@ -230,8 +230,8 @@
             <mat-tab label="{{ 'apptocsinglepage.samuhikCharcha' | translate }}">
                 <ng-template matTabContent>
                     <div class="flex flex-col ratings-div mt-5" id="samuhikCharchaDiv">
-                        <ws-widget-samuhik-charcha-content [content]="
-                        " [conditionData]="condition" (resumeContent)="resumeContentCall()">
+                        <ws-widget-samuhik-charcha-content [content]="contentReadData" [conditionData]="condition"
+                            (resumeContent)="resumeContentCall()">
                         </ws-widget-samuhik-charcha-content>
                     </div>
                 </ng-template>

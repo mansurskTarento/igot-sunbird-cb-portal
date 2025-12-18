@@ -307,7 +307,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.contentReadData && this.contentReadData?.eventLinked?.length) {
       const orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
       await this.getSamuhikConfig()
-      const eventsLinked = this.content.eventLinked || []
+      const eventsLinked = this.contentReadData.eventLinked || []
       let eventsData: any = []
       this.samuhikConfig?.strips[0].tabs.forEach((ele: any) => {
         ele.request.searchV6.request.filters.identifier = eventsLinked
@@ -321,7 +321,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
         this.samuhikCharchaSvc.getSearchV6Results(ele.request.searchV6).subscribe((res: any) => {
           if (res && res.result && res.result.count && res.result?.Event && res.result.Event?.length) {
             for (let eve = 0; eve < res.result.Event?.length; eve++) {
-              if (res.result.Event[eve]['createdFor'] && res.result.Event[eve]['createdFor'].length)
+              if (res.result.Event[eve]['createdFor'] && res.result.Event[eve]['createdFor'].length &&
+                res.result.Event[eve]['resourceType'] === 'Samuhik Charcha'
+              )
                 eventsData.push(res.result.Event[eve]['createdFor'][0])
               if (eventsData.includes(this.configService.userProfile?.rootOrgId)) {
                 this.enableSamuhikCharchaTab = true
