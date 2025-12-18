@@ -25,7 +25,9 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() enrollFlowItems: any
   @Input() enrolledEvent: any
   @Input() courseProgress: any
+  @Input() userAbleToEnroll: any = false
   @Output() enrollEvent: any = new EventEmitter()
+
   startTime: any
   endTime: any
   lastUpdate: any

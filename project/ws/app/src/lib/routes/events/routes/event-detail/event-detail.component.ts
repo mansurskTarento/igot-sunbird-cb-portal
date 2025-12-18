@@ -88,7 +88,8 @@ export class EventDetailComponent implements OnInit {
   }
   linkedCourseData: any
   linkedCourseProgress: any
-
+  userAbleToEnroll = false
+  eventOrg = ''
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -159,6 +160,20 @@ export class EventDetailComponent implements OnInit {
       })
     ).subscribe((data: any) => {
       this.eventData = data?.eventData
+      if (this.eventData?.createdFor && this.eventData?.createdFor.length) {
+        this.eventOrg = this.eventData?.createdFor[0]
+        if (this.configSvc && this.configSvc.userProfile && this.configSvc.userProfile?.rootOrgId) {
+          if (this.configSvc.userProfile?.rootOrgId === this.eventOrg) {
+            this.userAbleToEnroll = true
+          } else {
+            this.userAbleToEnroll = false
+          }
+        }
+      }
+
+
+      console.log('this.configSvc', this.configSvc)
+      console.log('this.eventOrg', this.eventOrg)
       if (this.eventData?.preEventReads?.length === 1 && this.eventData?.preEventReads?.[0] === '') {
         this.eventData.preEventReads = []
       }

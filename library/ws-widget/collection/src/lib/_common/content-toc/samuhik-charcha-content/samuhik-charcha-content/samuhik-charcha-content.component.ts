@@ -46,6 +46,7 @@ export class SamuhikCharchaContentComponent implements OnInit {
           ele.request.searchV6.request.filters.endDateTime['<'] = this.getCurrentTimeInUTC
         }
       })
+      console.log('this.samuhikConfig--', this.samuhikConfig)
       this.samuhikConfigLoaded = true
     }
     if (this.samuhikConfig && this.samuhikConfig.strips && this.samuhikConfig.strips.length) {

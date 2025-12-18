@@ -244,8 +244,8 @@
                 </div>
               </div>
             </ng-container>
-            <ng-container
-              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30)">
+            <ng-container *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30)
+              && userAbleToEnroll">
               <div class="complete-course-section">
                 <div class="flex items-center justify-between p-6">
                   <div class="flex items-center gap-4">
@@ -477,7 +477,7 @@
     <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
       <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
         [enrolledEvent]="enrolledEvent" [courseProgress]="linkedCourseProgress" *ngIf="eventData"
-        (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
+        (enrollEvent)="enrollEvent($event)" [userAbleToEnroll]="userAbleToEnroll"></app-right-menu-card>
     </div>
   </div>
 </ng-container>
