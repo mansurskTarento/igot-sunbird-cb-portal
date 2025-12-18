@@ -1168,9 +1168,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           let channel = ''
           let organisationType = ''
           let organisationSubType = ''
-          console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
-          console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
-          console.log('this.heirarchyObject', this.heirarchyObject)
           if (this.registrationFormStepOne.value.type === 'ministry') {
             if (this.heirarchyObject.orgName === 'N/A') {
               orgId = this.registrationFormStepOne.value.ministry
@@ -2511,11 +2508,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   onOrganisationChanged(event: any) {
-    console.log('this.masterData.organisation', this.masterData.organisation)
-    console.log('event.value', this.masterData.organisation)
     if (event.value) {
       this.heirarchyObject = _.find(this.masterData.organisation, { identifier: event.value })
     }
-    console.log('this.heirarchyObject', this.heirarchyObject)
   }
 }

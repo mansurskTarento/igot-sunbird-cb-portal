@@ -231,9 +231,7 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   private async getSamuhikConfig() {
     try {
       this.samuhikConfig = await this.samuhikCharchaSvc.fetchConfigFile().toPromise()
-      console.log('this.samuhikConfig---', this.samuhikConfig)
     } catch (error) {
-      console.error('Error fetching Samuhik config:', error)
     }
   }
 
@@ -329,13 +327,9 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
                 this.enableSamuhikCharchaTab = true
               }
             }
-            console.log('eventsData--', eventsData)
-            console.log(this.configService.userProfile?.rootOrgId)
           }
         })
       })
-
-      console.log('this.samuhikConfig--', this.samuhikConfig)
 
     }
 
