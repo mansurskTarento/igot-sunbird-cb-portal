@@ -142,7 +142,6 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isMobile = this.utilitySvc.isMobile
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    console.log('this.userInfo', this.userInfo)
     if (this.userInfo?.professionalDetails && this.userInfo?.professionalDetails?.length) {
       this.userDesignation = this.userInfo?.professionalDetails[0]['designation']?.trim()
     }
