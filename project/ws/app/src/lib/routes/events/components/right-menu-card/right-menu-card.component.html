@@ -11,15 +11,14 @@
     </div>
     <ng-container *ngIf="isenrollFlow">
       <ng-container
-        *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed && isEnrolled">
+        *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed">
         <div class="enrollment-pill">
           <span class="enrollment-text">Oh, only <strong>{{eventData?.maxEnrolments - totalUsersEnrolled}}</strong>
             {{(eventData?.maxEnrolments - totalUsersEnrolled < 1) ? 'slot' : 'slots' }} left... better enroll
               now!</span>
         </div>
       </ng-container>
-      <ng-container
-        *ngIf="showEnrolledCount && totalUsersEnrolled >= eventData?.maxEnrolments && isEnrollmentAllowed && isEnrolled">
+      <ng-container *ngIf="showEnrolledCount && totalUsersEnrolled >= eventData?.maxEnrolments && isEnrollmentAllowed">
         <div class="enrollment-pill">
           <span>All Slots Filled</span>
         </div>
@@ -66,31 +65,43 @@
           </ng-container>
         </ng-container>
         <!--enrolled -->
-        <ng-container *ngIf="isEnrolled">
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all " *ngIf="currentEvent">
+        <ng-container>
+          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all" *ngIf="currentEvent && isEnrolled">
             <a mat-button class="flex-1 action-button" target="_blank"
               (click)="navigateToPLayer();raiseTelemetry('join-event')">
               <span i18n>{{ 'eventDetailsRightCard.joinEvent' | translate }}</span>
             </a>
           </div>
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all "
+          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all " <<<<<<< HEAD
             *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() !== 'live'">
+            =======
+            *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() !== 'live' && isEnrolled">
+            >>>>>>> e2d41480435ff3517c4a9d4efd4df75b5e98d7cb
             <a mat-button class="flex-1 action-button" target="_blank"
               (click)="navigateToPLayer();raiseTelemetry('view-recording')">
               <span i18n>{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
             </a>
           </div>
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all "
+          <<<<<<< HEAD <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all "
             *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() === 'live'">
             <a mat-button class="flex-1 action-button">
               <span i18n>Event is completed</span>
             </a>
-          </div>
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent">
-            <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button">
-              <span i18n>{{ 'eventDetailsRightCard.eventIsYetToStart' | translate }}</span>
-            </p>
-          </div>
+            </div>
+            <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent">
+              =======
+              <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all justify-center"
+                *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() === 'live'">
+                <!-- <a mat-button class="flex-1 action-button"> -->
+                <span i18n>Event is completed</span>
+                <!-- </a> -->
+              </div>
+              <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent && isEnrolled">
+                >>>>>>> e2d41480435ff3517c4a9d4efd4df75b5e98d7cb
+                <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button">
+                  <span i18n>{{ 'eventDetailsRightCard.eventIsYetToStart' | translate }}</span>
+                </p>
+              </div>
         </ng-container>
         <!-- <ng-container>
             <div class="ml-4 mt-2 mr-6 mb-2 view-more  view-all" *ngIf="!isEnrolled && pastEvent">
@@ -114,7 +125,7 @@
           </a>
         </p>
         <p mat-button class="flex-1 margin-top-xs margin-bottom-xs event-completed" *ngIf="!isSpvEvent">
-          <span i18n>{{ 'eventDetailsRightCard.eventIsCompleted' | translate }}</span>
+          <span i18n>{{ 'eventDetailsRightCard.eventIsCompleted' | translate }} </span>
         </p>
       </div>
       <div class="ml-4 mr-6 mb-2 mt-2 view-more view-all" *ngIf="currentEvent">
@@ -156,7 +167,7 @@
         </div>
       </div>
       <div class="margin-top-m karma-points-div"
-        *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) ">
+        *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) && !(eventData?.resourceType === 'Samuhik Charcha')">
         <ws-widget-karma-points [data]="kparray"
           [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent,
           pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
