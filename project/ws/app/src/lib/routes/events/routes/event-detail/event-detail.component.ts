@@ -90,6 +90,8 @@ export class EventDetailComponent implements OnInit {
   linkedCourseProgress: any
   userAbleToEnroll = false
   eventOrg = ''
+  totalUsersEnrolled: number = 0
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -244,6 +246,7 @@ export class EventDetailComponent implements OnInit {
         }
       }
       this.skeletonLoader = false
+      this.getEnrolledUserCount()
     })
 
   }
@@ -654,5 +657,21 @@ export class EventDetailComponent implements OnInit {
     }
 
     return parts.length > 0 ? parts.join(' ') : '0m'
+  }
+
+  getEnrolledUserCount() {
+    const requestBody = {
+      request: {
+        filters: {
+          active: true,
+          batchId: this.batchId,
+          limit: 1,
+          currentOffSet: 0
+        }
+      }
+    }
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+      this.totalUsersEnrolled = response?.totalCount || 0
+    })
   }
 }

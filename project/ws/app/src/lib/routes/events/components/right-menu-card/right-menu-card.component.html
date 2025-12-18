@@ -14,22 +14,22 @@
         *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed && userAbleToEnroll">
         <div class="enrollment-pill">
           <span class="enrollment-text">Oh, only <strong>{{eventData?.maxEnrolments - totalUsersEnrolled}}</strong>
-            {{(eventData?.maxEnrolments - totalUsersEnrolled < 1) ? 'slot' : 'slots' }} left... better enroll
-              now!</span>
+            {{(eventData?.maxEnrolments - totalUsersEnrolled === 1) ? 'slot' : 'slots' }} left... better enroll
+            now!</span>
         </div>
       </ng-container>
       <ng-container *ngIf="showEnrolledCount && totalUsersEnrolled >= eventData?.maxEnrolments && isEnrollmentAllowed">
         <div class="enrollment-pill">
-          <span>All Slots Filled</span>
+          <span>All slots are filled. Enrollment is currently closed.</span>
         </div>
       </ng-container>
       <ng-container *ngIf="!enrollBtnLoading">
         <!--Not enrolled -->
         <ng-container *ngIf="!isEnrolled && (futureEvent || currentEvent || pastEvent)">
-          <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId && isEnrollmentAllowed">
-            <ng-container *ngIf="eventData?.typeofEvent === 'live'">
+          <div class="ml-4 mt-2 mr-6 mb-2 view-more view-all" *ngIf="batchId">
+            <ng-container *ngIf="eventData?.typeofEvent === 'live' && !pastEvent">
               <ng-container
-                *ngIf="!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30 || totalUsersEnrolled >= eventData?.maxEnrolments">
+                *ngIf="(!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30) && totalUsersEnrolled < eventData?.maxEnrolments">
                 <a *ngIf="userAbleToEnroll" mat-button class="flex-1 action-button" (click)="completeCourse()">
                   <mat-icon>lock_outline</mat-icon>
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
@@ -90,7 +90,7 @@
             <!-- </a> -->
           </div>
           <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent && isEnrolled">
-            <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button">
+            <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button ">
               <span i18n>{{ 'eventDetailsRightCard.eventIsYetToStart' | translate }}</span>
             </p>
           </div>
