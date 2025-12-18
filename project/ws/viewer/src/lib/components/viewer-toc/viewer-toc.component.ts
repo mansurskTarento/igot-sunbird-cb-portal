@@ -123,13 +123,15 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   hierarchyData: any
   enrollmentList: any
   enableAITutorFlag = false
-  aiTutorResourceId:any = ''
+  aiTutorResourceId: any = ''
   showAITutorFlag = true
   scormAssessmentCount = 0
   totalResource = 0
   defaultTabIndex = 0
-  fromAITutor:any = false
+  fromAITutor: any = false
   isMobile = false
+  userInfo: any
+  userDepartmentId: any = ''
   // tslint:disable-next-line
   hasNestedChild = (_: number, nodeData: IViewerTocCard) =>
     nodeData && nodeData.children && nodeData.children.length
@@ -139,37 +141,51 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isMobile = this.utilitySvc.isMobile
-    if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor?.all) {
-      this.enableAITutorFlag = true
-    } else if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.length &&
+    this.userInfo = this.configSvc && this.configSvc.userProfile
+    if (this.userInfo?.userRootOrg?.id) {
+      this.userDepartmentId = this.userInfo?.userRootOrg?.id
+    }
+    if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor?.all) {
+      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDepartment) {
+        this.enableAITutorFlag = true
+      }
+      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDepartment?.includes(this.userDepartmentId)) {
+        this.enableAITutorFlag = true
+      }
+    } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.aiTutor && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg && this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.length &&
       this.configSvc.iGOTAIConfig?.aiTutor?.forOrg?.includes(this.configSvc.userProfile?.rootOrgId)
     ) {
-      this.enableAITutorFlag = true
+      if (this.configSvc.iGOTAIConfig?.aiTutor?.allDepartment) {
+        this.enableAITutorFlag = true
+      }
+      else if (this.configSvc.iGOTAIConfig?.aiTutor?.forDepartment?.includes(this.userDepartmentId)) {
+        this.enableAITutorFlag = true
+      }
     } else {
       this.enableAITutorFlag = false
     }
     this.hierarchyData = this.activatedRoute.snapshot.data.hierarchyData
-    && this.activatedRoute.snapshot.data.hierarchyData.data || ''
-    if(this.hierarchyData && this.hierarchyData.result 
-      && this.hierarchyData.result.content 
+      && this.activatedRoute.snapshot.data.hierarchyData.data || ''
+    if (this.hierarchyData && this.hierarchyData.result
+      && this.hierarchyData.result.content
       && this.hierarchyData.result.content.children) {
-      this.showAITutorFlag = this.onlyscormAssessmentExists(this.hierarchyData.result.content.children, 'mimeType', ['application/vnd.ekstep.html-archive','application/vnd.sunbird.questionset','application/json', 'text/x-url'])      
+      this.showAITutorFlag = this.onlyscormAssessmentExists(this.hierarchyData.result.content.children, 'mimeType', ['application/vnd.ekstep.html-archive', 'application/vnd.sunbird.questionset', 'application/json', 'text/x-url'])
     }
-    
+
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
-    && this.activatedRoute.snapshot.data.enrollmentData.data || ''
+      && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     const contentRead = this.activatedRoute.snapshot.data.contentRead
-    && this.activatedRoute.snapshot.data.contentRead.data || ''
+      && this.activatedRoute.snapshot.data.contentRead.data || ''
     if (contentRead.result && contentRead.result.content) {
       this.contentSvc.currentContentReadMetaData = contentRead.result.content
       this.aiTutorResourceId = contentRead.result.content.identifier
     }
-     // tslint:disable-next-line
+    // tslint:disable-next-line
     //  console.log(this.hierarchyData,'hierarchyData')
-     // tslint:disable-next-line
+    // tslint:disable-next-line
     //  console.log(contentRead,'contentRead')
 
-     
+
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.logos) {
       const logo = this.configSvc.instanceConfig.logos.defaultContent || ''
       this.defaultThumbnail = this.domSanitizer.bypassSecurityTrustResourceUrl(logo)
@@ -181,7 +197,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
 
     this.paramSubscription = this.activatedRoute.queryParamMap.subscribe(async params => {
-      
+
       this.collectionId = params.get('collectionId')
       this.collectionType = params.get('collectionType') || 'course'
       const primaryCategory = params.get('primaryCategory')
@@ -189,7 +205,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.forPreview = params.get('preview') === 'true' ? true : false
       this.channelId = params.get('channelId')
       this.fromAITutor = params.get('fromAITutor')
-      if(this.fromAITutor === true || this.fromAITutor === 'true') {
+      if (this.fromAITutor === true || this.fromAITutor === 'true') {
         this.defaultTabIndex = 1
       }
       try {
@@ -229,45 +245,45 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
               this.processCurrentResourceChange()
             }
           } else {
-            if(this.isPreAssessment) {
+            if (this.isPreAssessment) {
               this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
-              this.queue.map((item:any) => {
-                if(this.collection) {
+              this.queue.map((item: any) => {
+                if (this.collection) {
                   item['collectionId'] = this.collection.identifier
                   item['batchId'] = this.collection.batchId
                   if (item?.courseCategory === 'Pre Enrolment Assessment') {
                     item['mimeType'] = 'application/vnd.sunbird.questionset'
                   }
                 }
-                
+
               })
               if (this.resourceId && this.queue.length) {
                 this.processCurrentResourceChange()
               }
             } else {
-              this.queue = this.utilitySvc.getLeafNodes(this.collection, [])  
+              this.queue = this.utilitySvc.getLeafNodes(this.collection, [])
               if (this.resourceId) {
                 this.processCurrentResourceChange()
               }
             }
-            
+
           }
         }
       }
-      
+
     })
     this.viewerDataServiceSubscription = this.viewerDataSvc.changedSubject.subscribe(_data => {
       if (this.resourceId !== this.viewerDataSvc.resourceId) {
-        if(this.viewerDataSvc && this.viewerDataSvc.resource && this.viewerDataSvc.resource.contextCategory && 
-          this.viewerDataSvc.resource.contextCategory === 'Pre Enrolment Assessment' && 
+        if (this.viewerDataSvc && this.viewerDataSvc.resource && this.viewerDataSvc.resource.contextCategory &&
+          this.viewerDataSvc.resource.contextCategory === 'Pre Enrolment Assessment' &&
           this.viewerDataSvc.resource.parent
         ) {
           this.resourceId = this.viewerDataSvc.resource.parent
         } else {
           this.resourceId = this.viewerDataSvc.resourceId
         }
-        
-        if(this.isPreAssessment) {
+
+        if (this.isPreAssessment) {
           this.queue = this.getLeafNodes(this.contentData['preEnrolmentResources'], [])
           if (this.resourceId && this.queue.length) {
             this.processCurrentResourceChange()
@@ -275,7 +291,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         } else {
           this.processCurrentResourceChange()
         }
-        
+
       }
     })
   }
@@ -307,7 +323,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   //         if(data) {
   //           this.contentData.children && this.contentData.children.forEach((item: any)=>{
   //             if(
-  //               item.primaryCategory === NsContent.EPrimaryCategory.COURSE && 
+  //               item.primaryCategory === NsContent.EPrimaryCategory.COURSE &&
   //               item.identifier === data.courseId
   //             ){
   //               this.tocSvc.mapCompletionPercentage(item, data.resumeData)
@@ -354,15 +370,15 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     }
   }
   private processCurrentResourceChange() {
-    if (this.collection && this.resourceId) {      
+    if (this.collection && this.resourceId) {
       const currentIndex = this.queue.findIndex(c => c.identifier === this.resourceId)
       // console.log('this.contentData', this.contentData)
       // console.log('this.queue', this.queue)
       // console.log('this.resourceId', this.resourceId)
-      if(this.queue && currentIndex > -1) {
-        if(this.queue[currentIndex] &&  this.queue[currentIndex].identifier) {
-        // this.aiTutorResourceId = this.queue[currentIndex].identifier
-        }        
+      if (this.queue && currentIndex > -1) {
+        if (this.queue[currentIndex] && this.queue[currentIndex].identifier) {
+          // this.aiTutorResourceId = this.queue[currentIndex].identifier
+        }
       }
       // console.log('currentIndex' , currentIndex)
       const next =
@@ -370,21 +386,21 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       const prev = currentIndex - 1 >= 0 ? this.queue[currentIndex - 1] : null
       // console.log('pre', prev)
       // console.log('next', next)
-      if(this.queue && this.queue.length) {
+      if (this.queue && this.queue.length) {
         this.viewerDataSvc.updateNextPrevResource(Boolean(this.collection), prev, next, this.getMLQueryParam())
         this.processCollectionForTree()
         this.expandThePath()
       }
-      
+
       // if (next && next.viewerUrl === '0') { // temp
-       // this.getContentProgressHash()
+      // this.getContentProgressHash()
       // }
     }
   }
 
   getMLQueryParam() {
-    const  queryMLParams: any = {}
-    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML && 
+    const queryMLParams: any = {}
+    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML &&
       this.activatedRoute.snapshot.queryParams.MLId
     ) {
       queryMLParams['ML'] = this.activatedRoute.snapshot.queryParams.ML
@@ -398,15 +414,15 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     _collectionType: string,
   ): Promise<IViewerTocCard | null> {
     try {
-      let  content: NsContent.IContentResponse | NsContent.IContent
+      let content: NsContent.IContentResponse | NsContent.IContent
       if (collectionId) {
         if (this.hierarchyData) {
-          content =  this.hierarchyData
+          content = this.hierarchyData
         } else {
           content = await (this.forPreview
-                  ? this.contentSvc.fetchAuthoringContent(collectionId,'read')
-                  : this.contentSvc.fetchContent(collectionId, 'detail', [], _collectionType)
-                ).toPromise()
+            ? this.contentSvc.fetchAuthoringContent(collectionId, 'read')
+            : this.contentSvc.fetchContent(collectionId, 'detail', [], _collectionType)
+          ).toPromise()
         }
         const contentData = content.result.content
         this.collection = content.result.content
@@ -418,7 +434,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         return viewerTocCardContent
       }
       return null
-    } catch (err:any) {
+    } catch (err: any) {
       switch (err && err.status) {
         case 403: {
           this.errorWidgetData.widgetData.errorType = 'accessForbidden'
@@ -477,7 +493,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.isFetching = false
       console.log('content', content)
       return viewerTocCardContent
-    } catch (err:any) {
+    } catch (err: any) {
       switch (err && err.status) {
         case 403: {
           this.errorWidgetData.widgetData.errorType = 'accessForbidden'
@@ -638,13 +654,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       this.nestedDataSource.data = this.collection.children
       // this.pathSet = new Set()
       // if (this.resourceId && this.tocMode === 'TREE') {
-        if (this.resourceId) {
-          of(true)
-            .pipe(delay(2000))
-            .subscribe(() => {
-              this.expandThePath()
-            })
-        }
+      if (this.resourceId) {
+        of(true)
+          .pipe(delay(2000))
+          .subscribe(() => {
+            this.expandThePath()
+          })
+      }
       // }
     }
   }
@@ -682,7 +698,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       return true
     }
     const children = node.preEnrolmentResources || []
-    if (children.some((u:any) => this.hasPath(u, pathArr, id))) {
+    if (children.some((u: any) => this.hasPath(u, pathArr, id))) {
       return true
     }
     pathArr.pop()
@@ -693,38 +709,38 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     this.hidenav.emit(false)
   }
 
-  onlyscormAssessmentExists(data:any, key:any, value:any) {
-    for (let i=0; i<data?.length; i++) {
-      if (data[i] && data[i]['children'] && data[i]['children'].length) { 
+  onlyscormAssessmentExists(data: any, key: any, value: any) {
+    for (let i = 0; i < data?.length; i++) {
+      if (data[i] && data[i]['children'] && data[i]['children'].length) {
         // this.totalResource = this.totalResource + 1
-        this.onlyscormAssessmentExists(data[i]?.children, key, value)      
+        this.onlyscormAssessmentExists(data[i]?.children, key, value)
       } else {
         this.totalResource = this.totalResource + 1
         if (value.includes(data[i][key])) {
           // this.showAITutorFlag = false;
           this.scormAssessmentCount = this.scormAssessmentCount + 1
-        } 
+        }
       }
     }
     // console.log('this.totalResource',this.totalResource)
     // console.log('this.scormAssessmentCount',this.scormAssessmentCount)
-    if(this.totalResource === this.scormAssessmentCount) {
-      this.showAITutorFlag = false;
+    if (this.totalResource === this.scormAssessmentCount) {
+      this.showAITutorFlag = false
     } else {
       this.showAITutorFlag = true
     }
-    return this.showAITutorFlag;
+    return this.showAITutorFlag
   }
 
-  onTabChanged(event:any) {
+  onTabChanged(event: any) {
     // console.log('contentData', this.contentData)
-    if(event && event.index && event.index === 1) {
+    if (event && event.index && event.index === 1) {
       this.raiseAITutorStartTelemetry()
       this.raiseAITutorInteractTelemetry()
     } else {
       this.raiseAITutorEndTelemetry()
     }
-    
+
   }
 
   raiseAITutorStartTelemetry() {
@@ -732,13 +748,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`   },
-        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
+        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/viewer', module: 'Learn'},
+      pageContext: { pageId: '/viewer', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -751,13 +767,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`  },
-        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
+        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/viewer', module: 'Learn'},
+      pageContext: { pageId: '/viewer', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -769,13 +785,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}`  },
-        object: { "id": this.contentData?.identifier,"type": this.contentData?.courseCategory },
+        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
+        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/viewer', module: 'Learn'},
+      pageContext: { pageId: '/viewer', module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -786,18 +802,18 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     if (Array.isArray(node)) {
       if (node.length === 0) {
         // empty array
-        return nodes;
+        return nodes
       } else {
         // node is an array with items
         node.forEach((child: any) => {
-          this.getLeafNodes(child, nodes);
-        });
+          this.getLeafNodes(child, nodes)
+        })
       }
     } else if (node) {
       // node is a single object
-      nodes.push(node);
+      nodes.push(node)
     }
-    
-    return nodes;
+
+    return nodes
   }
 }
