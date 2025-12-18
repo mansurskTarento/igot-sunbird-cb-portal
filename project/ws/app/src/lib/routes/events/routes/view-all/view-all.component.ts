@@ -44,6 +44,7 @@ export class ViewAllComponent {
   totalCount = 0
   totalEventsCount = 0
   orgId: any
+  eventLinked: string[] = []
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -98,9 +99,21 @@ export class ViewAllComponent {
       this.resetData()
       this.fetchData()
     })
-    this.activateRoute.queryParamMap.subscribe((data: any) => {
+    this.activateRoute.queryParamMap.subscribe(async (data: any) => {
       if (data.params && data.params.resourceType) {
         this.selectedFilters['resourceType'] = [data.params.resourceType]
+        if (data.params.courseId) {
+          this.selectedFilters['courseId'] = [data.params.courseId]
+          try {
+            const response = await this.eventSvc.getContentData(data.params.courseId).toPromise()
+            this.eventLinked = _.get(response, 'result.content.eventLinked', [])
+          } catch (error) {
+            this.eventLinked = []
+          }
+        }
+        if (data.params.tabSelected) {
+          this.selectedFilters['tabSelected'] = data.params.tabSelected
+        }
       }
       if (data.params && data.params.query) {
         this.searchControl.setValue(data.params.query)
@@ -138,6 +151,23 @@ export class ViewAllComponent {
       requestBody.request.filters = {
         ...requestBody.request.filters,
         createdFor: [this.orgId],
+      }
+      if (this.selectedFilters?.courseId && this.eventLinked.length) {
+        requestBody.request.filters = {
+          ...requestBody.request.filters,
+          identifier: this.eventLinked,
+        }
+      }
+      if (this.selectedFilters?.tabSelected) {
+        if (this.selectedFilters.tabSelected.toLowerCase() === 'upcoming events') {
+          requestBody.request.filters['endDateTime'] = {
+            '>=': this.getCurrentTimeInUTC
+          }
+        } else if (this.selectedFilters.tabSelected.toLowerCase() === 'past events') {
+          requestBody.request.filters['endDateTime'] = {
+            '<': this.getCurrentTimeInUTC
+          }
+        }
       }
     }
     if (this.selectedFilters) {
@@ -237,6 +267,13 @@ export class ViewAllComponent {
     }
     return requestBody
   }
+
+  get getCurrentTimeInUTC(): string {
+    const currentDate = new Date()
+    const isoString = currentDate.toISOString()
+    return isoString.replace('Z', '+0000')
+  }
+
   fetchData() {
     if (!this.isLoading) {
       this.contentDataList = [...this.contentDataList, ...this.transformSkeletonToWidgets(this.contnet)]
