@@ -173,9 +173,6 @@ export class EventDetailComponent implements OnInit {
         }
       }
 
-
-      console.log('this.configSvc', this.configSvc)
-      console.log('this.eventOrg', this.eventOrg)
       if (this.eventData?.preEventReads?.length === 1 && this.eventData?.preEventReads?.[0] === '') {
         this.eventData.preEventReads = []
       }
