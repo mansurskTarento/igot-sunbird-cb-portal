@@ -90,7 +90,7 @@
             <!-- </a> -->
           </div>
           <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent && isEnrolled">
-            <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button ">
+            <p mat-button class="flex-1  margin-top-xs margin-bottom-xs action-button cursor-default-important">
               <span i18n>{{ 'eventDetailsRightCard.eventIsYetToStart' | translate }}</span>
             </p>
           </div>
@@ -158,12 +158,14 @@
           </span>
         </div>
       </div>
-      <div class="margin-top-m karma-points-div"
-        *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) && !(eventData?.resourceType === 'Samuhik Charcha')">
-        <ws-widget-karma-points [data]="kparray"
-          [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent,
-          pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
-      </div>
+      <ng-container *ngIf="eventData?.typeofEvent?.toLowerCase() !== 'live'">
+        <div class="margin-top-m karma-points-div"
+          *ngIf="!(!isEnrolled && pastEvent)  || !(isEnrolled && pastEvent && enrolledEvent?.status < 2) && !(eventData?.resourceType === 'Samuhik Charcha')">
+          <ws-widget-karma-points [data]="kparray"
+            [condition]="{event: eventData, isEnrolled: isEnrolled, enrolledEvent: enrolledEvent,
+                  pastEvent: pastEvent, currentEvent: currentEvent, futureEvent: futureEvent, completedAfterExpiry: completedAfterExpiry }"></ws-widget-karma-points>
+        </div>
+      </ng-container>
       <!-- <ng-container *ngIf="!completedAfterExpiry"> -->
       <div class="certificate-info" *ngIf="(isEnrolled && pastEvent && enrolledEvent?.status > 1 &&
                 enrolledEvent?.issuedCertificates?.length === 0)">
