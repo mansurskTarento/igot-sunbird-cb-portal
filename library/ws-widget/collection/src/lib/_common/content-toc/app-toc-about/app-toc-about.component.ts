@@ -178,8 +178,6 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   selectedSectorId = ''
   refreshratingSub
   pageConfigData: any
-  selectedVersion: any
-  versions: any[] = []
   constructor(
     private ratingService: RatingService,
     private loggerService: LoggerService,
@@ -280,33 +278,6 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
     ) {
       this.handleOpenCertificateDialog()
     }
-    this.loadVersionDataIfAvailable()
-  }
-
-
-  loadVersionDataIfAvailable() {
-    if (this.content) {
-      this.versions = [
-        {
-          name: `${this.content?.name} 1` || 'Volume 1',
-          value: this.content?.identifier,
-        },
-        {
-          name: `${this.content?.name} 2` || 'Volume 2',
-          value: this.content?.identifier,
-        },
-        {
-          name: `${this.content?.name} 3` || 'Volume 3',
-          value: this.content?.identifier,
-        },
-        {
-          name: `${this.content?.name} 4` || 'Volume 4',
-          value: this.content?.identifier,
-        }
-      ]
-      this.selectedVersion = this.versions[0].value
-    }
-
   }
 
   ngAfterViewInit(): void {
