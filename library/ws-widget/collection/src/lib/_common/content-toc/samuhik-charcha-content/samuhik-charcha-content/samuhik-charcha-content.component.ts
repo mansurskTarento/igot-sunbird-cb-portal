@@ -54,6 +54,10 @@ export class SamuhikCharchaContentComponent implements OnInit {
         this.samuhikConfig.strips[0]['viewMoreUrl']['viewMoreText'] = "Show all"
       }
 
+      if (_.get(this.samuhikConfig, 'strips[0].viewMoreUrl.queryParams')) {
+        this.samuhikConfig.strips[0].viewMoreUrl.queryParams['courseId'] = this.content.identifier
+      }
+
     }
   }
 

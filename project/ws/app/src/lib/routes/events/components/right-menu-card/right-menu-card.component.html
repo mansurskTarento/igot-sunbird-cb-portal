@@ -11,7 +11,7 @@
     </div>
     <ng-container *ngIf="isenrollFlow">
       <ng-container
-        *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed">
+        *ngIf="showEnrolledCount && eventData?.maxEnrolments && totalUsersEnrolled < eventData?.maxEnrolments && isEnrollmentAllowed && userAbleToEnroll">
         <div class="enrollment-pill">
           <span class="enrollment-text">Oh, only <strong>{{eventData?.maxEnrolments - totalUsersEnrolled}}</strong>
             {{(eventData?.maxEnrolments - totalUsersEnrolled === 1) ? 'slot' : 'slots' }} left... better enroll
@@ -30,10 +30,14 @@
             <ng-container *ngIf="eventData?.typeofEvent === 'live' && !pastEvent">
               <ng-container
                 *ngIf="(!courseProgress?.completionPercentage || courseProgress?.completionPercentage < 30) && totalUsersEnrolled < eventData?.maxEnrolments">
-                <a mat-button class="flex-1 action-button" (click)="completeCourse()">
+                <a *ngIf="userAbleToEnroll" mat-button class="flex-1 action-button" (click)="completeCourse()">
                   <mat-icon>lock_outline</mat-icon>
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
                 </a>
+                <div class="enrollment-pill" *ngIf="!userAbleToEnroll && eventData?.resourceType === 'Samuhik Charcha'">
+                  <span class="enrollment-text">You are Not able to enroll, as you are not beloging to
+                    same organisation</span>
+                </div>
               </ng-container>
               <ng-container *ngIf="courseProgress?.completionPercentage &&
                 courseProgress?.completionPercentage >= 30 && totalUsersEnrolled < eventData?.maxEnrolments">

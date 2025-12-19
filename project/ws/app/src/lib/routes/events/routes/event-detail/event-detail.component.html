@@ -250,7 +250,7 @@
               </div>
             </ng-container>
             <ng-container
-              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30) && totalUsersEnrolled < eventData?.maxEnrolments && !pastEvent">
+              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30) && totalUsersEnrolled < eventData?.maxEnrolments && !pastEvent && userAbleToEnroll">
               <div class="complete-course-section">
                 <div class="flex items-center justify-between p-6">
                   <div class="flex items-center gap-4">
@@ -383,19 +383,20 @@
             <div class="reference-card flex gap-4 justify-between">
               <div class="reference-inner-card">
                 <div class="reference-title flex align-icon gap-2">
-                  <div><img class="img-size" src="{{fileImage(item)}}" /></div>
-                  <div class="text-truncate">{{'events.preReads' | translate}} {{'events.documents' | translate}} </div>
+                  <div><img class="img-size" src="{{fileImage(item.url || item)}}" /></div>
+                  <div class="text-truncate">{{item.documentName ? item.documentName : ('events.preReads' | translate) +
+                    ' ' + ('events.documents' | translate)}}</div>
                 </div>
                 <div class="flex gap-2">
                   <mat-icon>visibility</mat-icon>
-                  <a target="_blank" href="{{item}}">
+                  <a target="_blank" href="{{item.url || item}}">
                     <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
                   </a>
                 </div>
               </div>
               <div>
                 <div class="reference-download-icon">
-                  <a download="{{eventData?.identifier}}-PreReads" (click)="downloadPDF(item)">
+                  <a download="{{eventData?.identifier}}-PreReads" (click)="downloadPDF(item.url || item)">
                     {{'events.downloadPdf' | translate}}
                   </a>
                 </div>
@@ -482,7 +483,7 @@
     <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
       <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
         [enrolledEvent]="enrolledEvent" [courseProgress]="linkedCourseProgress" *ngIf="eventData"
-        (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
+        (enrollEvent)="enrollEvent($event)" [userAbleToEnroll]="userAbleToEnroll"></app-right-menu-card>
     </div>
   </div>
 </ng-container>
