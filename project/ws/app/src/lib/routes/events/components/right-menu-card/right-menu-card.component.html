@@ -35,15 +35,18 @@
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
                 </a>
                 <div class="enrollment-pill" *ngIf="!userAbleToEnroll && eventData?.resourceType === 'Samuhik Charcha'">
-                  <span class="enrollment-text">You are Not able to enroll, as you are not beloging to
-                    same organisation</span>
+                  <span class="enrollment-text">This event is not available for your organisation.</span>
                 </div>
               </ng-container>
               <ng-container *ngIf="courseProgress?.completionPercentage &&
                 courseProgress?.completionPercentage >= 30 && totalUsersEnrolled < eventData?.maxEnrolments">
-                <a mat-button class="flex-1 action-button" target="_blank" (click)="enrolltoEvent()">
+                <a *ngIf="userAbleToEnroll" mat-button class="flex-1 action-button" target="_blank"
+                  (click)="enrolltoEvent()">
                   <span i18n>{{ 'eventDetailsRightCard.enroll' | translate }}</span>
                 </a>
+                <div class="enrollment-pill" *ngIf="!userAbleToEnroll && eventData?.resourceType === 'Samuhik Charcha'">
+                  <span class="enrollment-text">This event is not available for your organisation.</span>
+                </div>
               </ng-container>
             </ng-container>
             <ng-container *ngIf="eventData?.typeofEvent !== 'live'">
@@ -83,10 +86,10 @@
               <span i18n>{{ 'eventDetailsRightCard.viewRecording' | translate }}</span>
             </a>
           </div>
-          <div class="ml-4 mr-6 mb-2 mt-2 view-more  view-all justify-center"
+          <div class="enrollment-pill ml-4 mr-6 mb-2 mt-2 view-more  view-all justify-center"
             *ngIf="pastEvent && eventData?.typeofEvent?.toLowerCase() === 'live'">
             <!-- <a mat-button class="flex-1 action-button"> -->
-            <span i18n>Event is completed</span>
+            <span i18n>The event is completed.</span>
             <!-- </a> -->
           </div>
           <div class="ml-4 mr-6 mb-2 mt-2 view-more ws-mat-accent-text view-all" *ngIf="futureEvent && isEnrolled">
