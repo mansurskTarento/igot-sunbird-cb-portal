@@ -150,7 +150,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     "l3MapId": null,
     "l1OrgName": null,
     "l2OrgName": null
-}]
+  }]
   orgList: any
   resultFetched = false
   heirarchyObject: any
@@ -219,7 +219,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   organisationSearchText = ''
   organisationInitInProgress = false
 
-  currentMinistry:any = {}
+  currentMinistry: any = {}
 
   private subscriptionContact: Subscription | null = null
   private recaptchaSubscription!: Subscription
@@ -469,7 +469,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (!this.masterData['designationBackup']) {
       this.getDesignationSafe()
     }
-    if(!this.masterData['ministryBackup']) {
+    if (!this.masterData['ministryBackup']) {
       this.getMinistryData()
     }
 
@@ -483,17 +483,17 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       "description": null,
       "sbOrgSubType": null,
       "orgHierarchyFrameworkId": null
-  },)
-  this.masterData.departmentBackup.push({
-    "identifier": "-1",
-    "orgHierarchyFrameworkStatus": null,
-    "orgName": "N/A",
-    "sbOrgType": null,
-    "description": null,
-    "sbOrgSubType": null,
-    "orgHierarchyFrameworkId": null
-},)
-    
+    },)
+    this.masterData.departmentBackup.push({
+      "identifier": "-1",
+      "orgHierarchyFrameworkStatus": null,
+      "orgName": "N/A",
+      "sbOrgType": null,
+      "description": null,
+      "sbOrgSubType": null,
+      "orgHierarchyFrameworkId": null
+    },)
+
   }
   private getDesignationSafe(): void {
     if (this.designationInitInProgress || this.isLoadingMoreDesignations) {
@@ -819,7 +819,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     return this.signupSvc.searchOrgs(filterValue, this.typeValue).subscribe((res: any) => {
       this.resultFetched = true
       this.searching = false
-      
+
       this.filteredOrgList = res.result.response.filter((org: any) => {
         return org.orgName.toLowerCase().indexOf(filterValue) >= 0
       })
@@ -1163,17 +1163,14 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         _token => {
           // tslint:disable-next-line: no-console
           let req: any
-          let orgId= ''
+          let orgId = ''
           let orgName = ''
           let channel = ''
           let organisationType = ''
           let organisationSubType = ''
-          console.log('this.registrationFormStepOne.--', this.registrationFormStepOne)
-          console.log('this.registrationFormStepTwo--', this.registrationFormStepTwo)
-          console.log('this.heirarchyObject',this.heirarchyObject)
-          if(this.registrationFormStepOne.value.type === 'ministry') {
-            if(this.heirarchyObject.orgName === 'N/A') {            
-              orgId= this.registrationFormStepOne.value.ministry
+          if (this.registrationFormStepOne.value.type === 'ministry') {
+            if (this.heirarchyObject.orgName === 'N/A') {
+              orgId = this.registrationFormStepOne.value.ministry
               orgName = this.currentMinistry?.orgName
               channel = this.currentMinistry?.channel
               organisationType = this.currentMinistry.sbOrgType
@@ -1182,12 +1179,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               orgId = this.heirarchyObject.identifier
               orgName = this.heirarchyObject.orgName
               channel = this.heirarchyObject.channel
-              organisationSubType = this.heirarchyObject.sbOrgSubType 
+              organisationSubType = this.heirarchyObject.sbOrgSubType
               organisationType = this.heirarchyObject.sbOrgType
             }
-          } else if(this.registrationFormStepOne.value.type === 'state') {
-            if(this.heirarchyObject.orgName === 'N/A') {
-              if(this.registrationFormStepOne.value.department === '-1') {
+          } else if (this.registrationFormStepOne.value.type === 'state') {
+            if (this.heirarchyObject.orgName === 'N/A') {
+              if (this.registrationFormStepOne.value.department === '-1') {
                 orgId = this.registrationFormStepOne.value.state
                 orgName = this.currentMinistry?.orgName
                 channel = this.currentMinistry?.channel
@@ -1204,7 +1201,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               orgId = this.heirarchyObject.identifier
               orgName = this.heirarchyObject.orgName
               channel = this.heirarchyObject.channel
-              organisationSubType = this.heirarchyObject.sbOrgSubType 
+              organisationSubType = this.heirarchyObject.sbOrgSubType
               organisationType = this.heirarchyObject.sbOrgType
             }
           }
@@ -1217,18 +1214,18 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               // position: this.registrationFormStepOne.value.position.name || '',
               group: this.registrationFormStepTwo.value.group || '',
               source: `${environment.name}.${this.portalID}` || '',
-              orgName:  orgName,
-              channel: channel ,
-              organisationType: organisationType ,
-              organisationSubType:  organisationSubType,
+              orgName: orgName,
+              channel: channel,
+              organisationType: organisationType,
+              organisationSubType: organisationSubType,
               mapId: orgId,
               sbOrgId: orgId,
               position: this.registrationFormStepOne.value.position || '',
             }
           }
 
-           console.log('req ===: ', req)
-           this.signupSvc.register(req).subscribe(
+          console.log('req ===: ', req)
+          this.signupSvc.register(req).subscribe(
             (_res: any) => {
               this.openDialog()
               this.disableBtn = false
@@ -1407,7 +1404,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           module: "User Registration",
         })
 
-    }, 2000);
+    }, 2000)
 
   }
 
@@ -1444,14 +1441,14 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
     const reqOffset = (typeof offset === 'number') ? offset : this.ministryOffset
     const reqLimit = this.ministryDefaultLoadCount
-    console.log('reqOffset--',reqOffset)
-    console.log('reqLimit--',reqLimit)
+    console.log('reqOffset--', reqOffset)
+    console.log('reqLimit--', reqLimit)
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
     if (pageIndex === 0) {
       this.noMoreLegacyMinistrys = false
     }
-    const requestBody:any = {
+    const requestBody: any = {
       "request": {
         "filters": {
           "status": 1,
@@ -1459,7 +1456,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         },
         "query": "",
         "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.ministryDefaultLoadCount,
+        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.ministryDefaultLoadCount,
         "fields": [
           "identifier",
           "orgName",
@@ -1472,9 +1469,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         ]
       }
     }
-   
+
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText      
+      requestBody["request"]['query'] = searchText
       this.noMoreLegacyMinistrys = false
     }
 
@@ -1488,16 +1485,16 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
-          
+
           const mapped = content.filter(
             (item: any) => item && item.sbOrgType === 'ministry'
-          );
-          
+          )
+
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
           const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
           this.defaultSearchMinistryCount = total
-          
+
           // If offset is zero (first page) replace backup, otherwise append + dedupe
           // if (!this.masterData['ministry'] || reqOffset === 0) {
           //   this.masterData['ministry'] = mapped
@@ -1505,7 +1502,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           //   const combined = (this.masterData['ministry'] || []).concat(mapped)
           //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
           // }
-          
+
           if (!this.masterData['ministryBackup'] || reqOffset === 0) {
             this.masterData['ministryBackup'] = mapped
           } else {
@@ -1639,7 +1636,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // Create a new designation object to match the structure of other items
         const newMinistry = {
           identifier: currentMinistry,
-          
+
         }
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.ministry?.length >= this.ministryListLoadCount) {
@@ -1686,13 +1683,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     const reqLimit = this.stateDefaultLoadCount
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
-    console.log('reqOffset--',reqOffset)
-    console.log('reqLimit--',reqLimit)
-    console.log('stateDefaultLoadCount--',this.stateDefaultLoadCount)
+    console.log('reqOffset--', reqOffset)
+    console.log('reqLimit--', reqLimit)
+    console.log('stateDefaultLoadCount--', this.stateDefaultLoadCount)
     if (pageIndex === 0) {
       this.noMoreLegacyStates = false
     }
-    const requestBody:any = {
+    const requestBody: any = {
       "request": {
         "filters": {
           "status": 1,
@@ -1700,7 +1697,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         },
         "query": "",
         "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.stateDefaultLoadCount,
+        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.stateDefaultLoadCount,
         "fields": [
           "identifier",
           "orgName",
@@ -1713,9 +1710,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         ]
       }
     }
-   
+
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText      
+      requestBody["request"]['query'] = searchText
       this.noMoreLegacyStates = false
     }
 
@@ -1729,16 +1726,16 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
-          
+
           const mapped = content.filter(
             (item: any) => item && item.sbOrgType === 'state'
-          );
-          
+          )
+
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
           const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
           this.defaultSearchStateCount = total
-          
+
           // If offset is zero (first page) replace backup, otherwise append + dedupe
           // if (!this.masterData['ministry'] || reqOffset === 0) {
           //   this.masterData['ministry'] = mapped
@@ -1883,7 +1880,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // Create a new designation object to match the structure of other items
         const newState = {
           identifier: currentState,
-          
+
         }
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.state?.length >= this.stateListLoadCount) {
@@ -1934,7 +1931,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (pageIndex === 0) {
       this.noMoreLegacyDepartments = false
     }
-    const requestBody:any = {
+    const requestBody: any = {
       "request": {
         "filters": {
           "status": 1,
@@ -1943,7 +1940,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         },
         "query": "",
         "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex*reqLimit : this.departmentDefaultLoadCount,
+        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.departmentDefaultLoadCount,
         "fields": [
           "identifier",
           "orgName",
@@ -1951,13 +1948,14 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkId",
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
-          "sbOrgSubType"
+          "sbOrgSubType",
+          "channel"
         ]
       }
     }
-   
+
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText      
+      requestBody["request"]['query'] = searchText
       this.noMoreLegacyDepartments = false
     }
 
@@ -1970,22 +1968,22 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }))
       .subscribe({
         next: (res: any) => {
-         // const content = _.get(res, 'result.response.content', [])
+          // const content = _.get(res, 'result.response.content', [])
           const mapped = _.get(res, 'result.response.content', [])
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
 
           this.masterData['departmentBackup'] =
-          this.masterData['departmentBackup'].filter(
-            (item: any) => item.orgName === 'N/A'
-          );
-          
+            this.masterData['departmentBackup'].filter(
+              (item: any) => item.orgName === 'N/A'
+            )
+
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
           const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
           this.defaultSearchDepartmentCount = total
-          
+
           // If offset is zero (first page) replace backup, otherwise append + dedupe
           // if (!this.masterData['ministry'] || reqOffset === 0) {
           //   this.masterData['ministry'] = mapped
@@ -2131,7 +2129,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // Create a new designation object to match the structure of other items
         const newDepartment = {
           identifier: currentDepartment,
-          
+
         }
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.department?.length >= this.departmentListLoadCount) {
@@ -2161,12 +2159,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
   }
 
-   /** Organisation Data */
+  /** Organisation Data */
 
-   getOrganisationData(searchText?: string, offset?: number): void {
+  getOrganisationData(searchText?: string, offset?: number): void {
     // this.masterData['organisation'] = []
     // avoid running on server-side render
-    
+
     if (!isPlatformBrowser(this._platformId)) {
       return
     }
@@ -2183,8 +2181,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (pageIndex === 0) {
       this.noMoreLegacyOrganisations = false
     }
-    let requestBody:any = {}
-    if(this.registrationFormStepOne.controls.type.value === 'ministry') {
+    let requestBody: any = {}
+    if (this.registrationFormStepOne.controls.type.value === 'ministry') {
       requestBody = {
         "request": {
           "filters": {
@@ -2194,7 +2192,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           },
           "query": "",
           "limit": reqLimit,
-          "offset": reqLimit > 0 ? pageIndex*reqLimit : this.organisationDefaultLoadCount,
+          "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
           "fields": [
             "identifier",
             "orgName",
@@ -2208,7 +2206,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           ]
         }
       }
-    } else if(this.registrationFormStepOne.controls.type.value === 'state'){
+    } else if (this.registrationFormStepOne.controls.type.value === 'state') {
       requestBody = {
         "request": {
           "filters": {
@@ -2219,7 +2217,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           },
           "query": "",
           "limit": reqLimit,
-          "offset": reqLimit > 0 ? pageIndex*reqLimit : this.organisationDefaultLoadCount,
+          "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
           "fields": [
             "identifier",
             "orgName",
@@ -2234,10 +2232,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         }
       }
     }
-    
-   
+
+
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText      
+      requestBody["request"]['query'] = searchText
       this.noMoreLegacyOrganisations = false
     }
 
@@ -2250,22 +2248,22 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }))
       .subscribe({
         next: (res: any) => {
-         // const content = _.get(res, 'result.response.content', [])
+          // const content = _.get(res, 'result.response.content', [])
           const mapped = _.get(res, 'result.response.content', [])
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
           // if(res && res.result && res.result.response && res.result.response.content && res.result.response.content.length === 0) {
-            this.masterData['organisationBackup'] =
+          this.masterData['organisationBackup'] =
             this.masterData['organisationBackup'].filter(
               (item: any) => item.orgName === 'N/A'
-            );
+            )
           // }
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
           const total = _.get(res, 'result.response.count', _.get(res, 'result.response.count', _.get(res, 'result.response.count', 0)))
           this.defaultSearchOrganisationCount = total
-          
+
           // If offset is zero (first page) replace backup, otherwise append + dedupe
           // if (!this.masterData['ministry'] || reqOffset === 0) {
           //   this.masterData['ministry'] = mapped
@@ -2277,7 +2275,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (!this.masterData['organisationBackup'] || reqOffset === 0) {
             const combined = (this.masterData['organisationBackup'] || []).concat(mapped)
             this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
-           // this.masterData['organisationBackup'] = mapped
+            // this.masterData['organisationBackup'] = mapped
           } else {
             const combined = (this.masterData['organisationBackup'] || []).concat(mapped)
             this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
@@ -2411,7 +2409,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // Create a new designation object to match the structure of other items
         const newOrganisation = {
           identifier: currentOrganisation,
-          
+
         }
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.organisation?.length >= this.organisationListLoadCount) {
@@ -2430,7 +2428,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.isLoadingMoreOrganisations) return
 
     this.organisationSearchText = txt
-    if(txt.length === 0) {
+    if (txt.length === 0) {
       this.organisationFilterEnable = true
       this.isLoadingMoreOrganisations = true
       this.getOrganisationData(txt, 0)
@@ -2445,28 +2443,28 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
   }
 
-  onTypeChange(event:any) {
-    if(event && event.value && event.value === 'state') {     
+  onTypeChange(event: any) {
+    if (event && event.value && event.value === 'state') {
       this.getStateData()
-      const control = this.registrationFormStepOne.get('ministry');
-      control?.clearValidators();
-      control?.updateValueAndValidity();
-      const stateControl = this.registrationFormStepOne.get('state');
-      stateControl?.setValidators([Validators.required]);
-      stateControl?.updateValueAndValidity();
-      const departmentControl = this.registrationFormStepOne.get('department');
-      departmentControl?.setValidators([Validators.required]);
-      departmentControl?.updateValueAndValidity();
+      const control = this.registrationFormStepOne.get('ministry')
+      control?.clearValidators()
+      control?.updateValueAndValidity()
+      const stateControl = this.registrationFormStepOne.get('state')
+      stateControl?.setValidators([Validators.required])
+      stateControl?.updateValueAndValidity()
+      const departmentControl = this.registrationFormStepOne.get('department')
+      departmentControl?.setValidators([Validators.required])
+      departmentControl?.updateValueAndValidity()
     } else {
-      const control = this.registrationFormStepOne.get('ministry');
-      control?.setValidators([Validators.required]);
-      control?.updateValueAndValidity();
-      const stateControl = this.registrationFormStepOne.get('state');
-      stateControl?.clearValidators();
-      stateControl?.updateValueAndValidity();
-      const departmentControl = this.registrationFormStepOne.get('department');
-      departmentControl?.clearValidators();
-      departmentControl?.updateValueAndValidity();
+      const control = this.registrationFormStepOne.get('ministry')
+      control?.setValidators([Validators.required])
+      control?.updateValueAndValidity()
+      const stateControl = this.registrationFormStepOne.get('state')
+      stateControl?.clearValidators()
+      stateControl?.updateValueAndValidity()
+      const departmentControl = this.registrationFormStepOne.get('department')
+      departmentControl?.clearValidators()
+      departmentControl?.updateValueAndValidity()
       this.getMinistryData()
     }
     if (this.registrationFormStepOne.get('organisation')) {
@@ -2474,47 +2472,44 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     if (this.registrationFormStepOne.get('designation')) {
       this.registrationFormStepOne.get('designation')!.setValue('')
-    }      
+    }
   }
 
-  onStateChanged(event:any) {
-    if(event && event.value) {
-      if(event && event.value) {
-        if(this.masterData['stateBackup'] && this.masterData['stateBackup'].length) {         
-          this.currentMinistry = _.find(this.masterData.stateBackup, { identifier: event.value });
+  onStateChanged(event: any) {
+    if (event && event.value) {
+      if (event && event.value) {
+        if (this.masterData['stateBackup'] && this.masterData['stateBackup'].length) {
+          this.currentMinistry = _.find(this.masterData.stateBackup, { identifier: event.value })
         }
-      }      
+      }
     }
     this.getDepartmentData()
   }
 
-  onMinistryChange(event:any) {
-    if(event && event.value) {
-      if(this.masterData['ministryBackup'] && this.masterData['ministryBackup'].length) {       
-        this.currentMinistry = _.find(this.masterData.ministryBackup, { identifier: event.value });
-      }      
+  onMinistryChange(event: any) {
+    if (event && event.value) {
+      if (this.masterData['ministryBackup'] && this.masterData['ministryBackup'].length) {
+        this.currentMinistry = _.find(this.masterData.ministryBackup, { identifier: event.value })
+      }
     }
     if (this.registrationFormStepOne.get('organisation')) {
       this.registrationFormStepOne.get('organisation')!.setValue('')
-    }   
-    this.getOrganisationData()
-  }
-
-  onDepartmentChange(event:any) {
-    if(event && event.value) {
-      if(this.masterData['departmentBackup'] && this.masterData['departmentBackup'].length) {       
-        this.currentMinistry = _.find(this.masterData.departmentBackup, { identifier: event.value });
-      }      
     }
     this.getOrganisationData()
   }
 
-  onOrganisationChanged(event:any) {   
-    console.log('this.masterData.organisation', this.masterData.organisation) 
-    console.log('event.value', this.masterData.organisation) 
-    if (event.value ) {      
-      this.heirarchyObject =_.find(this.masterData.organisation, { identifier: event.value });
-    } 
-    console.log('this.heirarchyObject',this.heirarchyObject)
+  onDepartmentChange(event: any) {
+    if (event && event.value && event.value !== "-1") {
+      if (this.masterData['departmentBackup'] && this.masterData['departmentBackup'].length) {
+        this.currentMinistry = _.find(this.masterData.departmentBackup, { identifier: event.value })
+      }
+    }
+    this.getOrganisationData()
+  }
+
+  onOrganisationChanged(event: any) {
+    if (event.value) {
+      this.heirarchyObject = _.find(this.masterData.organisation, { identifier: event.value })
+    }
   }
 }

@@ -88,6 +88,9 @@ export class EventDetailComponent implements OnInit {
   }
   linkedCourseData: any
   linkedCourseProgress: any
+  userAbleToEnroll = false
+  eventOrg = ''
+  totalUsersEnrolled: number = 0
 
   constructor(
     public dialog: MatDialog,
@@ -159,6 +162,20 @@ export class EventDetailComponent implements OnInit {
       })
     ).subscribe((data: any) => {
       this.eventData = data?.eventData
+      if (this.eventData?.createdFor && this.eventData?.createdFor.length) {
+        this.eventOrg = this.eventData?.createdFor[0]
+        if (this.configSvc && this.configSvc.userProfile && this.configSvc.userProfile?.rootOrgId) {
+          if (this.configSvc.userProfile?.rootOrgId === this.eventOrg) {
+            this.userAbleToEnroll = true
+          } else {
+            this.userAbleToEnroll = false
+          }
+        }
+      }
+
+
+      console.log('this.configSvc', this.configSvc)
+      console.log('this.eventOrg', this.eventOrg)
       if (this.eventData?.preEventReads?.length === 1 && this.eventData?.preEventReads?.[0] === '') {
         this.eventData.preEventReads = []
       }
@@ -231,6 +248,7 @@ export class EventDetailComponent implements OnInit {
         }
       }
       this.skeletonLoader = false
+      this.getEnrolledUserCount()
     })
 
   }
@@ -670,5 +688,21 @@ export class EventDetailComponent implements OnInit {
     }
 
     return parts.length > 0 ? parts.join(' ') : '0m'
+  }
+
+  getEnrolledUserCount() {
+    const requestBody = {
+      request: {
+        filters: {
+          active: true,
+          batchId: this.batchId,
+          limit: 1,
+          currentOffSet: 0
+        }
+      }
+    }
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+      this.totalUsersEnrolled = response?.totalCount || 0
+    })
   }
 }

@@ -99,9 +99,14 @@
         <div class="flex flex-col gap-4">
           <div class="flex items-center justify-between gap-4">
             <div class="flex flex-row gap-2 ng-star-inserted">
-              <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2"><mat-icon
-                  class="ws-mat-orange-text mat-icon notranslate material-icons mat-icon-no-color" role="img"
-                  aria-hidden="true">video_library</mat-icon>
+              <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2">
+                <ng-container *ngIf="eventData?.typeofEvent?.toLowerCase() !== 'live'">
+                  <mat-icon class="ws-mat-orange-text mat-icon notranslate material-icons mat-icon-no-color" role="img"
+                    aria-hidden="true">video_library</mat-icon>
+                </ng-container>
+                <ng-container *ngIf="eventData?.typeofEvent?.toLowerCase() === 'live'">
+                  <img src="assets/icons/handshake.svg">
+                </ng-container>
                 <div class="text-xs font-bold text-white leading-3 ng-star-inserted">{{eventData?.resourceType}}</div>
               </div>
               <!-- <div class="ml-2" *ngIf="eventData?.resourceType === 'Webinar'">
@@ -245,7 +250,7 @@
               </div>
             </ng-container>
             <ng-container
-              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30)">
+              *ngIf="linkedCourseData && (!linkedCourseProgress || !linkedCourseProgress?.completionPercentage || linkedCourseProgress?.completionPercentage < 30) && totalUsersEnrolled < eventData?.maxEnrolments && !pastEvent && userAbleToEnroll">
               <div class="complete-course-section">
                 <div class="flex items-center justify-between p-6">
                   <div class="flex items-center gap-4">
@@ -478,7 +483,7 @@
     <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
       <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
         [enrolledEvent]="enrolledEvent" [courseProgress]="linkedCourseProgress" *ngIf="eventData"
-        (enrollEvent)="enrollEvent($event)"></app-right-menu-card>
+        (enrollEvent)="enrollEvent($event)" [userAbleToEnroll]="userAbleToEnroll"></app-right-menu-card>
     </div>
   </div>
 </ng-container>
