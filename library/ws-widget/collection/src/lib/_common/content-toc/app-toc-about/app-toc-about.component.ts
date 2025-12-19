@@ -70,7 +70,7 @@ interface IStripUnitContentData {
 })
 
 export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, OnChanges, OnDestroy {
-  
+
   @Input() condition: any
   @Input() kparray: any
   @Input() content: NsContent.IContent | null = null
@@ -270,15 +270,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       }
     }
 
-   if (
+    if (
       this.content?.contentId &&
       this.content?.certificateObj?.data &&
       Object.keys(this.content.certificateObj.data).length === 0 &&
       this.content.completionStatus === 2
     ) {
-      this.handleOpenCertificateDialog();
+      this.handleOpenCertificateDialog()
     }
-
   }
 
   ngAfterViewInit(): void {
@@ -847,14 +846,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   handleClickOfClaim(event: any): void {
     this.handleClaimService.setClaimData(event)
   }
-  
+
   getCourseIdForCertificate(): string {
-    const paramId = this.activatedRoute.snapshot.paramMap.get('id');
+    const paramId = this.activatedRoute.snapshot.paramMap.get('id')
     if (this.content?.contentId?.includes('ext_')) {
-      return this.content.contentId;
+      return this.content.contentId
     }
-    
-    return paramId || '';
+
+    return paramId || ''
   }
 
   //  handleOpenCertificateDialog() {
@@ -870,7 +869,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
 
   //     if (
   //       allowedPrimaryCategory &&
-  //      ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) || 
+  //      ( allowedPrimaryCategory.includes(this.content?.primaryCategory?.toLowerCase()) ||
   //       allowedPrimaryCategory.includes(this.content?.courseCategory?.toLowerCase()))
   //     ) {
   //       const payload = {
@@ -884,7 +883,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   //         (response) => {
   //           if (response) {
   //             this.downloadCertificateBool = false;
-             
+
   //             this.dialog.open(CertificateDialogComponent, {
   //               width: '1200px',
   //               data: {
@@ -928,14 +927,14 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   //       }
   //     );
   //   }
-  //   } 
+  //   }
   // }
 
   handleOpenCertificateDialog() {
     this.downloadCertificateBool = true
     const certId = this.content && this.content.certificateObj.certId
     if (this.content && this.content.certificateObj && !this.content.certificateObj.certData) {
-     if (certId) {
+      if (certId) {
         this.contentSvc.downloadCert(certId).subscribe(response => {
           if (this.content) {
             this.downloadCertificateBool = false
@@ -945,7 +944,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
               data: { cet: response.result.printUri, certId: this.content && this.content.certificateObj.certId },
             })
           }
-        },                                             (error: any) => {
+        }, (error: any) => {
           this.downloadCertificateBool = false
           this.loggerService.error('CERTIFICATE FETCH ERROR >', error)
           this.matSnackBar.open('Unable to View Certificate, due to some error!')
@@ -961,7 +960,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   openSurveyFormPopup() {
-    this.trigerCompletionSurveyForm.emit(true);
+    this.trigerCompletionSurveyForm.emit(true)
   }
 
   checkValidJSON(str: any) {
@@ -1014,9 +1013,16 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   ngOnDestroy(): void {
     this.destroySubject$.unsubscribe()
     this.timerUnsubscribe.unsubscribe()
-    if(this.refreshratingSub){
+    if (this.refreshratingSub) {
       this.refreshratingSub.unsubscribe()
     }
+  }
+
+  navigateToNewVersion() {
+    this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`app/toc/${this.contentReadData?.contentVersionInfo?.identifier}/overview`])
+    })
+
   }
 
 }

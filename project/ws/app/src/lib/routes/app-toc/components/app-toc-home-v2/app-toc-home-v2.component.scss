@@ -118,6 +118,14 @@
     padding: 4px;
     border-radius: 2px;
   }
+
+  .new-version-pill {
+    background-color: rgba(249, 203, 151, 1);
+    border: 1px solid rgba(249, 203, 151, 1);
+    padding: 4px;
+    border-radius: 2px;
+
+  }
 }
 
 .text-info-div {
@@ -440,6 +448,16 @@ a.action-button {
     min-width: 320px;
     max-width: 400px;
     margin: auto;
+  }
+}
+
+@media only screen and (max-width:768px) {
+  .new-version-text {
+    font-size: 12px !important;
+  }
+
+  .new-version-chip {
+    padding-top: 0px !important;
   }
 }
 
@@ -1057,4 +1075,61 @@ mat-divider {
   }
 
 
+}
+
+.new-version-chip {
+  gap: 10px;
+  padding-top: 2px;
+  padding-right: 8px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+  background-color: rgba(243, 150, 47, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 25%;
+    height: 100%;
+    background: linear-gradient(314deg, transparent, rgb(213 210 210 / 60%), transparent);
+    animation: shimmer 1s infinite;
+  }
+
+  .new-version-text {
+    font-family: Lato;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+  }
+}
+
+.btn-switch {
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  border-radius: 64px;
+  padding: 8px 16px;
+  border: none;
+  border: 1px solid rgba(243, 150, 47, 1);
+  color: rgba(243, 150, 47, 1);
+  background: rgba(239, 149, 30, 0.16) !important;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }

@@ -20,7 +20,7 @@
 }
 
 // .desc {
-    
+
 //     ::ng-deep .mob-text p {
 //                   margin: 0px !important;
 
@@ -76,20 +76,39 @@
         word-wrap: break-word;
         width: 100%;
     }
+
 }
 
-.mob-text{
+.btn-switch {
+    font-family: Lato, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 20px;
+    background: white;
+    border-radius: 64px;
+    padding: 8px 16px;
+    border: none;
+    border: 1px solid rgba(243, 150, 47, 1);
+    color: rgba(243, 150, 47, 1);
+    background: rgba(239, 149, 30, 0.16) !important;
+}
+
+.mob-text {
     word-break: break-word;
     white-space: normal;
     //   word-wrap: break-word;
     overflow-wrap: break-word;
     text-align: left;
 }
+
 ::ng-deep .mob-text p {
-    word-break: break-word!important;
-    white-space: normal!important;
-      word-wrap: break-word!important;
-    overflow-wrap: break-word!important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
     text-align: left;
     // margin: 0px !important;
     //   hyphens: auto;
@@ -303,6 +322,7 @@ $mob-title-line-count: 2;
 .mobile-certificate-container {
     margin-top: 10px;
     margin-bottom: 20px;
+
     .earned-certificate-container {
         display: flex;
         flex-direction: column;
@@ -353,6 +373,14 @@ $mob-title-line-count: 2;
     .certificate-container {
         display: none;
     }
+
+    .retire-info-icon {
+        font-size: 28px;
+        height: 28px;
+        color: rgb(243, 150, 47);
+        width: 28px;
+        overflow: unset !important;
+    }
 }
 
 @media screen and (min-width: 768px) {
@@ -384,10 +412,10 @@ $mob-title-line-count: 2;
 
     .mobile-karma-points {
         display: none;
-    }    
+    }
 }
 
-@media screen and (max-width: 1200px){
+@media screen and (max-width: 1200px) {
     .pt-mweb-8 {
         padding-top: 2rem;
     }
@@ -509,17 +537,19 @@ $mob-title-line-count: 2;
     -webkit-box-orient: vertical;
     word-wrap: break-word;
 }
+
 .img-container {
     position: relative;
-    
+
     .view-cert {
-      visibility: hidden;
-      display: none;
+        visibility: hidden;
+        display: none;
     }
-    
+
     &:hover {
         display: block;
         z-index: 99999;
+
         .view-cert {
             visibility: visible;
             position: absolute;
@@ -535,6 +565,7 @@ $mob-title-line-count: 2;
             height: 100%;
             background-color: #000000b5;
             border-radius: 8px;
+
             button {
                 color: white;
                 border: 1px solid white;
@@ -547,6 +578,7 @@ $mob-title-line-count: 2;
         }
     }
 }
+
 .view-certificate {
     visibility: visible !important;
     display: block;
@@ -564,7 +596,7 @@ $mob-title-line-count: 2;
     justify-content: center;
     width: 100%;
     height: 100%;
-    
+
     button {
         color: white;
         border: 1px solid white;
@@ -577,21 +609,25 @@ $mob-title-line-count: 2;
     }
 }
 
-.uploader-status ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
     stroke: #ffffff;
 }
+
 .uploader-status ::ng-deep .mat-progress-spinner svg {
     width: 24px !important;
     height: 24px !important;
 }
+
 .uploader-status ::ng-deep .mat-progress-spinner {
     width: 24px !important;
     height: 24px !important;
 }
+
 .emailDefault {
     color: #F3962F !important;
     text-decoration: underline !important;
-    
+
 }
 
 .locked-certificate-outer-div {
@@ -622,7 +658,7 @@ $mob-title-line-count: 2;
         font: 700 11.72px/normal Lato;
     }
 
-    .locking-screen-description{
+    .locking-screen-description {
         color: #FFF;
         text-align: center;
         /* stylelint-disable-next-line */
@@ -633,7 +669,7 @@ $mob-title-line-count: 2;
         }
     }
 
-    .surveyFormeButton{
+    .surveyFormeButton {
         background-color: #1B4CA1;
         height: 34px;
         border-radius: 18px;
@@ -642,5 +678,19 @@ $mob-title-line-count: 2;
         font: 700 12px Lato;
         border: 0px;
         cursor: pointer;
+    }
+}
+
+.content-retire-container {
+    background: rgba(253, 234, 213, 1);
+    border-radius: 12px;
+    padding: 16px;
+    gap: 16px;
+
+    .retire-info-icon {
+        font-size: 40px;
+        height: 40px;
+        width: 58px;
+        color: rgba(243, 150, 47, 1);
     }
 }

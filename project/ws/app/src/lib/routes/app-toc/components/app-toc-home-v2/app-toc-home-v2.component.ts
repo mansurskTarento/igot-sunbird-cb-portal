@@ -1928,6 +1928,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
+
   private processContentBody() {
     this.body = this.domSanitizer.bypassSecurityTrustHtml(
       this.content && this.content.body
@@ -3081,5 +3082,27 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const navigationUrl = (this.resumeData && !this.certData) ? this.resumeDataLink?.url : this.firstResourceLink?.url
     const queryParams = (this.resumeData && !this.certData) ? this.generateQuery('RESUME') : this.generateQuery('START')
     this.router.navigate([navigationUrl], { queryParams: queryParams })
+  }
+
+
+  navigateToNewVersion() {
+    this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`app/toc/${this.contentReadData?.contentVersionInfo?.identifier}/overview`])
+    })
+
+  }
+
+  canEnroll() {
+    if (this.contentReadData && this.contentReadData.lastEnrollmentDate) {
+      const serverTime = dayjs(this.serverDate).format('YYYY-MM-DD')
+      const eDate = dayjs(this.contentReadData.lastEnrollmentDate).format('YYYY-MM-DD')
+      if (dayjs(serverTime).isSameOrBefore(eDate)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
+    }
   }
 }
