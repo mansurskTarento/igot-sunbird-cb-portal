@@ -148,12 +148,12 @@
 .event-container-unlocked {
   position: relative;
   transition: filter 0.3s ease;
+}
 
-  &.blurred {
-    filter: blur(3px);
-    pointer-events: none;
-    user-select: none;
-  }
+.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .welcome-container {
