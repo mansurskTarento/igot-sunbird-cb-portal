@@ -500,7 +500,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   fileImage(name: string) {
-    return name.includes('.ppt') ? '/assets/icons/ppt.svg' :
+    return name && name.includes('.ppt') ? '/assets/icons/ppt.svg' :
       (name.includes('.doc') ? '/assets/icons/doc.svg' : '/assets/icons/pdf.svg')
   }
 
