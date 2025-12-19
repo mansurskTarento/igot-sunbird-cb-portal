@@ -411,7 +411,9 @@
                 <div class="reference-inner-card">
                   <div class="reference-title flex align-icon gap-2">
                     <div><img class="img-size" src="{{fileImage(item)}}" /></div>
-                    <div class="text-truncate">{{'events.summary' | translate}} {{'events.documents' | translate}}
+                    <div class="text-truncate">
+                      {{item.documentName ? item.documentName : ('events.summary' | translate) +
+                      ' ' + ('events.documents' | translate)}}
                     </div>
                   </div>
                   <div class="flex gap-2">
