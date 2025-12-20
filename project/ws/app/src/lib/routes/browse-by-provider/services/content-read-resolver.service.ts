@@ -34,7 +34,7 @@ export class ContentReadResolverService {
         liveCoursesCount: {
           '>=': '1'
         },
-        searchTags: ['Institutions']
+        isTrainingInstitution: true,
       },
       pageNumber: 0,
       pageSize: 10,
