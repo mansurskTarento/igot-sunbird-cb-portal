@@ -930,3 +930,22 @@ ul {
 .level-badge svg {
   flex-shrink: 0;
 }
+
+// Consent Dialog Styling
+::ng-deep {
+  .consent-dialog-panel {
+    .mat-dialog-container {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      border-radius: 8px;
+    }
+
+    .mat-dialog-content {
+      padding: 0;
+      margin: 0;
+      max-height: none;
+      overflow: hidden;
+    }
+  }
+}

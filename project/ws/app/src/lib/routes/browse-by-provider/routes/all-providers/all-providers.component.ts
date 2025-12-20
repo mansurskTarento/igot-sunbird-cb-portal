@@ -65,10 +65,16 @@ export class AllProvidersComponent implements OnInit {
     if (this.route.snapshot.data && this.route.snapshot.data.contentData
       && this.route.snapshot.data.contentData.data
       && this.route.snapshot.data.contentData.data.result
-      && this.route.snapshot.data.contentData.data.result.content
-      && this.route.snapshot.data.contentData.data.result.content.featuredProviders
+      && this.route.snapshot.data.contentData.data.result.data
+      && this.route.snapshot.data.contentData.data.result.data.length
     ) {
-      this.featuredProviders = JSON.parse(this.route.snapshot.data.contentData.data.result.content.featuredProviders)
+      this.route.snapshot.data.contentData.data.result.data?.forEach((element: any) => {
+        element['displayName'] = element.link || ''
+        element['name'] = element?.contentPartnerName || ''
+        element['orgId'] = element?.internalOrgId || ''
+        element['logoUrl'] = element?.link || ''
+      })
+      this.featuredProviders = this.route.snapshot.data.contentData.data.result.data
     }
    }
 
