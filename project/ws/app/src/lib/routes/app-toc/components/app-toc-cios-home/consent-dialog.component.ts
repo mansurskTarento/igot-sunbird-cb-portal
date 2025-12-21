@@ -109,7 +109,7 @@ export class ConsentDialogComponent implements OnInit {
     }
   }
 
-  private loadConsent(retryCount = 0): void {
+  private loadConsent(): void {
     this.http.get(this.data.consentUrl, {
       responseType: 'text',
       headers: { 'Cache-Control': 'no-cache' }
@@ -130,20 +130,9 @@ export class ConsentDialogComponent implements OnInit {
         }
       },
       error: (_err: any) => {
-        if (_err.status === 401 && retryCount < 2) {
-          // Retry after a short delay for intermittent 401 errors
-          setTimeout(() => {
-            console.log(`Retrying consent load (attempt ${retryCount + 2}/3)`)
-            this.loadConsent(retryCount + 1)
-          }, 500)
-        } else if (this.data?.assetsDocUrl && retryCount === 0) {
           // Try loading from fallback URL
           this.loadConsentFromFallback()
-        } else {
-          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml('<p>Consent content will be loaded shortly.</p>')
-          this.loading = false
-          this.error = true
-        }
+
       }
     })
   }
