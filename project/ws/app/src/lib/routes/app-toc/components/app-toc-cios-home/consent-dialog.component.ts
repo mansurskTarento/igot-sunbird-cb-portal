@@ -103,34 +103,49 @@ export class ConsentDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data?.consentUrl) {
-      this.http.get(this.data.consentUrl, {
-        responseType: 'text',
-        headers: { 'Cache-Control': 'no-cache' }
-      }).subscribe({
-        next: (html) => {
-          try {
-            const parser = new DOMParser()
-            const doc = parser.parseFromString(html, 'text/html')
-            const bodyContent = doc.body?.innerHTML || html
-            const styleContent = Array.from(doc.head?.querySelectorAll('style') || [])
-              .map(s => s.outerHTML)
-              .join('')
-            this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(styleContent + bodyContent)
-            this.loading = false
-          } catch (e) {
-            this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(html)
-            this.loading = false
-          }
-        },
-        error: (_err: any) => {
-          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml('<p>Consent content will be loaded shortly.</p>')
-          this.loading = false
-          this.error =true
-        }
-      })
+      this.loadConsent()
     } else {
       this.loading = false
     }
+  }
+
+  private loadConsent(retryCount = 0): void {
+    this.http.get(this.data.consentUrl, {
+      responseType: 'text',
+      headers: { 'Cache-Control': 'no-cache' }
+    }).subscribe({
+      next: (html) => {
+        try {
+          const parser = new DOMParser()
+          const doc = parser.parseFromString(html, 'text/html')
+          const bodyContent = doc.body?.innerHTML || html
+          const styleContent = Array.from(doc.head?.querySelectorAll('style') || [])
+            .map(s => s.outerHTML)
+            .join('')
+          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(styleContent + bodyContent)
+          this.loading = false
+        } catch (e) {
+          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(html)
+          this.loading = false
+        }
+      },
+      error: (_err: any) => {
+        if (_err.status === 401 && retryCount < 2) {
+          // Retry after a short delay for intermittent 401 errors
+          setTimeout(() => {
+            console.log(`Retrying consent load (attempt ${retryCount + 2}/3)`)
+            this.loadConsent(retryCount + 1)
+          }, 500)
+        } else if (this.data?.assetsDocUrl && retryCount === 0) {
+          // Try loading from fallback URL
+          this.loadConsentFromFallback()
+        } else {
+          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml('<p>Consent content will be loaded shortly.</p>')
+          this.loading = false
+          this.error = true
+        }
+      }
+    })
   }
 
   onClose(): void {
@@ -139,6 +154,34 @@ export class ConsentDialogComponent implements OnInit {
 
   onAccept(): void {
     this.dialogRef.close(true)
+  }
+
+  private loadConsentFromFallback(): void {
+    this.http.get(this.data.assetsDocUrl, {
+      responseType: 'text',
+      headers: { 'Cache-Control': 'no-cache' }
+    }).subscribe({
+      next: (html) => {
+        try {
+          const parser = new DOMParser()
+          const doc = parser.parseFromString(html, 'text/html')
+          const bodyContent = doc.body?.innerHTML || html
+          const styleContent = Array.from(doc.head?.querySelectorAll('style') || [])
+            .map(s => s.outerHTML)
+            .join('')
+          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(styleContent + bodyContent)
+          this.loading = false
+        } catch (e) {
+          this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(html)
+          this.loading = false
+        }
+      },
+      error: (_err: any) => {
+        this.htmlContent = this.sanitizer.bypassSecurityTrustHtml('<p>Consent content will be loaded shortly.</p>')
+        this.loading = false
+        this.error = true
+      }
+    })
   }
 }
 

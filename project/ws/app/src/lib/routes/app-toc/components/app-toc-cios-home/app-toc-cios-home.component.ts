@@ -193,9 +193,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
 
   async enRollToExtCourse(content: any) {
     const consentUrl: string = `${environment?.missionKarmayogiPath}${this.config?.contentConsent?.consentDocUrl}` || ''
-
+    const assetsDocUrl: string = `${this.config?.contentConsent?.assetsDocUrl}` || ''
     const dialogRef = this.matDialog.open(ConsentDialogComponent, {
-      width: '800px',
+      width: '900px',
       height: '70vh',
       maxHeight: '90vh',
       minHeight: '400px',
@@ -203,7 +203,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       hasBackdrop: true,
       panelClass: 'consent-dialog-panel',
       data: {
-        consentUrl: consentUrl
+        consentUrl: consentUrl,
+        assetsDocUrl: assetsDocUrl
       }
     })
 
