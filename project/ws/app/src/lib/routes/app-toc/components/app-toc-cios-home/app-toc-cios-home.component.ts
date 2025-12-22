@@ -216,7 +216,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         this.callConsentApi(content)
       } else {
         // User disagreed
-        this.snackBar.open('You must agree to the terms to enroll in this course.')
+        this.snackBar.open('You must agree to the terms to enroll in this course.', 'X', {
+          duration: 5000,
+    })
       }
     })
   }
@@ -238,7 +240,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     this.certSvc.consentSubmit(request).subscribe((_res: any) => {
         this.proceedWithEnrollment(content)
     }, (error: any) => {
-      this.snackBar.open(error?.error?.params?.msg || 'Unable to submit consent')
+      this.snackBar.open(error?.error?.params?.msg || 'Unable to submit consent', 'X', {
+          duration: 5000,
+    })
     })
   }
   private async proceedWithEnrollment(content: any) {
@@ -255,7 +259,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.contentViewEventForNetCore('enroll')
     } else {
       this.loader.changeLoad.next(false)
-      this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content')
+      this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content', 'X', {
+          duration: 10000,
+    })
     }
   }
 
@@ -470,7 +476,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.canEnroll = true
         },
         (error: any) => {
-        this.snackBar.open(error?.error?.params?.msg || 'Unable to validate enrollment eligibility')
+        this.snackBar.open(error?.error?.params?.msg || 'Unable to validate enrollment eligibility', 'X', {
+          duration: 10000,
+    })
           this.enrollValidationLoading = false
           this.canEnroll = false
         }
