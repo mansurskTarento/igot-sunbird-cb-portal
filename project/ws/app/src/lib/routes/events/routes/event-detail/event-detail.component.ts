@@ -254,20 +254,24 @@ export class EventDetailComponent implements OnInit {
     if (this.eventData && this.eventData.preEventReads && this.eventData.preEventReads.length > 0) {
       const preEventReadsDetails: { documentName: string, url: string }[] = []
       this.eventData.preEventReads.forEach((eventReads: any) => {
-        preEventReadsDetails.push({
-          documentName: this.uploadedFileName(eventReads),
-          url: eventReads
-        })
+        if (eventReads) {
+          preEventReadsDetails.push({
+            documentName: this.uploadedFileName(eventReads),
+            url: eventReads
+          })
+        }
       })
       this.eventData.preEventReads = preEventReadsDetails
     }
     if (this.eventData && this.eventData.postEventSummary && this.eventData.postEventSummary.length > 0) {
       const postEventSummaryDetails: { documentName: string, url: string }[] = []
       this.eventData.postEventSummary.forEach((eventSummary: any) => {
-        postEventSummaryDetails.push({
-          documentName: this.uploadedFileName(eventSummary),
-          url: eventSummary
-        })
+        if (eventSummary) {
+          postEventSummaryDetails.push({
+            documentName: this.uploadedFileName(eventSummary),
+            url: eventSummary
+          })
+        }
       })
       this.eventData.postEventSummary = postEventSummaryDetails
     }
