@@ -418,14 +418,14 @@
                   </div>
                   <div class="flex gap-2">
                     <mat-icon>visibility</mat-icon>
-                    <a target="_blank" href="{{item}}">
+                    <a target="_blank" href="{{item.url || item}}">
                       <span class="view-pdf cursor-pointer">{{'events.view' | translate}}</span>
                     </a>
                   </div>
                 </div>
                 <div>
                   <div class="reference-download-icon">
-                    <a download="{{eventData?.identifier}}-Summary" (click)="downloadPDF(item)">
+                    <a download="{{eventData?.identifier}}-Summary" (click)="downloadPDF(item.url || item)">
                       {{'events.downloadPdf' | translate}}
                     </a>
                   </div>
