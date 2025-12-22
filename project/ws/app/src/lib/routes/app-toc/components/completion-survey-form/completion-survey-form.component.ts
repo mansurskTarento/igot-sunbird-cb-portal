@@ -64,7 +64,8 @@ export class CompletionSurveyFormComponent implements OnInit {
       this.addLoader = this.addLoader - 1
       this.formDetails = {
         title: _.get(result, 'result.response.title', ''),
-        fields: _.get(result, 'result.response.fields', [])
+        fields: _.get(result, 'result.response.fields', []),
+        contextType: _.get(result, 'result.response.contextType', 'form'),
       }
       this.buildForm()
     }, (error: HttpErrorResponse) => {
@@ -175,6 +176,7 @@ export class CompletionSurveyFormComponent implements OnInit {
         version: 4,
         status: 'SUBMITTED',
         responses: this.dataObject,
+        contextType: _.get(this.formDetails, 'contextType', ''),
         contextId: _.get(this.data, 'courseID', ''),
         contextName: _.get(this.data, 'courseName', ''),
       }
