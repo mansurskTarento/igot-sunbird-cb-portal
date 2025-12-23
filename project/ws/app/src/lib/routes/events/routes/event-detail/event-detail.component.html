@@ -410,7 +410,7 @@
               <div class="reference-card flex gap-4 justify-between">
                 <div class="reference-inner-card">
                   <div class="reference-title flex align-icon gap-2">
-                    <div><img class="img-size" src="{{fileImage(item?.url)}}" /></div>
+                    <div><img class="img-size" src="{{fileImage(item.url || item)}}" /></div>
                     <div class="text-truncate">
                       {{(item?.documentName) ? item.documentName : ('events.summary' | translate) +
                       ' ' + ('events.documents' | translate)}}

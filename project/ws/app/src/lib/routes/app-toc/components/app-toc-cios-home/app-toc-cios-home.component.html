@@ -145,7 +145,7 @@
                                                 [progressType]="'percentage'" [customClassName]="'viewer-progress'">
                                             </ws-widget-content-progress>
                   </ng-container>   -->
-                <ng-container *ngIf="(userExtCourseEnroll | json) === '{}'">
+                <ng-container *ngIf="(userExtCourseEnroll | json) === '{}' && !enrollValidationLoading && canEnroll">
                     <button class="flex action-button justify-center flex-middle resume" type="button"
                         (click)="enRollToExtCourse(extContentReadData)">
                         <ng-container>{{ 'apptochome.enroll' | translate }}
@@ -282,7 +282,7 @@
                                                 </ws-widget-content-progress>
                     </ng-container>   -->
 
-                        <ng-container *ngIf="(userExtCourseEnroll | json) === '{}'">
+                        <ng-container *ngIf="(userExtCourseEnroll | json) === '{}' && !enrollValidationLoading && canEnroll">
                             <button class="flex action-button justify-center flex-middle resume" type="button"
                                 (click)="enRollToExtCourse(extContentReadData)">
                                 <ng-container>{{ 'apptochome.enroll' | translate }}
