@@ -412,7 +412,7 @@
                   <div class="reference-title flex align-icon gap-2">
                     <div><img class="img-size" src="{{fileImage(item.url || item)}}" /></div>
                     <div class="text-truncate">
-                      {{item.documentName ? item.documentName : ('events.summary' | translate) +
+                      {{(item?.documentName) ? item.documentName : ('events.summary' | translate) +
                       ' ' + ('events.documents' | translate)}}
                     </div>
                   </div>
