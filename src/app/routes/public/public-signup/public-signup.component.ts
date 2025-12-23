@@ -1913,7 +1913,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   /** Department Data */
 
   getDepartmentData(searchText?: string, offset?: number): void {
-    this.masterData['department'] = []
+    //this.masterData['department'] = []
     // avoid running on server-side render
     if (!isPlatformBrowser(this._platformId)) {
       return
@@ -1973,11 +1973,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
+          if (mapped?.length === 0) {
+            this.masterData['departmentBackup'] =
+              this.masterData['departmentBackup'].filter(
+                (item: any) => item.orgName === 'N/A'
+              )
+          }
 
-          this.masterData['departmentBackup'] =
-            this.masterData['departmentBackup'].filter(
-              (item: any) => item.orgName === 'N/A'
-            )
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -2148,7 +2150,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.isLoadingMoreDepartments) return
 
     this.departmentSearchText = txt
-    if (txt?.length) {
+    if (txt.length === 0) {
+      this.departmentFilterEnable = true
+      this.isLoadingMoreDepartments = true
+      this.getDepartmentData(txt, 0)
+    }
+    else if (txt?.length) {
       this.departmentFilterEnable = true
       this.isLoadingMoreDepartments = true
       this.getDepartmentData(txt, 0)
@@ -2157,6 +2164,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.departmentFilterEnable = false
       this.checkCurrentDepartmentPresent()
     }
+
+
   }
 
   /** Organisation Data */
