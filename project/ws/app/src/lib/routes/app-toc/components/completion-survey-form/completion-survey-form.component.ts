@@ -179,6 +179,7 @@ export class CompletionSurveyFormComponent implements OnInit {
         contextType: _.get(this.formDetails, 'contextType', ''),
         contextId: _.get(this.data, 'courseID', ''),
         contextName: _.get(this.data, 'courseName', ''),
+        contextOrgId: _.get(this.data, 'contextOrgId', '')
       }
 
       this.addLoader = this.addLoader + 1
