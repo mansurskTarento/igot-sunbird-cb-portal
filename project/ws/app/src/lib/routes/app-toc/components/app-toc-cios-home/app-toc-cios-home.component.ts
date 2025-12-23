@@ -76,6 +76,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     public netCoreService: NetCoreService
   ) {
     this.route.data.subscribe((data: any) => {
+      this.enrollValidationLoading = false
       if (data && data.extContent && data.extContent.data && data.extContent.data.content) {
         this.extContentReadData = data.extContent.data.content
         this.extContentReadData['certificateObj'] = {
