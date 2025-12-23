@@ -85,7 +85,7 @@ export class CbpPlanComponent implements OnInit {
   async getCbPlans() {
     this.cbpLoader = true
     const userId: any = this.configSvc.userProfile && this.configSvc.userProfile.userId
-    let response = await this.widgetSvc.fetchCbpPlanList(userId).toPromise()
+    let response = await this.widgetSvc.fetchCbpPlanList(userId, true).toPromise()
     if (response.length) {
       this.cbpOriginalData = response
       this.upcommingList = []
