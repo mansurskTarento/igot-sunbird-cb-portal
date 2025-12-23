@@ -185,7 +185,8 @@ export class PublicSurveyFormComponent implements OnInit {
         contextId: _.get(this.data, 'courseId'),
         contextType: _.get(this.formDetails, 'contextType', ''),
         contextName: _.get(this.data, 'courseName', ''),
-        emailId: this.getEmailFromsurvey()
+        emailId: this.getEmailFromsurvey(),
+        contextOrgId: _.get(this.data, 'contextOrgId'),
       }
 
       // Remove existing survey data from local storage if present

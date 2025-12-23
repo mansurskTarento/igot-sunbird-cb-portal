@@ -2110,7 +2110,9 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       const data = {
         surveyId,
         courseName: this.contentReadData?.name || '',
-        courseID: this.contentReadData?.identifier || ''
+        courseID: this.contentReadData?.identifier || '',
+        contextOrgId: this.contentReadData?.createdFor && this.contentReadData?.createdFor.length > 0 ?
+          this.contentReadData?.createdFor[0] : ''
       }
       const dialogRef = this.dialog.open(CompletionSurveyFormComponent, {
         disableClose: true,
@@ -3068,13 +3070,16 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     const surveyId = this.environment.publicContentSurveyId || ''
     const courseId = this.contentReadData?.identifier || ''
     const courseName = this.contentReadData?.name || ''
+    const contextOrgId = this.contentReadData?.createdFor && this.contentReadData?.createdFor.length > 0 ?
+      this.contentReadData?.createdFor[0] : ''
 
     this.clearExistingPublicSurveyData(surveyId, courseId)
 
     const data = {
       surveyId: surveyId,
       courseId: courseId,
-      courseName: courseName
+      courseName: courseName,
+      contextOrgId: contextOrgId
     }
     const dialogRef = this.dialog.open(PublicSurveyFormComponent, {
       // disableClose: true,
