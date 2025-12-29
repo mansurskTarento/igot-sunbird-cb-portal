@@ -98,8 +98,8 @@
                                 [ngClass]="{'sourceEllipsis': sourceEllipsis}" title="{{content?.source}}">
                                 {{ 'cardcontentv2.by' | translate }}
                                 <span *ngIf="extContentReadData?.contentPartner?.contentPartnerName">
-                                    <span *ngIf="extContentReadData?.sourceProvider?.length;else contentPartnerName">
-                                        {{ extContentReadData?.sourceProvider?.join(', ') }}
+                                    <span *ngIf="extContentReadData?.courseProvider?.length;else contentPartnerName">
+                                        {{ formatcourseProviders(extContentReadData?.courseProvider) }}
                                     </span>
                                     <ng-template #contentPartnerName>
                                         {{extContentReadData?.contentPartner?.contentPartnerName }}
