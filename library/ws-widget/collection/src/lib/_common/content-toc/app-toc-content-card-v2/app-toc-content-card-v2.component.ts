@@ -12,6 +12,7 @@ import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/
 import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
 import { Subscription } from 'rxjs'
 import { ContentLanguageService } from '@sunbird-cb/consumption'
+import { ResourceDownloadHelperService } from '../../../../../../../../src/app/services/resource-download-helper.service'
 
 @Component({
   selector: 'ws-widget-app-toc-content-card-v2',
@@ -19,15 +20,15 @@ import { ContentLanguageService } from '@sunbird-cb/consumption'
   styleUrls: ['./app-toc-content-card-v2.component.scss'],
   animations: [
     trigger('panelInOut', [
-        transition('void => *', [
-            style({transform: 'translateY(-10%)',opacity: '0'}),
-            animate(250)
-        ]),
-        transition('* => void', [
-            animate(200, style({transform: 'translateY(-10%)',opacity: '0'}))
-        ])
+      transition('void => *', [
+        style({ transform: 'translateY(-10%)', opacity: '0' }),
+        animate(250)
+      ]),
+      transition('* => void', [
+        animate(200, style({ transform: 'translateY(-10%)', opacity: '0' }))
+      ])
     ])
-]
+  ]
 })
 export class AppTocContentCardV2Component implements OnInit {
   @Input() content: NsContent.IContent | null = null
@@ -37,7 +38,7 @@ export class AppTocContentCardV2Component implements OnInit {
   @Input() forPreview = false
   @Input() batchId!: string
   @Input() componentName: string = 'toc'
-  @Input() index!:number
+  @Input() index!: number
   @Input() pathSet!: any
   @Input() expandActive = true
   @Input() hierarchyMapData: any = {}
@@ -79,6 +80,7 @@ export class AppTocContentCardV2Component implements OnInit {
     private certificateService: CertificateService,
     private appTocSvc: AppTocService,
     private contentLangSvc: ContentLanguageService,
+    private resourceDownloadHelperSvc: ResourceDownloadHelperService
   ) { }
 
   ngOnInit() {
@@ -93,9 +95,9 @@ export class AppTocContentCardV2Component implements OnInit {
   resourceScroll() {
     this.pageScrollSubscription = this.appTocSvc.updatePageScroll.subscribe((value: boolean) => {
       if (value) {
-        setTimeout(()=>{
+        setTimeout(() => {
           this.scrollView()
-        },700) 
+        }, 700)
       }
     })
   }
@@ -109,27 +111,27 @@ export class AppTocContentCardV2Component implements OnInit {
       if (property === 'expandAll') {
         this.viewChildren = this.expandAll
       }
-      if(property === 'pathSet' && changes['pathSet']) {
+      if (property === 'pathSet' && changes['pathSet']) {
         let currentValue = changes['pathSet'].currentValue
         let previousValue = changes['pathSet'].previousValue
-        if(currentValue && previousValue){
+        if (currentValue && previousValue) {
           const eqSet = (xs: any, ys: any) =>
-          xs.size === ys.size &&
-          [...xs].every((x) => ys.has(x));
-          if(!eqSet(previousValue, currentValue)){ }
+            xs.size === ys.size &&
+            [...xs].every((x) => ys.has(x))
+          if (!eqSet(previousValue, currentValue)) { }
         }
         // if(previousValue === undefined){
-        //   setTimeout(()=>{  
+        //   setTimeout(()=>{
         //   },700)
         // }
       }
       // this.appTocSvc.getPageScroll.next(true)
-    
+
       if (property === 'hierarchyMapData') {
-        if(_.isEmpty(changes['hierarchyMapData'].currentValue)){
+        if (_.isEmpty(changes['hierarchyMapData'].currentValue)) {
           // this.loadingOverallPRogress = true
         } else {
-          if(this.content) {
+          if (this.content) {
             this.updateChildParentMap(this.content.identifier)
           }
         }
@@ -140,7 +142,7 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   check(content: any) {
-    if(this.expandActive) {
+    if (this.expandActive) {
       content.viewChildren = this.pathSet && this.pathSet.has(content.identifier) || content.viewChildren
     }
     return content.viewChildren
@@ -160,7 +162,7 @@ export class AppTocContentCardV2Component implements OnInit {
     return false
   }
 
-  public checkModule(content: NsContent.IContent | null):boolean {
+  public checkModule(content: NsContent.IContent | null): boolean {
     if (content) {
       return content.primaryCategory === NsContent.EPrimaryCategory.MODULE
     }
@@ -175,38 +177,38 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   get isBatchInProgess() {
-    if(this.batchData && (this.batchData.content && this.batchData.content.length) && this.batchData.enrolled) {
+    if (this.batchData && (this.batchData.content && this.batchData.content.length) && this.batchData.enrolled) {
       const batchData = this.batchData.content[0]
       if (batchData && batchData.endDate) {
         const now = moment().format('YYYY-MM-DD')
         const startDate = moment(batchData.startDate).format('YYYY-MM-DD')
         const endDate = batchData.endDate ? moment(batchData.endDate).format('YYYY-MM-DD') : now
-            return (
-              // batch.status &&
-              moment(startDate).isSameOrBefore(now)
-              && moment(endDate).isSameOrAfter(now)
-            )
+        return (
+          // batch.status &&
+          moment(startDate).isSameOrBefore(now)
+          && moment(endDate).isSameOrAfter(now)
+        )
       } return true
     }
     return false
   }
 
   get isResource(): boolean {
-    if (this.content) {  
-      return ( 
+    if (this.content) {
+      return (
         this.content.primaryCategory === NsContent.EPrimaryCategory.RESOURCE
         // || this.content.primaryCategory === NsContent.EPrimaryCategory.KNOWLEDGE_ARTIFACT
         || this.content.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
         || this.content.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
-        || this.content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT        
+        || this.content.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT
       )
     }
     return false
   }
   get resourceLink(): { url: string; queryParams: { [key: string]: any } } {
     if (this.content) {
-      let mimeType:any = ''
-      if(this.content && this.content.courseCategory === 'Pre Enrolment Assessment' && 
+      let mimeType: any = ''
+      if (this.content && this.content.courseCategory === 'Pre Enrolment Assessment' &&
         this.content.mimeType === 'application/vnd.ekstep.content-collection'
       ) {
         mimeType = 'application/vnd.sunbird.questionset'
@@ -216,16 +218,16 @@ export class AppTocContentCardV2Component implements OnInit {
       }
       let selectedLanguage = this.mlCourse ? this.contentLangSvc.getSelectedLanguage(this.mlCourse) : undefined
       let url = viewerRouteGenerator(
-       this.content.identifier,
+        this.content.identifier,
         mimeType,
         this.baseContentReadData?.identifier || this.rootId,
         this.baseContentReadData?.contentType || this.rootContentType,
         this.forPreview,
         this.content.primaryCategory,
         this.batchId,
-         this.content?.name || this.baseContentReadData?.name,
-        (selectedLanguage? selectedLanguage.langId : null),
-        (selectedLanguage? selectedLanguage.identifier : null),
+        this.content?.name || this.baseContentReadData?.name,
+        (selectedLanguage ? selectedLanguage.langId : null),
+        (selectedLanguage ? selectedLanguage.identifier : null),
       )
       /* tslint:disable-next-line */
       // console.log(this.content.identifier, '------', url,'=====> content card url link <========')
@@ -243,7 +245,7 @@ export class AppTocContentCardV2Component implements OnInit {
     // if (this.currentProgress > 70 && this.currentProgress <= 100) {
     //   return '#1D8923'
     // }
-   
+
     return '#1D8923'
   }
   public progressColor2(): string {
@@ -375,13 +377,13 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   updateChildParentMap(identifier: string) {
-    if(this.hierarchyMapData  && this.hierarchyMapData[identifier]) {
+    if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
       let localContentData = this.hierarchyMapData[identifier]
-      if(
+      if (
         !(localContentData.primaryCategory === NsContent.EPrimaryCategory.RESOURCE
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
-        || localContentData.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT)
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.FINAL_ASSESSMENT
+          || localContentData.primaryCategory === NsContent.EPrimaryCategory.COMP_ASSESSMENT)
       ) {
         // real percent logic
         // const total = localContentData.leafNodes.reduce((sum: number, childId: string) => {
@@ -391,13 +393,13 @@ export class AppTocContentCardV2Component implements OnInit {
         // if(total > 0) {
         //   this.hierarchyMapData[identifier]['completionPercentage'] = total / _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount'))
         // }
-        if(localContentData.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
+        if (localContentData.primaryCategory === NsContent.EPrimaryCategory.MODULE) {
           this.hierarchyMapData[identifier]['duration'] = this.hierarchyMapData[identifier].leafNodes.reduce(
             (sum: any, childID: any) => {
-              if(this.hierarchyMapData && this.hierarchyMapData[childID]) {
-                return sum + Number(this.hierarchyMapData[childID].duration || this.hierarchyMapData[childID].expectedDuration  || 0)
+              if (this.hierarchyMapData && this.hierarchyMapData[childID]) {
+                return sum + Number(this.hierarchyMapData[childID].duration || this.hierarchyMapData[childID].expectedDuration || 0)
               }
-            
+
             }, 0)
         }
         // tslint:disable
@@ -415,22 +417,22 @@ export class AppTocContentCardV2Component implements OnInit {
     // console.log('getCompletionPercentage', identifier)
     // console.log('this.hierarchyMapData[identifier] : ', this.hierarchyMapData[identifier])
     // const item = this.updateChildParentMap(identifier)
-    let percent =  this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage || 0 
+    let percent = this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionPercentage || 0
     return this.roundIfDecimal(percent)
   }
-  
+
   roundIfDecimal(value: number): number {
     if (!Number.isInteger(value)) {
-      return parseFloat(value.toFixed(2));
+      return parseFloat(value.toFixed(2))
     }
-    return value;
+    return value
   }
 
 
   getCompletionStatus(identifier: string) {
     // console.log('getCompletionStatus')
     // const item = this.updateChildParentMap(identifier)
-    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionStatus  
+    return this.hierarchyMapData && this.hierarchyMapData[identifier] && this.hierarchyMapData[identifier].completionStatus
   }
 
   openCertificateDialog(certData: any) {
@@ -442,30 +444,30 @@ export class AppTocContentCardV2Component implements OnInit {
       // panelClass: 'custom-dialog-container',
     })
   }
-  scrollView(){
+  scrollView() {
     try {
-      let errorField: any = this.renderer.selectRootElement('.resource-container .resource-active');
-      if(errorField){
-        errorField.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+      let errorField: any = this.renderer.selectRootElement('.resource-container .resource-active')
+      if (errorField) {
+        errorField.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
       }
-      if(this.componentName === 'toc') { 
-          if(errorField) {
-            const rect = errorField.getBoundingClientRect();
-            if(rect.top-420 > 0){
-              window.scroll(420,rect.top-148)
-            }
+      if (this.componentName === 'toc') {
+        if (errorField) {
+          const rect = errorField.getBoundingClientRect()
+          if (rect.top - 420 > 0) {
+            window.scroll(420, rect.top - 148)
           }
-      } 
-      setTimeout(()=>{
+        }
+      }
+      setTimeout(() => {
         this.appTocSvc.getPageScroll.next(false)
-      },700)
-     
+      }, 700)
+
       // else {
       //   errorField.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
       //   const rect = errorField.getBoundingClientRect();
       //   errorField.scroll(0,rect.top-56)
       // }
-    }catch (err) {
+    } catch (err) {
     }
   }
 
@@ -480,10 +482,10 @@ export class AppTocContentCardV2Component implements OnInit {
         id: certificateData,   // id of the certificate
         type: WsEvents.EnumInteractSubTypes.CERTIFICATE,
       })
-    if(certificateData) {
+    if (certificateData) {
       this.downloadCertificateLoading = true
       let certData: any = certificateData
-      this.certificateService.downloadCertificate_v2(certData).subscribe((res: any)=>{
+      this.certificateService.downloadCertificate_v2(certData).subscribe((res: any) => {
         this.downloadCertificateLoading = false
         const cet = res.result.printUri
         this.dialog.open(CertificateDialogComponent, {
@@ -502,29 +504,29 @@ export class AppTocContentCardV2Component implements OnInit {
   }
 
   get checkForCuratedProgram() {
-    if(this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+    if (this.content && this.content.parent && this.hierarchyMapData && this.hierarchyMapData[this.content.parent]) {
       let parentData = this.hierarchyMapData[this.content.parent]
-      return parentData && parentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM && 
-      parentData.compatibilityLevel >= 5 && 
-      parentData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY
+      return parentData && parentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM &&
+        parentData.compatibilityLevel >= 5 &&
+        parentData.contextLockingType === NsContent.EContextLockingType.COURSE_ASSESSMENT_ONLY
     }
     return false
   }
 
-  get isContentUnlocked () {
-    if (this.checkForCuratedProgram)  {
-      if (this.content && this.content.parent && this.hierarchyMapData &&this.hierarchyMapData[this.content.parent]) {
+  get isContentUnlocked() {
+    if (this.checkForCuratedProgram) {
+      if (this.content && this.content.parent && this.hierarchyMapData && this.hierarchyMapData[this.content.parent]) {
         let parentData = this.hierarchyMapData[this.content.parent]
         let completedLeafNodes = []
-        parentData.leafNodes.forEach((_ele:any) => {
-          if(this.hierarchyMapData && this.hierarchyMapData[_ele]) {
+        parentData.leafNodes.forEach((_ele: any) => {
+          if (this.hierarchyMapData && this.hierarchyMapData[_ele]) {
             let childData = this.hierarchyMapData[_ele]
-            if(childData && childData.completionStatus === 2) {
+            if (childData && childData.completionStatus === 2) {
               completedLeafNodes.push(childData)
             }
           }
-        });
-        if (completedLeafNodes.length >= parentData.leafNodesCount-1) {
+        })
+        if (completedLeafNodes.length >= parentData.leafNodesCount - 1) {
           return true
         } else {
           return false
@@ -540,9 +542,54 @@ export class AppTocContentCardV2Component implements OnInit {
       return {
         ...this.resourceLink.queryParams,
         preAssessment: 'true'
-      };
+      }
     }
-    return null;
+    return null
+  }
+
+  shouldShowDownloadButton(content: NsContent.IContent | null): boolean {
+    if (!content) {
+      return false
+    }
+
+    // Check if content has an artifact URL (downloadable resource)
+    if (!content.artifactUrl) {
+      return false
+    }
+
+    // Check if base content resource category includes "Case Study"
+    if (!this.baseContentReadData?.courseCategory ||
+      this.baseContentReadData.courseCategory !== NsContent.ECourseCategory.CASE_STUDY) {
+      return false
+    }
+
+    //for public scenario check if its player plage then only enable download
+    if (this.forPreview && !window.location.href.includes('/viewer/')) {
+      return false
+    }
+
+    // for logged in user check if user enrolled then only allow download
+    if (!this.forPreview && !this.isEnrolled) {
+      return false
+    }
+
+    // Define downloadable MIME types
+    const downloadableMimeTypes = [
+      NsContent.EMimeTypes.PDF
+    ]
+
+    return downloadableMimeTypes.includes(content.mimeType)
+  }
+
+  downloadContent(content: NsContent.IContent, event?: MouseEvent) {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    const pageId = `app/toc/pageId/${content.identifier}`
+    this.resourceDownloadHelperSvc.downloadPDF(content, pageId)
+    console.log('content', content)
+    console.log('baseContent', this.baseContentReadData)
   }
 
 }

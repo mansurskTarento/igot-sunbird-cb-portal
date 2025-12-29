@@ -15,6 +15,9 @@ import { VttFile } from '@polyflix/vtt-parser'
 import { tap } from 'rxjs/operators'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { MatTab } from '@angular/material/tabs'
+import { environment } from 'src/environments/environment'
+import { SamuhikCharchaService } from '../../_services/samuhik-charcha.service'
+import * as _ from 'lodash'
 @Component({
   selector: 'ws-widget-content-toc',
   templateUrl: './content-toc.component.html',
@@ -88,6 +91,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
   isMobileForAI = false
   transcriptActiveLanguageText = 'English'
   showAssignmentsTab = false
+  enableSamuhikCharchaTab = false
+  samuhikConfig: any
   constructor(
     private route: ActivatedRoute,
     private utilityService: UtilityService,
@@ -98,7 +103,8 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     private actionSVC: ActionService,
     private router: Router,
     private eventSvc: EventService,
-    private viewerDataSvc: ViewerDataService
+    private viewerDataSvc: ViewerDataService,
+    private samuhikCharchaSvc: SamuhikCharchaService,
   ) { }
 
   ngOnInit() {
@@ -216,7 +222,20 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
     })
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  get getCurrentTimeInUTC(): string {
+    const currentDate = new Date()
+    const isoString = currentDate.toISOString()
+    return isoString.replace('Z', '+0000')
+  }
+
+  private async getSamuhikConfig() {
+    try {
+      this.samuhikConfig = await this.samuhikCharchaSvc.fetchConfigFile().toPromise()
+    } catch (error) {
+    }
+  }
+
+  async ngOnChanges(changes: SimpleChanges) {
 
     this.resourceIdentifier = this.viewerDataSvc.resourceId
 
@@ -283,16 +302,78 @@ export class ContentTocComponent implements OnInit, AfterViewInit, OnChanges {
       this.discussWidgetData = { ...this.discussWidgetData }
     }
 
+    if (this.contentReadData && this.contentReadData?.eventLinked?.length) {
+      const orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
+      await this.getSamuhikConfig()
+      const eventsLinked = this.contentReadData.eventLinked || []
+      let eventsData: any = []
+      this.samuhikConfig?.strips[0].tabs.forEach((ele: any) => {
+        ele.request.searchV6.request.filters.identifier = eventsLinked
+        ele.request.searchV6.request.filters.createdFor = [orgId]
+        if (ele.request.searchV6.request.filters.endDateTime.hasOwnProperty('>=')) {
+          ele.request.searchV6.request.filters.endDateTime['>='] = this.getCurrentTimeInUTC
+        }
+        if (ele.request.searchV6.request.filters.endDateTime.hasOwnProperty('<')) {
+          ele.request.searchV6.request.filters.endDateTime['<'] = this.getCurrentTimeInUTC
+        }
+        this.samuhikCharchaSvc.getSearchV6Results(ele.request.searchV6).subscribe((res: any) => {
+          if (res && res.result && res.result.count && res.result?.Event && res.result.Event?.length) {
+            for (let eve = 0; eve < res.result.Event?.length; eve++) {
+              if (res.result.Event[eve]['createdFor'] && res.result.Event[eve]['createdFor'].length &&
+                res.result.Event[eve]['resourceType'] === 'Samuhik Charcha'
+              )
+                eventsData.push(res.result.Event[eve]['createdFor'][0])
+              if (eventsData.includes(this.configService.userProfile?.rootOrgId)) {
+                this.enableSamuhikCharchaTab = true
+              }
+            }
+          }
+        })
+      })
+
+    }
+
     if (this.contentReadData && this.contentReadData.referenceNodes) {
       this.contentReadData.referenceNodes.forEach((item: any) => {
         let userRoles: Set<string> = this.configService?.userRoles || new Set()
+        let hasEducatorRole = false
+
+        // Check if user has MENTOR role
         if (userRoles.has('MENTOR') ||
           userRoles.has('mentor') ||
           userRoles.has('Mentor')) {
+          hasEducatorRole = true
+        }
+
+        // Check local storage for survey response only if URL contains 'public' or 'preview=true'
+        if (!hasEducatorRole && this.forPreview) {
+          const surveyId = environment.publicContentSurveyId || ''
+          const courseId = this.contentReadData?.identifier || ''
+          const storageKey = `survey_${surveyId}_${courseId}`
+          const storedData = localStorage.getItem(storageKey)
+
+          if (storedData) {
+            try {
+              const surveyResponses = JSON.parse(storedData)
+              const educatorQuestion = surveyResponses.find((response: any) =>
+                response.question === 'Are you an Educator/Faculty member?'
+              )
+              if (educatorQuestion && educatorQuestion.answer === 'Yes') {
+                hasEducatorRole = true
+              }
+            } catch (error) {
+              console.error('Error parsing survey data from local storage:', error)
+            }
+          }
+        }
+
+        // Set teacherNotesFlag if user has educator role
+        if (hasEducatorRole) {
           if (item && item.resourceCategory && item.resourceCategory === 'Teachers Resource') {
             this.teacherNotesFlag = true
           }
         }
+
         if (item && item.resourceCategory && item.resourceCategory === 'Reference Resource') {
           this.referenceNotesFlag = true
         }

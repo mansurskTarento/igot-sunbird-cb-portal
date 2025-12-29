@@ -16,6 +16,7 @@ import { AppTocCiosResolverService } from './resolvers/app-toc-cios-resolver.ser
 import { AppTocCiosUserEnrollResolverService } from './resolvers/app-toc-cios-user-enroll-resolver.service'
 import { AppTocContentReadResolverService } from './resolvers/app-toc-content-read-resolver.service'
 import { AppTocHomeV2Component } from './components/app-toc-home-v2/app-toc-home-v2.component'
+import { FormDataResolverService } from '../../../../../../../src/app/services/form-data-resolver.service'
 
 const routes: Routes = [
   {
@@ -108,7 +109,7 @@ const routes: Routes = [
       module: 'Learn',
     },
     resolve: {
-      pageData: PageResolve,
+      pageData: FormDataResolverService,
       extContent: AppTocCiosResolverService,
       userEnrollContent: AppTocCiosUserEnrollResolverService,
     },

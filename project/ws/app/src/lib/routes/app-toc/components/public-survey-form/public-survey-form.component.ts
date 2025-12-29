@@ -64,7 +64,8 @@ export class PublicSurveyFormComponent implements OnInit {
       this.addLoader = this.addLoader - 1
       this.formDetails = {
         title: _.get(result, 'result.response.title', ''),
-        fields: _.get(result, 'result.response.fields', [])
+        fields: _.get(result, 'result.response.fields', []),
+        contextType: _.get(result, 'result.response.contextType', 'form'),
       }
       this.buildForm()
     }, (error: HttpErrorResponse) => {
@@ -182,9 +183,20 @@ export class PublicSurveyFormComponent implements OnInit {
         status: 'SUBMITTED',
         responses: this.dataObject,
         contextId: _.get(this.data, 'courseId'),
+        contextType: _.get(this.formDetails, 'contextType', ''),
         contextName: _.get(this.data, 'courseName', ''),
-        emailId: this.getEmailFromsurvey()
+        emailId: this.getEmailFromsurvey(),
+        contextOrgId: _.get(this.data, 'contextOrgId'),
       }
+
+      // Remove existing survey data from local storage if present
+      const storageKey = `survey_${this.surveyId}_${_.get(this.data, 'courseId')}`
+      if (localStorage.getItem(storageKey)) {
+        localStorage.removeItem(storageKey)
+      }
+
+      // Store fresh dataObject in local storage
+      localStorage.setItem(storageKey, JSON.stringify(this.dataObject))
 
       this.addLoader = this.addLoader + 1
       this.appTocSvc.submitFormPublic(formBody).subscribe({
