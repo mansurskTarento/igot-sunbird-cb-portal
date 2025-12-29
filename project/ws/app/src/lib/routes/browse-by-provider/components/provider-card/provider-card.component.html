@@ -1,10 +1,11 @@
 <!-- Card 1 start -->
 <div class="cursor-pointer  flex item-center single_provider_card mat-card "
-    [routerLink]="['/app/learn/browse-by/provider', provider?.name, provider?.orgId, 'micro-sites']"[hidden]="true">
-    <div class="flex flex-col card-container items-center justify-center">   
+    (click)="onCardClick()"
+    [hidden]="true">
+    <div class="flex flex-col card-container items-center justify-center">
         <div class="name-container flex flex-col margin-bottom-m">
             <div class="" role="link" tabindex="0"><!---->
-                <div class="name ws-mat-black-text cursor-pointer mat-subheading-1"> 
+                <div class="name ws-mat-black-text cursor-pointer mat-subheading-1">
                    {{provider?.name}}
                 </div>
             </div>
@@ -21,12 +22,11 @@
 <!-- TODO: Remove this below card, when the above card (card 1) information is available from backend -->
 <!-- Card 2 start -->
 <div class="cursor-pointer card2  item-center single_provider_card mat-card "
-    (click)="raiseTelemetery()"
-    [routerLink]="['/app/learn/browse-by/provider', provider?.name, provider?.orgId, 'micro-sites']">
-    <div class="w-full flex flex-col card-container items-center justify-center">   
+    (click)="onCardClick()">
+    <div class="w-full flex flex-col card-container items-center justify-center">
         <div class="flex width-inherit flex-col item-center justify-center">
 
-            
+
             <div class="flex items-center justify-center">
                 <ng-container *ngIf="provider?.logoUrl;else noLogo">
                     <img [src]="provider?.logoUrl" class="p-logo"  onerror="'/assets/images/micro-sites/default-provider.svg'">

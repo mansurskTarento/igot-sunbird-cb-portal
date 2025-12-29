@@ -19,6 +19,11 @@ const routes: Routes = [
       module: 'Profile',
     },
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'me'
+      },
       // {
       //   path: 'me',
       //   component: ProfileViewComponent,

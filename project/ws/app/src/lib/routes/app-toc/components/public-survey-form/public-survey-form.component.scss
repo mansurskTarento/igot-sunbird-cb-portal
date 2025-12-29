@@ -43,32 +43,32 @@
 .do-later-btn {
   height: 40px;
   color: #1b4ca1 !important;
-  background-color: #ffffff!important;
+  background-color: #ffffff !important;
   border-radius: 20px;
-  border: 1px solid #1b4ca1!important;
+  border: 1px solid #1b4ca1 !important;
   margin-right: 10px;
 }
 
 .submit-btn {
   height: 40px;
   color: #ffffff !important;
-  background-color: #1b4ca1!important;
+  background-color: #1b4ca1 !important;
   border-radius: 20px;
 }
 
 .submit-btn:disabled {
-    opacity: 0.6!important;
+  opacity: 0.6 !important;
 }
 
 .loader {
-    position: absolute;
-    top: 0pc;
-    left: 0px;
-    z-index: 1000;
-    height: 100vh;
-    width: 100vw;
-    background-color: #80808045;
-  }
+  position: absolute;
+  top: 0pc;
+  left: 0px;
+  z-index: 1000;
+  height: 100vh;
+  width: 100vw;
+  background-color: #80808045;
+}
 
 .info-icon {
   color: #d13924;
@@ -76,4 +76,14 @@
   height: 20px;
   width: 26px;
   margin-top: 2px;
+}
+
+.close-button {
+  height: 30px;
+  width: 30px;
+  line-height: 24px;
+  background: rgba(0, 0, 0, 0.2509803922) !important;
+  color: #fff !important;
+  align-self: end;
+  margin-right: -24px;
 }

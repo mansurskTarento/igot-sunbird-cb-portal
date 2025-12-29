@@ -125,6 +125,9 @@
 
 .course-author {
   font-size: 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
 }
 
 .author-avatar {
@@ -138,6 +141,8 @@
   @extend .course-tags;
   font-size: 14px;
   line-height: 16.8px;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .course-stats {
@@ -195,6 +200,18 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .organization-name {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 992px) {
+  .organization-name {
+    max-width: 150px;
+  }
+}
+
 @media (max-width: 768px) {
   .card-container {
     flex-direction: column;
@@ -208,6 +225,22 @@
   .bookmark-container {
     top: 8px;
     bottom: auto;
+  }
+
+  .organization-name {
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 700px) {
+  .organization-name {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 576px) {
+  .organization-name {
+    max-width: 80px;
   }
 }
 
@@ -248,4 +281,68 @@
   color: $brandAccentColor;
   background: $brandAccentDarkShade;
   padding: 7px 8px;
+}
+
+.right-section-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.right-section-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+// download icon Issue fixed
+.bookmark-section {
+  flex-wrap: wrap;
+  //   overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
+}
+
+.knowledge-level-container {
+  display: flex;
+  align-items: center;
+}
+
+.level-badge {
+  display: inline-flex;
+  height: 24px;
+  padding: 2px 8px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.level-badge.beginner {
+  border: 1px solid #49C951;
+  background: linear-gradient(0deg, rgba(73, 201, 81, 0.20) 0%, rgba(73, 201, 81, 0.20) 100%), #FFF;
+  color: #2F8132;
+  border-radius: 16px;
+}
+
+.level-badge.intermediate {
+  border: 1px solid #1B4CA1;
+  background: linear-gradient(0deg, rgba(27, 76, 161, 0.20) 0%, rgba(27, 76, 161, 0.20) 100%), #FFF;
+  color: #1B4CA1;
+  border-radius: 16px;
+}
+
+.level-badge.advanced {
+  border: 1px solid #FF8268;
+  background: linear-gradient(0deg, rgba(255, 130, 104, 0.20) 0%, rgba(255, 130, 104, 0.20) 100%), #FFF;
+  color: #FF4B25;
+  border-radius: 16px;
+}
+
+.level-badge svg {
+  flex-shrink: 0;
 }

@@ -54,9 +54,35 @@
   }
 }
 
+.enrollment-pill {
+  background: #FFF4E5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px;
+  margin-bottom: 8px;
+  font-weight: 700;
+
+  .enrollment-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a1a1a;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+}
+
 .timediv {
   background: rgba(0, 0, 0, 0.04);
   padding: 15px;
+}
+
+.no-space-text-overflow {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .comment-card {
@@ -230,4 +256,8 @@ button.ws-mat-primary-background {
   ::ng-deep .copy-input-wrapper button {
     left: 77% !important;
   }
+}
+
+.cursor-default-important {
+  cursor: default !important;
 }

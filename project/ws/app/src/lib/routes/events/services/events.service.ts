@@ -22,6 +22,7 @@ const API_END_POINTS = {
     `/apis/proxies/v8/user/events/list/${userId}`,
   CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
   ENROLL_CONTENT_DATA: (userId: string,) => `/apis/proxies/v8/learner/course/v4/user/enrollment/details/${userId}`,
+  GET_USER_ENROLL_COUNT: `/apis/proxies/v8/course/v1/batch/getParticipants`
 }
 
 @Injectable({
@@ -123,5 +124,9 @@ export class EventService {
         return of({ data: null, error })
       })
     )
+  }
+
+  getUserEnrollCount(requestBody: any): Observable<any> {
+    return this.http.post<any>(`${API_END_POINTS.GET_USER_ENROLL_COUNT}`, requestBody)
   }
 }

@@ -19,7 +19,7 @@ span.optional-span {
   margin-left: 8px;
   padding: 0px 6px;
   border-radius: 2px 2px;
-  display:inline-block;
+  display: inline-block;
   background-color: #0074b6;
   color: #fff;
   font-size: 12px;
@@ -63,6 +63,7 @@ span.optional-span {
 .tab:focus {
   outline: 1px solid !important;
 }
+
 .custom-chevron:focus {
   outline: 0px solid !important;
 }
@@ -178,19 +179,23 @@ span.optional-span {
   &.course.content-active {
     background-color: #1a4ca1;
     color: #fff;
-    .period{
+
+    .period {
       background: #fff
     }
+
     .text-active {
       color: #fff;
     }
-    & .icon-color{
+
+    & .icon-color {
       color: #fff;
     }
 
     & .customicon .mat-icon {
       color: #fff;
     }
+
     .progress-container {
       span {
         color: white !important;
@@ -202,7 +207,7 @@ span.optional-span {
 .text-active {
   color: #1a4ca1;
 
-  &.font-bold{
+  &.font-bold {
     font-weight: 600;
   }
 }
@@ -216,8 +221,8 @@ span.optional-span {
 
   .text-active {
     color: #fff;
-  
-    &.font-bold{
+
+    &.font-bold {
       font-weight: 600;
     }
   }
@@ -242,7 +247,7 @@ span.optional-span {
 .collection-wrapper.open {
   // background-color: #eff3f9;
   // border-radius: 0 0 8px 8px;
-  border-bottom: 1px solid rgba(0,0,0,0.16);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
 }
 
 .collection-wrapper.close {
@@ -285,7 +290,7 @@ span.optional-span {
 // :nth-child(1 of .resourceCard) .resource{
 //   margin-top: 16px !important;
 // }
-// fallback css for above 
+// fallback css for above
 .first.resourceCard:nth-child(1) .resource {
   margin-top: 16px !important;
 }
@@ -293,40 +298,41 @@ span.optional-span {
 // :nth-child(1 of .resourceCard) .activeResource{
 //   margin-top: 0 !important;
 // }
-// fallback css for above 
+// fallback css for above
 .first.resourceCard:nth-child(1) .activeResource {
   margin-top: 0 !important;
 }
 
-.children-container .resourceCard:last-child .resource-container:has(.activeResource)  {
+.children-container .resourceCard:last-child .resource-container:has(.activeResource) {
   margin-bottom: 0 !important;
 }
 
 
 // for selecting modules that are not last children of parent, to give border
-.moduleCard:not(:last-child) >  .collection-wrapper.close.module {
+.moduleCard:not(:last-child)>.collection-wrapper.close.module {
   border-bottom: 4px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
 }
 
 // for selecting modules that are not last children of parent and open so that border comes at end of its children
-.moduleCard:not(:last-child) >  .collection-wrapper.open.module + .child-wrapper.open {
+.moduleCard:not(:last-child)>.collection-wrapper.open.module+.child-wrapper.open {
   border-bottom: 4px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
 }
 
-.course + .child-wrapper {
+.course+.child-wrapper {
+
   // padding-left: 10px;
-  .module + .child-wrapper {
+  .module+.child-wrapper {
     // padding-left: 0px;
   }
 }
 
-.moduleCard + .child-wrapper {
+.moduleCard+.child-wrapper {
   // padding-left: 0 !important;
 }
 
-.module + .child-wrapper {
+.module+.child-wrapper {
   // padding-left: 10px;
 }
 
@@ -336,12 +342,13 @@ span.optional-span {
 //   border-bottom: 4px solid rgba(0, 0, 0, 0.08)
 // }
 
-.collection-wrapper.open.course + .child-wrapper.open {
+.collection-wrapper.open.course+.child-wrapper.open {
+
   // background-color: #eff3f9;
   // border-radius: 0 0 8px 8px;
   // border-bottom: 4px solid rgba(0, 0, 0, 0.08);
   // border-radius: 0;
-  .collection-wrapper.open.module + .child-wrapper.open {
+  .collection-wrapper.open.module+.child-wrapper.open {
     background-color: #eff3f9;
     border-radius: 0 0 8px 8px;
     border-bottom: 4px solid rgba(0, 0, 0, 0.08);
@@ -349,7 +356,7 @@ span.optional-span {
   }
 }
 
-.collection-wrapper.open.module + .child-wrapper.open {
+.collection-wrapper.open.module+.child-wrapper.open {
   background-color: #eff3f9;
   border-radius: 0 0 8px 8px;
   // border-bottom: 4px solid rgba(0, 0, 0, 0.08);
@@ -388,8 +395,8 @@ span.optional-span {
   font-size: 16px;
   vertical-align: middle;
 
-  &.icon-color{
-    color: rgba(0,0,0,0.6)
+  &.icon-color {
+    color: rgba(0, 0, 0, 0.6)
   }
 }
 
@@ -535,7 +542,7 @@ span.optional-span {
 .view-certificate-wrapper {
   display: flex;
   border-radius: 4px;
-  border: 1.5px solid rgba(0,116,182, 1);
+  border: 1.5px solid rgba(0, 116, 182, 1);
   opacity: 1;
   padding: 8px;
 }
@@ -558,7 +565,7 @@ span.optional-span {
 
 .collection-wrapper.course,
 .collection-wrapper.module,
-.resource-container .resource  {
+.resource-container .resource {
   padding-left: 16px;
   box-sizing: border-box;
   width: 100%;
@@ -566,36 +573,38 @@ span.optional-span {
 }
 
 // resource in module
-.children-container.module  .resource-container .resource {
+.children-container.module .resource-container .resource {
   padding-left: 24px;
   box-sizing: border-box;
   width: 100%;
 }
 
 // module in course
-.course .collection-wrapper.module  {
+.course .collection-wrapper.module {
   padding-left: 24px;
   box-sizing: border-box;
   width: 100%;
 }
 
 // resource in module in course
-.course .children-container.module  .resource-container .resource{
+.course .children-container.module .resource-container .resource {
   padding-left: 32px;
   box-sizing: border-box;
   width: 100%;
 }
 
 // resource in course
-.course  .resource-container .resource{
+.course .resource-container .resource {
   padding-left: 24px;
 }
 
 
-::ng-deep .white-spinner{
-  stroke:white !important;
+::ng-deep .white-spinner {
+  stroke: white !important;
 }
-.certificate-loader ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+
+.certificate-loader ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
   stroke: #ffffff;
 }
 
@@ -617,4 +626,26 @@ span.optional-span {
 
 .unlock-icon {
   color: #0c9600;
+}
+
+.download-btn {
+  padding: 4px 12px;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  cursor: pointer;
+  border-radius: 40px;
+  color: #1B4CA1;
+  font-weight: 700;
+  border: 1px solid #1B4CA1;
+  display: inline-block;
+  pointer-events: auto; // Enable clicks even when parent anchor is disabled
+  position: relative; // Ensure it's above the disabled parent
+  z-index: 1; // Ensure it's above the disabled parent
+}
+
+.activeResource .download-btn {
+  &.active {
+    color: #fff;
+    border: 1px solid #fff;
+  }
 }

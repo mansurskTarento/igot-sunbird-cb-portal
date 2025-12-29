@@ -39,7 +39,7 @@
       </div>
     </div>
   </div>
-  <div class="event-container-unlocked" [class.blurred]="locked">
+  <div class="event-container-unlocked w-full" [class.blurred]="locked">
     <div class="welcome-container">
       <div class="welcome-card">
         <div class="icon-container">
@@ -55,7 +55,6 @@
         </div>
       </div>
     </div>
-
     <div class="event-container" *ngIf="samuhikConfigLoaded">
       <sb-uic-content-strip-with-tabs [widgetData]="samuhikConfig"
         (telemtryResponse)="raiseTelemetryInteratEvent($event)">

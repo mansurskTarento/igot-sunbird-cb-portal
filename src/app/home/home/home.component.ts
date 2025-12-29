@@ -5,6 +5,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 /* tslint:disable */
 import _ from 'lodash'
+import { MatLegacyDialog as MatDialog  } from '@angular/material/legacy-dialog'
+
 /* tslint:enable */
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -14,6 +16,7 @@ import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 // import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
 import { BtnSettingsService } from '@sunbird-cb/collection'
+import { ProfileVerificationDialogComponent } from 'src/app/profile-verification-dialog/profile-verification-dialog.component'
 
 // import { NotificationComponent } from './notification/notification.component'
 
@@ -51,7 +54,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private userProfileService: UserProfileService,
     private matSnackBar: MatSnackBar,
-    private events: EventService,
+    private events: EventService,private dialog: MatDialog,
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}
@@ -275,7 +278,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
-    this.getOrgDetails()
+    this.mandatoryDetails()
   }
 
 
@@ -620,5 +623,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   redirectToCustomProfile() {
     this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
+  }
+  mandatoryDetails() {
+    let unMappedUser = this.configSvc.unMappedUser
+    let userProfileUpdateDate= unMappedUser && unMappedUser.profileDetails && unMappedUser.profileDetails.personalDetails &&  unMappedUser.profileDetails.personalDetails?.lastProfileVerificationPromptDate ? Number(unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate) : null
+    // Difference in milliseconds
+    const currentEpochTime = new Date().getTime();
+    let diffMs = 0
+    if(userProfileUpdateDate !== null) {
+     diffMs = Math.abs(currentEpochTime - userProfileUpdateDate);
+    }
+    // Convert ms → days
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    if((diffDays && diffDays> 90 ) || userProfileUpdateDate === null) {
+      let userData = {
+        ...this.configSvc.userProfile,
+        mobile: this.configSvc.unMappedUser.profileDetails?.personalDetails?.mobile || '',
+        primaryEmail: this.configSvc.unMappedUser.profileDetails?.personalDetails?.primaryEmail || '',
+      }
+        let dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
+          data: {
+            userProfile: userData
+          },
+          panelClass: 'profile-verification-dialog-container',
+          disableClose: true,
+          maxWidth: '95vw',
+          width: '500px'
+        })
+        dialogRef.afterClosed().subscribe(async (res: any) => {
+          if (res && res?.action === 'update') {
+            this.router.navigate(['/app/person-profile/me'], { fragment: 'mandatorySection' })
+          } else if (res && res?.action === 'verify'){
+            this.callExtPatchProfile()
+          }
+        })
+    } else {
+      this.getOrgDetails()
+    }
+  }
+  callExtPatchProfile() {
+    const currentEpoch = new Date().getTime().toString()
+    let request = {
+      "request": {
+          "userId":this.configSvc.unMappedUser.id,
+          "profileDetails": {
+              "personalDetails": {
+                "lastProfileVerificationPromptDate": currentEpoch
+              }
+          }
+      }
+    }
+    this.userProfileService.editProfileDetails(request).subscribe((res: any) => {
+      if(res && res.result && res.result.response?.toUpperCase() === 'SUCCESS') { 
+        this.matSnackBar.open('Profile verification  updated successfully', 'X', this.configSuccess)
+        if (this.configSvc?.unMappedUser?.profileDetails?.personalDetails) {
+          this.configSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = currentEpoch
+        }
+      }
+      this.getOrgDetails()
+    })
   }
 }
