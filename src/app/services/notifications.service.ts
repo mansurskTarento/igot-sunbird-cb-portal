@@ -5,6 +5,7 @@ import { map, retry } from 'rxjs/operators'
 import * as _ from 'lodash'
 import { Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import moment from 'moment'
 
 const API_END_POINTS = {
   NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/unread/count`,
@@ -186,11 +187,33 @@ export class NotificationsService {
     }
   }
 
-  handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
-    if (notification.category === 'LEARN') {
+  handleTocRedirection(notification: any, snackBar: any): void {
+    if (notification.sub_category === 'CONTENT_RETIRE') {
+      if (notification.message.data.retiredDate) {
+        const retireOn = moment(notification.message.data.retiredDate).format('MMMM D, YYYY')
+        const today = moment().format('MMMM D, YYYY')
+        if (moment(retireOn).isSameOrAfter(today)) {
+          this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+            this.router.navigate([`/app/toc/${notification.message.data.id}`])
+          })
+        } else {
+          snackBar.open(`This content is scheduled to be retired on ${retireOn}. You can not access it now.`)
+        }
+      } else {
+        snackBar.open('Something went wrong. Please try again later.')
+      }
+    } else if (notification.sub_category === 'CONTENT_RETIRED') {
+      snackBar.open(`This content is retired. You can not access it now.`)
+    } else {
       this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
         this.router.navigate([`/app/toc/${notification.message.data.id}`])
       })
+    }
+  }
+
+  handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
+    if (notification.category === 'LEARN') {
+      this.handleTocRedirection(notification, snackBar)
     } else if (notification.category === 'EVENT') {
       this.handleEventRedirection(notification, environment)
     } else if (notification.category === 'DISCUSSION') {
