@@ -197,7 +197,7 @@
             <mat-tab label="{{ 'apptocsinglepage.content' | translate }}" *ngIf="contentTabFlag">
                 <ng-template matTabContent>
                     <ws-widget-app-toc-content [batchId]="batchId" [componentName]="componentName" [pathSet]="pathSet"
-                        [content]="content" [tocStructure]="tocStructure" [config]="config" [forPreview]="false"
+                        [content]="content" [tocStructure]="tocStructure" [config]="config" [forPreview]="forPreview"
                         [resumeData]="resumeData" [batchData]="batchData" [skeletonLoader]="skeletonLoader"
                         [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData">
                     </ws-widget-app-toc-content>
@@ -206,7 +206,7 @@
         </ng-container>
 
         <ng-container *ngIf="config?.commentsTab && !forPreview">
-            <mat-tab label="{{ 'apptocsinglepage.comments' | translate }}">
+            <mat-tab label="{{ 'apptocsinglepage.startDiscussion' | translate }}">
                 <ng-template matTabContent>
                     <div class="flex flex-col ratings-div mt-5" id="commentsDiv"
                         *ngIf="discussWidgetData && discussWidgetData?.newCommentSection?.commentTreeData?.entityId">
@@ -225,7 +225,8 @@
                 </ng-template>
             </mat-tab>
         </ng-container>
-        <ng-container *ngIf="config?.samuhikCharchaTab && condition && contentReadData?.eventLinked?.length > 0">
+        <ng-container
+            *ngIf="config?.samuhikCharchaTab && condition && contentReadData?.eventLinked?.length > 0 && enableSamuhikCharchaTab">
             <mat-tab label="{{ 'apptocsinglepage.samuhikCharcha' | translate }}">
                 <ng-template matTabContent>
                     <div class="flex flex-col ratings-div mt-5" id="samuhikCharchaDiv">

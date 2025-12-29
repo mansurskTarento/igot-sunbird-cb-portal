@@ -457,7 +457,8 @@
 }
 
 .margin-top-m {
-  margin-top: $size-m !important;
+  // rating was miss aligned for dynamic card
+  // margin-top: $size-m !important;
 }
 
 .margin-top-l {

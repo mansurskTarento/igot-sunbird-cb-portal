@@ -14,6 +14,8 @@ const urls = {
   DOWNLOAD_CERTIFICATE: (id: string) => `certreg/v2/certs/download/${id}`,
   DOWNLOAD_CERTIFICATE_v2: (id: string) => `apis/protected/v8/cohorts/course/batch/cert/download/${id}`,
   SEARCH_CERTIFICATE: 'certreg/v1/certs/search',
+  VALIDATE_ENROLLMENT: 'cios-enroll/v1/validation',
+  CONSENT_API: 'consent/v1/acknowledge',
 }
 
 @Injectable({
@@ -69,5 +71,23 @@ export class CertificateService {
     }
     return this.apiService.post(option.url, option.data)
 
+  }
+
+  validateEnrollmentEligibility(courseId: string, partnerId: string): Observable<ServerResponse> {
+    const option = {
+      url: `${urls.PROXIES_PREFIX}${urls.VALIDATE_ENROLLMENT}`,
+      data: {
+        courseId,
+        partnerId,
+      },
+    }
+    return this.apiService.post(option.url, option.data)
+  }
+  consentSubmit(request: any): Observable<ServerResponse> {
+    const option = {
+      url: `${urls.PROXIES_PREFIX}${urls.CONSENT_API}`,
+      data: request
+    }
+    return this.apiService.post(option.url, option.data)
   }
 }

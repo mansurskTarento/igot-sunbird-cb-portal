@@ -1,10 +1,7 @@
 <div class="flex justify-between items-center">
   <div class="teachers-note-header">{{ 'apptocsinglepage.teachersNoteHeading' | translate }}</div>
-  <div >
-    <button 
-      [disabled]="hasActiveDownloads()" 
-      (click)="downloadAllContent()" 
-      class="download-all flex items-center">
+  <div>
+    <button [disabled]="hasActiveDownloads()" (click)="downloadAllContent()" class="download-all flex items-center">
       <span *ngIf="!isDownloadingAll">{{ 'apptocsinglepage.downaloadAllPdfs' | translate }}</span>
       <span *ngIf="isDownloadingAll" class="flex items-center">
         <mat-spinner diameter="16" class="mr-2"></mat-spinner>
@@ -17,16 +14,20 @@
 <div class="guide-container" *ngIf="content?.referenceNodes">
   <ng-container *ngFor="let note of content?.referenceNodes">
     <div class="guide-card flex gap-4 justify-between" *ngIf="note?.resourceCategory === notesDisplayType">
-      <div>
+      <div class="flex flex-col justify-center">
         <div class="note-title">{{note?.name}}</div>
-        <div class="flex gap-2 pt-2">
-          <mat-icon class="material-symbols-outlined">
-            visibility
-          </mat-icon>
-          <a (click)="previewContent(note)">
-            <span class="view-pdf">{{ 'apptocsinglepage.viewPDF' | translate }}</span>
-          </a>
-        </div>
+        <!-- To remove view option in case of public preview of toc  -->
+        <ng-container *ngIf="!forPreview">
+          <div class="flex gap-2 pt-2">
+            <mat-icon class="material-symbols-outlined">
+              visibility
+            </mat-icon>
+
+            <a (click)="previewContent(note)">
+              <span class="view-pdf">{{ 'apptocsinglepage.viewPDF' | translate }}</span>
+            </a>
+          </div>
+        </ng-container>
       </div>
       <div>
         <div class="download-ind">

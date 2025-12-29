@@ -39,7 +39,8 @@ export class RequestParams {
       'sectorDetails_v1',
       'languageMapV1',
       'language',
-      'completionSurveyLink'
+      'completionSurveyLink',
+      'difficultyLevel'
     ]
     this.facets = [...SearchOthersFacet, ...competenciesKey]
     this.query = ''

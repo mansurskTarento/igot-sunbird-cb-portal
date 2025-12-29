@@ -33,6 +33,19 @@ export class SeeAllService {
 
   }
 
+  /**
+   * Fetch content using dynamic configuration
+   * @param url - The API endpoint URL
+   * @param request - Request body (for POST) or query params (for GET)
+   * @param isGetApi - Whether to use GET instead of POST
+   */
+  fetchDynamicContent(url: string, request: any, isGetApi: boolean = false): Observable<any> {
+    if (isGetApi) {
+      return this.http.get<any>(url)
+    }
+    return this.http.post<any>(url, request)
+  }
+
   fetchSearchData(request: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SEARCH_V6, request)
   }

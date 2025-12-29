@@ -47,6 +47,45 @@
   }
 }
 
+.key-takeaways-container {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .key-takeaways-title {
+    margin: 0;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .key-takeaways-content {
+    padding: 20px;
+    background: linear-gradient(135deg, #E3F2FD 0%, #E8F5E9 100%);
+  }
+
+  .takeaways-list {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+
+    li {
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
 .top_banner_box {
   @include breakpoint-xs {
     flex-direction: column;
@@ -743,10 +782,38 @@ button.ws-mat-primary-background {
     width: 1202px;
     margin: 0 auto;
 
+    @include breakpoint-xs {
+      width: 100%;
+
+      >.flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: flex-start !important;
+      }
+    }
+
+    @include breakpoint-s {
+      width: 100%;
+
+      >.flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: flex-start !important;
+      }
+    }
+
     .seperator {
       width: 1px;
       height: 40px;
       background-color: #E0E0E0;
+
+      @include breakpoint-xs {
+        display: none;
+      }
+
+      @include breakpoint-s {
+        display: none;
+      }
     }
 
     .course-name {
@@ -757,6 +824,14 @@ button.ws-mat-primary-background {
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.4;
+
+      @include breakpoint-xs {
+        width: 100%;
+      }
+
+      @include breakpoint-s {
+        width: 100%;
+      }
     }
   }
 }
@@ -827,4 +902,8 @@ button.ws-mat-primary-background {
     font-size: 15px;
     line-height: 1.1px;
   }
+}
+
+.summary-continer {
+  min-height: 500px;
 }
