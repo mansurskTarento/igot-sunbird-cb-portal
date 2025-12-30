@@ -8,31 +8,31 @@ import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consu
 
 
 const configMap: any = {
-    extContent: {
-      name: "Cohort Insights",
-      url: '/apis/proxies/v8/cios/v1/search/content',
-      request: {
-        filterCriteriaMap: {
-        },
-        requestedFields: [],
-        pageNumber: 0,
-        pageSize: 10,
-        facets: ['topic'],
-        orderBy: 'createdOn',
-        orderDirection: 'desc',
-        searchString: ''
-      }
-    },
-    extContentAssigned: {
-      name: "Assigned Contents",
-      url: 'apis/proxies/v8/user/v1/assigned/externalcourses',
-      isGetApi: false,  // POST API but with local search (no pagination)
-      isLocalSearch: true,  // Flag to indicate local search only
-      request: {
-        "partnerId": ""
-      }
+  extContent: {
+    name: "Cohort Insights",
+    url: '/apis/proxies/v8/cios/v1/search/content',
+    request: {
+      filterCriteriaMap: {
+      },
+      requestedFields: [],
+      pageNumber: 0,
+      pageSize: 10,
+      facets: ['topic'],
+      orderBy: 'createdOn',
+      orderDirection: 'desc',
+      searchString: ''
+    }
+  },
+  extContentAssigned: {
+    name: "Assigned Contents",
+    url: 'apis/proxies/v8/user/v1/assigned/externalcourses',
+    isGetApi: false,  // POST API but with local search (no pagination)
+    isLocalSearch: true,  // Flag to indicate local search only
+    request: {
+      "partnerId": ""
     }
   }
+}
 @Component({
   selector: 'ws-app-see-all-dynamic',
   templateUrl: './see-all-dynamic.component.html',
@@ -84,7 +84,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.contentName = this.activatedRoute?.snapshot?.queryParams['providerName'] ?
-    `${this.activatedRoute?.snapshot?.queryParams['providerName']} Contents` : 'Explore all the contents'
+      `${this.activatedRoute?.snapshot?.queryParams['providerName']} Contents` : 'Explore all the contents'
     this.configKey = this.activatedRoute?.snapshot?.queryParams['key'] || 'extContent'
     this.filterProvider = this.activatedRoute?.snapshot?.queryParams['provider'] || 'PEDGOG'
 
@@ -100,7 +100,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
   loadConfiguration() {
     // Get config from local configMap
-    this.apiConfig = configMap[this.configKey]
+    const getConfigData = this.activatedRoute?.snapshot?.data['pageData']?.data || configMap
+    this.apiConfig = getConfigData[this.configKey]
 
     if (!this.apiConfig) {
       return
@@ -114,7 +115,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       this.apiConfig.request.filterCriteriaMap['contentPartner.id'] = this.filterProvider
     }
     if (this.filterProvider && this.apiConfig.request) {
-      this.apiConfig.request.partnerId =  this.filterProvider
+      this.apiConfig.request.partnerId = this.filterProvider
     }
   }
 
@@ -213,7 +214,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
             const data = res?.result?.content || res?.content || res?.data || []
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Capture server-provided total count
-            this.totalCount = res?.result?.totalCount || res?.totalCount ||res?.result?.content?.length ||0
+            this.totalCount = res?.result?.totalCount || res?.totalCount || res?.result?.content?.length || 0
 
             if (isLoadMore) {
               // Append new items for infinite scroll
