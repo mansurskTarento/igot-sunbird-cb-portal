@@ -76,6 +76,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     public netCoreService: NetCoreService
   ) {
     this.route.data.subscribe((data: any) => {
+      this.enrollValidationLoading = false
       if (data && data.extContent && data.extContent.data && data.extContent.data.content) {
         this.extContentReadData = data.extContent.data.content
         this.extContentReadData['certificateObj'] = {
@@ -191,6 +192,13 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     return str.replaceAll(replaceTxt, '')
   }
 
+  formatcourseProviders(providers: any[]): string {
+    if (!providers || !Array.isArray(providers)) {
+      return ''
+    }
+    return providers.map((provider: any) => provider.name).join(', ')
+  }
+
   async enRollToExtCourse(content: any) {
     const consentUrl: string = `${environment?.missionKarmayogiPath}${this.config?.contentConsent?.consentDocUrl}` || ''
     const assetsDocUrl: string = `${this.config?.contentConsent?.assetsDocUrl}` || ''
@@ -218,7 +226,7 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
         // User disagreed
         this.snackBar.open('You must agree to the terms to enroll in this course.', 'X', {
           duration: 5000,
-    })
+        })
       }
     })
   }
@@ -226,23 +234,23 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   callConsentApi(content: any) {
     console.log(content)
     const request = {
-      "request":{
+      "request": {
         "contentId": content?.contentId,
-        "consentId":this.config?.contentConsent?.consentId || '',
-        "additionalAttributes":{
-          "userRoles":["public"],
+        "consentId": this.config?.contentConsent?.consentId || '',
+        "additionalAttributes": {
+          "userRoles": ["public"],
           "versionKey": new Date().getTime(),
-          "description":"I have read and agree with the above declaration."
-          }
+          "description": "I have read and agree with the above declaration."
         }
       }
+    }
 
     this.certSvc.consentSubmit(request).subscribe((_res: any) => {
-        this.proceedWithEnrollment(content)
+      this.proceedWithEnrollment(content)
     }, (error: any) => {
       this.snackBar.open(error?.error?.params?.msg || 'Unable to submit consent', 'X', {
-          duration: 5000,
-    })
+        duration: 5000,
+      })
     })
   }
   private async proceedWithEnrollment(content: any) {
@@ -260,8 +268,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.loader.changeLoad.next(false)
       this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content', 'X', {
-          duration: 10000,
-    })
+        duration: 10000,
+      })
     }
   }
 
@@ -449,15 +457,15 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   }
 
   secondsToTime(d: any) {
-    d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
+    d = Number(d)
+    var h = Math.floor(d / 3600)
+    var m = Math.floor(d % 3600 / 60)
+    var s = Math.floor(d % 3600 % 60)
 
-    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return hDisplay + mDisplay + sDisplay;
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : ""
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : ""
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : ""
+    return hDisplay + mDisplay + sDisplay
   }
 
   clearCommentIdFromUrl(): void {
@@ -476,9 +484,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.canEnroll = true
         },
         (error: any) => {
-        this.snackBar.open(error?.error?.params?.msg || 'Unable to validate enrollment eligibility', 'X', {
-          duration: 10000,
-    })
+          this.snackBar.open(error?.error?.params?.msg || 'Unable to validate enrollment eligibility', 'X', {
+            duration: 10000,
+          })
           this.enrollValidationLoading = false
           this.canEnroll = false
         }

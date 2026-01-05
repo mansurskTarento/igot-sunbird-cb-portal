@@ -1973,7 +1973,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // const mapped = content.filter(
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
-          if (mapped?.length === 0) {
+
+          if (mapped?.length === 0 || searchText?.length) {
             this.masterData['departmentBackup'] =
               this.masterData['departmentBackup'].filter(
                 (item: any) => item.orgName === 'N/A'
@@ -2263,10 +2264,14 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
           // if(res && res.result && res.result.response && res.result.response.content && res.result.response.content.length === 0) {
-          this.masterData['organisationBackup'] =
-            this.masterData['organisationBackup'].filter(
-              (item: any) => item.orgName === 'N/A'
-            )
+
+
+          if (mapped?.length === 0 || searchText?.length) {
+            this.masterData['organisationBackup'] =
+              this.masterData['organisationBackup'].filter(
+                (item: any) => item.orgName === 'N/A'
+              )
+          }
           // }
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount

@@ -11,7 +11,8 @@ const API_END_POINTS = {
   GET_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/read`,
   UPDATE_NOTIFICATIONS: `apis/proxies/v8/notificationSetting/upsert`,
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
-  UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch'
+  UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
+  RESET_PASSWORD: '/apis/proxies/v8/user/v2/password/reset'
 }
 
 @Injectable()
@@ -52,5 +53,9 @@ export class SettingsService {
 
   updateProfileVisibility(form: any): Observable<any> {
     return this.http.post<any>(`${API_END_POINTS.UPDATE_PROFILE_DETAILS}`, form)
+  }
+
+  resetPassword(): Observable<any> {
+    return this.http.get<any>(API_END_POINTS.RESET_PASSWORD)
   }
 }
