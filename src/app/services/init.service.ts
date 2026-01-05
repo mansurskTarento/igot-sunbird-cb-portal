@@ -840,6 +840,7 @@ export class InitService {
     this.configSvc.portalUrls = publicConfig.portalUrls
     this.configSvc.activeOrg = publicConfig.org[0]
     this.configSvc.positions = publicConfig.positions
+    this.configSvc.completionSurvey = publicConfig.completionSurvey
     this.updateAppIndexMeta()
     this.updateTelemetryConfig()
     return publicConfig
