@@ -648,9 +648,6 @@ export class ProfileEntryEditComponent implements OnInit {
     });
     this.generateYearsList()
     this.educationFormValuChange()
-    // Load initial data
-    this.getEducationalQualifications('degree', 1)
-    this.getEducationalQualifications('institute', 1);
   }
 
   educationFormValuChange(): void {
@@ -670,12 +667,14 @@ export class ProfileEntryEditComponent implements OnInit {
         .subscribe(searchText => {
           if (isInitializingDegree) {
             isInitializingDegree = false
-            return;
+            return
           }
-          this.degreePageNumber = 1
-          this.degreeSearchText = searchText
-          this.getEducationalQualifications('degree', this.degreePageNumber, searchText)
-        });
+          if (searchText || this.filterDegreesMeta.length === 0) {
+            this.degreePageNumber = 1
+            this.degreeSearchText = searchText
+            this.getEducationalQualifications('degree', this.degreePageNumber, searchText)
+          }
+        })
 
       if (_.get(this.entryDetails, 'degree', '')) {
         searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
@@ -698,12 +697,14 @@ export class ProfileEntryEditComponent implements OnInit {
         .subscribe(searchText => {
           if (isInitializingInstitute) {
             isInitializingInstitute = false
-            return;
+            return
           }
-          this.institutePageNumber = 1
-          this.instituteSearchText = searchText
-          this.getEducationalQualifications('institute', this.institutePageNumber, searchText)
-        });
+          if (searchText || this.filterInstitutionsList.length === 0) {
+            this.institutePageNumber = 1
+            this.instituteSearchText = searchText
+            this.getEducationalQualifications('institute', this.institutePageNumber, searchText)
+          }
+        })
 
       if (_.get(this.entryDetails, 'institutionName', '')) {
         searchInstituteControl.setValue(_.get(this.entryDetails, 'institutionName', ''));
@@ -725,11 +726,7 @@ export class ProfileEntryEditComponent implements OnInit {
       this.degreesFilterEnable = false
       this.degreePageNumber = 1
       this.degreeSearchText = ''
-      // Load initial data only if not already loaded
-      if (this.filterDegreesMeta.length === 0) {
-        this.getEducationalQualifications('degree', this.degreePageNumber)
-      }
-      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
         searchInput.focus();
       }
@@ -803,11 +800,16 @@ export class ProfileEntryEditComponent implements OnInit {
         "pageSize": type === 'degree' ? this.degreeListLoadCount : this.institutionListLoadCount,
         "filters": {
           "status": 1
-        }
+        },
+        "sortBy":"name",
+        "orderBy" :"ASC"
       }
     }
+
     if (searchQuery && searchQuery.trim()) {
       payload['request']['searchString'] = searchQuery
+      delete payload['request']['sortBy']
+      delete payload['request']['orderBy']
     }
     this.ProfileV2RevampService.getEducationsQualificationsSearch(payload).subscribe({
       next: (response: any) => {
@@ -890,17 +892,13 @@ export class ProfileEntryEditComponent implements OnInit {
       this.inistitutionFilterEnable = false
       this.institutePageNumber = 1
       this.instituteSearchText = ''
-      // Load initial data only if not already loaded
-      if (this.filterInstitutionsList.length === 0) {
-        this.getEducationalQualifications('institute', this.institutePageNumber)
-      }
       setTimeout(() => {
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement
         if (searchInput) {
-          searchInput.focus();
+          searchInput.focus()
         }
-      }, 100);
-      this.checkCurrentInstitutePresent();
+      }, 100)
+      this.checkCurrentInstitutePresent()
       setTimeout(() => {
         const panel = document.querySelector('.mat-select-panel');
         if (panel) {
