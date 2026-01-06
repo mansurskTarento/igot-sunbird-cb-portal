@@ -5,10 +5,13 @@ import { CommonMethodsService } from '@sunbird-cb/consumption'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WidgetContentService, WsEvents } from '@sunbird-cb/utils-v2'
 import { LoaderService } from '@ws/author/src/public-api'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 import * as _ from 'lodash'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { ConsentDialogComponent } from './consent-dialog.component'
+import { environment } from '../../../../../../../../../src/environments/environment'
 
 @Component({
   selector: 'ws-app-app-toc-cios-home',
@@ -23,6 +26,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   downloadCertificateLoading = false
   forPreview: any = window.location.href.includes('/public/') || window.location.href.includes('?editMode=true')
   extContentAvailable = true
+  canEnroll = false
+  enrollValidationLoading = true
   rcElem = {
     offSetTop: 0,
     BottomPos: 0,
@@ -66,11 +71,12 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     private contentSvc: WidgetContentService,
     private certSvc: CertificateService,
     public loader: LoaderService,
-
+    private matDialog: MatDialog,
     public snackBar: MatSnackBar,
     public netCoreService: NetCoreService
   ) {
     this.route.data.subscribe((data: any) => {
+      this.enrollValidationLoading = false
       if (data && data.extContent && data.extContent.data && data.extContent.data.content) {
         this.extContentReadData = data.extContent.data.content
         this.extContentReadData['certificateObj'] = {
@@ -93,6 +99,8 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
           this.downloadCert()
           this.contentViewEventForNetCore('completion')
         }
+      } else {
+        this.validateEnrollmentEligibility()
       }
 
     })
@@ -133,7 +141,6 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.isMobile = false
     }
     this.contentViewEventForNetCore('view')
-
   }
 
   initializeDiscussData() {
@@ -186,6 +193,60 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
   }
 
   async enRollToExtCourse(content: any) {
+    const consentUrl: string = `${environment?.missionKarmayogiPath}${this.config?.contentConsent?.consentDocUrl}` || ''
+    const assetsDocUrl: string = `${this.config?.contentConsent?.assetsDocUrl}` || ''
+    const dialogRef = this.matDialog.open(ConsentDialogComponent, {
+      width: '900px',
+      height: '70vh',
+      maxHeight: '90vh',
+      minHeight: '400px',
+      disableClose: true,
+      hasBackdrop: true,
+      panelClass: 'consent-dialog-panel',
+      data: {
+        consentUrl: consentUrl,
+        assetsDocUrl: assetsDocUrl
+      }
+    })
+
+    // Handle dialog close
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        // User agreed - proceed with enrollment
+        // need to call consent api
+        this.callConsentApi(content)
+      } else {
+        // User disagreed
+        this.snackBar.open('You must agree to the terms to enroll in this course.', 'X', {
+          duration: 5000,
+    })
+      }
+    })
+  }
+
+  callConsentApi(content: any) {
+    console.log(content)
+    const request = {
+      "request":{
+        "contentId": content?.contentId,
+        "consentId":this.config?.contentConsent?.consentId || '',
+        "additionalAttributes":{
+          "userRoles":["public"],
+          "versionKey": new Date().getTime(),
+          "description":"I have read and agree with the above declaration."
+          }
+        }
+      }
+
+    this.certSvc.consentSubmit(request).subscribe((_res: any) => {
+        this.proceedWithEnrollment(content)
+    }, (error: any) => {
+      this.snackBar.open(error?.error?.params?.msg || 'Unable to submit consent', 'X', {
+          duration: 5000,
+    })
+    })
+  }
+  private async proceedWithEnrollment(content: any) {
     this.loader.changeLoad.next(true)
     const reqbody = {
       courseId: content.contentId,
@@ -199,7 +260,9 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
       this.contentViewEventForNetCore('enroll')
     } else {
       this.loader.changeLoad.next(false)
-      this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content')
+      this.snackBar.open(enrollRes?.error?.params?.msg || 'Unable to enroll to the content', 'X', {
+          duration: 10000,
+    })
     }
   }
 
@@ -402,6 +465,26 @@ export class AppTocCiosHomeComponent implements OnInit, AfterViewInit {
     const currentQueryParams = { ...this.route.snapshot.queryParams }
     delete currentQueryParams.commentId
     this.commentId = ''
+  }
+
+  private validateEnrollmentEligibility(): void {
+    // Only validate if user is not already enrolled and content is available
+    if (Object.keys(this.userExtCourseEnroll).length === 0 && this.extContentReadData && this.extContentReadData.contentId && this.extContentReadData.contentPartner && this.extContentReadData.contentPartner.id) {
+      this.enrollValidationLoading = true
+      this.certSvc.validateEnrollmentEligibility(this.extContentReadData.contentId, this.extContentReadData.contentPartner.id).subscribe(
+        (_response: any) => {
+          this.enrollValidationLoading = false
+          this.canEnroll = true
+        },
+        (error: any) => {
+        this.snackBar.open(error?.error?.params?.msg || 'Unable to validate enrollment eligibility', 'X', {
+          duration: 10000,
+    })
+          this.enrollValidationLoading = false
+          this.canEnroll = false
+        }
+      )
+    }
   }
 
 }

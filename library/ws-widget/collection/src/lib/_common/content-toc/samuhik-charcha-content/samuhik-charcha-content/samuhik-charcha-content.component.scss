@@ -15,6 +15,12 @@
   max-width: 600px;
   display: flex;
   justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* Required so blur is visible */
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
 }
 
 .locked-overlay {
@@ -22,6 +28,12 @@
   border-radius: 8px;
   padding: 20px 20px;
   width: 100%;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* Required so blur is visible */
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
 }
 
 .locked-content {
@@ -136,12 +148,12 @@
 .event-container-unlocked {
   position: relative;
   transition: filter 0.3s ease;
+}
 
-  &.blurred {
-    filter: blur(3px);
-    pointer-events: none;
-    user-select: none;
-  }
+.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .welcome-container {
@@ -208,8 +220,8 @@
 
     .welcome-icon {
       font-size: 28px;
-      width: 28px;
-      height: 28px;
+      // width: 28px;
+      // height: 28px;
     }
   }
 

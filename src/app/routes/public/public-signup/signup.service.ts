@@ -22,6 +22,7 @@ const API_END_POINTS = {
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
   CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
+  STATE_MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/search'
 }
 
 @Injectable({
@@ -214,5 +215,9 @@ export class SignupService {
 
   getRegistrationLinkStatus(req: any) {
     return this.http.post(API_END_POINTS.CHECK_REGISTRATION_LINK_STATUS, req)
+  }
+
+  getStateOrMinistyForRegistration(req:any) {
+    return this.http.post(API_END_POINTS.STATE_MINISTRY_FOR_REGISTRATION, req)
   }
 }
