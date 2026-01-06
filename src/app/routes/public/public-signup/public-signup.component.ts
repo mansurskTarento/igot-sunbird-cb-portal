@@ -1450,10 +1450,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     const requestBody: any = {
       "request": {
-        "filters": {
-          "status": 1,
-          "sbOrgType": this.registrationFormStepOne.controls.type.value
-        },
+        // "filters": {
+        //   "status": 1,
+        //   "sbOrgType": this.registrationFormStepOne.controls.type.value
+        // },
         "query": "",
         "limit": reqLimit,
         "offset": reqLimit > 0 ? pageIndex * reqLimit : this.ministryDefaultLoadCount,
@@ -1478,7 +1478,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreMinistrys = true
     console.log('requestBody--', requestBody)
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+    this.signupSvc.getMinistryForRegistration(requestBody).pipe(finalize(() => {
       this.isLoadingMoreMinistrys = false
       this.ministryInitInProgress = false
     }))
@@ -1691,10 +1691,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     const requestBody: any = {
       "request": {
-        "filters": {
-          "status": 1,
-          "sbOrgType": this.registrationFormStepOne.controls.type.value
-        },
+        // "filters": {
+        //   "status": 1,
+        //   "sbOrgType": this.registrationFormStepOne.controls.type.value
+        // },
         "query": "",
         "limit": reqLimit,
         "offset": reqLimit > 0 ? pageIndex * reqLimit : this.stateDefaultLoadCount,
@@ -1719,7 +1719,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreStates = true
 
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+    this.signupSvc.getStateForRegistration(requestBody).pipe(finalize(() => {
       this.isLoadingMoreStates = false
       this.stateInitInProgress = false
     }))
