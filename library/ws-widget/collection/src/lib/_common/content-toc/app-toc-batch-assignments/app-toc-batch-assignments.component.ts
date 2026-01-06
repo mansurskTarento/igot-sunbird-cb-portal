@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import * as _ from 'lodash'
@@ -146,9 +146,9 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
     if (assignment.answerURL) {
       this.submitAssignment(assignment)
     } else {
-      const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
+      const fileInput = document.getElementById('sResourceFile') as HTMLInputElement
       if (fileInput) {
-        fileInput.click();
+        fileInput.click()
       }
     }
 
@@ -185,7 +185,7 @@ export class AppTocBatchAssignmentsComponent implements OnInit {
         //this.viewAssignments(assessment.answerURL)
         this.previewAssignments(assessment.answerURL)
       } else if (result === 0) {
-        const fileInput = document.getElementById('sResourceFile') as HTMLInputElement;
+        const fileInput = document.getElementById('sResourceFile') as HTMLInputElement
         if (fileInput) {
           fileInput.click()
         }

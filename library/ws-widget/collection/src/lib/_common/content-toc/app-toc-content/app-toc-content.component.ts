@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@
 import { ActivatedRoute, Data } from '@angular/router'
 import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
 import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { Subscription } from 'rxjs'
 // import { NsAppToc } from '../models/app-toc.model'
 
@@ -42,7 +42,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
 
   typesOfContent: any
   selectedTabType: any = 'content'
-  nsContent: any =  NsContent
+  nsContent: any = NsContent
   otherResourse = 0
 
   constructor(
@@ -62,15 +62,15 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
       // console.log('qParamsMap--', qParamsMap)
       // console.log('this.content--', this.content)
       // console.log('this.hierarchyMapData', this.hierarchyMapData)
-      if(this.content && this.content?.preEnrolmentResources && typeof this.content?.preEnrolmentResources === 'string') {
-        this.content['preEnrolmentResources'] =  JSON.parse(this.content?.preEnrolmentResources)
+      if (this.content && this.content?.preEnrolmentResources && typeof this.content?.preEnrolmentResources === 'string') {
+        this.content['preEnrolmentResources'] = JSON.parse(this.content?.preEnrolmentResources)
       }
       const contextId = qParamsMap.get('contextId')
       const contextPath = qParamsMap.get('contextPath')
       const batchId = qParamsMap.get('batchId')
       const primaryCategory = qParamsMap.get('primaryCategory')
       const preAssessment = qParamsMap.get('preAssessment')
-      if(preAssessment === 'true') {
+      if (preAssessment === 'true') {
         this.isPreAssessment = true
       }
       if (contextId && contextPath) {
@@ -80,7 +80,7 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
       if (batchId) {
         this.batchId = batchId
       }
-      if(primaryCategory ) {
+      if (primaryCategory) {
         this.selectedTabType = primaryCategory === this.nsContent.EPrimaryCategory.OFFLINE_SESSION ? 'session' : 'content'
       }
     })
@@ -121,9 +121,9 @@ export class AppTocContentComponent implements OnInit, OnDestroy, OnChanges {
         setTimeout(() => {
           this.selectedTabType = 'session'
           this.typesOfContent[0].disabled = true
-        },         1000)
+        }, 1000)
       } else {
-        this.typesOfContent[1].disabled =  this.tocStructure['offlineSession'] ? false : true
+        this.typesOfContent[1].disabled = this.tocStructure['offlineSession'] ? false : true
       }
     }
   }

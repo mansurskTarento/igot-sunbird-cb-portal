@@ -10,7 +10,7 @@ import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
 import { CourseCompletionDialogComponent } from '../course-completion-dialog/course-completion-dialog.component'
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 // import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
@@ -85,7 +85,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     private appTocSvc: AppTocService,
     private widgetLibSvc: WidgetContentLibService,
     // private contentSvc: WidgetContentServiceUtils
-    
+
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -100,23 +100,23 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // this.getAuthDataIdentifer()
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
-    && this.activatedRoute.snapshot.data.enrollmentData.data || []
-    
-    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead && 
+      && this.activatedRoute.snapshot.data.enrollmentData.data || []
+
+    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead &&
       this.activatedRoute?.snapshot?.data?.contentRead?.data?.result?.content?.primaryCategory
 
     this.pageScrollSubscription = this.appTocSvc.updatePageScroll.subscribe((value: boolean) => {
       if (value) {
         setTimeout(() => {
-          if (document.getElementsByClassName('viewer-top-secondary')  &&
-          document.getElementsByClassName('viewer-top-secondary')[0]) {
+          if (document.getElementsByClassName('viewer-top-secondary') &&
+            document.getElementsByClassName('viewer-top-secondary')[0]) {
             document.getElementsByClassName('viewer-top-secondary')[0].scrollIntoView({
               behavior: 'smooth',
               block: 'start',
               inline: 'start',
-           })
+            })
           }
-        },         1000)
+        }, 1000)
       }
     })
 
@@ -171,9 +171,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data:any) => {
+    this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data: any) => {
       if (data.prevResource) {
-        if(data.prevResource && !data.prevResource.viewerUrl) {
+        if (data.prevResource && !data.prevResource.viewerUrl) {
           data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
             data.prevResource.mimeType,
             // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
@@ -184,7 +184,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         } else {
           this.prevResourceUrl = data.prevResource.viewerUrl
         }
-        
+
         this.prevResourceUrlParams = {
           queryParams: {
             primaryCategory: data.prevResource.primaryCategory,
@@ -210,7 +210,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         this.prevResourceUrl = null
       }
       if (data.nextResource) {
-        if(data.nextResource && !data.nextResource.viewerUrl) {
+        if (data.nextResource && !data.nextResource.viewerUrl) {
           data.nextResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
             data.nextResource.mimeType,
             // )}/${content.identifier}?primaryCategory=${content.primaryCategory}
@@ -221,7 +221,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         } else {
           this.nextResourceUrl = data.nextResource.viewerUrl
         }
-        
+
         this.nextResourceUrlParams = {
           queryParams: {
             primaryCategory: data.nextResource.primaryCategory,
@@ -257,7 +257,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
       this.collectionId = params.get('collectionId') as string
       this.isPreview = params.get('preview') === 'true' ? true : false
       const enrollList: any = this.widgetLibSvc.getEnrolledDataFromList(this.enrollmentList.courses, this.collectionId) || '{}'
-      this.currentDataFromEnrollList =  enrollList
+      this.currentDataFromEnrollList = enrollList
     })
 
     this.viewerDataServiceResourceSubscription = this.viewerDataSvc.changedSubject.subscribe(
@@ -289,10 +289,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       this.activatedRoute.snapshot.queryParams.batchId : ''
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-    if(isPreAssessment) {
-        return this.viewerSvc
-          .realTimeProgressUpdateForPreAssessmentQuiz(resourceId,  status)
-      
+    if (isPreAssessment) {
+      return this.viewerSvc
+        .realTimeProgressUpdateForPreAssessmentQuiz(resourceId, status)
+
     }
     return this.viewerSvc.realTimeProgressUpdateQuiz(resourceId, collectionId, batchId, status)
   }
@@ -332,7 +332,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   finishDialog() {
-    if(window.location.href.includes('preAssessment=true')) {
+    if (window.location.href.includes('preAssessment=true')) {
       this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
     }
     else if (!this.forPreview) {
@@ -347,7 +347,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           this.userid = this.configSvc.userProfile.userId || ''
         }
 
-        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)  
+        const language = this.viewerSvc.getResourceContentLanguage(this.identifier)
         const req = {
           request: {
             userId,
@@ -364,7 +364,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
             this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
 
             const lastIndexData = this.contentProgressHash?.length && this.contentProgressHash[this.contentProgressHash?.length - 1]
-            if(lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
+            if (lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
               this.generateCertificate()
             }
             if (this.content && ![
@@ -406,7 +406,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   showCompletionPopUp() {
     let id = ''
     const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
-                  this.activatedRoute.snapshot.queryParams.MLId : ''
+      this.activatedRoute.snapshot.queryParams.MLId : ''
     // check if multilingual ID is there then hit the API with MLID
     id = MLID ? MLID : this.identifier
     const dialogRef = this.dialog.open(CourseCompletionDialogComponent, {
@@ -442,13 +442,13 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   changeResource() {
     setTimeout(() => {
       this.appTocSvc.getPageScroll.next(true)
-    },         700)
+    }, 700)
   }
 
   checkForNextOfflineOnlineSession() {
     const nextUrl: any = this.nextResourceUrl
     if ((nextUrl.includes('offline-session')) ||
-    (nextUrl.includes('online-session'))
+      (nextUrl.includes('online-session'))
     ) {
       this.router.navigate([this.nextResourceUrl], { queryParams: this.nextResourceUrlParams.queryParams })
       // setTimeout(() => {
@@ -461,7 +461,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   checkForPrevOfflineOnlineSession() {
     const prevUrl: any = this.prevResourceUrl
     if ((prevUrl.includes('offline-session')) ||
-    (prevUrl.includes('online-session'))
+      (prevUrl.includes('online-session'))
 
     ) {
       this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
@@ -501,10 +501,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   }
 
   backToPrev() {
-    if(this.prevResourceUrl) {
+    if (this.prevResourceUrl) {
       this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
     } else {
-      if(!this.forPreview) {
+      if (!this.forPreview) {
         this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
       } else {
         this.router.navigateByUrl(`public/toc/${this.collectionId}/overview`)
@@ -518,24 +518,24 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
   // }
 
-    generateCertificate() {
-      // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
-      //   (cat: string) => cat?.toLowerCase()
-      // );
+  generateCertificate() {
+    // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+    //   (cat: string) => cat?.toLowerCase()
+    // );
 
-      // if (
-      //   allowedPrimaryCategory &&
-      //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-      //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
-      // ) {
-      //   const payload = {
-      //     request: {
-      //       courseId: this.identifier,
-      //       batchId: this.batchId,
-      //       userId: this.userid,
-      //     },
-      //   };
-      //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
-      // } 
+    // if (
+    //   allowedPrimaryCategory &&
+    //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+    //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+    // ) {
+    //   const payload = {
+    //     request: {
+    //       courseId: this.identifier,
+    //       batchId: this.batchId,
+    //       userId: this.userid,
+    //     },
+    //   };
+    //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+    // }
   }
 }

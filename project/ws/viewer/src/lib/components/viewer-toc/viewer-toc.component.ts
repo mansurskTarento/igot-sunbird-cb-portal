@@ -24,7 +24,7 @@ import { delay } from 'rxjs/operators'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
 import { MatTreeNestedDataSource } from '@angular/material/tree'
-// import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+// import { AppTocService } from '@sunbird-cb/toc'
 export interface IViewerTocCard {
   identifier: string
   viewerUrl: string

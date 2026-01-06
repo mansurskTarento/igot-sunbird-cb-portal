@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
 import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { ContentLanguageService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable({

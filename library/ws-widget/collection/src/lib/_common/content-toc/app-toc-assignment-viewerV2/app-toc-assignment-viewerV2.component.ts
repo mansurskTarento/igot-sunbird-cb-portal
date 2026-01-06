@@ -6,7 +6,7 @@ import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 @Component({
   selector: 'ws-widget-app-assignment-viewerV2',
@@ -41,10 +41,10 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.data.url) {
-      const urlParts = this.data.url.split('/');
-      this.fileName = urlParts[urlParts.length - 1];
-      this.fileName = this.fileName.split('?')[0];
-      this.fileName = decodeURIComponent(this.fileName);
+      const urlParts = this.data.url.split('/')
+      this.fileName = urlParts[urlParts.length - 1]
+      this.fileName = this.fileName.split('?')[0]
+      this.fileName = decodeURIComponent(this.fileName)
       this.fileType = this.getFileType(this.fileName)
       this.readFile()
     }
@@ -52,24 +52,24 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
 
   readFile() {
     if (!this.data.contentId) {
-      this.handleError('Content ID is missing');
-      return;
+      this.handleError('Content ID is missing')
+      return
     }
     if (!this.data.batchId) {
-      this.handleError('Batch ID is missing');
-      return;
+      this.handleError('Batch ID is missing')
+      return
     }
     if (!this.data.assessment?.id) {
-      this.handleError('Assignment ID is missing');
-      return;
+      this.handleError('Assignment ID is missing')
+      return
     }
     if (!this.fileName) {
-      this.handleError('File name is missing');
-      return;
+      this.handleError('File name is missing')
+      return
     }
 
-    this.isLoading = true;
-    this.error = false;
+    this.isLoading = true
+    this.error = false
 
     this.tocSvc.readAssignmentFile(
       this.data.contentId,
@@ -79,15 +79,15 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
     ).subscribe({
       next: (res: any) => {
         if (res) {
-          this.processFileData(res);
+          this.processFileData(res)
         } else {
-          this.handleError('No file data received');
+          this.handleError('No file data received')
         }
       },
       error: (error) => {
-        this.handleError(`Failed to load file: ${error.message || 'Unknown error'}`);
+        this.handleError(`Failed to load file: ${error.message || 'Unknown error'}`)
       }
-    });
+    })
   }
 
   handleSubmitAssignment() {
@@ -160,52 +160,52 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
 
   private processFileData(fileData: any) {
     try {
-      let blobData: Blob;
+      let blobData: Blob
 
       if (fileData instanceof Blob) {
-        const correctMimeType = this.getMimeType();
+        const correctMimeType = this.getMimeType()
         if (fileData.type !== correctMimeType && fileData.type.includes('multipart/form-data')) {
-          blobData = new Blob([fileData], { type: correctMimeType });
+          blobData = new Blob([fileData], { type: correctMimeType })
         } else {
-          blobData = fileData;
+          blobData = fileData
         }
       } else if (fileData instanceof ArrayBuffer) {
-        blobData = new Blob([fileData], { type: this.getMimeType() });
+        blobData = new Blob([fileData], { type: this.getMimeType() })
       } else if (typeof fileData === 'string') {
         // Check if it's base64
         if (fileData.startsWith('data:')) {
 
           // Data URL format
-          const response = fetch(fileData);
+          const response = fetch(fileData)
           response.then(res => res.blob()).then(blob => {
-            this.fileBlob = blob;
-            this.createFileUrl();
-            this.setupViewer();
-          });
-          return;
+            this.fileBlob = blob
+            this.createFileUrl()
+            this.setupViewer()
+          })
+          return
         } else {
           // Plain base64
-          const byteCharacters = atob(fileData);
-          const byteNumbers = new Array(byteCharacters.length);
+          const byteCharacters = atob(fileData)
+          const byteNumbers = new Array(byteCharacters.length)
           for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
           }
-          const byteArray = new Uint8Array(byteNumbers);
-          blobData = new Blob([byteArray], { type: this.getMimeType() });
+          const byteArray = new Uint8Array(byteNumbers)
+          blobData = new Blob([byteArray], { type: this.getMimeType() })
         }
       } else {
-        blobData = new Blob([JSON.stringify(fileData)], { type: this.getMimeType() });
+        blobData = new Blob([JSON.stringify(fileData)], { type: this.getMimeType() })
       }
       if (blobData.size === 0) {
-        throw new Error('Blob is empty (size: 0)');
+        throw new Error('Blob is empty (size: 0)')
       }
 
-      this.fileBlob = blobData;
-      this.createFileUrl();
-      this.setupViewer();
+      this.fileBlob = blobData
+      this.createFileUrl()
+      this.setupViewer()
 
     } catch (error) {
-      this.handleError(`Failed to process file data: ${error}`);
+      this.handleError(`Failed to process file data: ${error}`)
     }
   }
 
@@ -213,29 +213,29 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
     if (this.fileBlob) {
       // Clean up previous URL
       if (this.fileUrl) {
-        URL.revokeObjectURL(this.fileUrl);
+        URL.revokeObjectURL(this.fileUrl)
       }
 
       // Create new object URL
-      this.fileUrl = URL.createObjectURL(this.fileBlob);
+      this.fileUrl = URL.createObjectURL(this.fileBlob)
     } else {
-      console.log('No file blob available to create URL');
+      console.log('No file blob available to create URL')
     }
   }
 
   private setupViewer() {
-    this.isLoading = false;
+    this.isLoading = false
 
     if (!this.fileUrl) {
-      this.handleError('No file URL available');
-      return;
+      this.handleError('No file URL available')
+      return
     }
 
     if (this.fileType === 'pdf') {
-      this.setupPdfViewer();
+      this.setupPdfViewer()
     } else {
-      this.documentNotSupported = true;
-      this.showDownloadOption = true;
+      this.documentNotSupported = true
+      this.showDownloadOption = true
     }
   }
 
@@ -243,58 +243,58 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
     try {
       // Try direct PDF viewer first
       const pdfUrlWithParams = this.fileUrl + '#toolbar=0&navpanes=0&scrollbar=0'
-      this.safeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrlWithParams);
-      this.showPdfViewer = true;
+      this.safeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrlWithParams)
+      this.showPdfViewer = true
     } catch (error) {
-      console.error('Error setting up PDF viewer:', error);
-      this.handleError('Failed to setup PDF viewer');
+      console.error('Error setting up PDF viewer:', error)
+      this.handleError('Failed to setup PDF viewer')
     }
   }
 
   private getFileType(fileName: string): string {
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName.split('.').pop()?.toLowerCase()
 
     if (extension === 'pdf') {
-      return 'pdf';
+      return 'pdf'
     }
-    return 'unknown';
+    return 'unknown'
   }
 
   private getMimeType(): string {
     if (this.fileType === 'pdf') {
-      return 'application/pdf';
+      return 'application/pdf'
     }
-    return 'application/octet-stream';
+    return 'application/octet-stream'
   }
 
   private handleError(message: string) {
-    this.isLoading = false;
-    this.error = true;
-    this.errorMessage = message;
-    this.snackBar.open(message, 'Close', { duration: 5000 });
+    this.isLoading = false
+    this.error = true
+    this.errorMessage = message
+    this.snackBar.open(message, 'Close', { duration: 5000 })
   }
 
   // Public methods for template
   downloadFile() {
     if (this.fileBlob) {
-      const url = URL.createObjectURL(this.fileBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = this.fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const url = URL.createObjectURL(this.fileBlob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = this.fileName
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     }
   }
 
   onIframeLoad() {
-    console.log('Iframe loaded successfully');
+    console.log('Iframe loaded successfully')
   }
 
   onIframeError() {
-    console.error('Iframe failed to load');
-    this.handleError('Failed to load document in viewer');
+    console.error('Iframe failed to load')
+    this.handleError('Failed to load document in viewer')
   }
 
   handleClose() {
@@ -325,20 +325,20 @@ export class AssignmentViewerV2Component implements OnInit, OnDestroy {
 
   closeDialog() {
     if (this.fileUrl) {
-      URL.revokeObjectURL(this.fileUrl);
+      URL.revokeObjectURL(this.fileUrl)
     }
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
 
   retryLoad() {
-    this.error = false;
-    this.errorMessage = '';
-    this.readFile();
+    this.error = false
+    this.errorMessage = ''
+    this.readFile()
   }
 
   ngOnDestroy() {
     if (this.fileUrl) {
-      URL.revokeObjectURL(this.fileUrl);
+      URL.revokeObjectURL(this.fileUrl)
     }
   }
 }

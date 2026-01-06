@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
-import { NsAppRating } from '../../../../../../project/ws/app/src/lib/routes/app-toc/models/rating.model'
+import { NsAppRating } from '@sunbird-cb/toc'
 
 const PROXY_SLAG_V8 = '/apis/proxies/v8'
 const API_END_POINTS = {
   GET_RATING: (contentId: string, contentType: string, userId: string) =>
-  `${PROXY_SLAG_V8}/ratings/v1/read/${contentId}/${contentType}/${userId}`,
+    `${PROXY_SLAG_V8}/ratings/v1/read/${contentId}/${contentType}/${userId}`,
   ADD_OR_UPDATE: `${PROXY_SLAG_V8}/ratings/v1/upsert`,
   GET_RATING_SUMMARY: (contentId: string, contentType: string) =>
-  `${PROXY_SLAG_V8}/ratings/v1/summary/${contentId}/${contentType}`,
+    `${PROXY_SLAG_V8}/ratings/v1/summary/${contentId}/${contentType}`,
   GET_RATING_LOOKUP: `${PROXY_SLAG_V8}/ratings/v1/ratingLookUp`,
   GET_AUTHOR_REPLY: (contentId: string, userID: string) =>
-  `${PROXY_SLAG_V8}/ratings/v1/read/${contentId}/Course/${userID}`,
+    `${PROXY_SLAG_V8}/ratings/v1/read/${contentId}/Course/${userID}`,
   POST_AUTHOR_REPLY: `${PROXY_SLAG_V8}/ratings/v2/read`,
 }
 
@@ -31,7 +31,7 @@ export class RatingService {
         API_END_POINTS.GET_RATING(contentId, contentType, userId)
       )
     }
-      return Observable.of({})
+    return Observable.of({})
   }
 
   addOrUpdateRating(req: NsAppRating.IRating): Observable<any> {
@@ -63,7 +63,7 @@ export class RatingService {
         API_END_POINTS.POST_AUTHOR_REPLY, req
       )
     }
-      return Observable.of({})
+    return Observable.of({})
   }
 
   getRatingIcon(ratingIndex: number, avg: number): 'star' | 'star_border' | 'star_half' {

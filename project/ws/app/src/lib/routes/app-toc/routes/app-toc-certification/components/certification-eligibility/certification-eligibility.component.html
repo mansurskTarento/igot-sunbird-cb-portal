@@ -1,8 +1,0 @@
-<ng-container [ngSwitch]="eligibility.reason.code">
-  <ng-container *ngSwitchCase="-1" >This certification has not been enabled for registration.</ng-container>
-  <ng-container *ngSwitchCase="-2" >This certification is not applicable to your job level.</ng-container>
-  <ng-container *ngSwitchCase="-3" >This certification is not applicable to your PU.</ng-container>
-  <ng-container *ngSwitchCase="-4" >This certification has not been enabled for you.</ng-container>
-  <ng-container *ngSwitchCase="-5" >This certification is not applicable to your role code.</ng-container>
-  <ng-container *ngSwitchCase="-10" >You are not eligible for this certification.</ng-container>
-</ng-container>
