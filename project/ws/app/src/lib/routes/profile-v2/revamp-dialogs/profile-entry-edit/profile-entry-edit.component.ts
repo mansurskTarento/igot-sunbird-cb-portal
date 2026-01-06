@@ -669,7 +669,7 @@ export class ProfileEntryEditComponent implements OnInit {
             isInitializingDegree = false
             return
           }
-          if (searchText || this.filterDegreesMeta.length === 0) {
+          if (searchText || this.filterDegreesMeta?.length === 0) {
             this.degreePageNumber = 1
             this.degreeSearchText = searchText
             this.getEducationalQualifications('degree', this.degreePageNumber, searchText)
@@ -699,7 +699,7 @@ export class ProfileEntryEditComponent implements OnInit {
             isInitializingInstitute = false
             return
           }
-          if (searchText || this.filterInstitutionsList.length === 0) {
+          if (searchText || this.filterInstitutionsList?.length === 0) {
             this.institutePageNumber = 1
             this.instituteSearchText = searchText
             this.getEducationalQualifications('institute', this.institutePageNumber, searchText)
@@ -861,7 +861,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
       if (!degreeExists) {
         const newDegree = { name: currentDegree };
-        if (this.filterDegreesMeta.length >= this.degreeListLoadCount) {
+        if (this.filterDegreesMeta?.length >= this.degreeListLoadCount) {
           // Replace the last item with the new one to maintain the same number of items
           this.filterDegreesMeta.pop();
         }
@@ -917,7 +917,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
       if (!instituteExists) {
         const newInstitute = { name: currentInstitute };
-        if (this.filterInstitutionsList.length >= this.institutionListLoadCount) {
+        if (this.filterInstitutionsList?.length >= this.institutionListLoadCount) {
           // Replace the last item with the new one to maintain the same number of items
           this.filterInstitutionsList.pop();
         }
