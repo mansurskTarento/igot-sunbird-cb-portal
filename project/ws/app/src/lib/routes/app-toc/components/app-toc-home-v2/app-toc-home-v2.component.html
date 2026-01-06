@@ -484,8 +484,11 @@
                 </div>
               </div>
               <div class="flex items-center" *ngIf="contentReadData?.retirementDate">
-                <div class="new-version-pill text-xs leading-3">
+                <div class="new-version-pill text-xs leading-3" *ngIf="contentReadData?.status !== 'Retired'">
                   <span>{{ 'apptoc.pendingRetirement' | translate }}</span>
+                </div>
+                <div class="new-version-retire-pill text-xs leading-3" *ngIf="contentReadData?.status === 'Retired'">
+                  <span>{{ 'apptoc.retired' | translate }}</span>
                 </div>
               </div>
             </div>
