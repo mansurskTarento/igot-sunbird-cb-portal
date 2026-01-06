@@ -3039,20 +3039,24 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
   checkForCompletionSurveyTrigger() {
     if (this.content && this.contentReadData) {
       console.log('checkForSurveyTrigger this.content', this.contentReadData)
-      if ((this.content.completionStatus === 2 || this.content.completionPercentage === 100) && this.contentReadData.completionSurveyLink) {
-        const sID = this.contentReadData.completionSurveyLink.split('surveys/')
-        const surveyId = sID[1]
-        const courseId = this.contentReadData.identifier
-        // Call API to see if survey is submitted or not
-        this.tocSvc.getApllicationsById(surveyId, courseId).subscribe((res) => {
-          console.log('response of getApllicationsById', res)
-          if (res.result.response && Object.keys(res.result.response).length > 0) {
-            this.lockCertificate = false
-          } else {
-            this.lockCertificate = true
-            this.openCompletionSurveyFormPopup()
-          }
-        })
+      // check if completion survey is enabled and user has completed the course before 23rd DEC 2023 (release date of completion survey)
+      if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.completionSurvey.enabled &&
+        this.enrolledCourseData && this.enrolledCourseData && this.enrolledCourseData.completedOn > this.configSvc.instanceConfig.completionSurvey.startDate) {
+        if ((this.content.completionStatus === 2 || this.content.completionPercentage === 100) && this.contentReadData.completionSurveyLink) {
+          const sID = this.contentReadData.completionSurveyLink.split('surveys/')
+          const surveyId = sID[1]
+          const courseId = this.contentReadData.identifier
+          // Call API to see if survey is submitted or not
+          this.tocSvc.getApllicationsById(surveyId, courseId).subscribe((res) => {
+            console.log('response of getApllicationsById', res)
+            if (res.result.response && Object.keys(res.result.response).length > 0) {
+              this.lockCertificate = false
+            } else {
+              this.lockCertificate = true
+              this.openCompletionSurveyFormPopup()
+            }
+          })
+        }
       }
     }
   }
