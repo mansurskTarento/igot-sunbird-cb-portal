@@ -116,13 +116,13 @@
               </ng-container>
               <ng-template #transferRequest>
                 <ng-container *ngIf="!enableWR">
-                  <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="below"
+                  <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="right"
                     matTooltip="{{ 'NetworkV2Profile.clickToTransferTooltip' | translate }}" #MTRTooltip="matTooltip">
                     <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
                   </button>
                 </ng-container>
                 <ng-container *ngIf="enableWR">
-                  <button mat-menu-item class="disable-button" matTooltipPosition="below"
+                  <button mat-menu-item class="disable-button" matTooltipPosition="right"
                     matTooltip="{{ 'NetworkV2Profile.makeTransferRequest' | translate }}" (click)="MTRTooltip.toggle()">
                     <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
                   </button>
