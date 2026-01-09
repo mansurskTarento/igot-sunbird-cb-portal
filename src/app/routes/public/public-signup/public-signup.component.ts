@@ -2207,7 +2207,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (this.masterData['ministryBackup'][i]['hierarchyLevel'] === 'levelOne') {
             filters = {
               "status": 1,
-              "levelZeroOrgId": this.masterData['ministryBackup'][i]['parentPathId'],
+              "levelZeroOrgId": this.masterData['ministryBackup'][i]['ministryOrStateId'],
               "levelOneOrgId": this.masterData['ministryBackup'][i]['identifier'],
               "hierarchyRequestType": "All"
             }
