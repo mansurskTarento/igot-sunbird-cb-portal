@@ -1467,7 +1467,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "sbOrgSubType",
           "channel",
           "hierarchyLevel",
-          "parentPathId"
+          "parentPathId",
+          "ministryOrStateId"
         ]
       }
     }
