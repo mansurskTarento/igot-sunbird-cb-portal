@@ -3041,7 +3041,7 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       console.log('checkForSurveyTrigger this.content', this.contentReadData)
       // check if completion survey is enabled and user has completed the course before 23rd DEC 2023 (release date of completion survey)
       if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.completionSurvey.enabled &&
-        this.enrolledCourseData && this.enrolledCourseData && this.enrolledCourseData.completedOn > this.configSvc.instanceConfig.completionSurvey.startDate) {
+        this.enrolledCourseData && this.enrolledCourseData && this.enrolledCourseData.completedOn >= this.configSvc.instanceConfig.completionSurvey.startDate) {
         if ((this.content.completionStatus === 2 || this.content.completionPercentage === 100) && this.contentReadData.completionSurveyLink) {
           const sID = this.contentReadData.completionSurveyLink.split('surveys/')
           const surveyId = sID[1]

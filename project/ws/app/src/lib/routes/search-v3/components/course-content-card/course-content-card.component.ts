@@ -170,7 +170,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     if (
       _.get(this.configSvc, 'instanceConfig.completionSurvey.enabled') &&
       this.courseEnrollment &&
-      this.courseEnrollment.completedOn > _.get(this.configSvc.instanceConfig, 'completionSurvey.startDate') &&
+      this.courseEnrollment.completedOn >= _.get(this.configSvc.instanceConfig, 'completionSurvey.startDate') &&
       this.content &&
       this.content.completionSurveyLink &&
       this.content.surveyCompletionStatus === false
