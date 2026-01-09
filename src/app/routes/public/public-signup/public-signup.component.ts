@@ -2206,9 +2206,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
         "hierarchyRequestType": "All"
       }
-      for (let i = 0; i < this.masterData['ministryBackup'], length; i++) {
-        if (this.masterData['ministryBackup'][i]['identifier'] === this.registrationFormStepOne.controls.ministry.value) {
-          if (this.masterData['ministryBackup'][i]['hierarchyLevel'] === 'levelOne') {
+      for (let i = 0; i < this.masterData['ministryBackup'].length; i++) {
+        if (this.masterData['ministryBackup'][i]?.['identifier'] === this.registrationFormStepOne.controls.ministry.value) {
+          if (this.masterData['ministryBackup'][i]?.['hierarchyLevel'] === 'levelOne') {
             filters = {
               "status": 1,
               "levelZeroOrgId": this.masterData['ministryBackup'][i]['ministryOrStateId'],
