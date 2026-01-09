@@ -1488,9 +1488,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
 
-          const mapped = content.filter(
-            (item: any) => item && item.sbOrgType === 'ministry'
-          )
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'ministry'
+          // )
+
+          const mapped = content
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -1729,9 +1731,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
 
-          const mapped = content.filter(
-            (item: any) => item && item.sbOrgType === 'state'
-          )
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'state'
+          // )
+
+          const mapped = content
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
