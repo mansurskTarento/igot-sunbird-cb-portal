@@ -1467,7 +1467,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "sbOrgSubType",
           "channel",
           "hierarchyLevel",
-          "parentPathId"
+          "parentPathId",
+          "ministryOrStateId"
         ]
       }
     }
@@ -1710,7 +1711,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
           "sbOrgSubType",
-          "channel"
+          "channel",
+          "hierarchyLevel",
+          "parentPathId",
+          "ministryOrStateId"
         ]
       }
     }
