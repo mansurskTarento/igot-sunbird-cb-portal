@@ -99,7 +99,7 @@
 
           <!-- District -->
           <div class="flex flex-col profile-control w-full" [ngClass]="{'disableField': !entryForm?.get('orgState')?.value}"
-            matTooltip="{{ entryForm?.get('orgState')?.value ? '' : 'Please select a state first.' }}" 
+            matTooltip="{{ entryForm?.get('orgState')?.value ? '' : 'Please select a state first.' }}"
             [matTooltipDisabled]="entryForm?.get('orgState')?.value !== ''" matTooltipPosition="above">
             <div class="lable">{{'NetworkV2Profile.district' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
@@ -188,8 +188,8 @@
                     autocomplete="off">
                 </div>
               </div>
-              <mat-option *ngFor="let degree of filterDegreesMeta" [value]="degree">
-                {{ degree }}
+              <mat-option *ngFor="let degree of filterDegreesMeta" [value]="degree?.name">
+                {{ degree?.name }}
               </mat-option>
               <div *ngIf="isLoadingMoredegrees" class="loading-indicator">
                 {{'NetworkV2Profile.loadingMore' | translate}}
@@ -234,7 +234,7 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">{{'NetworkV2Profile.instituteName' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="institutionName" placeholder="{{'NetworkV2Profile.pleaseSelectInstituteName' | translate}}" panelClass="profile-control" 
+            <mat-select formControlName="institutionName" placeholder="{{'NetworkV2Profile.pleaseSelectInstituteName' | translate}}" panelClass="profile-control"
             (openedChange)="setupInstituteScrollListener($event)" (closed)="onInstituteDropdownClosed()" >
             <div class="sticky-search-container" (click)="$event.stopPropagation()">
               <div class="">
@@ -244,7 +244,7 @@
               </div>
             </div>
               <ng-container *ngFor="let institute of filterInstitutionsList">
-                <mat-option [value]="institute">{{institute}}</mat-option>
+                <mat-option [value]="institute?.name">{{institute?.name}}</mat-option>
               </ng-container>
                 <div *ngIf="isLoadingMoreInstitutions" class="loading-indicator">
                 {{'NetworkV2Profile.loadingMore' | translate}}
@@ -374,7 +374,7 @@
 
         <!-- URL -->
         <div class="flex flex-col profile-control w-full" [ngClass]="{'disable': disableUrl }">
-          <div class="lable">{{'NetworkV2Profile.url' | translate}} 
+          <div class="lable">{{'NetworkV2Profile.url' | translate}}
             <mat-icon class="info-icon" matTooltip="You may provide the link for the achievement.">info_outline</mat-icon>
           </div>
           <mat-form-field appearance="outline" class="full-width">

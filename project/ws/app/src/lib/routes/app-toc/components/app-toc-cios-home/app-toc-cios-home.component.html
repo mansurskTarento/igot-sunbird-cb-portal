@@ -29,35 +29,54 @@
                             <mat-icon (click)="onClickOfShare()">share</mat-icon>
                         </div>
                     </div>
-                     <ng-container *ngIf="!skeletonLoader">
+                    <ng-container *ngIf="!skeletonLoader">
                         <!-- Knowledge level block -->
-                        <div *ngIf="extContentReadData?.difficultyLevel || extContentReadData?.knowledgeLevel" class="knowledge-level-container">
-                            <span *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'beginner' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+                        <div *ngIf="extContentReadData?.difficultyLevel || extContentReadData?.knowledgeLevel"
+                            class="knowledge-level-container">
+                            <span
+                                *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'beginner' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'beginner'"
+                                class="level-badge beginner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                                    <rect width="16" height="16" fill="#DBF4DC"/>
-                                    <path d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z" fill="#49C951"/>
+                                    <rect width="16" height="16" fill="#DBF4DC" />
+                                    <path
+                                        d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
+                                        fill="#49C951" />
                                 </svg>
                                 {{extContentReadData?.difficultyLevel || extContentReadData?.knowledgeLevel}}
                             </span>
-                            <span *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'intermediate' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'intermediate'" class="level-badge intermediate">
+                            <span
+                                *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'intermediate' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'intermediate'"
+                                class="level-badge intermediate">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                                    <rect width="16" height="16" fill="#D1DBEC"/>
-                                    <path d="M7.42267 2.66666C7.67927 2.22221 8.32077 2.22221 8.57737 2.66666L12.0415 8.66666C12.2981 9.1111 11.9773 9.66666 11.4641 9.66666H4.53592C4.02272 9.66666 3.70197 9.1111 3.95857 8.66666L7.42267 2.66666Z" fill="#1B4CA1"/>
-                                    <path d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z" fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5"/>
+                                    <rect width="16" height="16" fill="#D1DBEC" />
+                                    <path
+                                        d="M7.42267 2.66666C7.67927 2.22221 8.32077 2.22221 8.57737 2.66666L12.0415 8.66666C12.2981 9.1111 11.9773 9.66666 11.4641 9.66666H4.53592C4.02272 9.66666 3.70197 9.1111 3.95857 8.66666L7.42267 2.66666Z"
+                                        fill="#1B4CA1" />
+                                    <path
+                                        d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
+                                        fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
                                 </svg>
                                 {{extContentReadData?.difficultyLevel || extContentReadData?.knowledgeLevel}}
                             </span>
-                            <span *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'advanced' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+                            <span
+                                *ngIf="extContentReadData?.difficultyLevel?.toLowerCase() === 'advanced' || extContentReadData?.knowledgeLevel?.toLowerCase() === 'advanced'"
+                                class="level-badge advanced">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
                                     <g clip-path="url(#clip0)">
-                                        <rect width="16" height="16" fill="#FFE6E1"/>
-                                        <path d="M7.42264 2.33334C7.67924 1.8889 8.32074 1.8889 8.57734 2.33334L12.0414 8.33334C12.298 8.77779 11.9773 9.33334 11.4641 9.33334H4.53589C4.02269 9.33334 3.70194 8.77779 3.95854 8.33334L7.42264 2.33334Z" fill="#FF8268"/>
-                                        <path d="M7.42264 5C7.67924 4.55555 8.32074 4.55556 8.57734 5L12.0414 11C12.298 11.4444 11.9773 12 11.4641 12H4.53589C4.02269 12 3.70194 11.4444 3.95854 11L7.42264 5Z" fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5"/>
-                                        <path d="M7.42264 7.66669C7.67924 7.22224 8.32074 7.22224 8.57734 7.66669L12.0414 13.6667C12.298 14.1111 11.9773 14.6667 11.4641 14.6667H4.53589C4.02269 14.6667 3.70194 14.1111 3.95854 13.6667L7.42264 7.66669Z" fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5"/>
+                                        <rect width="16" height="16" fill="#FFE6E1" />
+                                        <path
+                                            d="M7.42264 2.33334C7.67924 1.8889 8.32074 1.8889 8.57734 2.33334L12.0414 8.33334C12.298 8.77779 11.9773 9.33334 11.4641 9.33334H4.53589C4.02269 9.33334 3.70194 8.77779 3.95854 8.33334L7.42264 2.33334Z"
+                                            fill="#FF8268" />
+                                        <path
+                                            d="M7.42264 5C7.67924 4.55555 8.32074 4.55556 8.57734 5L12.0414 11C12.298 11.4444 11.9773 12 11.4641 12H4.53589C4.02269 12 3.70194 11.4444 3.95854 11L7.42264 5Z"
+                                            fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5" />
+                                        <path
+                                            d="M7.42264 7.66669C7.67924 7.22224 8.32074 7.22224 8.57734 7.66669L12.0414 13.6667C12.298 14.1111 11.9773 14.6667 11.4641 14.6667H4.53589C4.02269 14.6667 3.70194 14.1111 3.95854 13.6667L7.42264 7.66669Z"
+                                            fill="#FF8268" stroke="#FFE6E1" stroke-width="0.5" />
                                     </g>
                                     <defs>
                                         <clipPath id="clip0">
-                                            <rect width="16" height="16" fill="white"/>
+                                            <rect width="16" height="16" fill="white" />
                                         </clipPath>
                                     </defs>
                                 </svg>
@@ -78,8 +97,14 @@
                             <div class="text-sm sm:text-base source-text font-semibold break-words" #contentSource
                                 [ngClass]="{'sourceEllipsis': sourceEllipsis}" title="{{content?.source}}">
                                 {{ 'cardcontentv2.by' | translate }}
-                                <span *ngIf="extContentReadData?.contentPartner?.contentPartnerName">{{
-                                    extContentReadData?.contentPartner?.contentPartnerName }}</span>
+                                <span *ngIf="extContentReadData?.contentPartner?.contentPartnerName">
+                                    <span *ngIf="extContentReadData?.courseProvider?.length;else contentPartnerName">
+                                        {{ formatcourseProviders(extContentReadData?.courseProvider) }}
+                                    </span>
+                                    <ng-template #contentPartnerName>
+                                        {{extContentReadData?.contentPartner?.contentPartnerName }}
+                                    </ng-template>
+                                </span>
                                 <span *ngIf="!extContentReadData?.contentPartner?.contentPartnerName">{{
                                     'common.karmayogiBharat' | translate }}</span>
                             </div>
@@ -203,7 +228,8 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="!skeletonLoader">
-                                <ws-widget-app-toc-about [contentReadData]="extContentReadData" [showReviews]="false" [baseContentReadData]="extContentReadData"
+                                <ws-widget-app-toc-about [contentReadData]="extContentReadData" [showReviews]="false"
+                                    [baseContentReadData]="extContentReadData"
                                     [showMarketPlaceCertificate]="(userExtCourseEnroll | json) !== '{}' && userExtCourseEnroll?.issued_certificates?.length >  0 && userExtCourseEnroll?.progress === 100"
                                     [content]="extContentReadData" [fromMarketPlace]="true"
                                     [skeletonLoader]="skeletonLoader">
@@ -286,7 +312,8 @@
                                                 </ws-widget-content-progress>
                     </ng-container>   -->
 
-                        <ng-container *ngIf="(userExtCourseEnroll | json) === '{}' && !enrollValidationLoading && canEnroll">
+                        <ng-container
+                            *ngIf="(userExtCourseEnroll | json) === '{}' && !enrollValidationLoading && canEnroll">
                             <button class="flex action-button justify-center flex-middle resume" type="button"
                                 (click)="enRollToExtCourse(extContentReadData)">
                                 <ng-container>{{ 'apptochome.enroll' | translate }}
@@ -329,7 +356,7 @@
                     <div class="flex flex-col kpi-values items-center gap-2" *ngIf="extContentReadData?.duration > 0">
                         <img src="/assets/icons/toc/timer.svg" width="20px" alt="web image" />
                         <div class="text-xs">
-                            {{ extContentReadData?.duration  | pipeDurationTransform: 'hms' }}
+                            {{ extContentReadData?.duration | pipeDurationTransform: 'hms' }}
                         </div>
                     </div>
                 </div>
