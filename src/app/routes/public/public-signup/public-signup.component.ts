@@ -1465,7 +1465,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
           "sbOrgSubType",
-          "channel"
+          "channel",
+          "hierarchyLevel",
+          "parentPathId"
         ]
       }
     }
@@ -2193,13 +2195,28 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     let requestBody: any = {}
     if (this.registrationFormStepOne.controls.type.value === 'ministry') {
+
+
+      let filters: any = {
+        "status": 1,
+        "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
+        "hierarchyRequestType": "All"
+      }
+      for (let i = 0; i < this.masterData['ministryBackup'], length; i++) {
+        if (this.masterData['ministryBackup'][i]['identifier'] === this.registrationFormStepOne.controls.ministry.value) {
+          if (this.masterData['ministryBackup'][i]['hierarchyLevel'] === 'levelOne') {
+            filters = {
+              "status": 1,
+              "levelZeroOrgId": this.masterData['ministryBackup'][i]['parentPathId'],
+              "levelOneOrgId": this.masterData['ministryBackup'][i]['identifier'],
+              "hierarchyRequestType": "All"
+            }
+          }
+        }
+      }
       requestBody = {
         "request": {
-          "filters": {
-            "status": 1,
-            "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
-            "hierarchyRequestType": "All"
-          },
+          "filters": filters,
           "query": "",
           "limit": reqLimit,
           "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
