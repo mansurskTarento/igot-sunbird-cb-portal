@@ -19,6 +19,7 @@ import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_comm
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { Router } from '@angular/router'
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import * as _ from 'lodash'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 const NEW_CONTENT_THRESHOLD_DAYS = 14
@@ -163,6 +164,20 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         queryParams: urlData.queryParams,
       })
     }
+  }
+
+  get lockSurvey(): boolean {
+    if (
+      _.get(this.configSvc, 'instanceConfig.completionSurvey.enabled') &&
+      this.courseEnrollment &&
+      this.courseEnrollment.completedOn >= _.get(this.configSvc.instanceConfig, 'completionSurvey.startDate') &&
+      this.content &&
+      this.content.completionSurveyLink &&
+      this.content.surveyCompletionStatus === false
+    ) {
+      return true
+    }
+    return false
   }
 
   generateCompetencySubThemeString(): string {

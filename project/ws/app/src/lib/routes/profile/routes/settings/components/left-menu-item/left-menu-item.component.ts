@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
 import * as _ from 'lodash';
+import { SettingsService } from '../../settings.service'
 
 @Component({
   selector: 'ws-app-left-menu-item',
@@ -25,7 +26,8 @@ export class LeftMenuItemComponent implements OnChanges {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
-  ) { 
+    private settingsService: SettingsService,
+  ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = localStorage.getItem('websiteLanguage')!
@@ -75,11 +77,25 @@ export class LeftMenuItemComponent implements OnChanges {
       this.router.navigate(['/page/home'], { relativeTo: this.activatedRoute, queryParamsHandling: 'merge' })
       this.configSvc.updateTourGuideMethod(false)
     }
+    else if (tab.name == "resetPassword") {
+      this.resetPassword()
+    }
   }
 
   translateLetMenuName(menuName: string): string {
     const translationKey = 'settingLeftMenu.' + menuName.replace(/\s/g, "")
     return this.translate.instant(translationKey);
+  }
+
+  resetPassword() {
+    this.settingsService.resetPassword().subscribe({
+      next: (response: any) => {
+        if (response?.params?.status === 'success') {
+          const link = response?.result?.result?.link
+          window.open(link, '_blank')
+        }
+      }
+    })
   }
 
 }

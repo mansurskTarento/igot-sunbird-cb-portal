@@ -50,6 +50,7 @@ export namespace NsUserProfileDetails {
     OBC = 'OBC',
     SC = 'SC',
     ST = 'ST',
+    PWD = 'PWD',
   }
   export interface IFieldApproval {
     approvalRequired: boolean
