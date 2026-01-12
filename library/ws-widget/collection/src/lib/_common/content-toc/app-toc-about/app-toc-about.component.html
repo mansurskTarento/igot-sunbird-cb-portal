@@ -522,13 +522,15 @@
                 [ngTemplateOutletContext]="{ tagData: content?.searchTags?.slice(1,content?.searchTags?.length) }"></ng-container>
         </ng-container>
     </ng-container>
-    <!-- <ng-container *ngIf="!skeletonLoader && sectorsList?.length">
+    <ng-container *ngIf="(!skeletonLoader && sectorsList?.length) && (content?.primaryCategory.toLowerCase() === 'learning resource' ||
+    content?.resourceCategory?.toLowerCase() === 'case study')">
         <div class="flex flex-col">
             <div class="mat-subheading-1 nodtranslate">{{ 'gyaanKarmayogi.sectors' | translate }}</div>
             <ng-container *ngIf="sectorsList?.length > 0">
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-row gap-3 sm:gap-4 mb-3 flex-wrap">
                         <ng-container *ngFor="let sector of sectorsList; let i = index; let isLast = last">
+                            <!-- [ngClass]="{'theme-activated': competencySelected === item.key}"-->
                             <div class="themes-button"
                                 [ngClass]="{'theme-activated': selectedSectorId === sector?.sectorId}"
                                 (click)="handleSubsector(sector, 'selected')">{{ sector?.sectorName }}</div>
@@ -549,9 +551,8 @@
                         </div>
                     </ng-container>
                 </div>
-            </ng-container> -->
-    <!-- [ngClass]="{'theme-activated': competencySelected === item.key}"-->
-    <!-- <div class="flex flex-wrap gap-2" >
+            </ng-container>
+            <!-- <div class="flex flex-wrap gap-2" >
                 <ng-container *ngFor="let sector of sectorsList; let i = index; let isLast = last">
                     <div class="text-xs mob-text" >{{ sector?.sectorName }}</div>
                     <div class="flex items-center" *ngIf="!isLast">
@@ -559,8 +560,8 @@
                     </div>
                 </ng-container>
             </div> -->
-    <!-- </div>
-    </ng-container> -->
+        </div>
+    </ng-container>
 
     <!-- <ng-container *ngIf="!skeletonLoader && subSectorsList?.length">
         <div class="flex flex-col">
