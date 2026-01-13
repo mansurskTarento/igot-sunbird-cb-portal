@@ -400,6 +400,7 @@ export namespace NsContent {
     STANDALONE_ASSESSMENT = 'Standalone Assessment',
     MODERATED_ASSESSEMENT = 'Moderated Assessment',
     CASE_STUDY = 'Case Study',
+    LEARNING_PATHWAY = 'Learning Pathway',
   }
 
   export enum WFBlendedProgramStatus {

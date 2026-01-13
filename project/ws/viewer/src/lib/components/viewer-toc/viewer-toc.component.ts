@@ -24,6 +24,7 @@ import { delay } from 'rxjs/operators'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '../../viewer-util.service'
 import { MatTreeNestedDataSource } from '@angular/material/tree'
+import { AppTocV2Service } from '@sunbird-cb/toc'
 // import { AppTocService } from '@sunbird-cb/toc'
 export interface IViewerTocCard {
   identifier: string
@@ -87,7 +88,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     private configSvc: ConfigurationsService,
     // private contentProgressSvc: ContentProgressService,
     private userSvc: WidgetUserServiceLib,
-    public eventSvc: EventService
+    public eventSvc: EventService,
+    public tocV2Svc: AppTocV2Service
     // private tocSvc: AppTocService,
   ) {
     this.nestedTreeControl = new NestedTreeControl<IViewerTocCard>(this._getChildren)
@@ -424,8 +426,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
             : this.contentSvc.fetchContent(collectionId, 'detail', [], _collectionType)
           ).toPromise()
         }
-        const contentData = content.result.content
-        this.collection = content.result.content
+        let contentData: any = {}
+        if (this.contentSvc?.currentContentReadMetaData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+          contentData = this.tocV2Svc.constructHeirarchyData(this.contentSvc?.currentContentReadMetaData)
+        } else {
+          contentData = content.result.content
+        }
+        this.collection = contentData
         this.contentSvc.currentMetaData = contentData
         this.collectionCard = this.createCollectionCard(contentData)
         const viewerTocCardContent = this.convertContentToIViewerTocCard(contentData)

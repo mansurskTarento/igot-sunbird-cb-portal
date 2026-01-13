@@ -12,6 +12,7 @@ import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggl
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
 import { AppTocService } from '@sunbird-cb/toc'
+import { AppTocV2Service } from '@sunbird-cb/toc'
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -98,7 +99,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     public pdfScormDataService: PdfScormDataService,
     private translate: TranslateService,
     public tocSvc: AppTocService,
-    // private renderer: Renderer2,
+    private tocV2Svc: AppTocV2Service,
   ) {
     this.rootSvc.showNavbarDisplay$.next(false)
     this.abc.mobileTopHeaderVisibilityStatus.next(false)
@@ -236,7 +237,11 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (contentData.result.content.children && contentData.result.content.children.length) {
         this.compatibilityLevel = contentData.result.content.children[0]['compatibilityLevel']
       }
-      this.hierarchyData = contentData.result.content
+      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
+      } else {
+        this.hierarchyData = contentData.result.content
+      }
       await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
       this.leafNodesCount = contentData.result.content.leafNodesCount

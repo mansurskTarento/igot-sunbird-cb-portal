@@ -60,12 +60,12 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTreeModule } from '@angular/material/tree'
 
-import { ContentTocModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/content-toc.module';
+import { ContentTocModule } from '@sunbird-cb/toc'
 // import { AiTutorComponent } from './components/ai-tutor/ai-tutor.component'
 import { FormsModule } from '@angular/forms'
-import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { MarkdownModule } from 'ngx-markdown';
+import { MatSelectModule } from '@angular/material/select'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MarkdownModule } from 'ngx-markdown'
 
 @NgModule({
   declarations: [ViewerComponent, ViewerTocComponent],
