@@ -2534,6 +2534,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.registrationFormStepOne.get('organisation')) {
       this.registrationFormStepOne.get('organisation')!.setValue('')
     }
+    this.masterData['organisationBackup'] = []
     this.getOrganisationData()
   }
 
