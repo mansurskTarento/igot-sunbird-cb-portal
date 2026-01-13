@@ -473,17 +473,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.getMinistryData()
     }
 
-    this.masterData.organisationBackup = []
     this.masterData.departmentBackup = []
-    this.masterData.organisationBackup.push({
-      "identifier": "-1",
-      "orgHierarchyFrameworkStatus": null,
-      "orgName": "N/A",
-      "sbOrgType": null,
-      "description": null,
-      "sbOrgSubType": null,
-      "orgHierarchyFrameworkId": null
-    },)
+    this.resetOrganisationBackup()
     this.masterData.departmentBackup.push({
       "identifier": "-1",
       "orgHierarchyFrameworkStatus": null,
@@ -501,6 +492,18 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     this.designationInitInProgress = true
     this.getDesignation()
+  }
+
+  resetOrganisationBackup() {
+    this.masterData.organisationBackup = [{
+      "identifier": "-1",
+      "orgHierarchyFrameworkStatus": null,
+      "orgName": "N/A",
+      "sbOrgType": null,
+      "description": null,
+      "sbOrgSubType": null,
+      "orgHierarchyFrameworkId": null
+    }]
   }
 
   getDesignation(searchText?: string, offset?: number): void {
@@ -2534,7 +2537,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.registrationFormStepOne.get('organisation')) {
       this.registrationFormStepOne.get('organisation')!.setValue('')
     }
-    this.masterData['organisationBackup'] = []
+    this.resetOrganisationBackup()
     this.getOrganisationData()
   }
 
