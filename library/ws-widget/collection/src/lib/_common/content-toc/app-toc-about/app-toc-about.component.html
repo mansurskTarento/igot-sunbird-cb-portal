@@ -522,7 +522,7 @@
                 [ngTemplateOutletContext]="{ tagData: content?.searchTags?.slice(1,content?.searchTags?.length) }"></ng-container>
         </ng-container>
     </ng-container>
-    <ng-container *ngIf="(!skeletonLoader && sectorsList?.length) && (content?.primaryCategory.toLowerCase() === 'learning resource' ||
+    <ng-container *ngIf="(!skeletonLoader && sectorsList?.length) && (content?.primaryCategory?.toLowerCase() === 'learning resource' ||
     content?.resourceCategory?.toLowerCase() === 'case study')">
         <div class="flex flex-col">
             <div class="mat-subheading-1 nodtranslate">{{ 'gyaanKarmayogi.sectors' | translate }}</div>
