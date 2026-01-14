@@ -73,7 +73,7 @@ export class ProfileEntryEditComponent implements OnInit {
   degreesFilterEnable = false
   degreeListLoadCount = 50
   degreeDefaultLoadCount = 50
-  degreePageNumber = 1
+  degreePageNumber = 0
   degreeTotalCount = 0
   degreeSearchText = ''
 
@@ -84,7 +84,7 @@ export class ProfileEntryEditComponent implements OnInit {
   inistitutionFilterEnable = false
   institutionListLoadCount = 50
   institutionDefaultLoadCount = 50
-  institutePageNumber = 1
+  institutePageNumber = 0
   instituteTotalCount = 0
   instituteSearchText = ''
   yeasersList: string[] = [];
@@ -669,8 +669,8 @@ export class ProfileEntryEditComponent implements OnInit {
             isInitializingDegree = false
             return
           }
-          if (searchText || this.filterDegreesMeta?.length === 0) {
-            this.degreePageNumber = 1
+          if ((searchText && searchText?.length > 1) || this.filterDegreesMeta?.length === 0) {
+            this.degreePageNumber = 0
             this.degreeSearchText = searchText
             this.getEducationalQualifications('degree', this.degreePageNumber, searchText)
           }
@@ -699,8 +699,8 @@ export class ProfileEntryEditComponent implements OnInit {
             isInitializingInstitute = false
             return
           }
-          if (searchText || this.filterInstitutionsList?.length === 0) {
-            this.institutePageNumber = 1
+          if ((searchText && searchText?.length > 1) || this.filterInstitutionsList?.length === 0) {
+            this.institutePageNumber = 0
             this.instituteSearchText = searchText
             this.getEducationalQualifications('institute', this.institutePageNumber, searchText)
           }
@@ -724,7 +724,7 @@ export class ProfileEntryEditComponent implements OnInit {
     if(opened && searchDegreeControl) {
       searchDegreeControl.setValue('')
       this.degreesFilterEnable = false
-      this.degreePageNumber = 1
+      this.degreePageNumber = 0
       this.degreeSearchText = ''
       const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
@@ -789,7 +789,7 @@ export class ProfileEntryEditComponent implements OnInit {
   //   })
   // }
 
-  getEducationalQualifications(type: 'degree' | 'institute', pageNumber: number = 1, searchQuery: string = '') {
+  getEducationalQualifications(type: 'degree' | 'institute', pageNumber: number = 0, searchQuery: string = '') {
     this.isLoadingMoredegrees = type === 'degree' ? true : this.isLoadingMoredegrees
     this.isLoadingMoreInstitutions = type === 'institute' ? true : this.isLoadingMoreInstitutions
 
@@ -818,7 +818,7 @@ export class ProfileEntryEditComponent implements OnInit {
           const totalCount = _.get(response, 'result.count', 0)
           this.degreeTotalCount = totalCount
 
-          if (pageNumber === 1) {
+          if (pageNumber === 0) {
             this.filterDegreesMeta = [...content, { name: 'Other' }]
           } else {
             this.filterDegreesMeta = [...this.filterDegreesMeta, ...content]
@@ -831,7 +831,7 @@ export class ProfileEntryEditComponent implements OnInit {
           const totalCount = _.get(response, 'result.count', 0)
           this.instituteTotalCount = totalCount
 
-          if (pageNumber === 1) {
+          if (pageNumber === 0) {
             this.filterInstitutionsList = [...content, { name: 'Other' }]
           } else {
             this.filterInstitutionsList = [...this.filterInstitutionsList, ...content]
@@ -890,7 +890,7 @@ export class ProfileEntryEditComponent implements OnInit {
     if (opened && searchInstituteControl) {
       searchInstituteControl.setValue('')
       this.inistitutionFilterEnable = false
-      this.institutePageNumber = 1
+      this.institutePageNumber = 0
       this.instituteSearchText = ''
       setTimeout(() => {
         const searchInput = document.querySelector('.search-input') as HTMLInputElement
