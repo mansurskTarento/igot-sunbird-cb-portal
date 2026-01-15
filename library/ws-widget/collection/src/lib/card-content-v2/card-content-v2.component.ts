@@ -421,10 +421,10 @@ export class CardContentV2Component extends WidgetBaseComponent
       clearInterval(this.cbPlanInterval)
     }
   }
-  async getRedirectUrlData(content: any, contentType?: any) {
+  async getRedirectUrlData(content: any, _contentType?: any) {
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'
 
-    if (contentType && content.primaryCategory === this.primaryCategory.RESOURCE) {
+    if (content.primaryCategory === this.primaryCategory.RESOURCE) {
       // if(content.primaryCategory === this.primaryCategory.COURSE) {
       //   this.router.navigate([`app/toc/${content.identifier}/overview`],{
       //     queryParams : { }

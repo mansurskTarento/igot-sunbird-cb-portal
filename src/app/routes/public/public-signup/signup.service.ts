@@ -22,7 +22,9 @@ const API_END_POINTS = {
   ORGANISATION_FW: (frameworkName: string) =>
     `/api/framework/v1/read/${frameworkName}`,
   CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
-  STATE_MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/search'
+  STATE_MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/search',
+  MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/ministry/search',
+  STATE_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/state/search'
 }
 
 @Injectable({
@@ -81,7 +83,7 @@ export class SignupService {
     }
     return this.http.post(API_END_POINTS.sendOtp, reqObj)
   }
-  
+
   resendOtp(value: any, type: string) {
     const reqObj = {
       request: {
@@ -137,12 +139,12 @@ export class SignupService {
       request: {
         organisationId,
       },
-    };
+    }
     return this.http.post<any>(API_END_POINTS.ORG_READ, request).pipe(
       map((res: any) => {
-        return _.get(res, 'result.response');
+        return _.get(res, 'result.response')
       })
-    );
+    )
   }
 
   getFrameworkInfo(frameWorkName: string): Observable<any> {
@@ -152,9 +154,9 @@ export class SignupService {
       })
       .pipe(
         tap((response: any) => {
-          this.formateData(response);
+          this.formateData(response)
         })
-      );
+      )
   }
 
   formateData(response: any) {
@@ -171,10 +173,10 @@ export class SignupService {
         category: a.category,
         associations: a.associations,
         children: this.formateChildren(a.terms || []),
-      });
-    });
+      })
+    })
 
-    const allCategories: any = [];
+    const allCategories: any = []
     this.list.forEach((a: any) => {
       allCategories.push({
         code: a.code,
@@ -184,18 +186,18 @@ export class SignupService {
         status: a.status,
         description: a.description,
         translations: a.translations,
-      });
-    });
+      })
+    })
   }
 
   formateChildren(terms: any[]): any[] {
     return terms.map((c: any) => {
-      const associations = c.associations || [];
+      const associations = c.associations || []
       if (associations.length > 0) {
-        Object.assign(c, { children: associations });
-        this.formateChildren(c.associations);
+        Object.assign(c, { children: associations })
+        this.formateChildren(c.associations)
       } else {
-        Object.assign(c, { children: [] });
+        Object.assign(c, { children: [] })
       }
       const importedBy =
         _.get(c, 'additionalProperties.importedById', null) ===
@@ -204,9 +206,9 @@ export class SignupService {
           : _.get(c, 'additionalProperties.importedByName', null);
       (c['importedByName'] = importedBy),
         (c['importedOn'] = _.get(c, 'additionalProperties.importedOn')),
-        (c['importedById'] = _.get(c, 'additionalProperties.importedById'));
-      return c;
-    });
+        (c['importedById'] = _.get(c, 'additionalProperties.importedById'))
+      return c
+    })
   }
 
   searchOrgsByIdentifier(req: any) {
@@ -217,7 +219,15 @@ export class SignupService {
     return this.http.post(API_END_POINTS.CHECK_REGISTRATION_LINK_STATUS, req)
   }
 
-  getStateOrMinistyForRegistration(req:any) {
+  getStateOrMinistyForRegistration(req: any) {
     return this.http.post(API_END_POINTS.STATE_MINISTRY_FOR_REGISTRATION, req)
+  }
+
+  getMinistryForRegistration(req: any) {
+    return this.http.post(API_END_POINTS.MINISTRY_FOR_REGISTRATION, req)
+  }
+
+  getStateForRegistration(req: any) {
+    return this.http.post(API_END_POINTS.STATE_FOR_REGISTRATION, req)
   }
 }
