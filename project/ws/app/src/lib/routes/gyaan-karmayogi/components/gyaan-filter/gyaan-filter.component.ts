@@ -31,6 +31,7 @@ export class GyaanFilterComponent implements OnInit {
   @Input() selectedFilter: any
   selectedContent = 'all'
   gConstants: any
+  private defaultApplied = false
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     public translate: TranslateService,
@@ -80,6 +81,30 @@ export class GyaanFilterComponent implements OnInit {
         showTicks: false,
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.route.queryParams.subscribe((res: any) => {
+      this.selectedContent = res.content || 'otherResources'
+      setTimeout(() => {
+        if (this.defaultApplied) return
+
+        const values = this.localFilterData?.contentType?.values
+        if (!values?.length) return
+
+        const facet = values.find((v: any) => v.name === this.selectedContent)
+        if (!facet) return
+
+        facet.checked = true
+        this.defaultApplied = true
+
+        this.filterChange.emit({
+          event: true,
+          key: 'contentType',
+          keyData: facet
+        })
+      })
+    })
   }
 
   sanitizeFacetsData() {
