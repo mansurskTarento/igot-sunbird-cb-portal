@@ -296,6 +296,56 @@ mat-grid-list {
       line-height: normal;
     }
   }
+.explore-more {
+  min-width: 130px !important;
+  border-right: none;
+  padding-right: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+::ng-deep .explore-content-action {
+  height: auto !important;
+  line-height: normal !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  div.flex.items-center {
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  mat-icon {
+    margin-right: 0 !important;
+    margin-bottom: 0px;
+    padding: 0 !important;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .explore-content-text {
+    max-width: none !important;
+    margin-top: 0px;
+
+    span {
+      white-space: nowrap;
+      overflow-wrap: break-word;
+      line-height: normal;
+    }
+
+    .arrow-chevron {
+      display: none;
+    }
+  }
+}
 }
 
 @media (max-width : 768px) {    
