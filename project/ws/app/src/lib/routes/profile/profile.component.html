@@ -9,6 +9,11 @@
   <mat-sidenav [mode]="mode$ | async" [(opened)]="sideNavBarOpened" class="border-0 "
     [ngClass]="{'margin-top-48': currentRoute === 'home'}">
     <div class="contain">
+      <div *ngIf="screenSizeIsLtMedium">
+        <button type="button" mat-icon-button (click)="sideNavBarOpened = false">
+          <mat-icon>keyboard_backspace</mat-icon>
+        </button>
+      </div>
       <div class="flex-1" style="position: relative;">
         <div #stickyMenu [class.sticky]="sticky">
           <ws-app-left-menu [tabsData]="tabsData" class="flex flex-1"></ws-app-left-menu>
