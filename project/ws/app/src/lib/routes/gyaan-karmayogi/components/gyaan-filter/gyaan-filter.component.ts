@@ -94,10 +94,9 @@ export class GyaanFilterComponent implements OnInit {
 
         const facet = values.find((v: any) => v.name === this.selectedContent)
         if (!facet) return
-
+        
         facet.checked = true
         this.defaultApplied = true
-
         this.filterChange.emit({
           event: true,
           key: 'contentType',
