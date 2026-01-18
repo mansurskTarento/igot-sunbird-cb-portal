@@ -2,6 +2,7 @@ import {
   Component, OnDestroy, OnInit, AfterViewInit, AfterViewChecked,
   HostListener, ElementRef, ViewChild, ViewEncapsulation, Input,
 } from '@angular/core'
+import { Location } from '@angular/common'
 import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
 import { ActivatedRoute, Event, Data, Router, NavigationEnd } from '@angular/router'
 import { UntypedFormControl, Validators } from '@angular/forms'
@@ -297,7 +298,8 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
     public dataTransferSvc: DataTransferService,
     private matSnackbarNew: MatSnackbarNew,
     private userServiceLib: WidgetUserServiceLib,
-    public netCoreService: NetCoreService
+    public netCoreService: NetCoreService,
+    private location: Location,
   ) {
     this.historyData = history.state
     this.environment = environment
@@ -479,6 +481,10 @@ export class AppTocHomeV2Component implements OnInit, OnDestroy, AfterViewChecke
       .subscribe((_timer: any) => {
         this.timer = _timer
       })
+  }
+
+  goBack() {
+    this.location.back()
   }
 
   handleBreadcrumbs() {
