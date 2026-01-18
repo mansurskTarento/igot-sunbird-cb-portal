@@ -61,6 +61,11 @@
   .banner-details {
     padding: 36px 0px;
 
+    @media screen and (max-width: 576px) {
+      padding-top: 10px;
+      padding-bottom: 20px;
+    }
+
     .due-tag {
       padding: 4px;
       color: #FFF;
@@ -132,6 +137,26 @@
   padding: 8px;
   background-color: #FFF;
   border-radius: 64px;
+}
+
+.mobile-back-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  padding: 0px;
+  margin-bottom: 8px;
+  color: white !important;
+
+  mat-icon {
+    font-size: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  @media screen and (min-width: 577px) {
+    display: none !important;
+  }
 }
 
 .tag-div {
