@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core'
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { LoggerService, MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -25,19 +25,19 @@ export class CourseCompletionDialogComponent implements OnInit {
     private langtranslations: MultilingualTranslationsService,
     public events: EventService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      if (localStorage.getItem('websiteLanguage')) {
-        this.translate.setDefaultLang('en')
-        const lang = localStorage.getItem('websiteLanguage')!
-        this.translate.use(lang)
-      }
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
     }
+  }
 
   ngOnInit() {
     const app: any = document.getElementById('viewer-conatiner-backdrop')
     if (app) {
       app.style.filter = 'blur(5px)'
     }
-    if (typeof(this.data.courseName) !== 'undefined') {
+    if (typeof (this.data.courseName) !== 'undefined') {
       this.courseName = this.data.courseName
     } else {
       this.courseName = 'course'
@@ -64,9 +64,9 @@ export class CourseCompletionDialogComponent implements OnInit {
             this.userRating = {
               rating: 0,
               comment: null,
-          }
-          this.isEditMode = false
-          // this.showRating = true
+            }
+            this.isEditMode = false
+            // this.showRating = true
           }
         },
         (err: any) => {
@@ -79,7 +79,7 @@ export class CourseCompletionDialogComponent implements OnInit {
   addRating(index: number) {
     this.showRating = true
     this.userRating = {
-      rating: index + 1 ,
+      rating: index + 1,
       comment: null,
       review: this.userRating?.review || '',
     }
@@ -95,9 +95,9 @@ export class CourseCompletionDialogComponent implements OnInit {
           rating: this.userRating.rating,
         },
         {
-        pageIdExt: 'rating-popup',
-        module: WsEvents.EnumTelemetrymodules.FEEDBACK,
-      })
+          pageIdExt: 'rating-popup',
+          module: WsEvents.EnumTelemetrymodules.FEEDBACK,
+        })
     }
   }
 

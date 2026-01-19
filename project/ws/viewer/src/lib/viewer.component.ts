@@ -11,7 +11,8 @@ import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.s
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
+import { AppTocV2Service } from '@sunbird-cb/toc'
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -30,7 +31,7 @@ export enum ErrorType {
 })
 
 export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
-  
+
   fullScreenContainer: HTMLElement | null = null
   content: NsContent.IContent | null = null
   contentReadData: NsContent.IContent | null = null
@@ -98,7 +99,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     public pdfScormDataService: PdfScormDataService,
     private translate: TranslateService,
     public tocSvc: AppTocService,
-    // private renderer: Renderer2,
+    private tocV2Svc: AppTocV2Service,
   ) {
     this.rootSvc.showNavbarDisplay$.next(false)
     this.abc.mobileTopHeaderVisibilityStatus.next(false)
@@ -123,7 +124,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.translate.use(lang)
     }
 
-    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams['preAssessment']) {
+    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams['preAssessment']) {
       this.isPreAssessment = true
     } else {
       this.isPreAssessment = false
@@ -134,55 +135,55 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.ML
       && this.activatedRoute.snapshot.queryParams.MLId
     ) {
-      if(this.collectionId !== this.activatedRoute.snapshot.queryParams.MLId) {
-          this.widgetServ.fetchContentData(this.collectionId || '').subscribe(data => {
-            this.baseContentReadData = data?.result?.content
-          })
-      }else {
-        if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+      if (this.collectionId !== this.activatedRoute.snapshot.queryParams.MLId) {
+        this.widgetServ.fetchContentData(this.collectionId || '').subscribe(data => {
+          this.baseContentReadData = data?.result?.content
+        })
+      } else {
+        if (this.activatedRoute.snapshot.data['contentRead']['data']) {
           this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
         }
-        
+
       }
     } else {
-      if(this.activatedRoute.snapshot.data['contentRead']['data']) {
+      if (this.activatedRoute.snapshot.data['contentRead']['data']) {
         this.baseContentReadData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']
       }
     }
   }
 
   getContentData(e: any) {
-    if( this.activatedRoute.snapshot.data &&  this.activatedRoute.snapshot.data['preAssessmentRead'] && 
-      this.activatedRoute.snapshot.data['preAssessmentRead']['data'] && 
+    if (this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data['preAssessmentRead'] &&
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data'] &&
       this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result'] &&
-      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
+      this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']
     ) {
-        this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content'] 
-        
-        if(this.content) {
-          let hashMap = this.tocSvc.hashmap
-          // console.log('hasMap', hashMap)
-          // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
-          if(!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
-            this.tocSvc.createPreAssessmentHirarchyProgressHashmap( this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
-          }          
+      this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']
+
+      if (this.content) {
+        let hashMap = this.tocSvc.hashmap
+        // console.log('hasMap', hashMap)
+        // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
+        if (!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
+          this.tocSvc.createPreAssessmentHirarchyProgressHashmap(this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
         }
-        this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
-        // console.log('this.content', this.content)
-        // console.log('this.contentMIMEType', this.contentMIMEType)
-        this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
-        this.getPreEnrollmentResoureStateRead()
-        // console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
-        // console.log('this.hierarchyData', this.hierarchyData)
-        
-        this.resetAndFetchTocStructure()
-        // console.log('tocStructure', this.tocStructure)
+      }
+      this.contentMIMEType = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['mimeType']
+      // console.log('this.content', this.content)
+      // console.log('this.contentMIMEType', this.contentMIMEType)
+      this.hierarchyData = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources']
+      this.getPreEnrollmentResoureStateRead()
+      // console.log('tocSvc?.hashmap', this.tocSvc?.hashmap)
+      // console.log('this.hierarchyData', this.hierarchyData)
+
+      this.resetAndFetchTocStructure()
+      // console.log('tocStructure', this.tocStructure)
     } else {
       e.activatedRoute.data.subscribe((data: { content: { data: NsContent.IContent } }) => {
         // console.log('this.content',data)
         if (data.content && data.content.data) {
           this.content = data.content.data
-          
+
           this.contentMIMEType = data.content.data.mimeType
         }
       })
@@ -190,9 +191,9 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getAuthDataIdentifer() {
-    if(this.isPreAssessment) {
-      
-      
+    if (this.isPreAssessment) {
+
+
     } else {
       const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
       this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
@@ -202,12 +203,12 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.leafNodesCount = data.result.content.leafNodesCount
       })
     }
-   
+
   }
 
   async ngOnInit() {
-  
-      this.getTocConfig()
+
+    this.getTocConfig()
     // for left side player scroll on right side resource click
     // this.pageScrollSubscription = this.tocSvc.updatePageScroll.subscribe((value: boolean) => {
     //   if (value) {
@@ -224,22 +225,31 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     //   }
     // })
     // console.log('this.activatedRoute.snapshot.data.contentRead--', this.activatedRoute.snapshot.data.contentRead)
-    const contentData = this.activatedRoute.snapshot.data.hierarchyData 
-    && this.activatedRoute.snapshot.data.hierarchyData.data || ''
+    const contentData = this.activatedRoute.snapshot.data.hierarchyData
+      && this.activatedRoute.snapshot.data.hierarchyData.data || ''
 
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
-    && this.activatedRoute.snapshot.data.enrollmentData.data || ''
+      && this.activatedRoute.snapshot.data.enrollmentData.data || ''
     this.contentReadData = this.activatedRoute.snapshot.data && this.activatedRoute.snapshot.data.contentRead
-    && this.activatedRoute.snapshot.data.contentRead.data?.result.content || {}
+      && this.activatedRoute.snapshot.data.contentRead.data?.result.content || {}
     if (contentData && contentData.result && contentData.result.content) {
       this.coursePrimaryCategory = contentData.result.content.courseCategory
       if (contentData.result.content.children && contentData.result.content.children.length) {
         this.compatibilityLevel = contentData.result.content.children[0]['compatibilityLevel']
       }
-      this.hierarchyData = contentData.result.content
+      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
+        this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
+        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
+      } else {
+        this.hierarchyData = contentData.result.content
+        this.leafNodesCount = contentData.result.content.leafNodesCount
+      }
       await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
-      this.leafNodesCount = contentData.result.content.leafNodesCount
+      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
+      }
     }
     this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
     this.checkMultilingual()
@@ -252,7 +262,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           enrolled: true,
         }
         if (!this.forPreview) {
-         this.tocSvc.mapSessionCompletionPercentage(this.batchData)
+          this.tocSvc.mapSessionCompletionPercentage(this.batchData)
         }
       }
 
@@ -373,7 +383,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (courseData && courseData.issuedCertificates && courseData.issuedCertificates.length) {
       const certificate: any = courseData.issuedCertificates.sort((a: any, b: any) =>
         new Date(a.lastIssuedOn).getTime() - new Date(b.lastIssuedOn).getTime())
- 
+
       const certificateId = certificate?.issuedCertificates?.[0].identifier
       this.widgetServ.downloadCert(certificateId).subscribe((response: any) => {
         if (this.content) {
@@ -439,7 +449,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async manipulateHierarchyData() {
     if (!this.forPreview) {
-      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId||''  )
+      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
 
     } else {
       this.loadAllHierarchyData = true
@@ -497,25 +507,25 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getPreEnrollmentResoureStateRead() {
-    let identifierArr:any = []
-    this.hierarchyData.map((item:any)=>{
+    let identifierArr: any = []
+    this.hierarchyData.map((item: any) => {
       identifierArr.push(item.identifier)
     })
-    if(identifierArr && identifierArr.length) {
-      let req ={
+    if (identifierArr && identifierArr.length) {
+      let req = {
         "request": {
           "contentIds": identifierArr,
           "fields": [
-              // "lastAccessTime",
-              // "completionPercentage"
+            // "lastAccessTime",
+            // "completionPercentage"
           ]
+        }
       }
-      } 
-      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data:any)=>{
+      this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data: any) => {
         // console.log('read resources progress data', data)
-        if(data && data.result && data.result.contentList) {
-          for(let i=0; i<data.result.contentList.length; i++) {
-            if(Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
+        if (data && data.result && data.result.contentList) {
+          for (let i = 0; i < data.result.contentList.length; i++) {
+            if (Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
               this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
               this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
             }
@@ -523,7 +533,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       })
     }
-   
+
   }
 
- }
+}

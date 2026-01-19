@@ -8,10 +8,10 @@ import { MobileAppsService } from '../../../../../../../src/app/services/mobile-
 import { SCORMAdapterService, scormLMSStatus } from './SCORMAdapter/scormAdapter'
 /* tslint:disable */
 import _ from 'lodash'
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment'
 import { Subscription, timer } from 'rxjs'
 import { Storage } from './SCORMAdapter/storage'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 /* tslint:enable */
 
 @Component({
@@ -87,7 +87,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     this.tocConfigSubscription = this.widgetContentSvc.tocConfigData.subscribe((data: any) => {
-        this.tocConfig = data
+      this.tocConfig = data
     })
     if (this.htmlContent && this.htmlContent.identifier) {
       this.scormAdapterService.contentId = this.htmlContent.identifier
@@ -155,7 +155,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
       let progressData
       if (this.store.getItem('Initialized')) {
-        progressData = { ...this.store.getAll() || 0 , spentTime: (completionData && completionData.spentTime) }
+        progressData = { ...this.store.getAll() || 0, spentTime: (completionData && completionData.spentTime) }
       } else {
         progressData = { spentTime: (completionData && completionData.spentTime) || 0 }
       }
@@ -174,7 +174,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           // tslint:disable-next-line: max-length
           if (this.tocSvc.hashmap[htmlContent.identifier]
             && (!this.tocSvc.hashmap[htmlContent.identifier]['completionStatus']
-            || this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] < 2)) {
+              || this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] < 2)) {
             this.tocSvc.hashmap[htmlContent.identifier]['completionPercentage'] = req.completionPercentage
             this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] = req.status
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
@@ -182,7 +182,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
         // this.store.clearAll()
         return
-      // tslint:disable-next-line: align
+        // tslint:disable-next-line: align
       }, (err: any) => {
         this.loggerSvc.error('Error calling progress update for scorm content', err)
         // this.store.clearAll()
@@ -202,31 +202,31 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         completionPercentage: data && data['completionPercentage'],
         status: data && data['completionStatus'],
         spentTime: data && data['spentTime'],
-      // tslint:disable-next-line: whitespace
+        // tslint:disable-next-line: whitespace
       }
     }
-      // if (data) {
-        spentTimen = this.ticks + (data && data['spentTime'] || 0)
-        if (htmlContent && spentTimen) {
-          // ~~ will remove decimal after division
-          // tslint:disable-next-line
-          percentage = ~~((spentTimen / htmlContent.duration) * 100)
-        }
-      // }
+    // if (data) {
+    spentTimen = this.ticks + (data && data['spentTime'] || 0)
+    if (htmlContent && spentTimen) {
+      // ~~ will remove decimal after division
+      // tslint:disable-next-line
+      percentage = ~~((spentTimen / htmlContent.duration) * 100)
+    }
+    // }
 
-      if (percentage >= this.getThreshold()) {
-        return {
-          completionPercentage: 100,
-          status: 2,
-          spentTime: spentTimen,
-        }
-    // tslint:disable-next-line
-      } else {
-        return {
-          completionPercentage: percentage,
-          status: 1,
-          spentTime: spentTimen,
-        }
+    if (percentage >= this.getThreshold()) {
+      return {
+        completionPercentage: 100,
+        status: 2,
+        spentTime: spentTimen,
+      }
+      // tslint:disable-next-line
+    } else {
+      return {
+        completionPercentage: percentage,
+        status: 1,
+        spentTime: spentTimen,
+      }
       // }
     }
   }
@@ -364,34 +364,34 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         //   )
         // }
         if (this.htmlContent && this.htmlContent.streamingUrl) {
-        if (this.htmlContent.streamingUrl.includes(environment.azureHost)) {
-          this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.htmlContent.streamingUrl)
-        } else {
-          if (this.htmlContent.streamingUrl && this.htmlContent.initFile) {
-            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-              // tslint:disable-next-line:max-line-length
-              `${this.generateUrl(this.htmlContent.streamingUrl)}/${this.htmlContent.initFile}?timestamp='${new Date().getTime()}`
-            )
+          if (this.htmlContent.streamingUrl.includes(environment.azureHost)) {
+            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.htmlContent.streamingUrl)
           } else {
-            if (environment.production) {
+            if (this.htmlContent.streamingUrl && this.htmlContent.initFile) {
               this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-                // tslint:disable-next-line: max-line-length
-                // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-                // tslint:disable-next-line: max-line-length
-                `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                // tslint:disable-next-line:max-line-length
+                `${this.generateUrl(this.htmlContent.streamingUrl)}/${this.htmlContent.initFile}?timestamp='${new Date().getTime()}`
               )
             } else {
-              this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-                // tslint:disable-next-line: max-line-length
-                // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-                // tslint:disable-next-line: max-line-length
-                `/abcd/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-              )
+              if (environment.production) {
+                this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
+                  // tslint:disable-next-line: max-line-length
+                  // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                  // tslint:disable-next-line: max-line-length
+                  `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                )
+              } else {
+                this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
+                  // tslint:disable-next-line: max-line-length
+                  // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                  // tslint:disable-next-line: max-line-length
+                  `/abcd/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                )
+              }
             }
           }
-        }
-          } else {
-             if (this.htmlContent.initFile) {
+        } else {
+          if (this.htmlContent.initFile) {
             this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
               // tslint:disable-next-line: max-line-length
               `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/${this.htmlContent.initFile}?timestamp='${new Date().getTime()}`
@@ -564,7 +564,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     const newUrl = newLink.join('/')
-    return  newUrl
+    return newUrl
   }
 
 }

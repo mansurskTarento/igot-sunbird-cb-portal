@@ -4,7 +4,7 @@ import { EventService, WsEvents, LoggerService, NsContent } from '@sunbird-cb/ut
 import { RatingService } from '@sunbird-cb/collection/src/lib/_services/rating.service'
 import { switchMap, takeUntil } from 'rxjs/operators'
 import { Subject } from 'rxjs'
-import { NsAppRating } from '@ws/app/src/lib/routes/app-toc/models/rating.model'
+import { NsAppRating } from '@sunbird-cb/toc'
 import { Router } from '@angular/router'
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -19,8 +19,8 @@ export class ContentRatingV2DialogComponent implements OnInit {
   @Input() ccuserRating: any
   @Input() navigatetoTOC: any
   @Input() rateFromCompletionDialog: any
-  @Input()  isEditMode = false
-  @Input()  collectionId = ''
+  @Input() isEditMode = false
+  @Input() collectionId = ''
   content: NsContent.IContent | null = null
   userRating = 0
   feedbackForm: UntypedFormGroup
@@ -49,7 +49,7 @@ export class ContentRatingV2DialogComponent implements OnInit {
     if (this.ccuserRating || this.navigatetoTOC || (this.data && this.data.courseName)) {
       const obj = {
         identifier: this.data.identifier,
-        primaryCategory:  this.data.primaryCategory,
+        primaryCategory: this.data.primaryCategory,
       }
       const dataobj = {
         content: obj,
@@ -107,7 +107,7 @@ export class ContentRatingV2DialogComponent implements OnInit {
       }
 
       this.ratingSvc.addOrUpdateRating(req).subscribe(
-        (_res: any) =>  {
+        (_res: any) => {
           this.raiseFeedbackTelemetry(feedbackForm)
           if (this.isEditMode) {
             this.dialogRef.close(true)
@@ -161,9 +161,9 @@ export class ContentRatingV2DialogComponent implements OnInit {
         rating: this.userRating,
       },
       {
-      pageIdExt: 'rating-popup',
-      module: WsEvents.EnumTelemetrymodules.FEEDBACK,
-    })
+        pageIdExt: 'rating-popup',
+        module: WsEvents.EnumTelemetrymodules.FEEDBACK,
+      })
     // tslint:disable-next-line: no-non-null-assertion
     this.feedbackForm.get('rating')!.setValue(this.userRating)
   }

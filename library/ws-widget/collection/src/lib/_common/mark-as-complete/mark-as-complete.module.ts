@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-// import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+// import { AppTocService } from '@sunbird-cb/toc'
 
 @NgModule({
     declarations: [MarkAsCompleteComponent, ConfirmDialogComponent],
