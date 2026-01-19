@@ -239,12 +239,17 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
+        this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
+        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
       } else {
         this.hierarchyData = contentData.result.content
+        this.leafNodesCount = contentData.result.content.leafNodesCount
       }
       await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
-      this.leafNodesCount = contentData.result.content.leafNodesCount
+      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
+      }
     }
     this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
     this.checkMultilingual()

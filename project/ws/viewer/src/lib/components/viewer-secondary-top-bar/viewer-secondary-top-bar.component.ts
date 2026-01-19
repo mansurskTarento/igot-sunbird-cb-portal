@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, AfterViewInit } from '@angular/core'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
@@ -19,7 +19,7 @@ import { WidgetContentLibService } from '@sunbird-cb/consumption'
   templateUrl: './viewer-secondary-top-bar.component.html',
   styleUrls: ['./viewer-secondary-top-bar.component.scss'],
 })
-export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
+export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() frameReference: any
   @Input() forPreview = false
@@ -69,6 +69,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   pageScrollSubscription: Subscription | null = null
   // primaryCategory = NsContent.EPrimaryCategory
   contentPrimaryCategory: any
+  isNextResourceLocked = false
   constructor(
     private activatedRoute: ActivatedRoute,
     private domSanitizer: DomSanitizer,
@@ -172,6 +173,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
     })
 
     this.viewerDataServiceSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data: any) => {
+      // Reset the locked state at the beginning of each navigation to avoid stale values
+      this.isNextResourceLocked = false
+
       if (data.prevResource) {
         if (data.prevResource && !data.prevResource.viewerUrl) {
           data.prevResource['viewerUrl'] = `${this.forPreview ? '' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
@@ -238,6 +242,10 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
           },
           fragment: '',
         }
+
+        // Check if next resource is locked from tocSvc hashmap
+        this.isNextResourceLocked = this.checkIfContentIsLocked(data.nextResource.identifier)
+        console.log('Next Resource Locked Status:', this.isNextResourceLocked, 'for identifier:', data.nextResource.identifier)
         if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
           this.updateProgress(2, data.nextResource.identifier)
         }
@@ -246,6 +254,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         // }
       } else {
         this.nextResourceUrl = null
+        this.isNextResourceLocked = false
       }
       if (this.resourceId !== this.viewerDataSvc.resourceId) {
         this.resourceId = this.viewerDataSvc.resourceId as string
@@ -279,6 +288,74 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
         this.rootOrgId = this.configSvc.userProfile.rootOrgId
       }
     }
+  }
+
+  ngAfterViewInit() {
+    // Check lock status after view initialization with multiple retry attempts
+    // This ensures hashmap and subscription data are ready
+    this.recheckLockStatusWithRetry(0)
+  }
+
+  recheckLockStatusWithRetry(attempt: number) {
+    const maxAttempts = 5
+    const delay = attempt === 0 ? 200 : 500 // First check after 200ms, then 500ms intervals
+
+    setTimeout(() => {
+      const lockChecked = this.checkInitialLockStatus()
+
+      // If lock status wasn't determined and we haven't exceeded max attempts, retry
+      if (!lockChecked && attempt < maxAttempts) {
+        console.log(`Retrying lock status check, attempt ${attempt + 1}/${maxAttempts}`)
+        this.recheckLockStatusWithRetry(attempt + 1)
+      }
+    }, delay)
+  }
+
+  checkInitialLockStatus(): boolean {
+    // Get the current resource from the viewer data service
+    const currentResourceId = this.viewerDataSvc.resourceId
+
+    console.log('Checking initial lock status:', {
+      currentResourceId,
+      hasNextUrl: !!this.nextResourceUrl,
+      hasHashmap: !!this.appTocSvc.hashmap,
+      hashmapSize: this.appTocSvc.hashmap ? Object.keys(this.appTocSvc.hashmap).length : 0
+    })
+
+    // Method 1: Check using nextResourceUrl if it's already set by subscription
+    if (this.nextResourceUrl && this.nextResourceUrlParams?.queryParams) {
+      // Extract the resource ID from the nextResourceUrl
+      const urlParts = this.nextResourceUrl.split('/')
+      const nextResourceId = urlParts[urlParts.length - 1]
+
+      if (nextResourceId && this.appTocSvc.hashmap && this.appTocSvc.hashmap[nextResourceId]) {
+        this.isNextResourceLocked = this.checkIfContentIsLocked(nextResourceId)
+        console.log('Lock status determined from nextResourceUrl:', this.isNextResourceLocked)
+        return true
+      }
+    }
+
+    // Method 2: Check using hashmap with current resource
+    if (this.appTocSvc.hashmap && currentResourceId) {
+      const currentContent = this.appTocSvc.hashmap[currentResourceId]
+
+      if (currentContent) {
+        console.log('Current content in hashmap:', {
+          id: currentResourceId,
+          hasNextResource: !!currentContent.nextResource
+        })
+
+        // Check if there's a nextResource property
+        if (currentContent.nextResource) {
+          this.isNextResourceLocked = this.checkIfContentIsLocked(currentContent.nextResource)
+          console.log('Lock status determined from hashmap:', this.isNextResourceLocked)
+          return true
+        }
+      }
+    }
+
+    console.log('Could not determine lock status yet')
+    return false
   }
 
   updateProgress(status: number, resourceId: any) {
@@ -517,6 +594,51 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy {
   //   console.log('data--', data)
   //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
   // }
+
+  checkIfContentIsLocked(contentIdentifier: string): boolean {
+    // Return false if no identifier provided
+    if (!contentIdentifier) {
+      console.log('No content identifier provided')
+      return false
+    }
+
+    // Check if hashmap exists and has the content
+    if (this.appTocSvc.hashmap && this.appTocSvc.hashmap[contentIdentifier]) {
+      const contentData = this.appTocSvc.hashmap[contentIdentifier]
+
+      // Check various locking properties - ensure they are explicitly true
+      const isLocked = contentData.isLocked === true ||
+        contentData.computedIsLocked === true ||
+        contentData.isParentMilestoneLocked === true
+
+      // Debug logging
+      console.log('Next Resource Lock Check:', {
+        identifier: contentIdentifier,
+        isLocked: contentData.isLocked,
+        computedIsLocked: contentData.computedIsLocked,
+        isParentMilestoneLocked: contentData.isParentMilestoneLocked,
+        finalResult: isLocked,
+        hashmapKeys: Object.keys(this.appTocSvc.hashmap).length
+      })
+
+      return isLocked
+    }
+
+    console.log('Content not found in hashmap:', contentIdentifier, 'Available keys:', this.appTocSvc.hashmap ? Object.keys(this.appTocSvc.hashmap).length : 0)
+    // If content not in hashmap, assume it's not locked
+    return false
+  }
+
+  onNextClick(event: Event) {
+    if (this.isNextResourceLocked) {
+      event.preventDefault()
+      event.stopPropagation()
+      console.log('Next navigation blocked - content is locked')
+      return false
+    }
+    this.checkForNextOfflineOnlineSession()
+    return true
+  }
 
   generateCertificate() {
     // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(

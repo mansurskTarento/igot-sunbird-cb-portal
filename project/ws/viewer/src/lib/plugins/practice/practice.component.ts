@@ -9,6 +9,7 @@ import {
   ViewChild, ViewChildren,
   Renderer2,
   TemplateRef,
+  ChangeDetectorRef,
 } from '@angular/core'
 import { Subscription, interval } from 'rxjs'
 import { filter, map } from 'rxjs/operators'
@@ -179,7 +180,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,
     private renderer: Renderer2,
     private widgetContentService: WidgetContentService,
-    private tocSvc: AppTocService
+    private tocSvc: AppTocService,
+    private cdr: ChangeDetectorRef
 
   ) {
     if (environment.assessmentBuffer) {
@@ -335,34 +337,91 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       if (this.selectedAssessmentCompatibilityLevel) {
         if (this.selectedAssessmentCompatibilityLevel < 7) {
-          this.quizSvc.canAttend(this.identifier).subscribe(response => {
-            if (response) {
-              this.canAttempt = response
-              //  this.canAttempt = {
-              //   attemptsAllowed: 1,
-              //   attemptsMade: 0,
-              // }
+          this.quizSvc.canAttend(this.identifier).subscribe(
+            response => {
+              if (response) {
+                this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            },
+            (error: any) => {
+              // Handle error from canAttend API
+              this.handleCanAttendError(error)
             }
-            this.init()
-            this.updateVisivility()
-          })
+          )
         } else {
-          this.quizSvc.canAttendV5(this.identifier).subscribe(response => {
-            if (response) {
-              this.canAttempt = response
-              //  this.canAttempt = {
-              //   attemptsAllowed: 1,
-              //   attemptsMade: 0,
-              // }
+          this.quizSvc.canAttendV5(this.identifier).subscribe(
+            response => {
+              if (response) {
+                this.canAttempt = response
+                //  this.canAttempt = {
+                //   attemptsAllowed: 1,
+                //   attemptsMade: 0,
+                // }
+              }
+              this.init()
+              this.updateVisivility()
+            },
+            (error: any) => {
+              // Handle error from canAttendV5 API
+              this.handleCanAttendError(error)
             }
-            this.init()
-            this.updateVisivility()
-          })
+          )
         }
       }
     }
 
     // }
+  }
+
+  handleCanAttendError(error: any) {
+    // Extract error message from the error response
+    let errorMessage = 'Unable to load assessment. Please try again later.'
+
+    if (error && error.params && error.params.errmsg) {
+      errorMessage = error.params.errmsg
+    } else if (error && error.error && error.error.params && error.error.params.errmsg) {
+      errorMessage = error.error.params.errmsg
+    } else if (error && error.message) {
+      errorMessage = error.message
+    }
+
+
+    const popupData = {
+      headerText: '',
+      assessmentType: 'maxAttemptReachedd',
+      primaryCategory: this.primaryCategory,
+      canAttempt: this.canAttempt,
+      warningNote: errorMessage,
+      buttonsList: [
+        {
+          response: 'yes',
+          text: 'Ok',
+          classes: 'blue-full',
+        },
+      ],
+    }
+    const dialogRef = this.dialog.open(FinalAssessmentPopupComponent, {
+      data: popupData,
+      width: '626px',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '225px',
+      panelClass: 'final-assessment',
+    })
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Navigate back or show appropriate UI after closing the dialog
+      this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
+    })
+
+    // Also show snackbar for quick notification
+    this.openSnackbar(errorMessage)
   }
   ngOnInit() {
     this.attemptSubscription = this.quizSvc.secAttempted.subscribe(data => {
@@ -374,7 +433,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     this.coursePrimaryCategory = this.widgetContentService.currentMetaData.primaryCategory
     if (this.widgetContentService.currentMetaData.children && this.widgetContentService.currentMetaData.children.length) {
-      this.widgetContentService.currentMetaData.children.map((item: any) => {
+      let activeResourceFound = false
+      this.widgetContentService.currentMetaData.children.forEach((item: any) => {
         const activeResource = this.findNested(item, 'identifier', this.identifier)
         this.showQuestionMarks = item.showMarks ? item.showMarks : 'No'
         // this.selectedAssessmentCompatibilityLevel = item.compatibilityLevel
@@ -399,8 +459,14 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           this.instructionAssessment = activeResource.description
           this.getInstructionAssessmentPagination(activeResource.description)
         }
-        this.canAttend()
+        if (activeResource && !activeResourceFound) {
+          activeResourceFound = true
+        }
       })
+      // Call canAttend only once after processing all children
+      if (activeResourceFound) {
+        this.canAttend()
+      }
     } else if (this.widgetContentService.currentMetaData && this.widgetContentService.currentMetaData?.content &&
       this.widgetContentService.currentMetaData?.content?.data &&
       this.widgetContentService.currentMetaData?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
@@ -2187,17 +2253,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
     } else {
-      if (this.tocSvc.hashmap[this.identifier] &&
-        (!this.tocSvc.hashmap[this.identifier]['completionStatus'] || this.tocSvc.hashmap[this.identifier]['completionStatus'] < 2)) {
+      if (this.tocSvc.hashmap[this.identifier]) {
         const completionPercentage: number = 100
         const completionStatus: number = 2
         if (this.tocSvc.hashmap[this.identifier] &&
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== undefined &&
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== null &&
-          this.tocSvc.hashmap[this.identifier]['completionStatus']) {
+          this.tocSvc.hashmap[this.identifier]['completionStatus'] !== undefined) {
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
           this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+          // Manually trigger change detection to update UI
+          this.cdr.detectChanges()
         }
       }
     }
@@ -2704,6 +2771,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             })
             if (contentProgressData && contentProgressData.length) {
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
+              // Manually trigger change detection to update UI
+              this.cdr.detectChanges()
             }
           }
         },
