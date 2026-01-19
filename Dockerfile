@@ -12,7 +12,6 @@ RUN npm run compress:brotli
 
 WORKDIR /app/dist
 COPY assets/iGOT/client-assets/dist www/en/assets
-RUN npm install --omit=dev
 RUN npm install --production 
 EXPOSE 3004
 
