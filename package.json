@@ -29,7 +29,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-builders/jest": "19.0.0",
     "@angular-slider/ngx-slider": "16.0.0",
     "@angular/animations": "^16.2.12",
     "@angular/cdk": "^16.2.14",
@@ -131,6 +130,7 @@
     "zone.js": "~0.13.3"
   },
   "devDependencies": {
+    "@angular-builders/jest": "19.0.0",
     "@angular-devkit/build-angular": "^16.2.16",
     "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.2.12",
