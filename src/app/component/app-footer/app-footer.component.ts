@@ -26,6 +26,7 @@ export class AppFooterComponent implements OnInit {
   logoSrc = '/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg'
   hubsList!: NsInstanceConfig.IHubs[]
   portalUrls!: NsInstanceConfig.IPortalUrls
+  copyrightYears = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`
   private baseUrl = this.configSvc.baseUrl
   constructor(
     private configSvc: ConfigurationsService,
@@ -68,7 +69,7 @@ export class AppFooterComponent implements OnInit {
     } else {
       const newInstance = await this.readAgain()
       this.hubsList = (newInstance.hubs || []).filter(i => i.active)
-    } 
+    }
     this.logoSrc = this.domainConfSvc.getDomainAppLogo()
     this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
   }
