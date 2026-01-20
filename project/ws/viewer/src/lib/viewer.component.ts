@@ -200,7 +200,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (data.result.content.cstoken) {
           this.configSvc.cstoken = data.result.content.cstoken
         }
-        this.leafNodesCount = data.result.content.leafNodesCount
+        this.leafNodesCount = this.hierarchyData?.leafNodes?.length || data.result.content.leafNodesCount || 0
       })
     }
 
@@ -240,7 +240,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
         this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
-        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
+        this.leafNodesCount = this.hierarchyData?.leafNodes?.length || 0
       } else {
         this.hierarchyData = contentData.result.content
         this.leafNodesCount = contentData.result.content.leafNodesCount

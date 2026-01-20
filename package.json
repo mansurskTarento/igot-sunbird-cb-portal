@@ -29,7 +29,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-builders/jest": "^19.0.0",
+    "@angular-builders/jest": "19.0.0",
     "@angular-slider/ngx-slider": "16.0.0",
     "@angular/animations": "^16.2.12",
     "@angular/cdk": "^16.2.14",
@@ -37,7 +37,7 @@
     "@angular/compiler": "^16.2.12",
     "@angular/core": "^16.2.12",
     "@angular/forms": "^16.2.12",
-    "@angular/localize": "^18.2.4",
+    "@angular/localize": "18.2.4",
     "@angular/material": "^16.2.14",
     "@angular/material-moment-adapter": "^16.2.14",
     "@angular/platform-browser": "^16.2.12",
