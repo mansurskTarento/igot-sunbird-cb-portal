@@ -1,4 +1,4 @@
-FROM node:18.20.3
+FROM node:22.6.0
 
 WORKDIR /app
 COPY . .
@@ -12,7 +12,7 @@ RUN npm run compress:brotli
 
 WORKDIR /app/dist
 COPY assets/iGOT/client-assets/dist www/en/assets
-RUN npm install --omit=dev --legacy-peer-deps --force
+RUN npm install --production --force
 EXPOSE 3004
 
 CMD [ "npm", "run", "serve:prod" ]
