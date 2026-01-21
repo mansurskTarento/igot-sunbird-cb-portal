@@ -22,9 +22,9 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection/src/lib/_common/content-rating-v2-dialog/content-rating-v2-dialog.component'
 import moment from 'moment'
-import { NsAppToc } from '@ws/app/src/lib/routes/app-toc/models/app-toc.model'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
-import { ActionService } from '@ws/app/src/lib/routes/app-toc/services/action.service'
+import { NsAppToc } from '@sunbird-cb/toc'
+import { AppTocService } from '@sunbird-cb/toc'
+import { ActionService } from '@sunbird-cb/toc'
 
 export enum ErrorType {
     internalServer = 'internalServer',

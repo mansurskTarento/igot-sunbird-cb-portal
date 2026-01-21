@@ -35,6 +35,7 @@ export namespace NsContent {
     collections?: IContent[]
     completionPercentage?: number | null
     completionStatus?: number
+    complexityLevel: string
     difficultyLevel: string
     contentId: string
     contentType: EContentTypes
@@ -399,6 +400,7 @@ export namespace NsContent {
     STANDALONE_ASSESSMENT = 'Standalone Assessment',
     MODERATED_ASSESSEMENT = 'Moderated Assessment',
     CASE_STUDY = 'Case Study',
+    LEARNING_PATHWAY = 'Learning Pathway',
   }
 
   export enum WFBlendedProgramStatus {
@@ -418,12 +420,12 @@ export namespace NsContent {
     TWO_STEP_PC_MDO = 'twoStepPCAndMDOApproval',
   }
 
-  export const  WFSTATUS_MSG_MAPPING: any = {
-    INITIATE:  '',
-    SEND_FOR_MDO_APPROVAL:  'BatchEnrollL1Msg',
-    SEND_FOR_PC_APPROVAL:  'BatchEnrollL2Msg',
-    APPROVED:  'BatchEnrollApprovedMsg',
-    REJECTED:  'BatchEnrollRejectedMsg',
+  export const WFSTATUS_MSG_MAPPING: any = {
+    INITIATE: '',
+    SEND_FOR_MDO_APPROVAL: 'BatchEnrollL1Msg',
+    SEND_FOR_PC_APPROVAL: 'BatchEnrollL2Msg',
+    APPROVED: 'BatchEnrollApprovedMsg',
+    REJECTED: 'BatchEnrollRejectedMsg',
     WITHDRAWN: 'BatchEnrollWithdrawMsg',
     REMOVED: 'BatchEnrollRemoveMsg',
     EXPIRED: 'BatchListExpiredMsg',

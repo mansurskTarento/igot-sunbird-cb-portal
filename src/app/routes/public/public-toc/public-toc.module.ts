@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { PublicTocComponent } from './public-toc.component'
 import { RouterModule } from '@angular/router'
 import { PipeDurationTransformModule, PipePartialContentModule, PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService, ActionService } from '@sunbird-cb/toc'
 import { AppTocModule } from '@ws/app/src/public-api'
 import { BtnPageBackNavModule } from '@sunbird-cb/collection/src/public-api'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
@@ -63,7 +63,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         BtnPageBackNavModule,
     ],
     exports: [PublicTocComponent],
-    providers: [AppTocService],
+    providers: [AppTocService, ActionService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PublicTocModule { }

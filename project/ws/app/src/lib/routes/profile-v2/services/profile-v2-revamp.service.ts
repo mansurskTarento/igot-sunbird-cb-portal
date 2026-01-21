@@ -46,6 +46,8 @@ const API_END_POINTS = {
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
 
+  SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search'
+
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
 }
@@ -65,7 +67,7 @@ export class ProfileV2RevampService {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
         if(!isNotCurrentUser) {
-          this.configulreProfileDetails(res) 
+          this.configulreProfileDetails(res)
         }
         return res
       }))
@@ -268,6 +270,11 @@ export class ProfileV2RevampService {
 
   deleteAchievement(payload: any): Observable<any> {
     return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, { body: payload })
+  }
+
+
+  getEducationsQualificationsSearch(payload: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.SEARCH_EDUCATIONAL_QUALIFICATIONS, payload)
   }
 
 }

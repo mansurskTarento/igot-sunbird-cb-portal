@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
 import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { ContentLanguageService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Injectable({
@@ -170,6 +170,11 @@ export class ViewerUtilService {
         this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
         this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
         this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+        // Trigger milestone lock recomputation for Learning Pathways
+        if (this.tocSvc.triggerMilestoneLockUpdate) {
+          this.tocSvc.triggerMilestoneLockUpdate()
+        }
       }
     } else {
       req = {}
@@ -186,7 +191,26 @@ export class ViewerUtilService {
     const tempContentReadData = this.contentSvc.currentContentReadMetaData
     const enrollmentList = this.contentSvc.currentBatchEnrollmentList
     if (!this.forPreview) {
-      if (tempContentData && tempContentReadData.cumulativeTracking &&
+      if (tempContentData.courseCategory === 'Learning Pathway') {
+        // Find the course that contains the given resource ID
+        const foundCourse = this.findCourseContainingResource(tempContentData, resourceId)
+
+        if (foundCourse) {
+          // Always update courseId if course is found
+          tempData.courseId = foundCourse.identifier
+
+          // Try to find batch ID from enrollment data for the found course
+          if (foundCourse.identifier) {
+            const enrollment = enrollmentList.find(
+              (course: any) => course.collectionId === foundCourse.identifier
+            )
+
+            if (enrollment && enrollment.batchId) {
+              tempData.batchId = enrollment.batchId
+            }
+          }
+        }
+      } else if (tempContentData && tempContentReadData.cumulativeTracking &&
         (tempContentData.primaryCategory === NsContent.EPrimaryCategory.PROGRAM ||
           tempContentData.primaryCategory === NsContent.EPrimaryCategory.CURATED_PROGRAM
           || tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM
@@ -221,6 +245,66 @@ export class ViewerUtilService {
       }
     }
     return tempData
+  }
+
+  /**
+   * Recursively searches for a resource ID in a content's children hierarchy
+   * @param content The content object to search in
+   * @param resourceId The resource ID to find
+   * @returns true if resource is found, false otherwise
+   */
+  private findResourceInContent(content: any, resourceId: string): boolean {
+    // Check if this content has the resource in its leafNodes
+    if (content.leafNodes && Array.isArray(content.leafNodes)) {
+      if (content.leafNodes.indexOf(resourceId) !== -1) {
+        return true
+      }
+    }
+
+    // Check if this content's identifier matches the resource ID
+    if (content.identifier === resourceId) {
+      return true
+    }
+
+    // Recursively search in children
+    if (content.children && Array.isArray(content.children)) {
+      for (const child of content.children) {
+        if (this.findResourceInContent(child, resourceId)) {
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
+  /**
+   * Finds the course that contains a given resource ID in a Learning Pathway
+   * @param learningPathwayContent The Learning Pathway content data
+   * @param resourceId The resource ID to find
+   * @returns The course object containing the resource, or null if not found
+   */
+  findCourseContainingResource(learningPathwayContent: any, resourceId: string): any {
+    // Check if milestones_v1 exists
+    if (!learningPathwayContent.milestones_v1 || !Array.isArray(learningPathwayContent.milestones_v1)) {
+      return null
+    }
+
+    // Loop through each milestone
+    for (const milestone of learningPathwayContent.milestones_v1) {
+      // Check if milestone has courses
+      if (milestone.courses && Array.isArray(milestone.courses)) {
+        // Loop through each course in the milestone
+        for (const course of milestone.courses) {
+          // Check if this course contains the resource
+          if (this.findResourceInContent(course, resourceId)) {
+            return course
+          }
+        }
+      }
+    }
+
+    return null
   }
 
   getResourceContentLanguage(resourceId: string) {
@@ -301,6 +385,11 @@ export class ViewerUtilService {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
           this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+          // Trigger milestone lock recomputation for Learning Pathways
+          if (this.tocSvc.triggerMilestoneLockUpdate) {
+            this.tocSvc.triggerMilestoneLockUpdate()
+          }
         }
       }
     } else {
@@ -465,6 +554,11 @@ export class ViewerUtilService {
         this.tocSvc.hashmap[contentId]['parent'] = req.request.contents[0].courseId
         this.tocSvc.hashmap[contentId]['progress'] = req.request.contents[0].progressdetails
         this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+        // Trigger milestone lock recomputation for Learning Pathways
+        if (this.tocSvc.triggerMilestoneLockUpdate) {
+          this.tocSvc.triggerMilestoneLockUpdate()
+        }
       }
 
       // console.log('Updated hashmap:', this.tocSvc.hashmap)
@@ -509,6 +603,11 @@ export class ViewerUtilService {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
           this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+          // Trigger milestone lock recomputation for Learning Pathways
+          if (this.tocSvc.triggerMilestoneLockUpdate) {
+            this.tocSvc.triggerMilestoneLockUpdate()
+          }
         }
       }
     } else {

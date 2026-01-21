@@ -473,17 +473,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.getMinistryData()
     }
 
-    this.masterData.organisationBackup = []
     this.masterData.departmentBackup = []
-    this.masterData.organisationBackup.push({
-      "identifier": "-1",
-      "orgHierarchyFrameworkStatus": null,
-      "orgName": "N/A",
-      "sbOrgType": null,
-      "description": null,
-      "sbOrgSubType": null,
-      "orgHierarchyFrameworkId": null
-    },)
+    this.resetOrganisationBackup()
     this.masterData.departmentBackup.push({
       "identifier": "-1",
       "orgHierarchyFrameworkStatus": null,
@@ -501,6 +492,18 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     this.designationInitInProgress = true
     this.getDesignation()
+  }
+
+  resetOrganisationBackup() {
+    this.masterData.organisationBackup = [{
+      "identifier": "-1",
+      "orgHierarchyFrameworkStatus": null,
+      "orgName": "N/A",
+      "sbOrgType": null,
+      "description": null,
+      "sbOrgSubType": null,
+      "orgHierarchyFrameworkId": null
+    }]
   }
 
   getDesignation(searchText?: string, offset?: number): void {
@@ -1450,10 +1453,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     const requestBody: any = {
       "request": {
-        "filters": {
-          "status": 1,
-          "sbOrgType": this.registrationFormStepOne.controls.type.value
-        },
+        // "filters": {
+        //   "status": 1,
+        //   "sbOrgType": this.registrationFormStepOne.controls.type.value
+        // },
         "query": "",
         "limit": reqLimit,
         "offset": reqLimit > 0 ? pageIndex * reqLimit : this.ministryDefaultLoadCount,
@@ -1465,7 +1468,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
           "sbOrgSubType",
-          "channel"
+          "channel",
+          "hierarchyLevel",
+          "parentPathId",
+          "ministryOrStateId"
         ]
       }
     }
@@ -1478,7 +1484,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreMinistrys = true
     console.log('requestBody--', requestBody)
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+    this.signupSvc.getMinistryForRegistration(requestBody).pipe(finalize(() => {
       this.isLoadingMoreMinistrys = false
       this.ministryInitInProgress = false
     }))
@@ -1486,9 +1492,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
 
-          const mapped = content.filter(
-            (item: any) => item && item.sbOrgType === 'ministry'
-          )
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'ministry'
+          // )
+
+          const mapped = content
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -1691,10 +1699,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     const requestBody: any = {
       "request": {
-        "filters": {
-          "status": 1,
-          "sbOrgType": this.registrationFormStepOne.controls.type.value
-        },
+        // "filters": {
+        //   "status": 1,
+        //   "sbOrgType": this.registrationFormStepOne.controls.type.value
+        // },
         "query": "",
         "limit": reqLimit,
         "offset": reqLimit > 0 ? pageIndex * reqLimit : this.stateDefaultLoadCount,
@@ -1706,7 +1714,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           "orgHierarchyFrameworkStatus",
           "sbOrgType",
           "sbOrgSubType",
-          "channel"
+          "channel",
+          "hierarchyLevel",
+          "parentPathId",
+          "ministryOrStateId"
         ]
       }
     }
@@ -1719,7 +1730,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreStates = true
 
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
+    this.signupSvc.getStateForRegistration(requestBody).pipe(finalize(() => {
       this.isLoadingMoreStates = false
       this.stateInitInProgress = false
     }))
@@ -1727,9 +1738,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           const content = _.get(res, 'result.response.content', [])
 
-          const mapped = content.filter(
-            (item: any) => item && item.sbOrgType === 'state'
-          )
+          // const mapped = content.filter(
+          //   (item: any) => item && item.sbOrgType === 'state'
+          // )
+
+          const mapped = content
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -2193,13 +2206,28 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     let requestBody: any = {}
     if (this.registrationFormStepOne.controls.type.value === 'ministry') {
+
+
+      let filters: any = {
+        "status": 1,
+        "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
+        "hierarchyRequestType": "All"
+      }
+      for (let i = 0; i < this.masterData['ministryBackup'].length; i++) {
+        if (this.masterData['ministryBackup'][i]?.['identifier'] === this.registrationFormStepOne.controls.ministry.value) {
+          if (this.masterData['ministryBackup'][i]?.['hierarchyLevel'] === 'levelOne') {
+            filters = {
+              "status": 1,
+              "levelZeroOrgId": this.masterData['ministryBackup'][i]['ministryOrStateId'],
+              "levelOneOrgId": this.masterData['ministryBackup'][i]['identifier'],
+              "hierarchyRequestType": "All"
+            }
+          }
+        }
+      }
       requestBody = {
         "request": {
-          "filters": {
-            "status": 1,
-            "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
-            "hierarchyRequestType": "All"
-          },
+          "filters": filters,
           "query": "",
           "limit": reqLimit,
           "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
@@ -2509,6 +2537,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.registrationFormStepOne.get('organisation')) {
       this.registrationFormStepOne.get('organisation')!.setValue('')
     }
+    this.resetOrganisationBackup()
     this.getOrganisationData()
   }
 

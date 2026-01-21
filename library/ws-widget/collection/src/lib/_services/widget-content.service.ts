@@ -8,7 +8,7 @@ import { NsContent } from './widget-content.model'
 import { NSSearch } from './widget-search.model'
 // tslint:disable
 import _ from 'lodash'
-import {  viewerRouteGenerator } from './viewer-route-util'
+import { viewerRouteGenerator } from './viewer-route-util'
 import moment from 'moment'
 import { ActivatedRoute } from '@angular/router'
 // tslint:enable
@@ -52,12 +52,12 @@ const API_END_POINTS = {
   CERT_ISSUE: `${PROTECTED_SLAG_V8}/cohorts/course/batch/cert/issue`,
   CERT_DOWNLOAD: (certId: any) => `${PROTECTED_SLAG_V8}/cohorts/course/batch/cert/download/${certId}`,
   READ_KARMAPOINTS: `/apis/proxies/v8/karmapoints/read`,
-  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
+  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/extended/content/v1/read/${contentId}`,
   READ_COURSE_KARMAPOINTS: '/apis/proxies/v8/karmapoints/user/course/read',
   CLAIM_KARMAPOINTS: '/apis/proxies/v8/claimkarmapoints',
   USER_KARMA_POINTS: '/apis/proxies/v8/user/totalkarmapoints',
   EXT_CONTENT_READ: (contentId: any) => `/apis/proxies/v8/cios/v1/content/read/${contentId}`,
-  EXT_USER_COURSE_ENROLL : (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
+  EXT_USER_COURSE_ENROLL: (contentId: any) => `/apis/proxies/v8/cios-enroll/v1/readby/useridcourseid/${contentId}`,
   EXT_CONTENT_EROLL: `/apis/proxies/v8/cios-enroll/v1/create`,
   EXT_PUBLIC_CONTENT: (partent: any, contentId: any) => `/apis/proxies/v8/ciosIntegration/v1/read/content/${partent}/${contentId}`,
   ENROLL_CONTENT_DATA: (userId: string,) => `/apis/proxies/v8/learner/course/v4/user/enrollment/details/${userId}`,
@@ -75,7 +75,7 @@ export class WidgetContentService {
   }
 
   tocConfigData: any = new BehaviorSubject<any>({})
-  tocConfigData$  = this.tocConfigData.asObservable()
+  tocConfigData$ = this.tocConfigData.asObservable()
   currentMetaData!: NsContent.IContent
   currentContentReadMetaData!: NsContent.IContent
   currentBatchEnrollmentList!: NsContent.ICourse[]
@@ -122,7 +122,7 @@ export class WidgetContentService {
         if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
           url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
         } else {
-            url = `/api/content/v1/read/${contentId}`
+          url = `/api/content/v1/read/${contentId}`
         }
       }
     } else {
@@ -152,7 +152,7 @@ export class WidgetContentService {
     let url = ''
     if (forcreator) {
       url = `apis/proxies/v8/action/content/v3/hierarchy/${contentId}?mode=edit`
-    } else if(apiType && apiType === 'read') {
+    } else if (apiType && apiType === 'read') {
       url = `/api/content/v1/read/${contentId}`
     } else {
       url = `${API_END_POINTS.AUTHORING_CONTENT}/${contentId}?hierarchyType=detail`
@@ -208,7 +208,7 @@ export class WidgetContentService {
 
   autoAssignCuratedBatchApi(request: any, programType: any): Observable<NsContent.IBatchListResponse> {
     const url = programType === NsContent.ECourseCategory.MODERATED_PROGRAM ?
-    API_END_POINTS.AUTO_ASSIGN_OPEN_PROGRAM : API_END_POINTS.AUTO_ASSIGN_CURATED_BATCH
+      API_END_POINTS.AUTO_ASSIGN_OPEN_PROGRAM : API_END_POINTS.AUTO_ASSIGN_CURATED_BATCH
     return this.http.post<NsContent.IBatchListResponse>(`${url}`, request)
       .pipe(
         retry(1),
@@ -265,21 +265,21 @@ export class WidgetContentService {
   fetchContentHistoryV2(req: NsContent.IContinueLearningDataReq): Observable<NsContent.IContinueLearningData> {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     req.request.fields = ['progressdetails']
-    if(req.request.courseId && !isPreAssessment) {
-    const data = this.http.post<NsContent.IContinueLearningData>(
-      `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
-    ).pipe(
-      map((rData: any) => {
-        this.languageMapProgress = rData?.result?.languageProgress || {}
-        return rData
-      }), //  (rData.responseData || []).map((p: any) => p.name)
-    )
-    // data.subscribe((subscribeData: any) => {
-    //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
-    //     })
-    return data
-  }
-  return of()
+    if (req.request.courseId && !isPreAssessment) {
+      const data = this.http.post<NsContent.IContinueLearningData>(
+        `${API_END_POINTS.CONTENT_HISTORYV2}/${req.request.courseId}`, req
+      ).pipe(
+        map((rData: any) => {
+          this.languageMapProgress = rData?.result?.languageProgress || {}
+          return rData
+        }), //  (rData.responseData || []).map((p: any) => p.name)
+      )
+      // data.subscribe((subscribeData: any) => {
+      //       this.programChildCourseResumeData.next({ resumeData: subscribeData.result.contentList, courseId: req.request.courseId })
+      //     })
+      return data
+    }
+    return of()
   }
 
   setProgramChildResumeData(contentList: any, courseId: any) {
@@ -451,7 +451,7 @@ export class WidgetContentService {
     return this.http.post<NsContent.IContent>(API_END_POINTS.TRENDING_CONTENT_SEARCH, req)
   }
 
-  getKarmaPoitns (limit: number, offset: any) {
+  getKarmaPoitns(limit: number, offset: any) {
     return this.http.post(API_END_POINTS.READ_KARMAPOINTS, { limit, offset }).pipe(catchError(_err => of(true)))
   }
   fetchProgramContent(contentId: string[]): Observable<NsContent.IContent[]> {
@@ -463,9 +463,9 @@ export class WidgetContentService {
       )
     }
     if (window.location.href.includes('editMode=true')) {
-      url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
+      url = `/apis/proxies/v8/extended/content/v1/read/${contentId}`
     } else {
-        url = `/api/content/v1/read/${contentId}`
+      url = `/api/content/v1/read/${contentId}`
     }
     return this.http.get<NsContent.IContent[]>(url)
     // return this.http.get<NsContent.IContent[]>(API_END_POINTS.CONTENT_READ(contentId))
@@ -482,7 +482,7 @@ export class WidgetContentService {
     return this.http.get<any>(API_END_POINTS.EXT_USER_COURSE_ENROLL(contentId))
   }
 
-  extContentEnroll (requestBody: any) {
+  extContentEnroll(requestBody: any) {
     return this.http.post<any>(`${API_END_POINTS.EXT_CONTENT_EROLL}`, requestBody)
   }
 
@@ -509,18 +509,18 @@ export class WidgetContentService {
     if (enrolledCourseData) {
       if (enrolledCourseData && enrolledCourseData.content && enrolledCourseData.content.status &&
         enrolledCourseData.content.status.toLowerCase() !== 'retired') {
-        if (enrolledCourseData.content.courseCategory ===  NsContent.ECourseCategory.BLENDED_PROGRAM ||
-          enrolledCourseData.content.courseCategory ===  NsContent.ECourseCategory.INVITE_ONLY_PROGRAM ||
-          enrolledCourseData.content.courseCategory ===  NsContent.ECourseCategory.MODERATED_PROGRAM ||
-          enrolledCourseData.content.primaryCategory ===  NsContent.EPrimaryCategory.BLENDED_PROGRAM ||
-          enrolledCourseData.content.primaryCategory ===  NsContent.EPrimaryCategory.PROGRAM) {
-            if (!this.isBatchInProgress(enrolledCourseData.batch)) {
-              return this.gotoTocPage(content)
-            }
-            const returnData =  await this.checkForDataToFormUrl(content, enrolledCourseData)
-            return returnData
+        if (enrolledCourseData.content.courseCategory === NsContent.ECourseCategory.BLENDED_PROGRAM ||
+          enrolledCourseData.content.courseCategory === NsContent.ECourseCategory.INVITE_ONLY_PROGRAM ||
+          enrolledCourseData.content.courseCategory === NsContent.ECourseCategory.MODERATED_PROGRAM ||
+          enrolledCourseData.content.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM ||
+          enrolledCourseData.content.primaryCategory === NsContent.EPrimaryCategory.PROGRAM) {
+          if (!this.isBatchInProgress(enrolledCourseData.batch)) {
+            return this.gotoTocPage(content)
+          }
+          const returnData = await this.checkForDataToFormUrl(content, enrolledCourseData)
+          return returnData
         }
-        const data =  await this.checkForDataToFormUrl(content, enrolledCourseData)
+        const data = await this.checkForDataToFormUrl(content, enrolledCourseData)
         return data
       }
       return ''
@@ -529,7 +529,7 @@ export class WidgetContentService {
   }
   async checkForDataToFormUrl(content: any, enrollData: any) {
     let urlData: any
-    if (enrollData.completionPercentage  === 100) {
+    if (enrollData.completionPercentage === 100) {
       return this.gotoTocPage(enrollData)
     }
     // if (enrollData.lrcProgressDetails && enrollData.lrcProgressDetails.mimeType) {
@@ -549,26 +549,26 @@ export class WidgetContentService {
     //                                         enrollData.lrcProgressDetails.mimeType)
     //   }
     // }
-      if (enrollData.lastReadContentId || enrollData.firstChildId) {
-        const doId =  enrollData.lastReadContentId || enrollData.firstChildId
-        const responseData = await this.fetchProgramContent(doId).toPromise().then(async (res: any) => {
-          if (res && res.result && res.result.content) {
-            const contentData: any = res.result.content
-            const modifyEnrollData  = {
-              ...enrollData,
-              identifier: enrollData.collectionId,
-              primaryCategory: enrollData.content.primaryCategory,
-              name: enrollData.content.name,
-            }
-            urlData =  this.getResourseDataWithData(modifyEnrollData, contentData.identifier, contentData.mimeType)
-            if (urlData) {
-              return urlData
-            }
+    if (enrollData.lastReadContentId || enrollData.firstChildId) {
+      const doId = enrollData.lastReadContentId || enrollData.firstChildId
+      const responseData = await this.fetchProgramContent(doId).toPromise().then(async (res: any) => {
+        if (res && res.result && res.result.content) {
+          const contentData: any = res.result.content
+          const modifyEnrollData = {
+            ...enrollData,
+            identifier: enrollData.collectionId,
+            primaryCategory: enrollData.content.primaryCategory,
+            name: enrollData.content.name,
           }
-        })
-        return responseData ? responseData : this.gotoTocPage(content)
-      }
-        return this.gotoTocPage(content)
+          urlData = this.getResourseDataWithData(modifyEnrollData, contentData.identifier, contentData.mimeType)
+          if (urlData) {
+            return urlData
+          }
+        }
+      })
+      return responseData ? responseData : this.gotoTocPage(content)
+    }
+    return this.gotoTocPage(content)
 
   }
 
@@ -609,11 +609,11 @@ export class WidgetContentService {
       const now = moment().format('YYYY-MM-DD')
       const startDate = moment(batchData.startDate).format('YYYY-MM-DD')
       const endDate = batchData.endDate ? moment(batchData.endDate).format('YYYY-MM-DD') : now
-          return (
-            // batch.status &&
-            moment(startDate).isSameOrBefore(now)
-            && moment(endDate).isSameOrAfter(now)
-          )
+      return (
+        // batch.status &&
+        moment(startDate).isSameOrBefore(now)
+        && moment(endDate).isSameOrAfter(now)
+      )
     } return true
   }
 
@@ -650,7 +650,7 @@ export class WidgetContentService {
     return resultContent
   }
 
-  fetchHierarchyContent(contentId:string, hierarchyType: 'all' | 'minimal' | 'detail' = 'detail') {
+  fetchHierarchyContent(contentId: string, hierarchyType: 'all' | 'minimal' | 'detail' = 'detail') {
     let url = ''
     const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
     if (!forPreview) {
@@ -677,20 +677,20 @@ export class WidgetContentService {
     if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
       url = `/apis/proxies/v8/action/content/v3/read/${contentId}`
     } else {
-        url = `/api/content/v1/read/${contentId}`
+      url = `/api/content/v1/read/${contentId}`
     }
-      return this.http.get<NsContent.IContent>(url)
+    return this.http.get<NsContent.IContent>(url)
   }
 
   getUserEnrollmentData(userId: string, request: any): Observable<{ data: any; error: any }> {
     return this.http.post(API_END_POINTS.ENROLL_CONTENT_DATA(userId), request).pipe(
       map((rData: any) => {
-        const result = rData?.result ?? null;
-        return { data: result, error: null };
+        const result = rData?.result ?? null
+        return { data: result, error: null }
       }),
       catchError((error: any) => {
-        return of({ data: null, error });
+        return of({ data: null, error })
       })
-    );
+    )
   }
 }

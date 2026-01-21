@@ -40,7 +40,7 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
-import { KarmaPointsModule } from '@sunbird-cb/collection/src/lib/_common/content-toc/karma-points/karma-points.module'
+import { KarmaPointsModule } from '@sunbird-cb/toc'
 import { EventPlayerComponent } from './routes/event-player/event-player.component'
 import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf-player.component'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
@@ -49,9 +49,9 @@ import { EventYouTubeComponent } from './components/event-you-tube/event-you-tub
 import { EventResolve } from './services/event-resolver.resolve'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
-import { HttpClient } from '@angular/common/http';
-import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component';
-import { EventsCalendarModule } from './routes/events-calendar/events-calendar.module';
+import { HttpClient } from '@angular/common/http'
+import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component'
+import { EventsCalendarModule } from './routes/events-calendar/events-calendar.module'
 import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
 import { MatLegacySnackBarModule } from '@angular/material/legacy-snack-bar'
 import { ContentStripWithTabsPillsModule, ContentStripWithTabsLibModule } from '@sunbird-cb/consumption'
@@ -61,14 +61,14 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { EventCardV2Module } from '@sunbird-cb/collection/src/lib/event-card-v2/event-card-v2.module'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatBottomSheetModule, MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import { MobileFiltersComponent } from './routes/events/mobile-filters/mobile-filters.component'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
-import { SeeAllComponent } from './routes/events/see-all/see-all.component';
-import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component';
-import { EventsV2Component } from './routes/events-v2/events-v2.component';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { SeeAllComponent } from './routes/events/see-all/see-all.component'
+import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
+import { EventsV2Component } from './routes/events-v2/events-v2.component'
 import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 import { ShareDiscussionModule } from '@sunbird-cb/discussion-v2'
 import { MatRadioModule } from '@angular/material/radio'
