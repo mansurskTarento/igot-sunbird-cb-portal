@@ -273,13 +273,10 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         try {
           const mlId = this.activatedRoute.snapshot.queryParams.MLId ? this.activatedRoute.snapshot.queryParams.MLId : this.collectionId
           if (mlId && this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[mlId]) {
+            // Ensure we write the aggregated unique count into the hashmap for the identifier the UI reads
             this.tocSvc.hashmap[mlId]['leafNodesCount'] = this.leafNodesCount
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', {
-              mlId,
-              writtenLeafNodesCount: this.tocSvc.hashmap[mlId]['leafNodesCount'],
-              hashmapKeys: Object.keys(this.tocSvc.hashmap || {}),
-            })
+            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', { mlId, writtenLeafNodesCount: this.leafNodesCount })
           }
         } catch (_e) {
           // ignore
@@ -535,49 +532,62 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private countLeafNodes(node: any): number {
+    // Build a unique set of leaf identifiers to avoid double counting.
+    const ids = new Set<string>()
     if (!node) {
       return 0
     }
-    let count = 0
-    // If an array of nodes is passed
-    if (Array.isArray(node)) {
-      for (const n of node) {
-        count += this.countLeafNodes(n)
+
+    const traverse = (n: any) => {
+      if (!n) {
+        return
       }
-      return count
-    }
-
-    // Common leafNodes property
-    if (node.leafNodes && Array.isArray(node.leafNodes)) {
-      count += node.leafNodes.length
-    }
-
-    // children (recursive)
-    if (node.children && Array.isArray(node.children)) {
-      for (const child of node.children) {
-        count += this.countLeafNodes(child)
-      }
-    }
-
-    // If node represents a standalone content item (like an assessment) with no children or leafNodes,
-    // count it as one. Exclude structural nodes like Course or Module.
-    const isStructural = node.primaryCategory === 'Course' || node.primaryCategory === 'Module' || node.primaryCategory === 'Program'
-    if (!isStructural && !(node.leafNodes && node.leafNodes.length) && !(node.children && node.children.length) && node.identifier) {
-      count += 1
-    }
-
-    // milestones_v1 -> courses (Learning Pathway specific)
-    if (node.milestones_v1 && Array.isArray(node.milestones_v1)) {
-      for (const m of node.milestones_v1) {
-        if (m.courses && Array.isArray(m.courses)) {
-          for (const course of m.courses) {
-            count += this.countLeafNodes(course)
+      // If node has explicit leafNodes (array of ids), add them
+      if (n.leafNodes && Array.isArray(n.leafNodes)) {
+        for (const id of n.leafNodes) {
+          if (id) {
+            ids.add(id)
           }
         }
       }
+
+      // If node has children, recurse
+      if (n.children && Array.isArray(n.children)) {
+        for (const child of n.children) {
+          traverse(child)
+        }
+      }
+
+      // milestones_v1 -> courses (Learning Pathway specific)
+      if (n.milestones_v1 && Array.isArray(n.milestones_v1)) {
+        for (const m of n.milestones_v1) {
+          if (m.courses && Array.isArray(m.courses)) {
+            for (const course of m.courses) {
+              traverse(course)
+            }
+          }
+        }
+      }
+
+      // If node is a standalone content item (no children/leafNodes), count its own identifier
+      const hasLeafNodes = n.leafNodes && n.leafNodes.length
+      const hasChildren = n.children && n.children.length
+      const isStructural = n.primaryCategory === 'Course' || n.primaryCategory === 'Module' || n.primaryCategory === 'Program'
+      if (!isStructural && !hasLeafNodes && !hasChildren && n.identifier) {
+        ids.add(n.identifier)
+      }
     }
 
-    return count
+    // If an array is passed, traverse each entry
+    if (Array.isArray(node)) {
+      for (const n of node) {
+        traverse(n)
+      }
+      return ids.size
+    }
+
+    traverse(node)
+    return ids.size
   }
 
   updateCount(event: any) {
