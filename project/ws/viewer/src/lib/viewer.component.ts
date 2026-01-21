@@ -273,10 +273,13 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         try {
           const mlId = this.activatedRoute.snapshot.queryParams.MLId ? this.activatedRoute.snapshot.queryParams.MLId : this.collectionId
           if (mlId && this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[mlId]) {
-            // Ensure we write the aggregated unique count into the hashmap for the identifier the UI reads
             this.tocSvc.hashmap[mlId]['leafNodesCount'] = this.leafNodesCount
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', { mlId, writtenLeafNodesCount: this.leafNodesCount })
+            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', {
+              mlId,
+              writtenLeafNodesCount: this.leafNodesCount,
+              hashmapKeys: Object.keys(this.tocSvc.hashmap || {}),
+            })
           }
         } catch (_e) {
           // ignore
