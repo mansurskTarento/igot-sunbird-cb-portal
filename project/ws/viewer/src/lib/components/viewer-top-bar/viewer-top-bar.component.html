@@ -108,12 +108,12 @@
         <div class="flex flex-row justify-between w-full ws-mat-black-text">
           <div class="flex items-center mb-2">
             <span class="mat-body-2 mr-2">{{'playerbrief.items' | translate}}
-              ({{currentDataFromEnrollList?.progress}}/{{currentDataFromEnrollList?.leafNodesCount}})</span>
+              ({{completedCount}}/{{overallLeafNodes}})</span>
             <mat-icon class="cursor-pointer ws-mat-black-text infoIcon"
               matTooltip="{{'playerbrief.topProgress' | translate}}">info_outline</mat-icon>
           </div>
 
-          <span class="mat-body-2  ws-mat-black-text"> {{currentDataFromEnrollList?.completionPercentage}}%</span>
+          <span class="mat-body-2  ws-mat-black-text"> {{overallProgress}}%</span>
         </div>
 
         <ws-widget-content-progress [contentId]="currentDataFromEnrollList?.identifier"

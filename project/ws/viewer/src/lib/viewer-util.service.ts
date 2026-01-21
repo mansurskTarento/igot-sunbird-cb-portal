@@ -170,6 +170,11 @@ export class ViewerUtilService {
         this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
         this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
         this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+        // Trigger milestone lock recomputation for Learning Pathways
+        if (this.tocSvc.triggerMilestoneLockUpdate) {
+          this.tocSvc.triggerMilestoneLockUpdate()
+        }
       }
     } else {
       req = {}
@@ -380,6 +385,11 @@ export class ViewerUtilService {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
           this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+          // Trigger milestone lock recomputation for Learning Pathways
+          if (this.tocSvc.triggerMilestoneLockUpdate) {
+            this.tocSvc.triggerMilestoneLockUpdate()
+          }
         }
       }
     } else {
@@ -544,6 +554,11 @@ export class ViewerUtilService {
         this.tocSvc.hashmap[contentId]['parent'] = req.request.contents[0].courseId
         this.tocSvc.hashmap[contentId]['progress'] = req.request.contents[0].progressdetails
         this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+        // Trigger milestone lock recomputation for Learning Pathways
+        if (this.tocSvc.triggerMilestoneLockUpdate) {
+          this.tocSvc.triggerMilestoneLockUpdate()
+        }
       }
 
       // console.log('Updated hashmap:', this.tocSvc.hashmap)
@@ -588,6 +603,11 @@ export class ViewerUtilService {
           this.tocSvc.hashmap[contentId]['completionPercentage'] = req.request.contents[0].completionPercentage
           this.tocSvc.hashmap[contentId]['completionStatus'] = req.request.contents[0].status
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+
+          // Trigger milestone lock recomputation for Learning Pathways
+          if (this.tocSvc.triggerMilestoneLockUpdate) {
+            this.tocSvc.triggerMilestoneLockUpdate()
+          }
         }
       }
     } else {
