@@ -200,7 +200,9 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (data.result.content.cstoken) {
           this.configSvc.cstoken = data.result.content.cstoken
         }
-        this.leafNodesCount = this.hierarchyData?.leafNodes?.length || data.result.content.leafNodesCount || 0
+        // compute total leaf nodes across hierarchy (handles learning pathway)
+        const source = this.hierarchyData || data.result.content
+        this.leafNodesCount = this.countLeafNodes(source) || 0
       })
     }
 
@@ -240,15 +242,50 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
         this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
-        this.leafNodesCount = this.hierarchyData?.leafNodes?.length || 0
+        // For Learning Pathway, use the leafNodes array length directly
+        // This is the accurate count of actual content items (excludes milestones, assessments structure)
+        this.leafNodesCount = (this.hierarchyData.leafNodes && Array.isArray(this.hierarchyData.leafNodes))
+          ? this.hierarchyData.leafNodes.length
+          : 0
+        console.debug('Learning Pathway leafNodesCount from hierarchyData.leafNodes:', this.leafNodesCount)
       } else {
         this.hierarchyData = contentData.result.content
         this.leafNodesCount = contentData.result.content.leafNodesCount
       }
       await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
-      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
-        this.leafNodesCount = this.tocSvc.hashmap[this.contentReadData.identifier]?.leafNodes?.length || 0
+      // Recompute leafNodesCount after hierarchy has been fully manipulated
+      try {
+        // For Learning Pathways, always use hierarchyData.leafNodes.length
+        if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+          this.leafNodesCount = (this.hierarchyData.leafNodes && Array.isArray(this.hierarchyData.leafNodes))
+            ? this.hierarchyData.leafNodes.length
+            : 0
+        } else {
+          this.leafNodesCount = this.countLeafNodes(this.hierarchyData) || 0
+        }
+        // Debug logs to help verify structure during testing
+        // tslint:disable-next-line: no-console
+        console.debug('Computed leafNodesCount:', this.leafNodesCount)
+        // tslint:disable-next-line: no-console
+        console.debug('Hierarchy sample:', this.hierarchyData && (this.hierarchyData.children || this.hierarchyData.milestones_v1 ? (this.hierarchyData.children || this.hierarchyData.milestones_v1) : this.hierarchyData))
+        // Ensure toc hashmap reflects aggregated leafNodesCount so top-bar displays correct total
+        try {
+          const mlId = this.activatedRoute.snapshot.queryParams.MLId ? this.activatedRoute.snapshot.queryParams.MLId : this.collectionId
+          if (mlId && this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[mlId]) {
+            this.tocSvc.hashmap[mlId]['leafNodesCount'] = this.leafNodesCount
+            this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', {
+              mlId,
+              writtenLeafNodesCount: this.tocSvc.hashmap[mlId]['leafNodesCount'],
+              hashmapKeys: Object.keys(this.tocSvc.hashmap || {}),
+            })
+          }
+        } catch (_e) {
+          // ignore
+        }
+      } catch (e) {
+        // ignore
       }
     }
     this.languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
@@ -495,6 +532,52 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       }
     }
+  }
+
+  private countLeafNodes(node: any): number {
+    if (!node) {
+      return 0
+    }
+    let count = 0
+    // If an array of nodes is passed
+    if (Array.isArray(node)) {
+      for (const n of node) {
+        count += this.countLeafNodes(n)
+      }
+      return count
+    }
+
+    // Common leafNodes property
+    if (node.leafNodes && Array.isArray(node.leafNodes)) {
+      count += node.leafNodes.length
+    }
+
+    // children (recursive)
+    if (node.children && Array.isArray(node.children)) {
+      for (const child of node.children) {
+        count += this.countLeafNodes(child)
+      }
+    }
+
+    // If node represents a standalone content item (like an assessment) with no children or leafNodes,
+    // count it as one. Exclude structural nodes like Course or Module.
+    const isStructural = node.primaryCategory === 'Course' || node.primaryCategory === 'Module' || node.primaryCategory === 'Program'
+    if (!isStructural && !(node.leafNodes && node.leafNodes.length) && !(node.children && node.children.length) && node.identifier) {
+      count += 1
+    }
+
+    // milestones_v1 -> courses (Learning Pathway specific)
+    if (node.milestones_v1 && Array.isArray(node.milestones_v1)) {
+      for (const m of node.milestones_v1) {
+        if (m.courses && Array.isArray(m.courses)) {
+          for (const course of m.courses) {
+            count += this.countLeafNodes(course)
+          }
+        }
+      }
+    }
+
+    return count
   }
 
   updateCount(event: any) {

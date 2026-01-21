@@ -12,7 +12,7 @@ RUN npm run compress:brotli
 
 WORKDIR /app/dist
 COPY assets/iGOT/client-assets/dist www/en/assets
-RUN npm install --omit=dev --force
+RUN npm install --production --force
 EXPOSE 3004
 
 CMD [ "npm", "run", "serve:prod" ]

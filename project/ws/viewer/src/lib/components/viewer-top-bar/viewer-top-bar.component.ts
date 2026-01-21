@@ -287,13 +287,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
-    this.overallLeafNodes = this.leafNodesCount || 0
+    // Prefer the aggregated leafNodesCount input when available
+    this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0
     if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
       // tslint:disable
       const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
       this.completedCount = completedItems.length
       this.completedCountOutput.emit(this.completedCount)
-      this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+      // Only override with hashmap value if input wasn't available
+      if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
+        this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+      }
       // tslint:disable
       this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / this.overallLeafNodes) * 100).toFixed())
       this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
