@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute, Router, NavigationStart, Event } from '@angular/router'
 import { ConfigurationsService, LogoutComponent, NsPage, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -15,6 +15,7 @@ import _ from 'lodash'
 export class ProfileComponent implements OnInit, OnDestroy {
   tabName = ''
   private defaultSideNavBarOpenedSubscription: Subscription | null = null
+  private routerSubscription: Subscription | null = null
   isLtMedium$ = this.valueSvc.isLtMedium$
   mode$ = this.isLtMedium$.pipe(map((isMedium: boolean) => (isMedium ? 'over' : 'side')))
   screenSizeIsLtMedium = false
@@ -59,6 +60,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.defaultSideNavBarOpenedSubscription = this.isLtMedium$.subscribe((isLtMedium: boolean) => {
       this.screenSizeIsLtMedium = isLtMedium
     })
+
+    this.routerSubscription = this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        if (this.screenSizeIsLtMedium) {
+          this.sideNavBarOpened = false
+        }
+      }
+    })
   }
   tabUpdate(tab: string) {
     this.tabName = tab
@@ -71,6 +80,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.defaultSideNavBarOpenedSubscription) {
       this.defaultSideNavBarOpenedSubscription.unsubscribe()
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe()
     }
   }
   logout() {

@@ -11,7 +11,7 @@ import { ViewerUtilService } from '../../viewer-util.service'
 import { CourseCompletionDialogComponent } from '../course-completion-dialog/course-completion-dialog.component'
 import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
-import { ResetRatingsService } from '@ws/app/src/lib/routes/app-toc/services/reset-ratings.service'
+import { ResetRatingsService } from '@sunbird-cb/toc'
 import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
 // import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
@@ -77,7 +77,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   assessmentStart = false;
   enrollmentList: any = []
   collectionLang: any
-  isPreAssessment:boolean = false
+  isPreAssessment: boolean = false
   redirectPath = '/page/home'
   // primaryCategory = NsContent.EPrimaryCategory
   contentPrimaryCategory: any
@@ -102,7 +102,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private contentLangSvc: ContentLanguageService,
     // private contentSvc: WidgetContentServiceUtils,
     private domainConfSvc: DomainConfService
-    
+
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
       this.logo = !isXSmall
@@ -117,8 +117,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.enrollmentList = this.activatedRoute.snapshot.data.enrollmentData
       && this.activatedRoute.snapshot.data.enrollmentData.data || []
-    
-    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead && 
+
+    this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead &&
       this.activatedRoute?.snapshot?.data?.contentRead?.data?.result?.content?.primaryCategory
 
     // this.getAuthDataIdentifer()
@@ -130,8 +130,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     if (window.location.href.includes('/channel/')) {
       this.forChannel = true
     }
-    this.isPreAssessment=this.activatedRoute.snapshot.queryParams.preAssessment ? true:false
-    this.isTypeOfCollection =  this.activatedRoute.snapshot.queryParams.collectionType ? true : false
+    this.isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment ? true : false
+    this.isTypeOfCollection = this.activatedRoute.snapshot.queryParams.collectionType ? true : false
     this.collectionType = this.activatedRoute.snapshot.queryParams.collectionType
     this.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
     this.courseName = this.activatedRoute.snapshot.queryParams.courseName
@@ -263,7 +263,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             this.activatedRoute.snapshot.queryParams.collectionId : ''
           const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
             this.activatedRoute.snapshot.queryParams.MLId : ''
-          const id = MLID ? MLID: collectionId
+          const id = MLID ? MLID : collectionId
           this.ComputeCompletedNodesAndPercent(id)
         }
       }
@@ -287,13 +287,17 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
-    this.overallLeafNodes = this.leafNodesCount || 0
+    // Prefer the aggregated leafNodesCount input when available
+    this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0
     if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
       // tslint:disable
       const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
       this.completedCount = completedItems.length
       this.completedCountOutput.emit(this.completedCount)
-      this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+      // Only override with hashmap value if input wasn't available
+      if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
+        this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+      }
       // tslint:disable
       this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / this.overallLeafNodes) * 100).toFixed())
       this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
@@ -360,9 +364,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
             this.contentProgressHash = data.result.contentList
             this.widgetServ.setProgramChildResumeData(this.contentProgressHash, this.identifier)
-            
-            if(this.contentProgressHash?.length && this.contentProgressHash[0]?.completionPercentage === 100 && this.contentProgressHash[0]?.status === 2) {
-                this.generateCertificate()
+
+            if (this.contentProgressHash?.length && this.contentProgressHash[0]?.completionPercentage === 100 && this.contentProgressHash[0]?.status === 2) {
+              this.generateCertificate()
             }
 
             if (this.leafNodesCount === this.contentProgressHash.length) {
@@ -481,14 +485,14 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkRatingAndApply() {
-    this.checkProgressAndGenerateCertificate();
+    this.checkProgressAndGenerateCertificate()
     if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
     }
   }
 
   get isMultilingual() {
-    if(this.baseContentReadData  && this.baseContentReadData.languageMapV1){
+    if (this.baseContentReadData && this.baseContentReadData.languageMapV1) {
       let languageList = this.contentLangSvc.getAllContentLanguages(this.contentReadData)
       return languageList.length > 1
     }
@@ -496,10 +500,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get contentCompletionPercent() {
-    if(this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
-      if(this.widgetServ?.languageMapProgress && this.collectionLang && 
+    if (this.contentReadData && this.contentReadData.primaryCategory === 'Course' && this.isMultilingual) {
+      if (this.widgetServ?.languageMapProgress && this.collectionLang &&
         this.widgetServ?.languageMapProgress[this.collectionLang]) {
-          return this.widgetServ?.languageMapProgress[this.collectionLang]
+        return this.widgetServ?.languageMapProgress[this.collectionLang]
       } else {
         return 0
       }
@@ -509,51 +513,51 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   checkProgressAndGenerateCertificate() {
-    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId;
+    this.identifier = this.activatedRoute.snapshot.queryParams.collectionId
     if (this.configSvc.userProfile) {
-      this.userid = this.configSvc.userProfile.userId || '';
+      this.userid = this.configSvc.userProfile.userId || ''
       let request: any = {
         request: {
           retiredCoursesEnabled: true,
           courseId: [this.identifier],
         },
-      };
+      }
 
       this.widgetServ.getUserEnrollmentData(this.userId, request).subscribe({
         next: (response: any) => {
           if (response?.data && response?.data?.courses.length) {
-            const course = response?.data?.courses[0];
+            const course = response?.data?.courses[0]
             if (
               course?.completionPercentage >= 100 &&
               course?.status === 2 &&
               !course?.issuedCertificates?.length
             ) {
-              this.generateCertificate();
+              this.generateCertificate()
             }
           }
         },
-      });
+      })
     }
   }
 
-   generateCertificate() {
-      // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
-      //   (cat: string) => cat?.toLowerCase()
-      // );
+  generateCertificate() {
+    // const allowedPrimaryCategory = ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION?.map(
+    //   (cat: string) => cat?.toLowerCase()
+    // );
 
-      // if (
-      //   allowedPrimaryCategory &&
-      //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
-      //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
-      // ) {
-      //   const payload = {
-      //     request: {
-      //       courseId: this.identifier,
-      //       batchId: this.batchId,
-      //       userId: this.userid,
-      //     },
-      //   };
-      //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
-      // } 
+    // if (
+    //   allowedPrimaryCategory &&
+    //   (allowedPrimaryCategory.includes(this.contentPrimaryCategory?.toLowerCase()) ||
+    //   allowedPrimaryCategory.includes(this.currentDataFromEnrollList.content.courseCategory?.toLowerCase()) )
+    // ) {
+    //   const payload = {
+    //     request: {
+    //       courseId: this.identifier,
+    //       batchId: this.batchId,
+    //       userId: this.userid,
+    //     },
+    //   };
+    //   this.contentSvc.downloadCertV2(payload).subscribe(() => {});
+    // }
   }
 }

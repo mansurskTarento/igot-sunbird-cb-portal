@@ -22,7 +22,7 @@ import { VideoModule } from '@ws/viewer/src/lib/routes/video/video.module'
 import { ViewerDataService } from '@ws/viewer/src/public-api'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
-import { ShareTocModule } from '../app-toc/share-toc/share-toc.module'
+import { ShareTocModule } from '@sunbird-cb/toc'
 import { GyaanFilterComponent } from './components/gyaan-filter/gyaan-filter.component'
 import { GyaanAudioComponent } from './components/players/gyaan-audio/gyaan-audio.component'
 import { AudioModule } from '@ws/viewer/src/lib/routes/audio/audio.module'
@@ -53,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [GyaanKarmayogiHomeComponent, GyaanPlayerComponent,
     GyaanKarmayogiComponent, GyaanKarmayogiViewAllComponent,
-     PdfComponent, GyaanVideoComponent, GyaanFilterComponent, GyaanAudioComponent, GyaanYoutubeComponent, ReplaceNbspTextPipe],
+    PdfComponent, GyaanVideoComponent, GyaanFilterComponent, GyaanAudioComponent, GyaanYoutubeComponent, ReplaceNbspTextPipe],
   imports: [NgxSliderModule,
     CommonModule,
     MatFormFieldModule,
@@ -84,7 +84,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SlidersModule,
     PipePublicURLModule,
     WidgetResolverModule,
-   TranslateModule.forChild({
+    TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
@@ -94,9 +94,9 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
-     { provide: MatBottomSheetRef, useValue: {} },
-     ViewerResolve, TitleCasePipe,
-     PdfScormDataService, GyaanKarmayogiService,
-      ViewerDataService],
+  { provide: MatBottomSheetRef, useValue: {} },
+    ViewerResolve, TitleCasePipe,
+    PdfScormDataService, GyaanKarmayogiService,
+    ViewerDataService],
 })
 export class GyaanKarmayogiModule { }

@@ -52,7 +52,7 @@
               "src/styles/styles.scss",
               "node_modules/shepherd.js/dist/css/shepherd.css",
               {
-                "inject":true,
+                "inject": true,
                 "input": "src/themes/theme-igot.scss",
                 "bundleName": "theme-igot"
               },
@@ -64,7 +64,7 @@
               "src/dashboard-assets/fonts/montserrat/stylesheet.css",
               "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
-              "node_modules/ckeditor5/dist/ckeditor5.css"    
+              "node_modules/ckeditor5/dist/ckeditor5.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -91,7 +91,7 @@
                   "maximumWarning": "6kb"
                 }
               ]
-},
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -111,7 +111,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "4mb",
-                  "maximumError": "25mb"
+                  "maximumError": "40mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -169,7 +169,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "25mb"
+                  "maximumError": "40mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -198,7 +198,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "25mb"
+                  "maximumError": "40mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -227,7 +227,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "25mb"
+                  "maximumError": "40mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -311,13 +311,13 @@
           "options": {
             "tsConfig": "project/ws/app/tsconfig.lib.json",
             "project": "project/ws/app/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "project/ws/app/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -339,13 +339,13 @@
           "options": {
             "tsConfig": "project/ws/author/tsconfig.lib.json",
             "project": "project/ws/author/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "project/ws/author/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -367,13 +367,13 @@
           "options": {
             "tsConfig": "project/ws/analytics/tsconfig.lib.json",
             "project": "project/ws/analytics/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "project/ws/analytics/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -395,13 +395,13 @@
           "options": {
             "tsConfig": "project/ws/viewer/tsconfig.lib.json",
             "project": "project/ws/viewer/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "project/ws/viewer/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -423,13 +423,13 @@
           "options": {
             "tsConfig": "library/ws-widget/collection/tsconfig.lib.json",
             "project": "library/ws-widget/collection/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "library/ws-widget/collection/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -451,13 +451,13 @@
           "options": {
             "tsConfig": "library/ws-widget/resolver/tsconfig.lib.json",
             "project": "library/ws-widget/resolver/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "library/ws-widget/resolver/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -480,5 +480,4 @@
       "enabled": false
     }
   }
-  
 }

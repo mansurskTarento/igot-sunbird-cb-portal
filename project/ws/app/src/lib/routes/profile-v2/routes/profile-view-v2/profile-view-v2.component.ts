@@ -931,6 +931,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       if (hasChanges) {
         this.updateProfileDetails(formBody);
       }
+      else {
+        if (this.profesionalDetails.profileDesignationStatus === "NOT-VERIFIED" || this.profesionalDetails.profileDesignationStatus === "NOT-VERIFIED") {
+          if (result.group || result.designation) {
+            formBody.request.profileDetails = { 'professionalDetails': [result.group && result.designation ? { group: result.group, designation: result.designation } : result.group ? { group: result.group } : { designation: result.designation }] }
+            this.updateProfileDetails(formBody)
+          }
+        }
+      }
     }
   }
 

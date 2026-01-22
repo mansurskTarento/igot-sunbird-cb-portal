@@ -5,7 +5,7 @@ import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
 import moment from 'moment'
 import { ProfileCertificateDialogComponent } from '../profile-certificate-dialog/profile-certificate-dialog.component'
 import { IProCert } from './profile-cretifications-v2.model'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
@@ -80,12 +80,12 @@ export class ProfileCretificationsV2Component extends WidgetBaseComponent implem
   }
 
   downloadCert(data: any) {
-if (data.length > 0) {
-  this.certId = data[0].identifier
-  this.contentSvc.downloadCert(this.certId).subscribe(response => {
-    this.certData = response.result.printUri
-  })
-}
+    if (data.length > 0) {
+      this.certId = data[0].identifier
+      this.contentSvc.downloadCert(this.certId).subscribe(response => {
+        this.certData = response.result.printUri
+      })
+    }
   }
   openCertificateDialog(value: any) {
     this.widgetData.certificates.forEach((element: any) => {
@@ -97,17 +97,17 @@ if (data.length > 0) {
           const courseDoId = value.courseId
           const certId = element.identifier
           if (courseDoId) {
-          this.tocSvc.fetchGetContentData(courseDoId).subscribe(res => {
-            if (res.result) {
-              const courseData = res.result
-              this.raiseIntreactTelemetry()
-              this.dialog.open(ProfileCertificateDialogComponent, {
-                autoFocus: false,
-                data: { cet, value, courseData, certId },
-              })
-            }
-          })
-        }
+            this.tocSvc.fetchGetContentData(courseDoId).subscribe(res => {
+              if (res.result) {
+                const courseData = res.result
+                this.raiseIntreactTelemetry()
+                this.dialog.open(ProfileCertificateDialogComponent, {
+                  autoFocus: false,
+                  data: { cet, value, courseData, certId },
+                })
+              }
+            })
+          }
         }
       }
       // else{

@@ -17,7 +17,7 @@
 
 .font-bold-imp {
     font-weight: bold !important;
-    color:rgb(27, 76, 161);
+    color: rgb(27, 76, 161);
 }
 
 .mobile-viewer-header {
@@ -52,7 +52,7 @@
 }
 
 .finish {
-    color:rgb(27, 76, 161)
+    color: rgb(27, 76, 161)
 }
 
 .heading {
@@ -60,7 +60,7 @@
     font-weight: 700;
     line-height: 20px;
     letter-spacing: 0.25;
-    color:rgba(0, 0, 0, 0.87)
+    color: rgba(0, 0, 0, 0.87)
 }
 
 .blue-rounded-btn {
@@ -70,7 +70,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}  
+}
 
 .center-toggle {
     position: fixed;
@@ -112,7 +112,7 @@
     vertical-align: middle;
 }
 
-.cross-icon img{
+.cross-icon img {
     padding: 16px;
     vertical-align: middle;
 }
@@ -123,10 +123,21 @@
     white-space: nowrap !important;
 }
 
+a.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+
+    span,
+    mat-icon {
+        color: rgba(0, 0, 0, 0.38) !important;
+    }
+}
+
 @media screen and (min-width: 280px) and (max-width: 540px) {
     .heading {
         padding-top: 10px;
-        width:265px;
+        width: 265px;
     }
-    
+
 }

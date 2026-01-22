@@ -14,9 +14,9 @@ import {
 } from '../_services/videojs-util'
 import { WidgetContentService } from '../_services/widget-content.service'
 import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
-import { AppTocService } from '@ws/app/src/lib/routes/app-toc/services/app-toc.service'
+import { AppTocService } from '@sunbird-cb/toc'
 import { Subscription } from 'rxjs'
-import 'videojs-hls-quality-selector';
+import 'videojs-hls-quality-selector'
 const videoJsOptions: videoJs.PlayerOptions = {
   controls: true,
   autoplay: true,
@@ -67,11 +67,11 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   replayVideoFlag = false
   activeTranscriptionLanguage = 'en'
   transcriptionLangArr = []
-  transcriptionSubscriptionData:any = {}
-  playerInitObj:any
+  transcriptionSubscriptionData: any = {}
+  playerInitObj: any
   previousSubtitleLanguage = 'en'
-  playTranscriptionVideoSubscription:Subscription | null = null
-  changeTranscriptionLanguageEventSubscription: Subscription | null = null  
+  playTranscriptionVideoSubscription: Subscription | null = null
+  changeTranscriptionLanguageEventSubscription: Subscription | null = null
   videoUrl = 'https://portal.uat.karmayogibharat.net/stream-store/content/do_114194996168163328192/artifact/manifest.m3u8'
   constructor(
     private eventSvc: EventService,
@@ -84,59 +84,59 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   ngOnInit() {
-  //   this.video=document.getElementById("videoTag");
-  //   document.addEventListener("keydown",(e:any)=>{
-  //     if(e.keyCode==37){       //left arrow
-  //         this.backward()
-  //     }else if(e.keyCode==39){ //right arrow
-  //         this.forward()
-  //     }
-  //   }
-  // )
+    //   this.video=document.getElementById("videoTag");
+    //   document.addEventListener("keydown",(e:any)=>{
+    //     if(e.keyCode==37){       //left arrow
+    //         this.backward()
+    //     }else if(e.keyCode==39){ //right arrow
+    //         this.forward()
+    //     }
+    //   }
+    // )
 
-  this.playTranscriptionVideoSubscription = this.appTocService.playTranscriptionVideo.subscribe((playTime:any)=>{
-    let startTime  = playTime.startTime
-    let endTime  = playTime.endTime
-    // let lastPlayedTime = startTime;
-    if(startTime && endTime) {
-      const player = this.playerInitObj.player;
+    this.playTranscriptionVideoSubscription = this.appTocService.playTranscriptionVideo.subscribe((playTime: any) => {
+      let startTime = playTime.startTime
+      let endTime = playTime.endTime
+      // let lastPlayedTime = startTime;
+      if (startTime && endTime) {
+        const player = this.playerInitObj.player
 
-      player.currentTime(startTime); // Jump to star
-      this.playerInitObj.player.currentTime(startTime); // jump to start  
-      // setTimeout(()=>{
+        player.currentTime(startTime) // Jump to star
+        this.playerInitObj.player.currentTime(startTime) // jump to start
+        // setTimeout(()=>{
         // initObj.player.autoplay()
-        if(this.videoTag && this.videoTag.nativeElement) {
+        if (this.videoTag && this.videoTag.nativeElement) {
           this.videoTag.nativeElement.muted = false
-          this.videoTag.nativeElement.play();
+          this.videoTag.nativeElement.play()
         } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
           this.realvideoTag.nativeElement.muted = false
-          this.realvideoTag.nativeElement.play();
+          this.realvideoTag.nativeElement.play()
         }
-        
-      // },1000)      
-     // initObj.player.play();    
-     this.playerInitObj.player.on('timeupdate',  ()=> {
-        // console.log('this.playerInitObj.player.currentTime()',this.playerInitObj.player.currentTime())
-        // console.log('endTime',endTime)
-        if (endTime && parseInt(this.playerInitObj.player.currentTime()) >= parseInt(endTime)) {          
-          this.playerInitObj.player.pause();
-          setTimeout(()=>{
-            endTime = player.duration()
-          },0)
-         
-        }
-      });
-      // player.on('play', () => {
-      //   const current = player.currentTime();
-      //   if (current >= endTime && lastPlayedTime < endTime) {
-      //     player.currentTime(lastPlayedTime);
-      //   }
-    
-      // });
-    }
+
+        // },1000)
+        // initObj.player.play();
+        this.playerInitObj.player.on('timeupdate', () => {
+          // console.log('this.playerInitObj.player.currentTime()',this.playerInitObj.player.currentTime())
+          // console.log('endTime',endTime)
+          if (endTime && parseInt(this.playerInitObj.player.currentTime()) >= parseInt(endTime)) {
+            this.playerInitObj.player.pause()
+            setTimeout(() => {
+              endTime = player.duration()
+            }, 0)
+
+          }
+        })
+        // player.on('play', () => {
+        //   const current = player.currentTime();
+        //   if (current >= endTime && lastPlayedTime < endTime) {
+        //     player.currentTime(lastPlayedTime);
+        //   }
+
+        // });
+      }
 
 
-  })
+    })
 
   }
 
@@ -154,58 +154,58 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
   async ngAfterViewInit() {
     let playerInitialize = false
-    
+
     this.widgetData = {
       ...this.widgetData,
     }
     //this.appTocService.transriptionIdentifier.next(this.widgetData)
     if (this.widgetData && this.widgetData.identifier && !this.widgetData.url) {
-      
+
       await this.fetchContent()
     }
     if (this.widgetData.url) {
       if (this.widgetData.isVideojs) {
-        if(!this.playerInitObj) {
+        if (!this.playerInitObj) {
           playerInitialize = true
           this.initializePlayer()
         }
-        
-        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data:any)=>{          
-          if(data && data?.activeLang) {
+
+        this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data: any) => {
+          if (data && data?.activeLang) {
             // console.log('data--', data)
             this.transcriptionLangArr = []
-            this.transcriptionSubscriptionData = data   
+            this.transcriptionSubscriptionData = data
             this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
             this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
-            if(this.transcriptionSubscriptionData?.loadPlayer) {
-              this.initializePlayer()  
+            if (this.transcriptionSubscriptionData?.loadPlayer) {
+              this.initializePlayer()
             } else {
               if (Array.isArray(this.transcriptionLangArr) && !playerInitialize) {
-  
+
                 let tracks = this.playerInitObj.player.textTracks()
                 //let allCues:any = []
                 for (let i = 0; i < tracks.length; i++) {
-                  const track = tracks[i];
+                  const track = tracks[i]
                   // console.log(tracks[i].label, tracks[i]);
-  
+
                   if (track.kind === 'subtitles' || track.kind === 'metadata') {
-                  //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
-                  if (track.language === this.activeTranscriptionLanguage) {
-                    track.mode = 'showing';
-  
-                  } else {
-                    track.mode = 'disabled'; // prevent multiple from showing
-                  }
-  
-  
-  
+                    //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+                    if (track.language === this.activeTranscriptionLanguage) {
+                      track.mode = 'showing'
+
+                    } else {
+                      track.mode = 'disabled' // prevent multiple from showing
+                    }
+
+
+
                     track.addEventListener('cuechange', () => {
-                      const activeCues = track.activeCues;
-  
+                      const activeCues = track.activeCues
+
                       if (activeCues && activeCues.length > 0) {
                         for (let j = 0; j < activeCues.length; j++) {
-                          const cue:any = activeCues[j];
-  
+                          const cue: any = activeCues[j]
+
                           // Log or store cue
                           // allCues.push({
                           //   start: cue.startTime,
@@ -218,7 +218,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                             end: cue.endTime,
                             text: cue?.text
                           })
-  
+
                           // Show in browser
                           // const entry = document.createElement('div');
                           // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
@@ -226,14 +226,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                         }
                         //console.log('cue', allCues)
                       }
-                    });
+                    })
                   }
                 }
               }
             }
-  
+
           } else {
-            this.initializePlayer()   
+            this.initializePlayer()
           }
         })
       } else {
@@ -241,7 +241,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
     }
 
-    const videoTag: any =   document.getElementsByTagName('video')[0]
+    const videoTag: any = document.getElementsByTagName('video')[0]
     if (videoTag) {
       videoTag.onended = () => {
         this.videoEnd = true
@@ -258,28 +258,28 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
         }
         let counter = 1
-        this.timerInterval =   setInterval(() => {
-            if (counter <= 5) {
-                this.updateProgress(counter)
+        this.timerInterval = setInterval(() => {
+          if (counter <= 5) {
+            this.updateProgress(counter)
+          }
+          if (counter > 5) {
+            if (videoTag) {
+              videoTag.style.filter = 'blur(0px)'
             }
-            if (counter > 5) {
-              if (videoTag) {
-                videoTag.style.filter = 'blur(0px)'
-              }
-              if (autoPlayVideo) {
-                autoPlayVideo.style.opacity = '1'
-              }
-              counter = 0
-              this.clearTimeInterval()
-              this.viewerSvc.autoPlayNextVideo.next(true)
+            if (autoPlayVideo) {
+              autoPlayVideo.style.opacity = '1'
             }
-            counter = counter + 1
-          },                               1000)
+            counter = 0
+            this.clearTimeInterval()
+            this.viewerSvc.autoPlayNextVideo.next(true)
+          }
+          counter = counter + 1
+        }, 1000)
 
       }
     }
 
-    
+
   }
 
   clearTimeInterval() {
@@ -301,13 +301,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     }
     this.clearTimeInterval()
 
-    if(this.changeTranscriptionLanguageEventSubscription) {
+    if (this.changeTranscriptionLanguageEventSubscription) {
       this.changeTranscriptionLanguageEventSubscription.unsubscribe()
     }
-    if(this.playTranscriptionVideoSubscription) {
+    if (this.playTranscriptionVideoSubscription) {
       this.playTranscriptionVideoSubscription.unsubscribe()
     }
-    
+
   }
   private initializeVPlayer() {
     // alert()
@@ -372,18 +372,18 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
       const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
-              this.activatedRoute.snapshot.queryParams.collectionId : ''
+        this.activatedRoute.snapshot.queryParams.collectionId : ''
       const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
-              this.activatedRoute.snapshot.queryParams.batchId : ''
+        this.activatedRoute.snapshot.queryParams.batchId : ''
       const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      if(isPreAssessment) {
+      if (isPreAssessment) {
         if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
             .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else if (this.widgetData.identifier && identifier && data) {
-          this.viewerSvc
-            .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+        this.viewerSvc
+          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
     }
     if (this.widgetData.resumePoint && this.widgetData.resumePoint !== 0) {
@@ -409,10 +409,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   private initializePlayer() {
     let startTime = 0
     let endTime = 0
-    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
-      if(this.activatedRoute.snapshot.queryParams.st) {
-      startTime = this.activatedRoute.snapshot.queryParams.st
-      endTime = this.activatedRoute.snapshot.queryParams.et      
+    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+      if (this.activatedRoute.snapshot.queryParams.st) {
+        startTime = this.activatedRoute.snapshot.queryParams.st
+        endTime = this.activatedRoute.snapshot.queryParams.et
       }
     }
 
@@ -463,18 +463,18 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
       const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-                                                           this.activatedRoute.snapshot.queryParams.batchId, identifier)
+        this.activatedRoute.snapshot.queryParams.batchId, identifier)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
       const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      if(isPreAssessment) {
+      if (isPreAssessment) {
         if (this.widgetData.identifier && identifier && data) {
           this.viewerSvc
             .realTimeProgressUpdateForPreAssessment(identifier, data)
         }
       } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
-          this.viewerSvc
-            .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+        this.viewerSvc
+          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
       }
     }
     let enableTelemetry = false
@@ -498,90 +498,90 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.widgetData,
       this.widgetData.mimeType,
       this.widgetData.size,
-      
+
     )
     this.playerInitObj = initObj
     this.player = initObj.player
-   ;
+      
     this.dispose = initObj.dispose
-    
-    
+
+
 
     initObj.player.ready(() => {
-      
+
       let tracks = initObj.player.textTracks()
       setTimeout(() => {
-        const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any;
+        const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any
         if (ccButton) {
           if (ccButton?.menu && typeof ccButton.menu.children === 'function') {
             // ✅ Rename menu items like "Captions Off" → "Subtitles Off"
             ccButton.menu.children().forEach((item: any) => {
-              const label = item.options_?.label;
-                // console.log('Found menu item:', label);
+              const label = item.options_?.label
+              // console.log('Found menu item:', label);
 
-                if (!label) return;
+              if (!label) return
 
-                let newLabel = label;
+              let newLabel = label
 
-                if (label.toLowerCase() === 'captions off') {
-                  newLabel = 'Subtitles Off';
-                } else if (label.toLowerCase().includes('captions')) {
-                  newLabel = label.replace(/captions/gi, 'Subtitles');
-                }
+              if (label.toLowerCase() === 'captions off') {
+                newLabel = 'Subtitles Off'
+              } else if (label.toLowerCase().includes('captions')) {
+                newLabel = label.replace(/captions/gi, 'Subtitles')
+              }
 
-                // 🔧 Update both label option & DOM element text
-                item.options_.label = newLabel;
+              // 🔧 Update both label option & DOM element text
+              item.options_.label = newLabel
 
-                // Find the actual DOM element and update its text
-                const itemEl = item.el();
-                const labelEl = itemEl?.querySelector('.vjs-menu-item-text');
+              // Find the actual DOM element and update its text
+              const itemEl = item.el()
+              const labelEl = itemEl?.querySelector('.vjs-menu-item-text')
 
-                if (labelEl) {
-                  labelEl.textContent = newLabel;
-                }
+              if (labelEl) {
+                labelEl.textContent = newLabel
+              }
 
-            });
+            })
           }
-      
-          const el = ccButton.el();
+
+          const el = ccButton.el()
           if (el) {
-            
-            const span = el.querySelector('.vjs-icon-placeholder');
+
+            const span = el.querySelector('.vjs-icon-placeholder')
             if (span) {
               // Clear any default icon classes
-              span.classList.remove('vjs-icon-placeholder', 'vjs-icon-subtitles', 'vjs-icon-captions');
-      
+              span.classList.remove('vjs-icon-placeholder', 'vjs-icon-subtitles', 'vjs-icon-captions')
+
               // Add custom layout
               span.innerHTML = `
                 <div class="custom-cc-wrapper">
                   <img src="/assets/ai-tutor/subtitle-on.svg" id="custom-cc-icon-img" class="custom-cc-icon-img" alt="icon" />
                   <span class="custom-cc-label">Subtitle</span>
                 </div>
-              `;
+              `
             }
           }
         }
-         const qualityBtn = document.querySelector('.vjs-quality-selector .vjs-menu-button');
+        const qualityBtn = document.querySelector('.vjs-quality-selector .vjs-menu-button')
 
         if (qualityBtn && this.widgetData && this.widgetData.streamingUrl) {
-          qualityBtn.innerHTML = '';
+          qualityBtn.innerHTML = ''
 
-          const wrapper = document.createElement('div');
-          wrapper.className = 'quality-wrapper'; // flex container
+          const wrapper = document.createElement('div')
+          wrapper.className = 'quality-wrapper' // flex container
 
-          const icon = document.createElement('span');
-          icon.className = 'vjs-icon-placeholder';
-          icon.innerHTML = '<i class="material-icons quality-icons"  title="Quality">tune</i>';
+          const icon = document.createElement('span')
+          icon.className = 'vjs-icon-placeholder'
+          icon.innerHTML = '<i class="material-icons quality-icons"  title="Quality">tune</i>'
 
           // const text = document.createElement('span');
           // text.className = 'vjs-menu-value';
           // text.textContent = 'Quality';
 
-          wrapper.appendChild(icon);
+          wrapper.appendChild(icon)
           // wrapper.appendChild(text);
-          qualityBtn.appendChild(wrapper);
+          qualityBtn.appendChild(wrapper)
         }
-      }, 100);
+      }, 100)
       this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
       this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
       // console.log('this.transcriptionLangArr----', this.transcriptionLangArr)
@@ -605,8 +605,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         //   if(this.activatedRoute.snapshot.queryParams.st) {
         //     let startTime = this.activatedRoute.snapshot.queryParams.st
         //     let endTime = this.activatedRoute.snapshot.queryParams.et
-        //     initObj.player.currentTime(startTime); // jump to start          
-        //     initObj.player.play();    
+        //     initObj.player.currentTime(startTime); // jump to start
+        //     initObj.player.play();
         //     initObj.player.on('timeupdate',  ()=> {
         //       if (endTime && initObj.player.currentTime() >= endTime) {
         //         initObj.player.pause();
@@ -616,46 +616,46 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         // }
 
         // initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
-        if(this.widgetData && this.widgetData.streamingUrl) {
+        if (this.widgetData && this.widgetData.streamingUrl) {
           initObj.player.src(this.widgetData.streamingUrl)
           //this.videoUrl = this.widgetData.streamingUrl
         } else {
           initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
           this.videoUrl = this.widgetData.url
         }
-        
 
-        if(startTime && endTime) {
-          initObj.player.currentTime(startTime); // jump to start  
-          setTimeout(()=>{
+
+        if (startTime && endTime) {
+          initObj.player.currentTime(startTime) // jump to start
+          setTimeout(() => {
             // initObj.player.autoplay()
-            if(this.videoTag && this.videoTag.nativeElement) {
+            if (this.videoTag && this.videoTag.nativeElement) {
               this.videoTag.nativeElement.muted = true
-              this.videoTag.nativeElement.play();
+              this.videoTag.nativeElement.play()
             } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
               this.realvideoTag.nativeElement.muted = true
-              this.realvideoTag.nativeElement.play();
+              this.realvideoTag.nativeElement.play()
             }
-            
-          },0)
-          
-         // initObj.player.play();    
-          initObj.player.on('timeupdate',  ()=> {
+
+          }, 0)
+
+          // initObj.player.play();
+          initObj.player.on('timeupdate', () => {
             if (endTime && initObj.player.currentTime() >= endTime) {
-              initObj.player.pause();
+              initObj.player.pause()
             }
-          });
+          })
         }
 
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.label === this.transcriptionSubscriptionData?.activeLang);
-        
-        let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+        const defaultTrackTemp: any = this.transcriptionLangArr.find((t: any) => t.label === this.transcriptionSubscriptionData?.activeLang)
+
+        let defaultTrack: any = this.transcriptionLangArr.filter((item: any) => {
           return item?.label === defaultTrackTemp?.label
-        });
-        this.transcriptionLangArr.forEach((track:any) => {
+        })
+        this.transcriptionLangArr.forEach((track: any) => {
           // console.log(track?.label , defaultTrack?.label)
           // console.log('track--', track)
           initObj.player.addRemoteTextTrack({
@@ -664,32 +664,32 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             srclang: this.titleCase(track.label),
             label: this.titleCase(track.language),
             default: track.label
-          }, false);
-        });
+          }, false)
+        })
         initObj.player.on('texttrackchange', () => {
-          
+
           for (let i = 0; i < tracks.length; i++) {
-            const track = tracks[i];
+            const track = tracks[i]
             if (track.mode === 'showing') {
-              const currentLang = track.language;
+              const currentLang = track.language
               if (currentLang !== this.previousSubtitleLanguage) {
                 //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
 
-                this.previousSubtitleLanguage = currentLang; // Update for next comparison
-                this.activeTranscriptionLanguage = currentLang;
+                this.previousSubtitleLanguage = currentLang // Update for next comparison
+                this.activeTranscriptionLanguage = currentLang
                 //const remoteTracks:any = initObj.player.remoteTextTracks();
                 // for (let j = remoteTracks.length - 1; j >= 0; j--) {
                 //   initObj.player.removeRemoteTextTrack(remoteTracks[j]);
                 // }
-                const newTrack:any = this.transcriptionLangArr.find((t: any) => { 
+                const newTrack: any = this.transcriptionLangArr.find((t: any) => {
                   // console.log(t)
                   return t.label === currentLang.toLowerCase()
 
-                });
+                })
                 if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
-                  this.replaceSubtitleTrack(newTrack);
+                  this.replaceSubtitleTrack(newTrack)
                 } else {
-                  this.replaceSubtitleTrack(defaultTrack);
+                  this.replaceSubtitleTrack(defaultTrack)
                 }
                 // if(newTrack) {
                 //   this.transcriptionLangArr.forEach((track:any) => {
@@ -703,48 +703,48 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 //       default: track.default_lang
                 //     }, false);
                 //   });
-      
+
                 // }
 
-                
+
 
                 // Optional: sync with a service or trigger UI update
                 // this.appTocService.setActiveSubtitleLanguage(currentLang);
-               // console.log('About to call next with:', currentLang);
-                this.appTocService.setActiveSubtitleLanguage(currentLang);
-                
+                // console.log('About to call next with:', currentLang);
+                this.appTocService.setActiveSubtitleLanguage(currentLang)
+
                 //console.log('Called next');
-              } 
-              
+              }
+
               this.updateSubtitleButtonIcon(true)
-              break; // Only one track should be 'showing'
+              break // Only one track should be 'showing'
             } else {
               this.previousSubtitleLanguage = ''
               this.updateSubtitleButtonIcon(false)
             }
           }
-        });
+        })
         // console.log('initObj--', initObj.player.textTracks())
-        
+
         //let allCues:any = []
         for (let i = 0; i < tracks.length; i++) {
-          const track = tracks[i];
+          const track = tracks[i]
           // console.log(tracks[i].label, tracks[i]);
 
           if (track.kind === 'subtitles' || track.kind === 'metadata') {
-          //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
-          if (track.language === this.activeTranscriptionLanguage) {
-            track.mode = 'showing';
-          } else {
-            track.mode = 'disabled'; // prevent multiple from showing
-          }
+            //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+            if (track.language === this.activeTranscriptionLanguage) {
+              track.mode = 'showing'
+            } else {
+              track.mode = 'disabled' // prevent multiple from showing
+            }
 
             track.addEventListener('cuechange', () => {
-              const activeCues = track.activeCues;
+              const activeCues = track.activeCues
 
               if (activeCues && activeCues.length > 0) {
                 for (let j = 0; j < activeCues.length; j++) {
-                  const cue:any = activeCues[j];
+                  const cue: any = activeCues[j]
 
                   // Log or store cue
                   // allCues.push({
@@ -766,7 +766,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 }
                 //console.log('cue', allCues)
               }
-            });
+            })
           }
         }
       }
@@ -823,7 +823,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       .toLowerCase()
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .join(' ')
   }
 
   replaceSubtitleTrack(newTrack: any) {
@@ -834,105 +834,105 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     //   return item?.label === defaultTrackTemp?.default_lang
     // });
 
-    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
-    const existingTracks = videoEl.querySelectorAll('track');
-    existingTracks.forEach((el: any) => el.remove());
-  
-    const trackEl = document.createElement('track');
-    trackEl.kind = 'subtitles';
-    trackEl.src = newTrack.uri;
-    trackEl.srclang = newTrack.label.toLowerCase();
-    trackEl.label = newTrack.language;
-    trackEl.default = true;
-    videoEl.appendChild(trackEl);
-    let tracks = videoEl.textTracks;
+    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
+    const existingTracks = videoEl.querySelectorAll('track')
+    existingTracks.forEach((el: any) => el.remove())
+
+    const trackEl = document.createElement('track')
+    trackEl.kind = 'subtitles'
+    trackEl.src = newTrack.uri
+    trackEl.srclang = newTrack.label.toLowerCase()
+    trackEl.label = newTrack.language
+    trackEl.default = true
+    videoEl.appendChild(trackEl)
+    let tracks = videoEl.textTracks
 
 
-      // setTimeout(() => {
-        
-        console.log('👉 Number of textTracks:', tracks.length);
+    // setTimeout(() => {
 
-        for (let i = 0; i < tracks.length; i++) {
-          const t = tracks[i];
-          if (t.kind === 'subtitles') {
-            // Toggle and force reflow if needed
-            if (t.mode === 'showing') {
-              t.mode = 'hidden';
-            } else {
-              // Workaround: re-set mode after short delay to force repaint
-              t.mode = 'hidden';
-              setTimeout(() => {
-                t.mode = 'showing';
-              }, 1000); // or 10–50ms if needed
-            }
-          }
-          
-          console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+    console.log('👉 Number of textTracks:', tracks.length)
+
+    for (let i = 0; i < tracks.length; i++) {
+      const t = tracks[i]
+      if (t.kind === 'subtitles') {
+        // Toggle and force reflow if needed
+        if (t.mode === 'showing') {
+          t.mode = 'hidden'
+        } else {
+          // Workaround: re-set mode after short delay to force repaint
+          t.mode = 'hidden'
+          setTimeout(() => {
+            t.mode = 'showing'
+          }, 1000) // or 10–50ms if needed
         }
-      // }, 1000);
-  
+      }
+
+      console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length)
+    }
+    // }, 1000);
+
     // Wait for the TextTrack to load
     const waitForTrack = () => {
       for (let i = 0; i < tracks.length; i++) {
-        const track = tracks[i];
+        const track = tracks[i]
         if (
           (track.kind === 'subtitles' || track.kind === 'metadata') &&
           track.language.toLowerCase() === newTrack.label.toLowerCase() &&
           track.cues && track.cues.length > 0
         ) {
-          track.mode = 'showing';
-  
+          track.mode = 'showing'
+
           // Now attach cuechange
           track.addEventListener('cuechange', () => {
-            const activeCues = track.activeCues;
+            const activeCues = track.activeCues
             if (activeCues && activeCues.length > 0) {
               for (let j = 0; j < activeCues.length; j++) {
-                const cue: any = activeCues[j];
+                const cue: any = activeCues[j]
                 this.appTocService.setTranscriptionData({
                   start: cue.startTime,
                   end: cue.endTime,
                   text: cue?.text
-                });
+                })
               }
             }
-          });
-  
-          console.log('✅ Cuechange listener attached');
-          return; // Done
+          })
+
+          console.log('✅ Cuechange listener attached')
+          return // Done
         } else {
-         // track.mode = 'hidden'
+          // track.mode = 'hidden'
         }
       }
-  
+
       // Retry after short delay
-      setTimeout(waitForTrack, 0);
-    };
-  
-    waitForTrack();
+      setTimeout(waitForTrack, 0)
+    }
+
+    waitForTrack()
   }
 
   updateSubtitleButtonIcon(subtitlesOn: boolean) {
-    let subtitleImage =  document.getElementById('custom-cc-icon-img') as HTMLImageElement
-    
-    if(subtitleImage) {
+    let subtitleImage = document.getElementById('custom-cc-icon-img') as HTMLImageElement
+
+    if (subtitleImage) {
       subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
     }
 
-    if(!subtitlesOn) {
-      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0];
-      let tracks = videoEl.textTracks;
+    if (!subtitlesOn) {
+      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
+      let tracks = videoEl.textTracks
       for (let i = 0; i < tracks.length; i++) {
-        const t = tracks[i];
+        const t = tracks[i]
         if (t.kind === 'subtitles') {
           // Toggle and force reflow if needed
           if (t.mode === 'showing') {
-            t.mode = 'hidden';
+            t.mode = 'hidden'
           }
         }
-        
-       // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+
+        // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
       }
     }
   }
-  
+
 }
