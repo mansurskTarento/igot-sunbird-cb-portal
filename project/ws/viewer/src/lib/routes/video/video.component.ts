@@ -10,7 +10,7 @@ import {
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { Platform } from '@angular/cdk/platform'
 import { environment } from 'src/environments/environment'
 
@@ -55,7 +55,7 @@ export class VideoComponent implements OnInit, OnDestroy {
     })
     this.isNotEmbed =
       this.activatedRoute.snapshot.queryParamMap.get('embed') === 'true' ? false : true
-      this.channelId = this.activatedRoute.snapshot.queryParamMap.get('channelId')
+    this.channelId = this.activatedRoute.snapshot.queryParamMap.get('channelId')
     if (
       this.activatedRoute.snapshot.queryParamMap.get('preview') === 'true' &&
       !this.accessControlSvc.authoringConfig.newDesign
@@ -289,7 +289,7 @@ export class VideoComponent implements OnInit, OnDestroy {
           this.activatedRoute.snapshot.queryParams.collectionId,
           this.activatedRoute.snapshot.queryParams.batchId,
           videoId)
-        const language = this.viewerSvc.getResourceContentLanguage(videoId) 
+        const language = this.viewerSvc.getResourceContentLanguage(videoId)
         const req: NsContent.IContinueLearningDataReq = {
           request: {
             userId,

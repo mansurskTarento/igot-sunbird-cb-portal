@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs'
 import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
 import { ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-class-diagram',
@@ -31,7 +31,7 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
     private valueSvc: ValueService,
     private eventSvc: EventService,
     private viewSvc: ViewerUtilService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.isSmallSubscription = this.isLtMedium$.subscribe(isSmall => {
@@ -65,7 +65,7 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
           this.isErrorOccured = true
         }
       },
-      () => {},
+      () => { },
     )
   }
 
@@ -74,8 +74,8 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier,
-                                             this.activatedRoute.snapshot.queryParams.collectionId,
-                                             this.activatedRoute.snapshot.queryParams.collectionType,
+        this.activatedRoute.snapshot.queryParams.collectionId,
+        this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier)
@@ -100,7 +100,7 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
       manifestFile = await this.http
         .get<any>(artifactUrl)
         .toPromise()
-        .catch((_err: any) => {})
+        .catch((_err: any) => { })
     }
     return manifestFile
   }

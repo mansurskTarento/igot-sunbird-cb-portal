@@ -19,7 +19,7 @@ import { ROOT_WIDGET_CONFIG } from '../collection.config'
 import { NsContent } from '../_services/widget-content.model'
 import { WidgetContentService } from '../_services/widget-content.service'
 import { IWidgetsPlayerPdfData } from './player-pdf.model'
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 const pdfjsViewer = require('pdfjs-dist/web/pdf_viewer')
 @Component({
   selector: 'ws-widget-player-pdf',
@@ -152,12 +152,12 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       this.eventDispatcher(WsEvents.EnumTelemetrySubType.Init)
     }
 
-    this.markAsCompleteSubjectSubscribe  = this.viewerSvc.markAsCompleteSubject.subscribe((data: any) => {
+    this.markAsCompleteSubjectSubscribe = this.viewerSvc.markAsCompleteSubject.subscribe((data: any) => {
 
       if (data) {
         this.currentPage.reset()
         this.currentPage.setValue(this.totalPages)
-        this.current  = [...this.current, ...[this.totalPages.toString()]]
+        this.current = [...this.current, ...[this.totalPages.toString()]]
         this.markAsCompleteSubjectSubscribe?.unsubscribe()
         if (this.identifier) {
           this.saveContinueLearning(this.identifier)
@@ -321,19 +321,19 @@ export class PlayerPdfComponent extends WidgetBaseComponent
         current: this.current,
       }
       const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-                                                           this.activatedRoute.snapshot.queryParams.batchId, id)
+        this.activatedRoute.snapshot.queryParams.batchId, id)
       const collectionId = (resData && resData.courseId) ? resData.courseId : ''
       const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       const batchId = (resData && resData.batchId) ? resData.batchId : ''
-      if(isPreAssessment) {
+      if (isPreAssessment) {
         if (id && collectionId) {
           this.viewerSvc
             .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
         }
-      } else 
-      if (id && collectionId && batchId) {
-        this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest, collectionId, batchId)
-      }
+      } else
+        if (id && collectionId && batchId) {
+          this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest, collectionId, batchId)
+        }
     }
     return
   }

@@ -4,11 +4,11 @@ import { Storage, IScromData } from './storage'
 import { errorCodes } from './errors'
 import _ from 'lodash'
 import { HttpBackend, HttpClient } from '@angular/common/http'
-import { ActivatedRoute } from '@angular/router';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { ActivatedRoute } from '@angular/router'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 import dayjs from 'dayjs'
-import { ViewerUtilService } from '../../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { Subject } from 'rxjs'
 const API_END_POINTS = {
   SCROM_ADD_UPDTE: '/apis/protected/v8/scrom/add',
@@ -116,9 +116,9 @@ export class SCORMAdapterService {
       // let newData = JSON.stringify(data)
       // data = Base64.encode(newData)
       let _return = false
-      
+
       //only for complete and pass status, progress call should be done
-      if(this.getStatus(data) === 2){
+      if (this.getStatus(data) === 2) {
         this.addDataV2(data).subscribe((response) => {
           if (response) {
             _return = true
@@ -130,7 +130,7 @@ export class SCORMAdapterService {
           }
         })
       }
-      
+
       return _return
     }
     return false
@@ -183,14 +183,14 @@ export class SCORMAdapterService {
     if (this.configSvc.userProfile) {
       userId = this.configSvc.userProfile.userId || ''
     }
-    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId, 
+    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
-    const ML  = this.viewerSvc.getResourceContentLanguage(this.contentId)
+    const ML = this.viewerSvc.getResourceContentLanguage(this.contentId)
     const req: NsContent.IContinueLearningDataReq = {
       request: {
         userId,
-        batchId: (requestCourse && requestCourse.batchId) ?  requestCourse.batchId : '',
-        courseId: (requestCourse && requestCourse.courseId) ?  requestCourse.courseId : '',
+        batchId: (requestCourse && requestCourse.batchId) ? requestCourse.batchId : '',
+        courseId: (requestCourse && requestCourse.courseId) ? requestCourse.courseId : '',
         contentIds: [],
         language: ML,
         fields: ['progressdetails'],
@@ -218,15 +218,15 @@ export class SCORMAdapterService {
                 // errors: data["errors"]
               }
               this.store.setAll(loadDatas)
-              // if scorm has progress and LMS was not initialized 
-              if(data["Initialized"]) {
+              // if scorm has progress and LMS was not initialized
+              if (data["Initialized"]) {
                 this.updateScormInitialized(scormLMSStatus.LMSPositive)
               } else {
                 this.updateScormInitialized(scormLMSStatus.LMSNegative)
               }
             }
           }
-          if(!found) {
+          if (!found) {
             this.updateScormInitialized(scormLMSStatus.LMSWating)
           }
         } else {
@@ -286,10 +286,10 @@ export class SCORMAdapterService {
   }
   addDataV2(postData: IScromData) {
     let req: any
-    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId, 
+    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
     if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId) {
-      const language = this.viewerSvc.getResourceContentLanguage(this.contentId) 
+      const language = this.viewerSvc.getResourceContentLanguage(this.contentId)
       req = {
         request: {
           userId: this.configSvc.userProfile.userId || '',
@@ -297,8 +297,8 @@ export class SCORMAdapterService {
             {
               contentId: this.contentId,
               language: language,
-              batchId: (requestCourse && requestCourse.batchId) ?  requestCourse.batchId : '',
-              courseId: (requestCourse && requestCourse.courseId) ?  requestCourse.courseId : '',
+              batchId: (requestCourse && requestCourse.batchId) ? requestCourse.batchId : '',
+              courseId: (requestCourse && requestCourse.courseId) ? requestCourse.courseId : '',
               status: this.getStatus(postData),
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
               progressdetails: postData
@@ -314,7 +314,7 @@ export class SCORMAdapterService {
 
   addDataV3(reqDetails: any, contentId?: string) {
     let req: any
-    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId, 
+    const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
     if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId) {
       req = {
@@ -322,13 +322,13 @@ export class SCORMAdapterService {
           userId: this.configSvc.userProfile.userId || '',
           contents: [
             {
-              contentId: contentId ? contentId :  this.contentId,
-              batchId: (requestCourse && requestCourse.batchId) ?  requestCourse.batchId : '',
-              courseId: (requestCourse && requestCourse.courseId) ?  requestCourse.courseId : '',
+              contentId: contentId ? contentId : this.contentId,
+              batchId: (requestCourse && requestCourse.batchId) ? requestCourse.batchId : '',
+              courseId: (requestCourse && requestCourse.courseId) ? requestCourse.courseId : '',
               status: (reqDetails.status) || 0,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
               completionPercentage: reqDetails.completionPercentage,
-              progressdetails: {...reqDetails.progressDetails},
+              progressdetails: { ...reqDetails.progressDetails },
             },
           ],
         },

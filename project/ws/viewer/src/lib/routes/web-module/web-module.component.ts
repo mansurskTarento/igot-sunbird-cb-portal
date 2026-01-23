@@ -5,7 +5,7 @@ import { NsContent, NsDiscussionForum, WidgetContentService } from '@sunbird-cb/
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-web-module',

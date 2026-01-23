@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 // import { WidgetContentService } from '@sunbird-cb/collection';
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 // import { EventService, ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { Subscription } from 'rxjs'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
@@ -998,6 +998,6 @@ export class AssessmentComponent implements OnInit {
             {
                 pageIdExt: 'QUML-player',
                 module: WsEvents.EnumTelemetrymodules.LEARN,
-          })
+            })
     }
 }

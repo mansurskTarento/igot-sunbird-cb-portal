@@ -10,7 +10,7 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, ValueService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
 import { Platform } from '@angular/cdk/platform'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-youtube',
@@ -152,7 +152,7 @@ export class YoutubeComponent implements OnInit, OnDestroy {
           this.activatedRoute.snapshot.queryParams.collectionId,
           this.activatedRoute.snapshot.queryParams.batchId,
           videoId)
-        const language = this.viewerSvc.getResourceContentLanguage(videoId) 
+        const language = this.viewerSvc.getResourceContentLanguage(videoId)
         const req: NsContent.IContinueLearningDataReq = {
           request: {
             userId,
@@ -193,7 +193,7 @@ export class YoutubeComponent implements OnInit, OnDestroy {
         )
         resolve(true)
       } else {
-       resolve(true)
+        resolve(true)
       }
     })
   }

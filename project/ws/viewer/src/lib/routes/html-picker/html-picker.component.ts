@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs'
 import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-html-picker',
@@ -26,7 +26,7 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
     private contentSvc: WidgetContentService,
     private eventSvc: EventService,
     private viewSvc: ViewerUtilService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.routeDataSubscription = this.activatedRoute.data.subscribe(
@@ -53,21 +53,21 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
           this.isErrorOccured = true
         }
       },
-      () => {},
+      () => { },
     )
   }
 
-   async ngOnDestroy() {
-     if (this.activatedRoute.snapshot.queryParams.collectionId &&
-       this.activatedRoute.snapshot.queryParams.collectionType
-       && this.htmlPickerData) {
-       await this.contentSvc.continueLearning(this.htmlPickerData.identifier,
-                                              this.activatedRoute.snapshot.queryParams.collectionId,
-                                              this.activatedRoute.snapshot.queryParams.collectionType,
-       )
-       } else if (this.htmlPickerData) {
-       await this.contentSvc.continueLearning(this.htmlPickerData.identifier)
-       }
+  async ngOnDestroy() {
+    if (this.activatedRoute.snapshot.queryParams.collectionId &&
+      this.activatedRoute.snapshot.queryParams.collectionType
+      && this.htmlPickerData) {
+      await this.contentSvc.continueLearning(this.htmlPickerData.identifier,
+        this.activatedRoute.snapshot.queryParams.collectionId,
+        this.activatedRoute.snapshot.queryParams.collectionType,
+      )
+    } else if (this.htmlPickerData) {
+      await this.contentSvc.continueLearning(this.htmlPickerData.identifier)
+    }
     if (this.routeDataSubscription) {
       this.routeDataSubscription.unsubscribe()
     }
@@ -85,7 +85,7 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
       manifestFile = await this.http
         .get<any>(artifactUrl)
         .toPromise()
-        .catch((_err: any) => {})
+        .catch((_err: any) => { })
     }
     return manifestFile
   }

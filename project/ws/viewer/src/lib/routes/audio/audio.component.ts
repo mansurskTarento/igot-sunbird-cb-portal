@@ -9,7 +9,7 @@ import {
   NsDiscussionForum,
   WidgetContentService,
 } from '@sunbird-cb/collection'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { environment } from 'src/environments/environment'
 

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs'
 import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
 import { WidgetContentService } from '@sunbird-cb/collection/src/public-api'
 import { NSQuiz } from '../../plugins/quiz/quiz.model'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 // import { ViewerDataService } from '../../viewer-data.service'
 /// **
 // * this will not be available for any Preview.
@@ -64,10 +64,10 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                 })
         } else {
             this.dataSubscription = this.activatedRoute.data.subscribe(
-                async (data:any) => {
+                async (data: any) => {
                     this.isFetchingDataComplete = false
                     this.testData = data.content.data
-                    if(data && data?.content && data?.content?.data  && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
+                    if (data && data?.content && data?.content?.data && data?.content?.data?.contextCategory === 'Pre Enrolment Assessment') {
                         this.contentSvc.currentMetaData = data
                     }
                     //   console.log(this.testData)
@@ -75,7 +75,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                 })
         }
 
-       
+
     }
     init() {
         if (this.testData) {
@@ -115,7 +115,7 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                     this.activatedRoute.snapshot.queryParams.collectionId,
                     this.activatedRoute.snapshot.queryParams.batchId,
                     identifier)
-                const language = this.viewerSvc.getResourceContentLanguage(identifier) 
+                const language = this.viewerSvc.getResourceContentLanguage(identifier)
                 const req: NsContent.IContinueLearningDataReq = {
                     request: {
                         userId,

@@ -6,7 +6,7 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 // import { NsContent } from '../_services/widget-content.model'
 import { ActivatedRoute } from '@angular/router'
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { ViewerDataService } from '@ws/viewer/src/lib/viewer-data.service'
 import { WidgetContentService } from '@sunbird-cb/collection'
@@ -33,10 +33,10 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
   courseName: any
   apiData: {
     // tslint:disable-next-line:prefer-template
-    getAPI: string;
-    postAPI: string;
-    getAllApplications: string;
-    customizedHeader: {};
+    getAPI: string
+    postAPI: string
+    getAllApplications: string
+    customizedHeader: {}
   } | undefined
   public afterSubmitAction = this.checkAfterSubmit.bind(this)
   isReadOnly = false
@@ -231,11 +231,11 @@ export class PlayerSurveyComponent extends WidgetBaseComponent
     if (this.surveyForm && this.surveyForm.controls.fields) {
       const questionsArray = this.questionsArray
       const childQuestionsArray = questionsArray.controls.filter((question: any) => {
-        return question.value && question.value.parentId === sectionId;
-      });
+        return question.value && question.value.parentId === sectionId
+      })
 
       if (childQuestionsArray.length > 0) {
-        return this.fb.array(childQuestionsArray);
+        return this.fb.array(childQuestionsArray)
       }
     }
     return this.fb.array([]) as FormArray

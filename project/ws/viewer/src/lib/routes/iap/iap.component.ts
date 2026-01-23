@@ -5,7 +5,7 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { EventService, SubapplicationRespondService, WsEvents } from '@sunbird-cb/utils-v2'
 import { fromEvent, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-iap',
@@ -106,8 +106,8 @@ export class IapComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.iapData) {
       await this.contentSvc.continueLearning(this.iapData.identifier,
-                                             this.activatedRoute.snapshot.queryParams.collectionId,
-                                             this.activatedRoute.snapshot.queryParams.collectionType,
+        this.activatedRoute.snapshot.queryParams.collectionId,
+        this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.iapData) {
       await this.contentSvc.continueLearning(this.iapData.identifier)

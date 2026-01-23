@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs'
 import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-channel',
