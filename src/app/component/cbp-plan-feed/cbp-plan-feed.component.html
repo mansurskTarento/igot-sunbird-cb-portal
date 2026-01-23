@@ -20,7 +20,7 @@
     </div>
     <div class="flex flex-wrap" *ngIf="filterApplied">
         <ng-container *ngFor="let item of filterObject | keyvalue">
-            <ng-container *ngIf="item?.key === 'isApar'">
+            <ng-container *ngIf="item?.key === 'isApar'&& item?.value">
                 <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
                     <p>{{'cbpPlanStats.apar' | translate}}</p>
                     <mat-icon aria-hidden="true" (click)="closeFilter(item.value,item.key)"
