@@ -11,7 +11,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { fromEvent, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-// import { ViewerUtilService } from '../../viewer-util.service'
+// import { ViewerUtilService } from '@sunbird-cb/toc'
 import { environment } from 'src/environments/environment'
 @Component({
   selector: 'viewer-html-mobile',

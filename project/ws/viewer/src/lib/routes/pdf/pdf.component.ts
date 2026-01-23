@@ -5,7 +5,7 @@ import { NsContent, NsDiscussionForum, WidgetContentService } from '@sunbird-cb/
 import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { environment } from 'src/environments/environment'
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
 @Component({
@@ -105,16 +105,16 @@ export class PdfComponent implements OnInit, OnDestroy {
           } else {
             this.widgetResolverPdfData.widgetData.collectionId = ''
           }
-          if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from 
-            && 
+          if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from
+            &&
             this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
-            if(this.activatedRoute.snapshot.queryParams.pn) {
-              let pageNumber  = this.activatedRoute.snapshot.queryParams.pn
+            if (this.activatedRoute.snapshot.queryParams.pn) {
+              let pageNumber = this.activatedRoute.snapshot.queryParams.pn
               this.widgetResolverPdfData.widgetData.resumePage = Number(pageNumber)
             }
           } else {
             this.widgetResolverPdfData.widgetData.resumePage = 1
-          }          
+          }
           if (this.pdfData && this.pdfData.identifier) {
             if (this.activatedRoute.snapshot.queryParams.collectionId) {
               await this.fetchContinueLearning(
@@ -241,7 +241,7 @@ export class PdfComponent implements OnInit, OnDestroy {
           this.activatedRoute.snapshot.queryParams.collectionId,
           this.activatedRoute.snapshot.queryParams.batchId,
           pdfId)
-        const language = this.viewerSvc.getResourceContentLanguage(pdfId) 
+        const language = this.viewerSvc.getResourceContentLanguage(pdfId)
         const req: NsContent.IContinueLearningDataReq = {
           request: {
             userId,
@@ -259,16 +259,16 @@ export class PdfComponent implements OnInit, OnDestroy {
               for (const content of data.result.contentList) {
                 if (content.contentId === pdfId && content.progressdetails && content.progressdetails.current) {
                   if (content.progress === 100 || content.status === 2) {
-                    if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from 
-                      && 
+                    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from
+                      &&
                       this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
-                      if(this.activatedRoute.snapshot.queryParams.pn) {
-                        let pageNumber  = this.activatedRoute.snapshot.queryParams.pn
+                      if (this.activatedRoute.snapshot.queryParams.pn) {
+                        let pageNumber = this.activatedRoute.snapshot.queryParams.pn
                         this.widgetResolverPdfData.widgetData.resumePage = Number(pageNumber)
                       }
                     } else {
                       this.widgetResolverPdfData.widgetData.resumePage = 1
-                    }                    
+                    }
                   } else {
                     this.widgetResolverPdfData.widgetData.resumePage = Number(content.progressdetails.current.pop())
                   }
@@ -282,7 +282,7 @@ export class PdfComponent implements OnInit, OnDestroy {
         )
         resolve(true)
       } else {
-         resolve(true)
+        resolve(true)
       }
 
     })

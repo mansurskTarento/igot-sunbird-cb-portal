@@ -22,13 +22,12 @@ export class ProviderCardComponent implements OnInit {
    * Navigate to provider micro-sites page
    */
   navigateToProvider(): void {
-    debugger
     let url = ''
     let queryParams = {}
-    if(this.provider?.internalOrgId) {
-       url = `/app/learn/browse-by/provider/${this.provider.contentPartnerName|| this.provider?.name}/${this.provider?.internalOrgId}/micro-sites`
-    }  else if(this.provider?.orgId) {
-      url  = `/app/learn/browse-by/provider/${this.provider.name}/${this.provider.orgId}/micro-sites`
+    if (this.provider?.internalOrgId) {
+      url = `/app/learn/browse-by/provider/${this.provider.contentPartnerName || this.provider?.name}/${this.provider?.internalOrgId}/micro-sites`
+    } else if (this.provider?.orgId) {
+      url = `/app/learn/browse-by/provider/${this.provider.name}/${this.provider.orgId}/micro-sites`
     } else {
       url = `app/seeAll/content`
       queryParams = {

@@ -15,7 +15,7 @@ import { getAmpConfig, isIOS, LINKS } from './player-amp.utility'
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 import { first, filter } from 'rxjs/operators'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'ws-widget-player-amp',
@@ -77,7 +77,7 @@ export class PlayerAmpComponent extends WidgetBaseComponent
           .pipe(
             filter(() => Boolean(amp)),
             first(),
-        )
+          )
           .toPromise()
       }
     }
@@ -122,8 +122,7 @@ export class PlayerAmpComponent extends WidgetBaseComponent
     ]
     if (isIOS()) {
       playerSource.unshift({
-        src: `${LINKS.ampProxy}?playbackUrl=${
-          this.data.tokens.manifest
+        src: `${LINKS.ampProxy}?playbackUrl=${this.data.tokens.manifest
           }(format=m3u8-aapl)&token=${encodeURIComponent(this.data.tokens.streamingToken)}`,
         type: 'application/vnd.apple.mpegurl',
         disableUrlRewriter: true,

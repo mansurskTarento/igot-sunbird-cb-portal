@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs'
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
 import { NsContent, NsDiscussionForum, WidgetContentService } from '@sunbird-cb/collection'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 
 @Component({
@@ -31,7 +31,7 @@ export class AudioNativeComponent implements OnInit, OnDestroy {
     private valueSvc: ValueService,
     private viewerSvc: ViewerUtilService,
     private configSvc: ConfigurationsService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.configSvc.instanceConfig) {
@@ -64,7 +64,7 @@ export class AudioNativeComponent implements OnInit, OnDestroy {
         this.saveContinueLearning(this.audioData)
         this.isFetchingDataComplete = true
       },
-      () => {},
+      () => { },
     )
   }
 

@@ -6,7 +6,7 @@ import { AccessControlService } from '@ws/author'
 import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
 import { environment } from 'src/environments/environment'
 import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-offline-session',
@@ -138,53 +138,53 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
   // get session  data  from batch api start
   getSessionData(resolveData: any) {
     if (this.batchData && this.batchData.batchAttributes && this.batchData.batchAttributes.sessionDetails_v2) {
-    const sessionData = this.batchData.batchAttributes.sessionDetails_v2.find((obj: any) => {
-      return obj.sessionId ===  this.activatedRoute.snapshot.params.resourceId
+      const sessionData = this.batchData.batchAttributes.sessionDetails_v2.find((obj: any) => {
+        return obj.sessionId === this.activatedRoute.snapshot.params.resourceId
 
-    })
-    let userId
-    if (this.configSvc.userProfile) {
-      userId = this.configSvc.userProfile.userId || ''
-    }
-    if (this.activatedRoute.snapshot.queryParams.collectionId
-      && this.activatedRoute.snapshot.queryParams.batchId
-      && this.activatedRoute.snapshot.params.resourceId
-    ) {
-      const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.batchId,
-        this.activatedRoute.snapshot.params.resourceId)
-
-        const language = this.viewerSvc.getResourceContentLanguage(this.activatedRoute.snapshot.params.resourceId)  
-      const req: NsContent.IContinueLearningDataReq = {
-        request: {
-          userId,
-          language,
-          batchId: requestCourse.batchId,
-          courseId: requestCourse.courseId || '',
-          contentIds: [],
-          fields: ['progressdetails'],
-        },
+      })
+      let userId
+      if (this.configSvc.userProfile) {
+        userId = this.configSvc.userProfile.userId || ''
       }
-      this.contentSvc.fetchContentHistoryV2(req).subscribe(
-        data => {
-          if (data && data.result && data.result.contentList.length) {
-            this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
-            for (const content of data.result.contentList) {
-              if (content.contentId === this.activatedRoute.snapshot.params.resourceId) {
-                sessionData.completionPercentage = content.completionPercentage
-                sessionData.completionStatus = content.status
-                sessionData.lastCompletedTime = content.lastCompletedTime
+      if (this.activatedRoute.snapshot.queryParams.collectionId
+        && this.activatedRoute.snapshot.queryParams.batchId
+        && this.activatedRoute.snapshot.params.resourceId
+      ) {
+        const requestCourse = this.viewerSvc.getBatchIdAndCourseId(
+          this.activatedRoute.snapshot.queryParams.collectionId,
+          this.activatedRoute.snapshot.queryParams.batchId,
+          this.activatedRoute.snapshot.params.resourceId)
+
+        const language = this.viewerSvc.getResourceContentLanguage(this.activatedRoute.snapshot.params.resourceId)
+        const req: NsContent.IContinueLearningDataReq = {
+          request: {
+            userId,
+            language,
+            batchId: requestCourse.batchId,
+            courseId: requestCourse.courseId || '',
+            contentIds: [],
+            fields: ['progressdetails'],
+          },
+        }
+        this.contentSvc.fetchContentHistoryV2(req).subscribe(
+          data => {
+            if (data && data.result && data.result.contentList.length) {
+              this.contentSvc.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
+              for (const content of data.result.contentList) {
+                if (content.contentId === this.activatedRoute.snapshot.params.resourceId) {
+                  sessionData.completionPercentage = content.completionPercentage
+                  sessionData.completionStatus = content.status
+                  sessionData.lastCompletedTime = content.lastCompletedTime
+                }
               }
             }
           }
-        }
-      )
-      resolveData.content.data['sessionData'] = sessionData
+        )
+        resolveData.content.data['sessionData'] = sessionData
+      }
+      // calling initData to form the data
+      this.initData(resolveData)
     }
-    // calling initData to form the data
-    this.initData(resolveData)
-  }
   }
   // get session data  from batch api end
 

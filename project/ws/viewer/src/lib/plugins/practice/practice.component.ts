@@ -21,7 +21,7 @@ import { PracticeService } from './practice.service'
 import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
 import { WidgetContentService } from '@sunbird-cb/collection'
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { ViewerUtilService } from '../../viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSQuiz } from '../quiz/quiz.model'
@@ -154,8 +154,13 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   questionParagraph = ''
   resCollectionId = ''
   resBatchId = ''
-  forPreview = (window.location.href.includes('public') || window.location.href.includes('author') ||
-    window.location.href.includes('editMode') || window.location.href.includes('preview=true'))
+  url = new URL(window.location.href);
+  forPreview =
+    ['public', 'author', 'editMode'].some(segment =>
+      this.url.pathname.split('/').includes(segment)
+    ) ||
+    this.url.searchParams.get('preview') === 'true';
+
   forCreatorMode = window.location.href.includes('editMode=true')
 
   public publicUserInfoForm!: UntypedFormGroup

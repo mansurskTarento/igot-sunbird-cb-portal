@@ -13,7 +13,7 @@ import {
   videoJsInitializer,
 } from '../_services/videojs-util'
 import { WidgetContentService } from '../_services/widget-content.service'
-import { ViewerUtilService } from '@ws/viewer/src/lib/viewer-util.service'
+import { ViewerUtilService } from '@sunbird-cb/toc'
 import { AppTocService } from '@sunbird-cb/toc'
 import { Subscription } from 'rxjs'
 import 'videojs-hls-quality-selector'
@@ -502,7 +502,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     )
     this.playerInitObj = initObj
     this.player = initObj.player
-      
+
     this.dispose = initObj.dispose
 
 
