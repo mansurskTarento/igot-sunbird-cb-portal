@@ -19,9 +19,9 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { OnConnectionBindInfo } from 'jsplumb'
 import { PracticeService } from './practice.service'
 import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
-import { WidgetContentService } from '@sunbird-cb/collection'
+
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { ViewerUtilService } from '@sunbird-cb/toc'
+import { ViewerUtilService, WidgetContentService, AppTocService } from '@sunbird-cb/toc'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSQuiz } from '../quiz/quiz.model'
@@ -34,7 +34,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatSidenav } from '@angular/material/sidenav'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
-import { AppTocService } from '@sunbird-cb/toc'
+
 // import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({

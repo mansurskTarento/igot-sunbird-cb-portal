@@ -7,11 +7,11 @@ import {
   NsContent,
   IWidgetsPlayerMediaData,
   NsDiscussionForum,
-  WidgetContentService,
 } from '@sunbird-cb/collection'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { environment } from 'src/environments/environment'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-audio',

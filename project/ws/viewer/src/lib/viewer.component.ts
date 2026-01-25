@@ -1,6 +1,6 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -11,8 +11,8 @@ import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.s
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService } from '@sunbird-cb/toc'
-import { AppTocV2Service } from '@sunbird-cb/toc'
+import { AppTocService, AppTocV2Service, WidgetContentService } from '@sunbird-cb/toc'
+
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -208,6 +208,24 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   }
 
+  syncMilestoneLockStatus() {
+    if (!this.hierarchyData || !this.hierarchyData.children) return
+
+    let hasChanges = false
+    this.hierarchyData.children.forEach((child: any) => {
+      if (child.primaryCategory === 'Milestone' && child.identifier) {
+        const hashData = this.tocSvc.hashmap[child.identifier]
+        if (hashData && hashData.computedIsLocked !== undefined) {
+          const oldLocked = child.isLocked
+          child.isLocked = hashData.computedIsLocked
+          if (oldLocked !== child.isLocked) {
+            hasChanges = true
+          }
+          console.log(`Synced lock status for ${hasChanges} ${child.name} (${child.identifier}): isLocked=${child.isLocked}`)
+        }
+      }
+    })
+  }
   async ngOnInit() {
 
     this.getTocConfig()
@@ -241,9 +259,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
-        this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
-        // For Learning Pathway, use the leafNodes array length directly
-        // This is the accurate count of actual content items (excludes milestones, assessments structure)
+        this.tocV2Svc.mapContentHierarchyProgressUpdate(this.hierarchyData, this.enrollmentList)
+        // Create hashmap and compute milestone locking after progress is updated
+        this.tocSvc.callHirarchyProgressHashmap(this.hierarchyData)
+        const isEnrolled = true
+        // Compute milestone locking status with enrollment status and updated progress data
+        this.tocSvc.computeMilestoneLockingStatus(isEnrolled)
+        console.log('Milestone locking recomputed. Enrolled:', isEnrolled)
+        // Sync content tree's isLocked with computed values
+        this.syncMilestoneLockStatus()
         this.leafNodesCount = (this.hierarchyData.leafNodes && Array.isArray(this.hierarchyData.leafNodes))
           ? this.hierarchyData.leafNodes.length
           : 0

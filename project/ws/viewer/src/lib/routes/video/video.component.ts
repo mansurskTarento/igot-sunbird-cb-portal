@@ -5,7 +5,6 @@ import {
   NsContent,
   // IWidgetsPlayerMediaData,
   NsDiscussionForum,
-  WidgetContentService,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -13,6 +12,7 @@ import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { Platform } from '@angular/cdk/platform'
 import { environment } from 'src/environments/environment'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-video',

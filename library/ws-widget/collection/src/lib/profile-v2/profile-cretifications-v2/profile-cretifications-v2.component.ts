@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { WidgetContentService } from '@sunbird-cb/collection'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
 import moment from 'moment'
 import { ProfileCertificateDialogComponent } from '../profile-certificate-dialog/profile-certificate-dialog.component'

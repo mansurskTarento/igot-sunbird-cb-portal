@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import moment from 'moment'
 

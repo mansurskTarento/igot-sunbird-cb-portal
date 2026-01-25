@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subscription } from 'rxjs'
 import { HttpClient, HttpBackend } from '@angular/common/http'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { NSQuiz } from '../../plugins/quiz/quiz.model'
 import { ActivatedRoute } from '@angular/router'
 import { WsEvents, EventService } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 // import { environment } from 'src/environments/environment'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-quiz',

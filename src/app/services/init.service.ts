@@ -4,7 +4,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Inject, Injectable } from '@angular/core'
 import { MatIconRegistry } from '@angular/material/icon'
 import { DomSanitizer } from '@angular/platform-browser'
-import { BtnSettingsService } from '@sunbird-cb/collection'
 import {
   hasPermissions,
   hasUnitPermission,
@@ -34,6 +33,7 @@ import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
+import { BtnSettingsService } from '../../../library/ws-widget/collection/src/public-api'
 declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */

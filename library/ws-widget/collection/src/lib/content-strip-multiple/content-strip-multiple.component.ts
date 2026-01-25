@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsContentStripMultiple } from './content-strip-multiple.model'
 import { ContentStripMultipleService } from './content-strip-multiple.service'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '../_services/widget-content.model'
 import {
   TFetchStatus,
@@ -15,13 +15,12 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-// import { NSSearch } from '@sunbird-cb/utils-v2'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { HttpClient } from '@angular/common/http'
 import { environment } from 'src/environments/environment'
-import { NSSearch } from '@sunbird-cb/collection'
+import { NSSearch } from '../_services/widget-search.model'
 import { SearchApiService } from '../_services/search-api.service'
 
 interface IStripUnitContentData {
@@ -246,26 +245,26 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
     strip: NsContentStripMultiple.IContentStripUnit,
     calculateParentStatus = true,
   ) {
-      // setting initial values
-      this.processStrip(strip, [], 'fetching', false, null)
-      this.fetchFromApi(strip, calculateParentStatus)
-      this.fetchFromSearch(strip, calculateParentStatus)
-      this.fetchFromSearchRegionRecommendation(strip, calculateParentStatus)
-      this.fetchFromSearchV6(strip, calculateParentStatus)
-      this.fetchFromIds(strip, calculateParentStatus)
-      this.fetchFromEnrollmentList(strip, calculateParentStatus)
-      this.fetchRelatedCBP(strip, calculateParentStatus)
-      this.fetchRecommendedCourses(strip, calculateParentStatus)
-      this.fetchMandatoryCourses(strip, calculateParentStatus)
-      this.fetchBasedOnInterest(strip, calculateParentStatus)
-      this.fetchMicrosoftCourses(strip, calculateParentStatus)
-      this.fetchDAKSHTACourses(strip, calculateParentStatus)
-      this.fetchprarambhCourse(strip, calculateParentStatus)
-      this.fetchCuratedCollections(strip, calculateParentStatus)
-      this.fetchModeratedCourses(strip, calculateParentStatus)
-      // if (this.veifiedKarmayogi) {
-      //  this.fetchModeratedCourses(strip, calculateParentStatus)
-      // }
+    // setting initial values
+    this.processStrip(strip, [], 'fetching', false, null)
+    this.fetchFromApi(strip, calculateParentStatus)
+    this.fetchFromSearch(strip, calculateParentStatus)
+    this.fetchFromSearchRegionRecommendation(strip, calculateParentStatus)
+    this.fetchFromSearchV6(strip, calculateParentStatus)
+    this.fetchFromIds(strip, calculateParentStatus)
+    this.fetchFromEnrollmentList(strip, calculateParentStatus)
+    this.fetchRelatedCBP(strip, calculateParentStatus)
+    this.fetchRecommendedCourses(strip, calculateParentStatus)
+    this.fetchMandatoryCourses(strip, calculateParentStatus)
+    this.fetchBasedOnInterest(strip, calculateParentStatus)
+    this.fetchMicrosoftCourses(strip, calculateParentStatus)
+    this.fetchDAKSHTACourses(strip, calculateParentStatus)
+    this.fetchprarambhCourse(strip, calculateParentStatus)
+    this.fetchCuratedCollections(strip, calculateParentStatus)
+    this.fetchModeratedCourses(strip, calculateParentStatus)
+    // if (this.veifiedKarmayogi) {
+    //  this.fetchModeratedCourses(strip, calculateParentStatus)
+    // }
   }
 
   fetchModeratedCourses(strip: NsContentStripMultiple.IContentStripUnit, calculateParentStatus = true) {
@@ -279,20 +278,20 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           query: '',
           filters: {
             courseCategory: [NsContent.ECourseCategory.MODERATED_COURSE,
-              NsContent.ECourseCategory.MODERATED_PROGRAM, NsContent.ECourseCategory.MODERATED_ASSESSEMENT],
-              'secureSettings.organisation': orgId,
+            NsContent.ECourseCategory.MODERATED_PROGRAM, NsContent.ECourseCategory.MODERATED_ASSESSEMENT],
+            'secureSettings.organisation': orgId,
             contentType: ['Course'],
-              status: [
-                  'Live',
-              ],
+            status: [
+              'Live',
+            ],
           },
           sort_by: {
-              lastUpdatedOn: 'desc',
+            lastUpdatedOn: 'desc',
           },
           facets: [
-              'mimeType',
+            'mimeType',
           ],
-          limit : 20,
+          limit: 20,
         },
       }
       if (!this.profileStatus) {
@@ -318,24 +317,24 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           // }
         }
         const viewMoreUrl = showViewMore
-            ? {
-              path: '/app/globalsearch',
-              queryParams: {
-                t: 'moderatedCourses',
-              },
-            } : null
+          ? {
+            path: '/app/globalsearch',
+            queryParams: {
+              t: 'moderatedCourses',
+            },
+          } : null
 
-            this.processStrip(
-              strip,
-              this.transformContentsToWidgets(contentList, strip),
-              'done',
-              calculateParentStatus,
-              viewMoreUrl,
-            )
+        this.processStrip(
+          strip,
+          this.transformContentsToWidgets(contentList, strip),
+          'done',
+          calculateParentStatus,
+          viewMoreUrl,
+        )
       },
-                                                                                      () => {
-        this.processStrip(strip, [], 'error', calculateParentStatus, null)
-      }
+        () => {
+          this.processStrip(strip, [], 'error', calculateParentStatus, null)
+        }
       )
     }
   }
@@ -375,7 +374,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
       } else {
         strip.request.search.locale = ['en']
       }
-      this.contentSvc.search(strip.request.search).subscribe(
+      this.contentSvc.search(strip.request.search as any).subscribe(
         results => {
           const showViewMore = Boolean(
             results.result.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
@@ -416,7 +415,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
       Object.keys(strip.request.searchRegionRecommendation).length
     ) {
       this.contentSvc
-        .searchRegionRecommendation(strip.request.searchRegionRecommendation)
+        .searchRegionRecommendation(strip.request.searchRegionRecommendation as any)
         .subscribe(
           results => {
             this.processStrip(
@@ -464,14 +463,14 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
         strip.request.searchV6.request.filters = this.checkForDateFilters(strip.request.searchV6.request.filters)
         strip.request.searchV6.request.filters = this.getFiltersFromArray(
           strip.request.searchV6.request.filters,
-          )
+        )
       }
       this.contentSvc.searchV6(strip.request.searchV6).subscribe(
         results => {
           const showViewMore = Boolean(
             results.result.content && results.result.content.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
           )
-          const viewMoreUrl:any = showViewMore
+          const viewMoreUrl: any = showViewMore
             ? {
               path: '/app/globalsearch',
               queryParams: {
@@ -495,7 +494,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
           //   viewMoreUrl.queryParams = viewMoreUrl.queryParams
           // }
           let contentData = results.result.content
-          if(strip && strip?.key === "featuredCourses"){
+          if (strip && strip?.key === "featuredCourses") {
             contentData = contentData.filter((data: NsContent.IContent) => {
               return data.primaryCategory === NsContent.EPrimaryCategory.COURSE
             })
@@ -671,7 +670,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
                 this.processStrip(strip, [], 'error', calculateParentStatus, null)
               },
             )
-          },         () => {
+          }, () => {
             this.processStrip(strip, [], 'error', calculateParentStatus, null)
           })
       }
@@ -685,7 +684,7 @@ export class ContentStripMultipleComponent extends WidgetBaseComponent
       const searchRequest = strip.request.curatedCollections
       this.contentSvc.searchRelatedCBPV6(searchRequest).subscribe(
         results => {
-          const showViewMore =  results.result.count > 0 ? Boolean(
+          const showViewMore = results.result.count > 0 ? Boolean(
             results.result.content.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
           ) : false
           const viewMoreUrl = showViewMore

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core'
-import { WidgetContentService } from '../_services/widget-content.service'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { WidgetContentService } from '@sunbird-cb/toc'
+import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2'
 import { HttpClient } from '@angular/common/http'
-import { NsContent } from '../_services/widget-content.model'
 
 const API_END_POINTS = {
   updateHierarchy: `/apis/protected/v8/content/hierarchy/update`,

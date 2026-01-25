@@ -5,8 +5,8 @@ import { ActivatedRoute, NavigationExtras, Params } from '@angular/router'
 import {
   // ContentProgressService,
   NsContent,
-  VIEWER_ROUTE_FROM_MIME,
-  WidgetContentService,
+  VIEWER_ROUTE_FROM_MIME
+
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
@@ -24,7 +24,7 @@ import { delay } from 'rxjs/operators'
 import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { MatTreeNestedDataSource } from '@angular/material/tree'
-import { AppTocV2Service } from '@sunbird-cb/toc'
+import { AppTocV2Service, WidgetContentService } from '@sunbird-cb/toc'
 // import { AppTocService } from '@sunbird-cb/toc'
 export interface IViewerTocCard {
   identifier: string

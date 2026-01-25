@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subscription } from 'rxjs'
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
-import { NsContent, NsDiscussionForum, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-audio-native',

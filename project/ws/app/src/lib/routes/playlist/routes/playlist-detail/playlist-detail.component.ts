@@ -8,8 +8,7 @@ import {
   NsError,
   NsPlaylist,
   ROOT_WIDGET_CONFIG,
-  viewerRouteGenerator,
-  WidgetContentService,
+  viewerRouteGenerator
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
@@ -26,6 +25,7 @@ import {
 } from '../../constants/playlist.constant'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'ws-app-playlist-detail',
@@ -244,10 +244,10 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
             )
 
             /* tslint:disable-next-line */
-            console.log(this.playlistPlayLink,'=====> playlist  firstPlayableContent url link <========')
+            console.log(this.playlistPlayLink, '=====> playlist  firstPlayableContent url link <========')
           }
         })
-      },                                                         _err => {
+      }, _err => {
         this.contentSvc.fetchContent(playlist.contents[0].identifier).subscribe(response => {
           if (response) {
             const firstPlayableContent = this.contentSvc.getFirstChildInHierarchy(response)
@@ -261,7 +261,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
             )
 
             /* tslint:disable-next-line */
-            console.log(this.playlistPlayLink,'=====> playlist  firstPlayableContent url 252 link <========')
+            console.log(this.playlistPlayLink, '=====> playlist  firstPlayableContent url 252 link <========')
           }
         })
       })

@@ -4,13 +4,13 @@ import {
   NsContent,
   IWidgetsPlayerMediaData,
   NsDiscussionForum,
-  WidgetContentService,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, ValueService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
 import { Platform } from '@angular/cdk/platform'
 import { ViewerUtilService } from '@sunbird-cb/toc'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-youtube',

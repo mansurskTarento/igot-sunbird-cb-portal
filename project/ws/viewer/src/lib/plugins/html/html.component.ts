@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnChanges, OnInit, ViewChild, OnDestroy }
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { Router, ActivatedRoute } from '@angular/router'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, LoggerService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../../../../../../src/app/services/mobile-apps.service'
 import { SCORMAdapterService, scormLMSStatus } from './SCORMAdapter/scormAdapter'
@@ -13,6 +13,7 @@ import { Subscription, timer } from 'rxjs'
 import { Storage } from './SCORMAdapter/storage'
 import { AppTocService } from '@sunbird-cb/toc'
 /* tslint:enable */
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-plugin-html',

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 const ADDITIONAL_FIELDS_IN_CONTENT = [
   'averageRating',
@@ -51,8 +52,7 @@ const ADDITIONAL_FIELDS_IN_CONTENT = [
   'posterImage',
 ]
 @Injectable()
-export class AppPublicTocResolverService
-   {
+export class AppPublicTocResolverService {
   constructor(
     private contentSvc: WidgetContentService,
   ) { }
@@ -62,8 +62,8 @@ export class AppPublicTocResolverService
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<NsContent.IContent>> {
     const contentId = route.paramMap.get('id')
-     if (contentId) {
-       return this.contentSvc.fetchContent(contentId, 'detail', ADDITIONAL_FIELDS_IN_CONTENT, '').pipe(
+    if (contentId) {
+      return this.contentSvc.fetchContent(contentId, 'detail', ADDITIONAL_FIELDS_IN_CONTENT, '').pipe(
         map(data => ({ data, error: null })),
         tap(resolveData => {
           resolveData.data = resolveData.data.result.content

@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Subscription } from 'rxjs'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@sunbird-cb/toc'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-dnd-quiz',

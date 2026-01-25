@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core'
-import { ContentStripMultipleService, NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { ContentStripMultipleService, NsContent } from '@sunbird-cb/collection'
 import { IWidgetAuthor } from './../../../interface/widget'
 import { ChannelStoreService } from './../../../services/store.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'ws-auth-content-strip-holder',
@@ -58,21 +59,21 @@ export class ContentStripHolderComponent implements OnInit, OnChanges {
     this.widget.children.map(
       v => {
         switch (this.store.getUpdatedContent(v).purpose) {
-        case 'info':
-          this.widgetMap.info = v
-          break
-        case 'noDataWidget':
-          this.widgetMap.noData = v
-          break
-        case 'errorWidget':
-          this.widgetMap.error = v
-          break
-        case 'preWidget':
-          this.widgetMap.preWidgets.push(v)
-          break
-        case 'postWidget':
-          this.widgetMap.postWidgets.push(v)
-          break
+          case 'info':
+            this.widgetMap.info = v
+            break
+          case 'noDataWidget':
+            this.widgetMap.noData = v
+            break
+          case 'errorWidget':
+            this.widgetMap.error = v
+            break
+          case 'preWidget':
+            this.widgetMap.preWidgets.push(v)
+            break
+          case 'postWidget':
+            this.widgetMap.postWidgets.push(v)
+            break
         }
       },
     )

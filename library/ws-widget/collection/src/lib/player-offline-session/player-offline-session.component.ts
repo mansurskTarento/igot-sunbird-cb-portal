@@ -9,7 +9,7 @@ import {
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { Subscription } from 'rxjs'
 import { IWidgetsPlayerOfflineSessionData } from './player-offline-session.model'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'ws-widget-player-offline-session',
@@ -34,7 +34,7 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
 
   ngOnInit() {
     this.tocConfigSubscription = this.widgetContentSvc.tocConfigData.subscribe((data: any) => {
-        this.tocConfig = data
+      this.tocConfig = data
     })
     // TODO:When player is fully implemented put initial functions here
   }
