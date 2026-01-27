@@ -5,6 +5,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
+import * as _ from 'lodash'
 
 
 const configMap: any = {
@@ -57,6 +58,9 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   filterProvider: string = ''
   apiConfig: any = null
   isGetApi = false
+  providerDetails: any = null
+  apiFacets: any[] = []  // Raw API facets for filter component
+  appliedFilters: any = {}  // Filters applied from filter component
 
   private destroy$ = new Subject<void>()
 
@@ -83,14 +87,22 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.contentName = this.activatedRoute?.snapshot?.queryParams['providerName'] ?
-      `${this.activatedRoute?.snapshot?.queryParams['providerName']} Contents` : 'Explore all the contents'
-    this.configKey = this.activatedRoute?.snapshot?.queryParams['key'] || 'extContent'
-    this.filterProvider = this.activatedRoute?.snapshot?.queryParams['provider'] || 'PEDGOG'
+    const providerName = _.get(this.activatedRoute, 'snapshot.queryParams.providerName', '')
+    this.contentName = providerName ? `${providerName} Contents` : 'Explore all the contents'
+    this.configKey = _.get(this.activatedRoute, 'snapshot.queryParams.key', 'extContent')
+    this.filterProvider = _.get(this.activatedRoute, 'snapshot.queryParams.provider', 'PEDGOG')
 
     // Load configuration from service
     this.loadConfiguration()
     this.fetchContent()
+    this.loadProviderDetails()
+  }
+
+  onFilterApplied(filters: any) {
+    this.appliedFilters = filters
+    console.log('Applied Filters:', this.appliedFilters)
+    // Apply filters and refresh content
+    this.fetchContent(false)
   }
 
   ngOnDestroy() {
@@ -98,9 +110,45 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
 
+  loadProviderDetails() {
+    if (!this.filterProvider) {
+      return
+    }
+
+    const request = {
+      filterCriteriaMap: {
+        isActive: true,
+        liveCoursesCount: {
+          '>=': '1'
+        },
+        isTrainingInstitution: false,
+        providerType: ['external', 'internal'],
+        id: this.filterProvider
+      },
+      pageNumber: 0,
+      pageSize: 10,
+      facets: ['contentPartnerName'],
+      orderBy: 'createdOn',
+      orderDirection: 'desc'
+    }
+
+    this.seeAllService
+      .getProviderDetails(request)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          this.providerDetails = _.get(res, 'result.data[0]', null)
+        },
+        (error: any) => {
+          console.error('Error fetching provider details:', error)
+          this.providerDetails = null
+        }
+      )
+  }
+
   loadConfiguration() {
     // Get config from local configMap
-    const getConfigData = this.activatedRoute?.snapshot?.data['pageData']?.data || configMap
+    const getConfigData = _.get(this.activatedRoute, 'snapshot.data.pageData.data', configMap)
     this.apiConfig = getConfigData[this.configKey]
 
     if (!this.apiConfig) {
@@ -148,13 +196,19 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
         .subscribe(
           (res: any) => {
             // Handle different response formats
-            const data = res?.result?.content || res?.content || res?.data || res || []
+            const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', null) || res || []
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Store original data for search filtering
             this.originalContentItems = [...transformed]
             this.contentItems = [...transformed]
             // Capture server-provided total count
-            this.totalCount = res?.result?.totalCount || res?.totalCount || transformed.length
+            this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || transformed.length
+            // Capture facets for filters
+            const resultFacets = _.get(res, 'result.facets', null)
+            const facets = _.get(res, 'facets', null)
+            if (resultFacets || facets) {
+              this.apiFacets = resultFacets || facets || []
+            }
             this.applyLocalSearch()
             this.applySort()
             this.loading = false
@@ -178,13 +232,19 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
         .subscribe(
           (res: any) => {
             // Handle different response formats
-            const data = res?.result?.content || res?.content || res?.data || []
+            const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', [])
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Store original data for search filtering
             this.originalContentItems = [...transformed]
             this.contentItems = [...transformed]
             // Capture server-provided total count
-            this.totalCount = res?.result?.totalCount || res?.totalCount || transformed.length
+            this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || transformed.length
+            // Capture facets for filters
+            const resultFacets = _.get(res, 'result.facets', null)
+            const facets = _.get(res, 'facets', null)
+            if (resultFacets || facets) {
+              this.apiFacets = resultFacets || facets || []
+            }
             this.applyLocalSearch()
             this.applySort()
             this.loading = false
@@ -211,10 +271,18 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
         .subscribe(
           (res: any) => {
             // Handle different response formats
-            const data = res?.result?.content || res?.content || res?.data || []
+            const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', [])
             const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
             // Capture server-provided total count
-            this.totalCount = res?.result?.totalCount || res?.totalCount || res?.result?.content?.length || 0
+            const resultContent = _.get(res, 'result.content', [])
+            this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || resultContent.length || 0
+
+            // Capture facets for filters (only on first load)
+            const resultFacets = _.get(res, 'result.facets', null)
+            const facets = _.get(res, 'facets', null)
+            if (!isLoadMore && (resultFacets || facets)) {
+              this.apiFacets = resultFacets || facets || []
+            }
 
             if (isLoadMore) {
               // Append new items for infinite scroll

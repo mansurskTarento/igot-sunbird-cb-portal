@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject, throwError } from 'rxjs'
 import { NSSearch } from '@sunbird-cb/collection/src/lib/_services/widget-search.model'
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators'
 
 // tslint:disable
 import _ from 'lodash'
@@ -14,6 +14,7 @@ const API_END_POINTS = {
   TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
   MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`,
   GetApplicationsById: `apis/proxies/v8/forms/v2/bulkGetApplicationsById`,
+  GetProviderDetails: `apis/proxies/v8/contentpartner/v1/search`,
 }
 
 @Injectable({
@@ -116,6 +117,10 @@ export class SeeAllService {
 
   getApplicationsById(formBody: any) {
     return this.http.post<any>(API_END_POINTS.GetApplicationsById, formBody)
+  }
+
+  getProviderDetails(request: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GetProviderDetails, request)
   }
 
 }
