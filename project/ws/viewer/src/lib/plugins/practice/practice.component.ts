@@ -1172,12 +1172,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   updatePreEnrollmentProgress(status: any) {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
-      if (this.identifier && this.widgetContentService.currentMetaData?.content?.data?.parent) {
-        const MIME_TYPE = "application/vnd.ekstep.content-collection"
-        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
+      if (this.identifier) {
+        const MIME_TYPE = "application/vnd.sunbird.questionset"
+        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, status, MIME_TYPE)
         setTimeout(() => {
-          this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionPercentage'] = 100
-          this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionStatus'] = 2
+          this.tocSvc.hashmap[this.identifier]['completionPercentage'] = 100
+          this.tocSvc.hashmap[this.identifier]['completionStatus'] = 2
         }, 700)
       }
     }
@@ -2774,7 +2774,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
               return content.contentId === this.identifier
             })
-            if (contentProgressData && contentProgressData.length) {
+            if (contentProgressData && contentProgressData.length && contentProgressData[0]?.status === 2) {
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()
