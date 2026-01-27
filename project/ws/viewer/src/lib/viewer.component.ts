@@ -262,7 +262,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.compatibilityLevel = contentData.result.content.children[0]['compatibilityLevel']
       }
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
-        debugger
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
         console.log('Constructed hierarchyData for Learning Pathway:', this.hierarchyData, this.enrollmentList?.courses)
         this.tocV2Svc.mapContentHierarchyProgressUpdate(this.hierarchyData, this.enrollmentList?.courses)
