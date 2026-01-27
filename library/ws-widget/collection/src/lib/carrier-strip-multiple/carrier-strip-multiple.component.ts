@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsCarrierStripNewMultiple } from './carrier-strip-multiple.model'
 import { ContentStripNewMultipleService } from './carrier-strip-multiple.service'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '../_services/widget-content.model'
 // tslint:disable-next-line
 import _ from 'lodash'

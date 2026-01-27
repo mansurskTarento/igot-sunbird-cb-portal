@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
-import { WidgetContentService, NsContent } from '@sunbird-cb/collection'
 import { IFilterUnitContent } from '../../../search/models/search.model'
+import { WidgetContentService } from '@sunbird-cb/toc'
+import { NsContent } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-channels-home',

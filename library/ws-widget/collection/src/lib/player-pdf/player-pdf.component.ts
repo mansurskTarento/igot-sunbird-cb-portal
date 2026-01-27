@@ -17,7 +17,7 @@ import { fromEvent, interval, merge, Subject, Subscription } from 'rxjs'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 import { NsContent } from '../_services/widget-content.model'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { IWidgetsPlayerPdfData } from './player-pdf.model'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 const pdfjsViewer = require('pdfjs-dist/web/pdf_viewer')

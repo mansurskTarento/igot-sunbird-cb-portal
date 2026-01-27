@@ -226,7 +226,6 @@ export * from './lib/_services/viewer-route-util'
 // models
 export * from './lib/_services/widget-content.model'
 // services
-export * from './lib/_services/widget-content.service'
 export * from './lib/_services/widget-search.model'
 export * from './lib/_services/rating.service'
 export * from './lib/graph-general/graph-general.service'

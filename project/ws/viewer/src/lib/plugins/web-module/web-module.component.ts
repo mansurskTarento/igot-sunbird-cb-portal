@@ -11,9 +11,11 @@ import {
 import { Subscription, fromEvent } from 'rxjs'
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser'
 import { ValueService, ConfigurationsService, EventService } from '@sunbird-cb/utils-v2'
-import { WidgetContentService, NsContent } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { ActivatedRoute } from '@angular/router'
+import { WidgetContentService } from '@sunbird-cb/toc'
+
 /* tslint:disable*/
 import _ from 'lodash'
 @Component({

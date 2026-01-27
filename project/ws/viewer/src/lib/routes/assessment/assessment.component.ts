@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-// import { WidgetContentService } from '@sunbird-cb/collection';
+// import { WidgetContentService } from '@sunbird-cb/toc';
 import { ViewerUtilService } from '@sunbird-cb/toc'
 // import { EventService, ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { Subscription } from 'rxjs'

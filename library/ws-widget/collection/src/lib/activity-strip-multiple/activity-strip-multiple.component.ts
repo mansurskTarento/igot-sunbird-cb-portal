@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostBinding, ViewChild, TemplateRe
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsNetworkStripNewMultiple } from './activity-strip-multiple.model'
 import { ActivityStripNewMultipleService } from './activity-strip-multiple.service'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '../_services/widget-content.model'
 import { saveAs } from 'file-saver'
 import {

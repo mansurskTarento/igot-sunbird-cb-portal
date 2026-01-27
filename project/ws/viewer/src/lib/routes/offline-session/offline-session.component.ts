@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
-import { NsContent, NsDiscussionForum, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
 import { AccessControlService } from '@ws/author'
 import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
 import { environment } from 'src/environments/environment'
 import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService } from '@sunbird-cb/toc'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-offline-session',
@@ -173,7 +174,7 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
               for (const content of data.result.contentList) {
                 if (content.contentId === this.activatedRoute.snapshot.params.resourceId) {
                   sessionData.completionPercentage = content.completionPercentage
-                  sessionData.completionStatus = content.status
+                  sessionData.completionStatus = Number(content.status) || 0
                   sessionData.lastCompletedTime = content.lastCompletedTime
                 }
               }

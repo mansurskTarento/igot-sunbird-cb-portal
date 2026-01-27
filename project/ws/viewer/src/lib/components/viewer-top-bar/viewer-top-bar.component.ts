@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
-import { WidgetContentService } from '@sunbird-cb/collection/src/lib/_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'

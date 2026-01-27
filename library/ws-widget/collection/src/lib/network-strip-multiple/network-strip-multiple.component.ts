@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsNetworkStripNewMultiple } from './network-strip-multiple.model'
 import { ContentStripNewMultipleService } from './network-strip-multiple.service'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import {
   TFetchStatus,
   LoggerService,

@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsDiscussStripNewMultiple } from './discuss-strip-multiple.model'
 import { ContentStripNewMultipleService } from './discuss-strip-multiple.service'
-import { WidgetContentService } from '../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '../_services/widget-content.model'
 import {
   TFetchStatus,

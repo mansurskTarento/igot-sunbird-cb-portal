@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core'
 import { NsContent } from '../../_services/widget-content.model'
 import { ConfigurationsService, MultilingualTranslationsService, UtilityService } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
-import { WidgetContentService } from '../../_services/widget-content.service'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'ws-widget-player-brief',

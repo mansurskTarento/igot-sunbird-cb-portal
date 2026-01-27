@@ -19,9 +19,9 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { OnConnectionBindInfo } from 'jsplumb'
 import { PracticeService } from './practice.service'
 import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
-import { WidgetContentService } from '@sunbird-cb/collection'
+
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { ViewerUtilService } from '@sunbird-cb/toc'
+import { ViewerUtilService, WidgetContentService, AppTocService } from '@sunbird-cb/toc'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSQuiz } from '../quiz/quiz.model'
@@ -34,7 +34,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatSidenav } from '@angular/material/sidenav'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
-import { AppTocService } from '@sunbird-cb/toc'
+
 // import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
@@ -1172,12 +1172,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   updatePreEnrollmentProgress(status: any) {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
-      if (this.identifier && this.widgetContentService.currentMetaData?.content?.data?.parent) {
-        const MIME_TYPE = "application/vnd.ekstep.content-collection"
-        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
+      if (this.identifier) {
+        const MIME_TYPE = "application/vnd.sunbird.questionset"
+        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, status, MIME_TYPE)
         setTimeout(() => {
-          this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionPercentage'] = 100
-          this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionStatus'] = 2
+          this.tocSvc.hashmap[this.identifier]['completionPercentage'] = 100
+          this.tocSvc.hashmap[this.identifier]['completionStatus'] = 2
         }, 700)
       }
     }
@@ -2774,7 +2774,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
               return content.contentId === this.identifier
             })
-            if (contentProgressData && contentProgressData.length) {
+            if (contentProgressData && contentProgressData.length && contentProgressData[0]?.status === 2) {
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()

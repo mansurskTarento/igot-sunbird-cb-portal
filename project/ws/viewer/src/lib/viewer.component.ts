@@ -1,6 +1,7 @@
+
 import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { NsContent, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -11,8 +12,8 @@ import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.s
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService } from '@sunbird-cb/toc'
-import { AppTocV2Service } from '@sunbird-cb/toc'
+import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
+
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -81,6 +82,8 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   sideNavForAIOpened = false
   baseContentReadData: any
   languageList: any = []
+  progressUpdateSubscription: Subscription | null = null
+  hashmapUpdatedSubscription: Subscription | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -100,6 +103,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     private translate: TranslateService,
     public tocSvc: AppTocService,
     private tocV2Svc: AppTocV2Service,
+    private viewerUtilSvc: ViewerUtilService,
   ) {
     this.rootSvc.showNavbarDisplay$.next(false)
     this.abc.mobileTopHeaderVisibilityStatus.next(false)
@@ -208,6 +212,24 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   }
 
+  syncMilestoneLockStatus() {
+    if (!this.hierarchyData || !this.hierarchyData.children) return
+
+    let hasChanges = false
+    this.hierarchyData.children.forEach((child: any) => {
+      if (child.primaryCategory === 'Milestone' && child.identifier) {
+        const hashData = this.tocSvc.hashmap[child.identifier]
+        if (hashData && hashData.computedIsLocked !== undefined) {
+          const oldLocked = child.isLocked
+          child.isLocked = hashData.computedIsLocked
+          if (oldLocked !== child.isLocked) {
+            hasChanges = true
+          }
+          console.log(`Synced lock status for ${hasChanges} ${child.name} (${child.identifier}): isLocked=${child.isLocked}`)
+        }
+      }
+    })
+  }
   async ngOnInit() {
 
     this.getTocConfig()
@@ -241,9 +263,17 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         this.hierarchyData = this.tocV2Svc.constructHeirarchyData(this.contentReadData)
-        this.tocSvc.callHirarchyProgressHashmap(this.contentReadData)
-        // For Learning Pathway, use the leafNodes array length directly
-        // This is the accurate count of actual content items (excludes milestones, assessments structure)
+        console.log('Constructed hierarchyData for Learning Pathway:', this.hierarchyData, this.enrollmentList?.courses)
+        this.tocV2Svc.mapContentHierarchyProgressUpdate(this.hierarchyData, this.enrollmentList?.courses)
+        console.log('Mapped progress into hierarchyData for Learning Pathway', this.hierarchyData)
+        // Create hashmap and compute milestone locking after progress is updated
+        this.tocSvc.callHirarchyProgressHashmap(this.hierarchyData)
+        const isEnrolled = true
+        // Compute milestone locking status with enrollment status and updated progress data
+        this.tocSvc.computeMilestoneLockingStatus(isEnrolled)
+        console.log('Milestone locking recomputed. Enrolled:', isEnrolled)
+        // Sync content tree's isLocked with computed values
+        this.syncMilestoneLockStatus()
         this.leafNodesCount = (this.hierarchyData.leafNodes && Array.isArray(this.hierarchyData.leafNodes))
           ? this.hierarchyData.leafNodes.length
           : 0
@@ -301,8 +331,17 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (!this.forPreview) {
           this.tocSvc.mapSessionCompletionPercentage(this.batchData)
         }
+      } else if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        // For Learning Pathways, check if any course in the pathway is enrolled
+        // This ensures isEnrolled is correctly set for milestone locking computation
+        const hasAnyEnrollment = this.enrollmentList.courses && this.enrollmentList.courses.length > 0
+        if (hasAnyEnrollment) {
+          this.batchData = {
+            content: [],
+            enrolled: true,
+          }
+        }
       }
-
     }
 
     this.pdfScormDataService.handleBackFromPdfScormFullScreen.subscribe((data: any) => {
@@ -383,6 +422,36 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.error && this.error.errorType === this.errorType.previewUnAuthorised) {
       }
     })
+    
+    // Subscribe to hashmap updates for real-time progress synchronization
+    // Use the observable pattern (hashmapUpdated$) for proper change detection
+    this.hashmapUpdatedSubscription = this.tocSvc.hashmapUpdated$.subscribe((updatedHashmap: any) => {
+      if (updatedHashmap && this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        console.log('📊 Hashmap updated in viewer, syncing milestone lock status')
+        // Sync lock status from hashmap to hierarchyData content tree
+        this.syncMilestoneLockStatus()
+        // Force change detection to update UI
+        this.changeDetector.detectChanges()
+      }
+    })
+
+    // Listen for progress updates to recompute milestone locking
+    // No need to fetch enrollment data - hashmap already has updated progress
+    this.progressUpdateSubscription = this.viewerUtilSvc.markAsCompleteSubject.subscribe(() => {
+      if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
+        console.log('🔄 Content marked complete, recomputing milestone locks with existing hashmap data')
+        // Hashmap already updated by viewer-util.service after progress update
+        // Just recompute milestone locking with existing data
+        const isEnrolled = true
+        this.tocSvc.computeMilestoneLockingStatus(isEnrolled)
+        // Sync lock status from hashmap to content tree
+        this.syncMilestoneLockStatus()
+        // Force change detection
+        this.changeDetector.detectChanges()
+        console.log('✅ Milestone locks recomputed from hashmap')
+      }
+    })
+    
     // if (this.collectionId) {
     //   if (!this.forPreview) {
     //     const enrollCourseData = this.enrolledCourseData
@@ -413,6 +482,12 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
     if (this.pageScrollSubscription) {
       this.pageScrollSubscription.unsubscribe()
+    }
+    if (this.hashmapUpdatedSubscription) {
+      this.hashmapUpdatedSubscription.unsubscribe()
+    }
+    if (this.progressUpdateSubscription) {
+      this.progressUpdateSubscription.unsubscribe()
     }
   }
 
@@ -602,6 +677,8 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     window.history.back()
   }
 
+
+
   getPreEnrollmentResoureStateRead() {
     let identifierArr: any = []
     this.hierarchyData.map((item: any) => {
@@ -623,7 +700,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           for (let i = 0; i < data.result.contentList.length; i++) {
             if (Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
               this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
-              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = data.result.contentList[i]['status']
+              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = Number(data.result.contentList[i]['status']) || 0
             }
           }
         }

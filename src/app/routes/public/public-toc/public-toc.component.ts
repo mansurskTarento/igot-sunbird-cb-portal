@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, AfterViewInit, AfterViewChecked, HostList
 import { ActivatedRoute, Event, Data, Router, NavigationEnd } from '@angular/router'
 import {
     NsContent,
-    WidgetContentService,
     viewerRouteGenerator,
     NsPlaylist,
     NsGoal,
@@ -24,7 +23,7 @@ import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection/src/lib/_
 import moment from 'moment'
 import { NsAppToc } from '@sunbird-cb/toc'
 import { AppTocService } from '@sunbird-cb/toc'
-import { ActionService } from '@sunbird-cb/toc'
+import { ActionService, WidgetContentService } from '@sunbird-cb/toc'
 
 export enum ErrorType {
     internalServer = 'internalServer',

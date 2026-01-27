@@ -3,10 +3,10 @@ import { Subscription } from 'rxjs'
 import {
   NsContent,
   // NsDiscussionForum,
-  WidgetContentService,
 } from '@sunbird-cb/collection'
 // import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
   selector: 'viewer-certification',
@@ -22,7 +22,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   // discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
   //   NsDiscussionForum.IDiscussionForumInput
   // > | null = null
-  constructor(private activatedRoute: ActivatedRoute, private contentSvc: WidgetContentService) {}
+  constructor(private activatedRoute: ActivatedRoute, private contentSvc: WidgetContentService) { }
 
   ngOnInit() {
     this.routeDataSubscription = this.activatedRoute.data.subscribe(
@@ -36,7 +36,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
         }
         this.isFetchingDataComplete = true
       },
-      () => {},
+      () => { },
     )
   }
 

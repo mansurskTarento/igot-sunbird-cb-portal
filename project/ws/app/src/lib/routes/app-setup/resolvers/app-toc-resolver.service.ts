@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router'
-import { NsContent, PipeContentRoutePipe, WidgetContentService } from '@sunbird-cb/collection'
+import { NsContent, PipeContentRoutePipe } from '@sunbird-cb/collection'
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
+import { WidgetContentService } from '@sunbird-cb/toc'
 
 const ADDITIONAL_FIELDS_IN_CONTENT = [
   'averageRating',
@@ -51,8 +52,7 @@ const ADDITIONAL_FIELDS_IN_CONTENT = [
   'posterImage',
 ]
 @Injectable()
-export class AppTocResolverService
-   {
+export class AppTocResolverService {
   constructor(
     private contentSvc: WidgetContentService,
     private routePipe: PipeContentRoutePipe,
@@ -67,9 +67,9 @@ export class AppTocResolverService
     const contentId = route.paramMap.get('id')
     const primaryCategory = route.queryParamMap.get('primaryCategory') || ''
     if (contentId) {
-      const   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+      const forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
       return (forPreview
-        ? this.contentSvc.fetchAuthoringContent(contentId,'read')
+        ? this.contentSvc.fetchAuthoringContent(contentId, 'read')
         : this.contentSvc.fetchContent(contentId, 'detail', ADDITIONAL_FIELDS_IN_CONTENT, primaryCategory)
       ).pipe(
         map(data => ({ data, error: null })),
@@ -82,8 +82,7 @@ export class AppTocResolverService
           currentRoute = currentRoute[currentRoute.length - 1]
           if (forPreview && currentRoute !== 'contents' && currentRoute !== 'overview') {
             this.router.navigate([
-              `${forPreview ? '/author' : '/app'}/toc/${resolveData.data.identifier}/${
-              resolveData.data.children.length ? 'contents' : 'overview'
+              `${forPreview ? '/author' : '/app'}/toc/${resolveData.data.identifier}/${resolveData.data.children.length ? 'contents' : 'overview'
               }?primaryCategory=${resolveData.data.primaryCategory}`,
             ])
           } else if (

@@ -3,15 +3,16 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router'
 import { catchError, map, tap } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
 // import { AccessControlService } from '@ws/author'
-import { WidgetContentService, NsContent, VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
+import { NsContent, VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { IResolveResponse, AuthMicrosoftService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ViewerDataService } from './viewer-data.service'
 import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
 import { Platform } from '@angular/cdk/platform'
+import { WidgetContentService } from '@sunbird-cb/toc'
+
 const ADDITIONAL_FIELDS_IN_CONTENT = ['creatorContacts', 'source', 'exclusiveContent']
 @Injectable()
-export class ViewerResolve
-   {
+export class ViewerResolve {
   constructor(
     private contentSvc: WidgetContentService,
     private viewerDataSvc: ViewerDataService,
@@ -50,7 +51,7 @@ export class ViewerResolve
         ADDITIONAL_FIELDS_IN_CONTENT,
         this.viewerDataSvc.primaryCategory,
       )
-      : ( route.queryParamMap.get('preAssessment') && this.viewerDataSvc.resource && this.viewerDataSvc.resource.courseCategory === 'Pre Enrolment Assessment'  && this.viewerDataSvc.resource.childNodes?.length  ? this.contentSvc.fetchContentData(
+      : (route.queryParamMap.get('preAssessment') && this.viewerDataSvc.resource && this.viewerDataSvc.resource.courseCategory === 'Pre Enrolment Assessment' && this.viewerDataSvc.resource.childNodes?.length ? this.contentSvc.fetchContentData(
         this.viewerDataSvc.resource.childNodes[0]
       ) : this.contentSvc.fetchContent(
         this.viewerDataSvc.resourceId,
@@ -62,18 +63,17 @@ export class ViewerResolve
       tap((content: any) => {
         // tslint:disable-next-line: no-parameter-reassignment
         content = content.result.content
-        let mimeType:any
-        if(content && content?.courseCategory === 'Pre Enrolment Assessment') {
+        let mimeType: any
+        if (content && content?.courseCategory === 'Pre Enrolment Assessment') {
           mimeType = 'application/vnd.sunbird.questionset'
-          if(content?.children && content?.children?.length)
-          {
-            if(content?.children[0]['contextCategory'] && content?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
+          if (content?.children && content?.children?.length) {
+            if (content?.children[0]['contextCategory'] && content?.children[0]['contextCategory'] === 'Pre Enrolment Assessment') {
               content = content?.children[0]
             }
           }
         } else {
           mimeType = content?.mimeType
-         // content = content.result.content
+          // content = content.result.content
         }
         if (content.status === 'Deleted' || content.status === 'Expired') {
           this.router.navigate([
@@ -103,15 +103,14 @@ export class ViewerResolve
         }
       }),
       map((data: any) => {
-        
+
         // tslint:disable-next-line: no-parameter-reassignment
         data = data.result.content
-        let mimeType:any = ''
-        if(data && data?.courseCategory === 'Pre Enrolment Assessment') {
+        let mimeType: any = ''
+        if (data && data?.courseCategory === 'Pre Enrolment Assessment') {
           mimeType = 'application/vnd.sunbird.questionset'
-          if(data?.children && data?.children?.length)
-          {
-            if(data?.children[0]['contextCategory'] && data?.children[0]['contextCategory']===  'Pre Enrolment Assessment') {
+          if (data?.children && data?.children?.length) {
+            if (data?.children[0]['contextCategory'] && data?.children[0]['contextCategory'] === 'Pre Enrolment Assessment') {
               data = data?.children[0]
             }
           }
@@ -128,7 +127,7 @@ export class ViewerResolve
           this.mobileAppsSvc.sendViewerData(data)
           return { data, error: null }
         }
-        
+
         return { data: null, error: 'mimeTypeMismatch' }
       }),
       catchError(error => {
