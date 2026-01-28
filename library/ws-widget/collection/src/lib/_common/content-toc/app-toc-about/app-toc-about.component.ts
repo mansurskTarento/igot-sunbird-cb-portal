@@ -178,6 +178,7 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
   selectedSectorId = ''
   refreshratingSub
   pageConfigData: any
+  isExternalContent = false
   constructor(
     private ratingService: RatingService,
     private loggerService: LoggerService,
@@ -426,6 +427,9 @@ export class AppTocAboutComponent implements OnInit, OnChanges, AfterViewInit, O
       }
     }
     this.forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
+    if (changes.content) {
+      this.isExternalContent = _.get(changes, 'content.currentValue.contentId', '').toString().includes('ext_')
+    }
   }
 
   getSubThemes(): any[] {
