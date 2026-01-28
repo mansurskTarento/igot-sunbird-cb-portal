@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core'
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core'
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
 import { ITableData } from '@sunbird-cb/collection/src/public-api'
@@ -9,13 +9,15 @@ import * as _ from 'lodash'
   templateUrl: './final-assessment-popup.component.html',
   styleUrls: ['./final-assessment-popup.component.scss'],
 })
-export class FinalAssessmentPopupComponent implements OnInit {
+export class FinalAssessmentPopupComponent implements OnInit, OnDestroy {
 
   assessmentData: any
   dataSource = new MatTableDataSource([])
   displayedColumns: any[] = []
 
   tableData!: ITableData | undefined
+  countdown = 5
+  countdownInterval: any
 
   constructor(
     private dialogRef: MatDialogRef<FinalAssessmentPopupComponent>,
@@ -25,13 +27,34 @@ export class FinalAssessmentPopupComponent implements OnInit {
     if (data && data.tableDetails && data.tableDetails.tableData) {
       this.setTableDataSource(data.tableDetails.tableData)
     }
-
+    
+    // Start countdown timer if auto-redirect is enabled
+    if (data && data.autoRedirect && data.redirectSeconds) {
+      this.countdown = data.redirectSeconds
+      this.startCountdown()
+    }
   }
 
   ngOnInit() {
     if (this.assessmentData && this.assessmentData.tableDetails && this.assessmentData.tableDetails.tableColumns) {
       this.setTableColumns(this.assessmentData.tableDetails.tableColumns)
     }
+  }
+
+  ngOnDestroy() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval)
+    }
+  }
+
+  startCountdown() {
+    this.countdownInterval = setInterval(() => {
+      this.countdown--
+      if (this.countdown <= 0) {
+        clearInterval(this.countdownInterval)
+        // Auto-close will be handled by parent component
+      }
+    }, 1000)
   }
 
   setTableColumns(columns: any) {

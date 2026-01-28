@@ -2265,11 +2265,59 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== undefined &&
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== null &&
           this.tocSvc.hashmap[this.identifier]['completionStatus'] !== undefined) {
+          
+          // Update assessment completion in hashmap
           this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
           this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
+          this.tocSvc.hashmap[this.identifier]['status'] = completionStatus
+          
+          console.log('📊 [ASSESSMENT COMPLETE] Updated assessment:', {
+            identifier: this.identifier,
+            name: this.tocSvc.hashmap[this.identifier]?.name,
+            parent: this.tocSvc.hashmap[this.identifier]?.parent,
+            completionStatus,
+            completionPercentage
+          })
+          
+          // CRITICAL: Recalculate parent course progress to check if course is now complete
+          // This is important when an assessment inside a course completes
+          const parentId = this.tocSvc.hashmap[this.identifier]?.parent
+          if (parentId && this.tocSvc.hashmap[parentId]) {
+            console.log('📊 [ASSESSMENT COMPLETE] Starting parent progress recalculation for:', {
+              parentId,
+              parentName: this.tocSvc.hashmap[parentId]?.name,
+              parentPrimaryCategory: this.tocSvc.hashmap[parentId]?.primaryCategory
+            })
+            this.recalculateParentProgress(parentId)
+          } else {
+            console.log('⚠️ [ASSESSMENT COMPLETE] No parent found to recalculate progress')
+          }
+          
+          // Create new hashmap reference for Angular change detection
           this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+          
+          // Emit hashmap update to notify subscribers
+          if (this.tocSvc.hashmapUpdated) {
+            this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
+          }
+          
+          // CRITICAL: Trigger milestone lock recomputation to unlock milestone assessment
+          // This ensures that when a mandatory course assessment completes, the milestone assessment unlocks
+          if (this.tocSvc.triggerMilestoneLockUpdate) {
+            console.log('🔄 [ASSESSMENT COMPLETE] Triggering milestone lock update after assessment completion:', this.identifier)
+            this.tocSvc.triggerMilestoneLockUpdate()
+          }
+          
+          // Emit to viewer component to trigger UI refresh
+          if (this.viewerSvc && this.viewerSvc.markAsCompleteSubject) {
+            this.viewerSvc.markAsCompleteSubject.next(true)
+          }
+          
           // Manually trigger change detection to update UI
           this.cdr.detectChanges()
+          
+          // Check if this assessment completes a milestone and show congratulations
+          this.checkAndShowMilestoneCompletion()
         }
       }
     }
@@ -2296,6 +2344,119 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.fetchProgressOfAssessment()
     }
   }
+
+  /**
+   * Recalculates parent (course/module/milestone) progress after child content completes
+   * This ensures that when assessments inside courses complete, the parent course progress updates
+   * which then triggers milestone lock recalculation
+   * 
+   * For MILESTONES: Only mandatory courses + milestone assessment count toward completion
+   * For COURSES/MODULES: All children count toward completion
+   */
+  recalculateParentProgress(parentId: string) {
+    const parentData = this.tocSvc.hashmap[parentId]
+    if (!parentData) {
+      console.log('⚠️ [PARENT PROGRESS] Parent not found in hashmap:', parentId)
+      return
+    }
+
+    console.log('📊 [PARENT PROGRESS] Recalculating progress for parent:', {
+      name: parentData.name,
+      id: parentId,
+      primaryCategory: parentData.primaryCategory,
+      currentCompletionPercentage: parentData.completionPercentage,
+      currentCompletionStatus: parentData.completionStatus,
+      currentStatus: parentData.status
+    })
+
+    // Get all children of this parent
+    let allChildren = Object.keys(this.tocSvc.hashmap)
+      .filter(key => this.tocSvc.hashmap[key].parent === parentId)
+      .map(key => ({
+        ...this.tocSvc.hashmap[key],
+        identifier: key
+      }))
+
+    if (allChildren.length === 0) {
+      console.log('⚠️ [PARENT PROGRESS] No children found for parent')
+      return
+    }
+
+    console.log('📊 [PARENT PROGRESS] Found', allChildren.length, 'total children')
+
+    // CRITICAL: For milestones, only count mandatory courses and milestone assessments
+    // Non-mandatory courses should NOT block milestone completion
+    let children = allChildren
+    if (parentData.primaryCategory === 'Milestone') {
+      children = allChildren.filter(child => {
+        // Include if:
+        // 1. It's a mandatory course (isMandatory === true)
+        // 2. It's a milestone assessment (Course Assessment with parent=milestone)
+        const isMandatory = child.isMandatory === true
+        const isMilestoneAssessment = child.primaryCategory === 'Course Assessment'
+        return isMandatory || isMilestoneAssessment
+      })
+      console.log('📊 [PARENT PROGRESS] Milestone: Filtering to mandatory + assessments only:', children.length, 'items')
+    }
+
+    // Calculate how many children are complete
+    let completedCount = 0
+    let totalCount = children.length
+
+    children.forEach((child, index) => {
+      const isComplete = (child.completionStatus === 2 || child.status === 2 || child.completionPercentage === 100)
+      console.log(`   ${index + 1}. ${child.name || child.identifier}:`, {
+        primaryCategory: child.primaryCategory,
+        isMandatory: child.isMandatory,
+        completionStatus: child.completionStatus,
+        status: child.status,
+        completionPercentage: child.completionPercentage,
+        isComplete: isComplete ? '✅' : '❌'
+      })
+      
+      if (isComplete) {
+        completedCount++
+      }
+    })
+
+    // Calculate parent's completion percentage
+    const newCompletionPercentage = Math.round((completedCount / totalCount) * 100)
+    const newCompletionStatus = newCompletionPercentage === 100 ? 2 : (newCompletionPercentage > 0 ? 1 : 0)
+
+    console.log('📊 [PARENT PROGRESS] Result:', {
+      parent: parentData.name,
+      completedCount,
+      totalCount,
+      newPercentage: newCompletionPercentage,
+      oldPercentage: parentData.completionPercentage,
+      newStatus: newCompletionStatus,
+      oldStatus: parentData.completionStatus
+    })
+
+    // Update parent's progress if it changed
+    if (parentData.completionPercentage !== newCompletionPercentage || 
+        parentData.completionStatus !== newCompletionStatus) {
+      
+      parentData.completionPercentage = newCompletionPercentage
+      parentData.completionStatus = newCompletionStatus
+      parentData.status = newCompletionStatus
+
+      console.log('✅ [PARENT PROGRESS] Updated parent progress:', {
+        name: parentData.name,
+        newPercentage: newCompletionPercentage + '%',
+        newStatus: newCompletionStatus
+      })
+
+      // Recursively update grandparent (milestone) if parent changed
+      if (parentData.parent && this.tocSvc.hashmap[parentData.parent]) {
+        console.log('📊 [PARENT PROGRESS] Recursively updating grandparent:', this.tocSvc.hashmap[parentData.parent]?.name)
+        this.recalculateParentProgress(parentData.parent)
+      }
+    } else {
+      console.log('ℹ️ [PARENT PROGRESS] No change in parent progress, skipping update')
+    }
+  }
+  
   formate(text: string): SafeHtml {
     let newText = '<ul>'
     if (text) {
@@ -2335,6 +2496,400 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       },
     }
     this.events.dispatchEvent(event)
+  }
+
+  /**
+   * Check if completing this assessment completes a milestone
+   * Show congratulations popup with option to continue to next milestone
+   */
+  checkAndShowMilestoneCompletion() {
+    try {
+      console.log('🎯 [MILESTONE CHECK] Starting milestone completion check for:', this.identifier)
+      
+      // Check if this is a milestone assessment (Course Assessment)
+      if (this.quizJson.primaryCategory !== 'Course Assessment') {
+        console.log('❌ [MILESTONE CHECK] Not a Course Assessment, skipping')
+        return
+      }
+
+      const assessmentData = this.tocSvc.hashmap[this.identifier]
+      if (!assessmentData || !assessmentData.parent) {
+        console.log('❌ [MILESTONE CHECK] No assessment data or parent found')
+        return
+      }
+
+      // Check if parent is a milestone
+      const parentData = this.tocSvc.hashmap[assessmentData.parent]
+      if (!parentData || parentData.primaryCategory !== 'Milestone') {
+        console.log('❌ [MILESTONE CHECK] Parent is not a milestone:', parentData?.primaryCategory)
+        return
+      }
+
+      console.log('✅ [MILESTONE CHECK] This is a milestone assessment. Parent milestone:', parentData.name)
+
+      // CRITICAL: Wait for milestone lock recomputation to complete before checking
+      // The milestone lock status AND progress are computed asynchronously, so we need to wait
+      // for them to finish before determining if the milestone is complete
+      setTimeout(() => {
+        this.checkMilestoneCompletionAfterLockUpdate(parentData)
+      }, 2000) // Wait 2 seconds for lock and progress computation to complete
+      
+    } catch (error) {
+      console.error('❌ [MILESTONE CHECK] Error checking milestone completion:', error)
+    }
+  }
+
+  /**
+   * Check milestone completion after lock recomputation is done
+   */
+  checkMilestoneCompletionAfterLockUpdate(parentData: any) {
+    const milestoneId = parentData.identifier
+    const milestoneName = parentData.name || 'Milestone'
+    
+    console.log('🔍 [MILESTONE CHECK] Checking if milestone is complete:', milestoneName)
+    
+    // Check if milestone is now complete (all mandatory courses + assessments done)
+    const isMilestoneComplete = this.checkMilestoneComplete(milestoneId)
+    
+    if (!isMilestoneComplete) {
+      console.log('❌ [MILESTONE CHECK] Milestone not complete yet - mandatory content incomplete')
+      return
+    }
+
+    console.log('✅ [MILESTONE CHECK] Milestone IS complete! Showing popup')
+
+    // Get milestone information
+    const milestoneNumber = this.getMilestoneNumber(milestoneId)
+    
+    // Check if there's a next milestone
+    const hasNextMilestone = this.hasNextMilestone(milestoneNumber)
+    
+    console.log('📊 [MILESTONE CHECK] Details:', {
+      milestoneName,
+      milestoneNumber,
+      hasNextMilestone
+    })
+    
+    // Show congratulations popup
+    this.showMilestoneCompletionPopup(milestoneName, milestoneNumber, hasNextMilestone)
+  }
+
+  /**
+   * Check if a milestone is complete (all mandatory courses + all assessments done)
+   * Uses the same logic as the TOC service milestone locking computation
+   */
+  checkMilestoneComplete(milestoneId: string): boolean {
+    console.log('🔍 [MILESTONE COMPLETE CHECK] Checking milestone:', milestoneId)
+    
+    const milestoneData = this.tocSvc.hashmap[milestoneId]
+    if (!milestoneData) {
+      console.log('❌ [MILESTONE COMPLETE CHECK] Milestone not found in hashmap')
+      return false
+    }
+
+    // Check completion percentage as primary indicator
+    const completionPercentage = milestoneData.completionPercentage || 0
+    const completionStatus = milestoneData.completionStatus || 0
+    
+    console.log('📊 [MILESTONE COMPLETE CHECK] Milestone data:', {
+      name: milestoneData.name,
+      completionPercentage,
+      completionStatus,
+      progress: milestoneData.progress,
+      status: milestoneData.status
+    })
+
+    // Debug: Show all children of this milestone
+    console.log('👶 [MILESTONE COMPLETE CHECK] Children of this milestone:')
+    for (const key of Object.keys(this.tocSvc.hashmap)) {
+      const item = this.tocSvc.hashmap[key]
+      if (item.parent === milestoneId) {
+        console.log(`  - ${item.name}:`, {
+          primaryCategory: item.primaryCategory,
+          isMandatory: item.isMandatory,
+          completionPercentage: item.completionPercentage || 0,
+          completionStatus: item.completionStatus || 0,
+          status: item.status || 0,
+          isComplete: (item.completionStatus === 2 || item.status === 2 || item.completionPercentage === 100) ? '✅' : '❌'
+        })
+      }
+    }
+
+    // A milestone is complete if:
+    // 1. completionPercentage is 100, OR
+    // 2. completionStatus is 2 (complete)
+    const isComplete = completionPercentage === 100 || completionStatus === 2
+    
+    console.log('✅ [MILESTONE COMPLETE CHECK] Result:', isComplete ? 'COMPLETE' : 'INCOMPLETE')
+
+    return isComplete
+  }
+
+  /**
+   * Get milestone number from milestone ID or hashmap data
+   */
+  getMilestoneNumber(milestoneId: string): number {
+    const milestoneData = this.tocSvc.hashmap[milestoneId]
+    if (milestoneData && milestoneData.milestoneIndex !== undefined) {
+      return milestoneData.milestoneIndex + 1 // milestoneIndex is 0-based
+    }
+    // Fallback: try to extract from ID (M1, M2, etc.)
+    const match = milestoneId.match(/(\d+)/)
+    return match ? parseInt(match[1], 10) : 1
+  }
+
+  /**
+   * Check if there's a next milestone after the current one
+   */
+  hasNextMilestone(currentMilestoneNumber: number): boolean {
+    // Count total milestones
+    let totalMilestones = 0
+    for (const key of Object.keys(this.tocSvc.hashmap)) {
+      const item = this.tocSvc.hashmap[key]
+      if (item.primaryCategory === 'Milestone') {
+        totalMilestones++
+      }
+    }
+    return currentMilestoneNumber < totalMilestones
+  }
+
+  /**
+   * Show milestone completion congratulations popup
+   */
+  showMilestoneCompletionPopup(milestoneName: string, milestoneNumber: number, hasNextMilestone: boolean) {
+    console.log('🎉 [MILESTONE POPUP] Showing completion popup:', { milestoneName, milestoneNumber, hasNextMilestone })
+    
+    const popupData: any = {
+      assessmentType: 'milestoneComplete',
+      headerText: `🎉 Great job! You've completed ${milestoneName}`,
+      message: hasNextMilestone 
+        ? `You can now continue to Milestone ${milestoneNumber + 1}.` 
+        : 'Congratulations on completing all milestones!',
+      buttonsList: [],
+      autoRedirect: false,
+      redirectSeconds: 0
+    }
+
+    if (hasNextMilestone) {
+      popupData.buttonsList.push({
+        response: 'continue-milestone',
+        text: `Continue to Milestone ${milestoneNumber + 1}`,
+        classes: 'blue-full',
+      })
+      popupData.buttonsList.push({
+        response: 'stay',
+        text: 'Stay Here',
+        classes: 'blue-outline',
+      })
+    } else {
+      popupData.buttonsList.push({
+        response: 'close',
+        text: 'Close',
+        classes: 'blue-full',
+      })
+    }
+
+    const dialogRef = this.dialog.open(FinalAssessmentPopupComponent, {
+      data: popupData,
+      width: '600px',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
+      panelClass: 'milestone-completion-popup',
+      disableClose: false,
+    })
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      console.log('🎉 [MILESTONE POPUP] User response:', result)
+      
+      if (result === 'continue-milestone') {
+        // Find and navigate to the first resource in the next milestone
+        console.log('🎉 [MILESTONE POPUP] Finding first resource in next milestone')
+        const nextMilestoneId = this.getNextMilestoneId(milestoneNumber)
+        
+        if (nextMilestoneId) {
+          const firstResourceUrl = this.getFirstResourceInMilestone(nextMilestoneId)
+          
+          if (firstResourceUrl) {
+            console.log('🎉 [MILESTONE POPUP] Navigating to first resource:', firstResourceUrl)
+            this.router.navigateByUrl(firstResourceUrl)
+          } else {
+            console.log('🎉 [MILESTONE POPUP] No first resource found, navigating to TOC')
+            this.router.navigate(['/app/toc', this.collectionId], {
+              queryParams: this.activatedRoute.snapshot.queryParams
+            })
+          }
+        } else {
+          console.log('🎉 [MILESTONE POPUP] Next milestone not found, navigating to TOC')
+          this.router.navigate(['/app/toc', this.collectionId], {
+            queryParams: this.activatedRoute.snapshot.queryParams
+          })
+        }
+      } else if (result === 'stay') {
+        console.log('🎉 [MILESTONE POPUP] User chose to stay on current page')
+        // Do nothing, user stays on result page
+      }
+    })
+  }
+
+  /**
+   * Get the ID of the next milestone
+   */
+  getNextMilestoneId(currentMilestoneNumber: number): string | null {
+    // Find all milestones
+    const milestones: any[] = []
+    for (const key of Object.keys(this.tocSvc.hashmap)) {
+      const item = this.tocSvc.hashmap[key]
+      if (item.primaryCategory === 'Milestone') {
+        milestones.push({
+          id: key,
+          number: this.getMilestoneNumber(key),
+          name: item.name
+        })
+      }
+    }
+
+    // Sort by milestone number
+    milestones.sort((a, b) => a.number - b.number)
+
+    // Find next milestone
+    const nextMilestone = milestones.find(m => m.number === currentMilestoneNumber + 1)
+    
+    console.log('🔍 [NEXT MILESTONE] All milestones:', milestones)
+    console.log('🔍 [NEXT MILESTONE] Current milestone number:', currentMilestoneNumber)
+    console.log('🔍 [NEXT MILESTONE] Next milestone:', nextMilestone)
+
+    return nextMilestone ? nextMilestone.id : null
+  }
+
+  /**
+   * Get the first navigable resource in a milestone
+   */
+  getFirstResourceInMilestone(milestoneId: string): string | null {
+    console.log('🔍 [FIRST RESOURCE] Finding first resource in milestone:', milestoneId)
+    
+    // Get all children of the milestone
+    const children: any[] = []
+    for (const key of Object.keys(this.tocSvc.hashmap)) {
+      const item = this.tocSvc.hashmap[key]
+      if (item.parent === milestoneId) {
+        children.push({
+          id: key,
+          ...item
+        })
+      }
+    }
+
+    console.log('🔍 [FIRST RESOURCE] Found', children.length, 'children in milestone')
+
+    // Find the first non-locked, non-assessment resource
+    for (const child of children) {
+      // Skip assessments
+      if (child.primaryCategory === 'Course Assessment' || child.courseCategory === 'Course Assessment') {
+        continue
+      }
+
+      // Check if it's locked
+      const isLocked = child.isParentMilestoneLocked || child.milestoneAssessmentLocked
+      
+      console.log('🔍 [FIRST RESOURCE] Checking:', child.name, {
+        isLocked,
+        primaryCategory: child.primaryCategory,
+        mimeType: child.mimeType
+      })
+
+      if (!isLocked) {
+        // For courses, get the first child resource within the course
+        if (child.primaryCategory === 'Course' || child.primaryCategory === 'Learning Resource') {
+          const firstChildResource = this.getFirstChildResource(child.id)
+          if (firstChildResource) {
+            return firstChildResource
+          }
+        }
+
+        // For direct resources (videos, etc.)
+        if (child.mimeType) {
+          const resourceUrl = this.buildResourceUrl(child)
+          if (resourceUrl) {
+            return resourceUrl
+          }
+        }
+      }
+    }
+
+    console.log('🔍 [FIRST RESOURCE] No unlocked resource found')
+    return null
+  }
+
+  /**
+   * Get the first navigable child resource within a parent (course/module)
+   */
+  getFirstChildResource(parentId: string): string | null {
+    const children: any[] = []
+    for (const key of Object.keys(this.tocSvc.hashmap)) {
+      const item = this.tocSvc.hashmap[key]
+      if (item.parent === parentId) {
+        children.push({
+          id: key,
+          ...item
+        })
+      }
+    }
+
+    for (const child of children) {
+      // Skip assessments
+      if (child.primaryCategory === 'Course Assessment' || child.courseCategory === 'Course Assessment') {
+        continue
+      }
+
+      // For modules/folders, recurse
+      if (child.primaryCategory === 'Course Unit' || !child.mimeType) {
+        const nestedResource = this.getFirstChildResource(child.id)
+        if (nestedResource) {
+          return nestedResource
+        }
+      }
+
+      // For actual resources
+      if (child.mimeType) {
+        const resourceUrl = this.buildResourceUrl(child)
+        if (resourceUrl) {
+          return resourceUrl
+        }
+      }
+    }
+
+    return null
+  }
+
+  /**
+   * Build the viewer URL for a resource
+   */
+  buildResourceUrl(resource: any): string | null {
+    const mimeType = resource.mimeType
+    const identifier = resource.identifier || resource.id
+    
+    if (!identifier) {
+      return null
+    }
+
+    // Map mimeType to viewer route
+    let viewerType = 'resource'
+    
+    if (mimeType === 'video/mp4' || mimeType === 'video/webm' || mimeType.startsWith('video/')) {
+      viewerType = 'video'
+    } else if (mimeType === 'application/pdf') {
+      viewerType = 'pdf'
+    } else if (mimeType === 'text/html' || mimeType === 'application/web-module') {
+      viewerType = 'web-module'
+    } else if (mimeType === 'application/vnd.ekstep.html-archive') {
+      viewerType = 'html'
+    }
+
+    const queryParams = this.activatedRoute.snapshot.queryParams
+    const queryString = new URLSearchParams(queryParams as any).toString()
+    
+    return `/app/viewer/${viewerType}/${identifier}${queryString ? '?' + queryString : ''}`
   }
 
   raiseInteractTelemetry() {
