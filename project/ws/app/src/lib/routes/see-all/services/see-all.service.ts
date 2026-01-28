@@ -15,6 +15,7 @@ const API_END_POINTS = {
   MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`,
   GetApplicationsById: `apis/proxies/v8/forms/v2/bulkGetApplicationsById`,
   GetProviderDetails: `apis/proxies/v8/contentpartner/v1/search`,
+  GET_COURSES: `/apis/proxies/v8/cios/v1/search/content`
 }
 
 @Injectable({
@@ -121,6 +122,10 @@ export class SeeAllService {
 
   getProviderDetails(request: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.GetProviderDetails, request)
+  }
+
+  getCourses(request: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.GET_COURSES, request)
   }
 
 }

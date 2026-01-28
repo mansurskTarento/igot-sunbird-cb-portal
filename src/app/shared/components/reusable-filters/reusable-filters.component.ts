@@ -29,12 +29,22 @@ export interface FilterConfig {
   showCount?: boolean
   showSeeMore?: boolean
   seeMoreLimit?: number
+  order?: number
   options: FilterOption[]
 }
 
 export interface ApiFacet {
   name: string
   values: { name: string; count: number }[]
+  // Optional pre-configuration from parent component
+  heading?: string
+  showSearch?: boolean
+  showClearAll?: boolean
+  selectType?: 'checkbox' | 'radio'
+  showCount?: boolean
+  showSeeMore?: boolean
+  seeMoreLimit?: number
+  order?: number
 }
 
 export interface FilterMetaConfig {
@@ -206,6 +216,7 @@ export class ReusableFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   /**
    * Transform API facets response to filterConfig format
+   * Now supports pre-configured facets from parent component with heading, showSearch, etc.
    */
   transformApiFacetsToConfig(): void {
     if (!this.apiFacets || !Array.isArray(this.apiFacets) || this.apiFacets.length === 0) {
@@ -219,18 +230,22 @@ export class ReusableFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const transformedConfig: FilterConfig[] = this.apiFacets
       .filter(facet => facet.values && facet.values.length > 0) // Only include facets with values
       .map(facet => {
-        const meta = mergedMeta[facet.name] || this.getDefaultMeta(facet.name)
+        // First check if facet already has configuration (from parent component)
+        // Otherwise fall back to mergedMeta or default
+        const hasPreConfig = facet.heading !== undefined
+        const metaConfig = mergedMeta[facet.name] || this.getDefaultMeta(facet.name)
 
         return {
           key: facet.name,
-          heading: meta.heading,
-          showSearch: meta.showSearch ?? true,
-          showClearAll: meta.showClearAll ?? false,
-          selectType: meta.selectType ?? 'checkbox',
-          showCount: meta.showCount ?? true,
-          showSeeMore: meta.showSeeMore ?? true,
-          seeMoreLimit: meta.seeMoreLimit ?? 4,
-          options: facet.values.map(value => {
+          heading: hasPreConfig ? (facet.heading as string) : metaConfig.heading,
+          showSearch: hasPreConfig ? (facet.showSearch ?? true) : (metaConfig.showSearch ?? true),
+          showClearAll: hasPreConfig ? (facet.showClearAll ?? false) : (metaConfig.showClearAll ?? false),
+          selectType: hasPreConfig ? (facet.selectType ?? 'checkbox') : (metaConfig.selectType ?? 'checkbox'),
+          showCount: hasPreConfig ? (facet.showCount ?? true) : (metaConfig.showCount ?? true),
+          showSeeMore: hasPreConfig ? (facet.showSeeMore ?? true) : (metaConfig.showSeeMore ?? true),
+          seeMoreLimit: hasPreConfig ? (facet.seeMoreLimit ?? 4) : (metaConfig.seeMoreLimit ?? 4),
+          order: hasPreConfig ? (facet.order ?? 999) : (metaConfig.order ?? 999),
+          options: facet.values.map((value: any) => {
             const filterValues = _.get(this.selectedFilters, facet.name, []) as string[]
             return {
               name: value.name,
@@ -242,9 +257,7 @@ export class ReusableFiltersComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
       .sort((a, b) => {
-        const orderA = _.get(mergedMeta, `${a.key}.order`, 999) as number
-        const orderB = _.get(mergedMeta, `${b.key}.order`, 999) as number
-        return orderA - orderB
+        return (a.order || 999) - (b.order || 999)
       })
 
     this.filterConfig = transformedConfig
