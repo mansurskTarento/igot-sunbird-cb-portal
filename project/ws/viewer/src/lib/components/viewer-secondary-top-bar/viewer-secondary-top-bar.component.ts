@@ -125,6 +125,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
 
     // Subscribe to hashmap updates to dynamically update lock status
     this.hashmapUpdateSubscription = this.appTocSvc.hashmapUpdated$.subscribe((update) => {
+      console.log('🔄 [NEXT BUTTON] Hashmap update received:', { 
+        hasUpdate: !!update, 
+        hasNextUrl: !!this.nextResourceUrl,
+        nextUrl: this.nextResourceUrl 
+      })
+      
       if (update && this.nextResourceUrl) {
         // Extract the resource ID from the nextResourceUrl
         const urlParts = this.nextResourceUrl.split('/')
@@ -135,11 +141,18 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
           const previousLockState = this.isNextResourceLocked
           this.isNextResourceLocked = this.checkIfContentIsLocked(nextResourceId)
           
+          console.log('🔓 [NEXT BUTTON] Lock status check:', {
+            nextResourceId,
+            previousLockState,
+            newLockState: this.isNextResourceLocked,
+            changed: previousLockState !== this.isNextResourceLocked
+          })
+          
           if (previousLockState !== this.isNextResourceLocked) {
-            console.log('🔄 Lock status changed for next resource:', nextResourceId, 
-                       'from', previousLockState, 'to', this.isNextResourceLocked)
+            console.log('✅ [NEXT BUTTON] Lock status CHANGED - triggering UI update')
             // Trigger change detection to update UI immediately
             this.cdr.markForCheck()
+            this.cdr.detectChanges()
           }
         }
       }
@@ -271,14 +284,37 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
         this.isNextResourceLocked = this.checkIfContentIsLocked(data.nextResource.identifier)
         console.log('📍 Initial Next Resource Locked Status:', this.isNextResourceLocked, 'for identifier:', data.nextResource.identifier)
         
-        // Double-check after a short delay to ensure hashmap is fully updated
+        // Store next resource ID for future rechecks
+        const nextResourceIdForRecheck = data.nextResource.identifier
+        
+        // Recheck after delays to catch late-arriving hashmap updates
+        // This handles race conditions where milestone lock computation completes after initial check
         setTimeout(() => {
-          const recheckResult = this.checkIfContentIsLocked(data.nextResource.identifier)
+          const recheckResult = this.checkIfContentIsLocked(nextResourceIdForRecheck)
           if (recheckResult !== this.isNextResourceLocked) {
-            console.log('🔄 Lock status changed on recheck from', this.isNextResourceLocked, 'to', recheckResult)
+            console.log('⏱️ [300ms RECHECK] Next resource lock status changed:', {
+              identifier: nextResourceIdForRecheck,
+              oldStatus: this.isNextResourceLocked,
+              newStatus: recheckResult
+            })
             this.isNextResourceLocked = recheckResult
+            this.cdr.detectChanges()
           }
         }, 300)
+        
+        // Additional recheck after a longer delay to catch milestone lock computations
+        setTimeout(() => {
+          const recheckResult = this.checkIfContentIsLocked(nextResourceIdForRecheck)
+          if (recheckResult !== this.isNextResourceLocked) {
+            console.log('⏱️ [1000ms RECHECK] Next resource lock status changed:', {
+              identifier: nextResourceIdForRecheck,
+              oldStatus: this.isNextResourceLocked,
+              newStatus: recheckResult
+            })
+            this.isNextResourceLocked = recheckResult
+            this.cdr.detectChanges()
+          }
+        }, 1000)
         
         if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
           this.updateProgress(2, data.nextResource.identifier)
@@ -364,7 +400,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
 
       if (nextResourceId && this.appTocSvc.hashmap && this.appTocSvc.hashmap[nextResourceId]) {
         this.isNextResourceLocked = this.checkIfContentIsLocked(nextResourceId)
-        console.log('Lock status determined from nextResourceUrl:', this.isNextResourceLocked)
         return true
       }
     }
@@ -382,7 +417,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
         // Check if there's a nextResource property
         if (currentContent.nextResource) {
           this.isNextResourceLocked = this.checkIfContentIsLocked(currentContent.nextResource)
-          console.log('Lock status determined from hashmap:', this.isNextResourceLocked)
           return true
         }
       }
@@ -615,6 +649,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
   }
 
   backToPrev() {
+    // Previous navigation - lock status should already be current from hashmap updates
+    console.log('◀️ [PREV CLICK] Navigating to previous content')
+    
     if (this.prevResourceUrl) {
       this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
     } else {
@@ -635,20 +672,17 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
   checkIfContentIsLocked(contentIdentifier: string): boolean {
     // Return false if no identifier provided
     if (!contentIdentifier) {
-      console.log('❌ No content identifier provided')
       return false
     }
 
     // Return false if no hashmap exists
     if (!this.appTocSvc.hashmap) {
-      console.log('❌ Hashmap not available yet')
       return false
     }
 
     // Check if hashmap has the content
     if (!this.appTocSvc.hashmap[contentIdentifier]) {
-      console.log('❌ Content not found in hashmap:', contentIdentifier, 
-                  'Available keys:', Object.keys(this.appTocSvc.hashmap).length)
+                
       // If content not in hashmap, check if it might be in preview mode
       if (this.forPreview) {
         return false
@@ -689,34 +723,35 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
                      milestoneAssessmentLocked
 
     // Comprehensive debug logging
-    console.log('🔒 Next Resource Lock Check:', {
-      identifier: contentIdentifier,
-      name: contentData.name || 'Unknown',
-      primaryCategory: contentData.primaryCategory,
-      isLocked: isDirectlyLocked,
-      computedIsLocked: isComputedLocked,
-      isParentMilestoneLocked: isParentLocked,
-      isMilestoneLocked: isMilestoneLocked,
-      milestoneAssessmentLocked: milestoneAssessmentLocked,
-      parent: contentData.parent,
-      '>>> FINAL RESULT': isLocked ? '🔒 LOCKED' : '🔓 UNLOCKED',
-    })
+
 
     return isLocked
   }
 
   onNextClick(event: Event) {
-    // Double-check lock status before allowing navigation
+    // Check current lock status before allowing navigation
+    // Lock status should already be up-to-date from previous hashmap updates
     if (this.nextResourceUrl) {
       const urlParts = this.nextResourceUrl.split('/')
       const nextResourceId = urlParts[urlParts.length - 1]
       
       if (nextResourceId) {
-        // Perform a fresh check right before navigation
+        // Perform a fresh check right before navigation using current hashmap state
         const currentLockStatus = this.checkIfContentIsLocked(nextResourceId)
         
+        console.log('🔍 [NEXT CLICK] Lock check before navigation:', {
+          nextResourceId,
+          currentLockStatus,
+          hashmapExists: !!this.appTocSvc.hashmap,
+          hashmapHasContent: this.appTocSvc.hashmap && !!this.appTocSvc.hashmap[nextResourceId]
+        })
+        
+        // Update lock status if it differs from what we have
         if (currentLockStatus !== this.isNextResourceLocked) {
-          console.log('⚠️ Lock status mismatch detected! Updating from', this.isNextResourceLocked, 'to', currentLockStatus)
+          console.log('⚠️ [NEXT CLICK] Lock status mismatch - updating:', {
+            storedState: this.isNextResourceLocked,
+            actualState: currentLockStatus
+          })
           this.isNextResourceLocked = currentLockStatus
         }
       }
@@ -725,12 +760,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
     if (this.isNextResourceLocked) {
       event.preventDefault()
       event.stopPropagation()
-      console.log('🚫 Next navigation blocked - content is locked')
+      console.log('🚫 [NEXT CLICK] Navigation blocked - content is locked')
       console.log('🔒 Please complete all mandatory items before proceeding')
       return false
     }
     
-    console.log('✅ Proceeding to next content')
+    console.log('✅ [NEXT CLICK] Navigation allowed - proceeding to next content')
     this.checkForNextOfflineOnlineSession()
     return true
   }

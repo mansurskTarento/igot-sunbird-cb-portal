@@ -147,6 +147,32 @@
     background-color: #1B4CA1 !important;
     color: #ffffff !important;
 }
+
+.success-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    color: #4CAF50;
+}
+
+// Milestone completion specific styles
+.milestone-completion-content {
+    text-align: center;
+    
+    h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #212529;
+    }
+    
+    p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+}
+
 @media (max-width: 768) {
     .footer-buttons {
         justify-content: center;
