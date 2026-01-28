@@ -19,6 +19,7 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { OnConnectionBindInfo } from 'jsplumb'
 import { PracticeService } from './practice.service'
 import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
+import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
 import { ViewerUtilService, WidgetContentService, AppTocService } from '@sunbird-cb/toc'
@@ -166,6 +167,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   public publicUserInfoForm!: UntypedFormGroup
   public submitted = false
   emailLengthVal = false
+  
+  // Store next resource URL from TOC service subscription
+  private nextResourceUrl: string | null = null
+  private nextResourceUrlParams: any = null
+  private viewerDataTocSubscription: Subscription | null = null
 
   @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
@@ -2197,6 +2203,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if (this.telemetrySubscription) {
       this.telemetrySubscription.unsubscribe()
     }
+    if (this.viewerDataTocSubscription) {
+      this.viewerDataTocSubscription.unsubscribe()
+    }
   }
 
   async getQuizResult() {
@@ -2570,6 +2579,10 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       hasNextMilestone
     })
     
+    // Subscribe to TOC changes to get the next resource URL
+    // This ensures we have the latest navigation data before showing the popup
+    this.subscribeToTocChanges()
+    
     // Show congratulations popup
     this.showMilestoneCompletionPopup(milestoneName, milestoneNumber, hasNextMilestone)
   }
@@ -2703,24 +2716,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       console.log('🎉 [MILESTONE POPUP] User response:', result)
       
       if (result === 'continue-milestone') {
-        // Find and navigate to the first resource in the next milestone
-        console.log('🎉 [MILESTONE POPUP] Finding first resource in next milestone')
-        const nextMilestoneId = this.getNextMilestoneId(milestoneNumber)
+        // Use pre-computed next resource URL from TOC service subscription
+        console.log('🎉 [MILESTONE POPUP] Navigating to next milestone content')
         
-        if (nextMilestoneId) {
-          const firstResourceUrl = this.getFirstResourceInMilestone(nextMilestoneId)
-          
-          if (firstResourceUrl) {
-            console.log('🎉 [MILESTONE POPUP] Navigating to first resource:', firstResourceUrl)
-            this.router.navigateByUrl(firstResourceUrl)
-          } else {
-            console.log('🎉 [MILESTONE POPUP] No first resource found, navigating to TOC')
-            this.router.navigate(['/app/toc', this.collectionId], {
-              queryParams: this.activatedRoute.snapshot.queryParams
-            })
-          }
+        if (this.nextResourceUrl && this.nextResourceUrlParams) {
+          console.log('🎉 [MILESTONE POPUP] Using pre-computed URL:', {
+            url: this.nextResourceUrl,
+            params: this.nextResourceUrlParams
+          })
+          this.router.navigate([this.nextResourceUrl], this.nextResourceUrlParams)
         } else {
-          console.log('🎉 [MILESTONE POPUP] Next milestone not found, navigating to TOC')
+          // Fallback: navigate to TOC if no next resource URL is available
+          console.log('🎉 [MILESTONE POPUP] No next resource URL, navigating to TOC')
           this.router.navigate(['/app/toc', this.collectionId], {
             queryParams: this.activatedRoute.snapshot.queryParams
           })
@@ -2763,133 +2770,59 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Get the first navigable resource in a milestone
+   * Subscribe to TOC changes to get pre-computed next resource URL
+   * This is called after milestone completion to ensure we have the latest navigation data
    */
-  getFirstResourceInMilestone(milestoneId: string): string | null {
-    console.log('🔍 [FIRST RESOURCE] Finding first resource in milestone:', milestoneId)
-    
-    // Get all children of the milestone
-    const children: any[] = []
-    for (const key of Object.keys(this.tocSvc.hashmap)) {
-      const item = this.tocSvc.hashmap[key]
-      if (item.parent === milestoneId) {
-        children.push({
-          id: key,
-          ...item
-        })
-      }
+  subscribeToTocChanges() {
+    // Clean up existing subscription if any
+    if (this.viewerDataTocSubscription) {
+      this.viewerDataTocSubscription.unsubscribe()
     }
 
-    console.log('🔍 [FIRST RESOURCE] Found', children.length, 'children in milestone')
-
-    // Find the first non-locked, non-assessment resource
-    for (const child of children) {
-      // Skip assessments
-      if (child.primaryCategory === 'Course Assessment' || child.courseCategory === 'Course Assessment') {
-        continue
-      }
-
-      // Check if it's locked
-      const isLocked = child.isParentMilestoneLocked || child.milestoneAssessmentLocked
-      
-      console.log('🔍 [FIRST RESOURCE] Checking:', child.name, {
-        isLocked,
-        primaryCategory: child.primaryCategory,
-        mimeType: child.mimeType
+    // Subscribe to TOC changes to get next resource URL
+    this.viewerDataTocSubscription = this.viewerDataSvc.tocChangeSubject.subscribe((data: any) => {
+      console.log('📡 [TOC SUBSCRIPTION] Received TOC change data:', {
+        hasNextResource: !!data.nextResource,
+        nextResourceId: data.nextResource?.identifier
       })
 
-      if (!isLocked) {
-        // For courses, get the first child resource within the course
-        if (child.primaryCategory === 'Course' || child.primaryCategory === 'Learning Resource') {
-          const firstChildResource = this.getFirstChildResource(child.id)
-          if (firstChildResource) {
-            return firstChildResource
-          }
+      if (data.nextResource) {
+        // Build viewer URL if not already present
+        if (data.nextResource && !data.nextResource.viewerUrl) {
+          data.nextResource['viewerUrl'] = `/viewer/${VIEWER_ROUTE_FROM_MIME(
+            data.nextResource.mimeType,
+          )}/${data.nextResource.identifier}`
+          this.nextResourceUrl = data.nextResource.viewerUrl
+        } else {
+          this.nextResourceUrl = data.nextResource.viewerUrl
         }
 
-        // For direct resources (videos, etc.)
-        if (child.mimeType) {
-          const resourceUrl = this.buildResourceUrl(child)
-          if (resourceUrl) {
-            return resourceUrl
-          }
+        // Store query params
+        this.nextResourceUrlParams = {
+          queryParams: {
+            primaryCategory: data.nextResource.primaryCategory,
+            collectionId: data.nextResource.collectionId,
+            collectionType: data.nextResource.collectionType,
+            batchId: data.nextResource.batchId,
+            viewMode: data.nextResource.viewMode,
+            courseName: this.activatedRoute.snapshot.queryParams.courseName,
+            ...(data.queryMLParams ? data.queryMLParams : null),
+            ...(window.location.href.includes('editMode=true') ? { editMode: true } : {}),
+            ...(window.location.href.includes('preAssessment=true') ? { preAssessment: true } : {}),
+          },
+          fragment: '',
         }
-      }
-    }
 
-    console.log('🔍 [FIRST RESOURCE] No unlocked resource found')
-    return null
-  }
-
-  /**
-   * Get the first navigable child resource within a parent (course/module)
-   */
-  getFirstChildResource(parentId: string): string | null {
-    const children: any[] = []
-    for (const key of Object.keys(this.tocSvc.hashmap)) {
-      const item = this.tocSvc.hashmap[key]
-      if (item.parent === parentId) {
-        children.push({
-          id: key,
-          ...item
+        console.log('✅ [TOC SUBSCRIPTION] Stored next resource URL:', {
+          url: this.nextResourceUrl,
+          params: this.nextResourceUrlParams.queryParams
         })
+      } else {
+        this.nextResourceUrl = null
+        this.nextResourceUrlParams = null
+        console.log('ℹ️ [TOC SUBSCRIPTION] No next resource available')
       }
-    }
-
-    for (const child of children) {
-      // Skip assessments
-      if (child.primaryCategory === 'Course Assessment' || child.courseCategory === 'Course Assessment') {
-        continue
-      }
-
-      // For modules/folders, recurse
-      if (child.primaryCategory === 'Course Unit' || !child.mimeType) {
-        const nestedResource = this.getFirstChildResource(child.id)
-        if (nestedResource) {
-          return nestedResource
-        }
-      }
-
-      // For actual resources
-      if (child.mimeType) {
-        const resourceUrl = this.buildResourceUrl(child)
-        if (resourceUrl) {
-          return resourceUrl
-        }
-      }
-    }
-
-    return null
-  }
-
-  /**
-   * Build the viewer URL for a resource
-   */
-  buildResourceUrl(resource: any): string | null {
-    const mimeType = resource.mimeType
-    const identifier = resource.identifier || resource.id
-    
-    if (!identifier) {
-      return null
-    }
-
-    // Map mimeType to viewer route
-    let viewerType = 'resource'
-    
-    if (mimeType === 'video/mp4' || mimeType === 'video/webm' || mimeType.startsWith('video/')) {
-      viewerType = 'video'
-    } else if (mimeType === 'application/pdf') {
-      viewerType = 'pdf'
-    } else if (mimeType === 'text/html' || mimeType === 'application/web-module') {
-      viewerType = 'web-module'
-    } else if (mimeType === 'application/vnd.ekstep.html-archive') {
-      viewerType = 'html'
-    }
-
-    const queryParams = this.activatedRoute.snapshot.queryParams
-    const queryString = new URLSearchParams(queryParams as any).toString()
-    
-    return `/app/viewer/${viewerType}/${identifier}${queryString ? '?' + queryString : ''}`
+    })
   }
 
   raiseInteractTelemetry() {
