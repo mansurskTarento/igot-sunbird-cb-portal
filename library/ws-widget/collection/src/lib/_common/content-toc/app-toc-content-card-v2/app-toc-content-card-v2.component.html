@@ -23,15 +23,15 @@
                     </span>
                 </div>
             </ng-container>
-            <ng-container *ngIf="content?.primaryCategory === primaryCategory.FINAL_ASSESSMENT && checkForCuratedProgram &&
+            <!-- <ng-container *ngIf="content?.primaryCategory === primaryCategory.FINAL_ASSESSMENT && checkForCuratedProgram &&
             isContentUnlocked">
-                <div class="content-locking flex w-full flex-middle mb-2 gap-3">
-                    <mat-icon class="unlock-icon">lock_open_right</mat-icon>
-                    <span class="unlock-message mat-body-2">
-                        This content is unlocked.
-                    </span>
-                </div>
-            </ng-container>
+    <div class="content-locking flex w-full flex-middle mb-2 gap-3">
+        <mat-icon class="unlock-icon">lock_open_right</mat-icon>
+        <span class="unlock-message mat-body-2">
+            This content is unlocked.
+        </span>
+    </div>
+</ng-container> -->
             <div class="flex flex-wrap items-start justify-start sm:justify-end">
                 <!-- <button *ngIf="!forPreview && content?.artifactUrl && !isXSmall && isAllowed && isEnabled" type="button"
                     mat-icon-button class="" [matMenuTriggerFor]="buttonMenu">
@@ -189,6 +189,16 @@
                         </div>
                     </ng-container>
 
+                    <!-- Locked content message -->
+                    <ng-container *ngIf="content?.primaryCategory === primaryCategory.FINAL_ASSESSMENT && checkForCuratedProgram &&
+                    isContentUnlocked">
+                        <div class="content-locking flex w-full flex-middle mb-2 gap-3">
+                            <mat-icon class="unlock-icon">lock_open_right</mat-icon>
+                            <span class="unlock-message mat-body-2">
+                                This content is unlocked.
+                            </span>
+                        </div>
+                    </ng-container>
                     <!-- Download button for pdf resources -->
                     <ng-container *ngIf="shouldShowDownloadButton(content)">
                         <div class="download-btn mat-body-2 mt-2 sm:mt-1" (click)="downloadContent(content, $event)"
