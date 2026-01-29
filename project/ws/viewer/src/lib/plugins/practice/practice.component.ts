@@ -2468,15 +2468,35 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     try {
       console.log('🎯 [MILESTONE CHECK] Starting milestone completion check for:', this.identifier)
       
-      // Check if this is a milestone assessment (Course Assessment)
-      if (this.quizJson.primaryCategory !== 'Course Assessment') {
-        console.log('❌ [MILESTONE CHECK] Not a Course Assessment, skipping')
+      // Get assessment data from hashmap (quizJson is already cleared at this point)
+      const assessmentData = this.tocSvc.hashmap[this.identifier]
+      if (!assessmentData) {
+        console.log('❌ [MILESTONE CHECK] No assessment data found in hashmap')
+        return
+      }
+      
+      // Check if this is a Course Assessment using hashmap data or contextCategory
+      const primaryCategory = this.viewerDataSvc.resource?.primaryCategory
+      const contextCategory = this.viewerDataSvc.resource?.contextCategory
+      
+      console.log('🎯 [MILESTONE CHECK] Assessment info:', {
+        primaryCategory,
+        contextCategory,
+        name: assessmentData.name
+      })
+      
+      // Check if this is a milestone assessment (Course Assessment with parent=Milestone)
+      // Also check contextCategory for 'Final Milestone Assessment'
+      const isCourseAssessment = primaryCategory === 'Course Assessment'
+      const isFinalMilestoneAssessment = contextCategory === 'Final Milestone Assessment'
+      
+      if (!isCourseAssessment && !isFinalMilestoneAssessment) {
+        console.log('❌ [MILESTONE CHECK] Not a Course Assessment or Final Milestone Assessment, skipping')
         return
       }
 
-      const assessmentData = this.tocSvc.hashmap[this.identifier]
-      if (!assessmentData || !assessmentData.parent) {
-        console.log('❌ [MILESTONE CHECK] No assessment data or parent found')
+      if (!assessmentData.parent) {
+        console.log('❌ [MILESTONE CHECK] No parent found for assessment')
         return
       }
 
@@ -3242,6 +3262,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()
+              // Check if this completes a milestone and show congratulations popup
+              const contextCategory = this.viewerDataSvc.resource?.contextCategory
+              if(contextCategory === 'Final Milestone Assessment') {
+                this.checkAndShowMilestoneCompletion()
+              }
             } else if(contentProgressData && contentProgressData.length && contentProgressData[0]){
               console.log('⏳ [FETCH PROGRESS] Assessment in progress (status=' + contentProgressData[0].status + '), updating hashmap')
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
