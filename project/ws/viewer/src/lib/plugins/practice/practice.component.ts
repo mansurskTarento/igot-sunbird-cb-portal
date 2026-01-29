@@ -1176,14 +1176,25 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   updatePreEnrollmentProgress(status: any) {
+    debugger
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
       if (this.identifier) {
         const MIME_TYPE = "application/vnd.sunbird.questionset"
+        console.log('🎯 [PRACTICE] Updating pre-assessment progress for:', this.identifier, 'status:', status)
         this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, status, MIME_TYPE)
+        // Also update the local hashmap and trigger milestone lock update
         setTimeout(() => {
-          this.tocSvc.hashmap[this.identifier]['completionPercentage'] = 100
-          this.tocSvc.hashmap[this.identifier]['completionStatus'] = 2
+          if (this.tocSvc.hashmap && this.tocSvc.hashmap[this.identifier]) {
+            this.tocSvc.hashmap[this.identifier]['completionPercentage'] = 100
+            this.tocSvc.hashmap[this.identifier]['completionStatus'] = 2
+            this.tocSvc.hashmap[this.identifier]['status'] = 2
+            this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+            console.log('🔄 [PRACTICE] Triggering milestone lock update after pre-assessment completion')
+            if (this.tocSvc.triggerMilestoneLockUpdate) {
+              this.tocSvc.triggerMilestoneLockUpdate()
+            }
+          }
         }, 700)
       }
     }
@@ -2267,68 +2278,10 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if (!(this.quizJson.primaryCategory === 'Course Assessment' || this.quizJson.primaryCategory === 'Practice Question Set')) {
       this.updateProgress(2)
     } else {
-      if (this.tocSvc.hashmap[this.identifier]) {
-        const completionPercentage: number = 100
-        const completionStatus: number = 2
-        if (this.tocSvc.hashmap[this.identifier] &&
-          this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== undefined &&
-          this.tocSvc.hashmap[this.identifier]['completionPercentage'] !== null &&
-          this.tocSvc.hashmap[this.identifier]['completionStatus'] !== undefined) {
-          
-          // Update assessment completion in hashmap
-          this.tocSvc.hashmap[this.identifier]['completionPercentage'] = completionPercentage
-          this.tocSvc.hashmap[this.identifier]['completionStatus'] = completionStatus
-          this.tocSvc.hashmap[this.identifier]['status'] = completionStatus
-          
-          console.log('📊 [ASSESSMENT COMPLETE] Updated assessment:', {
-            identifier: this.identifier,
-            name: this.tocSvc.hashmap[this.identifier]?.name,
-            parent: this.tocSvc.hashmap[this.identifier]?.parent,
-            completionStatus,
-            completionPercentage
-          })
-          
-          // CRITICAL: Recalculate parent course progress to check if course is now complete
-          // This is important when an assessment inside a course completes
-          const parentId = this.tocSvc.hashmap[this.identifier]?.parent
-          if (parentId && this.tocSvc.hashmap[parentId]) {
-            console.log('📊 [ASSESSMENT COMPLETE] Starting parent progress recalculation for:', {
-              parentId,
-              parentName: this.tocSvc.hashmap[parentId]?.name,
-              parentPrimaryCategory: this.tocSvc.hashmap[parentId]?.primaryCategory
-            })
-            this.recalculateParentProgress(parentId)
-          } else {
-            console.log('⚠️ [ASSESSMENT COMPLETE] No parent found to recalculate progress')
-          }
-          
-          // Create new hashmap reference for Angular change detection
-          this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-          
-          // Emit hashmap update to notify subscribers
-          if (this.tocSvc.hashmapUpdated) {
-            this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
-          }
-          
-          // CRITICAL: Trigger milestone lock recomputation to unlock milestone assessment
-          // This ensures that when a mandatory course assessment completes, the milestone assessment unlocks
-          if (this.tocSvc.triggerMilestoneLockUpdate) {
-            console.log('🔄 [ASSESSMENT COMPLETE] Triggering milestone lock update after assessment completion:', this.identifier)
-            this.tocSvc.triggerMilestoneLockUpdate()
-          }
-          
-          // Emit to viewer component to trigger UI refresh
-          if (this.viewerSvc && this.viewerSvc.markAsCompleteSubject) {
-            this.viewerSvc.markAsCompleteSubject.next(true)
-          }
-          
-          // Manually trigger change detection to update UI
-          this.cdr.detectChanges()
-          
-          // Check if this assessment completes a milestone and show congratulations
-          this.checkAndShowMilestoneCompletion()
-        }
-      }
+      // For Course Assessment: Do NOT set hardcoded completion values here
+      // Instead, fetchProgressOfAssessment() will read actual progress from API
+      // and updateContentHashMapForAssesstent() will update hashmap with real values
+      console.log('📊 [ASSESSMENT] Course Assessment submitted - will fetch actual progress from API')
     }
     this.finalResponse = res
     if (this.quizJson.isAssessment) {
@@ -2515,15 +2468,35 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     try {
       console.log('🎯 [MILESTONE CHECK] Starting milestone completion check for:', this.identifier)
       
-      // Check if this is a milestone assessment (Course Assessment)
-      if (this.quizJson.primaryCategory !== 'Course Assessment') {
-        console.log('❌ [MILESTONE CHECK] Not a Course Assessment, skipping')
+      // Get assessment data from hashmap (quizJson is already cleared at this point)
+      const assessmentData = this.tocSvc.hashmap[this.identifier]
+      if (!assessmentData) {
+        console.log('❌ [MILESTONE CHECK] No assessment data found in hashmap')
+        return
+      }
+      
+      // Check if this is a Course Assessment using hashmap data or contextCategory
+      const primaryCategory = this.viewerDataSvc.resource?.primaryCategory
+      const contextCategory = this.viewerDataSvc.resource?.contextCategory
+      
+      console.log('🎯 [MILESTONE CHECK] Assessment info:', {
+        primaryCategory,
+        contextCategory,
+        name: assessmentData.name
+      })
+      
+      // Check if this is a milestone assessment (Course Assessment with parent=Milestone)
+      // Also check contextCategory for 'Final Milestone Assessment'
+      const isCourseAssessment = primaryCategory === 'Course Assessment'
+      const isFinalMilestoneAssessment = contextCategory === 'Final Milestone Assessment'
+      
+      if (!isCourseAssessment && !isFinalMilestoneAssessment) {
+        console.log('❌ [MILESTONE CHECK] Not a Course Assessment or Final Milestone Assessment, skipping')
         return
       }
 
-      const assessmentData = this.tocSvc.hashmap[this.identifier]
-      if (!assessmentData || !assessmentData.parent) {
-        console.log('❌ [MILESTONE CHECK] No assessment data or parent found')
+      if (!assessmentData.parent) {
+        console.log('❌ [MILESTONE CHECK] No parent found for assessment')
         return
       }
 
@@ -2743,6 +2716,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    * Get the ID of the next milestone
    */
   getNextMilestoneId(currentMilestoneNumber: number): string | null {
+    debugger
     // Find all milestones
     const milestones: any[] = []
     for (const key of Object.keys(this.tocSvc.hashmap)) {
@@ -3235,6 +3209,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   fetchProgressOfAssessment() {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+    console.log('📡 [FETCH PROGRESS] Starting fetchProgressOfAssessment for:', {
+      identifier: this.identifier,
+      isPreAssessment,
+      primaryCategory: this.quizJson?.primaryCategory
+    })
+    
     if (!isPreAssessment) {
       let userId = ''
       if (this.configSvc.userProfile) {
@@ -3255,21 +3235,74 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           fields: ['progressdetails'],
         },
       }
+      
+      console.log('📡 [FETCH PROGRESS] Calling fetchContentHistoryV2 API with request:', req)
+      
       this.widgetContentService.fetchContentHistoryV2(req).subscribe(
         data => {
+          console.log('📡 [FETCH PROGRESS] API response received:', {
+            hasData: !!data,
+            hasResult: !!(data && data.result),
+            contentListLength: data?.result?.contentList?.length || 0
+          })
+          
           if (data && data.result && data.result.contentList.length) {
             this.widgetContentService.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
             let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
               return content.contentId === this.identifier
             })
+            
+            console.log('📡 [FETCH PROGRESS] Found progress data for this assessment:', {
+              found: !!(contentProgressData && contentProgressData.length),
+              progressData: contentProgressData && contentProgressData.length ? contentProgressData[0] : null
+            })
+            
             if (contentProgressData && contentProgressData.length && contentProgressData[0]?.status === 2) {
+              console.log('✅ [FETCH PROGRESS] Assessment is COMPLETE (status=2), updating hashmap')
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()
+              // Check if this completes a milestone and show congratulations popup
+              const contextCategory = this.viewerDataSvc.resource?.contextCategory
+              if(contextCategory === 'Final Milestone Assessment') {
+                this.checkAndShowMilestoneCompletion()
+              }
+            } else if(contentProgressData && contentProgressData.length && contentProgressData[0]){
+              console.log('⏳ [FETCH PROGRESS] Assessment in progress (status=' + contentProgressData[0].status + '), updating hashmap')
+              this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
+              // Manually trigger change detection to update UI
+              this.cdr.detectChanges()
+            } else {
+              console.log('⚠️ [FETCH PROGRESS] No progress data found, using mock data with status=1')
+               let mockProgressData = {
+                "lastAccessTime": "2026-01-28 18:17:42:997+0530",
+                "contentId": this.identifier,
+                "language": "english",
+                "batchId": requestCourse.batchId,
+                "completedCount": null,
+                "progressdetails": null,
+                "completionPercentage": 0,
+                "progress": 1,
+                "viewCount": null,
+                "courseId": requestCourse.courseId || '',
+                "collectionId": requestCourse.courseId || '',
+                "lastCompletedTime": "2026-01-28 18:17:43:007+0530",
+                "status": 1
+              }
+             this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, mockProgressData)
+              // Manually trigger change detection to update UI
+              this.cdr.detectChanges()
             }
+          } else {
+            console.log('⚠️ [FETCH PROGRESS] No content list in API response')
           }
         },
+        error => {
+          console.error('❌ [FETCH PROGRESS] API error:', error)
+        }
       )
+    } else {
+      console.log('ℹ️ [FETCH PROGRESS] Skipping - this is a pre-assessment')
     }
 
   }
