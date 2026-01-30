@@ -1,6 +1,7 @@
 @import 'ws-common';
 @import 'ws-vars';
 @import 'ws-mixins';
+@import 'node_modules/@sunbird-cb/design-system/src/styles/round-controls.scss';
 
 .container-balanced {
   height: auto;
@@ -20,7 +21,7 @@
 }
 
 .result-meta {
-  padding: 16px 0;
+  padding-bottom: 16px;
   border-bottom: 1px solid #e0e0e0;
 
   .explore-all-content {
@@ -28,73 +29,24 @@
   }
 
   .contents-title-top {
-    font-size: 14px;
-    color: #666;
+    // font-size: 14px;
+    // color: #666;
+    /* stylelint-disable-next-line */
+    font: 600 16px 'Montserrat';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    font-family: Montserrat;
+    letter-spacing: normal;
+    margin: 0px;
   }
 }
 
-.sort-search {
-  gap: 16px;
-
-  .search-input-wrapper {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 6px 12px;
-    background: white;
-    min-width: 250px;
-
-    .search-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      padding: 0;
-      font-size: 14px;
-
-      &::placeholder {
-        color: #999;
-      }
-    }
-
-    .clear-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0 4px;
-      display: flex;
-      align-items: center;
-      color: #999;
-      transition: color 0.2s ease;
-
-      &:hover {
-        color: #666;
-      }
-
-      i {
-        font-size: 16px;
-      }
-    }
-
-    .search-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0 8px;
-      display: flex;
-      align-items: center;
-      color: #666;
-
-      &:hover {
-        color: #333;
-      }
-
-      i {
-        font-size: 16px;
-      }
-    }
-  }
+.search-input-block {
+  width: 480px;
+  max-width: 90%;
 }
+
 
 .search-content-card {
   display: flex;

@@ -6,7 +6,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { ReusableFiltersComponent } from './components/reusable-filters/reusable-filters.component'
 
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
@@ -24,8 +23,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @NgModule({
   declarations: [
-    DownloadAppComponent,
-    ReusableFiltersComponent
+    DownloadAppComponent
   ],
   imports: [
     CommonModule,
@@ -41,8 +39,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTooltipModule
   ],
   exports: [
-    DownloadAppComponent,
-    ReusableFiltersComponent
+    DownloadAppComponent
   ],
 })
 export class SharedModule {

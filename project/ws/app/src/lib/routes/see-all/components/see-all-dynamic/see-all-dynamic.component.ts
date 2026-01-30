@@ -1,86 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { FormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import * as _ from 'lodash'
-
-// Filter configuration - defines display settings for each filter
-// Order in array determines display order (index 0 = first, index 1 = second, etc.)
-// Keys must match the API facet keys exactly
-const FILTER_CONFIG: Array<{
-  key: string,
-  heading: string,
-  showSearch: boolean,
-  showClearAll: boolean,
-  selectType: 'checkbox' | 'radio',
-  showCount: boolean,
-  showSeeMore: boolean,
-  seeMoreLimit: number
-}> = [
-    {
-      key: 'contentPartner.contentPartnerName',
-      heading: 'Content Provider',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    },
-    {
-      key: 'competencies_v6.competencyAreaName',
-      heading: 'Competency Area',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    },
-    {
-      key: 'competencies_v6.competencyThemeName',
-      heading: 'Competency Theme',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    },
-    {
-      key: 'competencies_v6.competencySubThemeName',
-      heading: 'Competency Sub Theme',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    },
-    {
-      key: 'courseProvider',
-      heading: 'Course Provider',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    },
-    {
-      key: 'topic',
-      heading: 'Topic',
-      showSearch: true,
-      showClearAll: true,
-      selectType: 'checkbox',
-      showCount: true,
-      showSeeMore: true,
-      seeMoreLimit: 4
-    }
-  ]
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 const configMap: any = {
   extContent: {
@@ -128,6 +55,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   customOptions: any[] = []
   contentName: string = ''
   searchString: string = ''
+  searchControl = new FormControl('')
   configKey: string = ''
   filterProvider: string = ''
   apiConfig: any = null
@@ -141,86 +69,39 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private seeAllService: SeeAllService,
-    private translate: TranslateService,
+    private translateService: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
     private commonSvc: CommonMethodsService,
     private router: Router,
     private contSvc: WidgetContentLibService
   ) {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translate.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translate.use(lang)
-    }
-    this.customOptions = [
-      { name: 'Most Relevant', value: 'most_relevant' },
-      { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
-      { name: 'Highest Rated', value: 'highest_rated' },
-      { name: 'A-Z', value: 'a-z' },
-      { name: 'Z-A', value: 'z-a' }
-    ]
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translateService.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translateService.use(lang)
+      }
+    })
   }
 
   ngOnInit() {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translateService.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translateService.use(lang)
+    }
+    this.getRouterData()
+    this.loadProviderDetails()
+  }
+
+  getRouterData() {
     const providerName = _.get(this.activatedRoute, 'snapshot.queryParams.providerName', '')
     this.contentName = providerName ? `${providerName} Contents` : 'Explore all the contents'
     this.configKey = _.get(this.activatedRoute, 'snapshot.queryParams.key', 'extContent')
     this.filterProvider = _.get(this.activatedRoute, 'snapshot.queryParams.provider', 'PEDGOG')
-
-    // Load configuration from service
     this.loadConfiguration()
-    // this.fetchContent()
-    this.getCourses()
-    this.loadProviderDetails()
   }
 
-  onFilterApplied(filters: any) {
-    this.appliedFilters = filters
-    console.log('Applied Filters:', this.appliedFilters)
-    // Apply filters and refresh content
-    // this.fetchContent(false)
-    this.getCourses(false)
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next()
-    this.destroy$.complete()
-  }
-
-  loadProviderDetails() {
-    if (!this.filterProvider) {
-      return
-    }
-
-    const request = {
-      filterCriteriaMap: {
-        isActive: true,
-        liveCoursesCount: {
-          '>=': '1'
-        },
-        isTrainingInstitution: false,
-        providerType: ['external', 'internal'],
-        id: this.filterProvider
-      },
-      pageNumber: 0,
-      pageSize: 10,
-      facets: ['contentPartnerName'],
-      orderBy: 'createdOn',
-      orderDirection: 'desc'
-    }
-
-    this.seeAllService
-      .getProviderDetails(request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (res: any) => {
-          this.providerDetails = _.get(res, 'result.data[0]', null)
-        },
-        (error: any) => {
-          console.error('Error fetching provider details:', error)
-          this.providerDetails = null
-        }
-      )
-  }
 
   loadConfiguration() {
     // Get config from local configMap
@@ -233,15 +114,19 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
 
     // Clone the config to avoid mutating the original
     this.apiConfig = JSON.parse(JSON.stringify(this.apiConfig))
+    this.customOptions = _.get(this.apiConfig, 'sortOptions', [])
 
     // Update the filter criteria with the provider from URL if present (only for POST APIs with request object)
     if (this.filterProvider && this.apiConfig.request && this.apiConfig.request.filterCriteriaMap) {
       this.apiConfig.request.filterCriteriaMap['contentPartner.id'] = this.filterProvider
     }
-    if (this.filterProvider && this.apiConfig.request) {
-      this.apiConfig.request.partnerId = this.filterProvider
-    }
+    // if (this.filterProvider && this.apiConfig.request) {
+    //   this.apiConfig.request.partnerId = this.filterProvider
+    // }
+    this.getCourses()
+    // this.fetchContent()
   }
+
 
   // fetchContent(isLoadMore = false) {
   //   if (!this.apiConfig) {
@@ -396,38 +281,45 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       this.isLoadingMore = true
     }
 
-    // Build filterCriteriaMap with common filters + user-selected filters
-    const filterCriteriaMap: any = {
-      // 'contentPartner.isActive': true,
-      'contentPartner.id': this.filterProvider
+    // Deep copy request from apiConfig to avoid mutating original
+    const request: any = JSON.parse(JSON.stringify(_.get(this.apiConfig, 'request', {})))
+
+    // Update filterCriteriaMap if present
+    if (_.has(request, 'filterCriteriaMap')) {
+      request.filterCriteriaMap['contentPartner.id'] = this.filterProvider
+
+      // Add user-selected filters from appliedFilters
+      if (this.appliedFilters && Object.keys(this.appliedFilters).length > 0) {
+        Object.keys(this.appliedFilters).forEach((key: string) => {
+          const values = this.appliedFilters[key]
+          if (values && values.length > 0) {
+            request.filterCriteriaMap[key] = values
+          }
+        })
+      }
     }
 
-    // Add user-selected filters from appliedFilters
-    if (this.appliedFilters && Object.keys(this.appliedFilters).length > 0) {
-      Object.keys(this.appliedFilters).forEach((key: string) => {
-        const values = this.appliedFilters[key]
-        if (values && values.length > 0) {
-          filterCriteriaMap[key] = values
-        }
-      })
+    // Update pageNumber if present
+    if (_.has(request, 'pageNumber')) {
+      request.pageNumber = this.currentPageNumber
     }
 
-    const request = {
-      filterCriteriaMap: filterCriteriaMap,
-      requestedFields: [],
-      pageNumber: this.currentPageNumber,
-      pageSize: this.pageSize,
-      facets: [
-        'courseProvider',
-        'topic',
-        'contentPartner.contentPartnerName',
-        'competencies_v6.competencyAreaName',
-        'competencies_v6.competencyThemeName',
-        'competencies_v6.competencySubThemeName'
-      ],
-      orderBy: 'createdOn'
+    // Update pageSize if present
+    if (_.has(request, 'pageSize')) {
+      request.pageSize = this.pageSize
     }
 
+    // Update searchString if present
+    if (_.has(request, 'searchString')) {
+      request.searchString = this.searchString
+    }
+
+    if (_.has(request, 'orderBy') && this.sortKey) {
+      request.orderBy = this.sortKey
+    }
+    if (_.has(request, 'orderDirection') && this.sortOrder) {
+      request.orderDirection = this.sortOrder
+    }
     this.seeAllService
       .getCourses(request)
       .pipe(takeUntil(this.destroy$))
@@ -476,7 +368,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
    * Input format: { "topic": [{ value: "val1", count: 5 }], "courseProvider": [] }
    * Output format: [{ name: 'topic', heading: 'Topic', values: [...], showSearch: true, ... }]
    * Only includes facets that have values (non-empty arrays)
-   * Orders facets based on position in FILTER_CONFIG array
+   * Orders facets based on position in FilterConfig array from apiConfig
    */
   transformFacets(facets: any): any[] {
     if (!facets || typeof facets !== 'object') {
@@ -484,9 +376,10 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     }
 
     const transformedFacets: any[] = []
+    const filterConfig = _.get(this.apiConfig, 'FilterConfig', [])
 
-    // Iterate over FILTER_CONFIG to maintain order
-    FILTER_CONFIG.forEach((config, index) => {
+    // Iterate over FilterConfig to maintain order
+    filterConfig.forEach((config: any, index: number) => {
       const key = config.key
       const values = facets[key]
 
@@ -510,10 +403,10 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       }
     })
 
-    // Add any facets from API that are not in FILTER_CONFIG (at the end)
+    // Add any facets from API that are not in FilterConfig (at the end)
     Object.keys(facets).forEach((key: string) => {
       const values = facets[key]
-      const isConfigured = FILTER_CONFIG.some(config => config.key === key)
+      const isConfigured = filterConfig.some((config: any) => config.key === key)
 
       if (!isConfigured && Array.isArray(values) && values.length > 0) {
         transformedFacets.push({
@@ -525,7 +418,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
           showCount: true,
           showSeeMore: true,
           seeMoreLimit: 4,
-          order: FILTER_CONFIG.length + transformedFacets.length,
+          order: filterConfig.length + transformedFacets.length,
           values: values.map((item: any) => ({
             name: _.get(item, 'value', ''),
             count: _.get(item, 'count', 0)
@@ -550,6 +443,55 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
       .trim()
+  }
+
+
+  onFilterApplied(filters: any) {
+    this.appliedFilters = filters
+    // Apply filters and refresh content
+    // this.fetchContent(false)
+    this.getCourses(false)
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
+
+  loadProviderDetails() {
+    if (!this.filterProvider) {
+      return
+    }
+
+    const request = {
+      filterCriteriaMap: {
+        isActive: true,
+        liveCoursesCount: {
+          '>=': '1'
+        },
+        isTrainingInstitution: false,
+        providerType: ['external', 'internal'],
+        id: this.filterProvider
+      },
+      pageNumber: 0,
+      pageSize: 10,
+      facets: ['contentPartnerName'],
+      orderBy: 'createdOn',
+      orderDirection: 'desc'
+    }
+
+    this.seeAllService
+      .getProviderDetails(request)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          this.providerDetails = _.get(res, 'result.data[0]', null)
+        },
+        (error: any) => {
+          console.error('Error fetching provider details:', error)
+          this.providerDetails = null
+        }
+      )
   }
 
   applyLocalSearch() {
@@ -621,26 +563,45 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   }
 
   onChangeSortSearch(event: any) {
-    if (event === 'most_relevant') {
-      // No specific sort for most relevant
-    } else if (event === 'recently_added_newest') {
-      this.sortKey = 'createdOn'
-      this.sortOrder = 'desc'
-    } else if (event === 'highest_rated') {
-      this.sortKey = 'avgRating'
-      this.sortOrder = 'desc'
-    } else if (event === 'a-z') {
-      this.sortKey = 'name'
-      this.sortOrder = 'asc'
-    } else if (event === 'z-a') {
-      this.sortKey = 'name'
-      this.sortOrder = 'desc'
+    // if (event === 'most_relevant') {
+    //   // No specific sort for most relevant
+    // } else if (event === 'recently_added_newest') {
+    //   this.sortKey = 'createdOn'
+    //   this.sortOrder = 'desc'
+    // } else if (event === 'highest_rated') {
+    //   this.sortKey = 'avgRating'
+    //   this.sortOrder = 'desc'
+    // } else if (event === 'a-z') {
+    //   this.sortKey = 'name'
+    //   this.sortOrder = 'asc'
+    // } else if (event === 'z-a') {
+    //   this.sortKey = 'name'
+    //   this.sortOrder = 'desc'
+    // }
+    // this.applySort()
+
+    switch (event) {
+      case 'recently_added_newest':
+        this.sortKey = 'createdOn'
+        this.sortOrder = 'desc'
+        break
+      case 'a-z':
+        this.sortKey = 'name'
+        this.sortOrder = 'asc'
+        break
+      case 'z-a':
+        this.sortKey = 'name'
+        this.sortOrder = 'desc'
+        break
+      default:
+        // Handle other cases or do nothing
+        break
     }
-    this.applySort()
+
+    this.getCourses(false)
   }
 
-  onSearch(searchValue: string) {
-    this.searchString = searchValue
+  onSearch() {
     const isLocalSearchApi = _.get(this.apiConfig, 'isLocalSearch', false)
 
     if (this.isGetApi || isLocalSearchApi) {

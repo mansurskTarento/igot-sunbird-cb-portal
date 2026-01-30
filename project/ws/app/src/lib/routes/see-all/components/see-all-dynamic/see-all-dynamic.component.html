@@ -23,44 +23,41 @@
   <div class="main-content-wrapper">
     <!-- Left Sidebar - Filters -->
     <aside class="filter-sidebar-wrapper">
-      <ws-reusable-filters [apiFacets]="apiFacets" [headerTitle]="'searchfilters.filterBy'" [showClearAllGlobal]="true"
+      <sb-uic-filter-by [apiFacets]="apiFacets" [headerTitle]="'searchfilters.filterBy'" [showClearAllGlobal]="true"
         (appliedFilter)="onFilterApplied($event)">
-      </ws-reusable-filters>
+      </sb-uic-filter-by>
     </aside>
 
     <!-- Right Content Area -->
     <div class="content-area">
       <!-- Search and Sort Header -->
-      <div class="result-meta flex items-center justify-between flex-wrap">
+      <div class="result-meta flex flex-column gap-4">
         <div>
           <p class="contents-title-top text-dark mb-0">
-            <span *ngIf="contentItems.length === 1">
-              {{ 'learnsearch.content' | translate : { count: totalCount || 0 } }}
-            </span>
-            <span *ngIf="contentItems.length > 1">
-              {{ 'learnsearch.contents' | translate: { count: totalCount || 0 } }}
-            </span>
+            <span *ngIf="totalCount === 1">{{ 'learnsearch.content' | translate:{ count: totalCount } }}</span>
+            <span *ngIf="totalCount > 1">{{ 'learnsearch.contents' | translate:{ count: totalCount } }}</span>
+            <span *ngIf="totalCount === 0">{{ 'learnsearch.contents' | translate:{ count: 0 } }}</span>
           </p>
         </div>
 
-        <div class="sort-search ml-auto flex items-center gap-4">
+        <div class="flex items-center justify-between">
           <!-- Search Input -->
-          <div class="search-input-wrapper">
-            <input type="text" class="search-input" placeholder="Search..." [(ngModel)]="searchString"
-              (keyup.enter)="onSearch(searchString)" />
-            <button *ngIf="searchString && searchString.trim() !== ''" class="clear-btn" (click)="clearSearch()"
-              title="Clear search">
-              <i class="icon-close"></i>
-            </button>
-            <button class="search-btn" (click)="onSearch(searchString)">
-              <i class="icon-search"></i>
-            </button>
+          <div class="round-control search-input-block">
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput [(ngModel)]="searchString" placeholder="Search..." (keyup.enter)="onSearch()" />
+              <button *ngIf="searchString" mat-icon-button matSuffix (click)="clearSearch()" title="Clear search">
+                <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="onSearch()" title="Search">
+                <mat-icon>search</mat-icon>
+              </button>
+            </mat-form-field>
           </div>
 
           <!-- Sort Options -->
-          <ws-app-search-sort-input *ngIf="customOptions?.length > 0" [category]="'content'"
+          <sb-uic-search-sort-input *ngIf="customOptions?.length > 0" [category]="'content'"
             [isExploreContentTab]="false" [customOptions]="customOptions"
-            (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
+            (searchSorter)="onChangeSortSearch($event)"></sb-uic-search-sort-input>
         </div>
       </div>
 
