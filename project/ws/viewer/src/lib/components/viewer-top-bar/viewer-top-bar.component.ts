@@ -319,24 +319,20 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       console.log(`   Input leafNodesCount: ${this.leafNodesCount}`)
       console.log(`   Hashmap leafNodesCount: ${this.hierarchyMapData[identifier].leafNodesCount}`)
       console.log(`   Total leafNodes array: ${this.hierarchyMapData[identifier].leafNodes?.length}`)
+      console.log(`   Course Category: ${this.hierarchyMapData[identifier].courseCategory}`)
       
-      // Check if this is a Learning Pathway - we need to count completed from accessible items only
-      const isLearningPathway = this.hierarchyMapData[identifier].courseCategory === 'Learning Pathway' ||
-                                this.hierarchyMapData[identifier].isLearningPathway === true
-      
-      // Get all leaf nodes for the total count
-      const allLeafNodes = this.hierarchyMapData[identifier].leafNodes || []
-      const totalLeafCount = allLeafNodes.length
-      
-      // For completed count calculation, only count accessible items
-      let accessibleLeafNodes = allLeafNodes
+      // Check if this is a Learning Pathway
+      const isLearningPathway = this.hierarchyMapData[identifier].courseCategory === 'Learning Pathway'
       
       if (isLearningPathway) {
-        console.log(`   🎯 Learning Pathway detected - filtering locked milestone items for completed count`)
+        // LEARNING PATHWAY LOGIC: Filter out locked milestone content
+        console.log(`   🎯 Learning Pathway detected - using milestone filtering logic`)
+        
+        // Get all leaf nodes
+        const allLeafNodes = this.hierarchyMapData[identifier].leafNodes || []
+        const totalLeafCount = allLeafNodes.length
         
         // Get list of locked milestone IDs
-        // IMPORTANT: Only check computedIsLocked (not isLocked) since computedIsLocked is the 
-        // dynamically computed value that reflects actual lock status after pre-assessment/progress
         const lockedMilestoneIds: string[] = []
         for (const key of Object.keys(this.hierarchyMapData)) {
           const item = this.hierarchyMapData[key]
@@ -350,7 +346,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         console.log(`   📊 Found ${lockedMilestoneIds.length} locked milestones`)
         
         // Filter leaf nodes to exclude those inside locked milestones (for completed count only)
-        accessibleLeafNodes = _.filter(allLeafNodes, (leafId: string) => {
+        const accessibleLeafNodes = _.filter(allLeafNodes, (leafId: string) => {
           const leafData = this.hierarchyMapData[leafId]
           if (!leafData) return false
           
@@ -372,46 +368,62 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         })
         
         console.log(`   📊 Accessible leaf nodes for completed count: ${accessibleLeafNodes.length}`)
-        console.log(`   📊 Total leaf nodes for display: ${totalLeafCount}`)
-      }
-      
-      // CRITICAL: Check multiple completion indicators (not just completionStatus === 2)
-      // Only count completed items from ACCESSIBLE content
-      const completedItems = _.filter(accessibleLeafNodes, (r: string) => {
-        const leafData = this.hierarchyMapData[r]
-        if (!leafData) {
-          return false
+        
+        // Count completed items from accessible content only
+        const completedItems = _.filter(accessibleLeafNodes, (r: string) => {
+          const leafData = this.hierarchyMapData[r]
+          if (!leafData) return false
+          
+          const isCompleted = 
+            leafData.completionStatus === 2 || 
+            leafData.status === 2 ||
+            leafData.completionPercentage === 100 ||
+            (leafData.completionPercentage && leafData.completionPercentage >= 100) ||
+            (leafData.progress && leafData.progress >= 100)
+          
+          return isCompleted
+        })
+        
+        this.completedCount = completedItems.length
+        this.overallLeafNodes = totalLeafCount  // Show total count (not filtered)
+        
+        console.log(`✅ [HEADER COUNT] Learning Pathway Result: ${this.completedCount}/${this.overallLeafNodes}`)
+        this.completedCountOutput.emit(this.completedCount)
+        
+        const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
+        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
+        this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
+        
+      } else {
+        // REGULAR COURSE LOGIC: Use old simple logic without filtering
+        console.log(`   📚 Regular course - using standard completion logic`)
+        
+        const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, (r: string) => {
+          return this.hierarchyMapData[r] && (
+            this.hierarchyMapData[r].completionStatus === 2 || 
+            this.hierarchyMapData[r].status === 2 ||
+            this.hierarchyMapData[r].completionPercentage === 100 ||
+            (this.hierarchyMapData[r].completionPercentage && this.hierarchyMapData[r].completionPercentage >= 100) ||
+            (this.hierarchyMapData[r].progress && this.hierarchyMapData[r].progress >= 100)
+          )
+        })
+        
+        this.completedCount = completedItems.length
+        
+        if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
+          this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
         }
         
-        const isCompleted = 
-          leafData.completionStatus === 2 || 
-          leafData.status === 2 ||
-          leafData.completionPercentage === 100 ||
-          (leafData.completionPercentage && leafData.completionPercentage >= 100) ||
-          (leafData.progress && leafData.progress >= 100)
+        console.log(`✅ [HEADER COUNT] Regular Course Result: ${this.completedCount}/${this.overallLeafNodes}`)
+        this.completedCountOutput.emit(this.completedCount)
         
-        return leafData && isCompleted
-      })
-      
-      this.completedCount = completedItems.length
-      
-      // IMPORTANT: For Learning Pathways, always show TOTAL leaf count (not filtered)
-      // This shows the user how many items exist in the entire Learning Pathway
-      // while completedCount shows progress only on accessible content
-      if (isLearningPathway) {
-        this.overallLeafNodes = totalLeafCount
-      } else if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
-        this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+        // tslint:disable
+        const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
+        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
+        this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
       }
-      
-      console.log(`✅ [HEADER COUNT] Result: ${this.completedCount}/${this.overallLeafNodes}`)
-      this.completedCountOutput.emit(this.completedCount)
-      
-      // tslint:disable
-      const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
-      this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
-      this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
-      this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
     }
     this.loadingOverallPRogress = false
   }

@@ -1176,7 +1176,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   updatePreEnrollmentProgress(status: any) {
-    debugger
+    
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
       if (this.identifier) {
@@ -2716,7 +2716,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    * Get the ID of the next milestone
    */
   getNextMilestoneId(currentMilestoneNumber: number): string | null {
-    debugger
+    
     // Find all milestones
     const milestones: any[] = []
     for (const key of Object.keys(this.tocSvc.hashmap)) {

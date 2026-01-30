@@ -278,6 +278,11 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       } else {
         this.hierarchyData = contentData.result.content
         this.leafNodesCount = contentData.result.content.leafNodesCount
+        // Map progress data for regular courses (like we do for Learning Pathways)
+        this.tocV2Svc.mapContentHierarchyProgressUpdate(this.hierarchyData, this.enrollmentList?.courses)
+        // Build hashmap for regular courses (non-Learning Pathway)
+        // This ensures hierarchyMapData is populated for child components like top-bar
+        this.tocSvc.callHirarchyProgressHashmap(this.hierarchyData)
       }
       await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
@@ -299,7 +304,20 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Ensure toc hashmap reflects aggregated leafNodesCount so top-bar displays correct total
         try {
           const mlId = this.activatedRoute.snapshot.queryParams.MLId ? this.activatedRoute.snapshot.queryParams.MLId : this.collectionId
-          if (mlId && this.tocSvc && this.tocSvc.hashmap && this.tocSvc.hashmap[mlId]) {
+          if (mlId && this.tocSvc && this.tocSvc.hashmap) {
+            // Create entry if it doesn't exist
+            if (!this.tocSvc.hashmap[mlId]) {
+              this.tocSvc.hashmap[mlId] = {
+                identifier: mlId,
+                leafNodesCount: this.leafNodesCount,
+                leafNodes: this.hierarchyData?.leafNodes || [],
+                completionPercentage: 0,
+                completionStatus: 0,
+                name: this.hierarchyData?.name || '',
+                primaryCategory: this.hierarchyData?.primaryCategory || '',
+                courseCategory: this.hierarchyData?.courseCategory || '',
+              }
+            }
             this.tocSvc.hashmap[mlId]['leafNodesCount'] = this.leafNodesCount
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
             // Initialize local hierarchyMapData for child components
