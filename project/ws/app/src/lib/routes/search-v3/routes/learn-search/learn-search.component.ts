@@ -1598,7 +1598,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async removeFilterChip(filter: any) {
-    debugger
     this.searchContentLoader = true
     this.filtersChipFromLearn = this.filtersChipFromLearn.filter(ele => ele !== filter)
     this.searchRequestCourse.request.filters.courseCategory = this.filtersChipFromLearn

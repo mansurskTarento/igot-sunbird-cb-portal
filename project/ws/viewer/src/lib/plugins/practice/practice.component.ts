@@ -403,33 +403,33 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
 
-    const popupData = {
-      headerText: '',
-      assessmentType: 'maxAttemptReachedd',
-      primaryCategory: this.primaryCategory,
-      canAttempt: this.canAttempt,
-      warningNote: errorMessage,
-      buttonsList: [
-        {
-          response: 'yes',
-          text: 'Ok',
-          classes: 'blue-full',
-        },
-      ],
-    }
-    const dialogRef = this.dialog.open(FinalAssessmentPopupComponent, {
-      data: popupData,
-      width: '626px',
-      maxWidth: '90vw',
-      height: 'auto',
-      maxHeight: '225px',
-      panelClass: 'final-assessment',
-    })
+    // const popupData = {
+    //   headerText: '',
+    //   assessmentType: 'maxAttemptReachedd',
+    //   primaryCategory: this.primaryCategory,
+    //   canAttempt: this.canAttempt,
+    //   warningNote: errorMessage,
+    //   buttonsList: [
+    //     {
+    //       response: 'yes',
+    //       text: 'Ok',
+    //       classes: 'blue-full',
+    //     },
+    //   ],
+    // }
+    // const dialogRef = this.dialog.open(FinalAssessmentPopupComponent, {
+    //   data: popupData,
+    //   width: '626px',
+    //   maxWidth: '90vw',
+    //   height: 'auto',
+    //   maxHeight: '225px',
+    //   panelClass: 'final-assessment',
+    // })
 
-    dialogRef.afterClosed().subscribe(() => {
-      // Navigate back or show appropriate UI after closing the dialog
-      this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
-    })
+    // dialogRef.afterClosed().subscribe(() => {
+    //   // Navigate back or show appropriate UI after closing the dialog
+    //   this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
+    // })
 
     // Also show snackbar for quick notification
     this.openSnackbar(errorMessage)
