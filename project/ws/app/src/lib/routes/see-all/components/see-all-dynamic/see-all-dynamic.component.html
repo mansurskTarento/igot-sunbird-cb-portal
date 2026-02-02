@@ -1,7 +1,7 @@
 <div class="learnsearch">
   <!-- Provider Header Section -->
   <div class="provider-header-wrapper" *ngIf="providerDetails">
-    <div class="provider-header-blue"></div>
+    <div class="provider-header-blue" [ngStyle]="{ 'background': headerBgColor }"></div>
     <div class="provider-header-white">
       <div class="provider-header-content">
         <div class="provider-logo-container">
@@ -21,12 +21,33 @@
 
   <!-- Main Content Area with Filters -->
   <div class="main-content-wrapper">
-    <!-- Left Sidebar - Filters -->
-    <aside class="filter-sidebar-wrapper">
-      <sb-uic-filter-by [apiFacets]="apiFacets" [headerTitle]="'searchfilters.filterBy'" [showClearAllGlobal]="true"
-        (appliedFilter)="onFilterApplied($event)">
-      </sb-uic-filter-by>
-    </aside>
+    <!-- Left Sidebar - Filters with Responsive Drawer -->
+    <ng-container *ngIf="!screenSizeIsLtMedium">
+      <aside class="filter-sidebar-wrapper" aria-label="Filters">
+        <sb-uic-filter-by [apiFacets]="apiFacets" [headerTitle]="'searchfilters.filterBy'" [showClearAllGlobal]="true"
+          (appliedFilter)="onFilterApplied($event)">
+        </sb-uic-filter-by>
+      </aside>
+    </ng-container>
+
+    <!-- Mobile Filter Drawer -->
+    <ng-container *ngIf="screenSizeIsLtMedium">
+      <div [ngClass]="{'filter-drawer-open': isFilterSidebarOpen}" class="filter-drawer-overlay"
+        *ngIf="isFilterSidebarOpen" (click)="isFilterSidebarOpen = false"
+        (keydown.escape)="isFilterSidebarOpen = false"></div>
+      <aside [ngClass]="{'filter-drawer-open': isFilterSidebarOpen}" class="filter-drawer-mobile"
+        aria-label="Mobile Filters">
+        <div class="mobile-sidenav-header">
+          <button type="button" mat-icon-button (click)="isFilterSidebarOpen = false" class="close-filter-btn"
+            title="Close filters">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <sb-uic-filter-by [apiFacets]="apiFacets" [headerTitle]="'searchfilters.filterBy'" [showClearAllGlobal]="true"
+          (appliedFilter)="onFilterApplied($event)">
+        </sb-uic-filter-by>
+      </aside>
+    </ng-container>
 
     <!-- Right Content Area -->
     <div class="content-area">
@@ -40,8 +61,8 @@
           </p>
         </div>
 
-        <div class="flex items-center justify-between">
-          <!-- Search Input -->
+        <div class="flex items-center justify-between search-sort-container w-full">
+          <!-- Search Input - Below sort on mobile, Right on desktop -->
           <div class="round-control search-input-block">
             <mat-form-field appearance="outline" class="w-full">
               <input matInput [(ngModel)]="searchString" placeholder="Search..." (keyup.enter)="onSearch()" />
@@ -53,11 +74,21 @@
               </button>
             </mat-form-field>
           </div>
+          <!-- Sort Options - On top in mobile, Left on desktop -->
+          <div class="flex justify-between sort-options-wrapper">
+            <!-- Mobile Filter Button -->
+            <div *ngIf="screenSizeIsLtMedium" class="mobile-filter-header items-center">
+              <button type="button" mat-icon-button (click)="isFilterSidebarOpen = !isFilterSidebarOpen"
+                class="filter-menu-btn" title="Open filters">
+                <mat-icon>menu</mat-icon>
+                <!-- <span class="filter-label">Filters</span> -->
+              </button>
+            </div>
+            <sb-uic-search-sort-input *ngIf="customOptions?.length > 0" [category]="'content'"
+              [isExploreContentTab]="false" [customOptions]="customOptions"
+              (searchSorter)="onChangeSortSearch($event)"></sb-uic-search-sort-input>
+          </div>
 
-          <!-- Sort Options -->
-          <sb-uic-search-sort-input *ngIf="customOptions?.length > 0" [category]="'content'"
-            [isExploreContentTab]="false" [customOptions]="customOptions"
-            (searchSorter)="onChangeSortSearch($event)"></sb-uic-search-sort-input>
         </div>
       </div>
 

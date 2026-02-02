@@ -1,13 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import * as _ from 'lodash'
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, ValueService } from '@sunbird-cb/utils-v2'
 
 const configMap: any = {
   extContent: {
@@ -41,6 +40,11 @@ const configMap: any = {
   styleUrls: ['./see-all-dynamic.component.scss']
 })
 export class SeeAllDynamicComponent implements OnInit, OnDestroy {
+  colors = [
+    '#EF941D', '#F97440', '#35B5B0', '#9988FF', '#816FEC',
+    '#254092', '#926525', '#4F72DF'
+  ];
+  headerBgColor = '#1a4ca1'
   contentItems: any[] = []
   originalContentItems: any[] = []
   scrollDistance = 2  // Distance from bottom to trigger load
@@ -55,7 +59,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   customOptions: any[] = []
   contentName: string = ''
   searchString: string = ''
-  searchControl = new FormControl('')
   configKey: string = ''
   filterProvider: string = ''
   apiConfig: any = null
@@ -63,6 +66,9 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   providerDetails: any = null
   apiFacets: any[] = []  // Raw API facets for filter component
   appliedFilters: any = {}  // Filters applied from filter component
+  isFilterSidebarOpen = false
+  public screenSizeIsLtMedium = false
+  isLtMedium$ = this.valueSvc.isLtMedium$
 
   private destroy$ = new Subject<void>()
 
@@ -73,7 +79,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     private langtranslations: MultilingualTranslationsService,
     private commonSvc: CommonMethodsService,
     private router: Router,
-    private contSvc: WidgetContentLibService
+    private contSvc: WidgetContentLibService,
+    private valueSvc: ValueService
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -90,8 +97,12 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translateService.use(lang)
     }
+    this.isLtMedium$.pipe(takeUntil(this.destroy$)).subscribe(isLtMedium => {
+      this.screenSizeIsLtMedium = isLtMedium
+    })
     this.getRouterData()
     this.loadProviderDetails()
+    this.setRandomColor()
   }
 
   getRouterData() {
@@ -100,6 +111,13 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.configKey = _.get(this.activatedRoute, 'snapshot.queryParams.key', 'extContent')
     this.filterProvider = _.get(this.activatedRoute, 'snapshot.queryParams.provider', 'PEDGOG')
     this.loadConfiguration()
+  }
+
+  setRandomColor() {
+    if (this.filterProvider) {
+      const randomIndex1 = Math.floor(Math.random() * Math.floor(this.colors.length))
+      this.headerBgColor = this.colors[randomIndex1]
+    }
   }
 
 
