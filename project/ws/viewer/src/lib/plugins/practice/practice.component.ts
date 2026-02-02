@@ -2529,7 +2529,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     const milestoneName = parentData.name || 'Milestone'
     
     console.log('🔍 [MILESTONE CHECK] Checking if milestone is complete:', milestoneName)
-    
+
     // Check if milestone is now complete (all mandatory courses + assessments done)
     const isMilestoneComplete = this.checkMilestoneComplete(milestoneId)
     
@@ -2573,38 +2573,85 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       return false
     }
 
-    // Check completion percentage as primary indicator
-    const completionPercentage = milestoneData.completionPercentage || 0
-    const completionStatus = milestoneData.completionStatus || 0
-    
     console.log('📊 [MILESTONE COMPLETE CHECK] Milestone data:', {
       name: milestoneData.name,
-      completionPercentage,
-      completionStatus,
+      completionPercentage: milestoneData.completionPercentage,
+      completionStatus: milestoneData.completionStatus,
       progress: milestoneData.progress,
       status: milestoneData.status
     })
 
+    // Check if all mandatory content AND milestone assessment are completed
+    let hasMandatoryContent = false
+    let allMandatoryComplete = true
+    let hasMilestoneAssessment = false
+    let milestoneAssessmentComplete = false
+
     // Debug: Show all children of this milestone
     console.log('👶 [MILESTONE COMPLETE CHECK] Children of this milestone:')
+    
+    // Check all direct children of the milestone
     for (const key of Object.keys(this.tocSvc.hashmap)) {
       const item = this.tocSvc.hashmap[key]
-      if (item.parent === milestoneId) {
-        console.log(`  - ${item.name}:`, {
-          primaryCategory: item.primaryCategory,
-          isMandatory: item.isMandatory,
-          completionPercentage: item.completionPercentage || 0,
-          completionStatus: item.completionStatus || 0,
-          status: item.status || 0,
-          isComplete: (item.completionStatus === 2 || item.status === 2 || item.completionPercentage === 100) ? '✅' : '❌'
-        })
+
+      // Only check direct children
+      if (item.parent !== milestoneId) continue
+
+      console.log(`  - ${item.name}:`, {
+        primaryCategory: item.primaryCategory,
+        isMandatory: item.isMandatory,
+        completionPercentage: item.completionPercentage || 0,
+        completionStatus: item.completionStatus || 0,
+        status: item.status || 0,
+        isComplete: (item.completionStatus === 2 || item.status === 2 || item.completionPercentage === 100) ? '✅' : '❌'
+      })
+
+      // Check if this is the milestone assessment
+      const isAssessment = 
+        item.primaryCategory === 'Course Assessment' ||
+        item.primaryCategory === 'Final Assessment' ||
+        item.primaryCategory === 'Standalone Assessment'
+
+      if (isAssessment) {
+        hasMilestoneAssessment = true
+        const isCompleted = item.completionStatus === 2 || item.status === 2 || 
+                           item.completionPercentage >= 100 || item.progress >= 100
+        if (isCompleted) {
+          milestoneAssessmentComplete = true
+        }
+        continue // Skip to next item
+      }
+
+      // Check if this is mandatory content (courses/collections)
+      if (item.primaryCategory === 'Course' || item.isCollection) {
+        const isMandatory = item.isMandatory !== false // Default is mandatory
+        
+        if (isMandatory) {
+          hasMandatoryContent = true
+          const isCompleted = item.completionStatus === 2 || item.status === 2 || 
+                             item.completionPercentage >= 100 || item.progress >= 100
+          if (!isCompleted) {
+            allMandatoryComplete = false
+          }
+        }
       }
     }
 
-    // A milestone is complete if:
-    // 1. completionPercentage is 100, OR
-    // 2. completionStatus is 2 (complete)
-    const isComplete = completionPercentage === 100 || completionStatus === 2
+    // Milestone is complete when:
+    // 1. All mandatory content is completed (or no mandatory content exists)
+    // 2. Milestone assessment is completed (or no assessment exists)
+    const mandatoryCheck = !hasMandatoryContent || allMandatoryComplete
+    const assessmentCheck = !hasMilestoneAssessment || milestoneAssessmentComplete
+    const isComplete = mandatoryCheck && assessmentCheck
+
+    console.log('📊 [MILESTONE COMPLETE CHECK] Completion checks:', {
+      hasMandatoryContent,
+      allMandatoryComplete,
+      mandatoryCheck,
+      hasMilestoneAssessment,
+      milestoneAssessmentComplete,
+      assessmentCheck
+    })
     
     console.log('✅ [MILESTONE COMPLETE CHECK] Result:', isComplete ? 'COMPLETE' : 'INCOMPLETE')
 
