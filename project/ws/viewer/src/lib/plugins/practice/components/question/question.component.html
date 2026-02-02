@@ -8,6 +8,7 @@
             <ng-container i18n="question number label"><span class="subheading-1">{{ 'practiceoverview.question' | translate }}</span></ng-container><span class="question-number">&nbsp;{{ questionNumber }}&nbsp;</span>
             <ng-container i18n="question number of total questions"><span class="question-number">{{ 'practiceoverview.of' | translate }}</span></ng-container>
             <span class="question-number">&nbsp;{{ total }}</span>
+            <span class="question-type ml-4" *ngIf="question?.questionType"> ({{ questionType[question.questionType] || ''}}) </span>
           </p>
         </div>
         <div class="flex flex-row align-center justify-around" *ngIf="!showQuestionOnly">
