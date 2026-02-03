@@ -70,6 +70,14 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() assessmentType = ''
   expandedQuestionSetSubscription: any
 
+  questionType = {
+    "mcq-sca": "Single selection-MCQs",
+    "mcq-mca": "Multiple selection-MCQs",
+    "fitb": "Fill in the blanks",
+    "mtf": "Match the following",
+    "mcq-mca-w": "Weightage Single Choice",
+  }
+
   constructor(
     // private elementRef: ElementRef,
     private practiceSvc: PracticeService,

@@ -121,18 +121,67 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
           if (response && response.attemptsMade > 0 && response.attemptsMade < response.attemptsAllowed) {
             this.quizSvc.checkAlreadySubmitAssessment.next(true)
           }
+          // Update canAttempt with the latest response
+          if (response) {
+            this.canAttempt = response
+          }
+        }, (err: any) => {
+          this.quizSvc.checkAlreadySubmitAssessment.next(false)
+          this.handleCanAttendError(err)
         })
       } else {
-        // this.quizSvc.canAttendV5(identifier).subscribe(response => {
-        //   if (response && response.attemptsMade > 0 && response.attemptsMade < response.attemptsAllowed) {
-        //     this.quizSvc.checkAlreadySubmitAssessment.next(true)
-        //   } else {
-        //     this.quizSvc.checkAlreadySubmitAssessment.next(false)
-        //   }
-        // })
+        this.quizSvc.canAttendV5(identifier).subscribe(response => {
+          if (response && response.attemptsMade > 0 && response.attemptsMade < response.attemptsAllowed) {
+            this.quizSvc.checkAlreadySubmitAssessment.next(true)
+          } else {
+            this.quizSvc.checkAlreadySubmitAssessment.next(false)
+          }
+          // Update canAttempt with the latest response
+          if (response) {
+            this.canAttempt = response
+          }
+        }, (err: any) => {
+          this.quizSvc.checkAlreadySubmitAssessment.next(false)
+          this.handleCanAttendError(err)
+        })
       }
     }
 
+  }
+
+  /**
+   * Handle error from canAttend/canAttendV5 API
+   * Sets canAttempt to indicate all attempts are exhausted
+   */
+  handleCanAttendError(error: any) {
+    // Extract error message from the error response
+    let errorMessage = 'Unable to load assessment. Please try again later.'
+
+    if (error && error.params && error.params.errmsg) {
+      errorMessage = error.params.errmsg
+    } else if (error && error.error && error.error.params && error.error.params.errmsg) {
+      errorMessage = error.error.params.errmsg
+    } else if (error && error.message) {
+      errorMessage = error.message
+    }
+
+    // Check if the error is about attempts being exhausted
+    const isAttemptsExhausted = errorMessage.toLowerCase().includes('attempts exhausted') ||
+      errorMessage.toLowerCase().includes('retry attempts') ||
+      errorMessage.toLowerCase().includes('maximum') ||
+      (error && error.error && error.error.responseCode === 'BAD_REQUEST')
+
+    if (isAttemptsExhausted) {
+      // Set canAttempt to indicate all attempts are used up
+      // When attemptsMade >= attemptsAllowed, the UI shows "You have exceeded the maximum allowed attempt"
+      this.canAttempt = {
+        attemptsAllowed: this.quizData?.maxAssessmentRetakeAttempts || 1,
+        attemptsMade: this.quizData?.maxAssessmentRetakeAttempts || 1, // Set equal to make it exhausted
+      }
+    }
+
+    // Show snackbar for quick notification
+    this.snackbar.open(errorMessage, 'Close', { duration: 8000 })
   }
 
   ngOnDestroy() {

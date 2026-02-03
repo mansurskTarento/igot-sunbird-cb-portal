@@ -101,6 +101,9 @@ export const SearchOthersFacet = [
   'courseCategory',
   'sectorDetails_v1.sectorName',
   'sectorDetails_v1.subSectorName',
+  "competencies_v6.competencyAreaName",
+  "competencies_v6.competencyThemeName",
+  "competencies_v6.competencySubThemeName"
 ]
 
 // Events
