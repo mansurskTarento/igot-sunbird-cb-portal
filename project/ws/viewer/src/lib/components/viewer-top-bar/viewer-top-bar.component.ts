@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
-import { WidgetContentService } from '@sunbird-cb/toc'
+import { WidgetContentService, AppTocService } from '@sunbird-cb/toc'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, LoggerService, NsPage, ValueService, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -37,6 +37,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   private viewerDataServiceSubscription: Subscription | null = null
   private paramSubscription: Subscription | null = null
   private viewerDataServiceResourceSubscription: Subscription | null = null
+  private hashmapUpdatedSubscription: Subscription | null = null
   overallProgress = 0
   overallLeafNodes = 0
   completedCount = 0
@@ -101,7 +102,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     private widgetLibSvc: WidgetContentLibService,
     private contentLangSvc: ContentLanguageService,
     // private contentSvc: WidgetContentServiceUtils,
-    private domainConfSvc: DomainConfService
+    private domainConfSvc: DomainConfService,
+    private tocSvc: AppTocService
 
   ) {
     this.valueSvc.isXSmall$.subscribe(isXSmall => {
@@ -120,6 +122,12 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
 
     this.contentPrimaryCategory = this.activatedRoute?.snapshot?.data?.contentRead &&
       this.activatedRoute?.snapshot?.data?.contentRead?.data?.result?.content?.primaryCategory
+
+    // Initialize hierarchyMapData from service if not provided via input
+    if (!this.hierarchyMapData || Object.keys(this.hierarchyMapData).length === 0) {
+      this.hierarchyMapData = this.tocSvc.hashmap || {}
+      console.log('📥 [TOP-BAR] Initialized hierarchyMapData from tocSvc.hashmap')
+    }
 
     // this.getAuthDataIdentifer()
     if (window.innerWidth <= 1200) {
@@ -249,6 +257,23 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
 
+    // Subscribe to hashmap updates to recalculate progress when content completion changes
+    this.hashmapUpdatedSubscription = this.tocSvc.hashmapUpdated$.subscribe((updatedHashmap: any) => {
+      if (updatedHashmap) {
+        const collectionId = this.activatedRoute.snapshot.queryParams.collectionId ?
+          this.activatedRoute.snapshot.queryParams.collectionId : ''
+        const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
+          this.activatedRoute.snapshot.queryParams.MLId : ''
+        const id = MLID ? MLID : collectionId
+        if (id) {
+          console.log('🔄 [TOP-BAR] Hashmap updated - recalculating progress')
+          // Update local reference to the latest hashmap
+          this.hierarchyMapData = updatedHashmap.hashmap || this.tocSvc.hashmap
+          this.ComputeCompletedNodesAndPercent(id)
+        }
+      }
+    })
+
   }
 
   ngOnChanges(props: SimpleChanges) {
@@ -290,18 +315,115 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     // Prefer the aggregated leafNodesCount input when available
     this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0
     if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
-      // tslint:disable
-      const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, r => (this.hierarchyMapData[r] && (this.hierarchyMapData[r].completionStatus === 2 || this.hierarchyMapData[r].completionPercentage === 100)))
-      this.completedCount = completedItems.length
-      this.completedCountOutput.emit(this.completedCount)
-      // Only override with hashmap value if input wasn't available
-      if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
-        this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+      console.log(`📊 [HEADER COUNT] Computing completed items for ${identifier}`)
+      console.log(`   Input leafNodesCount: ${this.leafNodesCount}`)
+      console.log(`   Hashmap leafNodesCount: ${this.hierarchyMapData[identifier].leafNodesCount}`)
+      console.log(`   Total leafNodes array: ${this.hierarchyMapData[identifier].leafNodes?.length}`)
+      console.log(`   Course Category: ${this.hierarchyMapData[identifier].courseCategory}`)
+      
+      // Check if this is a Learning Pathway
+      const isLearningPathway = this.hierarchyMapData[identifier].courseCategory === 'Learning Pathway'
+      
+      if (isLearningPathway) {
+        // LEARNING PATHWAY LOGIC: Filter out locked milestone content
+        console.log(`   🎯 Learning Pathway detected - using milestone filtering logic`)
+        
+        // Get all leaf nodes
+        const allLeafNodes = this.hierarchyMapData[identifier].leafNodes || []
+        const totalLeafCount = allLeafNodes.length
+        
+        // Get list of locked milestone IDs
+        const lockedMilestoneIds: string[] = []
+        for (const key of Object.keys(this.hierarchyMapData)) {
+          const item = this.hierarchyMapData[key]
+          if ((item.isMilestone || item.primaryCategory === 'Milestone') && 
+              item.computedIsLocked === true) {
+            lockedMilestoneIds.push(key)
+            console.log(`   🔒 Locked milestone: ${item.name || key}`)
+          }
+        }
+        
+        console.log(`   📊 Found ${lockedMilestoneIds.length} locked milestones`)
+        
+        // Filter leaf nodes to exclude those inside locked milestones (for completed count only)
+        const accessibleLeafNodes = _.filter(allLeafNodes, (leafId: string) => {
+          const leafData = this.hierarchyMapData[leafId]
+          if (!leafData) return false
+          
+          // Check if this leaf's parent chain includes a locked milestone
+          let currentParentId = leafData.parent
+          let depth = 0
+          const maxDepth = 10
+          
+          while (currentParentId && depth < maxDepth) {
+            if (lockedMilestoneIds.includes(currentParentId)) {
+              return false
+            }
+            const parentData = this.hierarchyMapData[currentParentId]
+            if (!parentData) break
+            currentParentId = parentData.parent
+            depth++
+          }
+          return true
+        })
+        
+        console.log(`   📊 Accessible leaf nodes for completed count: ${accessibleLeafNodes.length}`)
+        
+        // Count completed items from accessible content only
+        const completedItems = _.filter(accessibleLeafNodes, (r: string) => {
+          const leafData = this.hierarchyMapData[r]
+          if (!leafData) return false
+          
+          const isCompleted = 
+            leafData.completionStatus === 2 || 
+            leafData.status === 2 ||
+            leafData.completionPercentage === 100 ||
+            (leafData.completionPercentage && leafData.completionPercentage >= 100) ||
+            (leafData.progress && leafData.progress >= 100)
+          
+          return isCompleted
+        })
+        
+        this.completedCount = completedItems.length
+        this.overallLeafNodes = totalLeafCount  // Show total count (not filtered)
+        
+        console.log(`✅ [HEADER COUNT] Learning Pathway Result: ${this.completedCount}/${this.overallLeafNodes}`)
+        this.completedCountOutput.emit(this.completedCount)
+        
+        const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
+        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
+        this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
+        
+      } else {
+        // REGULAR COURSE LOGIC: Use old simple logic without filtering
+        console.log(`   📚 Regular course - using standard completion logic`)
+        
+        const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, (r: string) => {
+          return this.hierarchyMapData[r] && (
+            this.hierarchyMapData[r].completionStatus === 2 || 
+            this.hierarchyMapData[r].status === 2 ||
+            this.hierarchyMapData[r].completionPercentage === 100 ||
+            (this.hierarchyMapData[r].completionPercentage && this.hierarchyMapData[r].completionPercentage >= 100) ||
+            (this.hierarchyMapData[r].progress && this.hierarchyMapData[r].progress >= 100)
+          )
+        })
+        
+        this.completedCount = completedItems.length
+        
+        if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
+          this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
+        }
+        
+        console.log(`✅ [HEADER COUNT] Regular Course Result: ${this.completedCount}/${this.overallLeafNodes}`)
+        this.completedCountOutput.emit(this.completedCount)
+        
+        // tslint:disable
+        const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
+        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
+        this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
       }
-      // tslint:disable
-      this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / this.overallLeafNodes) * 100).toFixed())
-      this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
-      this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
     }
     this.loadingOverallPRogress = false
   }
@@ -315,6 +437,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     }
     if (this.viewerDataServiceResourceSubscription) {
       this.viewerDataServiceResourceSubscription.unsubscribe()
+    }
+    if (this.hashmapUpdatedSubscription) {
+      this.hashmapUpdatedSubscription.unsubscribe()
     }
   }
 

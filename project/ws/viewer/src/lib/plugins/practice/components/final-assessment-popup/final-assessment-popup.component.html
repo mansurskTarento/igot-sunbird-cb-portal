@@ -1,6 +1,6 @@
 <div class="finalAssessment">
     <button
-        *ngIf="assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'optionalWeightage'"
+        *ngIf="assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'milestoneComplete'"
         mat-icon-button class="close-button" [mat-dialog-close]="true">
         <mat-icon class="close-icon">close</mat-icon>
     </button>
@@ -9,7 +9,7 @@
         <mat-icon class="close-icon">close</mat-icon>
     </button>
     <ng-container
-        *ngIf="assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'publicUserSuccess'">
+        *ngIf="assessmentData?.assessmentType !== 'optionalWeightage' && assessmentData?.assessmentType !== 'maxAttemptReached' && assessmentData?.assessmentType !== 'publicUserSuccess' && assessmentData?.assessmentType !== 'milestoneComplete'">
         <div class="assessment-results">
             <ng-container *ngIf="assessmentData?.headerText">
                 <div class="header p-3">{{assessmentData.headerText}}</div>
@@ -110,6 +110,23 @@
                     (click)="closePopup('r')">
                     <span>OK</span>
                 </button>
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="assessmentData?.assessmentType === 'milestoneComplete'">
+        <div class="py-8 px-6 milestone-completion-content">
+            <div class="flex flex-col align-center justify-center text-center">
+                <div class="mb-6 celebration-icon">
+                    <span class="celebration-emoji">🎉</span>
+                </div>
+                <h2 class="milestone-completion-title mb-4">{{assessmentData?.headerText}}</h2>
+                <p class="milestone-completion-message mb-2">{{assessmentData?.message}}</p>
+            </div>
+            <div class="flex justify-center items-center gap-3 mt-8">
+                <ng-container *ngFor="let button of assessmentData?.buttonsList">
+                    <button mat-raised-button [ngClass]="button.classes" class="milestone-action-btn"
+                        (click)="closePopup(button.response)">{{button.text}}</button>
+                </ng-container>
             </div>
         </div>
     </ng-container>

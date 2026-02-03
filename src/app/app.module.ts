@@ -16,7 +16,7 @@ import 'hammerjs'
 import { AppRoutingModule } from './app-routing.module'
 import { InitService } from './services/init.service'
 import { GlobalErrorHandlingService } from './services/global-error-handling.service'
-import { AppTocResolverService } from '@sunbird-cb/toc'
+import { AppTocResolverService, WIDGET_REGISTRATION_TOC_LIB_CONFIG } from '@sunbird-cb/toc'
 
 import { RootComponent } from './component/root/root.component'
 import { LoginComponent } from './component/login/login.component'
@@ -173,8 +173,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
 
     CardsModule,
-    WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG]),
-    SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG]),
+    WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG, ...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
+    SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG,...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
     // Material Imports
     MatSliderModule,
     MatFormFieldModule,
