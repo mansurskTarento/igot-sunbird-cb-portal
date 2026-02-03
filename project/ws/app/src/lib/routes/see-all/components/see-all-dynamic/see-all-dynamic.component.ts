@@ -52,6 +52,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   pageSize = 10  // Items per page
   currentPageNumber = 0  // For server-side pagination
   totalCount = 0  // Server-provided total count
+  pageSizeOptions = [10, 20, 50, 100]
   sortKey = 'name'
   sortOrder: 'asc' | 'desc' = 'asc'
   loading = false
@@ -120,7 +121,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     }
   }
 
-
   loadConfiguration() {
     // Get config from local configMap
     const getConfigData = _.get(this.activatedRoute, 'snapshot.data.pageData.data', configMap)
@@ -144,7 +144,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.getCourses()
     // this.fetchContent()
   }
-
 
   // fetchContent(isLoadMore = false) {
   //   if (!this.apiConfig) {
@@ -289,15 +288,15 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   // }
 
   getCourses(isLoadMore = false) {
-    const isFirstLoad = !isLoadMore
-    if (isFirstLoad) {
-      this.loading = true
-      this.currentPageNumber = 0
-      this.contentItems = []
-      this.originalContentItems = []
-    } else {
-      this.isLoadingMore = true
-    }
+    // const isFirstLoad = !isLoadMore
+    // if (isFirstLoad) {
+    //   this.loading = true
+    //   this.currentPageNumber = 0
+    //   this.contentItems = []
+    //   this.originalContentItems = []
+    // } else {
+    //   this.isLoadingMore = true
+    // }
 
     // Deep copy request from apiConfig to avoid mutating original
     const request: any = JSON.parse(JSON.stringify(_.get(this.apiConfig, 'request', {})))
@@ -348,7 +347,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
           const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
 
           // Capture server-provided total count
-          this.totalCount = _.get(res, 'totalCount', null) || transformed.length || 0
+          this.totalCount = _.get(res, 'totalCount', 0)
 
           // Capture facets for filters (only on first load)
           if (!isLoadMore) {
@@ -564,20 +563,20 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   }
 
   onScrollEnd() {
-    // Check if we have more items to load
-    if (this.isLoadingMore || this.loading) {
-      return  // Already loading
-    }
+    // // Check if we have more items to load
+    // if (this.isLoadingMore || this.loading) {
+    //   return  // Already loading
+    // }
 
-    const totalLoaded = this.contentItems.length
-    if (totalLoaded >= this.totalCount) {
-      return  // All items loaded
-    }
+    // const totalLoaded = this.contentItems.length
+    // if (totalLoaded >= this.totalCount) {
+    //   return  // All items loaded
+    // }
 
-    // Load next page
-    this.currentPageNumber += 1
-    // this.fetchContent(true)  // Pass true to indicate this is a load-more request
-    this.getCourses(true)  // Pass true to indicate this is a load-more request
+    // // Load next page
+    // this.currentPageNumber += 1
+    // // this.fetchContent(true)  // Pass true to indicate this is a load-more request
+    // this.getCourses(true)  // Pass true to indicate this is a load-more request
   }
 
   onChangeSortSearch(event: any) {
@@ -663,5 +662,11 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       )
     }
 
+  }
+
+  onPageChange(event: any) {
+    this.currentPageNumber = event.currentPage - 1
+    this.pageSize = event.limit
+    this.getCourses(false)
   }
 }
