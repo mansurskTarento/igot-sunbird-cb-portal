@@ -25,9 +25,9 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { SeeAllRoutingModule } from './seeAll-routing.module'
 import { SeeAllHomeComponent } from './components/see-all-home/see-all-home.component'
 import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SeeAllWithPillsComponent } from './components/see-all-with-pills/see-all-with-pills.component'
-import { CardsModule, PaginationModule } from '@sunbird-cb/consumption'
+import { CardsModule, FiltersModule, PaginationModule } from '@sunbird-cb/consumption'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
@@ -48,69 +48,78 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
+import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+import { HttpClient } from '@angular/common/http'
 
 @NgModule({
-    declarations: [
-        SeeAllHomeComponent,
-        SeeAllWithPillsComponent,
-        SeeAllDynamicComponent,
-    ],
-    imports: [
-        CommonModule,
-        SeeAllRoutingModule,
-        CardContentV2Module,
-        BtnPageBackModule,
-        MatToolbarModule,
-        MatTabsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        MatOptionModule,
-        MatIconModule,
-        MatMenuModule,
-        MatChipsModule,
-        MatListModule,
-        MatSelectModule,
-        MatCardModule,
-        MatExpansionModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatSlideToggleModule,
-        MatSidenavModule,
-        MatRippleModule,
-        DefaultThumbnailModule,
-        MatTooltipModule,
-        PipeContentRouteModule,
-        PipeLimitToModule,
-        PipeDurationTransformModule,
-        BtnContentDownloadModule,
-        BtnContentLikeModule,
-        BtnContentShareModule,
-        BtnPlaylistModule,
-        BtnGoalsModule,
-        BtnContentMailMeModule,
-        BtnKbAnalyticsModule,
-        PipePartialContentModule,
-        PipePublicURLModule,
-        HorizontalScrollerModule,
-        MatProgressSpinnerModule,
-        DisplayContentTypeModule,
-        WidgetResolverModule,
-        BtnKbModule,
-        BtnChannelAnalyticsModule,
-        MatDividerModule,
-        UserAutocompleteModule,
-        InfiniteScrollModule,
-        TranslateModule,
-        CardsModule,
-        PaginationModule
-    ],
-    exports: [SeeAllHomeComponent],
-    providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  declarations: [
+    SeeAllHomeComponent,
+    SeeAllWithPillsComponent,
+    SeeAllDynamicComponent,
+  ],
+  imports: [
+    CommonModule,
+    SeeAllRoutingModule,
+    CardContentV2Module,
+    BtnPageBackModule,
+    MatToolbarModule,
+    MatTabsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatOptionModule,
+    MatIconModule,
+    MatMenuModule,
+    MatChipsModule,
+    MatListModule,
+    MatSelectModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    MatSidenavModule,
+    MatRippleModule,
+    DefaultThumbnailModule,
+    MatTooltipModule,
+    PipeContentRouteModule,
+    PipeLimitToModule,
+    PipeDurationTransformModule,
+    BtnContentDownloadModule,
+    BtnContentLikeModule,
+    BtnContentShareModule,
+    BtnPlaylistModule,
+    BtnGoalsModule,
+    BtnContentMailMeModule,
+    BtnKbAnalyticsModule,
+    PipePartialContentModule,
+    PipePublicURLModule,
+    HorizontalScrollerModule,
+    MatProgressSpinnerModule,
+    DisplayContentTypeModule,
+    WidgetResolverModule,
+    BtnKbModule,
+    BtnChannelAnalyticsModule,
+    MatDividerModule,
+    UserAutocompleteModule,
+    InfiniteScrollModule,
+    CardsModule,
+    PaginationModule,
+    FiltersModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
+  ],
+  exports: [SeeAllHomeComponent],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SeeAllModule { }
