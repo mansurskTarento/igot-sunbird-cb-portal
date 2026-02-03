@@ -167,7 +167,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   public publicUserInfoForm!: UntypedFormGroup
   public submitted = false
   emailLengthVal = false
-  
+
   // Store next resource URL from TOC service subscription
   private nextResourceUrl: string | null = null
   private nextResourceUrlParams: any = null
@@ -341,7 +341,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     //   this.init()
     //   this.updateVisivility()
     // } else {
-
     if ((this.forPreview && !this.forCreatorMode)) {
       this.init()
       this.updateVisivility()
@@ -402,37 +401,27 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       errorMessage = error.message
     }
 
+    // Check if the error is about attempts being exhausted
+    const isAttemptsExhausted = errorMessage.toLowerCase().includes('attempts exhausted') ||
+      errorMessage.toLowerCase().includes('retry attempts') ||
+      errorMessage.toLowerCase().includes('maximum') ||
+      (error && error.error && error.error.responseCode === 'BAD_REQUEST')
 
-    // const popupData = {
-    //   headerText: '',
-    //   assessmentType: 'maxAttemptReachedd',
-    //   primaryCategory: this.primaryCategory,
-    //   canAttempt: this.canAttempt,
-    //   warningNote: errorMessage,
-    //   buttonsList: [
-    //     {
-    //       response: 'yes',
-    //       text: 'Ok',
-    //       classes: 'blue-full',
-    //     },
-    //   ],
-    // }
-    // const dialogRef = this.dialog.open(FinalAssessmentPopupComponent, {
-    //   data: popupData,
-    //   width: '626px',
-    //   maxWidth: '90vw',
-    //   height: 'auto',
-    //   maxHeight: '225px',
-    //   panelClass: 'final-assessment',
-    // })
+    if (isAttemptsExhausted) {
+      // Set canAttempt to indicate all attempts are used up
+      // When attemptsMade >= attemptsAllowed, the UI shows "You have exceeded the maximum allowed attempt"
+      this.canAttempt = {
+        attemptsAllowed: this.quizData?.maxAssessmentRetakeAttempts || 1,
+        attemptsMade: this.quizData?.maxAssessmentRetakeAttempts || 1, // Set equal to make it exhausted
+      }
+    }
 
-    // dialogRef.afterClosed().subscribe(() => {
-    //   // Navigate back or show appropriate UI after closing the dialog
-    //   this.viewerHeaderSideBarToggleService.visibilityStatus.next(true)
-    // })
-
-    // Also show snackbar for quick notification
+    // Show snackbar for quick notification
     this.openSnackbar(errorMessage)
+
+    // Initialize and update UI to reflect the canAttempt status
+    this.init()
+    this.updateVisivility()
   }
   ngOnInit() {
     this.attemptSubscription = this.quizSvc.secAttempted.subscribe(data => {
@@ -1176,7 +1165,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   updatePreEnrollmentProgress(status: any) {
-    
+
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
       if (this.identifier) {
@@ -2375,7 +2364,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         completionPercentage: child.completionPercentage,
         isComplete: isComplete ? '✅' : '❌'
       })
-      
+
       if (isComplete) {
         completedCount++
       }
@@ -2396,9 +2385,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     })
 
     // Update parent's progress if it changed
-    if (parentData.completionPercentage !== newCompletionPercentage || 
-        parentData.completionStatus !== newCompletionStatus) {
-      
+    if (parentData.completionPercentage !== newCompletionPercentage ||
+      parentData.completionStatus !== newCompletionStatus) {
+
       parentData.completionPercentage = newCompletionPercentage
       parentData.completionStatus = newCompletionStatus
       parentData.status = newCompletionStatus
@@ -2418,7 +2407,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       console.log('ℹ️ [PARENT PROGRESS] No change in parent progress, skipping update')
     }
   }
-  
+
   formate(text: string): SafeHtml {
     let newText = '<ul>'
     if (text) {
@@ -2467,29 +2456,29 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   checkAndShowMilestoneCompletion() {
     try {
       console.log('🎯 [MILESTONE CHECK] Starting milestone completion check for:', this.identifier)
-      
+
       // Get assessment data from hashmap (quizJson is already cleared at this point)
       const assessmentData = this.tocSvc.hashmap[this.identifier]
       if (!assessmentData) {
         console.log('❌ [MILESTONE CHECK] No assessment data found in hashmap')
         return
       }
-      
+
       // Check if this is a Course Assessment using hashmap data or contextCategory
       const primaryCategory = this.viewerDataSvc.resource?.primaryCategory
       const contextCategory = this.viewerDataSvc.resource?.contextCategory
-      
+
       console.log('🎯 [MILESTONE CHECK] Assessment info:', {
         primaryCategory,
         contextCategory,
         name: assessmentData.name
       })
-      
+
       // Check if this is a milestone assessment (Course Assessment with parent=Milestone)
       // Also check contextCategory for 'Final Milestone Assessment'
       const isCourseAssessment = primaryCategory === 'Course Assessment'
       const isFinalMilestoneAssessment = contextCategory === 'Final Milestone Assessment'
-      
+
       if (!isCourseAssessment && !isFinalMilestoneAssessment) {
         console.log('❌ [MILESTONE CHECK] Not a Course Assessment or Final Milestone Assessment, skipping')
         return
@@ -2515,7 +2504,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       setTimeout(() => {
         this.checkMilestoneCompletionAfterLockUpdate(parentData)
       }, 2000) // Wait 2 seconds for lock and progress computation to complete
-      
+
     } catch (error) {
       console.error('❌ [MILESTONE CHECK] Error checking milestone completion:', error)
     }
@@ -2527,12 +2516,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   checkMilestoneCompletionAfterLockUpdate(parentData: any) {
     const milestoneId = parentData.identifier
     const milestoneName = parentData.name || 'Milestone'
-    
+
     console.log('🔍 [MILESTONE CHECK] Checking if milestone is complete:', milestoneName)
 
     // Check if milestone is now complete (all mandatory courses + assessments done)
     const isMilestoneComplete = this.checkMilestoneComplete(milestoneId)
-    
+
     if (!isMilestoneComplete) {
       console.log('❌ [MILESTONE CHECK] Milestone not complete yet - mandatory content incomplete')
       return
@@ -2542,20 +2531,20 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     // Get milestone information
     const milestoneNumber = this.getMilestoneNumber(milestoneId)
-    
+
     // Check if there's a next milestone
     const hasNextMilestone = this.hasNextMilestone(milestoneNumber)
-    
+
     console.log('📊 [MILESTONE CHECK] Details:', {
       milestoneName,
       milestoneNumber,
       hasNextMilestone
     })
-    
+
     // Subscribe to TOC changes to get the next resource URL
     // This ensures we have the latest navigation data before showing the popup
     this.subscribeToTocChanges()
-    
+
     // Show congratulations popup
     this.showMilestoneCompletionPopup(milestoneName, milestoneNumber, hasNextMilestone)
   }
@@ -2566,7 +2555,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    */
   checkMilestoneComplete(milestoneId: string): boolean {
     console.log('🔍 [MILESTONE COMPLETE CHECK] Checking milestone:', milestoneId)
-    
+
     const milestoneData = this.tocSvc.hashmap[milestoneId]
     if (!milestoneData) {
       console.log('❌ [MILESTONE COMPLETE CHECK] Milestone not found in hashmap')
@@ -2589,7 +2578,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     // Debug: Show all children of this milestone
     console.log('👶 [MILESTONE COMPLETE CHECK] Children of this milestone:')
-    
+
     // Check all direct children of the milestone
     for (const key of Object.keys(this.tocSvc.hashmap)) {
       const item = this.tocSvc.hashmap[key]
@@ -2607,15 +2596,15 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       })
 
       // Check if this is the milestone assessment
-      const isAssessment = 
+      const isAssessment =
         item.primaryCategory === 'Course Assessment' ||
         item.primaryCategory === 'Final Assessment' ||
         item.primaryCategory === 'Standalone Assessment'
 
       if (isAssessment) {
         hasMilestoneAssessment = true
-        const isCompleted = item.completionStatus === 2 || item.status === 2 || 
-                           item.completionPercentage >= 100 || item.progress >= 100
+        const isCompleted = item.completionStatus === 2 || item.status === 2 ||
+          item.completionPercentage >= 100 || item.progress >= 100
         if (isCompleted) {
           milestoneAssessmentComplete = true
         }
@@ -2625,11 +2614,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       // Check if this is mandatory content (courses/collections)
       if (item.primaryCategory === 'Course' || item.isCollection) {
         const isMandatory = item.isMandatory !== false // Default is mandatory
-        
+
         if (isMandatory) {
           hasMandatoryContent = true
-          const isCompleted = item.completionStatus === 2 || item.status === 2 || 
-                             item.completionPercentage >= 100 || item.progress >= 100
+          const isCompleted = item.completionStatus === 2 || item.status === 2 ||
+            item.completionPercentage >= 100 || item.progress >= 100
           if (!isCompleted) {
             allMandatoryComplete = false
           }
@@ -2652,7 +2641,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       milestoneAssessmentComplete,
       assessmentCheck
     })
-    
+
     console.log('✅ [MILESTONE COMPLETE CHECK] Result:', isComplete ? 'COMPLETE' : 'INCOMPLETE')
 
     return isComplete
@@ -2691,12 +2680,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    */
   showMilestoneCompletionPopup(milestoneName: string, milestoneNumber: number, hasNextMilestone: boolean) {
     console.log('🎉 [MILESTONE POPUP] Showing completion popup:', { milestoneName, milestoneNumber, hasNextMilestone })
-    
+
     const popupData: any = {
       assessmentType: 'milestoneComplete',
       headerText: `🎉 Great job! You've completed ${milestoneName}`,
-      message: hasNextMilestone 
-        ? `You can now continue to Milestone ${milestoneNumber + 1}.` 
+      message: hasNextMilestone
+        ? `You can now continue to Milestone ${milestoneNumber + 1}.`
         : 'Congratulations on completing all milestones!',
       buttonsList: [],
       autoRedirect: false,
@@ -2734,11 +2723,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       console.log('🎉 [MILESTONE POPUP] User response:', result)
-      
+
       if (result === 'continue-milestone') {
         // Use pre-computed next resource URL from TOC service subscription
         console.log('🎉 [MILESTONE POPUP] Navigating to next milestone content')
-        
+
         if (this.nextResourceUrl && this.nextResourceUrlParams) {
           console.log('🎉 [MILESTONE POPUP] Using pre-computed URL:', {
             url: this.nextResourceUrl,
@@ -2763,7 +2752,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    * Get the ID of the next milestone
    */
   getNextMilestoneId(currentMilestoneNumber: number): string | null {
-    
+
     // Find all milestones
     const milestones: any[] = []
     for (const key of Object.keys(this.tocSvc.hashmap)) {
@@ -2782,7 +2771,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     // Find next milestone
     const nextMilestone = milestones.find(m => m.number === currentMilestoneNumber + 1)
-    
+
     console.log('🔍 [NEXT MILESTONE] All milestones:', milestones)
     console.log('🔍 [NEXT MILESTONE] Current milestone number:', currentMilestoneNumber)
     console.log('🔍 [NEXT MILESTONE] Next milestone:', nextMilestone)
@@ -3261,7 +3250,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       isPreAssessment,
       primaryCategory: this.quizJson?.primaryCategory
     })
-    
+
     if (!isPreAssessment) {
       let userId = ''
       if (this.configSvc.userProfile) {
@@ -3282,9 +3271,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
           fields: ['progressdetails'],
         },
       }
-      
+
       console.log('📡 [FETCH PROGRESS] Calling fetchContentHistoryV2 API with request:', req)
-      
+
       this.widgetContentService.fetchContentHistoryV2(req).subscribe(
         data => {
           console.log('📡 [FETCH PROGRESS] API response received:', {
@@ -3292,18 +3281,18 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
             hasResult: !!(data && data.result),
             contentListLength: data?.result?.contentList?.length || 0
           })
-          
+
           if (data && data.result && data.result.contentList.length) {
             this.widgetContentService.setProgramChildResumeData(data.result.contentList, requestCourse.courseId)
             let contentProgressData = data.result.contentList && data.result.contentList.length && data.result.contentList.filter((content: any) => {
               return content.contentId === this.identifier
             })
-            
+
             console.log('📡 [FETCH PROGRESS] Found progress data for this assessment:', {
               found: !!(contentProgressData && contentProgressData.length),
               progressData: contentProgressData && contentProgressData.length ? contentProgressData[0] : null
             })
-            
+
             if (contentProgressData && contentProgressData.length && contentProgressData[0]?.status === 2) {
               console.log('✅ [FETCH PROGRESS] Assessment is COMPLETE (status=2), updating hashmap')
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
@@ -3311,17 +3300,17 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               this.cdr.detectChanges()
               // Check if this completes a milestone and show congratulations popup
               const contextCategory = this.viewerDataSvc.resource?.contextCategory
-              if(contextCategory === 'Final Milestone Assessment') {
+              if (contextCategory === 'Final Milestone Assessment') {
                 this.checkAndShowMilestoneCompletion()
               }
-            } else if(contentProgressData && contentProgressData.length && contentProgressData[0]){
+            } else if (contentProgressData && contentProgressData.length && contentProgressData[0]) {
               console.log('⏳ [FETCH PROGRESS] Assessment in progress (status=' + contentProgressData[0].status + '), updating hashmap')
               this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, contentProgressData[0])
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()
             } else {
               console.log('⚠️ [FETCH PROGRESS] No progress data found, using mock data with status=1')
-               let mockProgressData = {
+              let mockProgressData = {
                 "lastAccessTime": "2026-01-28 18:17:42:997+0530",
                 "contentId": this.identifier,
                 "language": "english",
@@ -3336,7 +3325,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
                 "lastCompletedTime": "2026-01-28 18:17:43:007+0530",
                 "status": 1
               }
-             this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, mockProgressData)
+              this.viewerSvc.updateContentHashMapForAssesstent(this.identifier, mockProgressData)
               // Manually trigger change detection to update UI
               this.cdr.detectChanges()
             }
