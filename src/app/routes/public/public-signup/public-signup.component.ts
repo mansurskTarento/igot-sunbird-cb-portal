@@ -2313,10 +2313,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               )
           }
 
-          if (!requestBody["request"]?.filters?.levelOneOrgId) {
-            this.masterData['organisationBackup'] = this.masterData['organisationBackup'].filter((item: any) => item.orgName !== 'N/A' );
-          }
-
           // }
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
