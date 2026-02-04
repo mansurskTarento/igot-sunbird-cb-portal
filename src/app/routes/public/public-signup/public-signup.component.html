@@ -84,8 +84,7 @@
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.ministry' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
-                      (closed)="onMinistryDropdownClosed()" panelClass="search-panel-ministry"
+                    <mat-select #ministry formControlName="ministry" placeholder="Select ministry" panelClass="search-panel-ministry"
                       (openedChange)="setupScrollListenerForMinistry($event)" (selectionChange)="onMinistryChange($event)">
 
                       <!-- Sticky search input container -->
@@ -133,8 +132,7 @@
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.state' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #state formControlName="state" placeholder="Select state"
-                      (closed)="onStateDropdownClosed()" panelClass="search-panel-state"
+                    <mat-select #state formControlName="state" placeholder="Select state" panelClass="search-panel-state"
                       (openedChange)="setupScrollListenerForState($event)"
                       (selectionChange)="onStateChanged($event)">
 
@@ -183,8 +181,7 @@
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.department' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #department formControlName="department" placeholder="Select department"
-                      (closed)="onDepartmentDropdownClosed()" panelClass="search-panel-department"
+                    <mat-select #department formControlName="department" placeholder="Select department" panelClass="search-panel-department"
                       (openedChange)="setupScrollListenerForDepartment($event)" (selectionChange)="onDepartmentChange($event)">
 
                       <!-- Sticky search input container -->
@@ -232,8 +229,7 @@
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.organisation' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #organisation formControlName="organisation" placeholder="Select organisation"
-                      (closed)="onOrganisationDropdownClosed()" panelClass="search-panel-organisation"
+                    <mat-select #organisation formControlName="organisation" placeholder="Select organisation" panelClass="search-panel-organisation"
                       (openedChange)="setupScrollListenerForOrganisation($event)"
                       (selectionChange)="onOrganisationChanged($event)">
 
