@@ -122,6 +122,11 @@
         </ng-container>
       </div>
 
+      <div class="mb-4" *ngIf="!loading && contentItems.length > 0">
+        <ws-widget-pagination [defaultPaginationSize]="pageSize" [defaultPaginationSizeOptions]="pageSizeOptions"
+          [totalItemsCount]="totalCount" (pageChange)="onPageChange($event)"></ws-widget-pagination>
+      </div>
+
       <!-- Loading More Indicator -->
       <div *ngIf="isLoadingMore" class="text-center py-4">
         <mat-spinner [diameter]="30"></mat-spinner>

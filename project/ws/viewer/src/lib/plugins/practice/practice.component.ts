@@ -172,6 +172,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   private nextResourceUrl: string | null = null
   private nextResourceUrlParams: any = null
   private viewerDataTocSubscription: Subscription | null = null
+  private cachedSelectedQuestionNumber: number = 0
+  private cachedQuestionId: string = ''
 
   @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
@@ -1213,7 +1215,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         )
         .subscribe(_timeRemaining => {
           this.timeLeft -= 1
-          if (this.timeLeft < 0) {
+          if (this.timeLeft === 0) {
             if (this.paperSections && this.paperSections.length) {
               if (this.allSecAttempted.full) {
                 this.isIdeal = true
@@ -2300,7 +2302,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
    * Recalculates parent (course/module/milestone) progress after child content completes
    * This ensures that when assessments inside courses complete, the parent course progress updates
    * which then triggers milestone lock recalculation
-   * 
+   *
    * For MILESTONES: Only mandatory courses + milestone assessment count toward completion
    * For COURSES/MODULES: All children count toward completion
    */
@@ -3067,6 +3069,29 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   getQuestionIndex(index: number): number {
     return (this.noOfQuestionsPerSet * this.currentSetNumber) + index + 1
+  }
+
+  getSelectedQuestionNumber(index?: number): number {
+    if (!this.currentQuestion || !this.secQuestions) {
+      return 0
+    }
+
+    // Return cached result if current question hasn't changed
+    if (this.currentQuestion['questionId'] === this.cachedQuestionId) {
+      return this.cachedSelectedQuestionNumber
+    }
+
+    let questionIndex = index
+    if (questionIndex === undefined || questionIndex === null) {
+      questionIndex = this.secQuestions.findIndex(q => q.questionId === this.currentQuestion['questionId'])
+    }
+
+    if (questionIndex > -1) {
+      this.cachedSelectedQuestionNumber = (this.noOfQuestionsPerSet * this.currentSetNumber) + questionIndex + 1
+      this.cachedQuestionId = this.currentQuestion['questionId']
+      return this.cachedSelectedQuestionNumber
+    }
+    return 0
   }
 
   getSectionTotalQuestionAndAnswerCount() {
