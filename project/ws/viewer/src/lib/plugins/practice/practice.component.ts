@@ -1213,7 +1213,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         )
         .subscribe(_timeRemaining => {
           this.timeLeft -= 1
-          if (this.timeLeft < 0) {
+          if (this.timeLeft === 0) {
             if (this.paperSections && this.paperSections.length) {
               if (this.allSecAttempted.full) {
                 this.isIdeal = true
