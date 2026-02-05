@@ -60,7 +60,7 @@
   font-size: 16px;
   font-family: 'Lato';
   color: rgba(0, 0, 0, 0.87)
-  
+
 }
 .answer {
   width: 40%;
@@ -270,7 +270,7 @@ color: rgb(27, 76, 161)
 
 @media only screen and (min-width: 360px) and (max-width:767px) {
       .mobile-responsive-question-container{
-         
+
           width: 100%;
           height: calc(100vh - 276px);
           overflow-y: auto
@@ -288,14 +288,14 @@ color: rgb(27, 76, 161)
       justify-content: center;
     }
 
-      
+
 }
 
 
 
 @media only screen and (min-width : 360px) and (max-width: 360px) {
   .mobile-responsive-question-container{
-         
+
     width: 330px;
     height: calc(100vh - 276px);
     overflow-y: auto
@@ -311,12 +311,12 @@ color: rgb(27, 76, 161)
   .respo {
     margin: 0 5px;
   }
- 
+
 }
 
 @media only screen and (min-width : 375px) and (max-width: 375px) {
   .mobile-responsive-question-container{
-         
+
     // width: 375px;
     // height: calc(100vh - 350px);
     // overflow-y: auto
@@ -335,12 +335,12 @@ color: rgb(27, 76, 161)
   .respo {
     margin: 0 5px;
   }
- 
+
 }
 
 @media only screen and (min-width : 390px) and (max-width: 390px) {
   .mobile-responsive-question-container{
-         
+
     width: 360px;
     height: calc(100vh - 276px);
     overflow-y: auto
@@ -355,18 +355,21 @@ color: rgb(27, 76, 161)
   .respo {
     margin: 0 5px;
   }
- 
+
 }
 
 video {
   width: 360px !important;
 }
 
-@media only screen and (min-width : 240px) and (max-width: 767px) { 
+@media only screen and (min-width : 240px) and (max-width: 767px) {
   video {
       width: 96% !important;
   }
 }
 .ques-padding-top {
     padding-top: 2px
+}
+.question-marks-inline {
+  margin-left: 10px;
 }

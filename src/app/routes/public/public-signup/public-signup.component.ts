@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core'
-import { Subscription, Observable, interval } from 'rxjs'
+import { Subscription, Observable, interval, Subject } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
 import { LoggerService, ConfigurationsService, NsInstanceConfig, MultilingualTranslationsService, WsEvents, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
-import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators'
+import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
@@ -182,6 +182,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   noMoreLegacyMinistrys = false
   ministrySearchText = ''
   ministryInitInProgress = false
+  private ministrySearchSubject = new Subject<any>()
 
   /* State Variables */
 
@@ -218,6 +219,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   noMoreLegacyOrganisations = false
   organisationSearchText = ''
   organisationInitInProgress = false
+  private organisationSearchSubject = new Subject<any>()
+  private destroy$ = new Subject<void>()
 
   currentMinistry: any = {}
 
@@ -306,6 +309,26 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       this.isMultiLangEnabled = this.configSvc.instanceConfig.isMultilingualEnabled
     }
+
+    this.organisationSearchSubject.pipe(
+      map((evt: any) => evt?.target?.value || ''),
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe((searchText: string) => {
+      this.performOrganisationSearch(searchText)
+    })
+
+    // Ministry Search Debounce - 500ms
+    this.ministrySearchSubject.pipe(
+      map((evt: any) => evt?.target?.value || ''),
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe((searchText: string) => {
+      this.performMinistrySearch(searchText)
+    })
+
     if (this.registrationFormStepOne.get('searchDesignation')) {
       // tslint:disable-next-line
       this.registrationFormStepOne.get('searchDesignation')!.valueChanges
@@ -1227,7 +1250,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             }
           }
 
-          console.log('req ===: ', req)
           this.signupSvc.register(req).subscribe(
             (_res: any) => {
               this.openDialog()
@@ -1300,6 +1322,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     if (this.userdataSubscription) {
       this.userdataSubscription.unsubscribe()
     }
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 
   // Getters
@@ -1444,8 +1468,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
     const reqOffset = (typeof offset === 'number') ? offset : this.ministryOffset
     const reqLimit = this.ministryDefaultLoadCount
-    console.log('reqOffset--', reqOffset)
-    console.log('reqLimit--', reqLimit)
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
     if (pageIndex === 0) {
@@ -1483,7 +1505,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
     // indicate loading state so scroll handlers don't trigger parallel calls
     this.isLoadingMoreMinistrys = true
-    console.log('requestBody--', requestBody)
     this.signupSvc.getMinistryForRegistration(requestBody).pipe(finalize(() => {
       this.isLoadingMoreMinistrys = false
       this.ministryInitInProgress = false
@@ -1658,7 +1679,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   ministrySearch(evt: any) {
-    const searchText = evt?.target?.value
+    this.ministrySearchSubject.next(evt)
+  }
+
+  performMinistrySearch(searchText: string) {
     const txt = (searchText || '').toString().trim()
     if (this.isLoadingMoreMinistrys) return
 
@@ -1691,9 +1715,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     const reqLimit = this.stateDefaultLoadCount
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
-    console.log('reqOffset--', reqOffset)
-    console.log('reqLimit--', reqLimit)
-    console.log('stateDefaultLoadCount--', this.stateDefaultLoadCount)
     if (pageIndex === 0) {
       this.noMoreLegacyStates = false
     }
@@ -1768,15 +1789,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (!mapped || mapped?.length === 0) {
             this.noMoreLegacyStates = true
           }
-          console.log(this.masterData['state'])
           // If we've loaded at least the total count, mark no-more-data
           if (this.defaultSearchStateCount && (this.masterData['stateBackup'] || []).length >= this.defaultSearchStateCount) {
             this.noMoreLegacyStates = true
           }
-          console.log(this.masterData['state'])
           // Ensure visible list matches the requested display count
           this.masterData['state'] = (this.masterData['stateBackup'] || []).slice(0, this.stateListLoadCount)
-          console.log(this.masterData['state'])
+          
           // loading flag cleared in finalize()
           this.checkCurrentStatePresent()
         },
@@ -1987,13 +2006,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
 
-          if (mapped?.length === 0 || searchText?.length) {
-            this.masterData['departmentBackup'] =
-              this.masterData['departmentBackup'].filter(
-                (item: any) => item.orgName === 'N/A'
-              )
-          }
-
+          this.masterData['departmentBackup'] = this.masterData['departmentBackup'].filter((item: any) => item.orgName !== 'N/A');
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -2027,7 +2040,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           }
           // Ensure visible list matches the requested display count
           this.masterData['department'] = (this.masterData['departmentBackup'] || []).slice(0, this.departmentListLoadCount)
-          console.log(this.masterData['department'])
           // loading flag cleared in finalize()
           this.isLoadingMoreDepartments = false
           this.checkCurrentDepartmentPresent()
@@ -2300,6 +2312,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
                 (item: any) => item.orgName === 'N/A'
               )
           }
+
           // }
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -2333,7 +2346,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           }
           // Ensure visible list matches the requested display count
           this.masterData['organisation'] = (this.masterData['organisationBackup'] || []).slice(0, this.organisationListLoadCount)
-          console.log(this.masterData['organisation'])
           // loading flag cleared in finalize()
           this.isLoadingMoreOrganisations = false
           this.checkCurrentOrganisationPresent()
@@ -2465,7 +2477,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   organisationSearch(evt: any) {
-    const searchText = evt?.target?.value
+    this.organisationSearchSubject.next(evt)
+  }
+
+  performOrganisationSearch(searchText: string) {
     const txt = (searchText || '').toString().trim()
     if (this.isLoadingMoreOrganisations) return
 
