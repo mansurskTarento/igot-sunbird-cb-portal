@@ -161,6 +161,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   public submitted = false
   emailLengthVal = false
 
+  private cachedSelectedQuestionNumber: number = 0
+  private cachedQuestionId: string = ''
+
   @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
     private events: EventService,
@@ -2498,6 +2501,29 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
   getQuestionIndex(index: number): number {
     return (this.noOfQuestionsPerSet * this.currentSetNumber) + index + 1
+  }
+
+  getSelectedQuestionNumber(index?: number): number {
+    if (!this.currentQuestion || !this.secQuestions) {
+      return 0
+    }
+
+    // Return cached result if current question hasn't changed
+    if (this.currentQuestion['questionId'] === this.cachedQuestionId) {
+      return this.cachedSelectedQuestionNumber
+    }
+
+    let questionIndex = index
+    if (questionIndex === undefined || questionIndex === null) {
+      questionIndex = this.secQuestions.findIndex(q => q.questionId === this.currentQuestion['questionId'])
+    }
+
+    if (questionIndex > -1) {
+      this.cachedSelectedQuestionNumber = (this.noOfQuestionsPerSet * this.currentSetNumber) + questionIndex + 1
+      this.cachedQuestionId = this.currentQuestion['questionId']
+      return this.cachedSelectedQuestionNumber
+    }
+    return 0
   }
 
   getSectionTotalQuestionAndAnswerCount() {
