@@ -89,7 +89,7 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getQuestionIndex(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
@@ -648,7 +648,7 @@
             <ng-container *ngIf="current_Question && !process">
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-                [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
                 [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
                 [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
                 [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
@@ -1192,7 +1192,7 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
@@ -1222,7 +1222,7 @@
 
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-                [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
                 [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
                 [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
                 (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
@@ -1391,7 +1391,7 @@
           <div>
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
@@ -1786,7 +1786,7 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
@@ -1955,7 +1955,7 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
               [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
@@ -1990,7 +1990,7 @@
           <div *ngIf="assessmentType !== 'optionalWeightage'">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="currentQuestionIndex + 1" [total]="secQuestions.length" [viewState]="viewState"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
               [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
