@@ -9,6 +9,11 @@
             <ng-container i18n="question number of total questions"><span class="question-number">{{ 'practiceoverview.of' | translate }}</span></ng-container>
             <span class="question-number">&nbsp;{{ total }}</span>
             <span class="question-type ml-4" *ngIf="question?.questionType"> ({{ questionType[question.questionType] || ''}}) </span>
+            <span *ngIf="question?.marks" class="question-marks-inline">
+              <span *ngIf="question?.marks === 1">[{{question?.marks}} {{ 'practiceoverview.mark' | translate }}]</span>
+              <span *ngIf="question?.marks > 1">[{{question?.marks}} {{ 'practiceoverview.marks' | translate }}]</span>
+            </span>
+
           </p>
         </div>
         <div class="flex flex-row align-center justify-around" *ngIf="!showQuestionOnly">
@@ -16,7 +21,7 @@
             <div *ngIf="!isMobile"  class="cursor-pointer" [ngClass]="showAnswer ? 'rounded-flag':'rounded-flag-disable'">
               <div class="flex" (click)="checkAns(questionNumber)">
                 <span>{{ 'playerbrief.showAnswer' | translate }}</span>
-                
+
               </div>
             </div>
             <div *ngIf="isMobile"  class="cursor-pointer">
@@ -25,7 +30,7 @@
                 <img *ngIf="!showAnswer" class="hw-24" src="assets/icons/final-assessment/gray-eye.svg"/>
               </div>
             </div>
-          </ng-container>        
+          </ng-container>
           <div class=" flex flex-row align-center justify-around rounded-flag ml-10" *ngIf="!isMobile" [ngClass]="!isQuestionMarked() ? 'rounded-flag-disable': 'rounded-flag'">
             <div>
               <span>{{ 'playerbrief.flag' | translate }}</span>
@@ -35,15 +40,15 @@
               <mat-icon class="gray-flag" *ngIf="!isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">outlined_flag</mat-icon>
               <mat-icon class="filled-flag" *ngIf="isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">flag</mat-icon>
               </button>
-            </div>             
+            </div>
           </div>
-          <div class=" flex flex-row align-center justify-around ml-2" *ngIf="isMobile">          
+          <div class=" flex flex-row align-center justify-around ml-2" *ngIf="isMobile">
             <div>
               <button aria-label="flag" i18n-aria-label mat-icon-button (click)="markQuestion()" class="border0">
               <mat-icon *ngIf="!isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">outlined_flag</mat-icon>
               <mat-icon class="filled-flag" *ngIf="isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">flag</mat-icon>
               </button>
-            </div>             
+            </div>
           </div>
 
         </div>
@@ -66,9 +71,9 @@
                 (update)="update($event)">
               </viewer-mcq-mca-question>
             </ng-container>
-    
+
             <ng-container *ngIf="question.questionType === 'mcq-sca' || question.questionType === 'mcq-sca-tf' || question.questionType === 'mcq-mca-w'">
-              <viewer-mcq-sca-question   [primaryCategory]="primaryCategory" class="flex-1" [question]="question" [itemSelectedList]="itemSelectedList1" [assessmentType]="assessmentType" 
+              <viewer-mcq-sca-question   [primaryCategory]="primaryCategory" class="flex-1" [question]="question" [itemSelectedList]="itemSelectedList1" [assessmentType]="assessmentType"
                 (update)="update($event)"></viewer-mcq-sca-question>
             </ng-container>
             <ng-container *ngIf="question.questionType === 'mtf'">
@@ -100,9 +105,9 @@
             </ng-container>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
-    
+
   </mat-card>
   <!-- created a duplicate as design changed -->
   <mat-card *ngIf="(question?.questionType === 'mtf' || question?.questionType === 'ftb')"
@@ -120,6 +125,11 @@
             <ng-container i18n="question number label"><span class="subheading-1">{{ 'practiceoverview.question' | translate }}</span></ng-container><span class="question-number">&nbsp;{{ questionNumber }}&nbsp;</span>
             <ng-container i18n="question number of total questions"><span class="question-number">{{ 'practiceoverview.of' | translate }}</span></ng-container>
             <span class="question-number">&nbsp;{{ total }}</span>
+            <span class="question-type ml-4" *ngIf="question?.questionType"> ({{ questionType[question?.questionType] || ''}}) </span>
+            <span *ngIf="question?.marks" class="question-marks-inline">
+              <span *ngIf="question?.marks === 1">[{{question?.marks}} {{ 'practiceoverview.mark' | translate }}]</span>
+              <span *ngIf="question?.marks > 1">[{{question?.marks}} {{ 'practiceoverview.marks' | translate }}]</span>
+            </span>
           </p>
         </div>
         <div class="flex flex-row align-center justify-around">
@@ -127,7 +137,7 @@
             <div *ngIf="!isMobile"  class="cursor-pointer" [ngClass]="showAnswer ? 'rounded-flag':'rounded-flag-disable'">
               <div class="flex" (click)="checkAns(questionNumber)">
                 <span>{{ 'playerbrief.showAnswer' | translate }}</span>
-                
+
               </div>
             </div>
             <div *ngIf="isMobile"  class="cursor-pointer">
@@ -136,7 +146,7 @@
                 <img *ngIf="!showAnswer" class="hw-24" src="assets/icons/final-assessment/gray-eye.svg"/>
               </div>
             </div>
-          </ng-container>        
+          </ng-container>
           <div class=" flex flex-row align-center justify-around rounded-flag ml-10" *ngIf="!isMobile" [ngClass]="!isQuestionMarked() ? 'rounded-flag-disable': 'rounded-flag'">
             <div>
               <span>{{ 'playerbrief.flag' | translate }}</span>
@@ -146,15 +156,15 @@
               <mat-icon class="gray-flag" *ngIf="!isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">outlined_flag</mat-icon>
               <mat-icon class="filled-flag" *ngIf="isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">flag</mat-icon>
               </button>
-            </div>             
+            </div>
           </div>
-          <div class=" flex flex-row align-center justify-around ml-2" *ngIf="isMobile">          
+          <div class=" flex flex-row align-center justify-around ml-2" *ngIf="isMobile">
             <div>
               <button aria-label="flag" i18n-aria-label mat-icon-button (click)="markQuestion()" class="border0">
               <mat-icon *ngIf="!isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">outlined_flag</mat-icon>
               <mat-icon class="filled-flag" *ngIf="isQuestionMarked()" matTooltip="{{'playerbrief.flagToolTip' | translate}}">flag</mat-icon>
               </button>
-            </div>             
+            </div>
           </div>
 
         </div>
@@ -189,10 +199,10 @@
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
-    
+
     </div>
   </mat-card>
 </ng-container>
@@ -207,24 +217,30 @@
         <div class="question-heading">
           <div>
             <p class="margin-bottom-m">
-              <ng-container><span class="standalone-question">{{ 'practiceoverview.question' | translate }}&nbsp;No.{{ questionNumber }}</span></ng-container>             
+              <ng-container><span class="standalone-question">{{ 'practiceoverview.question' | translate }}&nbsp;No.{{ questionNumber }}&nbsp;</span></ng-container>
+              <span class="question-type ml-4" *ngIf="question?.questionType"> ({{ questionType[question?.questionType] || ''}}) </span>
+              <span *ngIf="question?.marks" class="question-marks-inline">
+                <span *ngIf="question?.marks === 1">[{{question?.marks}} {{ 'practiceoverview.mark' | translate }}]</span>
+                <span *ngIf="question?.marks > 1">[{{question?.marks}} {{ 'practiceoverview.marks' | translate }}]</span>
+              </span>
             </p>
-          </div>         
+          </div>
         </div>
         <div>
           <div class="question-marks" *ngIf="assessmentType === 'questionWeightage' && showQuestionMarks === 'Yes'">
             <p *ngIf="question?.marks">
-             <span *ngIf="question?.marks === 1">{{question?.marks}} {{ 'practiceoverview.mark' | translate }}</span> 
-             <span *ngIf="question?.marks > 1">{{question?.marks}} {{ 'practiceoverview.marks' | translate }}</span> 
+             <span *ngIf="question?.marks === 1">{{question?.marks}} {{ 'practiceoverview.mark' | translate }}</span>
+             <span *ngIf="question?.marks > 1">{{question?.marks}} {{ 'practiceoverview.marks' | translate }}</span>
             </p>
           </div>
           <div class="question-marks" *ngIf="assessmentType === 'optionalWeightage'">
             <p>{{questionNumber}}/{{ total }}</p>
+
           </div>
         </div>
-      </div>      
+      </div>
       <div class="respo flex flex-column" *ngIf="!showOnlyQuestion" [ngClass]="mobileQuestionSetExpand ? 'mobile-responsive-question-container-expand' : 'mobile-responsive-question-container'">
-        
+
         <div class="flex flex-column respo_inner">
           <p *ngIf="questionParagraph"><strong>{{'practiceoverview.paragraphLabel' | translate}}</strong></p>
           <p *ngIf="questionParagraph" [innerHtml]="questionParagraph"></p>
@@ -234,7 +250,7 @@
             </h2>
             <ng-container *ngIf="question.questionType === 'ftb'">
               <viewer-fitb-question [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [primaryCategory]="primaryCategory" class="flex-1" [question]="question"
-                (update)="update($event)" 
+                (update)="update($event)"
                 ></viewer-fitb-question>
             </ng-container>
           </div>
@@ -245,7 +261,7 @@
                 (update)="update($event)">
               </viewer-mcq-mca-question>
             </ng-container>
-    
+
             <ng-container *ngIf="question.questionType === 'mcq-sca' || question.questionType === 'mcq-sca-tf' || question.questionType === 'mcq-mca-w'">
               <viewer-mcq-sca-question   [primaryCategory]="primaryCategory" class="flex-1" [question]="question" [itemSelectedList]="itemSelectedList1" [assessmentType]="assessmentType"
                 (update)="update($event)"></viewer-mcq-sca-question>
@@ -279,14 +295,14 @@
             </ng-container>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
-    
+
   </mat-card>
   <!-- created a duplicate as design changed -->
   <mat-card *ngIf="(question?.questionType === 'mtf' || question?.questionType === 'ftb')"
     class="flex flex-1 respo margin-bottom-m no-shadow standalone-assessment" [ngClass]="showOnlyQuestion ? 'show-only-question': 'show-only-answer'">
-    <div class="flex flex-column width-100"> 
+    <div class="flex flex-column width-100">
       <div class="paragraph">
         <p *ngIf="questionParagraph"><strong>{{'practiceoverview.paragraphLabel' | translate}}</strong></p>
         <p *ngIf="questionParagraph" [innerHtml]="questionParagraph"></p>
@@ -295,15 +311,20 @@
           <div class="question-heading">
             <div>
               <p class="margin-bottom-m">
-                <ng-container><span class="standalone-question">{{ 'practiceoverview.question' | translate }}&nbsp;No.{{ questionNumber }}</span></ng-container>             
+                <ng-container><span class="standalone-question">{{ 'practiceoverview.question' | translate }}&nbsp;No.{{ questionNumber }}&nbsp;</span></ng-container>
+                <span class="question-type ml-4" *ngIf="question?.questionType"> ({{ questionType[question?.questionType] || ''}}) </span>
+                <span *ngIf="question?.marks" class="question-marks-inline">
+                  <span *ngIf="question?.marks === 1">[{{question?.marks}} {{ 'practiceoverview.mark' | translate }}]</span>
+                  <span *ngIf="question?.marks > 1">[{{question?.marks}} {{ 'practiceoverview.marks' | translate }}]</span>
+                </span>
               </p>
-            </div>         
+            </div>
           </div>
           <div>
             <div class="question-marks" *ngIf="assessmentType === 'questionWeightage' && showQuestionMarks === 'Yes'">
               <p *ngIf="question?.marks">
-                <span *ngIf="question?.marks === 1">{{question?.marks}} {{ 'practiceoverview.mark' | translate }}</span> 
-                <span *ngIf="question?.marks > 1">{{question?.marks}} {{ 'practiceoverview.marks' | translate }}</span> 
+                <span *ngIf="question?.marks === 1">{{question?.marks}} {{ 'practiceoverview.mark' | translate }}</span>
+                <span *ngIf="question?.marks > 1">{{question?.marks}} {{ 'practiceoverview.marks' | translate }}</span>
               </p>
             </div>
             <div class="question-marks" *ngIf="assessmentType === 'optionalWeightage'">
@@ -312,7 +333,7 @@
           </div>
         </div>
       <div class="respo flex flex-column " *ngIf="!showOnlyQuestion" [ngClass]="mobileQuestionSetExpand ? 'mobile-responsive-question-container-expand' : 'mobile-responsive-question-container'">
-        <div class="flex flex-1 flex-column respo_inner">          
+        <div class="flex flex-1 flex-column respo_inner">
           <div class="flex flex-1 flex-column">
             <ng-container *ngIf="question.questionType !== 'ftb'">
               <h2 [innerHTML]="question?.question | nbpsPipe | QuestionSafeUrl" class="m-auto quiz-question mat-h2 ques-padding-top">
@@ -340,27 +361,27 @@
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
-    
+
     </div>
   </mat-card>
 </ng-container>
 
 <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7 && showMarkForReview" >
   <div class="Mweb-btns">
-    <a 
+    <a
                 class="text-black margin-xs quest_btn_review" mat-button
                 (click)="markQuestion()">
                 <ng-container *ngIf="!isXsmall">{{ 'practiceoverview.markForReviewNext' | translate }}</ng-container>
               </a>
-    <a 
+    <a
           class="text-black margin-xs quest_btn_review" mat-button
           (click)="clearResponse()">
           <ng-container *ngIf="!isXsmall">{{ 'practiceoverview.clearResponse' | translate }}</ng-container>
         </a>
   </div>
-  
+
 
 </ng-container>
