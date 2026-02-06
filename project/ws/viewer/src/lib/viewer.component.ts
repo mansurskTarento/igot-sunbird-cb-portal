@@ -283,8 +283,8 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Build hashmap for regular courses (non-Learning Pathway)
         // This ensures hierarchyMapData is populated for child components like top-bar
         this.tocSvc.callHirarchyProgressHashmap(this.hierarchyData)
+        await this.manipulateHierarchyData()
       }
-      await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
       // Recompute leafNodesCount after hierarchy has been fully manipulated
       try {
