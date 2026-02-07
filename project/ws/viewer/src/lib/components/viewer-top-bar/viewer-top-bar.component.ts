@@ -329,7 +329,6 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         // Strategy: Identify assessments by their parent structure since contextCategory is undefined
         // - Preliminary Assessment: Course Assessment with parent = root LP identifier
         // - Milestone Assessment: Course Assessment with parent = Milestone
-        let assessmentCount = 0
         
         for (const key of Object.keys(this.hierarchyMapData)) {
           const item = this.hierarchyMapData[key]
@@ -341,12 +340,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
             // Check if this is a preliminary assessment (parent is root LP)
             if (parentId === identifier) {
               mandatoryItemIds.add(key)
-              assessmentCount++
             }
             // Check if this is a milestone assessment (parent is a Milestone)
             else if (parentItem && (parentItem.primaryCategory === 'Milestone' || parentItem.isMilestone)) {
               mandatoryItemIds.add(key)
-              assessmentCount++
             }
           }
         }
