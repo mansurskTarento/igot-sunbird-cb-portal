@@ -11,6 +11,9 @@ const routes: Routes = [
     //   }
     // }
   },
+  {
+    path: 'v2/:uuid', component: CertificateDetailsComponent,
+  }
 ]
 @NgModule({
   imports: [RouterModule.forChild(routes)],

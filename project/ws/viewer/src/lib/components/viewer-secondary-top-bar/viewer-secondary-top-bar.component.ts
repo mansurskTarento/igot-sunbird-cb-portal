@@ -515,7 +515,20 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
             if (lastIndexData && lastIndexData?.completionPercentage === 100 && lastIndexData?.status === 2) {
               this.generateCertificate()
             }
-            if (this.content && ![
+            
+            // Check if this is a Learning Pathway
+            const isLearningPathway = this.baseContentReadData && this.baseContentReadData.courseCategory === 'Learning Pathway'
+            
+            if (isLearningPathway) {
+              
+              // For Learning Pathway, check if all mandatory items are completed
+              // completedCount should already reflect only mandatory items from viewer-top-bar
+              if (lastIndexData?.completionPercentage >= 100 && lastIndexData?.status === 2) {
+                this.showCompletionPopUp()
+              } else {
+                this.router.navigateByUrl(`app/toc/${this.collectionId}/overview`)
+              }
+            } else if (this.content && ![
               NsContent.ECourseCategory.MODERATED_COURSE,
               NsContent.ECourseCategory.MODERATED_ASSESSEMENT,
               NsContent.ECourseCategory.MODERATED_PROGRAM,
@@ -650,7 +663,6 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
 
   backToPrev() {
     // Previous navigation - lock status should already be current from hashmap updates
-    console.log('◀️ [PREV CLICK] Navigating to previous content')
     
     if (this.prevResourceUrl) {
       this.router.navigate([this.prevResourceUrl], { queryParams: this.prevResourceUrlParams.queryParams })
@@ -664,10 +676,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
     }
   }
 
-  // updateProgressForPreAssessment(data:any) {
-  //   console.log('data--', data)
-  //   console.log('this.tocSvc.hashmap', this.appTocSvc.hashmap)
-  // }
+
 
   checkIfContentIsLocked(contentIdentifier: string): boolean {
     // Return false if no identifier provided
