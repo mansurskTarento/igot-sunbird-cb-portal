@@ -16,7 +16,7 @@ const urls = {
   SEARCH_CERTIFICATE: 'certreg/v1/certs/search',
   VALIDATE_ENROLLMENT: 'cios-enroll/v1/validation',
   CONSENT_API: 'consent/v1/acknowledge',
-  VALIDATE_MILESTONE_CERTIFICATE: 'milestone/certs/validate',
+  VALIDATE_MILESTONE_CERTIFICATE: '/api/certreg/v2/achievement/validate',
 }
 
 @Injectable({
@@ -39,7 +39,7 @@ export class CertificateService {
     const option = {
       data,
       // url: `${urls.PROXIES_PREFIX}learner/${urls.VALIDATE_CERTIFICATE}`,
-      url: `${urls.LEARNER_PREFIX}${urls.VALIDATE_MILESTONE_CERTIFICATE}`,
+      url: `${urls.VALIDATE_MILESTONE_CERTIFICATE}`,
     }
     return this.apiService.post(option.url, option.data)
   }
