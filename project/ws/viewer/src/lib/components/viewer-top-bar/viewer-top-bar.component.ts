@@ -312,25 +312,82 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ComputeCompletedNodesAndPercent(identifier: string) {
-    // Prefer the aggregated leafNodesCount input when available
-    this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0
     if (this.hierarchyMapData && this.hierarchyMapData[identifier]) {
-      console.log(`📊 [HEADER COUNT] Computing completed items for ${identifier}`)
-      console.log(`   Input leafNodesCount: ${this.leafNodesCount}`)
-      console.log(`   Hashmap leafNodesCount: ${this.hierarchyMapData[identifier].leafNodesCount}`)
-      console.log(`   Total leafNodes array: ${this.hierarchyMapData[identifier].leafNodes?.length}`)
-      console.log(`   Course Category: ${this.hierarchyMapData[identifier].courseCategory}`)
-      
+
       // Check if this is a Learning Pathway
       const isLearningPathway = this.hierarchyMapData[identifier].courseCategory === 'Learning Pathway'
       
       if (isLearningPathway) {
-        // LEARNING PATHWAY LOGIC: Filter out locked milestone content
-        console.log(`   🎯 Learning Pathway detected - using milestone filtering logic`)
+        // LEARNING PATHWAY LOGIC: Count only mandatory items
         
-        // Get all leaf nodes
+        // Get all leaf nodes and also check for assessments directly in hashmap
         const allLeafNodes = this.hierarchyMapData[identifier].leafNodes || []
-        const totalLeafCount = allLeafNodes.length
+        const mandatoryItemIds = new Set<string>()
+        
+        
+        // First, scan all items in hashmap to find milestone and preliminary assessments
+        // Strategy: Identify assessments by their parent structure since contextCategory is undefined
+        // - Preliminary Assessment: Course Assessment with parent = root LP identifier
+        // - Milestone Assessment: Course Assessment with parent = Milestone
+        
+        for (const key of Object.keys(this.hierarchyMapData)) {
+          const item = this.hierarchyMapData[key]
+          
+          if (item.primaryCategory === 'Course Assessment') {
+            const parentId = item.parent
+            const parentItem = this.hierarchyMapData[parentId]
+            
+            // Check if this is a preliminary assessment (parent is root LP)
+            if (parentId === identifier) {
+              mandatoryItemIds.add(key)
+            }
+            // Check if this is a milestone assessment (parent is a Milestone)
+            else if (parentItem && (parentItem.primaryCategory === 'Milestone' || parentItem.isMilestone)) {
+              mandatoryItemIds.add(key)
+            }
+          }
+        }
+        
+        
+        // Second, filter leaf nodes from mandatory courses
+        const mandatoryLeafNodes = _.filter(allLeafNodes, (leafId: string) => {
+          // Skip if already counted as milestone/preliminary assessment
+          if (mandatoryItemIds.has(leafId)) {
+            return false
+          }
+          
+          const leafData = this.hierarchyMapData[leafId]
+          if (!leafData) return false
+          
+          // Check if this leaf belongs to a mandatory course
+          // Traverse up the parent chain to find the course
+          let currentParentId = leafData.parent
+          let depth = 0
+          const maxDepth = 10
+          
+          while (currentParentId && depth < maxDepth) {
+            const parentData = this.hierarchyMapData[currentParentId]
+            if (!parentData) break
+            
+            // If parent is a course, check if it's mandatory
+            if (parentData.primaryCategory === 'Course') {
+              if (parentData.isMandatory === true) {
+                return true
+              }
+              break // Stop at course level
+            }
+            
+            currentParentId = parentData.parent
+            depth++
+          }
+          
+          return false
+        })
+        
+        // Add mandatory course items to the set
+        mandatoryLeafNodes.forEach(leafId => mandatoryItemIds.add(leafId))
+        
+        const mandatoryLeafCount = mandatoryItemIds.size
         
         // Get list of locked milestone IDs
         const lockedMilestoneIds: string[] = []
@@ -339,38 +396,41 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
           if ((item.isMilestone || item.primaryCategory === 'Milestone') && 
               item.computedIsLocked === true) {
             lockedMilestoneIds.push(key)
-            console.log(`   🔒 Locked milestone: ${item.name || key}`)
           }
         }
         
-        console.log(`   📊 Found ${lockedMilestoneIds.length} locked milestones`)
         
-        // Filter leaf nodes to exclude those inside locked milestones (for completed count only)
-        const accessibleLeafNodes = _.filter(allLeafNodes, (leafId: string) => {
-          const leafData = this.hierarchyMapData[leafId]
-          if (!leafData) return false
+        // Filter mandatory items to exclude those inside locked milestones (for completed count only)
+        const accessibleMandatoryItems: string[] = []
+        for (const itemId of Array.from(mandatoryItemIds)) {
+          const itemData = this.hierarchyMapData[itemId]
+          if (!itemData) continue
           
-          // Check if this leaf's parent chain includes a locked milestone
-          let currentParentId = leafData.parent
+          // Check if this item's parent chain includes a locked milestone
+          let currentParentId = itemData.parent
           let depth = 0
           const maxDepth = 10
+          let isLocked = false
           
           while (currentParentId && depth < maxDepth) {
             if (lockedMilestoneIds.includes(currentParentId)) {
-              return false
+              isLocked = true
+              break
             }
             const parentData = this.hierarchyMapData[currentParentId]
             if (!parentData) break
             currentParentId = parentData.parent
             depth++
           }
-          return true
-        })
+          
+          if (!isLocked) {
+            accessibleMandatoryItems.push(itemId)
+          }
+        }
         
-        console.log(`   📊 Accessible leaf nodes for completed count: ${accessibleLeafNodes.length}`)
         
-        // Count completed items from accessible content only
-        const completedItems = _.filter(accessibleLeafNodes, (r: string) => {
+        // Count completed items from accessible mandatory content only
+        const completedItems = _.filter(accessibleMandatoryItems, (r: string) => {
           const leafData = this.hierarchyMapData[r]
           if (!leafData) return false
           
@@ -385,9 +445,8 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         })
         
         this.completedCount = completedItems.length
-        this.overallLeafNodes = totalLeafCount  // Show total count (not filtered)
+        this.overallLeafNodes = mandatoryLeafCount  // Show only mandatory count
         
-        console.log(`✅ [HEADER COUNT] Learning Pathway Result: ${this.completedCount}/${this.overallLeafNodes}`)
         this.completedCountOutput.emit(this.completedCount)
         
         const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
@@ -396,26 +455,29 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
         
       } else {
-        // REGULAR COURSE LOGIC: Use old simple logic without filtering
-        console.log(`   📚 Regular course - using standard completion logic`)
+        // For non-Learning Pathway courses, prefer the input leafNodesCount if available
+        this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0 
         
         const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, (r: string) => {
-          return this.hierarchyMapData[r] && (
+          const isComplete = this.hierarchyMapData[r] && (
             this.hierarchyMapData[r].completionStatus === 2 || 
             this.hierarchyMapData[r].status === 2 ||
             this.hierarchyMapData[r].completionPercentage === 100 ||
             (this.hierarchyMapData[r].completionPercentage && this.hierarchyMapData[r].completionPercentage >= 100) ||
             (this.hierarchyMapData[r].progress && this.hierarchyMapData[r].progress >= 100)
           )
+          
+         
+          
+          return isComplete
         })
         
         this.completedCount = completedItems.length
-        
+                
         if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
           this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
         }
         
-        console.log(`✅ [HEADER COUNT] Regular Course Result: ${this.completedCount}/${this.overallLeafNodes}`)
         this.completedCountOutput.emit(this.completedCount)
         
         // tslint:disable

@@ -393,6 +393,22 @@ const routes: Routes = [
     loadChildren: () => import('./routes/route-cert.module').then(u => u.RouteCertificateModule),
   },
   {
+    path: 'achievements',
+    data: {
+      pageId: 'certs',
+      module: 'Profile',
+    },
+    loadChildren: () => import('./routes/route-cert.module').then(u => u.RouteCertificateModule),
+  },
+  {
+    path: 'achievements/v2',
+    data: {
+      pageId: 'certs',
+      module: 'Profile',
+    },
+    loadChildren: () => import('./routes/route-cert-v2.module').then(u => u.RouteCertificateV2Module),
+  },
+  {
     path: 'public/certs',
     redirectTo: 'certs',
     // pathMatch: 'full',
