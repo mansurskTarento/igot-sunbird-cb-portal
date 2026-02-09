@@ -10,9 +10,6 @@ const routes: Routes = [
     //     env: 'certs', pageid: 'certificate-details', type: 'view'
     //   }
     // }
-  },
-  {
-    path: 'v2/:uuid', component: CertificateDetailsComponent,
   }
 ]
 @NgModule({
