@@ -38,6 +38,8 @@
         <a mat-icon-button class="width-auto mr-10 " [routerLink]="isNextResourceLocked ? [] : nextResourceUrl"
           [queryParams]="isNextResourceLocked ? {} : nextResourceUrlParams?.queryParams"
           *ngIf="isTypeOfCollection && nextResourceUrl" [class.disabled]="isNextResourceLocked"
+          [attr.aria-disabled]="isNextResourceLocked"
+          [attr.title]="isNextResourceLocked ? 'Complete all mandatory items to unlock' : (optionalLink ? 'Skip to next content' : 'Go to next content')"
           [style.pointer-events]="isNextResourceLocked ? 'none' : 'auto'" queryParamsHandling="" accesskey=">"
           (click)="onNextClick($event)">
           <!-- <span *ngIf="optionalLink"></span>  -->
@@ -140,6 +142,8 @@
           [routerLink]="isNextResourceLocked ? [] : nextResourceUrl"
           [queryParams]="isNextResourceLocked ? {} : nextResourceUrlParams?.queryParams"
           *ngIf="isTypeOfCollection && nextResourceUrl" [class.disabled]="isNextResourceLocked"
+          [attr.aria-disabled]="isNextResourceLocked"
+          [attr.title]="isNextResourceLocked ? 'Complete all mandatory items to unlock' : (optionalLink ? 'Skip to next content' : 'Go to next content')"
           [style.pointer-events]="isNextResourceLocked ? 'none' : 'auto'" queryParamsHandling="" accesskey=">"
           (click)="onNextClick($event)">
           <!-- <span *ngIf="optionalLink"></span>  -->

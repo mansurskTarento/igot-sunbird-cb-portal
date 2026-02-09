@@ -70,6 +70,16 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() assessmentType = ''
   expandedQuestionSetSubscription: any
 
+  questionType = {
+    "mcq-sca": "Single selection-MCQs",
+    "mcq-mca": "Multiple selection-MCQs",
+    "fitb": "Fill in the blanks",
+    "mtf": "Match the following",
+    "mcq-mca-w": "Weightage Single Choice",
+    "mcq-sca-tf": "True/False",
+    "ftb": "Fill in the blanks",
+  }
+
   constructor(
     // private elementRef: ElementRef,
     private practiceSvc: PracticeService,
@@ -173,7 +183,7 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
       config.duration = duration
       config.verticalPosition = 'top'
       config.horizontalPosition = 'center',
-      this.snackBar.open(primaryMsg, '', config)
+        this.snackBar.open(primaryMsg, '', config)
     } else {
       const config = new MatSnackBarConfig()
       config.panelClass = ['show-answer-alert-class']

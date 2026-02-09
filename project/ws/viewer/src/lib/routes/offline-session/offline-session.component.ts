@@ -174,7 +174,7 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
               for (const content of data.result.contentList) {
                 if (content.contentId === this.activatedRoute.snapshot.params.resourceId) {
                   sessionData.completionPercentage = content.completionPercentage
-                  sessionData.completionStatus = content.status
+                  sessionData.completionStatus = Number(content.status) || 0
                   sessionData.lastCompletedTime = content.lastCompletedTime
                 }
               }
