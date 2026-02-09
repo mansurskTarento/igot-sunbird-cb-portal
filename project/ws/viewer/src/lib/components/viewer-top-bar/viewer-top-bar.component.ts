@@ -455,23 +455,25 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
         
       } else {
-        // REGULAR COURSE LOGIC: Use old simple logic without filtering
-        
         // For non-Learning Pathway courses, prefer the input leafNodesCount if available
-        this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0
+        this.overallLeafNodes = (this.leafNodesCount && this.leafNodesCount > 0) ? this.leafNodesCount : 0 
         
         const completedItems = _.filter(this.hierarchyMapData[identifier].leafNodes, (r: string) => {
-          return this.hierarchyMapData[r] && (
+          const isComplete = this.hierarchyMapData[r] && (
             this.hierarchyMapData[r].completionStatus === 2 || 
             this.hierarchyMapData[r].status === 2 ||
             this.hierarchyMapData[r].completionPercentage === 100 ||
             (this.hierarchyMapData[r].completionPercentage && this.hierarchyMapData[r].completionPercentage >= 100) ||
             (this.hierarchyMapData[r].progress && this.hierarchyMapData[r].progress >= 100)
           )
+          
+         
+          
+          return isComplete
         })
         
         this.completedCount = completedItems.length
-        
+                
         if (!(this.leafNodesCount && this.leafNodesCount > 0)) {
           this.overallLeafNodes = _.toInteger(_.get(this.hierarchyMapData[identifier], 'leafNodesCount')) || 1
         }
