@@ -5,7 +5,7 @@ import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { HttpErrorResponse } from '@angular/common/http'
@@ -221,7 +221,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private datePipe: DatePipe,
     private events: EventService,
     private langtranslations: MultilingualTranslationsService,
-    private commonSvc: CommonDataService
+    private commonSvc: CommonDataService,
+    private router: Router,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -1305,7 +1306,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.createAchievementEntry(formBody).subscribe({
       next: (response: any) => {
         if (response) {
-          this.getAchievements()
+          setTimeout(() => {
+            this.getAchievements()
+          }, 500)
           this.openSnackbar('Updated Successfully')
         }
       },
@@ -1321,7 +1324,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileV2RevampSvc.updateAchievementEntry(formBody).subscribe({
       next: (response: any) => {
         if (response) {
-          this.getAchievements()
+          setTimeout(() => {
+            this.getAchievements()
+          }, 500)
           this.openSnackbar('Updated Successfully')
         }
       },
@@ -1660,7 +1665,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.deleteProfileEntryCall(requestData)
+        header === 'Achievements' ? this.deleteAchievement(requestData) : this.deleteProfileEntryCall(requestData)
       }
     })
 
@@ -1672,10 +1677,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       case 'Achievements':
         requestData = {
           "request": {
-            "userId": this.userId,
-            "achievements": [{
-              "uuid": entryDetails.uuid
-            }]
+            "id": entryDetails.id,
+            contextType: "achievements",
           }
         }
         break
@@ -1685,8 +1688,26 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   }
 
+  deleteAchievement(request: any): void {
+    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
+      next: (res: any) => {
+        if (res && res.result && res.responseCode === 'OK') {
+          this.openSnackbar('Achievement deleted successfully', 2000)
+          setTimeout(() => {
+            this.getAchievements()
+          }, 500)
+        } else {
+          this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000)
+        }
+      },
+      error: (_err: any) => {
+        this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000)
+      }
+    })
+  }
+
   deleteProfileEntryCall(request: any): void {
-    this.profileV2RevampSvc.deleteAchievement(request).subscribe({
+    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
       next: (res: any) => {
         if (res && res.result && res.result.response) {
           this.openSnackbar('Achievement deleted successfully', 2000)
@@ -1732,5 +1753,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
+  handleRedirectToCompetencyPassbook(): void {
+    this.router.navigate(['/page/competency-passbook/list'])
+  }
 
 }

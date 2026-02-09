@@ -53,6 +53,7 @@ const API_END_POINTS = {
   ADD_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/create',
   UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update',
   LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/search',
+  DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete'
 
 }
 
@@ -291,6 +292,10 @@ export class ProfileV2RevampService {
 
   listAchievements(payload: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.LIST_ACHIEVEMENTS, payload)
+  }
+
+  deleteAchievementEntry(payload: any): Observable<any> {
+    return this.http.delete<any>(API_END_POINTS.DELETE_ACHIEVEMENT, { body: payload })
   }
 
 }
