@@ -10,12 +10,13 @@ const urls = {
   HIERARCHY: 'course/v1/hierarchy',
   LEARNER_PREFIX: '/api/',
   PROXIES_PREFIX: '/apis/proxies/v8/',
-  VALIDATE_CERTIFICATE: 'certreg/v1/certs/validate',
+  VALIDATE_CERTIFICATE: 'certreg/v2/certs/validate',
   DOWNLOAD_CERTIFICATE: (id: string) => `certreg/v2/certs/download/${id}`,
   DOWNLOAD_CERTIFICATE_v2: (id: string) => `apis/protected/v8/cohorts/course/batch/cert/download/${id}`,
   SEARCH_CERTIFICATE: 'certreg/v1/certs/search',
   VALIDATE_ENROLLMENT: 'cios-enroll/v1/validation',
   CONSENT_API: 'consent/v1/acknowledge',
+  VALIDATE_MILESTONE_CERTIFICATE: '/api/certreg/v2/achievement/validate',
 }
 
 @Injectable({
@@ -33,6 +34,17 @@ export class CertificateService {
     }
     return this.apiService.post(option.url, option.data)
   }
+
+  validateMileStoneCertificate(data: any): Observable<ServerResponse> {
+    const option = {
+      data,
+      // url: `${urls.PROXIES_PREFIX}learner/${urls.VALIDATE_CERTIFICATE}`,
+      url: `${urls.VALIDATE_MILESTONE_CERTIFICATE}`,
+    }
+    return this.apiService.post(option.url, option.data)
+  }
+
+
 
   downloadCertificate(id: string): Observable<ServerResponse> {
     const option = {
