@@ -10,7 +10,7 @@ const urls = {
   HIERARCHY: 'course/v1/hierarchy',
   LEARNER_PREFIX: '/api/',
   PROXIES_PREFIX: '/apis/proxies/v8/',
-  VALIDATE_CERTIFICATE: 'certreg/v1/certs/validate',
+  VALIDATE_CERTIFICATE: 'certreg/v2/certs/validate',
   DOWNLOAD_CERTIFICATE: (id: string) => `certreg/v2/certs/download/${id}`,
   DOWNLOAD_CERTIFICATE_v2: (id: string) => `apis/protected/v8/cohorts/course/batch/cert/download/${id}`,
   SEARCH_CERTIFICATE: 'certreg/v1/certs/search',
@@ -44,7 +44,7 @@ export class CertificateService {
     return this.apiService.post(option.url, option.data)
   }
 
-  
+
 
   downloadCertificate(id: string): Observable<ServerResponse> {
     const option = {
