@@ -1,15 +1,15 @@
 <div>
   <!-- # region Primary Details -->
   <div class="section-header mb-4 flex justify-between items-center">
-    <span class="flex items-center">{{ 'NetworkV2Profile.primaryDetails' | translate}} 
-      <mat-icon class="info-icon" [matTooltipPosition]="'below'" #pTooltip="matTooltip"
-                matTooltip="{{ 'NetworkV2Profile.pdTooltipMsg' | translate }}"
-                (click)="pTooltip.toggle()">info_outline</mat-icon></span>
+    <span class="flex items-center">{{ 'NetworkV2Profile.primaryDetails' | translate}}
+      <mat-icon class="info-icon" [matTooltipPosition]="'below'" #pTooltip="matTooltip" matTooltip="{{ 'NetworkV2Profile.pdTooltipMsg' | translate }}"
+        (click)="pTooltip.toggle()">info_outline</mat-icon></span>
     <ng-container *ngIf="showPrimaryDetailsEdit">
       <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
     </ng-container>
     <ng-container *ngIf="disablePrimaryDetailsEdit">
-      <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'" [matTooltip]="'NetworkV2Profile.pdTooltipWarnMsg' | translate">edit</mat-icon>
+      <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'"
+        [matTooltip]="'NetworkV2Profile.pdTooltipWarnMsg' | translate">edit</mat-icon>
     </ng-container>
     <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">
       {{'NetworkV2Profile.withdrawRequest' | translate }}
@@ -86,8 +86,7 @@
                     <div class="approvalStatusRejected flex justify-center items-center">{{ 'NetworkV2Profile.rejected' |
                       translate }}</div>
                   </div>
-                  <div mat-icon-button (click)="viewReason(rejectedFields?.groupRejectionComments)"
-                    class="flex gap-2 items-center viewReason">
+                  <div mat-icon-button (click)="viewReason(rejectedFields?.groupRejectionComments)" class="flex gap-2 items-center viewReason">
                     <span>{{ 'NetworkV2Profile.viewReason' | translate }}</span>
                   </div>
                 </ng-container>
@@ -115,8 +114,7 @@
                     <div class="approvalStatusRejected flex justify-center items-center">{{ 'NetworkV2Profile.rejected' |
                       translate }}</div>
                   </div>
-                  <div mat-icon-button (click)="viewReason(rejectedFields?.designationRejectionComments)"
-                    class="flex gap-2 items-center viewReason">
+                  <div mat-icon-button (click)="viewReason(rejectedFields?.designationRejectionComments)" class="flex gap-2 items-center viewReason">
                     <span>{{ 'NetworkV2Profile.viewReason' | translate }}</span>
                   </div>
                 </ng-container>
@@ -223,6 +221,26 @@
           </div>
         </ng-container>
       </ng-container>
+    </div>
+    <div class="learning-progress mt-5">
+      <div class="flex card">
+        <div class="content-div">
+          <div class="flex flex-row gap-2 info-div">
+            <mat-icon class="verify">verified_user</mat-icon>
+            <div class="font-medium title">Learning Progress</div>
+          </div>
+          <div class="line">Track your learning journey, validated skills, and professional growth in one comprehensive view.</div>
+        </div>
+        <div class="full flex items-center justify-center">
+          <button mat-raised-button class="view-passbook-btn" (click)="handleRedirectToCompetencyPassbook()"
+            (keyup)="handleRedirectToCompetencyPassbook()">
+            <div class="flex items-center justify-between gap-2 rounded">
+              <mat-icon class="book">assignment</mat-icon>
+              <span>View Learning Passbook</span>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
   </ng-container>
   <!-- #endregion Other Details -->

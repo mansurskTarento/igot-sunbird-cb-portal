@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import * as _ from 'lodash';
-import { MatLegacyDialog } from '@angular/material/legacy-dialog';
-import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component';
-import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component';
-import { ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
+import { HttpErrorResponse } from '@angular/common/http'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import * as _ from 'lodash'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component'
+import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component'
+import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
   selector: 'ws-app-profile-primary-details',
@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./profile-primary-details.component.scss']
 })
 export class ProfilePrimaryDetailsComponent implements OnInit {
-  @Input() primaryDetails: any;
+  @Input() primaryDetails: any
   @Input() isCurrentUser = false;
   @Input() enableWTR = false;
   @Input() enableWR = false;
@@ -54,12 +54,13 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     private configService: ConfigurationsService,
     private dialog: MatLegacyDialog,
     private route: ActivatedRoute,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.getApprovedFields();
-    this.isNotMyUser = _.get(this.configService, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false;
-    this.isIgotOrg = _.get(this.configService, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false;
+    this.getApprovedFields()
+    this.isNotMyUser = _.get(this.configService, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
+    this.isIgotOrg = _.get(this.configService, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'primaryDetails' && this.showPrimaryDetailsEdit) {
         setTimeout(() => {
@@ -249,6 +250,10 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
           }
         })
     })
+  }
+
+  handleRedirectToCompetencyPassbook(): void {
+    this.router.navigate(['/page/competency-passbook/list'])
   }
 
   handleTranslateTo(menuName: string): string {

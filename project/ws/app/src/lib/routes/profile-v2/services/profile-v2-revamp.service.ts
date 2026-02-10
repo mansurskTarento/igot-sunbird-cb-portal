@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { NSProfileDataV2 } from '../models/profile-v2.model';
-import { Observable } from 'rxjs';
-import { map, retry } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { NSProfileDataV2 } from '../models/profile-v2.model'
+import { Observable } from 'rxjs'
+import { map, retry } from 'rxjs/operators'
 import { TranslateService } from '@ngx-translate/core'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import * as _ from 'lodash';
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import * as _ from 'lodash'
 
 
 const API_END_POINTS = {
@@ -46,9 +46,14 @@ const API_END_POINTS = {
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
 
-  SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search'
+  SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search',
 
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
+
+  ADD_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/create',
+  UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update',
+  LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/search',
+  DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete'
 
 }
 
@@ -66,30 +71,30 @@ export class ProfileV2RevampService {
   fetchProfile(userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile> {
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
-        if(!isNotCurrentUser) {
+        if (!isNotCurrentUser) {
           this.configulreProfileDetails(res)
         }
         return res
       }))
   }
-// fetchNodalDetailsV2(rootOrgId: any, roles: string): Promise<any> {
-//   const reqBody = {
-//     request: {
-//       filters: {
-//         rootOrgId: rootOrgId,
-//         'organisations.roles': roles,
-//       },
-//       fields: ['firstName', 'profileDetails.personalDetails.primaryEmail'],
-//       limit: 1,
-//     },
-//   }
-//   return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody).toPromise()
-// }
+  // fetchNodalDetailsV2(rootOrgId: any, roles: string): Promise<any> {
+  //   const reqBody = {
+  //     request: {
+  //       filters: {
+  //         rootOrgId: rootOrgId,
+  //         'organisations.roles': roles,
+  //       },
+  //       fields: ['firstName', 'profileDetails.personalDetails.primaryEmail'],
+  //       limit: 1,
+  //     },
+  //   }
+  //   return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody).toPromise()
+  // }
 
 
   configulreProfileDetails(requestBody: any) {
-    if( this.configSvc && this.configSvc.userProfileV2) {
-      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '');
+    if (this.configSvc && this.configSvc.userProfileV2) {
+      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '')
     }
   }
 
@@ -172,17 +177,17 @@ export class ProfileV2RevampService {
   }
 
   fetchNodalDetails(rootOrgId: any, roles: string) {
-  const reqBody = {
-    "request": {
+    const reqBody = {
+      "request": {
         "filters": {
-            "rootOrgId": rootOrgId,
-             "organisations.roles": roles
+          "rootOrgId": rootOrgId,
+          "organisations.roles": roles
         },
         "fields": ["firstName", "profileDetails.personalDetails.primaryEmail"],
         "limit": 1
+      }
     }
-}
-     return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody)
+    return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody)
   }
 
   getGroups(): Observable<any> {
@@ -275,6 +280,22 @@ export class ProfileV2RevampService {
 
   getEducationsQualificationsSearch(payload: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SEARCH_EDUCATIONAL_QUALIFICATIONS, payload)
+  }
+
+  createAchievementEntry(payload: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.ADD_ACHIEVEMENT_ENTRY, payload)
+  }
+
+  updateAchievementEntry(payload: any): Observable<any> {
+    return this.http.put<any>(API_END_POINTS.UPDATE_ACHIEVEMENT_ENTRY, payload)
+  }
+
+  listAchievements(payload: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.LIST_ACHIEVEMENTS, payload)
+  }
+
+  deleteAchievementEntry(payload: any): Observable<any> {
+    return this.http.delete<any>(API_END_POINTS.DELETE_ACHIEVEMENT, { body: payload })
   }
 
 }

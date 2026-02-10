@@ -1,29 +1,46 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { HttpErrorResponse } from '@angular/common/http';
-import * as _ from 'lodash';
-import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
-import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
-import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
+import { Component, Inject, OnInit } from '@angular/core'
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
+import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { HttpErrorResponse } from '@angular/common/http'
+import * as _ from 'lodash'
+import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
+import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
 
 export function endDateValidator(startDateControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const startDate = control?.parent?.get(startDateControlName)?.value;
-    const endDate = control?.value;
+    const startDate = control?.parent?.get(startDateControlName)?.value
+    const endDate = control?.value
 
     if (!endDate) {
-      return null; // Skip validation if endDate is not set
+      return null // Skip validation if endDate is not set
     }
 
     if (startDate && new Date(endDate) < new Date(startDate)) {
-      return { endDateLessThanStartDate: true };
+      return { endDateLessThanStartDate: true }
     }
 
-    return null; // Valid
-  };
+    return null // Valid
+  }
+}
+
+export function startDateValidator(endDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(endDateControlName)?.value
+    const startDate = control?.value
+
+    if (!startDate) {
+      return null // Skip validation if startDate is not set
+    }
+
+    if (endDate && new Date(startDate) > new Date(endDate)) {
+      return { startDateGreaterThanEndDate: true }
+    }
+
+    return null // Valid
+  }
 }
 
 @Component({
@@ -35,8 +52,8 @@ export function endDateValidator(startDateControlName: string): ValidatorFn {
 export class ProfileEntryEditComponent implements OnInit {
   //#region (global variables)
   header: string = '';
-  entryDetails: any;
-  entryForm!: FormGroup;
+  entryDetails: any
+  entryForm!: FormGroup
   apiSubscriptions: any
 
   //#region (service history variables)
@@ -101,26 +118,26 @@ export class ProfileEntryEditComponent implements OnInit {
     private snackBar: MatLegacySnackBar,
     private pipeImgUrl: PipeCertificateImageURL
   ) {
-    this.header = _.get(this.data, 'header', '');
-    this.entryDetails = _.get(this.data, 'entryDetails', '');
+    this.header = _.get(this.data, 'header', '')
+    this.entryDetails = _.get(this.data, 'entryDetails', '')
   }
   ngOnInit(): void {
-    this.initForm();
+    this.initForm()
   }
 
   //#region (intialization)
   initForm(): void {
     switch (this.header) {
       case 'Service History':
-        this.createServiceHistoryForm();
-        break;
+        this.createServiceHistoryForm()
+        break
       case 'Educational qualifications':
-        this.generateYearsList();
-        this.createEducationalQualificationsForm();
-        break;
+        this.generateYearsList()
+        this.createEducationalQualificationsForm()
+        break
       case 'Achievements':
-        this.createAchievementsForm();
-        break;
+        this.createAchievementsForm()
+        break
     }
   }
   //#endregion (intialization)
@@ -138,39 +155,39 @@ export class ProfileEntryEditComponent implements OnInit {
       endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
       description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000)]]
-    });
-    this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false);
-    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    })
+    this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false)
+    const orgDistrictControl = this.entryForm.get('orgDistrict')
     if (orgDistrictControl && _.get(this.entryDetails, 'orgState', '') === '') {
-      orgDistrictControl.disable();
+      orgDistrictControl.disable()
     }
-    if(_.get(this.entryDetails, 'orgName', '')) {
-      this.selctedOrgDetails['orgName'] = _.get(this.entryDetails, 'orgName', '');
-      this.selctedOrgDetails['orgId'] = _.get(this.entryDetails, 'orgId', '');
-      this.selctedOrgDetails['orgLogo'] = _.get(this.entryDetails, 'orgLogo', '');
-      this.selctedOrgDetails['rootOrgId'] = _.get(this.entryDetails, 'rootOrgId', '');
+    if (_.get(this.entryDetails, 'orgName', '')) {
+      this.selctedOrgDetails['orgName'] = _.get(this.entryDetails, 'orgName', '')
+      this.selctedOrgDetails['orgId'] = _.get(this.entryDetails, 'orgId', '')
+      this.selctedOrgDetails['orgLogo'] = _.get(this.entryDetails, 'orgLogo', '')
+      this.selctedOrgDetails['rootOrgId'] = _.get(this.entryDetails, 'rootOrgId', '')
     }
-    this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false;
+    this.isCurrentlyWorking = _.get(this.entryDetails, 'currentlyWorking', '') === 'true' ? true : false
     if (this.isCurrentlyWorking) {
-      const endDateControl = this.entryForm.get('endDate');
+      const endDateControl = this.entryForm.get('endDate')
       if (endDateControl) {
-        endDateControl.disable();
-        endDateControl.clearValidators();
-        endDateControl.updateValueAndValidity();
+        endDateControl.disable()
+        endDateControl.clearValidators()
+        endDateControl.updateValueAndValidity()
       }
     }
-    this.getOrgList('');
-    this.checkSelectedOrgHasDesignations();
+    this.getOrgList('')
+    this.checkSelectedOrgHasDesignations()
     this.getStatesList()
     if (_.get(this.entryDetails, 'startDate', '')) {
-      this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''));
+      this.startDate = new Date(_.get(this.entryDetails, 'startDate', ''))
     }
-    this.serviceHistoryValueChangeFunctions();
+    this.serviceHistoryValueChangeFunctions()
   }
 
   serviceHistoryValueChangeFunctions(): void {
-    const searchDesignationControl = this.entryForm.get('searchDesignation');
-    const designationControl = this.entryForm.get('designation');
+    const searchDesignationControl = this.entryForm.get('searchDesignation')
+    const designationControl = this.entryForm.get('designation')
     const searchOrgNameControl = this.entryForm.get('searchOrgName')
     const orgNameControl = this.entryForm.get('orgName')
     if (searchDesignationControl) {
@@ -184,11 +201,11 @@ export class ProfileEntryEditComponent implements OnInit {
         .subscribe(searchText => {
           this.designationsOffset = 0
           if (searchText && searchText.length > 1) {
-          this.designationSearchText = searchText
+            this.designationSearchText = searchText
             this.getdesignationsMeta()
           } else if (!searchText) {
-          this.designationSearchText = searchText
-            if(!settingValueChange) {
+            this.designationSearchText = searchText
+            if (!settingValueChange) {
               this.getdesignationsMeta()
             }
             this.checkCurrentDesignationPresent()
@@ -197,20 +214,20 @@ export class ProfileEntryEditComponent implements OnInit {
         })
     }
 
-    if( searchOrgNameControl) {
+    if (searchOrgNameControl) {
       let settingValueChange = true
       searchOrgNameControl.valueChanges.pipe(
-          debounceTime(250),
-          distinctUntilChanged(),
-          startWith(''),
-        )
+        debounceTime(250),
+        distinctUntilChanged(),
+        startWith(''),
+      )
         .subscribe(searchText => {
           this.orgOffset = 0
           if (searchText) {
             this.organisationFilterEnable = true
             this.getOrgList(searchText)
           } else {
-            if(!settingValueChange) {
+            if (!settingValueChange) {
               this.getOrgList()
             }
             this.organisationFilterEnable = false
@@ -221,22 +238,22 @@ export class ProfileEntryEditComponent implements OnInit {
 
     }
 
-    if(orgNameControl) {
+    if (orgNameControl) {
       orgNameControl.valueChanges.subscribe((value: string) => {
-        if(value) {
+        if (value) {
           const selectedOrgDetails: any = this.orgList.find((org: any) => org.orgName === value)
-          if(selectedOrgDetails) {
+          if (selectedOrgDetails) {
             this.selctedOrgDetails['orgId'] = selectedOrgDetails.identifier
             this.selctedOrgDetails['rootOrgId'] = selectedOrgDetails.rootOrgId
             this.selctedOrgDetails['orgLogo'] = selectedOrgDetails.imgUrl
             this.selctedOrgDetails['orgName'] = selectedOrgDetails.orgName
             this.designationsOffset = 0
-            this.designationsMeta = [];
-            if( searchDesignationControl) {
-              searchDesignationControl.patchValue('');
+            this.designationsMeta = []
+            if (searchDesignationControl) {
+              searchDesignationControl.patchValue('')
             }
-            if( designationControl) {
-              designationControl.reset();
+            if (designationControl) {
+              designationControl.reset()
             }
             this.checkSelectedOrgHasDesignations()
           }
@@ -266,23 +283,23 @@ export class ProfileEntryEditComponent implements OnInit {
         offset: this.orgOffset
       }
     }
-    if(query) {
+    if (query) {
       formBody.request['query'] = query
     }
-    this.isLoadingMoreOrganisations = true;
-    if(this.apiSubscriptions) {
+    this.isLoadingMoreOrganisations = true
+    if (this.apiSubscriptions) {
       this.apiSubscriptions.unsubscribe()
     }
     this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
       next: (res: any) => {
-        this.organisationsCount = _.get(res, 'result.response.count', 50);
-        if(this.orgOffset === 0) {
+        this.organisationsCount = _.get(res, 'result.response.count', 50)
+        if (this.orgOffset === 0) {
           this.orgList = _.get(res, 'result.response.content', []) as organisation[]
           this.checkCurrentOrganisationPresent()
         } else {
           this.orgList = [...this.orgList, ..._.get(res, 'result.response.content', []) as organisation[]]
         }
-        this.isLoadingMoreOrganisations = false;
+        this.isLoadingMoreOrganisations = false
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
@@ -292,9 +309,9 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   checkCurrentOrganisationPresent() {
-    if(this.selctedOrgDetails['orgName'] && this.orgList) {
+    if (this.selctedOrgDetails['orgName'] && this.orgList) {
       const selectedOrgIsPresent = this.orgList.filter((org: any) => org.orgName === this.selctedOrgDetails['orgName']).length > 0
-      if(!selectedOrgIsPresent) {
+      if (!selectedOrgIsPresent) {
         const orgDetails: organisation = {
           identifier: this.selctedOrgDetails['orgId'],
           orgName: this.selctedOrgDetails['orgName'],
@@ -307,39 +324,39 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   setupScrollListenerForOrg(opened: boolean): void {
-    const searchOrgNameControl = this.entryForm.get('searchOrgName');
-    if(opened && searchOrgNameControl) {
+    const searchOrgNameControl = this.entryForm.get('searchOrgName')
+    if (opened && searchOrgNameControl) {
       searchOrgNameControl.setValue('')
       this.organisationFilterEnable = false
       this.orgOffset = 0
       this.getOrgList()
-      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
-        searchInput.focus();
+        searchInput.focus()
       }
-      const panel = document.querySelector('.mat-select-panel');
+      const panel = document.querySelector('.mat-select-panel')
       if (panel) {
-        panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this));
+        panel.addEventListener('scroll', this.onOrganisationSelectScroll.bind(this))
       }
     }
   }
 
   onOrganisationSelectScroll(event: any): void {
-    const element = event.target;
+    const element = event.target
     // if (!this.organisationFilterEnable) {
-      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
-        if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
-          this.orgOffset = this.orgOffset + 1;
-          const searchOrgNameControl = this.entryForm.get('searchOrgName');
-          let query = searchOrgNameControl ? searchOrgNameControl.value : ''
-          this.getOrgList( query);
-        }
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+      if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
+        this.orgOffset = this.orgOffset + 1
+        const searchOrgNameControl = this.entryForm.get('searchOrgName')
+        let query = searchOrgNameControl ? searchOrgNameControl.value : ''
+        this.getOrgList(query)
       }
+    }
     // }
   }
 
   onOrganisationDropdownClosed(): void {
-    const searchOrgNameControl = this.entryForm.get('searchOrgName');
+    const searchOrgNameControl = this.entryForm.get('searchOrgName')
     if (searchOrgNameControl) {
       searchOrgNameControl.setValue('')
     }
@@ -350,7 +367,7 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (designations)
 
   checkSelectedOrgHasDesignations(): void {
-    if(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
+    if (this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId']) {
       const igotDesignationBody: any = {
         request: {
           filters: {
@@ -370,32 +387,32 @@ export class ProfileEntryEditComponent implements OnInit {
           },
           facets: [],
         },
-      };
+      }
       this.ProfileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
         next: (res: any) => {
-          const count = _.get(res, 'result.count', 0);
-          this.selectedOrgHasDesignations = count > 0;
-          this.getdesignationsMeta();
+          const count = _.get(res, 'result.count', 0)
+          this.selectedOrgHasDesignations = count > 0
+          this.getdesignationsMeta()
         },
         error: () => {
-          this.selectedOrgHasDesignations = false;
-          this.getdesignationsMeta();
+          this.selectedOrgHasDesignations = false
+          this.getdesignationsMeta()
         }
-      });
+      })
     } else {
-      this.selectedOrgHasDesignations = false;
-      this.getdesignationsMeta();
+      this.selectedOrgHasDesignations = false
+      this.getdesignationsMeta()
     }
   }
   getdesignationsMeta() {
     if (!(this.selctedOrgDetails && this.selctedOrgDetails['rootOrgId'])) {
-      return;
+      return
     }
-    this.isLoadingMoreDesignations = true;
+    this.isLoadingMoreDesignations = true
     if (this.selectedOrgHasDesignations) {
-      this.getIgotDesignations();
+      this.getIgotDesignations()
     } else {
-      this.getDefaultDesignations();
+      this.getDefaultDesignations()
     }
   }
 
@@ -421,26 +438,26 @@ export class ProfileEntryEditComponent implements OnInit {
         },
         facets: []
       }
-    };
-    if(this.designationSearchText){
-      requestBody['request']['query'] = this.designationSearchText;
+    }
+    if (this.designationSearchText) {
+      requestBody['request']['query'] = this.designationSearchText
     }
     this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
       next: (res: any) => {
-        this.isLoadingMoreDesignations = false;
-        if(this.designationsOffset === 0) {
-          this.designationsMeta = _.get(res, 'result.Term', []) as designation[];
+        this.isLoadingMoreDesignations = false
+        if (this.designationsOffset === 0) {
+          this.designationsMeta = _.get(res, 'result.Term', []) as designation[]
         } else {
-          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]];
+          this.designationsMeta = [...this.designationsMeta, ..._.get(res, 'result.Term', []) as designation[]]
         }
-        this.designationsTotalCount = _.get(res, 'result.count', 0);
-        this.checkCurrentDesignationPresent();
+        this.designationsTotalCount = _.get(res, 'result.count', 0)
+        this.checkCurrentDesignationPresent()
       },
       error: () => {
-        this.isLoadingMoreDesignations = false;
-        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+        this.isLoadingMoreDesignations = false
+        this.openSnackbar('Something went wrong. Please refresh or try again later.')
       }
-    });
+    })
   }
 
   private getDefaultDesignations() {
@@ -457,53 +474,53 @@ export class ProfileEntryEditComponent implements OnInit {
     }
     this.ProfileV2RevampService.searchDesignation(requestBody).subscribe({
       next: (res: any) => {
-        this.isLoadingMoreDesignations = false;
-        const content = _.get(res, 'result.result.data', []) as designation[];
+        this.isLoadingMoreDesignations = false
+        const content = _.get(res, 'result.result.data', []) as designation[]
         const mapped = content.map((item: any) => ({
           name: item.designation || '',
           status: item.status || 'Active',
-        }));
+        }))
         if (this.designationsOffset === 0) {
-          this.designationsMeta = mapped;
+          this.designationsMeta = mapped
         } else {
-          this.designationsMeta = [...this.designationsMeta, ...mapped];
+          this.designationsMeta = [...this.designationsMeta, ...mapped]
         }
-        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0);
-        this.checkCurrentDesignationPresent();
+        this.designationsTotalCount = _.get(res, 'result.result.totalCount', 0)
+        this.checkCurrentDesignationPresent()
       },
       error: () => {
-        this.isLoadingMoreDesignations = false;
-        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+        this.isLoadingMoreDesignations = false
+        this.openSnackbar('Something went wrong. Please refresh or try again later.')
       }
-    });
+    })
   }
 
   setupScrollListener(opened: boolean): void {
-    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const searchDesignationControl = this.entryForm.get('searchDesignation')
     if (opened && searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationsOffset = 0
-      this.designationsMeta = [];
+      this.designationsMeta = []
       this.getdesignationsMeta()
-      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
-        searchInput.focus();
+        searchInput.focus()
       }
-      const panel = document.querySelector('.mat-select-panel');
+      const panel = document.querySelector('.mat-select-panel')
       if (panel) {
-        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this))
       }
     }
   }
   checkCurrentDesignationPresent() {
     // Get the current designation value
-    const searchDesignationControl = this.entryForm.get('designation');
-    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
+    const searchDesignationControl = this.entryForm.get('designation')
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : ''
     // Check if current designation exists in the list
     if (currentDesignation) {
       const designationExists = this.designationsMeta.some(
         (designation: any) => designation.name.toLowerCase() === currentDesignation.toLowerCase()
-      );
+      )
 
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
@@ -511,27 +528,27 @@ export class ProfileEntryEditComponent implements OnInit {
         const newDesignation = {
           name: currentDesignation,
           status: 'Active'
-        };
-        this.designationsMeta.unshift(newDesignation);
+        }
+        this.designationsMeta.unshift(newDesignation)
       }
     }
   }
 
   onDesignationSelectScroll(event: any): void {
-    const element = event.target;
-      // Check if user has scrolled to the bottom (with a small threshold)
-      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
-        // Only load more if not already loading and if there are potentially more items
-        if (!this.isLoadingMoreDesignations && this.designationsMeta.length < this.designationsTotalCount) {
-          this.isLoadingMoreDesignations = true;
-          this.designationsOffset += 1;
-          this.getdesignationsMeta()
-        }
+    const element = event.target
+    // Check if user has scrolled to the bottom (with a small threshold)
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
+      // Only load more if not already loading and if there are potentially more items
+      if (!this.isLoadingMoreDesignations && this.designationsMeta.length < this.designationsTotalCount) {
+        this.isLoadingMoreDesignations = true
+        this.designationsOffset += 1
+        this.getdesignationsMeta()
       }
+    }
   }
 
   onDesignationDropdownClosed(): void {
-    const searchDesignationControl = this.entryForm.get('searchDesignation');
+    const searchDesignationControl = this.entryForm.get('searchDesignation')
     if (searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationSearchText = ''
@@ -545,12 +562,12 @@ export class ProfileEntryEditComponent implements OnInit {
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[]
         if (this.entryForm) {
-          const stateControl = this.entryForm.get('orgState');
+          const stateControl = this.entryForm.get('orgState')
           if (stateControl) {
-            stateControl.patchValue(_.get(this.entryDetails, 'orgState', ''));
+            stateControl.patchValue(_.get(this.entryDetails, 'orgState', ''))
           }
           if (_.get(this.entryDetails, 'orgState', '')) {
-            this.getDistrictsList(_.get(this.entryDetails, 'orgState', ''), true);
+            this.getDistrictsList(_.get(this.entryDetails, 'orgState', ''), true)
           }
         }
       }, error: (error: HttpErrorResponse) => {
@@ -562,70 +579,70 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   getDistrictsList(state: string, isFirstTime: boolean = false) {
-    const orgDistrictControl = this.entryForm.get('orgDistrict');
+    const orgDistrictControl = this.entryForm.get('orgDistrict')
     if (state) {
       if (orgDistrictControl) {
-        orgDistrictControl.enable();
+        orgDistrictControl.enable()
       }
       this.ProfileV2RevampService.getDistrictsList(state).subscribe({
         next: (res: any) => {
-          this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
-          const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null;
+          this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[]
+          const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null
           if (districtControl) {
             if (isFirstTime) {
-              districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''));
+              districtControl.patchValue(_.get(this.entryDetails, 'orgDistrict', ''))
             } else {
-              districtControl.patchValue('');
+              districtControl.patchValue('')
             }
           }
         },
         error: (err: HttpErrorResponse) => {
-          this.districtsList = [];
+          this.districtsList = []
           if (err) {
-            this.openSnackbar('Something went wrong. Please refresh or try again later.');
+            this.openSnackbar('Something went wrong. Please refresh or try again later.')
           }
         }
       })
     } else {
       if (orgDistrictControl) {
-        orgDistrictControl.disable();
+        orgDistrictControl.disable()
       }
     }
   }
 
   onCurrentlyWorkingChange(event: boolean): void {
-    this.isCurrentlyWorking = event;
-    const currentlyWorkingControl = this.entryForm.get('currentlyWorking');
+    this.isCurrentlyWorking = event
+    const currentlyWorkingControl = this.entryForm.get('currentlyWorking')
     if (currentlyWorkingControl) {
-      currentlyWorkingControl.patchValue(event.toString());
+      currentlyWorkingControl.patchValue(event.toString())
     }
     if (event) {
-      const endDateControl = this.entryForm.get('endDate');
+      const endDateControl = this.entryForm.get('endDate')
       if (endDateControl) {
-        endDateControl.setValue(null);
-        endDateControl.disable();
-        endDateControl.clearValidators();
-        endDateControl.updateValueAndValidity();
+        endDateControl.setValue(null)
+        endDateControl.disable()
+        endDateControl.clearValidators()
+        endDateControl.updateValueAndValidity()
       }
     } else {
-      const endDateControl = this.entryForm.get('endDate');
+      const endDateControl = this.entryForm.get('endDate')
       if (endDateControl) {
-        endDateControl.enable();
-        endDateControl.setValidators([Validators.required]);
-        endDateControl.updateValueAndValidity();
+        endDateControl.enable()
+        endDateControl.setValidators([Validators.required])
+        endDateControl.updateValueAndValidity()
       }
     }
   }
 
   onStartDateChange(selectedStartDate: Date): void {
-    this.startDate = selectedStartDate;
-    const endDateControl = this.entryForm.get('endDate');
+    this.startDate = selectedStartDate
+    const endDateControl = this.entryForm.get('endDate')
     if (endDateControl) {
-      const currentEndDate = endDateControl.value;
+      const currentEndDate = endDateControl.value
 
       // Reset end date if it is less than the selected start date
       if (currentEndDate && new Date(currentEndDate) < selectedStartDate) {
-        endDateControl.setValue(null);
+        endDateControl.setValue(null)
       }
     }
   }
@@ -645,17 +662,17 @@ export class ProfileEntryEditComponent implements OnInit {
       otherInstituteName: [''],
       startYear: [_.get(this.entryDetails, 'startYear', ''), [Validators.required]],
       endYear: [_.get(this.entryDetails, 'endYear', ''), [Validators.required]],
-    });
+    })
     this.generateYearsList()
     this.educationFormValuChange()
   }
 
   educationFormValuChange(): void {
-    const searchInstituteControl = this.entryForm.get('searchInstitute');
-    const institutionNameControl = this.entryForm.get('institutionName');
-    const searchDegreeControl = this.entryForm.get('searchDegrees');
+    const searchInstituteControl = this.entryForm.get('searchInstitute')
+    const institutionNameControl = this.entryForm.get('institutionName')
+    const searchDegreeControl = this.entryForm.get('searchDegrees')
     let isInitializingDegree = true
-    let isInitializingInstitute = true;
+    let isInitializingInstitute = true
 
     if (searchDegreeControl) {
       searchDegreeControl.valueChanges
@@ -677,14 +694,14 @@ export class ProfileEntryEditComponent implements OnInit {
         })
 
       if (_.get(this.entryDetails, 'degree', '')) {
-        searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+        searchDegreeControl.setValue(_.get(this.entryDetails, 'degree', ''))
       }
       setTimeout(() => {
-        const degreeControl = this.entryForm.get('degree');
+        const degreeControl = this.entryForm.get('degree')
         if (degreeControl) {
-          degreeControl.setValue(_.get(this.entryDetails, 'degree', ''));
+          degreeControl.setValue(_.get(this.entryDetails, 'degree', ''))
         }
-      }, 10);
+      }, 10)
     }
 
     if (searchInstituteControl && institutionNameControl) {
@@ -707,28 +724,28 @@ export class ProfileEntryEditComponent implements OnInit {
         })
 
       if (_.get(this.entryDetails, 'institutionName', '')) {
-        searchInstituteControl.setValue(_.get(this.entryDetails, 'institutionName', ''));
+        searchInstituteControl.setValue(_.get(this.entryDetails, 'institutionName', ''))
       }
       setTimeout(() => {
-        institutionNameControl.setValue(_.get(this.entryDetails, 'institutionName', ''));
-        this.onInstituteChange(_.get(this.entryDetails, 'institutionName', ''));
+        institutionNameControl.setValue(_.get(this.entryDetails, 'institutionName', ''))
+        this.onInstituteChange(_.get(this.entryDetails, 'institutionName', ''))
         institutionNameControl.valueChanges.subscribe((name: string) => {
           this.onInstituteChange(name)
         })
-      }, 10);
+      }, 10)
     }
   }
 
   setupScrollListenerForDegrees(opened: boolean): void {
-    const searchDegreeControl = this.entryForm.get('searchDegrees');
-    if(opened && searchDegreeControl) {
+    const searchDegreeControl = this.entryForm.get('searchDegrees')
+    if (opened && searchDegreeControl) {
       searchDegreeControl.setValue('')
       this.degreesFilterEnable = false
       this.degreePageNumber = 0
       this.degreeSearchText = ''
       const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
-        searchInput.focus();
+        searchInput.focus()
       }
       this.checkCurrentDegreePresent()
       setTimeout(() => {
@@ -736,12 +753,12 @@ export class ProfileEntryEditComponent implements OnInit {
         if (panel) {
           panel.addEventListener('scroll', this.onDegreesSelectScroll.bind(this))
         }
-      }, 100);
+      }, 100)
     }
   }
 
   onDegreesSelectScroll(event: any): void {
-    const element = event.target;
+    const element = event.target
 
     if (!this.degreesFilterEnable) {
       // Check if user has scrolled to the bottom
@@ -749,9 +766,9 @@ export class ProfileEntryEditComponent implements OnInit {
         // Only load more if not already loading and if there are potentially more items
         const loadedCount = this.filterDegreesMeta.filter(item => item.name !== 'Other').length
         if (!this.isLoadingMoredegrees && loadedCount < this.degreeTotalCount) {
-          this.isLoadingMoredegrees = true;
+          this.isLoadingMoredegrees = true
           this.degreePageNumber += 1
-          this.getEducationalQualifications('degree', this.degreePageNumber, this.degreeSearchText);
+          this.getEducationalQualifications('degree', this.degreePageNumber, this.degreeSearchText)
         }
       }
     }
@@ -759,20 +776,20 @@ export class ProfileEntryEditComponent implements OnInit {
 
   onDegreesDropdownClosed(): void {
     setTimeout(() => {
-      const degreeControlControl = this.entryForm.get('degree');
-      const searchDegreeControl = this.entryForm.get('searchDegrees');
+      const degreeControlControl = this.entryForm.get('degree')
+      const searchDegreeControl = this.entryForm.get('searchDegrees')
       if (searchDegreeControl) {
-        searchDegreeControl.setValue('');
+        searchDegreeControl.setValue('')
       }
       if (degreeControlControl && degreeControlControl.value) {
         this.checkCurrentDegreePresent()
         // degreeControlControl.setValue(degreeControlControl.value);
       }
-    }, 100);
+    }, 100)
   }
 
   generateYearsList(): void {
-    this.yeasersList = generateYears(1900);
+    this.yeasersList = generateYears(1900)
   }
 
   // getDegreesList() {
@@ -801,8 +818,8 @@ export class ProfileEntryEditComponent implements OnInit {
         "filters": {
           "status": 1
         },
-        "sortBy":"name",
-        "orderBy" :"ASC"
+        "sortBy": "name",
+        "orderBy": "ASC"
       }
     }
 
@@ -843,29 +860,29 @@ export class ProfileEntryEditComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.isLoadingMoredegrees = false
-        this.isLoadingMoreInstitutions = false;
+        this.isLoadingMoreInstitutions = false
         if (error) {
-          this.openSnackbar('Something went wrong. Please refresh or try again later.');
+          this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
       }
     })
   }
 
   checkCurrentDegreePresent() {
-    const degreeControl = this.entryForm.get('degree');
-    const currentDegree = degreeControl ? degreeControl.value : '';
+    const degreeControl = this.entryForm.get('degree')
+    const currentDegree = degreeControl ? degreeControl.value : ''
     if (currentDegree) {
       const degreeExists = this.filterDegreesMeta.some(
         (degree: any) => degree?.name.toLowerCase() === currentDegree.toLowerCase()
-      );
+      )
 
       if (!degreeExists) {
-        const newDegree = { name: currentDegree };
+        const newDegree = { name: currentDegree }
         if (this.filterDegreesMeta?.length >= this.degreeListLoadCount) {
           // Replace the last item with the new one to maintain the same number of items
-          this.filterDegreesMeta.pop();
+          this.filterDegreesMeta.pop()
         }
-        this.filterDegreesMeta.unshift(newDegree);
+        this.filterDegreesMeta.unshift(newDegree)
       }
     }
   }
@@ -886,7 +903,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
 
   setupInstituteScrollListener(opened: boolean): void {
-    const searchInstituteControl = this.entryForm.get('searchInstitute');
+    const searchInstituteControl = this.entryForm.get('searchInstitute')
     if (opened && searchInstituteControl) {
       searchInstituteControl.setValue('')
       this.inistitutionFilterEnable = false
@@ -900,34 +917,34 @@ export class ProfileEntryEditComponent implements OnInit {
       }, 100)
       this.checkCurrentInstitutePresent()
       setTimeout(() => {
-        const panel = document.querySelector('.mat-select-panel');
+        const panel = document.querySelector('.mat-select-panel')
         if (panel) {
-          panel.addEventListener('scroll', this.onInstituteSelectScroll.bind(this));
+          panel.addEventListener('scroll', this.onInstituteSelectScroll.bind(this))
         }
-      }, 100);
+      }, 100)
     }
   }
   checkCurrentInstitutePresent() {
-    const institutionNameControl = this.entryForm.get('institutionName');
-    const currentInstitute = institutionNameControl ? institutionNameControl.value : '';
+    const institutionNameControl = this.entryForm.get('institutionName')
+    const currentInstitute = institutionNameControl ? institutionNameControl.value : ''
     if (currentInstitute) {
       const instituteExists = this.filterInstitutionsList.some(
         (institute: any) => institute?.name.toLowerCase() === currentInstitute.toLowerCase()
-      );
+      )
 
       if (!instituteExists) {
-        const newInstitute = { name: currentInstitute };
+        const newInstitute = { name: currentInstitute }
         if (this.filterInstitutionsList?.length >= this.institutionListLoadCount) {
           // Replace the last item with the new one to maintain the same number of items
-          this.filterInstitutionsList.pop();
+          this.filterInstitutionsList.pop()
         }
-        this.filterInstitutionsList.unshift(newInstitute);
+        this.filterInstitutionsList.unshift(newInstitute)
       }
     }
   }
 
   onInstituteSelectScroll(event: any): void {
-    const element = event.target;
+    const element = event.target
 
     if (!this.inistitutionFilterEnable) {
       // Check if user has scrolled to the bottom
@@ -935,9 +952,9 @@ export class ProfileEntryEditComponent implements OnInit {
         // Only load more if not already loading and if there are potentially more items
         const loadedCount = this.filterInstitutionsList.filter(item => item.name !== 'Other').length
         if (!this.isLoadingMoreInstitutions && loadedCount < this.instituteTotalCount) {
-          this.isLoadingMoreInstitutions = true;
+          this.isLoadingMoreInstitutions = true
           this.institutePageNumber += 1
-          this.getEducationalQualifications('institute', this.institutePageNumber, this.instituteSearchText);
+          this.getEducationalQualifications('institute', this.institutePageNumber, this.instituteSearchText)
         }
       }
     }
@@ -945,58 +962,58 @@ export class ProfileEntryEditComponent implements OnInit {
 
   onInstituteDropdownClosed(): void {
     setTimeout(() => {
-      const institutionNameControl = this.entryForm.get('institutionName');
-      const searchInstituteControl = this.entryForm.get('searchInstitute');
+      const institutionNameControl = this.entryForm.get('institutionName')
+      const searchInstituteControl = this.entryForm.get('searchInstitute')
       if (searchInstituteControl) {
-        searchInstituteControl.setValue('');
+        searchInstituteControl.setValue('')
       }
       if (institutionNameControl && institutionNameControl.value) {
         if (institutionNameControl) {
-          institutionNameControl.setValue(institutionNameControl.value);
+          institutionNameControl.setValue(institutionNameControl.value)
         }
       }
-    }, 100);
+    }, 100)
   }
 
   onDegreeChange(selectedDegree: string): void {
-    const otherDegreeControl = this.entryForm.get('otherDegree');
+    const otherDegreeControl = this.entryForm.get('otherDegree')
     if (otherDegreeControl) {
       if (selectedDegree && selectedDegree.toLocaleLowerCase() === 'other') {
-        otherDegreeControl.setValidators([Validators.required, Validators.maxLength(80), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
+        otherDegreeControl.setValidators([Validators.required, Validators.maxLength(80), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)])
       } else {
-        otherDegreeControl.clearValidators();
+        otherDegreeControl.clearValidators()
       }
-      otherDegreeControl.setValue('');
-      otherDegreeControl.updateValueAndValidity();
+      otherDegreeControl.setValue('')
+      otherDegreeControl.updateValueAndValidity()
     }
   }
 
   onInstituteChange(selectedInstitute: string, isPatching = false): void {
-    const otherInstituteControl = this.entryForm.get('otherInstituteName');
+    const otherInstituteControl = this.entryForm.get('otherInstituteName')
     if (otherInstituteControl) {
       if (selectedInstitute === 'Other') {
-        otherInstituteControl.setValidators([Validators.required, Validators.maxLength(125), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)]);
+        otherInstituteControl.setValidators([Validators.required, Validators.maxLength(125), Validators.pattern(/^[a-zA-Z0-9\s(),.&\/]*$/)])
       } else {
-        otherInstituteControl.clearValidators();
+        otherInstituteControl.clearValidators()
       }
       if (!isPatching) {
-        otherInstituteControl.setValue('');
+        otherInstituteControl.setValue('')
       }
-      otherInstituteControl.updateValueAndValidity();
+      otherInstituteControl.updateValueAndValidity()
     }
   }
 
   isEndYearDisabled(year: number): boolean {
-    const startYear = this.entryForm.get('startYear')?.value as number;
-    return startYear ? year < startYear : false;
+    const startYear = this.entryForm.get('startYear')?.value as number
+    return startYear ? year < startYear : false
   }
 
   onStartYearChange(value: number): void {
-    const endYear = this.entryForm.get('endYear')?.value;
+    const endYear = this.entryForm.get('endYear')?.value
     if (endYear && endYear < value) {
       this.entryForm.patchValue({
         endYear: null
-      });
+      })
     }
   }
 
@@ -1006,72 +1023,77 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
-      issuedDate: [_.get(this.entryDetails, 'issuedDate', '')],
-      uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
-      fileName: [_.get(this.entryDetails, 'fileName', '')],
-      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
-    });
-    if (_.get(this.entryDetails, 'fileName', '')) {
-      const urlControl = this.entryForm.controls.url;
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+      startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+      endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+      uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
+      fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
+      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
+    })
+    if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
+      const urlControl = this.entryForm.controls.url
       urlControl.patchValue('')
       urlControl.disable()
       urlControl.updateValueAndValidity()
-      this.disableUpload = false;
-      this.disableUrl = true;
+      this.disableUpload = false
+      this.disableUrl = true
     } else if (_.get(this.entryDetails, 'url', '')) {
-      this.disableUpload = true;
-      this.disableUrl = false;
+      this.disableUpload = true
+      this.disableUrl = false
     }
-    this.valueChanges();
+    this.valueChanges()
   }
 
   valueChanges(): void {
-    const urlControl = this.entryForm.get('url');
+    const urlControl = this.entryForm.get('url')
     if (urlControl) {
       urlControl.valueChanges.subscribe((value: string) => {
         if (value && value.trim() !== '') {
-          const documentUrlControl = this.entryForm.get('uploadedDocumentUrl');
+          const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
           if (documentUrlControl) {
-            documentUrlControl.patchValue('');
-            documentUrlControl.updateValueAndValidity();
+            documentUrlControl.patchValue('')
+            documentUrlControl.updateValueAndValidity()
           }
-          const fileNameControl = this.entryForm.get('fileName');
+          const fileNameControl = this.entryForm.get('fileName')
           if (fileNameControl) {
-            fileNameControl.patchValue('');
-            fileNameControl.updateValueAndValidity();
+            fileNameControl.patchValue('')
+            fileNameControl.updateValueAndValidity()
           }
-          this.disableUpload = true;
-          this.disableUrl = false;
+          this.disableUpload = true
+          this.disableUrl = false
         } else {
-          this.disableUpload = false;
-          this.disableUrl = false;
+          this.disableUpload = false
+          this.disableUrl = false
         }
-      });
+      })
     }
   }
 
   removeFile(): void {
-    const documentUrlControl = this.entryForm.get('uploadedDocumentUrl');
+    const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
     if (documentUrlControl) {
-      documentUrlControl.patchValue('');
-      documentUrlControl.updateValueAndValidity();
+      documentUrlControl.patchValue('')
+      documentUrlControl.updateValueAndValidity()
     }
-    const urlControl = this.entryForm.get('url');
+    const urlControl = this.entryForm.get('url')
     if (urlControl) {
-      urlControl.patchValue('');
-      urlControl.enable();
-      urlControl.updateValueAndValidity();
+      urlControl.patchValue('')
+      urlControl.enable()
+      urlControl.updateValueAndValidity()
     }
-    const fileNameControl = this.entryForm.get('fileName');
+    const fileNameControl = this.entryForm.get('fileName')
     if (fileNameControl) {
-      fileNameControl.patchValue('');
-      fileNameControl.updateValueAndValidity();
+      fileNameControl.patchValue('')
+      fileNameControl.updateValueAndValidity()
     }
-    this.disableUpload = false;
-    this.disableUrl = false;
+    this.disableUpload = false
+    this.disableUrl = false
   }
 
   preventDefaultCDK(event: DragEvent, isEneter = ''): void {
@@ -1125,21 +1147,21 @@ export class ProfileEntryEditComponent implements OnInit {
             const folderNameToSplit = '/userAchievements/'
             const urlSplice = createdUrl.split(folderNameToSplit)[1]
             const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
-            const documentUrlControl = this.entryForm.get('uploadedDocumentUrl');
+            const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
             if (documentUrlControl) {
               documentUrlControl.patchValue(uploadedFile)
               documentUrlControl.updateValueAndValidity()
             }
-            const urlControl = this.entryForm.get('url');
+            const urlControl = this.entryForm.get('url')
             if (urlControl) {
               urlControl.patchValue('')
               urlControl.disable()
               urlControl.updateValueAndValidity()
             }
-            const fileNameControl = this.entryForm.get('fileName');
+            const fileNameControl = this.entryForm.get('fileName')
             if (fileNameControl) {
-              fileNameControl.patchValue(fileName);
-              fileNameControl.updateValueAndValidity();
+              fileNameControl.patchValue(fileName)
+              fileNameControl.updateValueAndValidity()
             }
             this.disableUrl = true
             this.disableUpload = false
@@ -1159,40 +1181,40 @@ export class ProfileEntryEditComponent implements OnInit {
   handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-        const formValue = this.entryForm.value;
+        const formValue = this.entryForm.value
         if (this.header === 'Service History') {
-          if(formValue.orgName === this.selctedOrgDetails['orgName']) {
+          if (formValue.orgName === this.selctedOrgDetails['orgName']) {
             formValue['orgLogo'] = this.selctedOrgDetails['orgLogo']
             formValue['orgId'] = this.selctedOrgDetails['orgId']
             formValue['rootOrgId'] = this.selctedOrgDetails['rootOrgId']
           }
         }
-        this.dialogRef.close(formValue);
+        this.dialogRef.close(formValue)
       } else {
-        this.markFormGroupTouched(this.entryForm);
+        this.markFormGroupTouched(this.entryForm)
       }
     }
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
+      control.markAsTouched()
       if ((control as any).controls) {
-        this.markFormGroupTouched(control as FormGroup);
+        this.markFormGroupTouched(control as FormGroup)
       }
-    });
+    })
   }
 
   hasError(controlName: string, errorName: string): boolean {
-    const control = this.entryForm.get(controlName);
+    const control = this.entryForm.get(controlName)
     if (control && control.touched && control.hasError(errorName)) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   handleCancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
