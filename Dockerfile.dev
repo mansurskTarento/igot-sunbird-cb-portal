@@ -1,7 +1,15 @@
 FROM node:10
 
+RUN useradd -ms /bin/bash appuser \
+    && mkdir -p /app \
+    && chown -R appuser:appuser /app
+
 WORKDIR /app
 COPY . .
+
+COPY --chown=appuser:appuser . .
+
+USER appuser
 
 #RUN npm i yarn
 #RUN yarn global add @angular/cli@latest
