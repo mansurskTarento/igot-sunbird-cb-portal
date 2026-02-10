@@ -356,7 +356,8 @@
                   <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
                   <ng-container *ngIf="isCurrentUser">
                     <div class="flex items-center gap-2">
-                      <span class="link-to-passbook">View Learning Passbook</span>
+                      <span class="link-to-passbook" (click)="handleRedirectToCompetencyPassbook()"
+                        (keyup)="handleRedirectToCompetencyPassbook()">View Learning Passbook</span>
                       <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                     </div>
                   </ng-container>
