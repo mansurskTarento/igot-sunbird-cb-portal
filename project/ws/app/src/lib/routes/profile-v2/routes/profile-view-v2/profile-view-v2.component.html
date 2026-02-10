@@ -5,10 +5,10 @@
       <!-- #region (cover photo ) -->
       <div>
         <ng-container *ngIf="profileBannerUrl; else defaultCoverPhoto">
-          <img class="cover-picture" [src]="profileBannerUrl" alt="cover-photo">
+          <img class="cover-picture" [src]="profileBannerUrl" alt="cover">
         </ng-container>
         <ng-template #defaultCoverPhoto>
-          <img class="cover-picture" src="./assets/icons/profile_cover_pic.svg" alt="default cover photo">
+          <img class="cover-picture" src="./assets/icons/profile_cover_pic.svg" alt="default cover">
         </ng-template>
         <ng-container *ngIf="isCurrentUser">
           <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
@@ -219,7 +219,7 @@
       <!-- #region (left routing) -->
       <div class="hidden md:flex flex-col gap-3 left-routing-card">
         <ng-container *ngFor="let profileRoute of profileRoutes">
-          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)"
+          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)" (keyup)="selectRoute(profileRoute?.id)"
             [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
             <ng-container *ngIf="profileRoute?.url; else routeIcon">
               <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
@@ -269,7 +269,8 @@
                   <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' :
                     'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
                   <ng-container *ngIf="isCurrentUser">
-                    <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')">edit</mat-icon>
+                    <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')"
+                      (keyup)="openProfileEditDialog('About Me')">edit</mat-icon>
                   </ng-container>
                 </div>
                 <ng-container *ngIf="aboutme; else emptyGif">
@@ -279,7 +280,7 @@
                     </div>
                   </div>
                   <ng-container *ngIf="showViewMoreBtn">
-                    <div class="view-more" (click)="showMoreAbout = !showMoreAbout">
+                    <div class="view-more" (click)="showMoreAbout = !showMoreAbout" (keyup)="showMoreAbout = !showMoreAbout">
                       {{(showMoreAbout ? 'NetworkV2Profile.viewLess' : 'NetworkV2Profile.viewMore') | translate}}
                     </div>
                   </ng-container>
@@ -302,7 +303,8 @@
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
                   <ng-container *ngIf="isCurrentUser">
-                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')">add</mat-icon>
+                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')"
+                      (keyup)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                   </ng-container>
                 </div>
                 <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
@@ -311,8 +313,9 @@
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
                     <div class="dividing-line"></div>
-                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')">
-                      {{'NetworkV2Profile.showAll' | translate}}</div>
+                    <div class="show-all-text" (click)="openProfileEntryListDialog('Service History')"
+                      (keyup)="openProfileEntryListDialog('Service History')">
+                      {{'NetworkV2Profile.showAll' | translate }}</div>
                   </div>
                 </ng-container>
               </div>
@@ -330,7 +333,8 @@
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
                   <ng-container *ngIf="isCurrentUser">
-                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
+                    <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')"
+                      (keyup)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
                   </ng-container>
                 </div>
                 <ng-container
@@ -341,7 +345,8 @@
                   <ng-container *ngIf="educationalQualificationDetails?.count > 2">
                     <div class="flex flex-col justify-between items-center">
                       <div class="dividing-line"></div>
-                      <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')">
+                      <div class="show-all-text" (click)="openProfileEntryListDialog('Educational qualifications')"
+                        (keyup)="openProfileEntryListDialog('Educational qualifications')">
                         {{'NetworkV2Profile.showAll' | translate}}
                       </div>
                     </div>
@@ -357,8 +362,9 @@
                   <ng-container *ngIf="isCurrentUser">
                     <div class="flex items-center gap-2">
                       <span class="link-to-passbook" (click)="handleRedirectToCompetencyPassbook()"
-                        (keyup)="handleRedirectToCompetencyPassbook()">View Learning Passbook</span>
-                      <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
+                        (keyup)="handleRedirectToCompetencyPassbook()">{{'NetworkV2Profile.viewLearningPassbook' | translate}}</span>
+                      <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')"
+                        (keyup)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                     </div>
                   </ng-container>
                 </div>
@@ -369,7 +375,8 @@
                   <ng-container *ngIf="achievementsDetails?.count > 2">
                     <div class="flex flex-col justify-between items-center">
                       <div class="dividing-line"></div>
-                      <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')">
+                      <div class="show-all-text" (click)="openProfileEntryListDialog('Achievements')"
+                        (keyup)="openProfileEntryListDialog('Achievements')">
                         {{'NetworkV2Profile.showAll' | translate}}</div>
                     </div>
                   </ng-container>

@@ -227,16 +227,16 @@
         <div class="content-div">
           <div class="flex flex-row gap-2 info-div">
             <mat-icon class="verify">verified_user</mat-icon>
-            <div class="font-medium title">Learning Progress</div>
+            <div class="font-medium title">{{'NetworkV2Profile.learningProgress' | translate}}</div>
           </div>
-          <div class="line">Track your learning journey, validated skills, and professional growth in one comprehensive view.</div>
+          <div class="line">{{'NetworkV2Profile.learningProgressDescription' | translate}}</div>
         </div>
         <div class="full flex items-center justify-center">
           <button mat-raised-button class="view-passbook-btn" (click)="handleRedirectToCompetencyPassbook()"
             (keyup)="handleRedirectToCompetencyPassbook()">
             <div class="flex items-center justify-between gap-2 rounded">
               <mat-icon class="book">assignment</mat-icon>
-              <span>View Learning Passbook</span>
+              <span>{{'NetworkV2Profile.viewLearningPassbook' | translate}}</span>
             </div>
           </button>
         </div>
