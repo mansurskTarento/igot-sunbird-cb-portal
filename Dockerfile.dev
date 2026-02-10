@@ -5,19 +5,17 @@ RUN useradd -ms /bin/bash appuser \
     && chown -R appuser:appuser /app
 
 WORKDIR /app
-COPY . .
 
-COPY --chown=appuser:appuser . .
+COPY --chown=appuser:appuser package.json yarn.lock ./
 
 USER appuser
 
-#RUN npm i yarn
-#RUN yarn global add @angular/cli@latest
+RUN yarn install --frozen-lockfile
 
-RUN yarn && yarn add moment && yarn add vis-util && npm run build-dev --prod --build-optimizer
-#RUN ng build --prod --outputPath=dist/www/en --baseHref=/ --i18nLocale=en --verbose=true
+COPY --chown=appuser:appuser . .
+
+RUN npm run build-dev --prod --build-optimizer
 RUN npm run compress:brotli
-#RUN npm run compress:gzip
 
 WORKDIR /app/dist
 RUN npm install --production
