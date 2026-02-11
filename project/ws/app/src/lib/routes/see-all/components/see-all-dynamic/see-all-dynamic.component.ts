@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Component, OnInit, OnDestroy, AfterViewChecked, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
@@ -39,7 +39,7 @@ const configMap: any = {
   templateUrl: './see-all-dynamic.component.html',
   styleUrls: ['./see-all-dynamic.component.scss']
 })
-export class SeeAllDynamicComponent implements OnInit, OnDestroy {
+export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewChecked {
   colors = [
     '#EF941D', '#F97440', '#35B5B0', '#9988FF', '#816FEC',
     '#254092', '#926525', '#4F72DF'
@@ -70,6 +70,12 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   isFilterSidebarOpen = false
   public screenSizeIsLtMedium = false
   isLtMedium$ = this.valueSvc.isLtMedium$
+  isDescriptionExpanded = false
+  showDescriptionToggle = false
+  @ViewChild('descriptionEl') descriptionEl!: ElementRef<HTMLParagraphElement>
+  private hasCheckedDescriptionOverflow = false
+  titles: any[] = [
+  ]
 
   private destroy$ = new Subject<void>()
 
@@ -81,7 +87,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     private commonSvc: CommonMethodsService,
     private router: Router,
     private contSvc: WidgetContentLibService,
-    private valueSvc: ValueService
+    private valueSvc: ValueService,
+    private cdr: ChangeDetectorRef
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -106,12 +113,40 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.setRandomColor()
   }
 
+  ngAfterViewChecked() {
+    this.checkDescriptionOverflow()
+  }
+
+  checkDescriptionOverflow() {
+    if (this.descriptionEl && this.providerDetails?.description && !this.hasCheckedDescriptionOverflow) {
+      const el = this.descriptionEl.nativeElement
+      // Check if content is overflowing (scrollHeight > clientHeight means text is clamped)
+      this.showDescriptionToggle = el.scrollHeight > el.clientHeight
+      this.hasCheckedDescriptionOverflow = true
+      this.cdr.detectChanges()
+    }
+  }
+
   getRouterData() {
     const providerName = _.get(this.activatedRoute, 'snapshot.queryParams.providerName', '')
-    this.contentName = providerName ? `${providerName} Contents` : 'Explore all the contents'
+    this.contentName = providerName ? `${providerName}` : 'Explore all the contents'
     this.configKey = _.get(this.activatedRoute, 'snapshot.queryParams.key', 'extContent')
     this.filterProvider = _.get(this.activatedRoute, 'snapshot.queryParams.provider', 'PEDGOG')
     this.loadConfiguration()
+    this.initializeTitles()
+  }
+
+  initializeTitles() {
+    this.titles = [
+      {
+        title: 'All Providers', url: '/app/seeAll',
+        queryParams: {
+          key: 'ciosContent',
+          tabSelected: 'Providers'
+        }
+      },
+      { title: this.contentName, url: 'none', icon: '' }
+    ]
   }
 
   setRandomColor() {
@@ -138,166 +173,11 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     if (this.filterProvider && this.apiConfig.request && this.apiConfig.request.filterCriteriaMap) {
       this.apiConfig.request.filterCriteriaMap['contentPartner.id'] = this.filterProvider
     }
-    // if (this.filterProvider && this.apiConfig.request) {
-    //   this.apiConfig.request.partnerId = this.filterProvider
-    // }
     this.getCourses()
     // this.fetchContent()
   }
 
-  // fetchContent(isLoadMore = false) {
-  //   if (!this.apiConfig) {
-  //     return
-  //   }
-
-  //   const isFirstLoad = !isLoadMore
-  //   if (isFirstLoad) {
-  //     this.loading = true
-  //     this.currentPageNumber = 0
-  //     this.contentItems = []
-  //     this.originalContentItems = []
-  //   } else {
-  //     this.isLoadingMore = true
-  //   }
-
-  //   const url = this.apiConfig.url
-  //   const request = this.apiConfig.request
-  //   const isLocalSearchApi = this.apiConfig.isLocalSearch === true
-
-  //   // Check if this is a GET API - first check explicit flag, then check if request is empty
-  //   this.isGetApi = this.apiConfig.isGetApi === true || !request || Object.keys(request).length === 0
-
-  //   if (this.isGetApi) {
-  //     this.seeAllService
-  //       .fetchDynamicContent(url, {}, true)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe(
-  //         (res: any) => {
-  //           // Handle different response formats
-  //           const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', null) || res || []
-  //           const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
-  //           // Store original data for search filtering
-  //           this.originalContentItems = [...transformed]
-  //           this.contentItems = [...transformed]
-  //           // Capture server-provided total count
-  //           this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || transformed.length
-  //           // Capture facets for filters
-  //           const resultFacets = _.get(res, 'result.facets', null)
-  //           const facets = _.get(res, 'facets', null)
-  //           debugger
-  //           if (resultFacets || facets) {
-  //             this.apiFacets = resultFacets || facets || []
-  //           }
-  //           this.applyLocalSearch()
-  //           this.applySort()
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         },
-  //         (_err) => {
-  //           this.contentItems = []
-  //           this.originalContentItems = []
-  //           this.totalCount = 0
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         }
-  //       )
-  //   } else if (isLocalSearchApi) {
-  //     const localSearchRequest = JSON.parse(JSON.stringify(request))
-  //     // Don't add pageNumber, searchString, or pageSize for local search APIs
-
-  //     this.seeAllService
-  //       .fetchDynamicContent(url, localSearchRequest, false)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe(
-  //         (res: any) => {
-  //           // Handle different response formats
-  //           const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', [])
-  //           const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
-  //           // Store original data for search filtering
-  //           this.originalContentItems = [...transformed]
-  //           this.contentItems = [...transformed]
-  //           // Capture server-provided total count
-  //           this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || transformed.length
-  //           // Capture facets for filters
-  //           const resultFacets = _.get(res, 'result.facets', null)
-  //           const facets = _.get(res, 'facets', null)
-  //           if (resultFacets || facets) {
-  //             this.apiFacets = resultFacets || facets || []
-  //           }
-  //           this.applyLocalSearch()
-  //           this.applySort()
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         },
-  //         (_err) => {
-  //           this.contentItems = []
-  //           this.originalContentItems = []
-  //           this.totalCount = 0
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         }
-  //       )
-  //   } else {
-  //     // For POST APIs with server-side pagination - use server-side pagination with infinite scroll
-  //     const postRequest = JSON.parse(JSON.stringify(request))
-  //     postRequest.searchString = this.searchString
-  //     postRequest.pageNumber = this.currentPageNumber
-  //     postRequest.pageSize = this.pageSize
-
-  //     this.seeAllService
-  //       .fetchDynamicContent(url, postRequest)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe(
-  //         (res: any) => {
-  //           // Handle different response formats
-  //           const data = _.get(res, 'result.content', null) || _.get(res, 'content', null) || _.get(res, 'data', [])
-  //           const transformed = this.commonSvc.transformContentsToWidgetsWithoutStrip(data)
-  //           // Capture server-provided total count
-  //           const resultContent = _.get(res, 'result.content', [])
-  //           this.totalCount = _.get(res, 'result.totalCount', null) || _.get(res, 'totalCount', null) || resultContent.length || 0
-
-  //           // Capture facets for filters (only on first load)
-  //           const resultFacets = _.get(res, 'result.facets', null)
-  //           const facets = _.get(res, 'facets', null)
-  //           if (!isLoadMore && (resultFacets || facets)) {
-  //             this.apiFacets = resultFacets || facets || []
-  //           }
-
-  //           if (isLoadMore) {
-  //             // Append new items for infinite scroll
-  //             this.contentItems = [...this.contentItems, ...transformed]
-  //           } else {
-  //             // Replace all items on first load
-  //             this.contentItems = transformed
-  //           }
-
-  //           this.applySort()
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         },
-  //         (_err) => {
-  //           if (!isLoadMore) {
-  //             this.contentItems = []
-  //           }
-  //           this.totalCount = 0
-  //           this.loading = false
-  //           this.isLoadingMore = false
-  //         }
-  //       )
-  //   }
-  // }
-
   getCourses(isLoadMore = false) {
-    // const isFirstLoad = !isLoadMore
-    // if (isFirstLoad) {
-    //   this.loading = true
-    //   this.currentPageNumber = 0
-    //   this.contentItems = []
-    //   this.originalContentItems = []
-    // } else {
-    //   this.isLoadingMore = true
-    // }
-
     // Deep copy request from apiConfig to avoid mutating original
     const request: any = JSON.parse(JSON.stringify(_.get(this.apiConfig, 'request', {})))
 
@@ -562,41 +442,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.applySort()
   }
 
-  onScrollEnd() {
-    // // Check if we have more items to load
-    // if (this.isLoadingMore || this.loading) {
-    //   return  // Already loading
-    // }
-
-    // const totalLoaded = this.contentItems.length
-    // if (totalLoaded >= this.totalCount) {
-    //   return  // All items loaded
-    // }
-
-    // // Load next page
-    // this.currentPageNumber += 1
-    // // this.fetchContent(true)  // Pass true to indicate this is a load-more request
-    // this.getCourses(true)  // Pass true to indicate this is a load-more request
-  }
-
   onChangeSortSearch(event: any) {
-    // if (event === 'most_relevant') {
-    //   // No specific sort for most relevant
-    // } else if (event === 'recently_added_newest') {
-    //   this.sortKey = 'createdOn'
-    //   this.sortOrder = 'desc'
-    // } else if (event === 'highest_rated') {
-    //   this.sortKey = 'avgRating'
-    //   this.sortOrder = 'desc'
-    // } else if (event === 'a-z') {
-    //   this.sortKey = 'name'
-    //   this.sortOrder = 'asc'
-    // } else if (event === 'z-a') {
-    //   this.sortKey = 'name'
-    //   this.sortOrder = 'desc'
-    // }
-    // this.applySort()
-
     switch (event) {
       case 'recently_added_newest':
         this.sortKey = 'createdOn'
@@ -626,8 +472,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
       this.applyLocalSearch()
       this.applySort()
     } else {
-      // For POST APIs - fetch from API with search string (reset to first page)
-      // this.fetchContent(false)
       this.getCourses(false)
     }
   }

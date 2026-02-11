@@ -265,6 +265,34 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}
+
+.see-more-link {
+  /* stylelint-disable-next-line */
+  font: 400 14px 'Lato';
+  color: #1a4ca1;
+  cursor: pointer;
+  margin-top: 4px;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover,
+  &:active,
+  &:focus,
+  &:visited {
+    text-decoration: none;
+    color: #1a4ca1;
+    outline: none;
+  }
 }
 
 // Responsive styles for provider header
