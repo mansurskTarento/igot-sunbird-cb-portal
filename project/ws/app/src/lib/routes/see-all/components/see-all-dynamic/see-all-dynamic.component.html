@@ -15,7 +15,12 @@
         </div>
         <div class="provider-info">
           <h1 class="provider-name">{{ providerDetails?.contentPartnerName || contentName }}</h1>
-          <p class="provider-description" *ngIf="providerDetails?.description">{{ providerDetails?.description }}</p>
+          <p class="provider-description" *ngIf="providerDetails?.description" [class.expanded]="isDescriptionExpanded"
+            #descriptionEl>{{ providerDetails?.description }}</p>
+          <a *ngIf="providerDetails?.description && showDescriptionToggle" class="see-more-link"
+            (click)="isDescriptionExpanded = !isDescriptionExpanded">
+            {{ isDescriptionExpanded ? ('learnsearch.seeLess' | translate) : ('learnsearch.seeMore' | translate) }}
+          </a>
         </div>
       </div>
     </div>

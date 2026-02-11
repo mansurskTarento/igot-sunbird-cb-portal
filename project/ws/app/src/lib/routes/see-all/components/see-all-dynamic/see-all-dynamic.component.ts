@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Component, OnInit, OnDestroy, AfterViewChecked, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
@@ -39,7 +39,7 @@ const configMap: any = {
   templateUrl: './see-all-dynamic.component.html',
   styleUrls: ['./see-all-dynamic.component.scss']
 })
-export class SeeAllDynamicComponent implements OnInit, OnDestroy {
+export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewChecked {
   colors = [
     '#EF941D', '#F97440', '#35B5B0', '#9988FF', '#816FEC',
     '#254092', '#926525', '#4F72DF'
@@ -70,6 +70,10 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   isFilterSidebarOpen = false
   public screenSizeIsLtMedium = false
   isLtMedium$ = this.valueSvc.isLtMedium$
+  isDescriptionExpanded = false
+  showDescriptionToggle = false
+  @ViewChild('descriptionEl') descriptionEl!: ElementRef<HTMLParagraphElement>
+  private hasCheckedDescriptionOverflow = false
   titles: any[] = [
   ]
 
@@ -83,7 +87,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     private commonSvc: CommonMethodsService,
     private router: Router,
     private contSvc: WidgetContentLibService,
-    private valueSvc: ValueService
+    private valueSvc: ValueService,
+    private cdr: ChangeDetectorRef
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -106,6 +111,20 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
     this.getRouterData()
     this.loadProviderDetails()
     this.setRandomColor()
+  }
+
+  ngAfterViewChecked() {
+    this.checkDescriptionOverflow()
+  }
+
+  checkDescriptionOverflow() {
+    if (this.descriptionEl && this.providerDetails?.description && !this.hasCheckedDescriptionOverflow) {
+      const el = this.descriptionEl.nativeElement
+      // Check if content is overflowing (scrollHeight > clientHeight means text is clamped)
+      this.showDescriptionToggle = el.scrollHeight > el.clientHeight
+      this.hasCheckedDescriptionOverflow = true
+      this.cdr.detectChanges()
+    }
   }
 
   getRouterData() {
