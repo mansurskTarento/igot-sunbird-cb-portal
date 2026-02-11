@@ -1,4 +1,6 @@
 <div class="learnsearch">
+  <!-- Breadcrumb Navigation -->
+  <ws-widget-btn-page-back [widgetData]="{ url: 'home', titles: titles }"></ws-widget-btn-page-back>
   <!-- Provider Header Section -->
   <div class="provider-header-wrapper" *ngIf="providerDetails">
     <div class="provider-header-blue" [ngStyle]="{ 'background': headerBgColor }"></div>
@@ -101,7 +103,7 @@
       <div *ngIf="!loading && contentItems?.length === 0" class="text-center no-results-container">
         <img src="/assets/icons/no-data.svg" wsUtilsImageResponsive alt="No results"
           class="margin-top-l margin-bottom-s" />
-        <div class="no-data-text font-bold text-sm my-4">{{ 'home.noDataFound' | translate }}</div>
+        <div class="no-data-text font-bold text-sm my-4">{{ 'home.noMatchingCourses' | translate }}</div>
       </div>
 
       <!-- Loading with existing items -->
@@ -115,7 +117,7 @@
 
       <!-- Content Cards with Infinite Scroll -->
       <div *ngIf="!loading && contentItems.length > 0" class="search-content-card" infiniteScroll
-        [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()">
+        [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle">
         <ng-container *ngFor="let item of contentItems; let index = index">
           <sb-uic-card-landscape [widgetData]="item?.widgetData" (contentData)="getRedirectUrlData($event)">
           </sb-uic-card-landscape>
