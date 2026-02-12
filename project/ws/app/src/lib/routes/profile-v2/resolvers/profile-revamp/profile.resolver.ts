@@ -32,7 +32,9 @@ export class profileResolver
     const isNotCurrentUser = userId !== _.get(this.configSvc, 'userProfile.userId')
     return this.profileSvc.fetchProfile(userId, isNotCurrentUser).pipe(
       map(data =>  ({
-         data: _.get(data, 'result.response'), 
+         data: _.merge(_.get(data, 'result.response') || {}, {
+           professionalDetails: this.configSvc.userProfile?.professionalDetails
+         }),
          error: null,
          userId
         })),
