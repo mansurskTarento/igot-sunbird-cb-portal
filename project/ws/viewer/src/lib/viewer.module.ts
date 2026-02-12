@@ -61,14 +61,14 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTreeModule } from '@angular/material/tree'
 
 import { ContentTocModule } from '@sunbird-cb/toc'
-// import { AiTutorComponent } from './components/ai-tutor/ai-tutor.component'
+import { AiTutorComponent } from './components/ai-tutor/ai-tutor.component'
 import { FormsModule } from '@angular/forms'
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MarkdownModule } from 'ngx-markdown'
 
 @NgModule({
-  declarations: [ViewerComponent, ViewerTocComponent],
+  declarations: [ViewerComponent, ViewerTocComponent, AiTutorComponent],
   imports: [
     CommonModule,
     MatCardModule,
