@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import moment from 'moment'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
- import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ApiService } from '@ws/author/src/public-api'
 import { CertificateService } from '../../services/certificate.service'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
@@ -82,7 +82,14 @@ export class CertificateDetailsComponent implements OnInit {
     //   this.loader = false
     //   this.viewCertificate = true
     // },         1000)
-    this.certificateService.validateCertificate(request).subscribe(
+
+    const currentUrl = this.router.url
+    const isAchievement = currentUrl.includes('achievements') || currentUrl.includes('achievement')
+    const apiCall = isAchievement
+      ? this.certificateService.validateMileStoneCertificate(request)
+      : this.certificateService.validateCertificate(request)
+
+    apiCall.subscribe(
       (data: any) => {
         // this.getCourseVideoUrl(_.get(data, 'result.response.related.courseId'))
         const certData = _.get(data, 'result.response.json')
