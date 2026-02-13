@@ -12,10 +12,8 @@
       <div class="flex justify-between items-start certificate-name">
         <div class="achievement-title">{{achievement?.contextData?.title}}</div>
         <ng-container *ngIf="isCurrentUser">
-          <span class="status mr-2 {{achievement?.status.toLowerCase()}}">{{achievement?.status}}</span>
-          <mat-icon class="edit-icon mr-2" (click)="openEditDialog(achievement)" (keyup)="openEditDialog(achievement)"
-            *ngIf="achievement?.status === 'PENDING'">edit</mat-icon>
           <mat-icon class="delete-icon mr-2" (click)="deleteAchievement(achievement)" (keyup)="deleteAchievement(achievement)">delete</mat-icon>
+          <mat-icon class="edit-icon mr-2" (click)="openEditDialog(achievement)" (keyup)="openEditDialog(achievement)">edit</mat-icon>
         </ng-container>
       </div>
       <div class="achievement-details"> {{achievement?.contextData?.issuedOrganisation}}</div>
