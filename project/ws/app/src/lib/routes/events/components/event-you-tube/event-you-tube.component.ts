@@ -86,7 +86,8 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (resumeFrom > this.rateToFire && this.resumeEventStatus !== 2) {
           this.resumeEventStatus = 2
-          this.updateProgress(this.eventData.duration, resumeFrom, new Date().getTime(), true)
+          const currentTime = new Date().toISOString().replace('T', ' ').replace('Z', '').split('.')[0] + ':00+0000'
+          this.updateProgress(this.eventData.duration, resumeFrom, currentTime, true)
         }
         this.initializePlayer(resumeFrom)
       } else {
@@ -325,7 +326,6 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateProgress(progress: any, timeSpent: any, lastTimeAccessed: any, normalUpdate?: boolean) {
     let userId = ''
-    let completionPercentage: any = 0
     const batchId = this.getBatchId()
     if (this.configSvc.userProfile) {
       userId = this.configSvc.userProfile.userId || ''
@@ -355,9 +355,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       }
       this.eventService.saveEventProgressUpdate(req).subscribe((_res: any) => {
-        if (completionPercentage > 50) {
-          this.resumeEventStatus = 2
-        }
+        this.resumeEventStatus = 2
       })
     }
   }
