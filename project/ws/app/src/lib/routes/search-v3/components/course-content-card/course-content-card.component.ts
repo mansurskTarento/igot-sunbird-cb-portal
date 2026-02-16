@@ -88,9 +88,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   checkForCiosDuration(item: any) {
-    if (item && item.contentId && item.contentId.includes('ext_')) {
-      return item.duration * 60
-    }
+    // if (item && item.contentId && item.contentId.includes('ext_')) {
+    //   return item.duration * 60
+    // }
     return item.duration
   }
 
