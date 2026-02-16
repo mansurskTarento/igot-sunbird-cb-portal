@@ -334,19 +334,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getAchievements() {
-    const requestBody = {
-      filterCriteriaMap: {
-        userId: this.userId
-      },
-      pageNumber: 0,
-      pageSize: 2,
-      orderBy: 'createdOn',
-      orderDirection: 'desc',
-      facets: ['status']
-    }
-    this.profileV2RevampSvc.listAchievements(requestBody).subscribe((response: any) => {
+    this.profileV2RevampSvc.listAchievements().subscribe((response: any) => {
       if (response) {
-        this.achievementsDetails.achievementsList = _.get(response, 'result.search_results.data', [])
+        const allAchievements = _.get(response, 'result.search_results.data', [])
+        this.achievementsDetails.achievementsList = allAchievements.slice(0, 2)
         this.achievementsDetails.count = _.get(response, 'result.search_results.totalCount', 0)
       }
     }, error => {

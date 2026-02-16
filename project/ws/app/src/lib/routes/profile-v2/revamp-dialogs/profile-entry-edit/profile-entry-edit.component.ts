@@ -1043,7 +1043,10 @@ export class ProfileEntryEditComponent implements OnInit {
       urlControl.updateValueAndValidity()
       this.disableUpload = false
       this.disableUrl = true
-    } else if (_.get(this.entryDetails, 'url', '')) {
+      const documentUrlControl = this.entryForm.controls.uploadedDocumentUrl
+      documentUrlControl.patchValue(_.get(this.entryDetails?.contextData, 'uploadedDocumentUrl', ''))
+      documentUrlControl.updateValueAndValidity()
+    } else if (_.get(this.entryDetails?.contextData, 'url', '')) {
       this.disableUpload = true
       this.disableUrl = false
     }
