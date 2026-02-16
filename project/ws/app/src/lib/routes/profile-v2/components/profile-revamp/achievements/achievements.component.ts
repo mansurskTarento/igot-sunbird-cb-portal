@@ -48,17 +48,7 @@ export class AchievementsComponent implements OnInit {
 
   getAchievementsList(userId?: any): void {
     if (this.userId || userId) {
-      const requestBody = {
-        filterCriteriaMap: {
-          userId: this.userId
-        },
-        pageNumber: 0,
-        pageSize: 100,
-        orderBy: 'createdOn',
-        orderDirection: 'desc',
-        facets: ['status']
-      }
-      this.profileV2RevampSvc.listAchievements(requestBody).subscribe({
+      this.profileV2RevampSvc.listAchievements().subscribe({
         next: (res: any) => {
           if (res) {
             this.achievementsList = _.get(res, 'result.search_results.data', [])
