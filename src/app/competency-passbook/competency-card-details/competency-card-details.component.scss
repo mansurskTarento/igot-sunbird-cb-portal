@@ -32,6 +32,14 @@ $text-primary: #1B4CA1;
     text-overflow: ellipsis;
 }
 
+.name-of-the-course {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .certificate-container {
     width: 100%;
     max-width: 380px;
@@ -117,6 +125,15 @@ $title-line-count: 2;
     height: 72px;
 }
 
+.source {
+    color: #1B4CA1;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid #1b4ca1;
+    padding: 1px 8px;
+    text-transform: uppercase;
+}
+
 @media screen and (max-width: 768px) {
     .mobile-container {
         padding: 16px;
@@ -130,15 +147,16 @@ $title-line-count: 2;
 
 .img-container {
     position: relative;
-    
+
     .view-cert {
-      visibility: hidden;
-      display: none;
+        visibility: hidden;
+        display: none;
     }
-    
+
     &:hover {
         display: block;
         z-index: 99999;
+
         .view-cert {
             visibility: visible;
             position: absolute;
@@ -154,6 +172,7 @@ $title-line-count: 2;
             height: 100%;
             background-color: #000000b5;
             border-radius: 8px;
+
             button {
                 color: white;
                 border: 1px solid white;
@@ -166,6 +185,7 @@ $title-line-count: 2;
         }
     }
 }
+
 .view-certificate {
     visibility: visible !important;
     position: absolute;
@@ -181,7 +201,7 @@ $title-line-count: 2;
     justify-content: center;
     width: 100%;
     height: 100%;
-    
+
     button {
         color: white;
         border: 1px solid white;
@@ -194,13 +214,16 @@ $title-line-count: 2;
     }
 }
 
-.uploader-status ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
     stroke: #ffffff;
 }
+
 .uploader-status ::ng-deep .mat-progress-spinner svg {
     width: 24px !important;
     height: 24px !important;
 }
+
 .uploader-status ::ng-deep .mat-progress-spinner {
     width: 24px !important;
     height: 24px !important;
