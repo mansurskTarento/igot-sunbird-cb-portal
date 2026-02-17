@@ -83,7 +83,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.contentName = this.activatedRoute?.snapshot?.queryParams['providerName'] ?
+    this.contentName = this.activatedRoute?.snapshot?.queryParams['contentName'] ? this.activatedRoute?.snapshot?.queryParams['contentName'] : this.activatedRoute?.snapshot?.queryParams['providerName'] ?
       `${this.activatedRoute?.snapshot?.queryParams['providerName']} Contents` : 'Explore all the contents'
     this.configKey = this.activatedRoute?.snapshot?.queryParams['key'] || 'extContent'
     this.filterProvider = this.activatedRoute?.snapshot?.queryParams['provider'] || 'PEDGOG'
