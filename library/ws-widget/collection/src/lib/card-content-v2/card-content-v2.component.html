@@ -1917,9 +1917,14 @@
     <p *ngIf="data.cbpData.planDuration === acbpConstants?.OVERDUE && data?.cbpData?.contentStatus < 2"
       class="cbp-danger">{{'cardcontentv2.overDue' | translate}}</p>
   </div>
-  <ng-container *ngIf="widgetData?.content?.isApar">
-    <div class="cbp-mark right-0 rounded-bottom">
-      <p class="cbp-success apar-flag">APAR</p>
+  <ng-container *ngIf="widgetData?.content?.isApar || CaCourseUnitIds?.includes(widgetData?.content?.identifier)">
+    <div class="flex cbp-mark right-0 rounded-bottom">
+      <ng-container *ngIf="widgetData?.content?.isApar">
+        <p class="cbp-success apar-flag">APAR</p>
+      </ng-container>
+      <ng-container *ngIf="CaCourseUnitIds?.includes(widgetData?.content?.identifier)">
+        <p class="cbp-success apar-flag" [ngClass]="widgetData?.content?.isApar  ? 'margin-left-xs' : ''">CA</p>
+      </ng-container>
     </div>
   </ng-container>
 </ng-template>
