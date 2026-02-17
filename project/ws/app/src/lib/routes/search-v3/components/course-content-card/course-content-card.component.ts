@@ -18,7 +18,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { Router } from '@angular/router'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import * as _ from 'lodash'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
@@ -43,6 +43,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   downloadCertificateLoading = false;
   isIgot = false;
   igotSpecializationProgram: any
+  CaCourseUnitIds = '[]'
   constructor(
     private configSvc: ConfigurationsService,
     private dialog: MatDialog,
@@ -50,11 +51,13 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private certificateService: CertificateService,
     private router: Router,
     private contSvc: WidgetContentLibService,
+    private commonSvc: CommonMethodsService
   ) { }
 
   ngOnInit(): void {
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey]
+    this.CaCourseUnitIds = this.commonSvc.getCourseUnitIds()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
