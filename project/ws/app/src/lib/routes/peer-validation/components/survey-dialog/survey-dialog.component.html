@@ -1,0 +1,83 @@
+<div class="survey-dialog">
+  <button mat-icon-button class="close-btn" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="dialog-header">
+    <h2 class="title">Peer Validation</h2>
+    <p class="subtitle">
+      This survey is aimed at knowing the impact of <span class="course-name">{{ data.courseName }}</span> course that
+      you completed on <span class="date">{{ data.completionDate }}</span>.
+    </p>
+  </div>
+
+  <!-- Angular Material Stepper -->
+  <mat-dialog-content class="content-scroll">
+    <mat-stepper #stepper linear (selectionChange)="onStepChange($event)" class="survey-stepper">
+      <!-- Icon Overrides to show Number always with Custom Styles -->
+      <ng-template matStepperIcon="number" let-index="index">
+        <div class="step-icon-custom" [ngClass]="{
+               'state-done': isStepCompleted(index) && currentStep !== index,
+               'state-edit': currentStep === index,
+               'state-number': currentStep !== index && !isStepCompleted(index)
+             }">
+          {{index + 1}}
+        </div>
+      </ng-template>
+      <ng-template matStepperIcon="edit" let-index="index">
+        <div class="step-icon-custom" [ngClass]="{
+               'state-done': isStepCompleted(index) && currentStep !== index,
+               'state-edit': currentStep === index,
+               'state-number': currentStep !== index && !isStepCompleted(index)
+             }">
+          {{index + 1}}
+        </div>
+      </ng-template>
+      <ng-template matStepperIcon="done" let-index="index">
+        <div class="step-icon-custom state-done">
+          {{index + 1}}
+        </div>
+      </ng-template>
+
+      <!-- Step 1: Survey Questions -->
+      <mat-step [completed]="canProceedToStep2()">
+        <ng-template matStepLabel>Survey Questions</ng-template>
+        <ws-app-survey-questions [questions]="surveyQuestions" [form]="questionForm">
+        </ws-app-survey-questions>
+
+        <div class="stepper-actions">
+          <button mat-stroked-button color="primary" disabled>Back</button>
+          <button mat-stroked-button color="primary" matStepperNext [disabled]="!canProceedToStep2()">
+            Next
+          </button>
+        </div>
+      </mat-step>
+
+      <!-- Step 2: Upload Documents -->
+      <mat-step [completed]="isStep2Completed">
+        <ng-template matStepLabel>Upload Documents</ng-template>
+        <ws-app-document-upload [documents]="uploadedDocuments" (documentsChanged)="onDocumentsChanged($event)">
+        </ws-app-document-upload>
+
+        <div class="stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
+          <button mat-stroked-button color="primary" (click)="completeStep2()">Next</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 3: Peer Selection -->
+      <mat-step completed="false">
+        <ng-template matStepLabel>Peer Selection</ng-template>
+        <ws-app-peer-selection [selectedPeers]="selectedPeers" (peersChanged)="onPeersChanged($event)">
+        </ws-app-peer-selection>
+
+        <div class="stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
+          <button mat-stroked-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit()">
+            Submit
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-dialog-content>
+</div>

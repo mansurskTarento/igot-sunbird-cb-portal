@@ -1,0 +1,54 @@
+<div class="survey-questions">
+  <div class="course-info">
+    <strong>Course:</strong> Effective Communication Strategies
+  </div>
+
+  <div *ngFor="let question of questions; let i = index" class="question-block">
+    <div class="question-text">
+      {{ i + 1 }}.{{ question.text }} <span class="required" *ngIf="question.required">*</span>
+    </div>
+
+    <!-- Rating Question -->
+    <div *ngIf="question.type === 'rating'" class="rating-container">
+      <span class="rating-label">NOT AT ALL</span>
+      <div class="rating-buttons">
+        <button *ngFor="let rating of getRatingArray(5)" type="button" [class.selected]="isRatingSelected(i, rating)"
+          (click)="selectRating(i, rating)" class="rating-btn">
+          {{ rating }}
+        </button>
+      </div>
+      <span class="rating-label">VERY CONFIDENT</span>
+    </div>
+
+    <!-- Text Question -->
+    <div *ngIf="question.type === 'text'" class="text-container">
+      <textarea [formControl]="responses.at(i)" [maxlength]="question.maxLength || 300" rows="4" class="text-input"
+        placeholder="Type your response here..."></textarea>
+      <div class="char-count">
+        {{ responses.at(i).value?.length || 0 }}/{{ question.maxLength || 300 }}
+      </div>
+    </div>
+
+    <!-- Single Select Question -->
+    <div *ngIf="question.type === 'single-select'" class="single-select-container">
+      <mat-radio-group [formControl]="responses.at(i)" class="radio-group">
+        <div *ngFor="let option of question.options" class="option-card"
+          [class.selected]="responses.at(i).value === option" (click)="responses.at(i).setValue(option)">
+          <mat-radio-button [value]="option" class="radio-option">
+            <span class="option-label">{{ option }}</span>
+          </mat-radio-button>
+        </div>
+      </mat-radio-group>
+    </div>
+
+    <!-- Multi Select Question -->
+    <div *ngIf="question.type === 'multi-select'" class="multi-select-container">
+      <div *ngFor="let option of question.options" class="option-card checkbox-card"
+        [class.selected]="isOptionSelected(i, option)" (click)="toggleOption(i, option, !isOptionSelected(i, option))">
+        <mat-checkbox [checked]="isOptionSelected(i, option)"
+          (click)="$event.stopPropagation(); toggleOption(i, option, !isOptionSelected(i, option))"></mat-checkbox>
+        <div class="option-label">{{ option }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,636 @@
+.dashboard-container {
+  padding: 24px 8%;
+  background-color: #F3F5F9;
+  min-height: 100vh;
+  // padding-top: 24px !important; // Enforce top padding to prevent nav overlap
+
+  @media (max-width: 1280px) {
+    padding: 24px 5%;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 4%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 3%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 16px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 4px;
+    }
+
+    .header-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      p {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 13px;
+        }
+      }
+
+      .request-validation-btn {
+        background-color: #3F51B5;
+        color: white;
+        border-radius: 18px;
+        padding: 0 20px;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 36px;
+        height: 36px;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #E0E0E0;
+    margin-bottom: 24px;
+    gap: 32px;
+
+    .tab-item {
+      padding: 12px 0;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      position: relative;
+      font-weight: 500;
+
+      &.active {
+        color: #3F51B5;
+        font-weight: 600;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: #3F51B5;
+        }
+      }
+    }
+  }
+
+  // Common Card Style Mixin
+  @mixin card-style {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  // Card 1: Filters
+  .filter-card {
+    @include card-style;
+    margin-bottom: 24px; // Gap between cards
+
+    .filter-header-content {
+      display: flex;
+      justify-content: flex-start; // Changed from space-between
+      gap: 60px; // Added gap
+      align-items: center;
+
+      @media (max-width: 1024px) {
+        gap: 30px;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .results-count {
+        strong {
+          display: block;
+          font-size: 16px;
+          color: #333;
+          margin-bottom: 4px;
+
+          @media (max-width: 768px) {
+            font-size: 14px;
+          }
+        }
+
+        span {
+          font-size: 12px;
+          color: #666;
+        }
+      }
+
+      .controls {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+
+        @media (max-width: 768px) {
+          width: 100%;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .search-box {
+          min-width: 150px;
+          width: 320px; // Fixed width instead of 100%
+          height: 36px;
+          border: 1px solid #E0E0E0;
+          border-radius: 20px;
+          background-color: white;
+          padding: 0 16px;
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+
+          @media (max-width: 768px) {
+            width: 100%;
+          }
+
+          mat-icon {
+            color: #999;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+          }
+
+          input {
+            border: none;
+            outline: none;
+            font-size: 13px;
+            width: 100%;
+            color: #333;
+            background: transparent;
+
+            &::placeholder {
+              color: #999;
+            }
+          }
+        }
+
+        .dropdown {
+          display: flex;
+          align-items: center;
+        }
+
+        .mat-mdc-option {
+          opacity: 1 !important;
+        }
+
+
+        .mat-mdc-option-text {
+          color: #000 !important;
+        }
+
+        .mat-mdc-select-panel {
+          background: #fff !important;
+        }
+
+        .mat-mdc-option {
+          opacity: 1 !important;
+          background: transparent;
+        }
+
+        .mat-mdc-option.mdc-list-item--selected {
+          background: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        // Custom styling for standalone Mat Select (pill shape)
+        .filter-select {
+          min-width: 150px;
+          height: 36px;
+          border: 1px solid #E0E0E0;
+          border-radius: 20px;
+          background-color: white;
+          padding: 0 16px;
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  // Card 2: Table
+  .table-card {
+    @include card-style;
+    padding: 0;
+
+    .table-header {
+      display: flex;
+      padding: 14px 0; // Increased vertical padding
+      background-color: #F5F5F5; // Light gray background
+      color: #999;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px; // Slight radius
+      margin-bottom: 16px;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        display: none; // Hide header on mobile
+      }
+
+      .col-name {
+        flex: 4;
+        padding-left: 16px; // Add left padding to first col only
+      }
+
+      .col-status {
+        flex: 1;
+        text-align: center;
+      }
+
+      .col-date {
+        flex: 1;
+        text-align: center;
+      }
+
+      .col-action {
+        flex: 1;
+        text-align: right;
+        padding-right: 16px; // Add right padding to last col only
+      }
+
+      .col-requested-by {
+        flex: 2;
+        text-align: left;
+      }
+    }
+
+    .table-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #F5F5F5;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 12px;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background: #FAFAFA;
+      }
+
+      &:last-child {
+        border-bottom: none;
+
+        @media (max-width: 768px) {
+          border: 1px solid #E0E0E0;
+        }
+      }
+
+      .col-name {
+        flex: 4;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-left: 16px; // Align with header
+
+        @media (max-width: 768px) {
+          padding-left: 0;
+          flex: none;
+          width: 100%;
+        }
+
+        .thumbnail {
+          width: 80px;
+          height: 60px;
+          background-color: #F5F5F5;
+          border: 1px solid #E0E0E0;
+          border-radius: 4px;
+
+          @media (max-width: 480px) {
+            width: 60px;
+            height: 45px;
+          }
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .name-details {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          .name {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            line-height: 1.4;
+
+            @media (max-width: 480px) {
+              font-size: 13px;
+            }
+          }
+
+          .sub-name {
+            font-size: 12px;
+            color: #666;
+            font-weight: 400;
+          }
+        }
+      }
+
+      .col-status {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+
+        @media (max-width: 768px) {
+          flex: none;
+          justify-content: flex-start;
+
+          &::before {
+            content: 'Status: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 8px;
+          }
+        }
+
+        .status-pill {
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 12px;
+          text-transform: uppercase;
+
+          &.active,
+          &.completed {
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+            background-color: rgba(76, 175, 80, 0.05);
+          }
+
+          &.ended,
+          &.expired {
+            color: #F44336;
+            border: 1px solid #F44336;
+            background-color: rgba(244, 67, 54, 0.05);
+          }
+        }
+      }
+
+      .col-date {
+        flex: 1;
+        text-align: center;
+        font-size: 13px;
+        color: #333;
+
+        @media (max-width: 768px) {
+          flex: none;
+          text-align: left;
+
+          &::before {
+            content: 'End Date: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .col-action {
+        flex: 1;
+        text-align: right;
+        padding-right: 16px; // Align with header
+
+        @media (max-width: 768px) {
+          flex: none;
+          text-align: left;
+          padding-right: 0;
+          margin-top: 8px;
+        }
+
+        .start-review-btn {
+          background-color: #3F51B5;
+          color: white;
+          border-radius: 18px;
+          font-size: 12px;
+          padding: 6px 20px;
+          min-height: 32px;
+          height: auto;
+          line-height: 1;
+          box-shadow: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          text-align: center;
+
+          @media (max-width: 768px) {
+            width: 100%;
+            padding: 8px 16px;
+          }
+
+          &:disabled {
+            background-color: #9E9E9E; // Gray for disabled
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .col-requested-by {
+        flex: 2;
+        text-align: left;
+        color: #333;
+        font-size: 13px;
+        padding-right: 16px;
+
+        @media (max-width: 768px) {
+          flex: none;
+          padding-right: 0;
+
+          &::before {
+            content: 'Requested By: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+
+    .no-data {
+      padding: 32px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+
+    // Paginator Styling
+  }
+
+  .custom-paginator ::ng-deep {
+    // background: transparent;
+    font-size: 13px;
+
+    .mat-paginator-container {
+      padding: 0;
+      justify-content: flex-end;
+      color: #666;
+      min-height: 48px;
+    }
+
+    .mat-paginator-page-size-label {
+      margin: 0 8px 0 0;
+      color: #333;
+      font-weight: 500;
+    }
+
+    // Stronger selector for the form field
+    .mat-form-field,
+    .mat-mdc-form-field {
+      width: 64px !important; // Slightly wider than 50px to fit arrow
+      margin: 0 8px;
+
+      .mat-form-field-wrapper,
+      .mat-mdc-form-field-wrapper {
+        padding-bottom: 0;
+      }
+
+      .mat-form-field-flex,
+      .mat-mdc-text-field-wrapper {
+        border: none !important;
+        border-bottom: 1px solid #999 !important; // Underline
+        border-radius: 0 !important;
+        padding: 0 !important; // Remove padding
+        background-color: transparent !important;
+        height: 24px !important; // Smaller height
+        display: flex;
+        align-items: center;
+      }
+
+      // Hide outlines and ripples
+      .mat-form-field-underline,
+      .mdc-line-ripple,
+      .mdc-notched-outline {
+        display: none !important;
+      }
+
+      .mat-form-field-infix,
+      .mat-mdc-form-field-infix {
+        border-top: 0 !important;
+        padding: 0 !important;
+        width: auto !important;
+        min-height: 24px !important;
+        display: flex;
+        align-items: center;
+      }
+
+      .mat-select-value,
+      .mat-mdc-select-value {
+        color: #333;
+        font-weight: 500;
+        font-size: 13px;
+        padding-right: 4px !important;
+      }
+
+      .mat-select-arrow-wrapper,
+      .mat-mdc-select-arrow-wrapper {
+        transform: translateY(0) !important;
+      }
+
+      .mat-select-arrow,
+      .mat-mdc-select-arrow {
+        color: #333;
+      }
+    }
+
+    .mat-paginator-range-label {
+      margin: 0 16px 0 24px;
+      color: #333;
+      font-weight: 500;
+    }
+  }
+
+  // Specific fix for overlap issue between 576px and 1135px
+  @media (min-width: 576px) and (max-width: 1135px) {
+    padding-top: 80px !important; // Increased to 80px to clear nav bar
+    @media (min-width: 577px) and (max-width: 600px) {
+      padding-top: 100px !important; // Increased to 80px to clear nav bar
+    }
+
+  }
+
+}
+
+::ng-deep .mat-mdc-select-panel {
+  background-color: white !important;
+  border-radius: 4px !important;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12) !important;
+  padding: 0 !important; // MDC sometimes adds padding
+}
+
+::ng-deep .mat-mdc-option {
+  background: white !important;
+  color: #333 !important;
+  min-height: 36px !important;
+  padding: 0 16px !important;
+
+  // Hide the pseudo checkbox for single selection look
+  .mat-pseudo-checkbox {
+    display: none !important;
+  }
+
+  // Text color styling
+  .mdc-list-item__primary-text {
+    color: #333 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+  // Hover state
+  &:hover:not(.mdc-list-item--disabled) {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  // Active/Selected state
+  &.mdc-list-item--selected,
+  &.mat-mdc-option-active {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+
+    .mdc-list-item__primary-text {
+      color: #3F51B5 !important;
+      font-weight: 700 !important;
+    }
+  }
+}

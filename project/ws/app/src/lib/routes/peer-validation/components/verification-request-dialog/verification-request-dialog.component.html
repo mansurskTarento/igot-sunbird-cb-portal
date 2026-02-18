@@ -1,0 +1,23 @@
+<div class="verification-dialog">
+  <button mat-icon-button class="close-btn" (click)="onNo()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="icon-container">
+    <mat-icon class="warning-icon">error_outline</mat-icon>
+  </div>
+
+  <p class="message">
+    You have a verification request from <span class="highlight">{{ data?.learnerName || 'Learner' }}</span>.<br>
+    Can you verify?
+  </p>
+
+  <div class="button-group">
+    <button mat-stroked-button color="primary" (click)="onYes()" class="action-btn">
+      Yes
+    </button>
+    <button mat-stroked-button (click)="onNo()" class="action-btn">
+      No
+    </button>
+  </div>
+</div>

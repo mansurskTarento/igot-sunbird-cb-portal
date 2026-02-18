@@ -1,0 +1,68 @@
+<div class="peer-selection">
+  <div class="selection-header">
+    <strong>Select your peers</strong>
+  </div>
+
+  <!-- Reporting Officer -->
+  <!-- Reporting Officer -->
+  <div class="peer-field">
+    <label>
+      Select Reporting officer <span class="required">*</span>
+    </label>
+    <div class="select-with-search" (click)="toggleSearch('reportingOfficer')">
+      <div class="pill-select full-width display-pill" [class.has-value]="reportingOfficerControl.value">
+        {{ getDisplayName(reportingOfficerControl.value) || "Select Reporting Officer" }}
+        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+      </div>
+    </div>
+    <!-- Inline Search Table -->
+    <div class="inline-search-container" *ngIf="showReportingOfficerSearch">
+      <ws-app-user-search-table
+        [selectedUserId]="reportingOfficerControl.value?.id || reportingOfficerControl.value?.userId"
+        [excludedIds]="getExcludedIds('reportingOfficer')" (userSelected)="onUserSelected($event, 'reportingOfficer')">
+      </ws-app-user-search-table>
+    </div>
+  </div>
+
+  <!-- Peer -->
+  <div class="peer-field">
+    <label>
+      Select Peer <span class="required">*</span>
+    </label>
+    <div class="select-with-search" (click)="toggleSearch('peer')">
+      <div class="pill-select full-width display-pill" [class.has-value]="peerControl.value">
+        {{ getDisplayName(peerControl.value) || "Select Peer" }}
+        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+      </div>
+    </div>
+    <div class="inline-search-container" *ngIf="showPeerSearch">
+      <ws-app-user-search-table [selectedUserId]="peerControl.value?.id || peerControl.value?.userId"
+        [excludedIds]="getExcludedIds('peer')" (userSelected)="onUserSelected($event, 'peer')">
+      </ws-app-user-search-table>
+    </div>
+  </div>
+
+  <!-- Subordinate (Optional) -->
+  <div class="peer-field">
+    <label>
+      Select Subordinate <span class="optional">(Optional)</span>
+    </label>
+    <div class="select-with-search" (click)="toggleSearch('subordinate')">
+      <div class="pill-select full-width display-pill" [class.has-value]="subordinateControl.value">
+        {{ getDisplayName(subordinateControl.value) || "Select Subordinate" }}
+        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+      </div>
+    </div>
+    <div class="inline-search-container" *ngIf="showSubordinateSearch">
+      <ws-app-user-search-table [selectedUserId]="subordinateControl.value?.id || subordinateControl.value?.userId"
+        [excludedIds]="getExcludedIds('subordinate')" (userSelected)="onUserSelected($event, 'subordinate')">
+      </ws-app-user-search-table>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <mat-icon>info</mat-icon>
+    <span>Your selected peer will receive a notification to review your submission.</span>
+  </div>
+</div>

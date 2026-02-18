@@ -1,0 +1,38 @@
+<div class="user-search-table">
+  <div class="search-box">
+    <mat-icon>search</mat-icon>
+    <input type="text" placeholder="Type here to search.." [(ngModel)]="searchQuery" (input)="filterUsers()">
+  </div>
+
+  <div class="user-table">
+    <!-- <div class="table-header" style="padding: 28px;"></div> -->
+    <div class="table-header">
+      <div class="col-select"></div>
+      <div class="col-name">Full Name</div>
+      <div class="col-email">Email</div>
+      <div class="col-org">Organisation</div>
+      <div class="col-designation">Designation</div>
+    </div>
+
+    <!-- Rows directly in user-table for shared scroll context -->
+    <div class="table-row" *ngFor="let user of filteredUsers" (click)="selectUser(user)">
+      <div class="col-select">
+        <input type="radio" [checked]="isSelected(user)" (click)="$event.stopPropagation(); selectUser(user)">
+      </div>
+      <div class="col-name">
+        <div class="user-avatar">
+          <img *ngIf="user.profileDetails?.profileImageUrl" [src]="user.profileDetails?.profileImageUrl" alt="User Photo" class="user-photo">
+          <span *ngIf="!user.profileDetails?.profileImageUrl">{{ getUserInitials(user) }}</span>
+        </div>
+        <span>{{ getUserFullName(user) }}</span>
+      </div>
+      <div class="col-email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email || '--' }}</div>
+      <div class="col-org">{{ user.rootOrgName || '--' }}</div>
+      <div class="col-designation">{{ user.profileDetails?.professionalDetails?.[0]?.designation || '--' }}</div>
+    </div>
+
+    <div class="no-data" *ngIf="filteredUsers.length === 0">
+      No users found.
+    </div>
+  </div>
+</div>

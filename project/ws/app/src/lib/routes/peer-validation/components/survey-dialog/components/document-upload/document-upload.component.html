@@ -1,0 +1,50 @@
+<div class="document-upload">
+  <div class="upload-header">
+    <strong>Upload the supported documents</strong>
+    <p class="hint" *ngIf="!documents || documents.length === 0">These attachments will be visible to the peers that you
+      select for validating your survey responses.
+    </p>
+  </div>
+
+  <!-- Upload Area -->
+  <div class="upload-area" [class.drag-over]="dragOver" (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
+    <img src="assets/icons/upload-upward-arrow.svg" width="32px" height="32px" alt="Upload Logo"
+      class="app-logo cursor-pointer" />
+    <div class="upload-text">
+      <strong>Upload</strong>
+      <div class="upload-info">
+        <div>Max file size: 200 MB (Video), 2 MB (Document)</div>
+        <div>Supported file types: MP4, PDF</div>
+      </div>
+    </div>
+  </div>
+
+  <input #fileInput type="file" multiple accept=".pdf,.mp4" (change)="onFileSelect($event)" style="display: none">
+
+  <div class="file-note">Only PDF and MP4 are supported</div>
+
+  <!-- Uploaded Files List -->
+  <div *ngIf="documents.length > 0" class="uploaded-files">
+    <div *ngFor="let doc of documents; let i = index" class="file-item">
+      <img [src]="doc.type.includes('pdf') ? 'assets/icons/PDF_alternate.svg' : 'assets/icons/Shape.svg'"
+        class="file-icon" alt="File Icon" width="24" height="24">
+      <div class="file-info">
+        <div class="file-name" (click)="previewFile(doc)"
+          [class.clickable]="doc.type.includes('mp4') || doc.type.includes('video') || doc.type.includes('pdf')">
+          {{ doc.name }}
+        </div>
+        <div class="file-size">({{ formatFileSize(doc.size) }})</div>
+      </div>
+      <button mat-icon-button (click)="removeDocument(i)" class="remove-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isUploading" class="uploading">
+    <mat-spinner diameter="24"></mat-spinner>
+    <span>Uploading...</span>
+  </div>
+</div>

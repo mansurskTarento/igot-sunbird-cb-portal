@@ -1,0 +1,25 @@
+<div class="survey-popup">
+  <button mat-icon-button class="close-btn" (click)="onNo()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="icon-container">
+    <mat-icon class="warning-icon">error_outline</mat-icon>
+  </div>
+
+  <p class="message">
+    Dear <span class="highlight">{{ data?.learnerName || 'Learner' }}</span> you have completed
+    <span class="highlight">{{ data?.courseName || 'Course' }}</span> on
+    <span class="highlight">{{ data?.completionDate || 'Date' }}</span>.
+    Have you been able to implement the course learnings in your day-to-day work?
+  </p>
+
+  <div class="button-group">
+    <button mat-stroked-button color="primary" (click)="onYes()" class="action-btn">
+      Yes
+    </button>
+    <button mat-stroked-button (click)="onNo()" class="action-btn">
+      No
+    </button>
+  </div>
+</div>

@@ -1,0 +1,171 @@
+.survey-dialog {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  padding: 0;
+
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: rgba(0, 0, 0, 0.54);
+    z-index: 10;
+  }
+
+  .dialog-header {
+    padding: 16px 24px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #E0E0E0;
+    flex-shrink: 0;
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0;
+      line-height: 1.4;
+
+      .course-name,
+      .date {
+        font-weight: 500;
+      }
+    }
+  }
+
+  mat-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden;
+  }
+
+  ::ng-deep .survey-stepper {
+    background-color: transparent;
+
+    .mat-horizontal-content-container {
+      padding: 0 24px 24px 24px !important;
+    }
+
+    .mat-horizontal-stepper-header-container {
+      pointer-events: none !important;
+      padding: 16px 24px !important;
+      background-color: #F8F9FA;
+      margin-bottom: 24px !important;
+    }
+    .mat-step-header {
+      flex-direction: column !important;
+      height: auto !important;
+      padding: 16px 0 !important;
+      box-sizing: content-box !important;
+      border-radius: 0 !important;
+
+      &:hover {
+        background-color: transparent !important;
+      }
+      .mat-step-icon {
+        background-color: transparent !important;
+        color: transparent !important;
+        width: 24px !important;
+        height: 24px !important;
+        margin: 0 0 8px 0 !important;
+        border: none !important;
+        padding: 0 !important;
+        overflow: visible !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        .mat-icon {
+          display: none !important;
+        }
+        .mat-step-icon-content {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        .step-icon-custom {
+          width: 24px !important;
+          height: 24px !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 12px !important;
+          font-weight: 500 !important;
+          color: white !important;
+          z-index: 10 !important;
+          position: relative !important;
+
+          &.state-number {
+            background-color: #E0E0E0 !important;
+          }
+          &.state-edit {
+            background-color: #FF9800 !important;
+          }
+
+          &.state-done {
+            background-color: #4CAF50 !important;
+          }
+        }
+      }
+
+      &[ng-reflect-state="done"] .mat-step-icon,
+      &.cdk-step-done .mat-step-icon {
+        background-color: #4CAF50 !important;
+        color: white !important;
+      }
+
+      .mat-step-label {
+        font-size: 12px;
+        color: #666;
+        font-weight: 500;
+        text-align: center;
+        white-space: normal;
+        max-width: 100px;
+        line-height: 1.2;
+
+        &.mat-step-label-selected {
+          color: #3F51B5 !important;
+          font-weight: 700 !important;
+        }
+      }
+    }
+
+    .mat-stepper-horizontal-line {
+      top: 28px !important;
+      border-top-width: 2px !important;
+      border-top-color: #E0E0E0 !important;
+      margin: 0 -16px !important;
+    }
+  }
+
+  .stepper-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 16px;
+
+    button {
+      min-width: 100px;
+      height: 36px;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+
+      &:not(:disabled) {
+        border-color: #3F51B5 !important;
+        color: #3F51B5 !important;
+      }
+    }
+  }
+}

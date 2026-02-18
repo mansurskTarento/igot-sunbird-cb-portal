@@ -1,0 +1,153 @@
+.peer-selection {
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  // max-height: 65vh;  <-- Removed to let dialog handle scrolling
+  // overflow-y: auto;  <-- Removed
+
+  .selection-header {
+    margin-bottom: 24px;
+
+    strong {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .peer-field {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: rgba(0, 0, 0, 0.87);
+
+      .required {
+        color: #F44336;
+      }
+
+      .required::after {
+        content: "" !important;
+      }
+
+      .optional {
+        color: rgba(0, 0, 0, 0.54);
+        font-weight: normal;
+      }
+    }
+
+    .select-with-search {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer; // Make the whole area Clickable
+    }
+
+    .pointer-events-none {
+      pointer-events: none;
+    }
+
+    .inline-search-container {
+      margin-top: 12px;
+      padding: 16px;
+      background: white;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      animation: expandIn 0.2s ease-out;
+    }
+
+    .pill-select {
+      display: flex; // Flex to align text and arrow
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      border: 1px solid #E0E0E0;
+      border-radius: 40px;
+      padding: 6px 16px;
+      background: white;
+      box-sizing: border-box;
+      min-height: 36px; // Ensure height match
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.38); // Placeholder color by default
+
+      &.has-value {
+        color: #333; // Selected value color
+      }
+
+      .dropdown-arrow {
+        color: #757575;
+        margin-right: -8px; // Pull arrow slightly right to match standard
+      }
+
+      &:focus,
+      &:hover {
+        border-color: #3F51B5;
+      }
+    }
+  }
+
+  .info-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #FFF3E0;
+    border-radius: 4px;
+    margin-top: 24px;
+
+    mat-icon {
+      color: #FF9800;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+    }
+
+    span {
+      flex: 1;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+}
+
+// Styles for the Select Panel
+::ng-deep .survey-peer-select-panel {
+  background-color: white !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 4px !important;
+  min-width: 100% !important;
+
+  .mat-mdc-option {
+    background-color: white !important;
+    color: #333 !important;
+    height: 48px;
+    padding: 0 16px;
+
+    &:hover {
+      background-color: #f5f5f5 !important;
+    }
+
+    .mat-mdc-option-text {
+      color: #333 !important;
+    }
+
+    &.mat-mdc-option-active,
+    &.mat-mdc-selected {
+      background-color: #E8EAF6 !important;
+      color: #3F51B5 !important;
+
+      .mat-mdc-option-text {
+        color: #3F51B5 !important;
+      }
+    }
+  }
+}

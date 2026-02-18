@@ -1,0 +1,405 @@
+.review-page {
+  padding: 24px 0px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: transparent;
+  min-height: 100vh;
+
+  .back-nav {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 24px;
+    color: #333;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+
+  .user-header {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .user-info {
+      .name {
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+
+        .badge {
+          font-size: 11px;
+          font-weight: 500;
+          color: #3F51B5;
+          border: 1px solid #3F51B5;
+          border-radius: 15px;
+          padding: 2px 8px;
+          margin-left: 5px;
+        }
+      }
+
+      .course {
+        color: #666;
+        margin-top: 4px;
+      }
+    }
+
+    .reporting-officer-info {
+      text-align: right;
+
+      .officer-name {
+        font-weight: 500;
+        margin-bottom: 4px;
+
+        .status-badge {
+          margin-left: 8px;
+          padding: 5px 12px;
+          border-radius: 10px;
+          font-size: 12px;
+
+          &.pending {
+            background: #fff3cd;
+            color: #856404;
+          }
+
+          &.approved,
+          &.agreed {
+            background: #28a745; // Solid Green
+            color: white;
+          }
+
+          &.rejected,
+          &.not-agreed {
+            background: #dc3545; // Solid Red
+            color: white;
+          }
+        }
+      }
+
+      .officer-message {
+        font-size: 12px;
+        color: #888;
+      }
+    }
+  }
+
+  .review-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .question-item {
+      margin-bottom: 24px;
+      background-color: #F8F9FA; // Card Background
+      padding: 24px; // Card Padding
+      border-radius: 8px;
+      border: 1px solid #EEEEEE; // Subtle Border
+      // Remove old divider style
+      // border-bottom: 1px solid #eee;
+
+      &:last-child {
+        margin-bottom: 0;
+        // border-bottom: none;
+      }
+
+      .q-header {
+        font-weight: 500;
+        margin-bottom: 16px;
+        font-size: 16px;
+
+        .red {
+          color: red;
+        }
+      }
+
+      .q-response-rating {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 600px;
+        margin-bottom: 16px;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          max-width: 100%;
+        }
+
+        .label-side {
+          font-size: 12px;
+          color: #666;
+          font-weight: 500;
+
+          @media (max-width: 768px) {
+            text-align: center;
+            font-size: 10px;
+            text-transform: uppercase;
+          }
+
+          @media (max-width: 480px) {
+            font-size: 9px;
+          }
+        }
+
+        .rating-pills {
+          display: flex;
+          gap: 12px;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+          }
+
+          @media (max-width: 480px) {
+            gap: 6px;
+          }
+
+          .pill {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #666;
+            background: white; // Ensure White Background
+
+            @media (max-width: 480px) {
+              width: 36px;
+              height: 36px;
+              font-size: 13px;
+            }
+
+            &.selected {
+              background: #007bff; // Primary color
+              color: white;
+              border-color: #007bff;
+              box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3); // Shadow for selected
+            }
+          }
+        }
+      }
+
+      .q-response-text {
+        .text-box {
+          background: #FFFFFF; // White background for text
+          padding: 16px;
+          border-radius: 4px;
+          border: 1px solid #E0E0E0; // Border for text box
+          color: #333;
+          min-height: 60px;
+        }
+      }
+    }
+
+    .meta-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #eee;
+
+      .meta-label {
+        font-weight: 600;
+        margin-bottom: 16px;
+        font-size: 16px;
+
+        .optional-text {
+          font-weight: 400;
+          color: #888;
+          font-size: 14px;
+          margin-left: 4px;
+        }
+      }
+
+      .meta-sub {
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #555;
+      }
+
+      // Styles for new Pill Select
+      .select-with-search {
+        cursor: pointer;
+        margin-bottom: 16px;
+
+        .display-pill {
+          border: 1px solid #ccc;
+          border-radius: 24px; // Pill shape
+          padding: 10px 16px;
+          min-height: 24px; // Adjust height
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: white;
+          color: #666; // Placeholder color
+          font-size: 14px;
+          position: relative;
+          transition: border-color 0.2s;
+
+          &.has-value {
+            color: #333; // Selected text color
+            background: #e8f0fe; // Light blue background for selected state
+            border-color: #1a73e8;
+          }
+
+          &:hover {
+            border-color: #3f51b5;
+          }
+
+          .dropdown-arrow {
+            color: #666;
+          }
+        }
+      }
+
+      .inline-search-container {
+        margin-top: 8px;
+        margin-bottom: 24px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 16px;
+        background: #fafafa;
+      }
+
+      .attachments {
+        margin-top: 16px;
+
+        .attachment-item {
+          display: flex;
+          align-items: center;
+          padding: 8px 12px;
+          background: #e8f0fe; // Light blue/purple background
+          border-radius: 4px;
+          margin-bottom: 8px;
+          border: 1px solid #d2e3fc; // Subtle blue border
+
+          .attachment-icon {
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+
+            .icon-video {
+              color: #3F51B5;
+              font-size: 24px;
+              width: 24px;
+              height: 24px;
+            }
+
+            .icon-file {
+              width: 24px;
+              height: 24px;
+            }
+          }
+
+          .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+
+            .filename {
+              font-weight: 500;
+              color: #3F51B5;
+              cursor: pointer;
+              text-decoration: underline;
+
+              &:hover {
+                color: #2c3e50;
+              }
+            }
+
+            .filesize {
+              color: #666;
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
+
+    .declaration {
+      margin-top: 32px;
+      margin-bottom: 32px;
+
+      .declaration-text {
+        color: #3F51B5;
+        font-size: 14px;
+      }
+
+      ::ng-deep mat-checkbox {
+        color: #3F51B5 !important;
+      }
+
+      ::ng-deep .mat-checkbox-label {
+        color: #3F51B5 !important;
+      }
+
+      ::ng-deep .mat-checkbox-label-content {
+        color: #3F51B5 !important;
+        font-size: 14px;
+      }
+
+      ::ng-deep .mat-checkbox-layout {
+        color: #3F51B5 !important;
+      }
+    }
+
+    .inline-actions {
+      display: flex;
+      justify-content: flex-end; // Align buttons to the right
+      gap: 16px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 24px;
+        height: 40px;
+        border-radius: 24px; // Pill shape
+        background: white;
+        border: 1px solid;
+
+        &.btn-approve {
+          color: #28a745;
+          border-color: #28a745;
+
+          &:hover {
+            background: rgba(40, 167, 69, 0.1);
+          }
+        }
+
+        &.btn-reject {
+          color: #dc3545;
+          border-color: #dc3545;
+
+          &:hover {
+            background: rgba(220, 53, 69, 0.1);
+          }
+        }
+
+        &:disabled {
+          color: #aaa;
+          border-color: #ddd;
+          background: transparent;
+        }
+      }
+    }
+  }
+}

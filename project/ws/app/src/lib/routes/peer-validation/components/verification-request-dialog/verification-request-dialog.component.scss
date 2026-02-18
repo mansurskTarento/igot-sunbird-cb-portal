@@ -1,0 +1,47 @@
+.verification-dialog {
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  min-width: 400px;
+
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  .icon-container {
+    margin-bottom: 24px;
+
+    .warning-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #FF9800;
+    }
+  }
+
+  .message {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.87);
+    margin: 0 0 24px;
+
+    .highlight {
+      color: #3F51B5;
+      font-weight: 500;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+
+    .action-btn {
+      min-width: 100px;
+      border-radius: 4px;
+    }
+  }
+}
