@@ -7,6 +7,16 @@ import {
   ActivatedRoute,
   Router,
 } from '@angular/router'
+import {
+  FormControl,
+} from '@angular/forms'
+import {
+  Subject,
+} from 'rxjs'
+import {
+  debounceTime,
+  takeUntil,
+} from 'rxjs/operators'
 // tslint:disable-next-line
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
@@ -37,6 +47,10 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   tabSelected: any
   dynamicTabIndex = 0
   isCoisContent = false
+  searchControl = new FormControl('')
+  savedTabIndex = 0
+  private destroy$ = new Subject<void>()
+  private skipNextSearchChange = false
 
   constructor(
     private activated: ActivatedRoute,
@@ -61,16 +75,16 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       pageType = (res.pageType) ? res.pageType : ''
     })
     const configData = await this.seeAllSvc.getSeeAllConfigJson(pageType, pageSubType).catch(_error => { })
-    if(configData && configData.homeStrips){
+    if (configData && configData.homeStrips) {
       configData.homeStrips.forEach((ele: any) => {
-       if (ele && ele.strips.length > 0) {
-         ele.strips.forEach((subEle: any) => {
-           if (subEle.key === this.keyData) {
-             this.seeAllPageConfig = subEle
-           }
-         })
-       }
-     })
+        if (ele && ele.strips.length > 0) {
+          ele.strips.forEach((subEle: any) => {
+            if (subEle.key === this.keyData) {
+              this.seeAllPageConfig = subEle
+            }
+          })
+        }
+      })
     }
     if (!this.seeAllPageConfig) {
       if (configData) {
@@ -102,15 +116,15 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
       this.seeAllPageConfig.tabs.length
-      ) {
-        this.tabResults = this.seeAllPageConfig.tabs
-        this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.label === this.tabSelected)
-      }
+    ) {
+      this.tabResults = this.seeAllPageConfig.tabs
+      this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.label === this.tabSelected)
+    }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
     if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.searchV6) {
       this.fetchFromSearchV6(this.seeAllPageConfig)
       this.seeAllPageConfig.request.searchV6.request.filters =
-      this.checkForDateFilters(this.seeAllPageConfig.request.searchV6.request.filters)
+        this.checkForDateFilters(this.seeAllPageConfig.request.searchV6.request.filters)
     } else if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.trendingSearch) {
       this.fetchFromTrendingContent(this.seeAllPageConfig)
     } else if (this.seeAllPageConfig.request && this.seeAllPageConfig.request.enrollmentList) {
@@ -119,6 +133,9 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       this.isCoisContent = true
       this.fetchCiosContentData(this.seeAllPageConfig)
     }
+
+    // Setup search control with debounce
+    this.setupSearchControl()
   }
 
   checkForDateFilters(filters: any) {
@@ -130,6 +147,28 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       filters['batches.enrollmentEndDate']['>='] = eval(filters['batches.enrollmentEndDate']['>='])
     }
     return filters
+  }
+
+  setupSearchControl() {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(2000),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((searchString: any) => {
+        if (this.skipNextSearchChange) {
+          this.skipNextSearchChange = false
+          return
+        }
+        const trimmedSearchValue = searchString ? searchString.trim() : ''
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length && (trimmedSearchValue.length > 3 || trimmedSearchValue.length === 0)) {
+          this.tabClicked(this.savedTabIndex, this.seeAllPageConfig, false)
+        }
+      })
+  }
+
+  clearSearchControl() {
+    this.searchControl.setValue('')
   }
 
   private getFiltersFromArray(v6filters: any) {
@@ -153,8 +192,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       widgetSubType: 'cardContent',
       widgetHostClass: 'mb-2',
       widgetData: {
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.loaderConfig
-        && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.loaderConfig
+          && strip.viewMoreUrl.loaderConfig.cardSubType || 'card-portrait-skeleton',
       },
     }))
   }
@@ -172,8 +211,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         ...(content.batch && {
           batch: content.batch,
         }),
-        cardSubType: strip.viewMoreUrl &&  strip.viewMoreUrl.stripConfig
-        && strip.viewMoreUrl.stripConfig.cardSubType,
+        cardSubType: strip.viewMoreUrl && strip.viewMoreUrl.stripConfig
+          && strip.viewMoreUrl.stripConfig.cardSubType,
         context: {
           pageSection: strip.key,
           position: idx,
@@ -199,21 +238,21 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   getInprogressAndCompleted(array: NsContent.IContent[],
-                            customFilter: any,
-                            strip: NsContentStripWithTabs.IContentStripUnit) {
+    customFilter: any,
+    strip: NsContentStripWithTabs.IContentStripUnit) {
     const inprogress: any[] = []
     const completed: any[] = []
     array.forEach((e, idx, arr) => {
       const status = e.status ? (e.status as string).toLowerCase() : ''
       const statusRetired = status === 'retired'
       if (customFilter(e, idx, arr)) {
-      if (!statusRetired) {
-        inprogress.push(e)
+        if (!statusRetired) {
+          inprogress.push(e)
+        }
+      } else {
+        completed.push(e)
       }
-     } else {
-      completed.push(e)
-     }
-      })
+    })
     // Sort the completed array with 'live' status first and 'Retired' status second
     completed.sort((a: any, b: any) => {
       const statusA = a.status ? a.status.toLowerCase() : ''
@@ -233,8 +272,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       return 0
     })
     return [
-    { value: 'inprogress', widgets: this.transformContentsToWidgets(inprogress, strip) },
-    { value: 'completed', widgets: this.transformContentsToWidgets(completed, strip) }]
+      { value: 'inprogress', widgets: this.transformContentsToWidgets(inprogress, strip) },
+      { value: 'completed', widgets: this.transformContentsToWidgets(completed, strip) }]
   }
 
   splitEnrollmentTabsData(contentNew: NsContent.IContent[], strip: NsContentStripWithTabs.IContentStripUnit) {
@@ -265,7 +304,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     return tabResults
   }
 
-  public tabClicked(tabIndex: any, stripMap: any) {
+  public tabClicked(tabIndex: any, stripMap: any, resetControl: boolean = true) {
     const data: WsEvents.ITelemetryTabData = {
       label: `${stripMap.tabs[tabIndex].textLabel}`,
       index: tabIndex,
@@ -273,6 +312,14 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     // reset pagination on tab change
     this.page = 0
     this.dynamicTabIndex = tabIndex
+    this.savedTabIndex = tabIndex
+
+    // Only reset control when explicitly requested from tab click
+    if (resetControl) {
+      this.skipNextSearchChange = true
+      this.searchControl.setValue('')
+    }
+
     this.eventSvc.raiseInteractTelemetry(
       {
         type: WsEvents.EnumInteractTypes.CLICK,
@@ -288,6 +335,9 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     const currentStrip = stripMap
     if (currentStrip && currentTabFromMap && !currentTabFromMap.computeDataOnClick) {
       if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
+        if (currentTabFromMap.showSearchBox && _.get(currentTabFromMap, 'request.ciosContent') && this.searchControl.value) {
+          currentTabFromMap.request.ciosContent['searchString'] = this.searchControl.value
+        }
         // call API to get tab data and process
         if (currentTabFromMap.request.searchV6) {
           this.getTabDataByNewReqSearchV6(currentStrip, tabIndex, currentTabFromMap, true)
@@ -355,8 +405,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
 
-    async fetchCiosContentData(strip: any, calculateParentStatus = true) {
-      this.isCoisContent = true
+  async fetchCiosContentData(strip: any, calculateParentStatus = true) {
+    this.isCoisContent = true
     if (strip && strip.request.ciosContent && Object.keys(strip.request.ciosContent).length) {
       if (strip.tabs && strip.tabs.length) {
         // TODO: Have to extract requestRequired to outer level of tabs config
@@ -380,7 +430,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   async getTabDataByCiosSearch(
-    strip:any,
+    strip: any,
     tabIndex: number,
     _currentTab: NsContentStripWithTabs.IContentStripTab,
     _calculateParentStatus: boolean,
@@ -388,15 +438,15 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   ) {
     try {
       const response = await this.consumWidgetSvc.postApiMethod(_currentTab.request.apiUrl, _currentTab.request.ciosContent).toPromise()
-      if(response && response.result && response.result.data && response.result.data.length){
+      if (response && response.result && response.result.data && response.result.data.length) {
         strip.stripConfig.cardSubType = 'card-providers-lib'
-        let data  = response.result.data.map((item: any) => {
+        let data = response.result.data.map((item: any) => {
           return {
             ...item,
             "name": item?.contentPartnerName || '',
             "logoUrl": item?.link || '',
             "description": item?.description || '',
-            "contentDisplayType":_currentTab?.request?.condition || 'extContent',
+            "contentDisplayType": _currentTab?.request?.condition || 'extContent',
             "isExternalProvider": true
           }
         })
@@ -447,7 +497,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           this.tabResults = allTabs
         }
       } else {
-       this.tabResults = []
+        this.tabResults = []
       }
     }
   }
@@ -481,8 +531,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       // Make the API request
       const response: any = await this.consumWidgetSvc.getApiMethod(currentTab.request.apiUrl).toPromise()
 
-        this.tabResults = []
-        let combinedWidgets: any = []
+      this.tabResults = []
+      let combinedWidgets: any = []
       // Handle successful response
       if (response && response.result && response.result.length) {
         const widgets = this.transformContentsToWidgets(response.result, strip)
@@ -494,9 +544,9 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         combinedWidgets = existingwidgets && existingwidgets.length ? [...existingwidgets, ...widgets] : [...widgets]
 
 
-      }  else if (response.result.content) {
-            let featuredProvider = JSON.parse(response.result.content.featuredProviders || '[]')
-            combinedWidgets = this.transformContentsToWidgets(featuredProvider, strip)
+      } else if (response.result.content) {
+        let featuredProvider = JSON.parse(response.result.content.featuredProviders || '[]')
+        combinedWidgets = this.transformContentsToWidgets(featuredProvider, strip)
 
       } else {
         // Handle no data response
@@ -504,17 +554,17 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         combinedWidgets = existingwidgets && existingwidgets.length ? [...existingwidgets] : []
       }
 
-        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
-          const allTabs = this.seeAllPageConfig.tabs
-          if (allTabs && allTabs.length && allTabs[tabIndex]) {
-            allTabs[tabIndex] = {
-              ...allTabs[tabIndex],
-              widgets: combinedWidgets,
-              fetchTabStatus: 'done',
-            }
-            this.tabResults = allTabs
+      if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
+        const allTabs = this.seeAllPageConfig.tabs
+        if (allTabs && allTabs.length && allTabs[tabIndex]) {
+          allTabs[tabIndex] = {
+            ...allTabs[tabIndex],
+            widgets: combinedWidgets,
+            fetchTabStatus: 'done',
           }
+          this.tabResults = allTabs
         }
+      }
     } catch (error) {
       console.error('Error fetching playlist content:', error)
       this.tabResults = []
@@ -561,37 +611,37 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           if (this.seeAllPageConfig.tabs) {
             const allTabs = this.seeAllPageConfig.tabs
             const currentTabFromMap = (allTabs && allTabs.length &&
-               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
+              allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
             this.getTabDataByNewReqSearchV6(strip, this.dynamicTabIndex,
-                                            currentTabFromMap, calculateParentStatus)
+              currentTabFromMap, calculateParentStatus)
           }
         }
 
       } else {
-      try {
-        const response = await this.searchV6Request(strip, strip.request, calculateParentStatus)
-        if (response && response.results) {
-          if (this.contentDataList[0].widgetData.content) {
-            this.contentDataList =
-            _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
-          } else {
-            this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
+        try {
+          const response = await this.searchV6Request(strip, strip.request, calculateParentStatus)
+          if (response && response.results) {
+            if (this.contentDataList[0].widgetData.content) {
+              this.contentDataList =
+                _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
+            } else {
+              this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
+            }
+            this.totalCount = response.results.result.count
+            this.totalPages = Math.ceil(response.results.result.count / strip.request.searchV6.request.limit)
           }
-          this.totalCount = response.results.result.count
-          this.totalPages = Math.ceil(response.results.result.count / strip.request.searchV6.request.limit)
-        }
-      } catch (error) {}
+        } catch (error) { }
       }
     }
   }
 
   async searchV6Request(strip: NsContentStripWithTabs.IContentStripUnit,
-                        request: NsContentStripWithTabs.IContentStripUnit['request'],
-                        _calculateParentStatus: boolean
-  ): Promise <any> {
+    request: NsContentStripWithTabs.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
+  ): Promise<any> {
     const originalFilters: any = []
     // console.log('calling -- ')
-    return new Promise <any>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       if (request && request.searchV6) {
         this.seeAllSvc.searchV6(request.searchV6).subscribe(results => {
           const showViewMore = Boolean(
@@ -620,7 +670,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        },                                                  (error: any) => {
+        }, (error: any) => {
           reject(error)
         })
       }
@@ -647,38 +697,38 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           if (this.seeAllPageConfig.tabs) {
             const allTabs = this.seeAllPageConfig.tabs
             const currentTabFromMap = (allTabs && allTabs.length &&
-               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
+              allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
             this.getTabDataByNewReqTrending(strip, this.dynamicTabIndex, currentTabFromMap,
-                                            calculateParentStatus)
+              calculateParentStatus)
           }
         }
 
       } else {
-      try {
-        const response = await this.trendingSearchRequest(strip, strip.request, calculateParentStatus)
-        if (response && response.results && response.results.response) {
-          // if (this.contentDataList[0].widgetData.content) {
-          //   this.contentDataList =
-          //   _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
-          // }else {
-          //   this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
-          // }
-          // this.totalCount = response.results.result.count
-          // this.totalPages = Math.ceil(response.results.result.count / this.pagelimit)
-          const content = response.results.response[strip.request.trendingSearch.responseKey] || []
-          this.contentDataList = this.transformContentsToWidgets(content, strip)
-        }
-      } catch (error) {}
+        try {
+          const response = await this.trendingSearchRequest(strip, strip.request, calculateParentStatus)
+          if (response && response.results && response.results.response) {
+            // if (this.contentDataList[0].widgetData.content) {
+            //   this.contentDataList =
+            //   _.concat(this.contentDataList, this.transformContentsToWidgets(response.results.result.content, strip))
+            // }else {
+            //   this.contentDataList = this.transformContentsToWidgets(response.results.result.content, strip)
+            // }
+            // this.totalCount = response.results.result.count
+            // this.totalPages = Math.ceil(response.results.result.count / this.pagelimit)
+            const content = response.results.response[strip.request.trendingSearch.responseKey] || []
+            this.contentDataList = this.transformContentsToWidgets(content, strip)
+          }
+        } catch (error) { }
       }
     }
   }
 
   async trendingSearchRequest(strip: NsContentStripWithTabs.IContentStripUnit,
-                              request: NsContentStripWithTabs.IContentStripUnit['request'],
-                              _calculateParentStatus: boolean
-  ): Promise <any> {
+    request: NsContentStripWithTabs.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
+  ): Promise<any> {
     const originalFilters: any = []
-    return new Promise <any>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       if (request && request.trendingSearch) {
         // check for the request if it has dynamic values]
         if (request.trendingSearch.request.filters.organisation &&
@@ -728,7 +778,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        },                                                                     (error: any) => {
+        }, (error: any) => {
           if (error.error && error.error.status === 400) {
           }
           reject(error)
@@ -810,16 +860,16 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         }
       }
       // with tabs
-      else if(this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length){
+      else if (this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length) {
         let tabdata = this.seeAllPageConfig.tabs[this.dynamicTabIndex]
         let existingWidgets = tabdata.widgets || []
-        if(tabdata && tabdata.request && tabdata.request.searchV6){
+        if (tabdata && tabdata.request && tabdata.request.searchV6) {
           tabdata.request.searchV6.request['offset'] = this.page
           this.getTabDataByNewReqSearchV6(this.seeAllPageConfig, this.dynamicTabIndex, tabdata, true, existingWidgets)
-        } else if(tabdata && tabdata.request && tabdata.request.ciosContent){
+        } else if (tabdata && tabdata.request && tabdata.request.ciosContent) {
           tabdata.request.ciosContent['pageNumber'] = this.page
           this.getTabDataByCiosSearch(this.seeAllPageConfig, this.dynamicTabIndex, tabdata, true, existingWidgets)
-        } else if(tabdata && tabdata.request && tabdata.request.playlistRead){
+        } else if (tabdata && tabdata.request && tabdata.request.playlistRead) {
           this.getTabDataByNewReqPlaylistReadContent(this.seeAllPageConfig, this.dynamicTabIndex, tabdata, true, existingWidgets)
         }
       }
@@ -831,15 +881,18 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label.toLowerCase(), type, '')
   }
   async postRequestMethod(strip: NsContentStripWithTabs.IContentStripUnit,
-                          request: NsContentStripWithTabs.IContentStripUnit['request'],
-                          apiUrl: string,
-                          _calculateParentStatus: boolean
+    request: NsContentStripWithTabs.IContentStripUnit['request'],
+    apiUrl: string,
+    _calculateParentStatus: boolean
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
@@ -858,12 +911,12 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             }
               : null
             resolve({ results, viewMoreUrl })
-          } else  if (results && results.results&& results.results.data) {
+          } else if (results && results.results && results.results.data) {
             resolve({ results })
           } else {
             resolve({ results })
           }
-        },                                                            (error: any) => {
+        }, (error: any) => {
           // this.processStrip(strip, [], 'error', calculateParentStatus, null);
           reject(error)
         },
