@@ -6,8 +6,7 @@
             </div>
         </div>
         <div class="flex flex-row flex-wrap content-container" infinite-scroll [infiniteScrollDistance]="scrollDistance"
-            [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()"
-            *ngIf="tabResults.length === 0">
+            [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()" *ngIf="tabResults.length === 0">
             <ng-container *ngIf="!isCoisContent">
                 <div class="mr-2 mb-5" *ngFor="let c of contentDataList">
                     <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
@@ -15,37 +14,54 @@
             </ng-container>
             <ng-container *ngIf="isCoisContent">
                 <div class="mr-2" *ngFor="let c of contentDataList">
-                    <sb-uic-provider-card  [isCardLoading]="false" [widgetData]="c.widgetData"></sb-uic-provider-card>
+                    <sb-uic-provider-card [isCardLoading]="false" [widgetData]="c.widgetData"></sb-uic-provider-card>
                     <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
                 </div>
             </ng-container>
         </div>
-        <div class="flex flex-row flex-wrap content-container"
-            *ngIf="tabResults.length > 0" infinite-scroll [infiniteScrollDistance]="scrollDistance"
-            [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()" >
-            <mat-tab-group animationDuration="0ms"
-                  class="mat-tab-labels w-full strips-tabgroup" dynamicHeight
-                  (selectedIndexChange)="tabClicked($event, seeAllPageConfig, seeAllPageConfig.key)" [selectedIndex]="dynamicTabIndex">
-            <mat-tab *ngFor="let tab of tabResults; let last = last;" [label]="tab?.label">
-                <ng-template mat-tab-label>
-                    <span>{{translateLabels(tab?.label,'seeAllHome')}} &nbsp;</span>
-                    <span *ngIf="tab?.showTabDataCount">({{tab?.widgets?.length}})</span>
-                </ng-template>
-                <div class="flex flex-row flex-wrap content-container mt-10 mb-10">
-                    <ng-container *ngIf="!isCoisContent">
-                        <div class="mr-2 mb-5" *ngFor="let c of tab?.widgets">
-                            <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
+        <div class="flex flex-row flex-wrap content-container" *ngIf="tabResults.length > 0" infinite-scroll
+            [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()">
+            <mat-tab-group animationDuration="0ms" class="mat-tab-labels w-full strips-tabgroup" dynamicHeight
+                (selectedIndexChange)="tabClicked($event, seeAllPageConfig)" [selectedIndex]="dynamicTabIndex">
+                <mat-tab *ngFor="let tab of tabResults; let last = last;" [label]="tab?.label">
+                    <ng-template mat-tab-label>
+                        <span>{{translateLabels(tab?.label,'seeAllHome')}} &nbsp;</span>
+                        <span *ngIf="tab?.showTabDataCount">({{tab?.widgets?.length}})</span>
+                    </ng-template>
+                    <ng-container *ngIf="tab?.showSearchBox">
+                        <div class="flex top_search_box mt-4">
+                            <div class="search_box_inner flex-1">
+                                <div class="flex flex-1 flex-column margin-fix search search_box_main">
+                                    <div class="relative search-wrapper">
+                                        <mat-icon matPrefix
+                                            class="flex absolute items-center justify-center mr-2">search
+                                        </mat-icon>
+                                        <input type="text" name="searchKey" [formControl]="searchControl"
+                                            class="ml-2 search-field" i18-aria-label aria-label="Search"
+                                            placeholder="search" i18n-placeholder="search" />
+                                        <!-- <mat-icon *ngIf="searchControl.value" class="clear-icon"
+                                            (click)="clearSearchControl()">clear</mat-icon> -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </ng-container>
-                    <ng-container *ngIf="isCoisContent">
-                        <div class="mr-2" *ngFor="let c of tab?.widgets">
-                            <sb-uic-provider-card  [isCardLoading]="false" [widgetData]="c.widgetData"></sb-uic-provider-card>
-                            <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
-                        </div>
-                    </ng-container>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
+                    <div class="flex flex-row flex-wrap content-container mt-10 mb-10">
+                        <ng-container *ngIf="!isCoisContent">
+                            <div class="mr-2 mb-5" *ngFor="let c of tab?.widgets">
+                                <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="isCoisContent">
+                            <div class="mr-2" *ngFor="let c of tab?.widgets">
+                                <sb-uic-provider-card [isCardLoading]="false"
+                                    [widgetData]="c.widgetData"></sb-uic-provider-card>
+                                <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
+                            </div>
+                        </ng-container>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
         </div>
     </ng-container>
 </div>
