@@ -161,7 +161,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           return
         }
         const trimmedSearchValue = searchString ? searchString.trim() : ''
-        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length && (trimmedSearchValue.length > 3 || trimmedSearchValue.length === 0)) {
+        if (this.seeAllPageConfig && this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length && (trimmedSearchValue.length >= 3 || searchString.length === 0)) {
           this.tabClicked(this.savedTabIndex, this.seeAllPageConfig, false)
         }
       })
@@ -337,6 +337,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       if (currentTabFromMap.requestRequired && currentTabFromMap.request) {
         if (currentTabFromMap.showSearchBox && _.get(currentTabFromMap, 'request.ciosContent') && this.searchControl.value) {
           currentTabFromMap.request.ciosContent['searchString'] = this.searchControl.value
+        } else {
+          delete currentTabFromMap.request.ciosContent['searchString']
         }
         // call API to get tab data and process
         if (currentTabFromMap.request.searchV6) {
@@ -478,6 +480,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           if (allTabs && allTabs.length && allTabs[tabIndex]) {
             allTabs[tabIndex] = {
               ...allTabs[tabIndex],
+              widgets: [],
               fetchTabStatus: 'done',
             }
             this.tabResults = allTabs
@@ -848,7 +851,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
 
   onScrollEnd() {
     this.page += 1
-    if (this.page <= this.totalPages) {
+    if (this.page < this.totalPages) {
       // Prevent scroll to top by using setTimeout to allow DOM updates
       const currentScrollPosition = window.scrollY
 

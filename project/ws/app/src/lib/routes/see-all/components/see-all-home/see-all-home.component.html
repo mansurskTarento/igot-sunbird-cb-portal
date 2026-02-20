@@ -34,13 +34,14 @@
                                 <div class="flex flex-1 flex-column margin-fix search search_box_main">
                                     <div class="relative search-wrapper">
                                         <mat-icon matPrefix
-                                            class="flex absolute items-center justify-center mr-2">search
+                                            class="flex absolute items-center justify-center mr-2 search-icon">search
                                         </mat-icon>
                                         <input type="text" name="searchKey" [formControl]="searchControl"
                                             class="ml-2 search-field" i18-aria-label aria-label="Search"
                                             placeholder="search" i18n-placeholder="search" />
-                                        <!-- <mat-icon *ngIf="searchControl.value" class="clear-icon"
-                                            (click)="clearSearchControl()">clear</mat-icon> -->
+                                        <mat-icon matSuffix *ngIf="searchControl.value" class="clear-icon absolute"
+                                            (click)="clearSearchControl()"
+                                            (keypress)="clearSearchControl()">clear</mat-icon>
                                     </div>
                                 </div>
                             </div>
@@ -53,11 +54,23 @@
                             </div>
                         </ng-container>
                         <ng-container *ngIf="isCoisContent">
-                            <div class="mr-2" *ngFor="let c of tab?.widgets">
-                                <sb-uic-provider-card [isCardLoading]="false"
-                                    [widgetData]="c.widgetData"></sb-uic-provider-card>
-                                <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
-                            </div>
+                            <ng-container *ngIf="tab?.widgets && tab?.widgets.length > 0; else noDataMessageTemplate">
+                                <div class="mr-2" *ngFor="let c of tab?.widgets">
+                                    <sb-uic-provider-card [isCardLoading]="false"
+                                        [widgetData]="c.widgetData"></sb-uic-provider-card>
+                                    <!-- <sb-uic-card-portrait-ext [widgetData]="c.widgetData" (contentData)="takeExtClickAction($event)"></sb-uic-card-portrait-ext> -->
+                                </div>
+                            </ng-container>
+                            <ng-template #noDataMessageTemplate>
+                                <ng-container *ngIf="searchControl.value && searchControl.value.trim().length > 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="noDataTemplate; context: {message: tab?.searchNoDataMsg }"></ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="!searchControl.value || searchControl.value.trim().length === 0">
+                                    <ng-container
+                                        *ngTemplateOutlet="noDataTemplate; context: {message: tab?.nodataMsg}"></ng-container>
+                                </ng-container>
+                            </ng-template>
                         </ng-container>
                     </div>
                 </mat-tab>
@@ -65,3 +78,14 @@
         </div>
     </ng-container>
 </div>
+
+<ng-template #noDataTemplate let-message="message">
+    <div class="no-data-container flex flex-column items-center justify-center w-full min-h-60">
+        <div class="no-data-image flex flex-col items-center justify-center">
+            <img src="/assets/icons/no-data.svg" alt="No data found" class="w-32 h-32">
+            <div class="no-data-message text-center">
+                <p class="text-lg text-gray-600">{{ message || 'No data found' }}</p>
+            </div>
+        </div>
+    </div>
+</ng-template>
