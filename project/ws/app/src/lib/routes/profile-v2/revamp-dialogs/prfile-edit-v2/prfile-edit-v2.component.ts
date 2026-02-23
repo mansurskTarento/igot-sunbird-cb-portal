@@ -1,31 +1,31 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA, MatLegacyDialog } from '@angular/material/legacy-dialog';
-import * as _ from 'lodash';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { EMAIL_PATTERN, EMP_ID_PATTERN, IMAGE_SIZE_1MB, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model';
-import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA, MatLegacyDialog } from '@angular/material/legacy-dialog'
+import * as _ from 'lodash'
+import { HttpErrorResponse } from '@angular/common/http'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
+import { Subject } from 'rxjs'
+import { EMAIL_PATTERN, EMP_ID_PATTERN, IMAGE_SIZE_1MB, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model'
+import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
-import { OtpService } from '../../../user-profile/services/otp.services';
+import { OtpService } from '../../../user-profile/services/otp.services'
 import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
 import { RejectionReasonPopupComponent } from '../../components/rejection-reason-popup/rejection-reason-popup.component'
 import { WithdrawRequestComponent } from '../../components/withdraw-request/withdraw-request.component'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
-import { DatePipe, Location } from '@angular/common';
-import { ConfigurationsService, ImageCropComponent, PipeCertificateImageURL } from '@sunbird-cb/utils-v2';
+import { DatePipe, Location } from '@angular/common'
+import { ConfigurationsService, ImageCropComponent, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
 import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage';
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant';
-import { UserProfileService } from '../../../user-profile/services/user-profile.service';
-import { TranslateService } from '@ngx-translate/core';
+import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
+import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
+import { UserProfileService } from '../../../user-profile/services/user-profile.service'
+import { TranslateService } from '@ngx-translate/core'
 // import { Router } from '@angular/router';
 
 
-@Component({  
+@Component({
   selector: 'ws-app-prfile-edit-v2',
   templateUrl: './prfile-edit-v2.component.html',
   styleUrls: ['./prfile-edit-v2.component.scss']
@@ -33,8 +33,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class PrfileEditV2Component implements OnInit, OnDestroy {
   header = '';
-  profileDetails: any;
-  profileForm!: FormGroup;
+  profileDetails: any
+  profileForm!: FormGroup
   currentDate: Date = new Date();
   initilisationInProgress = true;
 
@@ -92,11 +92,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   civilServiceName: any
   cadreList: any[] = []
   cadreControllingAuthority: any
-  startBatch: any;
-  endBatch: any;
-  exclusionYear: any;
-  selectedCadreName: any;
-  selectedCadre: any;
+  startBatch: any
+  endBatch: any
+  exclusionYear: any
+  selectedCadreName: any
+  selectedCadre: any
   nodalEmail: string = ''
   nodalName: string = ''
 
@@ -129,119 +129,119 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     // private router: Router,
     private location: Location
   ) {
-    
+
     // Handle both data structures - direct and wrapped in dialogDetails
-    const hasDialogDetails = this.data && this.data.hasOwnProperty('dialogDetails');
-    
-    this.header = hasDialogDetails ? _.get(this.data, 'dialogDetails.header', '') : _.get(this.data, 'header', '');
-    this.profileDetails = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileDetails', {}) : _.get(this.data, 'profileDetails', {});
-    this.profileImage = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileImage', null) : _.get(this.data, 'profileImage', null);
-    
+    const hasDialogDetails = this.data && this.data.hasOwnProperty('dialogDetails')
+
+    this.header = hasDialogDetails ? _.get(this.data, 'dialogDetails.header', '') : _.get(this.data, 'header', '')
+    this.profileDetails = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileDetails', {}) : _.get(this.data, 'profileDetails', {})
+    this.profileImage = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileImage', null) : _.get(this.data, 'profileImage', null)
+
     // groupsList can come from either location
-    this.groupsList = _.get(this.data, 'groupsList', []);
+    this.groupsList = _.get(this.data, 'groupsList', [])
     if (!this.groupsList.length && hasDialogDetails) {
-      this.groupsList = _.get(this.data, 'dialogDetails.groupsList', []);
+      this.groupsList = _.get(this.data, 'dialogDetails.groupsList', [])
     }
-    
+
     // These fields are always at the top level when passed from openProfileEditDialog or handleEditMandatoryDetails
-    this.enableWTR = _.get(this.data, 'enableWTR', false);
-    this.enableWR = _.get(this.data, 'enableWR', false);
-    this.approvalPendingFields = _.get(this.data, 'approvalPendingFields', []);
-   
+    this.enableWTR = _.get(this.data, 'enableWTR', false)
+    this.enableWR = _.get(this.data, 'enableWR', false)
+    this.approvalPendingFields = _.get(this.data, 'approvalPendingFields', [])
+
   }
 
   ngOnInit(): void {
-    this.initForm();
-    this.loadDynamicEmail();
+    this.initForm()
+    this.loadDynamicEmail()
     if (this.header === 'Mandatory Section') {
-      this.getApprovedFields();
-      this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false;
-      this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false;
+      this.getApprovedFields()
+      this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
+      this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
     }
   }
 
-loadDynamicEmail() {
-  const rootOrgId = _.get(this.configSvc, 'userProfile.rootOrgId', '')
-  const tryRoles = ['MDO_LEADER', 'MDO_ADMIN']
-  let roleIdx = 0
+  loadDynamicEmail() {
+    const rootOrgId = _.get(this.configSvc, 'userProfile.rootOrgId', '')
+    const tryRoles = ['MDO_LEADER', 'MDO_ADMIN']
+    let roleIdx = 0
 
-  const fetchEmailByRole = (role: string) => {
-    this.profileV2RevampService.fetchNodalDetails(rootOrgId, role).subscribe(res => {
-      if (res?.result?.response?.content?.length) {
-        const nodalPerson = res.result.response.content[0]
-        this.nodalEmail = nodalPerson?.profileDetails?.personalDetails?.primaryEmail || this.nodalEmail
-        this.nodalName = nodalPerson?.firstName
-        this.getDesignationHint()
-      } else if (roleIdx === 0) {
-        // If MDO_LEADER failed and this was the first attempt, try MDO_ADMIN
-        roleIdx++
-        fetchEmailByRole(tryRoles[roleIdx])
-      }
-    },
-    _err => {
-      if (roleIdx === 0) {
-        roleIdx++
-        fetchEmailByRole(tryRoles[roleIdx])
-      }
-      // If second role also errors, keep defaults (do nothing)
-    })
+    const fetchEmailByRole = (role: string) => {
+      this.profileV2RevampService.fetchNodalDetails(rootOrgId, role).subscribe(res => {
+        if (res?.result?.response?.content?.length) {
+          const nodalPerson = res.result.response.content[0]
+          this.nodalEmail = nodalPerson?.profileDetails?.personalDetails?.primaryEmail || this.nodalEmail
+          this.nodalName = nodalPerson?.firstName
+          this.getDesignationHint()
+        } else if (roleIdx === 0) {
+          // If MDO_LEADER failed and this was the first attempt, try MDO_ADMIN
+          roleIdx++
+          fetchEmailByRole(tryRoles[roleIdx])
+        }
+      },
+        _err => {
+          if (roleIdx === 0) {
+            roleIdx++
+            fetchEmailByRole(tryRoles[roleIdx])
+          }
+          // If second role also errors, keep defaults (do nothing)
+        })
+    }
+
+    fetchEmailByRole(tryRoles[roleIdx])
   }
 
-  fetchEmailByRole(tryRoles[roleIdx])
-}
 
-
-getDesignationHint(): string {
-  const translatedString = this.translate.instant('NetworkV2Profile.designationHint')
-  return translatedString
-    .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
-    .replace('%NAME%', `<b>(${this.nodalName})</b>`);
-}
+  getDesignationHint(): string {
+    const translatedString = this.translate.instant('NetworkV2Profile.designationHint')
+    return translatedString
+      .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
+      .replace('%NAME%', `<b>(${this.nodalName})</b>`)
+  }
 
 
   private initForm(): void {
     switch (this.header) {
       case 'Profile':
-        this.createProfileForm();
-        this.getInitials();
-        this.getStatesList();
-        break;
+        this.createProfileForm()
+        this.getInitials()
+        this.getStatesList()
+        break
       case 'Primary Details':
-        this.createPrimaryDetailsForm();
-        this.checkOrgHasDesignations();
+        this.createPrimaryDetailsForm()
+        this.checkOrgHasDesignations()
         // this.getdesignationsMeta();
-        break;
+        break
       case 'Mandatory Section':
-        this.createMandatoryDetailsForm();
-        this.checkOrgHasDesignations();
+        this.createMandatoryDetailsForm()
+        this.checkOrgHasDesignations()
         // this.getdesignationsMeta();
-        break;
+        break
       case 'About Me':
-        this.createAboutMeForm();
-        break;
+        this.createAboutMeForm()
+        break
       case 'Other Details':
-        this.createOtherDetailsForm();
-        break;
+        this.createOtherDetailsForm()
+        break
       default:
-        this.profileForm = this.fb.group({});
+        this.profileForm = this.fb.group({})
     }
   }
 
   //#region (profile)
   private createProfileForm(): void {
-    this.profileImage = _.get(this.profileDetails, 'profileImage', null);
+    this.profileImage = _.get(this.profileDetails, 'profileImage', null)
     this.profileForm = this.fb.group({
       firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^(?! )[a-zA-Z]+(?: [a-zA-Z]+)*(?<! )$/), Validators.maxLength(200), Validators.minLength(2)]],
       state: [_.get(this.profileDetails, 'state', '')],
       district: [_.get(this.profileDetails, 'district', '')]
-    });
+    })
     setTimeout(() => {
-      this.initilisationInProgress = false;
+      this.initilisationInProgress = false
     }, 10)
   }
 
   getInitials(): void {
-    const userName = _.get(this.profileDetails, 'firstname', '');
+    const userName = _.get(this.profileDetails, 'firstname', '')
     if (userName) {
       if (userName.split(' ').length > 1) {
         const nameArr = userName.split(' ')
@@ -255,18 +255,18 @@ getDesignationHint(): string {
   getStatesList() {
     this.profileV2RevampService.getStatesList().subscribe({
       next: (res: any) => {
-        this.statesList = _.get(res, 'result.statesList', []) as state[];
+        this.statesList = _.get(res, 'result.statesList', []) as state[]
         if (_.get(this.profileDetails, 'state', '')) {
-          const stateControl = this.profileForm ? this.profileForm.get('state') : null;
+          const stateControl = this.profileForm ? this.profileForm.get('state') : null
           if (stateControl) {
-            stateControl.patchValue(_.get(this.profileDetails, 'state', ''));
+            stateControl.patchValue(_.get(this.profileDetails, 'state', ''))
           }
-          this.getDistrictsList(_.get(this.profileDetails, 'state', ''), true);
+          this.getDistrictsList(_.get(this.profileDetails, 'state', ''), true)
         }
       },
       error: (err: HttpErrorResponse) => {
-        this.statesList = [];
-        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'));
+        this.statesList = []
+        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'))
       }
     })
   }
@@ -274,38 +274,38 @@ getDesignationHint(): string {
   getDistrictsList(state: string, isFirstTime: boolean = false) {
     this.profileV2RevampService.getDistrictsList(state).subscribe({
       next: (res: any) => {
-        this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[];
-        const districtControl = this.profileForm ? this.profileForm.get('district') : null;
+        this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[]
+        const districtControl = this.profileForm ? this.profileForm.get('district') : null
         if (districtControl) {
           if (isFirstTime) {
-            districtControl.patchValue(_.get(this.profileDetails, 'district', ''));
+            districtControl.patchValue(_.get(this.profileDetails, 'district', ''))
           } else {
-            districtControl.patchValue('');
+            districtControl.patchValue('')
           }
         }
       },
       error: (err: HttpErrorResponse) => {
-        this.districtsList = [];
-        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'));
+        this.districtsList = []
+        this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'))
       }
     })
   }
 
   get customNameValidation(): string {
-    const userName = this.profileForm.get('firstname');
+    const userName = this.profileForm.get('firstname')
     if (userName && userName.value) {
       if (/[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value) && /\d/.test(userName.value)) {
-        return 'NetworkV2Profile.invalidNameFormat';
+        return 'NetworkV2Profile.invalidNameFormat'
       } else if (!userName.value.trim()) {
-        return 'NetworkV2Profile.nameIsRequired';
+        return 'NetworkV2Profile.nameIsRequired'
       } else if (/^\s|\s$/.test(userName.value)) {
-        return 'NetworkV2Profile.nameCannotStartOrEndWithSpace';
+        return 'NetworkV2Profile.nameCannotStartOrEndWithSpace'
       } else if (/^[-']|[-']$/.test(userName.value) || /[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
-        return 'NetworkV2Profile.specialCharNotAllowedInName';
+        return 'NetworkV2Profile.specialCharNotAllowedInName'
       } else if (/\d/.test(userName.value)) {
-        return 'NetworkV2Profile.nameCannotContainNumbers';
+        return 'NetworkV2Profile.nameCannotContainNumbers'
       } else if (/(\s{2,}|[-']{2,})/.test(userName.value)) {
-        return 'NetworkV2Profile.pleaseAvoidMultipleSpaces';
+        return 'NetworkV2Profile.pleaseAvoidMultipleSpaces'
       }
     }
     return 'NetworkV2Profile.invalidNameFormat'
@@ -315,60 +315,60 @@ getDesignationHint(): string {
   //#region (profile image)
 
   handleUploadProfileImg(file: File) {
-      const formData = new FormData()
-      const fileName = file.name.replace(/[^A-Za-z0-9.]/g, '')
-      if (
-        !(
-          PROFILE_IMAGE_SUPPORT_TYPES.indexOf(
-            `.${fileName
-              .toLowerCase()
-              .split('.')
-              .pop()}`,
-          ) > -1
-        )
-      ) {
-        this.snackBar.openFromComponent(NotificationComponent, {
-          data: {
-            type: Notify.INVALID_IMG_FORMAT,
-          },
-          duration: NOTIFICATION_TIME * 1500,
-        })
-        return
-      }
-  
-      if (file.size > IMAGE_SIZE_1MB * 2) {
-        this.openSnackbar(this.handleTranslateTo('profileImageSizeLimit'))
-        return
-      }
-  
-      const dialogRef = this.dialog.open(ImageCropComponent, {
-        width: '70%',
+    const formData = new FormData()
+    const fileName = file.name.replace(/[^A-Za-z0-9.]/g, '')
+    if (
+      !(
+        PROFILE_IMAGE_SUPPORT_TYPES.indexOf(
+          `.${fileName
+            .toLowerCase()
+            .split('.')
+            .pop()}`,
+        ) > -1
+      )
+    ) {
+      this.snackBar.openFromComponent(NotificationComponent, {
         data: {
-          isRoundCrop: true,
-          imageFile: file,
-          width: 272,
-          height: 148,
-          isThumbnail: true,
-          imageFileName: fileName,
+          type: Notify.INVALID_IMG_FORMAT,
         },
+        duration: NOTIFICATION_TIME * 1500,
       })
-  
-      dialogRef.afterClosed().subscribe({
-        next: (result: File) => {
-          if (result) {
-            formData.append('data', result, fileName)
-            const reader = new FileReader();
-            reader.onload = () => {
-              this.genrateProfileImageUrl(result, fileName);
-            };
-            reader.readAsDataURL(result);
-          }
-        },
-      })
+      return
     }
 
+    if (file.size > IMAGE_SIZE_1MB * 2) {
+      this.openSnackbar(this.handleTranslateTo('profileImageSizeLimit'))
+      return
+    }
+
+    const dialogRef = this.dialog.open(ImageCropComponent, {
+      width: '70%',
+      data: {
+        isRoundCrop: true,
+        imageFile: file,
+        width: 272,
+        height: 148,
+        isThumbnail: true,
+        imageFileName: fileName,
+      },
+    })
+
+    dialogRef.afterClosed().subscribe({
+      next: (result: File) => {
+        if (result) {
+          formData.append('data', result, fileName)
+          const reader = new FileReader()
+          reader.onload = () => {
+            this.genrateProfileImageUrl(result, fileName)
+          }
+          reader.readAsDataURL(result)
+        }
+      },
+    })
+  }
+
   genrateProfileImageUrl(file: any, fileName?: string) {
-    if(file) {
+    if (file) {
       const formdata = new FormData()
       formdata.append('data', file, fileName)
       this.profileV2RevampService.updateProfilePic(formdata).subscribe({
@@ -383,18 +383,18 @@ getDesignationHint(): string {
     }
   }
   uploadImage() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
     input.onchange = (event: any) => {
-      const file = event.target.files[0];
-      this.handleUploadProfileImg(file);
-    };
-    input.click();
+      const file = event.target.files[0]
+      this.handleUploadProfileImg(file)
+    }
+    input.click()
   }
 
   deleteImage() {
-    this.profileImage = '';
+    this.profileImage = ''
     this.profileImageChanged = true
   }
   //#endregion (end of profile image)
@@ -406,12 +406,12 @@ getDesignationHint(): string {
       group: [_.get(this.profileDetails, 'group', ''), Validators.required],
       designation: [_.get(this.profileDetails, 'designation', ''), Validators.required],
       searchDesignation: [''],
-    });
-    this.checkCurrentDesignationPresent();
+    })
+    this.checkCurrentDesignationPresent()
     setTimeout(() => {
-      this.initilisationInProgress = false;
+      this.initilisationInProgress = false
     }, 10)
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('searchDesignation')
     if (searchDesignationControl) {
       let settingValueChange = true
       searchDesignationControl.valueChanges
@@ -425,10 +425,10 @@ getDesignationHint(): string {
           if (searchText && searchText.length > 1) {
             this.designationSearchText = searchText // to avoid api call with single character
             this.getdesignationsMeta()
-          } else if(!searchText) {
-            if(!settingValueChange) {
+          } else if (!searchText) {
+            if (!settingValueChange) {
               this.designationSearchText = searchText
-              this.getdesignationsMeta() 
+              this.getdesignationsMeta()
             }
             this.checkCurrentDesignationPresent()
           }
@@ -457,42 +457,42 @@ getDesignationHint(): string {
         },
         facets: [],
       },
-    };
+    }
     this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
       next: (res: any) => {
-        const count = _.get(res, 'result.count', 0);
-        this.orgHasDesignations = count > 0;
-        this.getdesignationsMeta();
+        const count = _.get(res, 'result.count', 0)
+        this.orgHasDesignations = count > 0
+        this.getdesignationsMeta()
       },
       error: () => {
-        this.orgHasDesignations = false;
-        this.getdesignationsMeta();
+        this.orgHasDesignations = false
+        this.getdesignationsMeta()
       }
-    });
+    })
   }
 
   getdesignationsMeta() {
-    this.isLoadingMoreDesignations = true;
+    this.isLoadingMoreDesignations = true
     if (this.header === 'Mandatory Section') {
-        this.getDefaultDesignations();
+      this.getDefaultDesignations()
     } else {
       if (this.orgHasDesignations) {
-        this.getIgotDesignations();
+        this.getIgotDesignations()
       } else {
-        this.getDefaultDesignations();
+        this.getDefaultDesignations()
       }
     }
   }
 
   setDesignationResults(data: any[], totalCount: number) {
     if (this.designationsOffset === 0) {
-      this.designationsMeta = data;
+      this.designationsMeta = data
     } else {
-      this.designationsMeta = [...this.designationsMeta, ...data];
+      this.designationsMeta = [...this.designationsMeta, ...data]
     }
-    this.designationsTotalCount = totalCount;
-    this.isLoadingMoreDesignations = false;
-    this.checkCurrentDesignationPresent();
+    this.designationsTotalCount = totalCount
+    this.isLoadingMoreDesignations = false
+    this.checkCurrentDesignationPresent()
   }
 
   getIgotDesignations() {
@@ -515,22 +515,22 @@ getDesignationHint(): string {
         },
         facets: [],
       },
-    };
+    }
     if (this.designationSearchText) {
-      igotDesignationBody['request']['query'] = this.designationSearchText;
+      igotDesignationBody['request']['query'] = this.designationSearchText
     }
     this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
       next: (res: any) => {
-        const igotData = _.get(res, 'result.Term', []);
-        const data = igotData.map((item: any) => ({ designation: item.name, status: 'Active' }));
-        const totalCount = _.get(res, 'result.count', igotData.length);
-        this.setDesignationResults(data, totalCount);
+        const igotData = _.get(res, 'result.Term', [])
+        const data = igotData.map((item: any) => ({ designation: item.name, status: 'Active' }))
+        const totalCount = _.get(res, 'result.count', igotData.length)
+        this.setDesignationResults(data, totalCount)
       },
       error: () => {
-        this.isLoadingMoreDesignations = false;
-        this.openSnackbar('Something went wrong. Please refresh or try again later.');
+        this.isLoadingMoreDesignations = false
+        this.openSnackbar('Something went wrong. Please refresh or try again later.')
       },
-    });
+    })
   }
 
   getDefaultDesignations() {
@@ -547,59 +547,59 @@ getDesignationHint(): string {
     }
     this.profileV2RevampService.searchDesignation(requestBody).subscribe({
       next: (res: any) => {
-        const data = _.get(res, 'result.result.data', []);
-        const totalCount = _.get(res, 'result.result.totalCount', 0);
-        this.setDesignationResults(data, totalCount);
+        const data = _.get(res, 'result.result.data', [])
+        const totalCount = _.get(res, 'result.result.totalCount', 0)
+        this.setDesignationResults(data, totalCount)
       },
       error: () => {
-        this.isLoadingMoreDesignations = false;
+        this.isLoadingMoreDesignations = false
         this.openSnackbar('Something went wrong. Please refresh or try again later.')
       }
     })
   }
 
   setupScrollListener(opened: boolean): void {
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('searchDesignation')
     if (opened && searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationsOffset = 0
       this.getdesignationsMeta()
-      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement
       if (searchInput) {
-        searchInput.focus();
+        searchInput.focus()
       }
       this.checkCurrentDesignationPresent()
-      const panel = document.querySelector('.mat-select-panel');
+      const panel = document.querySelector('.mat-select-panel')
       if (panel) {
         // Add scroll event listener to the panel
-        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this));
+        panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this))
       }
     }
   }
 
   onDesignationSelectScroll(event: any): void {
-    const element = event.target;
+    const element = event.target
 
     if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
       // Only load more if not already loading and if there are potentially more items
       if (!this.isLoadingMoreDesignations && this.designationsMeta.length < this.designationsTotalCount) {
-          this.isLoadingMoreDesignations = true;
-          this.designationsOffset += 1;
-          this.getdesignationsMeta()
-        }
+        this.isLoadingMoreDesignations = true
+        this.designationsOffset += 1
+        this.getdesignationsMeta()
+      }
     }
   }
 
   checkCurrentDesignationPresent() {
 
     // Get the current designation value
-    const searchDesignationControl = this.profileForm.get('designation');
-    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : '';
+    const searchDesignationControl = this.profileForm.get('designation')
+    const currentDesignation = searchDesignationControl ? searchDesignationControl.value : ''
     // Check if current designation exists in the list
     if (currentDesignation) {
       const designationExists = this.designationsMeta.some(
         (designation: any) => designation.designation.toLowerCase() === currentDesignation.toLowerCase()
-      );
+      )
 
       // If designation doesn't exist in the list, add it
       if (!designationExists) {
@@ -607,14 +607,14 @@ getDesignationHint(): string {
         const newDesignation = {
           designation: currentDesignation,
           status: 'Active'
-        };
-        this.designationsMeta.unshift(newDesignation);
+        }
+        this.designationsMeta.unshift(newDesignation)
       }
     }
   }
 
   onDesignationDropdownClosed(): void {
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('searchDesignation')
     if (searchDesignationControl) {
       searchDesignationControl.setValue('')
       this.designationSearchText = ''
@@ -627,15 +627,24 @@ getDesignationHint(): string {
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
       aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000)]]
-    });
+    })
+    // If server returned a value exceeding maxlength, mark control as touched/dirty
+    const aboutControl = this.profileForm.get('aboutme')
+    if (aboutControl && aboutControl.value && aboutControl.value.length > 2000) {
+      aboutControl.markAsTouched()
+      aboutControl.markAsDirty()
+      aboutControl.updateValueAndValidity()
+    } else {
+      this.profileForm.updateValueAndValidity()
+    }
     setTimeout(() => {
-      this.initilisationInProgress = false;
+      this.initilisationInProgress = false
     }, 10)
   }
 
   //#region (other details)
   private createOtherDetailsForm(): void {
-    const dob = _.get(this.profileDetails, 'dob', '');
+    const dob = _.get(this.profileDetails, 'dob', '')
     this.profileForm = this.fb.group({
       employeeCode: [_.get(this.profileDetails, 'employeeCode', ''), [Validators.pattern(EMP_ID_PATTERN)]],
       primaryEmail: [_.get(this.profileDetails, 'primaryEmail', ''), [Validators.pattern(EMAIL_PATTERN)]],
@@ -652,18 +661,18 @@ getDesignationHint(): string {
       cadreBatch: [_.get(this.profileDetails, 'cadreBatch', ''), []],
       cadreControllingAuthorityName: [_.get(this.profileDetails, 'cadreControllingAuthorityName', ''), []],
       isOnCentralDeputation: [_.get(this.profileDetails, 'isOnCentralDeputation', false), []],
-    });
-    this.civilServiceTypeId = _.get(this.profileDetails, 'civilServiceTypeId', '');
-    this.civilServiceId = _.get(this.profileDetails, 'civilServiceId', '');
-    this.cadreId = _.get(this.profileDetails, 'cadreId', '');
-    this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '');
-    this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false);
+    })
+    this.civilServiceTypeId = _.get(this.profileDetails, 'civilServiceTypeId', '')
+    this.civilServiceId = _.get(this.profileDetails, 'civilServiceId', '')
+    this.cadreId = _.get(this.profileDetails, 'cadreId', '')
+    this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '')
+    this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false)
 
-    this.fetchCadreData();
-    this.getMasterLanguage();
-    this.valueCahngeMethosdsForOtherDetails();
+    this.fetchCadreData()
+    this.getMasterLanguage()
+    this.valueCahngeMethosdsForOtherDetails()
     setTimeout(() => {
-      this.initilisationInProgress = false;
+      this.initilisationInProgress = false
     }, 10)
   }
 
@@ -685,7 +694,7 @@ getDesignationHint(): string {
         this.civilServiceData = _.get(response, 'result.response.value.civilServiceType')
         this.civilServiceTypes = _.get(this.civilServiceData, 'civilServiceTypeList', []).map((service: any) => service.name)
         if (_.get(this.profileDetails, 'civilServiceType', '')) {
-          this.getService(_.get(this.profileDetails, 'civilServiceType', ''), false);
+          this.getService(_.get(this.profileDetails, 'civilServiceType', ''), false)
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -701,10 +710,10 @@ getDesignationHint(): string {
       .subscribe((res: any) => {
         this.masterLanguages = res.languages
         this.masterLanguageBackup = res.languages
-        const domicileMediumControl = this.profileForm.get('domicileMedium');
+        const domicileMediumControl = this.profileForm.get('domicileMedium')
         if (domicileMediumControl) {
-          domicileMediumControl.patchValue(_.get(this.profileDetails, 'domicileMedium', ''));
-          domicileMediumControl.updateValueAndValidity();
+          domicileMediumControl.patchValue(_.get(this.profileDetails, 'domicileMedium', ''))
+          domicileMediumControl.updateValueAndValidity()
         }
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
@@ -714,11 +723,11 @@ getDesignationHint(): string {
   }
 
   get primaryEmailControl() {
-    return this.profileForm.get('primaryEmail');
+    return this.profileForm.get('primaryEmail')
   }
   get mobileControl() {
-    const mobileControl = this.profileForm.get('mobile');
-    return mobileControl;
+    const mobileControl = this.profileForm.get('mobile')
+    return mobileControl
   }
 
   get showCadreDetails(): boolean {
@@ -727,20 +736,20 @@ getDesignationHint(): string {
       'Indian Police Service (IPS)',
       'Indian Forest Service (IFoS)'
     ]
-    const serviceNameControl = this.profileForm.get('civilServiceName');
-    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
-    const isCadreControl = this.profileForm.get('isCadre');
+    const serviceNameControl = this.profileForm.get('civilServiceName')
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const isCadreControl = this.profileForm.get('isCadre')
     if (typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
       serviceNameControl && serviceNameControl.value &&
       isCadreControl && isCadreControl.value &&
       servicesList.includes(serviceNameControl.value)) {
-      return true;
+      return true
     }
-    const cadreNameControl = this.profileForm.get('cadreName');
+    const cadreNameControl = this.profileForm.get('cadreName')
     if (cadreNameControl) {
-      this.removeValidation(cadreNameControl);
+      this.removeValidation(cadreNameControl)
     }
-    return false;
+    return false
   }
 
   get showBatchDetails(): boolean {
@@ -749,10 +758,10 @@ getDesignationHint(): string {
       'Indian Police Service (IPS)',
       'Indian Forest Service (IFoS)'
     ]
-    const serviceNameControl = this.profileForm.get('civilServiceName');
-    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
-    const isCadreControl = this.profileForm.get('isCadre');
-    const cadreNameControl = this.profileForm.get('cadreName');
+    const serviceNameControl = this.profileForm.get('civilServiceName')
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const isCadreControl = this.profileForm.get('isCadre')
+    const cadreNameControl = this.profileForm.get('cadreName')
     if (
       typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
       serviceNameControl && serviceNameControl.value &&
@@ -765,40 +774,40 @@ getDesignationHint(): string {
         )
       )
     ) {
-      return true;
+      return true
     }
     return false
   }
 
   get showControllingAuthority(): boolean {
-    const isCadreControl = this.profileForm.get('isCadre');
-    const cadreBatchControl = this.profileForm.get('cadreBatch');
+    const isCadreControl = this.profileForm.get('isCadre')
+    const cadreBatchControl = this.profileForm.get('cadreBatch')
     if (isCadreControl && isCadreControl.value && cadreBatchControl && cadreBatchControl.value) {
-      return true;
+      return true
     }
     return false
   }
 
   get showCentralDeputation(): boolean {
-    const civilServiceTypeControl = this.profileForm.get('civilServiceType');
-    const isCadreControl = this.profileForm.get('isCadre');
-    const cadreNameControl = this.profileForm.get('cadreName');
-    const cadreBatchControl = this.profileForm.get('cadreBatch');
+    const civilServiceTypeControl = this.profileForm.get('civilServiceType')
+    const isCadreControl = this.profileForm.get('isCadre')
+    const cadreNameControl = this.profileForm.get('cadreName')
+    const cadreBatchControl = this.profileForm.get('cadreBatch')
     if (
       civilServiceTypeControl && civilServiceTypeControl.value === 'All India Services' &&
       isCadreControl && !!isCadreControl.value &&
       cadreNameControl && !!cadreNameControl.value &&
       cadreBatchControl && !!cadreBatchControl.value
     ) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   valueCahngeMethosdsForOtherDetails(): void {
-    const primaryEmailControl = this.primaryEmailControl;
-    const mobileControl = this.mobileControl;
-    const domicileMediumControl = this.profileForm.get('domicileMedium');
+    const primaryEmailControl = this.primaryEmailControl
+    const mobileControl = this.mobileControl
+    const domicileMediumControl = this.profileForm.get('domicileMedium')
 
     if (primaryEmailControl) {
       primaryEmailControl.valueChanges.subscribe((value: string) => {
@@ -809,7 +818,7 @@ getDesignationHint(): string {
             this.verifyEmail = false
           }
         } else if (!value) {
-          this.verifyEmail = false;
+          this.verifyEmail = false
         } else if (value === _.get(this.profileDetails, 'primaryEmail', '')) {
           this.verifyEmail = false
         }
@@ -825,7 +834,7 @@ getDesignationHint(): string {
             this.verifyMobile = false
           }
         } else if (!value || value === _.get(this.profileDetails, 'mobile', '')) {
-          this.verifyMobile = false;
+          this.verifyMobile = false
         }
       })
     }
@@ -847,46 +856,46 @@ getDesignationHint(): string {
 
   getIsCadreStatus(value: boolean) {
     this.isCadreStatus = value
-    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
-    const serviceNameControl = this.profileForm.get('civilServiceName');
-    const cadreNameControl = this.profileForm.get('cadreName');
-    const cadreBatchControl = this.profileForm.get('cadreBatch');
-    const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority');
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const serviceNameControl = this.profileForm.get('civilServiceName')
+    const cadreNameControl = this.profileForm.get('cadreName')
+    const cadreBatchControl = this.profileForm.get('cadreBatch')
+    const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
     if (value) {
-      this.addValidation(typeOfCivilServiceControl);
-      this.addValidation(serviceNameControl);
-      this.addValidation(cadreNameControl);
-      this.addValidation(cadreBatchControl);
-      this.addValidation(cadreControllingAuthorityControl);
-      this.civilServiceTypeId = '';
-      this.civilServiceId = '';
-      this.cadreId = '';
+      this.addValidation(typeOfCivilServiceControl)
+      this.addValidation(serviceNameControl)
+      this.addValidation(cadreNameControl)
+      this.addValidation(cadreBatchControl)
+      this.addValidation(cadreControllingAuthorityControl)
+      this.civilServiceTypeId = ''
+      this.civilServiceId = ''
+      this.cadreId = ''
     }
     else {
       this.showBatchForNoCadre = false
-      this.removeValidation(typeOfCivilServiceControl);
-      this.removeValidation(serviceNameControl);
-      this.removeValidation(cadreNameControl);
-      this.removeValidation(cadreBatchControl);
-      this.removeValidation(cadreControllingAuthorityControl);
+      this.removeValidation(typeOfCivilServiceControl)
+      this.removeValidation(serviceNameControl)
+      this.removeValidation(cadreNameControl)
+      this.removeValidation(cadreBatchControl)
+      this.removeValidation(cadreControllingAuthorityControl)
     }
   }
 
   addValidation(control: any) {
     if (control) {
-      control.reset();
-      control.setValidators([Validators.required]);
-      control.updateValueAndValidity();
-      control.markAsUntouched();
+      control.reset()
+      control.setValidators([Validators.required])
+      control.updateValueAndValidity()
+      control.markAsUntouched()
     }
   }
 
   removeValidation(control: any) {
     if (control) {
-      control.reset();
-      control.clearValidators();
-      control.updateValueAndValidity();
-      control.markAsUntouched();
+      control.reset()
+      control.clearValidators()
+      control.updateValueAndValidity()
+      control.markAsUntouched()
     }
   }
 
@@ -1108,12 +1117,12 @@ getDesignationHint(): string {
   handleSubmit(): void {
     if (this.profileForm) {
       if (this.canSaveChanges) {
-        const profileData = this.profileForm.value;
+        const profileData = this.profileForm.value
         if (this.profileImageChanged) {
-          profileData['profileImageUrl'] = this.profileImage;
-          const firstNameControl = this.profileForm.get('firstName');
+          profileData['profileImageUrl'] = this.profileImage
+          const firstNameControl = this.profileForm.get('firstName')
           if (firstNameControl && !firstNameControl.value) {
-            profileData['firstName'] = this.profileDetails['firstName'];
+            profileData['firstName'] = this.profileDetails['firstName']
           }
         }
         if (this.header === 'Other Details') {
@@ -1121,10 +1130,10 @@ getDesignationHint(): string {
         } else if (this.header === 'Mandatory Section') {
           this.generateMandatorySectionForm()
         } else {
-          this.dialogRef.close(this.profileForm.value);
+          this.dialogRef.close(this.profileForm.value)
         }
       } else {
-        this.markFormGroupTouched(this.profileForm);
+        this.markFormGroupTouched(this.profileForm)
       }
     }
   }
@@ -1132,10 +1141,10 @@ getDesignationHint(): string {
   generateMandatorySectionForm(): void {
     this.submitbtnLoading = true
     if (this.profileForm.valid) {
-      const formValue = this.profileForm.value;
-      const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
-  
-      
+      const formValue = this.profileForm.value
+      const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails)
+
+
       // MANDATORY: Always include userId and profileDetails with lastProfileVerificationPromptDate
       const postData: any = {
         'request': {
@@ -1156,9 +1165,9 @@ getDesignationHint(): string {
       }
 
       // Check if any professional details changed
-      const groupChanged = formValue.group && formValue.group !== _.get(primaryDetails, 'group', '');
-      const designationChanged = formValue.designation && formValue.designation !== _.get(primaryDetails, 'designation', '');
-      const orgChanged =  formValue.transferOrganization &&  formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '');
+      const groupChanged = formValue.group && formValue.group !== _.get(primaryDetails, 'group', '')
+      const designationChanged = formValue.designation && formValue.designation !== _.get(primaryDetails, 'designation', '')
+      const orgChanged = formValue.transferOrganization && formValue.transferOrganization !== _.get(primaryDetails, 'departmentName', '')
 
       if (groupChanged || designationChanged || orgChanged) {
         postData.request.profileDetails.professionalDetails = [{
@@ -1169,15 +1178,15 @@ getDesignationHint(): string {
       }
 
       // Check if any personal details changed and add them to existing personalDetails
-      const emailChanged = formValue.primaryEmail !== _.get(primaryDetails, 'primaryEmail', '');
-      const mobileChanged = formValue.mobile !== _.get(primaryDetails, 'mobile', '');
+      const emailChanged = formValue.primaryEmail !== _.get(primaryDetails, 'primaryEmail', '')
+      const mobileChanged = formValue.mobile !== _.get(primaryDetails, 'mobile', '')
 
       if (emailChanged) {
-        postData.request.profileDetails.personalDetails.primaryEmail = formValue.primaryEmail;
+        postData.request.profileDetails.personalDetails.primaryEmail = formValue.primaryEmail
       }
-      
+
       if (mobileChanged) {
-        postData.request.profileDetails.personalDetails.mobile = formValue.mobile;
+        postData.request.profileDetails.personalDetails.mobile = formValue.mobile
       }
 
       this.userProfileService.editProfileDetails(postData)
@@ -1186,8 +1195,8 @@ getDesignationHint(): string {
           next: (_res: any) => {
             this.openSnackbar('Your request has been sent for approval')
             this.submitbtnLoading = false
-            this.location.replaceState('/page/home');
-            window.location.reload();
+            this.location.replaceState('/page/home')
+            window.location.reload()
           },
           error: (error: HttpErrorResponse) => {
             this.submitbtnLoading = false
@@ -1207,66 +1216,66 @@ getDesignationHint(): string {
     //   this.updateEmail(this.primaryEmailControl.value)
     // }
     if (formBody && formBody.dob) {
-      const dobDate = new Date(formBody.dob);
+      const dobDate = new Date(formBody.dob)
       formBody.dob = this.datePipe.transform(dobDate, 'dd-MM-yyyy')
     }
-    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType');
-    const serviceNameControl = this.profileForm.get('civilServiceName');
-    const isCadreControl = this.profileForm.get('isCadre');
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const serviceNameControl = this.profileForm.get('civilServiceName')
+    const isCadreControl = this.profileForm.get('isCadre')
     const cadreBatchControl = this.profileForm.get('cadreBatch')
-    const isOnCentralDeputationControl = this.profileForm.get('isOnCentralDeputation');
+    const isOnCentralDeputationControl = this.profileForm.get('isOnCentralDeputation')
     if (typeOfCivilServiceControl && serviceNameControl && isCadreControl && cadreBatchControl) {
       if ((
         typeOfCivilServiceControl.value &&
         serviceNameControl.value &&
         cadreBatchControl.value
       ) || isCadreControl.value) {
-        formBody['civilServiceTypeId'] = this.serviceId || '';
-        formBody['civilServiceId'] = this.civilServiceId || '';
-        formBody['cadreId'] = this.cadreId || '';
-        formBody['cadreControllingAuthorityName'] = this.cadreControllingAuthority || '';
-        formBody['isOnCentralDeputation'] = isOnCentralDeputationControl?.value || false;
+        formBody['civilServiceTypeId'] = this.serviceId || ''
+        formBody['civilServiceId'] = this.civilServiceId || ''
+        formBody['cadreId'] = this.cadreId || ''
+        formBody['cadreControllingAuthorityName'] = this.cadreControllingAuthority || ''
+        formBody['isOnCentralDeputation'] = isOnCentralDeputationControl?.value || false
       } else {
-        formBody['civilServiceType'] = '';
-        formBody['civilServiceName'] = '';
-        formBody['isCadre'] = false;
-        formBody['cadreBatch'] = '';
-        formBody['cadreControllingAuthorityName'] = '';
-        formBody['civilServiceTypeId'] = '';
-        formBody['civilServiceId'] = '';
-        formBody['cadreControllingAuthorityName'] = '';
-        formBody['cadreBatch'] = '';
-        formBody['isOnCentralDeputation'] = false;
+        formBody['civilServiceType'] = ''
+        formBody['civilServiceName'] = ''
+        formBody['isCadre'] = false
+        formBody['cadreBatch'] = ''
+        formBody['cadreControllingAuthorityName'] = ''
+        formBody['civilServiceTypeId'] = ''
+        formBody['civilServiceId'] = ''
+        formBody['cadreControllingAuthorityName'] = ''
+        formBody['cadreBatch'] = ''
+        formBody['isOnCentralDeputation'] = false
 
       }
     }
-    this.dialogRef.close(formBody);
+    this.dialogRef.close(formBody)
   }
 
   handleCancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
+      control.markAsTouched()
       if ((control as any).controls) {
-        this.markFormGroupTouched(control as FormGroup);
+        this.markFormGroupTouched(control as FormGroup)
       }
-    });
+    })
   }
 
   hasError(controlName: string, errorName: string): boolean {
-    const control = this.profileForm.get(controlName);
-    return control?.touched && control?.hasError(errorName) || false;
+    const control = this.profileForm.get(controlName)
+    return control?.touched && control?.hasError(errorName) || false
   }
 
   get canSaveChanges(): boolean {
     if (!this.profileForm || this.initilisationInProgress) {
-      return false;
+      return false
     }
-    const isFormValid = this.profileForm.valid;
-    
+    const isFormValid = this.profileForm.valid
+
     switch (this.header) {
       case 'Profile':
         if (isFormValid || this.profileImageChanged) {
@@ -1298,19 +1307,19 @@ getDesignationHint(): string {
   }
 
   get enableEditBtn(): boolean {
-    const groupControl = this.profileForm.get('group');
-    const designationControl = this.profileForm.get('designation');
-    
+    const groupControl = this.profileForm.get('group')
+    const designationControl = this.profileForm.get('designation')
+
     // Check if both controls exist and form is valid
     if (!groupControl || !designationControl || !this.profileForm.valid) {
-      return false;
+      return false
     }
-    
+
     // Enable button if both group and designation have values (on load or after changes)
-    const hasGroupValue = groupControl.value && groupControl.value.trim() !== '';
-    const hasDesignationValue = designationControl.value && designationControl.value.trim() !== '';
-    
-    return hasGroupValue && hasDesignationValue;
+    const hasGroupValue = groupControl.value && groupControl.value.trim() !== ''
+    const hasDesignationValue = designationControl.value && designationControl.value.trim() !== ''
+
+    return hasGroupValue && hasDesignationValue
   }
 
   handleTranslateTo(menuName: string): string {
@@ -1344,7 +1353,7 @@ getDesignationHint(): string {
     }
 
     if (searchText && searchText.trim() !== '') {
-      request.request.query = searchText;
+      request.request.query = searchText
     }
     return request
   }
@@ -1355,21 +1364,21 @@ getDesignationHint(): string {
       .subscribe({
         next: (res: any) => {
           if (res && res.result && res.result.response && res.result.response.content && res.result.response.content.length) {
-            const newData = res.result.response.content;
+            const newData = res.result.response.content
 
             if (onLoad) {
               // When dropdown is open, only show API results (no initial org prepended)
-              this.transferOrganizationData = [...newData];
-              this.transferOrgDataTotalCount = res.result.response.count;
+              this.transferOrganizationData = [...newData]
+              this.transferOrgDataTotalCount = res.result.response.count
             } else {
-              this.transferOrganizationData = [...this.transferOrganizationData, ...newData];
+              this.transferOrganizationData = [...this.transferOrganizationData, ...newData]
             }
-            this.transferOrgFilterData = this.transferOrganizationData;
+            this.transferOrgFilterData = this.transferOrganizationData
           } else {
             if (onLoad) {
               // If no results from API, show empty list
-              this.transferOrganizationData = [];
-              this.transferOrgFilterData = [];
+              this.transferOrganizationData = []
+              this.transferOrgFilterData = []
             }
           }
           this.isLoadingMoreTransferOrg = false
@@ -1390,16 +1399,16 @@ getDesignationHint(): string {
     }
   }
 
-   private getInitialOrgFromUnmappedUser(): any {
-    const rootOrg = _.get(this.configSvc, 'unMappedUser.rootOrg', null);
+  private getInitialOrgFromUnmappedUser(): any {
+    const rootOrg = _.get(this.configSvc, 'unMappedUser.rootOrg', null)
     if (rootOrg && rootOrg.channel) {
       return {
         channel: rootOrg.channel,
         isRootOrg: rootOrg.isRootOrg !== undefined ? rootOrg.isRootOrg : true,
         rootOrgId: rootOrg.rootOrgId || rootOrg.id || ''
-      };
+      }
     }
-    return null;
+    return null
   }
 
   /**
@@ -1407,72 +1416,72 @@ getDesignationHint(): string {
    */
   private async loadTransferOrgAndSetValue() {
     // Get the initial org from unmapped user
-    const initialOrg = this.getInitialOrgFromUnmappedUser();
+    const initialOrg = this.getInitialOrgFromUnmappedUser()
 
     // If no match or no departmentName, set the initial org from unmapped user
     if (initialOrg) {
       // Add the initial org to transferOrganizationData so it appears in the dropdown
-      this.transferOrganizationData = [initialOrg];
-      this.transferOrgFilterData = [initialOrg];
+      this.transferOrganizationData = [initialOrg]
+      this.transferOrgFilterData = [initialOrg]
 
       // Set the form value to the channel string (not the object) to match mat-option [value]
-      this.profileForm.get('transferOrganization')?.setValue(initialOrg.channel);
-      this.selectedTransferOrgId = initialOrg.rootOrgId;
+      this.profileForm.get('transferOrganization')?.setValue(initialOrg.channel)
+      this.selectedTransferOrgId = initialOrg.rootOrgId
     }
   }
 
   setupTransferOrgScrollListener(opened: boolean): void {
     if (opened) {
       if (this.profileForm.get('searchTransferOrganization')?.value) {
-        this.profileForm.get('searchTransferOrganization')!.setValue('');
+        this.profileForm.get('searchTransferOrganization')!.setValue('')
       } else {
-        this.getAllTransferOrgData(true, 0, '');
+        this.getAllTransferOrgData(true, 0, '')
       }
-      this.transferOrgListLoadCount = this.transferOrgDefaultLoadCount;
+      this.transferOrgListLoadCount = this.transferOrgDefaultLoadCount
 
       setTimeout(() => {
-        const searchInput = document.querySelector('.search-org-input') as HTMLInputElement;
+        const searchInput = document.querySelector('.search-org-input') as HTMLInputElement
         if (searchInput) {
-          searchInput.focus();
+          searchInput.focus()
         }
-      }, 100);
+      }, 100)
 
       setTimeout(() => {
-        const panel = document.querySelector('.mat-select-panel');
+        const panel = document.querySelector('.mat-select-panel')
         if (panel) {
-          panel.addEventListener('scroll', this.onTransferOrgSelectScroll.bind(this));
+          panel.addEventListener('scroll', this.onTransferOrgSelectScroll.bind(this))
         }
-      }, 100);
+      }, 100)
     } else {
       // Dropdown is closed: if no selection was made, reset to the initial unmapped user org
-      const currentValue = this.profileForm.get('transferOrganization')?.value;
-      const initialOrg = this.getInitialOrgFromUnmappedUser();
+      const currentValue = this.profileForm.get('transferOrganization')?.value
+      const initialOrg = this.getInitialOrgFromUnmappedUser()
 
       // If nothing was selected or the user didn't select anything from the API results
       if (!currentValue) {
         // Reset to initial value from unmapped user
-        this.loadTransferOrgAndSetValue();
+        this.loadTransferOrgAndSetValue()
       } else {
         // Check if the selected value exists in the current data (API results)
-        const selectedOrgExists = this.transferOrganizationData.find((org: any) => org.channel === currentValue);
+        const selectedOrgExists = this.transferOrganizationData.find((org: any) => org.channel === currentValue)
 
         // If the selected value doesn't exist in API results and matches initial org, restore initial org
         if (!selectedOrgExists && initialOrg && currentValue === initialOrg.channel) {
-          this.loadTransferOrgAndSetValue();
+          this.loadTransferOrgAndSetValue()
         }
       }
     }
   }
 
   onTransferOrgSelectScroll(event: any): void {
-    const element = event.target;
+    const element = event.target
 
     if (element.scrollTop + element.clientHeight >= element.scrollHeight - 5) {
       if (!this.isLoadingMoreTransferOrg && this.transferOrganizationData.length < this.transferOrgDataTotalCount) {
-        this.isLoadingMoreTransferOrg = true;
-        const nextOffset = this.transferOrganizationData.length;
-        this.getAllTransferOrgData(false, nextOffset, this.profileForm.get('searchTransferOrganization')?.value || '');
-        this.transferOrgListLoadCount += this.transferOrgDefaultLoadCount;
+        this.isLoadingMoreTransferOrg = true
+        const nextOffset = this.transferOrganizationData.length
+        this.getAllTransferOrgData(false, nextOffset, this.profileForm.get('searchTransferOrganization')?.value || '')
+        this.transferOrgListLoadCount += this.transferOrgDefaultLoadCount
       }
     }
   }
@@ -1482,7 +1491,7 @@ getDesignationHint(): string {
   }
 
   get searchTransferOrganization() {
-    return this.profileForm.get('searchTransferOrganization');
+    return this.profileForm.get('searchTransferOrganization')
   }
 
   // Approval status methods for Mandatory Section
@@ -1528,8 +1537,8 @@ getDesignationHint(): string {
   }
 
   get showOrganizationPending(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.organizationApprovedTime < unVerifiedObj.organizationRequestTime &&
       rejectedFields.organizationRejectionTime < unVerifiedObj.organizationRequestTime &&
@@ -1545,8 +1554,8 @@ getDesignationHint(): string {
   }
 
   get showOrganizationRejection(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.organizationApprovedTime < rejectedFields.organizationRejectionTime &&
       unVerifiedObj.organizationRequestTime < rejectedFields.organizationRejectionTime &&
@@ -1562,8 +1571,8 @@ getDesignationHint(): string {
   }
 
   get showGroupPending(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.groupApprovedTime < unVerifiedObj.groupRequestTime &&
       rejectedFields.groupRejectionTime < unVerifiedObj.groupRequestTime &&
@@ -1579,8 +1588,8 @@ getDesignationHint(): string {
   }
 
   get showGroupRejection(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.groupApprovedTime < rejectedFields.groupRejectionTime &&
       unVerifiedObj.groupRequestTime < rejectedFields.groupRejectionTime &&
@@ -1596,8 +1605,8 @@ getDesignationHint(): string {
   }
 
   get showDesignationPending(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.designationApprovedTime < unVerifiedObj.designationRequestTime &&
       rejectedFields.designationRejectionTime < unVerifiedObj.designationRequestTime &&
@@ -1613,8 +1622,8 @@ getDesignationHint(): string {
   }
 
   get showDesignationRejection(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
-    const rejectedFields = _.get(this.data, 'rejectedFields', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
+    const rejectedFields = _.get(this.data, 'rejectedFields', {})
     if (
       this.designationApprovedTime < rejectedFields.designationRejectionTime &&
       unVerifiedObj.designationRequestTime < rejectedFields.designationRejectionTime &&
@@ -1631,12 +1640,12 @@ getDesignationHint(): string {
 
   openProfileEditDialog(header: string): void {
     // This method can be used if needed for nested dialog opening
-    console.log('Open profile edit dialog:', header);
+    console.log('Open profile edit dialog:', header)
   }
 
   getSendApprovalStatus(): void {
     // Refresh approval status
-    this.getApprovedFields();
+    this.getApprovedFields()
   }
 
   updateWithdrawalStatus(): void {
@@ -1676,7 +1685,7 @@ getDesignationHint(): string {
       })
 
       // Listen for the component emitter to know when withdraw succeeded and enable transfer
-      const compInstance: any = dialogRef.componentInstance;
+      const compInstance: any = dialogRef.componentInstance
       if (compInstance && compInstance.enableMakeTransfer) {
         compInstance.enableMakeTransfer.pipe(takeUntil(this.destroySubject$)).subscribe(() => {
           // Clear pending and rejected fields data (organization prioritized)
@@ -1698,12 +1707,12 @@ getDesignationHint(): string {
           }
 
           // Enable form fields
-          const groupControl = this.profileForm.get('group');
-          const designationControl = this.profileForm.get('designation');
-          const transferOrgControl = this.profileForm.get('transferOrganization');
-          if (groupControl && groupControl.disabled) { groupControl.enable(); }
-          if (designationControl && designationControl.disabled) { designationControl.enable(); }
-          if (transferOrgControl && transferOrgControl.disabled) { transferOrgControl.enable(); }
+          const groupControl = this.profileForm.get('group')
+          const designationControl = this.profileForm.get('designation')
+          const transferOrgControl = this.profileForm.get('transferOrganization')
+          if (groupControl && groupControl.disabled) { groupControl.enable() }
+          if (designationControl && designationControl.disabled) { designationControl.enable() }
+          if (transferOrgControl && transferOrgControl.disabled) { transferOrgControl.enable() }
 
           this.openSnackbar(this.handleTranslateTo('withdrawRequestSuccess'))
           this.enableWR = false
@@ -1760,19 +1769,19 @@ getDesignationHint(): string {
             this.data.rejectedFields.groupRejectionTime = 0
             this.data.rejectedFields.designationRejectionTime = 0
           }
-          
+
           // Enable all form fields
-          const groupControl = this.profileForm.get('group');
-          const designationControl = this.profileForm.get('designation');
-          const transferOrgControl = this.profileForm.get('transferOrganization');
-          
-          if (groupControl && groupControl.disabled) groupControl.enable();
-          if (designationControl && designationControl.disabled) designationControl.enable();
-          if (transferOrgControl && transferOrgControl.disabled) transferOrgControl.enable();
-          
+          const groupControl = this.profileForm.get('group')
+          const designationControl = this.profileForm.get('designation')
+          const transferOrgControl = this.profileForm.get('transferOrganization')
+
+          if (groupControl && groupControl.disabled) groupControl.enable()
+          if (designationControl && designationControl.disabled) designationControl.enable()
+          if (transferOrgControl && transferOrgControl.disabled) transferOrgControl.enable()
+
           this.openSnackbar(this.handleTranslateTo('withdrawRequestSuccess'))
           this.enableWR = false
-          
+
           // Refresh approval fields to update timestamps
           this.getApprovedFields()
         }, (error: HttpErrorResponse) => {
@@ -1784,52 +1793,52 @@ getDesignationHint(): string {
   }
 
   disablePendingFields(): void {
-    const groupControl = this.profileForm.get('group');
-    const designationControl = this.profileForm.get('designation');
-    const transferOrgControl = this.profileForm.get('transferOrganization');
+    const groupControl = this.profileForm.get('group')
+    const designationControl = this.profileForm.get('designation')
+    const transferOrgControl = this.profileForm.get('transferOrganization')
     // Check if ANY field has pending/rejected status
-    const anyFieldPendingOrRejected = this.isOrganizationPending || 
-                                      this.isGroupPending || 
-                                      this.isDesignationPending;
+    const anyFieldPendingOrRejected = this.isOrganizationPending ||
+      this.isGroupPending ||
+      this.isDesignationPending
 
     if (anyFieldPendingOrRejected) {
       // Disable all three fields if any one is pending/rejected
-      if (groupControl) groupControl.disable({ emitEvent: false });
-      if (designationControl) designationControl.disable({ emitEvent: false });
-      if (transferOrgControl) transferOrgControl.disable({ emitEvent: false });
+      if (groupControl) groupControl.disable({ emitEvent: false })
+      if (designationControl) designationControl.disable({ emitEvent: false })
+      if (transferOrgControl) transferOrgControl.disable({ emitEvent: false })
     } else {
       // Re-enable fields if no pending/rejected status
-      if (groupControl && groupControl.disabled) groupControl.enable({ emitEvent: false });
-      if (designationControl && designationControl.disabled) designationControl.enable({ emitEvent: false });
-      if (transferOrgControl && transferOrgControl.disabled) transferOrgControl.enable({ emitEvent: false });
+      if (groupControl && groupControl.disabled) groupControl.enable({ emitEvent: false })
+      if (designationControl && designationControl.disabled) designationControl.enable({ emitEvent: false })
+      if (transferOrgControl && transferOrgControl.disabled) transferOrgControl.enable({ emitEvent: false })
     }
   }
 
   get isOrganizationPending(): boolean {
-    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {});
+    const unVerifiedObj = _.get(this.data, 'unVerifiedObj', {})
     // const rejectedFields = _.get(this.data, 'rejectedFields', {});
-    
+
     // Check if organization field exists in pending or rejected
-    return !!(unVerifiedObj.organization);
+    return !!(unVerifiedObj.organization)
   }
 
   get isGroupPending(): boolean {
-    return this.showGroupPending;
+    return this.showGroupPending
   }
 
   get isDesignationPending(): boolean {
-    return this.showDesignationPending;
+    return this.showDesignationPending
   }
 
   ngOnDestroy() {
     this.destroySubject$.unsubscribe()
   }
 
-   //#region (primary details)
+  //#region (primary details)
   private createMandatoryDetailsForm(): void {
     // Get values from primaryDetails or profileDetails
-    const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
-    
+    const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails)
+
     this.profileForm = this.fb.group({
       group: [_.get(primaryDetails, 'group', ''), Validators.required],
       designation: [_.get(primaryDetails, 'designation', ''), Validators.required],
@@ -1838,23 +1847,23 @@ getDesignationHint(): string {
       mobile: [_.get(primaryDetails, 'mobile', ''), [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       transferOrganization: [_.get(primaryDetails, 'departmentName', ''), [Validators.required]],
       searchTransferOrganization: [''],
-    });
-    this.checkCurrentDesignationPresent();
+    })
+    this.checkCurrentDesignationPresent()
 
-    this.loadTransferOrgAndSetValue();
-    
+    this.loadTransferOrgAndSetValue()
+
     // Set up value change listeners for email and mobile
-    this.setupMandatorySectionValueChanges();
-    
+    this.setupMandatorySectionValueChanges()
+
     // Disable fields if they have pending/rejected status
-    this.disablePendingFields();
-    
+    this.disablePendingFields()
+
     setTimeout(() => {
-      this.initilisationInProgress = false;
+      this.initilisationInProgress = false
     }, 10)
-    
+
     // Search Designation Control
-    const searchDesignationControl = this.profileForm.get('searchDesignation');
+    const searchDesignationControl = this.profileForm.get('searchDesignation')
     if (searchDesignationControl) {
       let settingValueChange = true
       searchDesignationControl.valueChanges
@@ -1868,20 +1877,19 @@ getDesignationHint(): string {
           if (searchText && searchText.length > 1) {
             this.designationSearchText = searchText // to avoid api call with single character
             this.getdesignationsMeta()
-          } else if(!searchText) {
-            if(!settingValueChange) {
+          } else if (!searchText) {
+            if (!settingValueChange) {
               this.designationSearchText = searchText
-              this.getdesignationsMeta() 
+              this.getdesignationsMeta()
             }
             this.checkCurrentDesignationPresent()
           }
           settingValueChange = false
         })
-        console.log(this.profileForm,'profileForm')
     }
 
     // Search Transfer Organization Control
-    const searchTransferOrgControl = this.profileForm.get('searchTransferOrganization');
+    const searchTransferOrgControl = this.profileForm.get('searchTransferOrganization')
     if (searchTransferOrgControl) {
       searchTransferOrgControl.valueChanges
         .pipe(
@@ -1890,29 +1898,29 @@ getDesignationHint(): string {
         )
         .subscribe(searchText => {
           // Call API with search instead of just filtering local data
-          this.transferOrganizationData = []; // Clear existing data
-          this.getAllTransferOrgData(true, 0, searchText);
-        });
+          this.transferOrganizationData = [] // Clear existing data
+          this.getAllTransferOrgData(true, 0, searchText)
+        })
     }
   }
 
   setupMandatorySectionValueChanges(): void {
-    const primaryEmailControl = this.profileForm.get('primaryEmail');
-    const mobileControl = this.profileForm.get('mobile');
-    const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails);
+    const primaryEmailControl = this.profileForm.get('primaryEmail')
+    const mobileControl = this.profileForm.get('mobile')
+    const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails)
 
     if (primaryEmailControl) {
       primaryEmailControl.valueChanges.subscribe((value: string) => {
         if (value && value !== _.get(primaryDetails, 'primaryEmail', '')) {
           if (primaryEmailControl.valid) {
-            this.verifyEmail = true;
+            this.verifyEmail = true
           } else {
-            this.verifyEmail = false;
+            this.verifyEmail = false
           }
         } else if (!value) {
-          this.verifyEmail = false;
+          this.verifyEmail = false
         } else if (value === _.get(primaryDetails, 'primaryEmail', '')) {
-          this.verifyEmail = false;
+          this.verifyEmail = false
         }
       })
     }
@@ -1921,12 +1929,12 @@ getDesignationHint(): string {
       mobileControl.valueChanges.subscribe((value: string) => {
         if (value && value !== _.get(primaryDetails, 'mobile', '')) {
           if (mobileControl.valid) {
-            this.verifyMobile = true;
+            this.verifyMobile = true
           } else {
-            this.verifyMobile = false;
+            this.verifyMobile = false
           }
         } else if (!value || value === _.get(primaryDetails, 'mobile', '')) {
-          this.verifyMobile = false;
+          this.verifyMobile = false
         }
       })
     }
