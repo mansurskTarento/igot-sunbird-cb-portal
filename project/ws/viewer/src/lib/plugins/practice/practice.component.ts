@@ -22,13 +22,12 @@ import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents 
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { ViewerUtilService, WidgetContentService, AppTocService } from '@sunbird-cb/toc'
+import { ViewerUtilService, WidgetContentService, AppTocService, ViewerDataService } from '@sunbird-cb/toc'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSQuiz } from '../quiz/quiz.model'
 import { environment } from 'src/environments/environment'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
-import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
@@ -36,7 +35,6 @@ import { MatSidenav } from '@angular/material/sidenav'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 
-// import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
   selector: 'viewer-plugin-practice',
@@ -184,7 +182,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private viewerSvc: ViewerUtilService,
     private router: Router,
     private valueSvc: ValueService,
-    // private vws: ViewerDataService,
     private configSvc: ConfigurationsService,
     private formBuilder: UntypedFormBuilder,
     public snackbar: MatSnackBar,
