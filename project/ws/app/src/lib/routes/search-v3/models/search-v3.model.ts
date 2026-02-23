@@ -276,7 +276,9 @@ export class SearchExternalRequest {
   orderDirection?: string
 
   constructor(competenciesKey: any) {
-    this.filterCriteriaMap = {}
+    this.filterCriteriaMap = {
+      "contentPartner.isActive": true
+    }
     this.requestedFields = []
     this.pageNumber = 0
     this.pageSize = 3

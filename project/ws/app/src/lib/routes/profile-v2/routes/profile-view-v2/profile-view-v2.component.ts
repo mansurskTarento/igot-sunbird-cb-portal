@@ -362,7 +362,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           this.getConnectionStatus()
         }
       }
-      this.profesionalDetails = _.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {})))
+      this.profesionalDetails = _.merge(_.get(data, 'profile.data.profiledetails', _.get(data, 'profile.data.profileDetails', _.get(data, 'profile.data', {}))), {
+        professionalDetails: _.get(data, 'profile.data.professionalDetails', {})
+      })
       this.profileData = _.get(data, 'profile.data', {})
       this.profesionalDetails['userId'] = _.get(data, 'profile.userId', '')
       this.orgId = _.get(data, 'profile.data.rootOrgId', _.get(data, 'profile.data.profileDetails.rootOrgId', ''))
@@ -695,8 +697,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     } else if (header === 'Primary Details') {
       dialogDetails['groupsList'] = this.groupsList
     } else if (header === 'mandatorySection') {
-      console.log(this.groupsList, '=========> this.grouplist')
-
       dialogDetails['groupsList'] = this.groupsList
     }
 
@@ -1716,8 +1716,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   // Update handleEditCustomDetails to build the form and populate values
   handleEditMandatoryDetails() {
-    console.log(this.groupsList, '=========> this.grouplist')
-
     const dialogDetails: any = {
       header: 'Mandatory Section',
       profileDetails: this.primaryDetails,

@@ -35,7 +35,13 @@
                         <mat-icon>schedule</mat-icon>
                         {{content?.programDuration}} {{content?.programDuration === 1 ? 'day' : 'days'}}
                     </span>
+
                 </div>
+                <ng-container *ngIf="CaCourseUnitIds?.includes(content?.identifier)">
+                    <div class="cbp-mark right-0 rounded-bottom">
+                        <p class="cbp-primary apar-flag">CA</p>
+                    </div>
+                </ng-container>
                 <div class="course-badges-new" *ngIf="checkIfContentIsNew(content?.createdOn)">
                     <span class="badge new-badge font-normal">New</span>
                 </div>
@@ -187,7 +193,8 @@
 
                 <div class="course-author mb-3 flex items-center gap-2">
                     <div class="author-avatar flex items-center justify-center">
-                        <img class="source-icon" alt="ong" [src]="content?.creatorLogo || content?.contentPartner?.link| pipePublicURL" width="16"
+                        <img class="source-icon" alt="ong"
+                            [src]="content?.creatorLogo || content?.contentPartner?.link| pipePublicURL" width="16"
                             [wsUtilsDefaultThumbnail]="defaultSLogo">
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
