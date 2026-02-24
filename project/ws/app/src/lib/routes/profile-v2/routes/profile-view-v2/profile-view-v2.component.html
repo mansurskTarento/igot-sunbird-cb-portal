@@ -361,8 +361,9 @@
                   <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
                   <ng-container *ngIf="isCurrentUser">
                     <div class="flex items-center gap-2">
-                      <span class="link-to-passbook" (click)="handleRedirectToCompetencyPassbook()"
-                        (keyup)="handleRedirectToCompetencyPassbook()">{{'NetworkV2Profile.viewLearningPassbook' | translate}}</span>
+                      <!-- Moved this to Sprint 35 -->
+                      <!-- <span class="link-to-passbook" (click)="handleRedirectToCompetencyPassbook()"
+                        (keyup)="handleRedirectToCompetencyPassbook()"> aa {{'NetworkV2Profile.viewLearningPassbook' | translate}}</span> -->
                       <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')"
                         (keyup)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                     </div>
