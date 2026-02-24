@@ -1023,20 +1023,20 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
-      //deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
-      //startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
-      //endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
-      issuedDate: [_.get(this.entryDetails, 'issuedDate', ''), [Validators.required]],
-      //learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
-      //trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
-      uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
-      fileName: [_.get(this.entryDetails, 'fileName', '')],
-      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+      startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+      endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+      uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
+      fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
+      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
     })
-    if (_.get(this.entryDetails, 'fileName', '')) {
+    if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
       urlControl.patchValue('')
       urlControl.disable()

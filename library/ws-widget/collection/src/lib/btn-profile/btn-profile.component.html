@@ -101,19 +101,12 @@
     <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()" class="app-features flex items-center">
       <span i18n>{{'profileDropdown.learningHistory' | translate }}</span>
     </a>
-    <!-- Moved to sprint 35 -->
-    <!-- <div class="flex flex-middle justify-between">
+    <div class="flex flex-middle justify-between">
       <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()" class="app-features flex items-center">
         <span i18n>{{'profileDropdown.competencyPassbook' | translate }}</span>
       </a>
-      <span class="red-indicator mr-2"></span>
-    </div> -->
-
-    <a mat-menu-item role="link" routerLink="/app/profile/settings" class="all-features flex items-center" (click)="raiseTelemetry('Settings')">
-      <!-- <mat-icon>settings</mat-icon> -->
-      <span>{{'profileDropdown.settings' | translate }}</span>
-    </a>
-
+      <!-- <span class="red-indicator mr-2"></span> -->
+    </div>
 
     <!-- <a mat-menu-item role="link" routerLink="/app/features" class="all-features flex-wrap">
       <mat-icon>apps</mat-icon>
