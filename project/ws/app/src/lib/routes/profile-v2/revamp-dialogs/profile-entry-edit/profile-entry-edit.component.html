@@ -339,7 +339,7 @@
         </div>
 
         <!-- Delivery mode -->
-        <div class="flex flex-col w-full profile-control-delivery-mode">
+        <!-- <div class="flex flex-col w-full profile-control-delivery-mode">
           <div class="lable">{{'NetworkV2Profile.deliveryMode' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="deliveryMode" placeholder="Select delivery mode">
@@ -348,10 +348,10 @@
               <mat-option [value]="'Hybrid'">Hybrid</mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- started Date -->
-        <div class="flex flex-col profile-control-date-field w-full">
+        <!-- <div class="flex flex-col profile-control-date-field w-full">
           <div class="lable">{{'NetworkV2Profile.startDate' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput [matDatepicker]="startedDatePicker" formControlName="startDate" placeholder="{{'NetworkV2Profile.startDate' | translate}}"
@@ -362,10 +362,10 @@
             <mat-error *ngIf="hasError('startDate', 'startDateGreaterThanEndDate')">
               {{'NetworkV2Profile.startDateShouldNotEndDate' | translate}}</mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- endDate Date -->
-        <div class="flex flex-col profile-control-date-field w-full">
+        <!-- <div class="flex flex-col profile-control-date-field w-full">
           <div class="lable">{{'NetworkV2Profile.endDate' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}"
@@ -376,7 +376,7 @@
             <mat-error *ngIf="hasError('endDate', 'endDateLessThanStartDate')">{{'NetworkV2Profile.endDataCannotBeBeforeStartDate' |
               translate}}</mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- Issue Date -->
         <div class="flex flex-col profile-control-date-field w-full">
@@ -427,7 +427,7 @@
         </div>
 
         <!-- Learning Hours -->
-        <div class="flex flex-col profile-control w-full">
+        <!-- <div class="flex flex-col profile-control w-full">
           <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
           </div>
           <mat-form-field appearance="outline" class="full-width">
@@ -440,10 +440,10 @@
               *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'max')">{{'NetworkV2Profile.learningHoursShouldBeLessThan10000'
               | translate}}</mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- Training Type -->
-        <div class="flex flex-col w-full profile-control-delivery-mode">
+        <!-- <div class="flex flex-col w-full profile-control-delivery-mode">
           <div class="lable required">{{'NetworkV2Profile.trainingType' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="trainingType" placeholder="Select training type">
@@ -455,7 +455,7 @@
             </mat-select>
             <mat-error *ngIf="hasError('trainingType', 'required')">{{'NetworkV2Profile.trainingTypeIsRequired' | translate}}</mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- Description -->
         <div class="flex flex-col w-full">
