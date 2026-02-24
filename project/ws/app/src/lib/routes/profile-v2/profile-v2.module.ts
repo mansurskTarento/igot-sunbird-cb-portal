@@ -75,8 +75,9 @@ import { CertificateViewPopupComponent } from './components/profile-revamp/certi
 import { SearchV3Module } from '../search-v3/search-v3.module'
 import { CommunitySuggestionsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
 import { DescriptionComponent } from './components/profile-revamp/description/description.component'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 
-import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component';
+import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component'
 import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-custom-fields.component'
 @NgModule({
     declarations: [
@@ -156,6 +157,7 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         MatLegacyMenuModule,
         ImageCropperModule,
         MatLegacyCheckboxModule,
+        MatRadioModule,
         DragDropModule,
         SearchV3Module,
         CommunitySuggestionsModule,
