@@ -1072,6 +1072,10 @@ export class ProfileEntryEditComponent implements OnInit {
       this.disableUpload = true
       this.disableUrl = false
     }
+    if (this.entryDetails && this.entryDetails.contextData && this.entryDetails.contextData.competencies_v6) {
+      const competencies = this.entryDetails.contextData.competencies_v6
+      this.entryForm.get('competencies_v6')?.patchValue(competencies)
+    }
     this.valueChanges()
     this.addCompetencyMeta()
   }
