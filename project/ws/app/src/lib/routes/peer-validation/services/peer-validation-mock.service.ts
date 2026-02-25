@@ -227,6 +227,7 @@ export class PeerValidationMockService {
     const storedSubmission = this.submittedSurveys.get(id)
 
     if (storedSubmission) {
+      const peers = storedSubmission.peers || []
       // Convert the stored submission to a review request
       const reviewRequest: NSPeerValidation.IReviewRequest = {
         id,
@@ -236,16 +237,30 @@ export class PeerValidationMockService {
         completionDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         responses: storedSubmission.responses,
         documents: storedSubmission.documents,
-        reportingOfficer: storedSubmission.reportingOfficer || {
+        reportingOfficer: peers[0] ? {
+          id: peers[0].id || peers[0].userId,
+          name: `${peers[0].firstName || ''} ${peers[0].lastName || ''}`.trim() || peers[0].name || '',
+          email: peers[0].profileDetails?.personalDetails?.primaryEmail || peers[0].email || '',
+          designation: peers[0].profileDetails?.professionalDetails?.[0]?.designation || '',
+        } : {
           id: 'RO001',
           name: 'Not Selected',
           email: '',
           designation: '',
         },
         reportingOfficerStatus: 'agreed',
-        forwardedTo: storedSubmission.peer || storedSubmission.subordinate || undefined,
-        peer: storedSubmission.peer || undefined,
-        subordinate: storedSubmission.subordinate || undefined,
+        forwardedTo: peers[1] ? {
+          id: peers[1].id || peers[1].userId,
+          name: `${peers[1].firstName || ''} ${peers[1].lastName || ''}`.trim() || peers[1].name || '',
+          email: peers[1].profileDetails?.personalDetails?.primaryEmail || peers[1].email || '',
+          designation: peers[1].profileDetails?.professionalDetails?.[0]?.designation || '',
+        } : undefined,
+        peer: peers[1] ? {
+          id: peers[1].id || peers[1].userId,
+          name: `${peers[1].firstName || ''} ${peers[1].lastName || ''}`.trim() || peers[1].name || '',
+          email: peers[1].profileDetails?.personalDetails?.primaryEmail || peers[1].email || '',
+          designation: peers[1].profileDetails?.professionalDetails?.[0]?.designation || '',
+        } : undefined,
       }
       return of(reviewRequest).pipe(delay(700))
     }

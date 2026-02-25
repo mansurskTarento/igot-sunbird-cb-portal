@@ -1,8 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core'
-import { FormControl } from '@angular/forms'
-import { Observable } from 'rxjs'
-import { NSPeerValidation } from '../../../../models/peer-validation.model'
-import { PeerValidationService } from '../../../../services/peer-validation.service'
+
+const MIN_PEERS = 2
+const MAX_PEERS = 3
 
 @Component({
   selector: 'ws-app-peer-selection',
@@ -13,118 +12,87 @@ export class PeerSelectionComponent implements OnInit {
   @Input() selectedPeers: any
   @Output() peersChanged = new EventEmitter<any>()
 
-  reportingOfficerControl = new FormControl()
-  peerControl = new FormControl()
-  subordinateControl = new FormControl()
+  selectedPeersList: any[] = []   // Full user objects for selected peers
+  selectedPeerIds: string[] = []  // IDs only – passed to the table
+  searchQuery = ''
 
-  reportingOfficerOptions!: Observable<NSPeerValidation.IPeerInfo[]>
-  peerOptions!: Observable<NSPeerValidation.IPeerInfo[]>
-  subordinateOptions!: Observable<NSPeerValidation.IPeerInfo[]>
-
-  constructor(
-    private peerValidationService: PeerValidationService,
-  ) { }
-
-  // Visibility flags for search tables
-  showReportingOfficerSearch = false
-  showPeerSearch = false
-  showSubordinateSearch = false
+  readonly minPeers = MIN_PEERS
+  readonly maxPeers = MAX_PEERS
 
   ngOnInit() {
-    // Load all peers initially
-    this.reportingOfficerOptions = this.peerValidationService.searchPeers('')
-    this.peerOptions = this.peerValidationService.searchPeers('')
-    this.subordinateOptions = this.peerValidationService.searchPeers('')
-
-    // Listen to changes
-    this.reportingOfficerControl.valueChanges.subscribe(value => {
-      this.selectedPeers.reportingOfficer = value
-      this.peersChanged.emit(this.selectedPeers)
-    })
-
-    this.peerControl.valueChanges.subscribe(value => {
-      this.selectedPeers.peer = value
-      this.peersChanged.emit(this.selectedPeers)
-    })
-
-    this.subordinateControl.valueChanges.subscribe(value => {
-      this.selectedPeers.subordinate = value
-      this.peersChanged.emit(this.selectedPeers)
-    })
+    // Restore from parent-input if available
+    if (this.selectedPeers && Array.isArray(this.selectedPeers.peers)) {
+      this.selectedPeersList = [...this.selectedPeers.peers]
+      this.selectedPeerIds = this.selectedPeersList.map((u: any) => u.id || u.userId)
+    }
   }
 
-  toggleSearch(roleType: 'reportingOfficer' | 'peer' | 'subordinate') {
-    if (roleType === 'reportingOfficer') {
-      this.showReportingOfficerSearch = !this.showReportingOfficerSearch
-      // Close others
-      if (this.showReportingOfficerSearch) {
-        this.showPeerSearch = false
-        this.showSubordinateSearch = false
-      }
-    } else if (roleType === 'peer') {
-      this.showPeerSearch = !this.showPeerSearch
-      if (this.showPeerSearch) {
-        this.showReportingOfficerSearch = false
-        this.showSubordinateSearch = false
-      }
+  onSearchInput() {
+    // Propagated via ngModel binding on input inside user-search-table will be handled differently
+    // The user-search-table has its own internal searchQuery – we keep this for future extension
+  }
+
+  onUserToggled(user: any) {
+    const userId = user.id || user.userId
+    const idx = this.selectedPeerIds.indexOf(userId)
+
+    if (idx > -1) {
+      // Remove
+      this.selectedPeerIds = this.selectedPeerIds.filter(id => id !== userId)
+      this.selectedPeersList = this.selectedPeersList.filter(
+        (u: any) => (u.id || u.userId) !== userId
+      )
     } else {
-      this.showSubordinateSearch = !this.showSubordinateSearch
-      if (this.showSubordinateSearch) {
-        this.showReportingOfficerSearch = false
-        this.showPeerSearch = false
-      }
+      // Add (guard max)
+      if (this.selectedPeerIds.length >= this.maxPeers) return
+      this.selectedPeerIds = [...this.selectedPeerIds, userId]
+      this.selectedPeersList = [...this.selectedPeersList, user]
     }
+
+    this.emitChange()
   }
 
-  onUserSelected(user: any, roleType: 'reportingOfficer' | 'peer' | 'subordinate') {
-    this.selectUserForRole(user, roleType)
-    // Hide the table after selection
-    if (roleType === 'reportingOfficer') this.showReportingOfficerSearch = false
-    if (roleType === 'peer') this.showPeerSearch = false
-    if (roleType === 'subordinate') this.showSubordinateSearch = false
+  removePeer(peer: any) {
+    const userId = peer.id || peer.userId
+    this.selectedPeerIds = this.selectedPeerIds.filter(id => id !== userId)
+    this.selectedPeersList = this.selectedPeersList.filter(
+      (u: any) => (u.id || u.userId) !== userId
+    )
+    this.emitChange()
   }
 
-  private selectUserForRole(user: any, roleType: 'reportingOfficer' | 'peer' | 'subordinate') {
-    if (roleType === 'reportingOfficer') {
-      this.reportingOfficerControl.setValue(user)
-    } else if (roleType === 'peer') {
-      this.peerControl.setValue(user)
-    } else {
-      this.subordinateControl.setValue(user)
-    }
+  get isValid(): boolean {
+    return this.selectedPeersList.length >= this.minPeers &&
+      this.selectedPeersList.length <= this.maxPeers
   }
 
-  getExcludedIds(currentRole: 'reportingOfficer' | 'peer' | 'subordinate'): string[] {
-    const ids: string[] = []
-
-    // Add other selected users to exclusion list
-    if (currentRole !== 'reportingOfficer') {
-      const ro = this.reportingOfficerControl.value
-      if (ro && (ro.id || ro.userId)) ids.push(ro.id || ro.userId)
-    }
-
-    if (currentRole !== 'peer') {
-      const peer = this.peerControl.value
-      if (peer && (peer.id || peer.userId)) ids.push(peer.id || peer.userId)
-    }
-
-    if (currentRole !== 'subordinate') {
-      const sub = this.subordinateControl.value
-      if (sub && (sub.id || sub.userId)) ids.push(sub.id || sub.userId)
-    }
-
-    return ids
+  private emitChange() {
+    this.peersChanged.emit({
+      peers: this.selectedPeersList,
+      isValid: this.isValid,
+    })
   }
 
-  getDisplayName(user: any): string {
-    if (!user) return ''
-    if (user.firstName || user.lastName) {
-      return `${user.firstName || ''} ${user.lastName || ''}`.trim()
-    }
-    return user.name || ''
+  // Helpers used in template
+  getUserFullName(user: any): string {
+    return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Unknown'
   }
 
-  comparePeers(o1: any, o2: any): boolean {
-    return (o1 && o2) ? (o1.id === o2.id || o1.userId === o2.userId) : o1 === o2
+  getUserInitials(user: any): string {
+    const first = user.firstName || ''
+    const last = user.lastName || ''
+    if (first && last) return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase()
+    if (first) return first.substring(0, 2).toUpperCase()
+    if (user.name) {
+      const parts = user.name.split(' ')
+      return parts.length > 1
+        ? `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase()
+        : user.name.substring(0, 2).toUpperCase()
+    }
+    return 'U'
+  }
+
+  getUserDesignation(user: any): string {
+    return user.profileDetails?.professionalDetails?.[0]?.designation || '--'
   }
 }

@@ -210,6 +210,63 @@
       }
     }
 
+    // Standalone attachments block (no longer inside meta-section)
+    .attachments {
+      margin-top: 16px;
+
+      .attachment-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        background: #e8f0fe;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        border: 1px solid #d2e3fc;
+
+        .attachment-icon {
+          margin-right: 12px;
+          display: flex;
+          align-items: center;
+
+          .icon-video {
+            color: #3F51B5;
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+
+          .icon-file {
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .attachment-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex: 1;
+
+          .filename {
+            font-weight: 500;
+            color: #3F51B5;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+
+            &:hover {
+              color: #303F9F;
+            }
+          }
+
+          .filesize {
+            color: rgba(0, 0, 0, 0.54);
+            font-size: 13px;
+          }
+        }
+      }
+    }
+
     .meta-section {
       margin-top: 24px;
       padding-top: 24px;

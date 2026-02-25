@@ -1,64 +1,37 @@
 <div class="peer-selection">
   <div class="selection-header">
-    <strong>Select your peers</strong>
+    <strong>Select Reporting Officer/Peers/Subordinate</strong>
+    <p class="hint">Choose at lease 2 and maximum 3 reviewers.</p>
   </div>
 
-  <!-- Reporting Officer -->
-  <!-- Reporting Officer -->
-  <div class="peer-field">
-    <label>
-      Select Reporting officer <span class="required">*</span>
-    </label>
-    <div class="select-with-search" (click)="toggleSearch('reportingOfficer')">
-      <div class="pill-select full-width display-pill" [class.has-value]="reportingOfficerControl.value">
-        {{ getDisplayName(reportingOfficerControl.value) || "Select Reporting Officer" }}
-        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
-      </div>
-    </div>
-    <!-- Inline Search Table -->
-    <div class="inline-search-container" *ngIf="showReportingOfficerSearch">
-      <ws-app-user-search-table
-        [selectedUserId]="reportingOfficerControl.value?.id || reportingOfficerControl.value?.userId"
-        [excludedIds]="getExcludedIds('reportingOfficer')" (userSelected)="onUserSelected($event, 'reportingOfficer')">
-      </ws-app-user-search-table>
-    </div>
+  <!-- Search Input -->
+  <div class="search-box">
+    <mat-icon>search</mat-icon>
+    <input type="text" placeholder="Search by name or email" [(ngModel)]="searchQuery" (input)="onSearchInput()">
   </div>
 
-  <!-- Peer -->
-  <div class="peer-field">
-    <label>
-      Select Peer <span class="required">*</span>
-    </label>
-    <div class="select-with-search" (click)="toggleSearch('peer')">
-      <div class="pill-select full-width display-pill" [class.has-value]="peerControl.value">
-        {{ getDisplayName(peerControl.value) || "Select Peer" }}
-        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+  <!-- Selected Peer Chips -->
+  <div class="selected-chips" *ngIf="selectedPeersList.length > 0">
+    <div class="chip" *ngFor="let peer of selectedPeersList">
+      <div class="chip-avatar">
+        <img *ngIf="peer.profileDetails?.profileImageUrl" [src]="peer.profileDetails?.profileImageUrl" alt="User Photo"
+          class="chip-photo">
+        <span *ngIf="!peer.profileDetails?.profileImageUrl">{{ getUserInitials(peer) }}</span>
       </div>
-    </div>
-    <div class="inline-search-container" *ngIf="showPeerSearch">
-      <ws-app-user-search-table [selectedUserId]="peerControl.value?.id || peerControl.value?.userId"
-        [excludedIds]="getExcludedIds('peer')" (userSelected)="onUserSelected($event, 'peer')">
-      </ws-app-user-search-table>
+      <div class="chip-info">
+        <div class="chip-name">{{ getUserFullName(peer) }}</div>
+        <div class="chip-designation">{{ getUserDesignation(peer) }}</div>
+      </div>
+      <button class="chip-remove" (click)="removePeer(peer)">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
   </div>
 
-  <!-- Subordinate (Optional) -->
-  <div class="peer-field">
-    <label>
-      Select Subordinate <span class="optional">(Optional)</span>
-    </label>
-    <div class="select-with-search" (click)="toggleSearch('subordinate')">
-      <div class="pill-select full-width display-pill" [class.has-value]="subordinateControl.value">
-        {{ getDisplayName(subordinateControl.value) || "Select Subordinate" }}
-        <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
-      </div>
-    </div>
-    <div class="inline-search-container" *ngIf="showSubordinateSearch">
-      <ws-app-user-search-table [selectedUserId]="subordinateControl.value?.id || subordinateControl.value?.userId"
-        [excludedIds]="getExcludedIds('subordinate')" (userSelected)="onUserSelected($event, 'subordinate')">
-      </ws-app-user-search-table>
-    </div>
-  </div>
+  <!-- User Search Table -->
+  <ws-app-user-search-table [selectedUserIds]="selectedPeerIds" [searchQuery]="searchQuery" [maxSelect]="3"
+    (userToggled)="onUserToggled($event)">
+  </ws-app-user-search-table>
 
   <!-- Info Banner -->
   <div class="info-banner">

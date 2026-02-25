@@ -10,16 +10,8 @@
       <div class="name">{{ learnerName }} <span class="badge">{{ designation }} </span></div>
       <div class="course">Course : {{ requestData.courseName }}</div>
     </div>
-    <div class="reporting-officer-info" *ngIf="requestData.forwardPeer?.id === currentUserId">
-      <div class="officer-name">
-        <span class="name-placeholder">{{ requestData.reportingOfficer.name }}</span>
-        <span class="status-badge" [ngClass]="requestData.reportingOfficerStatus">
-          {{ requestData.reportingOfficerStatus | titlecase }}
-        </span>
-      </div>
-      <div class="officer-message">The above reporting officer has sent this request for validation.</div>
-    </div>
   </div>
+
 
   <div class="review-content">
 
@@ -69,39 +61,18 @@
       </div>
     </div>
 
-    <!-- Forward Options / File Attachments -->
-    <div class="meta-section">
-      <div class="meta-label" *ngIf="requestData.reportingOfficer?.id === currentUserId||true">Forward validation Request
-        <span class="optional-text">(Optional)</span></div>
-      <div class="meta-sub" *ngIf="requestData.reportingOfficer?.id === currentUserId||true">Select Peer</div>
-      <div class="select-with-search" *ngIf="requestData.reportingOfficer?.id === currentUserId||true"
-        (click)="toggleSearch()">
-        <div class="pill-select full-width display-pill" [class.has-value]="selectedForwardPeer">
-          {{ getDisplayName(selectedForwardPeer) || "Search and select a peer" }}
-          <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+    <!-- File Attachments -->
+    <div class="attachments" *ngIf="requestData.documents && requestData.documents.length > 0">
+      <div class="attachment-item" *ngFor="let doc of requestData.documents"
+        [ngClass]="{'video': doc.type.includes('video'), 'doc': doc.type.includes('pdf')}">
+        <div class="attachment-icon">
+          <mat-icon *ngIf="doc.type.includes('video')" class="icon-video">play_circle_filled</mat-icon>
+          <img *ngIf="doc.type.includes('pdf')" src="assets/icons/PDF_alternate.svg" class="icon-file" width="24"
+            height="24" alt="File Icon">
         </div>
-      </div>
-
-      <!-- Inline Search Table -->
-      <div class="inline-search-container" *ngIf="showForwardPeerSearch">
-        <ws-app-user-search-table [selectedUserId]="selectedForwardPeer?.id || selectedForwardPeer?.userId"
-          [excludedIds]="excludedIds" (userSelected)="onPeerSelected($event)">
-        </ws-app-user-search-table>
-      </div>
-
-      <!-- Attachments -->
-      <div class="attachments" *ngIf="requestData.documents && requestData.documents.length > 0">
-        <div class="attachment-item" *ngFor="let doc of requestData.documents"
-          [ngClass]="{'video': doc.type.includes('video'), 'doc': doc.type.includes('pdf')}">
-          <div class="attachment-icon">
-            <mat-icon *ngIf="doc.type.includes('video')" class="icon-video">play_circle_filled</mat-icon>
-            <img *ngIf="doc.type.includes('pdf')" src="assets/icons/PDF_alternate.svg" class="icon-file" width="24"
-              height="24" alt="File Icon">
-          </div>
-          <div class="attachment-info">
-            <span class="filename" (click)="previewDocument(doc)">{{ doc.name }}</span>
-            <span class="filesize">({{ formatFileSize(doc.size) }})</span>
-          </div>
+        <div class="attachment-info">
+          <span class="filename" (click)="previewDocument(doc)">{{ doc.name }}</span>
+          <span class="filesize">({{ formatFileSize(doc.size) }})</span>
         </div>
       </div>
     </div>

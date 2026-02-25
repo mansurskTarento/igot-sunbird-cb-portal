@@ -18,10 +18,9 @@ export class SurveyDialogComponent implements OnInit {
   surveyQuestions: NSPeerValidation.ISurveyQuestion[] = []
   questionForm!: FormGroup
   uploadedDocuments: NSPeerValidation.IUploadedDocument[] = []
-  selectedPeers = {
-    reportingOfficer: null,
-    peer: null,
-    subordinate: null,
+  selectedPeers: { peers: any[], isValid: boolean } = {
+    peers: [],
+    isValid: false,
   }
 
   constructor(
@@ -80,8 +79,8 @@ export class SurveyDialogComponent implements OnInit {
     this.uploadedDocuments = documents
   }
 
-  onPeersChanged(peers: any) {
-    this.selectedPeers = peers
+  onPeersChanged(peerData: { peers: any[], isValid: boolean }) {
+    this.selectedPeers = peerData
   }
 
   canProceedToStep2(): boolean {
@@ -108,7 +107,7 @@ export class SurveyDialogComponent implements OnInit {
   }
 
   canSubmit(): boolean {
-    return this.selectedPeers.reportingOfficer !== null && this.selectedPeers.peer !== null
+    return this.selectedPeers.isValid
   }
 
   onSubmit() {
@@ -123,9 +122,7 @@ export class SurveyDialogComponent implements OnInit {
         value: this.responses.at(index).value,
       })),
       documents: this.uploadedDocuments,
-      reportingOfficer: this.selectedPeers.reportingOfficer,
-      peer: this.selectedPeers.peer,
-      subordinate: this.selectedPeers.subordinate,
+      peers: this.selectedPeers.peers,
     }
     console.log('Submitting survey:', submission)
     this.peerValidationService.submitSurvey(submission).subscribe({

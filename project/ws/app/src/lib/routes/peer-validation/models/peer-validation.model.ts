@@ -38,9 +38,7 @@ export namespace NSPeerValidation {
     courseId: string
     responses: ISurveyResponse[]
     documents: IUploadedDocument[]
-    reportingOfficer: IPeerInfo | null
-    peer: IPeerInfo | null
-    subordinate: IPeerInfo | null
+    peers: any[]
   }
 
   // Survey Popup Data

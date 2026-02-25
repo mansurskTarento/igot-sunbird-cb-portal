@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit, Inject, Optional } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnInit, Inject, Optional, OnChanges, SimpleChanges } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { PeerValidationService } from '../../../../services/peer-validation.service'
 
 @Component({
@@ -11,37 +12,41 @@ import { PeerValidationService } from '../../../../services/peer-validation.serv
   templateUrl: './user-search-table.component.html',
   styleUrls: ['./user-search-table.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatDialogModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatDialogModule, MatButtonModule, MatCheckboxModule],
 })
-export class UserSearchTableComponent implements OnInit {
+export class UserSearchTableComponent implements OnInit, OnChanges {
   @Input() users: any[] = []
-  @Input() selectedUserId: string | null = null
-  @Input() excludedIds: string[] = [] // New Input
-  @Output() userSelected = new EventEmitter<any>()
+  @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)
+  @Input() maxSelect = 3
+  @Input() searchQuery = ''                 // Driven by parent search input
+  @Output() userToggled = new EventEmitter<any>()   // Emits user object when toggled
 
   filteredUsers: any[] = []
-  searchQuery = ''
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private peerValidationService: PeerValidationService
   ) {
-    // If opened as dialog, use data from MAT_DIALOG_DATA
     if (data) {
-      this.selectedUserId = data.selectedUserId || null
+      this.selectedUserIds = data.selectedUserIds || []
     }
   }
 
   ngOnInit() {
-    // Fetch users when component initializes
     this.getAllUsers()
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['selectedUserIds'] || changes['searchQuery']) {
+      this.filterUsers()
+    }
   }
 
   getAllUsers() {
     this.peerValidationService.getAllUsers().subscribe({
       next: (res: any) => {
         this.users = res?.result?.response?.content || res?.result?.content || res || []
-        this.filterUsers() // Apply filters initially
+        this.filterUsers()
       },
       error: (err: any) => {
         console.error('Error fetching users:', err)
@@ -54,28 +59,35 @@ export class UserSearchTableComponent implements OnInit {
   filterUsers() {
     const query = this.searchQuery.toLowerCase().trim()
     this.filteredUsers = this.users.filter(user => {
-      // Exclude if in excludedIds list
-      const userId = user.id || user.userId
-      if (this.excludedIds.includes(userId)) {
-        return false
-      }
-
-      // Filter by name
-      return this.getUserFullName(user).toLowerCase().includes(query)
+      const name = this.getUserFullName(user).toLowerCase()
+      const email = (
+        user.profileDetails?.personalDetails?.primaryEmail ||
+        user.email || ''
+      ).toLowerCase()
+      return name.includes(query) || email.includes(query)
     })
   }
 
-  // Also update ngOnInit/getAllUsers to initial filter
-  updateFilteredUsers() {
-    this.filterUsers()
-  }
-
-  selectUser(user: any) {
-    this.userSelected.emit(user)
+  toggleUser(user: any, event?: Event) {
+    if (event) {
+      event.stopPropagation()
+    }
+    const userId = user.id || user.userId
+    const alreadySelected = this.selectedUserIds.includes(userId)
+    if (!alreadySelected && this.selectedUserIds.length >= this.maxSelect) {
+      // At max — do not allow more
+      return
+    }
+    this.userToggled.emit(user)
   }
 
   isSelected(user: any): boolean {
-    return (user.id || user.userId) === this.selectedUserId
+    return this.selectedUserIds.includes(user.id || user.userId)
+  }
+
+  isDisabled(user: any): boolean {
+    const userId = user.id || user.userId
+    return !this.selectedUserIds.includes(userId) && this.selectedUserIds.length >= this.maxSelect
   }
 
   getUserFullName(user: any): string {
@@ -85,7 +97,6 @@ export class UserSearchTableComponent implements OnInit {
   getUserInitials(user: any): string {
     const firstName = user.firstName || ''
     const lastName = user.lastName || ''
-
     if (firstName && lastName) {
       return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
     } else if (firstName) {
@@ -98,5 +109,9 @@ export class UserSearchTableComponent implements OnInit {
       return user.name.substring(0, 2).toUpperCase()
     }
     return 'U'
+  }
+
+  getUserDesignation(user: any): string {
+    return user.profileDetails?.professionalDetails?.[0]?.designation || '--'
   }
 }
