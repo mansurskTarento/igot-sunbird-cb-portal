@@ -1,7 +1,13 @@
 FROM node:10
 
+RUN mkdir -p /app \
+ && chown -R node:node /app
+
 WORKDIR /app
-COPY . .
+
+COPY --chown=node:node . .
+
+USER node
 
 #RUN npm i yarn
 #RUN yarn global add @angular/cli@latest
@@ -16,4 +22,3 @@ RUN npm install --production
 EXPOSE 3024
 
 CMD [ "npm", "run", "serve:prod" ]
-
