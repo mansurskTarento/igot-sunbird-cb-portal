@@ -1,0 +1,14 @@
+<div class="mandatory-notification-modal">
+  <h2 mat-dialog-title class="modal-title">Retake Comprehensive Assessment</h2>
+  <div mat-dialog-content class="modal-body">
+    <p>{{ data?.notification?.message?.body }}</p>
+  </div>
+  <div mat-dialog-actions class="modal-actions">
+    <button mat-stroked-button color="primary" (click)="onReject()" class="btn-reject cursor-pointer">
+      Remind me later
+    </button>
+    <button mat-flat-button color="primary" (click)="onAccept()" class="btn-accept cursor-pointer">
+      Reattempt Now
+    </button>
+  </div>
+</div>
