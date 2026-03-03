@@ -62,6 +62,21 @@ export class DocumentUploadComponent {
         return
       }
 
+      // Enforce one PDF and one video limit
+      if (file.type === 'application/pdf') {
+        const alreadyHasPdf = this.documents.some(doc => doc.type === 'application/pdf')
+        if (alreadyHasPdf) {
+          this.showSnack('Only one PDF is allowed. Please remove the existing PDF before uploading a new one.')
+          return
+        }
+      } else if (file.type === 'video/mp4') {
+        const alreadyHasVideo = this.documents.some(doc => doc.type === 'video/mp4')
+        if (alreadyHasVideo) {
+          this.showSnack('Only one video is allowed. Please remove the existing video before uploading a new one.')
+          return
+        }
+      }
+
       // Validate file size: PDF max 2MB, MP4 max 200MB
       let maxSize: number
       let maxSizeLabel: string
@@ -74,7 +89,9 @@ export class DocumentUploadComponent {
       }
 
       if (file.size > maxSize) {
-        this.showSnack(`File too large: ${file.name}. Maximum size is ${maxSizeLabel}.`)
+        this.showSnack(
+          `"${file.name}" (${this.formatFileSize(file.size)}) exceeds the allowed limit. Maximum size for ${file.type === 'application/pdf' ? 'PDF' : 'MP4'} is ${maxSizeLabel}.`
+        )
         return
       }
 
