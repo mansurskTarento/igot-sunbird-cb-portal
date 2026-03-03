@@ -47,6 +47,7 @@ import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.compone
 import { concat, interval, timer, of, Subscription } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
 import { MandatoryNotificationModalComponent } from '../mandatory-notification-modal/mandatory-notification-modal.component'
+import { MandatoryNotificationsService } from '../../services/mandatory-notifications.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -86,7 +87,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private changeDetector: ChangeDetectorRef,
     private utilitySvc: UtilityService,
     private urlService: UrlService,
-    private iGOTAIService: iGOTAIService
+    private iGOTAIService: iGOTAIService,
+    private mandatoryNotificationsService: MandatoryNotificationsService
 
     // private dialogRef: MatDialogRef<any>,
   ) {
@@ -239,7 +241,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
   fetchMandatoryNotification() {
 
-    this.iGOTAIService.getMandatoryNotification().subscribe((notification: any) => {
+    this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
       if (notification && Object.keys(notification).length > 0 && !notification?.read) {
         this.mandatoryNotificationData = notification
         this.showMandatoryNotification = true
@@ -269,8 +271,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       },
       panelClass: 'profile-verification-dialog-container',
       disableClose: false,
-      maxWidth: '95vw',
-      width: '500px',
     })
 
     dialogRef.afterClosed().subscribe(result => {
@@ -283,7 +283,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             type: this.mandatoryNotificationData.type
           }
         }
-        this.iGOTAIService.markMandatoryAsRead(request).subscribe((res: any) => {
+        this.mandatoryNotificationsService.markMandatoryAsRead(request).subscribe((res: any) => {
           if (res.responseCode === 'OK') {
             this.mandatoryNotificationData.read = true
             this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
@@ -351,10 +351,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
       }
     }
-    this.iGOTAIService.formReadData(request).subscribe((data: any) => {
+    this.mandatoryNotificationsService.formReadData(request).subscribe((data: any) => {
       this.popupDuration = data && data.result && data.result.form && data.result.form.data && data.result.form.data.mandatoryPopUpDuration
     })
-
 
     this.btnBackSvc.initialize()
     setTimeout(() => {
