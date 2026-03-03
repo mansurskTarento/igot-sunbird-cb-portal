@@ -105,6 +105,7 @@ import { ResourceDownloadHelperService } from './services/resource-download-help
 import { ProfileVerificationDialogComponent } from './profile-verification-dialog/profile-verification-dialog.component'
 import { CommonDataService } from './services/common-data.service'
 import { WIDGET_REGISTRATION_CONFIG } from '../../library/ws-widget/collection/src/public-api'
+import { MandatoryNotificationModalComponent } from './component/mandatory-notification-modal/mandatory-notification-modal.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -158,7 +159,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SurveyShikshaComponent,
     PrivacyPolicyComponent,
     LearnerAdvisoryComponent,
-    ProfileVerificationDialogComponent
+    ProfileVerificationDialogComponent,
+    MandatoryNotificationModalComponent
   ],
   imports: [
     FormsModule,
@@ -174,7 +176,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
     CardsModule,
     WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG, ...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
-    SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG,...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
+    SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG, ...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
     // Material Imports
     MatSliderModule,
     MatFormFieldModule,
