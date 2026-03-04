@@ -227,12 +227,18 @@
 
           ::ng-deep .mat-radio-button.mat-radio-checked .mat-radio-outer-circle,
           ::ng-deep .mat-mdc-radio-checked .mdc-radio__outer-circle {
-            border-color: #3F51B5 !important;
+            border-color: #1B4CA1 !important;
           }
 
           ::ng-deep .mat-radio-inner-circle,
           ::ng-deep .mdc-radio__inner-circle {
-            background-color: #3F51B5 !important;
+            background-color: #1B4CA1 !important;
+            border-color: #1B4CA1 !important;
+          }
+
+          // MDC radio ripple and focus indicator
+          ::ng-deep .mat-mdc-radio-button.mat-mdc-radio-checked .mdc-radio__background::before {
+            background-color: #1B4CA1 !important;
           }
         }
       }
@@ -264,6 +270,20 @@
         flex: 0 0 auto;
       }
 
+      // Checkbox styles for option-card with mat-checkbox
+      ::ng-deep .mat-mdc-checkbox-checked .mdc-checkbox__background {
+        background-color: #1B4CA1 !important;
+        border-color: #1B4CA1 !important;
+      }
+
+      ::ng-deep .mdc-checkbox__checkmark {
+        color: #FFFFFF !important;
+      }
+
+      ::ng-deep .mdc-checkbox__checkmark-path {
+        stroke: #FFFFFF !important;
+      }
+
       .option-label {
         flex: 1 1 auto;
         font-size: 14px;
@@ -278,6 +298,33 @@
 
       @media (max-width: 480px) {
         gap: 10px;
+      }
+
+      // Checkbox styles applied at container level to cover all checkboxes
+      ::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+      ::ng-deep .mat-mdc-checkbox-checked .mdc-checkbox__background {
+        background-color: #1B4CA1 !important;
+        border-color: #1B4CA1 !important;
+      }
+
+      ::ng-deep .mdc-checkbox__checkmark {
+        color: #FFFFFF !important;
+      }
+
+      ::ng-deep .mdc-checkbox__checkmark-path {
+        stroke: #FFFFFF !important;
+      }
+
+      ::ng-deep .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__checkmark-path {
+        stroke: #FFFFFF !important;
+      }
+
+      ::ng-deep .mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark-path {
+        stroke: #FFFFFF !important;
+      }
+
+      ::ng-deep .mat-checkbox-checkmark-path {
+        stroke: #FFFFFF !important;
       }
 
       .checkbox-option {
@@ -316,8 +363,50 @@
 
         ::ng-deep .mat-checkbox-checked .mat-checkbox-background,
         ::ng-deep .mat-mdc-checkbox-checked .mdc-checkbox__background {
-          background-color: #3F51B5 !important;
-          border-color: #3F51B5 !important;
+          background-color: #1B4CA1 !important;
+          border-color: #1B4CA1 !important;
+        }
+
+        // Checkbox tick/checkmark color - white on blue background
+        ::ng-deep .mdc-checkbox__checkmark {
+          color: #FFFFFF !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        ::ng-deep .mdc-checkbox__checkmark-path {
+          stroke: #FFFFFF !important;
+          stroke-width: 3.12 !important;
+        }
+
+        ::ng-deep .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__checkmark {
+          color: #FFFFFF !important;
+        }
+
+        ::ng-deep .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__checkmark-path {
+          stroke: #FFFFFF !important;
+        }
+
+        ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__checkmark-path {
+          stroke: #FFFFFF !important;
+        }
+
+        // Target the SVG path directly
+        ::ng-deep .mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark-path {
+          stroke: #FFFFFF !important;
+        }
+
+        ::ng-deep .mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark {
+          color: #FFFFFF !important;
+        }
+
+        // Legacy Angular Material checkbox checkmark
+        ::ng-deep .mat-checkbox-checkmark {
+          fill: #FFFFFF !important;
+        }
+
+        ::ng-deep .mat-checkbox-checkmark-path {
+          stroke: #FFFFFF !important;
         }
 
         ::ng-deep .mat-checkbox-label {
