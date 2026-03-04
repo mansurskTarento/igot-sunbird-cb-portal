@@ -3,7 +3,9 @@
 
   <!-- Overall Result View -->
   <ng-container *ngIf="showOverallView">
-    <viewer-overall-result-view [resultsData]="results" (viewQuestions)="onViewQuestions($event)">
+    <viewer-overall-result-view [resultsData]="results"
+      [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+      (viewQuestions)="onViewQuestions($event)">
     </viewer-overall-result-view>
   </ng-container>
 

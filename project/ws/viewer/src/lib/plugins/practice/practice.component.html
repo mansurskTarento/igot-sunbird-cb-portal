@@ -340,12 +340,11 @@
 
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <ng-container *ngIf="primaryCategory !== ePrimaryCategory.COMP_ASSESSMENT; else caresult">
-        <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
-          [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
-          (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-        </viewer-result>
-      </ng-container>
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      </viewer-result> -->
     </ng-container>
     <!-- </div> -->
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
@@ -717,12 +716,11 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <ng-container *ngIf="primaryCategory !== ePrimaryCategory.COMP_ASSESSMENT; else caresult">
-        <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
-          [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
-          (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-        </viewer-result>
-      </ng-container>
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -1444,13 +1442,12 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <ng-container *ngIf="primaryCategory !== ePrimaryCategory.COMP_ASSESSMENT; else caresult">
-        <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
-          [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
-          (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
-          [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-        </viewer-result>
-      </ng-container>
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
+        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -2050,13 +2047,12 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <ng-container *ngIf="primaryCategory !== ePrimaryCategory.COMP_ASSESSMENT; else caresult">
-        <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
-          [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
-          (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
-          [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-        </viewer-result>
-      </ng-container>
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+        [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
+        (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
+        [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -2396,5 +2392,7 @@
 
 
 <ng-template #caresult>
-  <viewer-ca-results-view [results]="finalResponse" [canAttempt]="canAttempt"></viewer-ca-results-view>
+  <viewer-ca-results-view [results]="finalResponse" [canAttempt]="canAttempt"
+    [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel"
+    (userSelection)="getSections($event)"></viewer-ca-results-view>
 </ng-template>

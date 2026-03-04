@@ -11,6 +11,7 @@ import { NSPractice } from '../../practice.model'
 export class CaResultsViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() results!: any
   @Input() canAttempt: any
+  @Input() selectedAssessmentCompatibilityLevel: number = 0
 
   @Output() userSelection = new EventEmitter<string>()
 

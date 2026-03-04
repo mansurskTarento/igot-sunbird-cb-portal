@@ -3,14 +3,7 @@ import { Subject } from 'rxjs'
 import * as _ from 'lodash'
 import { NSPractice } from '../../practice.model'
 import { TranslateService } from '@ngx-translate/core'
-
-interface SummaryCard {
-  label: string
-  value: string
-  icon?: string
-  iconUrl?: string
-  class?: string
-}
+import { NsContent } from '@sunbird-cb/utils-v2'
 
 interface SectionTableData {
   sectionName: string
@@ -32,6 +25,7 @@ interface FailureInfo {
 })
 export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() resultsData: any
+  @Input() selectedAssessmentCompatibilityLevel: number = 1
   @Output() viewQuestions = new EventEmitter<NSPractice.IQuizSubmitResSec>();
 
   // Component-owned computed properties
@@ -39,11 +33,55 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
   overallScorePercent = 0;
   marksObtainedText = '';
   requiredPassPercent = 0;
-  summaryCards: SummaryCard[] = [];
+  summaryCards: any[] = [
+    {
+      imgType: 'icon',
+      imgPath: 'speed',
+      class: 'icon-bg-blue',
+      summary: '',
+      summaryType: 'quizresult.score',
+    },
+    {
+      imgType: 'img',
+      imgPath: '/assets/icons/final-assessment/nest_clock_farsight_analog.svg',
+      class: 'icon-bg-lite-green',
+      summary: '',
+      summaryType: 'quizresult.timeTaken',
+    },
+    {
+      imgType: 'img',
+      imgPath: '/assets/icons/final-assessment/assignment.svg',
+      class: 'icon-bg-pink',
+      summary: '',
+      summaryType: 'quizresult.attempted',
+    },
+    {
+      imgType: 'icon',
+      imgPath: 'check_circle_outline',
+      class: 'icon-bg-yellow',
+      summary: '',
+      summaryType: 'quizresult.correct',
+    },
+    {
+      imgType: 'icon',
+      imgPath: 'cancel',
+      class: 'icon-bg-red',
+      summary: '',
+      summaryType: 'quizresult.wrong',
+    },
+    {
+      imgType: 'img',
+      imgPath: '/assets/icons/final-assessment/target.svg',
+      class: 'icon-bg-dark-green',
+      summary: '',
+      summaryType: 'quizresult.accuracy',
+    },
+  ];
   sectionTableData: SectionTableData[] = [];
-  displayedColumns = ['sectionName', 'result', 'yourScore', 'requiredScore', 'actions'];
+  displayedColumns = ['sectionName', 'result', 'yourScore', 'requiredScore'];
   failureInfo: FailureInfo | null = null;
   isDataLoaded = false;
+  primaryCategories = NsContent.EPrimaryCategory.PRACTICE_RESOURCE
 
   // RxJS Lifecycle Management
   destroy$ = new Subject<void>();
@@ -74,7 +112,6 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
     this.overallScorePercent = 0
     this.marksObtainedText = ''
     this.requiredPassPercent = 0
-    this.summaryCards = []
     this.sectionTableData = []
     this.failureInfo = null
     this.isDataLoaded = false
@@ -91,13 +128,18 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
 
     // Basic derived state
     this.isPassed = _.get(results, 'pass', false)
-    this.overallScorePercent = this.sanitizeNumber(_.get(results, 'overallResult', 0))
-    this.requiredPassPercent = this.sanitizeNumber(_.get(results, 'passPercentage', 0))
+
+    this.overallScorePercent = parseFloat((this.selectedAssessmentCompatibilityLevel >= 7
+      ? this.sanitizeNumber(_.get(results, 'totalPercentage', 0))
+      : this.sanitizeNumber(_.get(results, 'overallResult', 0))).toFixed(2))
+    this.requiredPassPercent = parseFloat((this.selectedAssessmentCompatibilityLevel >= 7
+      ? this.sanitizeNumber(_.get(results, 'overallResult', 0))
+      : this.sanitizeNumber(_.get(results, 'passPercentage', 0))).toFixed(2))
 
     const correct = this.sanitizeNumber(_.get(results, 'correct', 0))
     const incorrect = this.sanitizeNumber(_.get(results, 'incorrect', 0))
     const blank = this.sanitizeNumber(_.get(results, 'blank', 0))
-    const total = correct + incorrect + blank
+    const total = this.sanitizeNumber(_.get(results, 'total', 0)) || (correct + incorrect + blank)
     this.marksObtainedText = `${correct} out of ${total} marks`
 
     // Summary cards computation
@@ -117,54 +159,93 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
     const correct = this.sanitizeNumber(_.get(results, 'correct', 0))
     const incorrect = this.sanitizeNumber(_.get(results, 'incorrect', 0))
     const blank = this.sanitizeNumber(_.get(results, 'blank', 0))
-    const total = correct + incorrect + blank
-    const totalMarks = _.get(results, 'totalMarks', '')
+    const total = this.sanitizeNumber(_.get(results, 'total', 0)) || (correct + incorrect + blank)
+    const overallResult = this.selectedAssessmentCompatibilityLevel >= 7
+      ? this.sanitizeNumber(_.get(results, 'totalPercentage', 0))
+      : this.sanitizeNumber(_.get(results, 'overallResult', 0))
 
-    // Calculate total time from all questions across all sections
-    const timeTaken = _.get(results, 'timeTakenForAssessment') ? this.formatTime(_.get(results, 'timeTakenForAssessment')) : ''
+    const totalSectionMarks = this.sanitizeNumber(_.get(results, 'totalSectionMarks', null))
+    const totalMarks = this.sanitizeNumber(_.get(results, 'totalMarks', null))
+    const timeTaken = _.get(results, 'timeTakenForAssessment', null)
 
-    this.summaryCards = []
+    const cards = []
 
-    if (timeTaken !== '') {
-      this.summaryCards.push({ label: 'Time Taken', value: timeTaken, icon: 'schedule', class: 'time-green' })
+    if (_.get(results, 'totalSectionMarks') != null && _.get(results, 'totalMarks') != null
+      && !isNaN(totalSectionMarks) && !isNaN(totalMarks)) {
+      cards.push({
+        imgType: 'icon',
+        imgPath: 'speed',
+        class: 'icon-bg-blue',
+        summary: `${totalSectionMarks.toFixed(2)}/${totalMarks}`,
+        summaryType: 'quizresult.score',
+      })
+    }
+
+    if (timeTaken != null && !isNaN(Number(timeTaken))) {
+      cards.push({
+        imgType: 'img',
+        imgPath: '/assets/icons/final-assessment/nest_clock_farsight_analog.svg',
+        class: 'icon-bg-lite-green',
+        summary: this.millisecondsToHMS(timeTaken),
+        summaryType: 'quizresult.timeTaken',
+      })
     }
 
     if (total > 0) {
-      this.summaryCards.push({ label: 'Attempted', value: `${total - blank}/${total}`, icon: 'assignment', class: 'attempted-orange' })
+      cards.push({
+        imgType: 'img',
+        imgPath: '/assets/icons/final-assessment/assignment.svg',
+        class: 'icon-bg-pink',
+        summary: `${correct + incorrect}/${total}`,
+        summaryType: 'quizresult.attempted',
+      })
     }
 
-    if (totalMarks !== '' && totalMarks !== null && totalMarks !== undefined) {
-      this.summaryCards.push({ label: 'Marks Obtained', value: `${totalMarks}`, icon: 'emoji_events', class: 'marks-blue' })
+    if (total > 0) {
+      cards.push({
+        imgType: 'icon',
+        imgPath: 'check_circle_outline',
+        class: 'icon-bg-yellow',
+        summary: `${correct}/${total}`,
+        summaryType: 'quizresult.correct',
+      })
     }
+
+    if (_.get(results, 'incorrect') != null && !isNaN(Number(_.get(results, 'incorrect')))) {
+      cards.push({
+        imgType: 'icon',
+        imgPath: 'cancel',
+        class: 'icon-bg-red',
+        summary: incorrect.toString(),
+        summaryType: 'quizresult.wrong',
+      })
+    }
+
+    if (overallResult > 0) {
+      cards.push({
+        imgType: 'img',
+        imgPath: '/assets/icons/final-assessment/target.svg',
+        class: 'icon-bg-dark-green',
+        summary: `${Math.round(overallResult)}%`,
+        summaryType: 'quizresult.accuracy',
+      })
+    }
+
+    this.summaryCards = cards
   }
 
-  // private calculateTotalTimeTaken(): string {
-  //   const sections = _.get(this.resultsData, 'children', [])
-  //   let totalMs = 0
+  millisecondsToHMS(milleSeconds: any): string {
+    const ms = Number(milleSeconds)
+    const seconds: number = Math.floor((ms / 1000) % 60)
+    const minutes: number = Math.floor((ms / (1000 * 60)) % 60)
+    const hours: number = Math.floor((ms / (1000 * 60 * 60)) % 24)
 
-  //   sections.forEach((section: any) => {
-  //     const questions = _.get(section, 'children', [])
-  //     questions.forEach((question: any) => {
-  //       totalMs += parseInt(question.timeSpent, 10) || 0
-  //     })
-  //   })
+    const hoursStr: string = (hours < 10) ? `0${hours}` : `${hours}`
+    const minutesStr: string = (minutes < 10) ? `0${minutes}` : `${minutes}`
+    const secondsStr: string = (seconds < 10) ? `0${seconds}` : `${seconds}`
 
-  //   return this.formatTime(totalMs)
-  // }
-
-  private formatTime(ms: string | number): string {
-    const totalSeconds = Math.max(1, Math.floor(Number(ms) / 1000))
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const seconds = totalSeconds % 60
-
-    const pad = (n: number) => n < 10 ? `0${n}` : `${n}`
-
-    if (hours > 0) return `${pad(hours)}:${pad(minutes)}:${pad(seconds)} m`
-    if (minutes > 0) return `${pad(minutes)}:${pad(seconds)}`
-    return `${seconds}s`
+    return `${hoursStr}:${minutesStr}:${secondsStr}`
   }
-
   private sanitizeNumber(value: any): number {
     if (value === null || value === undefined) return 0
     const num = Number(value)
@@ -197,13 +278,26 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
       return
     }
 
-    const total = _.get(this.resultsData, 'total', 0)
-    const correct = _.get(this.resultsData, 'correct', 0)
-    const pointsNeeded = Math.ceil((this.requiredPassPercent * total / 100) - correct)
+    const rawTotalMarks = _.get(this.resultsData, 'totalMarks', null)
+    const rawTotalSectionMarks = _.get(this.resultsData, 'totalSectionMarks', null)
+
+    if (
+      rawTotalMarks === null || rawTotalMarks === undefined ||
+      rawTotalSectionMarks === null || rawTotalSectionMarks === undefined ||
+      !this.requiredPassPercent ||
+      this.overallScorePercent === null || this.overallScorePercent === undefined
+    ) {
+      this.failureInfo = null
+      return
+    }
+
+    const totalMarks = this.sanitizeNumber(rawTotalMarks)
+    const totalSectionMarks = this.sanitizeNumber(rawTotalSectionMarks)
+    const pointsNeeded = Math.ceil((this.requiredPassPercent * totalMarks / 100) - totalSectionMarks)
     const percentageNeeded = this.requiredPassPercent - this.overallScorePercent
 
     this.failureInfo = {
-      percentageMore: Math.max(0, Math.round(percentageNeeded)),
+      percentageMore: Math.max(0, parseFloat(percentageNeeded.toFixed(2))),
       additionalMarks: Math.max(0, pointsNeeded)
     }
   }
