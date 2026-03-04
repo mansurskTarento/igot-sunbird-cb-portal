@@ -291,8 +291,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     ).subscribe((event: any) => {
       const isPlayer = event.url.includes('/viewer')
 
+      // Extract fragment from URL
+      const fragment = this.route.snapshot.fragment || ''
+      console.log('URL Fragment:', fragment)
+
       // Initialize mandatory details from common data service
-      this.commonDataSvc.mandatoryDetails(isPlayer)
+      if (!['mandatorySection', 'orgDetails'].includes(fragment)) {
+        this.commonDataSvc.mandatoryDetails(isPlayer)
+      }
       // Check and show mandatory notification on route change
       this.prevUrl = this.currUrl
 
