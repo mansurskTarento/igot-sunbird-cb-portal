@@ -18,14 +18,16 @@ export class SurveyPopupComponent {
   ) { }
 
   onYes() {
-    this.dialogRef.close()
-    // Open the survey dialog
+    // Open the survey dialog FIRST before closing this popup.
+    // This prevents the screen blink caused by the backdrop disappearing
+    // in the gap between close() and the next open() call.
     this.dialog.open(SurveyDialogComponent, {
       width: '700px',
       maxWidth: '90vw',
       disableClose: true,
       data: this.data,
     })
+    this.dialogRef.close()
   }
 
   onNo() {

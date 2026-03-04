@@ -25,8 +25,8 @@
 
     h1 {
       font-size: 20px;
-      font-weight: 700;
-      color: #333;
+      font-weight: 600;
+      color: #000000; // Figma: #000000 (Heading 2, Montserrat SemiBold)
       margin: 0 0 4px;
     }
 
@@ -42,7 +42,7 @@
       }
 
       p {
-        color: #666;
+        color: rgba(0, 0, 0, 0.87); // Figma: #000000 at 87%
         font-size: 14px;
         margin: 0;
 
@@ -52,7 +52,7 @@
       }
 
       .request-validation-btn {
-        background-color: #3F51B5;
+        background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         color: white;
         border-radius: 18px;
         padding: 0 20px;
@@ -70,20 +70,20 @@
 
   .tabs {
     display: flex;
-    border-bottom: 1px solid #E0E0E0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
     margin-bottom: 24px;
     gap: 32px;
 
     .tab-item {
       padding: 12px 0;
       font-size: 14px;
-      color: #666;
+      color: #666666; // Figma: AccessibilityShades/KB-Greys-Black-60%
       cursor: pointer;
       position: relative;
       font-weight: 500;
 
       &.active {
-        color: #3F51B5;
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         font-weight: 600;
 
         &::after {
@@ -93,7 +93,7 @@
           left: 0;
           width: 100%;
           height: 2px;
-          background-color: #3F51B5;
+          background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         }
       }
     }
@@ -246,8 +246,8 @@
     .table-header {
       display: flex;
       padding: 14px 0; // Increased vertical padding
-      background-color: #F5F5F5; // Light gray background
-      color: #999;
+      background-color: #F0F3F4; // Figma: #F0F3F4 table header row bg
+      color: rgba(0, 0, 0, 0.6); // Figma: #000000 at 60%
       font-size: 12px;
       font-weight: 500;
       border-radius: 4px; // Slight radius
@@ -349,7 +349,7 @@
 
           .name {
             font-size: 14px;
-            color: #333;
+            color: rgba(0, 0, 0, 0.87); // Figma: #000000 at 87%
             font-weight: 500;
             line-height: 1.4;
 
@@ -393,16 +393,16 @@
 
           &.active,
           &.completed {
-            color: #4CAF50;
-            border: 1px solid #4CAF50;
-            background-color: rgba(76, 175, 80, 0.05);
+            color: #007107; // Figma: ACTIVE text color
+            border: 1px solid #49C951; // Figma: ACTIVE border
+            background-color: rgba(73, 201, 81, 0.2); // Figma: #49C951 at 20%
           }
 
           &.ended,
           &.expired {
-            color: #F44336;
-            border: 1px solid #F44336;
-            background-color: rgba(244, 67, 54, 0.05);
+            color: #D13924; // Figma: States/KB-States-Negative/Light
+            border: 1px solid #D13924;
+            background-color: rgba(209, 57, 36, 0.24); // Figma: #D13924 at 24%
           }
         }
       }
@@ -440,7 +440,7 @@
         }
 
         .start-review-btn {
-          background-color: #3F51B5;
+          background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
           color: white;
           border-radius: 18px;
           font-size: 12px;
@@ -461,7 +461,8 @@
           }
 
           &:disabled {
-            background-color: #9E9E9E; // Gray for disabled
+            background-color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
+            color: #666666; // Figma: AccessibilityShades/KB-Greys-Black-60%
             cursor: not-allowed;
           }
         }
@@ -585,6 +586,7 @@
   // Specific fix for overlap issue between 576px and 1135px
   @media (min-width: 576px) and (max-width: 1135px) {
     padding-top: 80px !important; // Increased to 80px to clear nav bar
+
     @media (min-width: 577px) and (max-width: 600px) {
       padding-top: 100px !important; // Increased to 80px to clear nav bar
     }
@@ -629,7 +631,7 @@
     background-color: rgba(0, 0, 0, 0.04) !important;
 
     .mdc-list-item__primary-text {
-      color: #3F51B5 !important;
+      color: #1B4CA1 !important; // Figma: Primary/KB-Primary-Light
       font-weight: 700 !important;
     }
   }

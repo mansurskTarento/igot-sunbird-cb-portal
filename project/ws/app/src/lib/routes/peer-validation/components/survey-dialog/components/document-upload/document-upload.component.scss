@@ -14,40 +14,39 @@
 
     .hint {
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.6);
+      color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
       margin: 4px 0;
     }
   }
 
   .upload-area {
-    border: 2px dashed #BDBDBD;
-    border-radius: 8px;
-    padding: 24px 20px; // Reduced padding from 40px
+    border: 1px dashed #1B4CA1; // Figma: dashed border #1B4CA1
+    border-radius: 4px;
+    padding: 24px 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
-    background: #E8EAF6;
-    border-color: #3F51B5;
+    background: rgba(27, 76, 161, 0.04); // Figma: #1B4CA1 at 4%
 
     &:hover,
     &.drag-over {
-      background: #FAFAFA;
+      background: rgba(27, 76, 161, 0.08);
     }
 
     .upload-icon {
-      font-size: 32px; // Reduced icon size
+      font-size: 32px;
       width: 32px;
       height: 32px;
-      color: #3F51B5;
-      margin-bottom: 8px; // Reduced margin
+      color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+      margin-bottom: 8px;
     }
 
     .upload-text {
       strong {
         font-size: 14px;
-        color: #3F51B5;
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         display: block;
-        margin-bottom: 4px; // Reduced margin
+        margin-bottom: 4px;
       }
 
       .upload-info {
@@ -60,11 +59,11 @@
         }
 
         .pdf-size {
-          color: #E53935;
+          color: #F44336;
         }
 
         .mp4-size {
-          color: #E65100;
+          color: #F44336;
         }
       }
     }
@@ -72,7 +71,7 @@
 
   .file-note {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
     margin-top: 8px;
   }
 
@@ -88,7 +87,7 @@
       margin-bottom: 8px;
 
       .file-icon {
-        color: #3F51B5;
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         margin-right: 12px;
       }
 
@@ -105,11 +104,12 @@
 
           &.clickable {
             cursor: pointer;
-            color: #3F51B5;
+            color: #1B4CA1; // Figma: Primary/KB-Primary-Light
             text-decoration: underline;
+            font-weight: 700;
 
             &:hover {
-              color: #303F9F;
+              color: #163d84;
             }
           }
         }
@@ -131,7 +131,7 @@
     align-items: center;
     gap: 12px;
     margin-top: 16px;
-    color: #3F51B5;
+    color: #1B4CA1; // Figma: Primary/KB-Primary-Light
     font-size: 14px;
   }
 }

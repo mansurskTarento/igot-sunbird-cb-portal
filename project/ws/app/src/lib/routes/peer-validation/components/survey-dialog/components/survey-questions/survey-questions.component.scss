@@ -17,7 +17,7 @@
   .course-info {
     font-size: 14px;
     margin-bottom: 16px; // Reduced
-    color: #333;
+    color: #666666; // Figma: AccessibilityShades/KB-Greys-Black-60%
     font-weight: 500;
 
     @media (max-width: 480px) {
@@ -38,7 +38,7 @@
       font-weight: 600;
       margin-bottom: 12px; // Reduced
       line-height: 1.4;
-      color: #333;
+      color: #212529; // Figma: Body Text/Body Color
 
       .required {
         color: #F44336;
@@ -64,7 +64,7 @@
       .rating-label {
         font-size: 11px;
         font-weight: 600;
-        color: #999;
+        color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
         text-transform: uppercase;
 
         @media (max-width: 768px) {
@@ -116,15 +116,15 @@
           }
 
           &.selected {
-            background: #3F51B5;
+            background: #1B4CA1; // Figma: Primary/KB-Primary-Light
             color: white;
-            border-color: #3F51B5;
-            box-shadow: 0 2px 4px rgba(63, 81, 181, 0.3) !important; // Shadow for active
+            border-color: #1B4CA1;
+            box-shadow: 0 2px 4px rgba(27, 76, 161, 0.3) !important;
           }
 
           &:hover:not(.selected) {
             background: #F5F5F5;
-            border-color: #BDBDBD;
+            border-color: rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
           }
         }
       }
@@ -137,13 +137,13 @@
       .text-input {
         width: 100%;
         padding: 12px;
-        border: 1px solid #E0E0E0; // Lighter border
+        border: 1px solid rgba(0, 0, 0, 0.16); // Figma: Borders/Border-16% Black
         border-radius: 4px;
         font-family: inherit;
         font-size: 14px;
         resize: vertical;
         box-sizing: border-box;
-        background-color: #FFFFFF; // Ensure white background
+        background-color: #FFFFFF; // Figma: White/KB-White-100%
 
         @media (max-width: 480px) {
           font-size: 13px;
@@ -152,11 +152,11 @@
 
         &:focus {
           outline: none;
-          border-color: #3F51B5;
+          border-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
         }
 
         &::placeholder {
-          color: rgba(0, 0, 0, 0.38);
+          color: rgba(0, 0, 0, 0.4); // Figma: Primary/KB-Primary-Tertiary
         }
       }
 

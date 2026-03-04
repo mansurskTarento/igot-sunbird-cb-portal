@@ -48,6 +48,11 @@ export class PeerDashboardComponent implements OnInit {
   }
 
   fetchData() {
+    // Clear stale data immediately so the old list doesn't blink
+    // while the new API response is in-flight.
+    this.pendingSurveys = []
+    this.incomingRequests = []
+    this.totalItems = 0
     const filters: NSPeerValidation.IDashboardFilters = {
       tab: this.activeTab === 'pending' ? 0 : 1,
       search: this.searchQuery,

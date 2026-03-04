@@ -18,20 +18,15 @@
       font-size: 48px;
       width: 48px;
       height: 48px;
-      color: #FF9800;
+      color: #F3962F;
     }
   }
 
   .message {
     font-size: 14px;
     line-height: 1.6;
-    color: rgba(0, 0, 0, 0.87);
+    color: #1B4CA1;
     margin: 0 0 24px;
-
-    .highlight {
-      color: #3F51B5;
-      font-weight: 500;
-    }
   }
 
   .button-group {
@@ -42,6 +37,15 @@
     .action-btn {
       min-width: 100px;
       border-radius: 4px;
+      border: 1px solid #1B4CA1; // Figma: Primary/KB-Primary-Light
+      color: #1B4CA1;
+      background: white;
+      transition: background-color 0.2s, color 0.2s;
+
+      &:hover {
+        background-color: #1B4CA1;
+        color: white;
+      }
     }
   }
 }
