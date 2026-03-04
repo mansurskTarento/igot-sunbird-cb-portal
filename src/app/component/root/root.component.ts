@@ -68,6 +68,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   environment: any = null
   popupDuration: any = 7200
   isPlayer: boolean = false
+  lastNotificationActionTime: number | null = null
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -240,7 +241,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
   fetchMandatoryNotification() {
-
     this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
       if (notification && Object.keys(notification).length > 0 && !notification?.read) {
         this.mandatoryNotificationData = notification
@@ -276,6 +276,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     dialogRef.afterClosed().subscribe(result => {
       this.isMandatoryModalOpen = false
       if (result === 'accepted') {
+
         let request: any = {
           request: {
             id: this.mandatoryNotificationData.notification_id,
@@ -283,24 +284,50 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             type: this.mandatoryNotificationData.type
           }
         }
+
         this.mandatoryNotificationsService.markMandatoryAsRead(request).subscribe((res: any) => {
           if (res.responseCode === 'OK') {
+            // Set timestamp when user accepts
+            this.lastNotificationActionTime = Date.now()
             this.mandatoryNotificationData.read = true
+
             this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
               this.showMandatoryNotification = true
               this.fetchMandatoryNotification()
             })
-            this.router.navigate(['/app/toc/', this.mandatoryNotificationData?.message?.data?.id, 'overview'])
+            this.router.navigate(['/viewer/practice/', this.mandatoryNotificationData?.message?.data?.assessmentId,],
+              {
+                queryParams: {
+                  primaryCategory: this.mandatoryNotificationData?.message?.data?.primaryCategory,
+                  collectionId: this.mandatoryNotificationData?.message?.data?.collectionId,
+                  collectionType: this.mandatoryNotificationData?.message?.data?.collectionType,
+                  batchId: this.mandatoryNotificationData?.message?.data?.batchId,
+                }
+              }
+            )
           }
+        }, error => {
+          console.error('Error marking mandatory notification as read:', error)
+          // Set timestamp when user rejects/closes
+          this.lastNotificationActionTime = Date.now()
+          // Disable until the timer re-triggers
+          this.showMandatoryNotification = false
+          // Re-check API for notification after the duration
+          this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
+            this.showMandatoryNotification = true
+            this.fetchMandatoryNotification()
+          })
         })
 
       } else {
+        // Set timestamp when user rejects/closes
+        this.lastNotificationActionTime = Date.now()
         // Disable until the timer re-triggers
         this.showMandatoryNotification = false
-        // Re-trigger the modal after 15 seconds
+        // Re-check API for notification after the duration
         this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
           this.showMandatoryNotification = true
-          this.openMandatoryNotificationModal()
+          this.fetchMandatoryNotification()
         })
       }
     })
@@ -368,11 +395,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     ).subscribe((event: any) => {
       const wasPlayer = this.isPlayer
       this.isPlayer = event.url.includes('/viewer')
-      // When navigating away from viewer, show pending mandatory notification
-      if (wasPlayer && !this.isPlayer && this.mandatoryNotificationData
-        && !this.isMandatoryModalOpen) {
-        this.showMandatoryNotification = true
-        this.openMandatoryNotificationModal()
+      // When navigating away from viewer, check if enough time has elapsed
+      if (wasPlayer && !this.isPlayer && !this.isMandatoryModalOpen) {
+        const currentTime = Date.now()
+        const timeElapsed = this.lastNotificationActionTime
+          ? (currentTime - this.lastNotificationActionTime) / 1000 // Convert to seconds
+          : this.popupDuration + 1 // If no timestamp, consider time elapsed
+
+        // Only show modal if time elapsed is greater than or equal to popup duration
+        if (timeElapsed >= this.popupDuration) {
+          this.showMandatoryNotification = true
+          this.fetchMandatoryNotification()
+        }
       }
 
       this.prevUrl = this.currUrl

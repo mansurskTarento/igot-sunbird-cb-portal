@@ -204,6 +204,17 @@ export class NotificationsService {
       }
     } else if (notification.sub_category === 'CONTENT_RETIRED') {
       snackBar.open(`This content is retired. You can not access it now.`)
+    } else if (notification.sub_category === 'RETAKE_MANDATORY_COMPREHENSIVE_ASSESSMENT_PROGRAM') {
+      this.router.navigate(['/viewer/practice/', notification.message.data.assessmentId,],
+        {
+          queryParams: {
+            primaryCategory: notification.message.data.primaryCategory,
+            collectionId: notification.message.data.collectionId,
+            collectionType: notification.message.data.collectionType,
+            batchId: notification.message.data.batchId,
+          }
+        }
+      )
     } else {
       this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
         this.router.navigate([`/app/toc/${notification.message.data.id}`])
