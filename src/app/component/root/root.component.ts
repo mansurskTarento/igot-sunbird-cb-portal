@@ -44,10 +44,10 @@ import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
-import { concat, interval, timer, of, Subscription } from 'rxjs'
+import { concat, interval, timer, of } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
-import { MandatoryNotificationModalComponent } from '../mandatory-notification-modal/mandatory-notification-modal.component'
 import { MandatoryNotificationsService } from '../../services/mandatory-notifications.service'
+import { CommonDataService } from '../../services/common-data.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -61,14 +61,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   isHomePage = false
-  showMandatoryNotification = false
-  isMandatoryModalOpen = false
-  mandatoryNotificationTimer: Subscription | null = null
-  mandatoryNotificationData: any = null
-  environment: any = null
-  popupDuration: any = 7200
-  isPlayer: boolean = false
-  lastNotificationActionTime: number | null = null
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -89,7 +81,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private utilitySvc: UtilityService,
     private urlService: UrlService,
     private iGOTAIService: iGOTAIService,
-    private mandatoryNotificationsService: MandatoryNotificationsService
+    private mandatoryNotificationsService: MandatoryNotificationsService,
+    private commonDataSvc: CommonDataService,
 
     // private dialogRef: MatDialogRef<any>,
   ) {
@@ -240,98 +233,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       // this.authSvc.logout()
     }
   }
-  fetchMandatoryNotification() {
-    this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
-      if (notification && Object.keys(notification).length > 0 && !notification?.read) {
-        this.mandatoryNotificationData = notification
-        this.showMandatoryNotification = true
-        this.openMandatoryNotificationModal()
-      } else {
-        this.showMandatoryNotification = false
-      }
-    }, error => {
-      console.error('Error fetching mandatory notification:', error)
-    })
-  }
-
-  openMandatoryNotificationModal() {
-    if (this.isMandatoryModalOpen || !this.showMandatoryNotification || this.isPlayer) {
-      return
-    }
-    this.isMandatoryModalOpen = true
-
-    // Clear any pending re-trigger timer
-    if (this.mandatoryNotificationTimer) {
-      this.mandatoryNotificationTimer.unsubscribe()
-      this.mandatoryNotificationTimer = null
-    }
-    const dialogRef = this.dialog.open(MandatoryNotificationModalComponent, {
-      data: {
-        notification: this.mandatoryNotificationData,
-      },
-      panelClass: 'profile-verification-dialog-container',
-      disableClose: false,
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.isMandatoryModalOpen = false
-      if (result === 'accepted') {
-
-        let request: any = {
-          request: {
-            id: this.mandatoryNotificationData.notification_id,
-            created_at: this.mandatoryNotificationData.created_at,
-            type: this.mandatoryNotificationData.type
-          }
-        }
-
-        this.mandatoryNotificationsService.markMandatoryAsRead(request).subscribe((res: any) => {
-          if (res.responseCode === 'OK') {
-            // Set timestamp when user accepts
-            this.lastNotificationActionTime = Date.now()
-            this.mandatoryNotificationData.read = true
-
-            this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
-              this.showMandatoryNotification = true
-              this.fetchMandatoryNotification()
-            })
-            this.router.navigate(['/viewer/practice/', this.mandatoryNotificationData?.message?.data?.assessmentId,],
-              {
-                queryParams: {
-                  primaryCategory: this.mandatoryNotificationData?.message?.data?.primaryCategory,
-                  collectionId: this.mandatoryNotificationData?.message?.data?.collectionId,
-                  collectionType: this.mandatoryNotificationData?.message?.data?.collectionType,
-                  batchId: this.mandatoryNotificationData?.message?.data?.batchId,
-                }
-              }
-            )
-          }
-        }, error => {
-          console.error('Error marking mandatory notification as read:', error)
-          // Set timestamp when user rejects/closes
-          this.lastNotificationActionTime = Date.now()
-          // Disable until the timer re-triggers
-          this.showMandatoryNotification = false
-          // Re-check API for notification after the duration
-          this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
-            this.showMandatoryNotification = true
-            this.fetchMandatoryNotification()
-          })
-        })
-
-      } else {
-        // Set timestamp when user rejects/closes
-        this.lastNotificationActionTime = Date.now()
-        // Disable until the timer re-triggers
-        this.showMandatoryNotification = false
-        // Re-check API for notification after the duration
-        this.mandatoryNotificationTimer = timer(this.popupDuration * 1000).subscribe(() => {
-          this.showMandatoryNotification = true
-          this.fetchMandatoryNotification()
-        })
-      }
-    })
-  }
 
   openIntro() {
     // if (!(this.rootSvc.getCookie('intro') && !!(this.rootSvc.getCookie('intro')))) {
@@ -379,36 +280,20 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       }
     }
     this.mandatoryNotificationsService.formReadData(request).subscribe((data: any) => {
-      this.popupDuration = data && data.result && data.result.form && data.result.form.data && data.result.form.data.mandatoryPopUpDuration
+      const popupDuration = data && data.result && data.result.form && data.result.form.data && data.result.form.data.mandatoryPopUpDuration
+      this.commonDataSvc.initializeMandatoryNotificationTimer(popupDuration || 7200)
     })
 
     this.btnBackSvc.initialize()
-    setTimeout(() => {
-      this.fetchMandatoryNotification()
-    }, 500)
-
-
-
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      const wasPlayer = this.isPlayer
-      this.isPlayer = event.url.includes('/viewer')
-      // When navigating away from viewer, check if enough time has elapsed
-      if (wasPlayer && !this.isPlayer && !this.isMandatoryModalOpen) {
-        const currentTime = Date.now()
-        const timeElapsed = this.lastNotificationActionTime
-          ? (currentTime - this.lastNotificationActionTime) / 1000 // Convert to seconds
-          : this.popupDuration + 1 // If no timestamp, consider time elapsed
+      const isPlayer = event.url.includes('/viewer')
 
-        // Only show modal if time elapsed is greater than or equal to popup duration
-        if (timeElapsed >= this.popupDuration) {
-          this.showMandatoryNotification = true
-          this.fetchMandatoryNotification()
-        }
-      }
-
+      // Initialize mandatory details from common data service
+      this.commonDataSvc.mandatoryDetails(isPlayer)
+      // Check and show mandatory notification on route change
       this.prevUrl = this.currUrl
 
       this.currUrl = event.url
@@ -417,6 +302,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       if (this.currUrl === '/page/home') {
         this.isHomePage = true
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
+        // Fetch mandatory notification when navigating to home
+        //this.commonDataSvc.fetchMandatoryNotification()
       } else {
         this.isHomePage = false
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)

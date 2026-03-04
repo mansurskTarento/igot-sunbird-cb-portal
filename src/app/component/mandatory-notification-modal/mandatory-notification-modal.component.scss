@@ -1,3 +1,31 @@
+::ng-deep .mandatory-notification-dialog-container {
+  .mat-dialog-container {
+    padding: 24px !important;
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .mat-dialog-title {
+    margin: 0 0 16px 0 !important;
+    padding: 0 !important;
+  }
+
+  .mat-dialog-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: unset !important;
+  }
+
+  .mat-dialog-actions {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: unset !important;
+  }
+}
+
 .mandatory-notification-modal {
   min-width: 400px;
   max-width: 560px;

@@ -490,6 +490,7 @@ export class InitService {
         if (userProfile.rootOrgId) {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe((orgData) => {
             //console.log('orgData--', orgData)
+            this.configSvc.orgReadData = orgData
             if (orgData && orgData['netcoreDisabled']) {
 
             } else {
