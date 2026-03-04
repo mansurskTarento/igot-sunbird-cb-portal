@@ -1,0 +1,338 @@
+.pass-theme {
+  .result-header-card {
+    border-color: #1D8923 !important;
+
+    .check-circle-icon {
+      color: #1D8923 !important;
+    }
+  }
+}
+
+.failed-theme {
+  .result-header-card {
+    border-color: #D13924;
+
+    .check-circle-icon {
+      color: #F3962F;
+    }
+
+    .result-description {
+      color: #D13924
+    }
+
+    .persentage {
+      color: #D13924 !important;
+    }
+
+    .required-box {
+      border: 1px solid #FFD6A8;
+      background-color: #FFF7ED;
+      border-radius: 10px;
+      padding: 9px 13px;
+      // stylelint-disable-next-line
+      font: 400 12px Lato;
+      color: #CA3500 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .requiredPassPercent {
+        color: #F54900 !important;
+        // stylelint-disable-next-line
+        font: 600 16px Montserrat;
+      }
+    }
+  }
+
+  .what-you-need-to-pass {
+    border: 1px solid #FFD6A8;
+    background-color: #FFF7ED;
+    border-radius: 10px;
+    padding: 9px 13px;
+    max-width: fit-content;
+
+    .what-you-need-to-pass-title {
+      // stylelint-disable-next-line
+      font: 700 14px Lato;
+      color: #D13924;
+    }
+
+    .description-points {
+      // stylelint-disable-next-line
+      font: 400 12px Lato;
+      color: #D13924;
+    }
+  }
+}
+
+.summary-card-label {
+  // stylelint-disable-next-line
+  font: 400 16px Lato;
+}
+
+.summary-card-value {
+  // stylelint-disable-next-line
+  font: 600 20px Montserrat;
+}
+
+.time-green {
+  width: 50px;
+  height: 50px;
+  border-radius: 26px;
+  background-color: #D1FAE5;
+
+  mat-icon {
+    color: #1D8923;
+  }
+}
+
+.attempted-orange {
+  width: 50px;
+  height: 50px;
+  border-radius: 26px;
+  background-color: rgba(239, 149, 30, 0.12);
+
+  mat-icon {
+    color: #E99E38;
+  }
+}
+
+.marks-blue {
+  width: 50px;
+  height: 50px;
+  border-radius: 26px;
+  background-color: #DBEAFE;
+
+  mat-icon {
+    color: #7FAEFF;
+  }
+}
+
+.overall-result-container {
+  .section-wise-performance {
+    // stylelint-disable-next-line
+    font: 600 20px Montserrat;
+  }
+
+  // stylelint-disable-next-line
+  font: 400 14px/1.5 'Inter',
+  sans-serif;
+
+  .result-header-card {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    border: 2px solid #D13924;
+
+    .check-circle-icon {
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+    }
+
+    .overall-results {
+      // stylelint-disable-next-line
+      font: 600 20px Montserrat;
+      margin-bottom: 10px;
+    }
+
+    .info-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: rgba(0, 0, 0, 0.60);
+    }
+
+    .result-description {
+      // stylelint-disable-next-line
+      font: 400 14px Lato;
+      color: #666
+    }
+
+    .your-score {
+      // stylelint-disable-next-line
+      font: 400 16px Lato;
+      color: #6A7282
+    }
+
+    .persentage {
+      // stylelint-disable-next-line
+      font: 700 36px Inter;
+      color: #1D8923;
+    }
+
+    .obtained-marks {
+      // stylelint-disable-next-line
+      font: 400 14px Lato;
+      color: #6A7282
+    }
+
+  }
+
+  .summary-cards {
+
+    // Mobile-first responsive design
+    .flex {
+      @apply flex-col;
+
+      @media (min-width: 768px) {
+        @apply flex-row;
+      }
+    }
+
+    .summary-card {
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .text-pass {
+    color: #1D8923;
+  }
+
+  .text-fail {
+    color: #D13924;
+  }
+
+  .section-performance-table {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+
+    table {
+      @apply bg-white;
+      min-width: 600px; // Ensures table doesn't compress too much
+
+      th {
+        @apply bg-gray-100 py-4 px-6 text-left font-semibold text-gray-700;
+        /* stylelint-disable-next-line font-family-no-missing-generic-keyword */
+        font: 600 12px/1.4 'Inter', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+      }
+
+      td {
+        @apply py-4 px-6 border-gray-200;
+        /* stylelint-disable-next-line font-family-no-missing-generic-keyword */
+        font: 400 14px/1.5 'Inter', sans-serif;
+      }
+
+      tr {
+        transition: background-color 0.15s ease-in-out;
+        height: 70px;
+      }
+    }
+
+    // Mobile table adaptations
+    @media (max-width: 768px) {
+      .hidden-mobile {
+        display: none;
+      }
+    }
+  }
+
+  .failure-info-box {
+    border-left: 4px solid #f97316;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .result-header-card {
+      padding: 16px;
+
+      .flex {
+        @apply flex-col;
+      }
+    }
+  }
+}
+
+.min-score-box {
+  background-color: #FFF7ED;
+  border-radius: 10px;
+  padding: 10px 25px;
+  // stylelint-disable-next-line
+  font: 700 14px Lato;
+  color: #CA3500 !important;
+}
+
+.visibility-btn {
+  background-color: #1B4CA1 !important;
+  color: #FFFFFF !important;
+  // stylelint-disable-next-line
+  font: 700 14px Lato;
+  border-radius: 10px;
+  padding: 7px 18px;
+}
+
+@media (max-width: 768px) {
+  .overall-results {
+    font-size: 16px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mobile-section-performance {
+  h2 {
+    // stylelint-disable-next-line
+    font: 600 20px Montserrat;
+    color: #1B4CA1;
+    margin-bottom: 5px;
+  }
+
+  .divider {
+    width: 95px;
+    border-bottom: 4px solid #FFA600;
+    line-height: 4px;
+  }
+
+  .section-card {
+    border-radius: 8px;
+    padding: 10px;
+
+    .section-card-header {
+      // stylelint-disable-next-line
+      font: 600 16px Montserrat;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .label {
+      // stylelint-disable-next-line
+      font: 400 14px Lato;
+      color: rgba(0, 0, 0, 0.60);
+    }
+
+    .pass-text {
+      color: #1D8923;
+      // stylelint-disable-next-line
+      font: 700 14px Lato;
+    }
+
+    .fail-text {
+      color: #D13924;
+      // stylelint-disable-next-line
+      font: 700 14px Lato;
+    }
+  }
+}

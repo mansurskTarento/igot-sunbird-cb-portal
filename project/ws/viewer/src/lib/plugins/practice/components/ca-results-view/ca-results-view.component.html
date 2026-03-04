@@ -1,0 +1,30 @@
+<!-- Parent Container with State Management -->
+<div class="ca-results-container">
+
+  <!-- Overall Result View -->
+  <ng-container *ngIf="showOverallView">
+    <viewer-overall-result-view [resultsData]="results" (viewQuestions)="onViewQuestions($event)">
+    </viewer-overall-result-view>
+  </ng-container>
+
+  <!-- Section Results View -->
+  <ng-container *ngIf="!showOverallView && selectedSection">
+    <viewer-section-results-view [sectionData]="selectedSection" (back)="onBackFromSection()">
+    </viewer-section-results-view>
+  </ng-container>
+
+  <div class="w-full flex justify-center items-center mt-4">
+    <ng-container *ngIf="(canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1 === 0">
+      <div class="mat-subheading-2 message">
+        <span>{{'playerbrief.maxAllowedRetake' | translate}}</span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="canAttempt?.attemptsAllowed - canAttempt?.attemptsMade - 1 > 0">
+      <button mat-button (click)="retakeTest()" class="flex items-center gap-2 justify-center reattempt-btn">
+        <mat-icon>repeat</mat-icon>
+        {{'quizresult.reattemptTest' | translate}}
+      </button>
+    </ng-container>
+  </div>
+
+</div>
