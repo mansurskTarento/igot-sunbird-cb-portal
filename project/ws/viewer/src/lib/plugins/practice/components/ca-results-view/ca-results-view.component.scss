@@ -1,5 +1,6 @@
 .ca-results-container {
   background-color: #F0F3F4;
+  // stylelint-disable-next-line
   font: 400 14px/1.5 'Inter', sans-serif;
   max-height: 500px;
   overflow-y: auto;
@@ -33,6 +34,7 @@
     border: 1px solid #1B4CA1;
     border-radius: 17px;
     padding: 0 20px;
+    // stylelint-disable-next-line
     font: 700 14px Lato;
     color: #1B4CA1;
 

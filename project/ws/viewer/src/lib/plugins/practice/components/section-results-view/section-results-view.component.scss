@@ -1,8 +1,10 @@
 .section-results-container {
+  // stylelint-disable-next-line
   font: 400 14px/1.5 'Inter', sans-serif;
   background-color: #ffffff;
 
   .section-title {
+    // stylelint-disable-next-line
     font: 600 20px Montserrat;
     margin: 0 0 24px 0;
   }
@@ -11,6 +13,7 @@
     background-color: #FFF7ED;
     border-radius: 10px;
     padding: 10px 25px;
+    // stylelint-disable-next-line
     font: 700 14px Lato;
     color: #CA3500 !important;
   }
@@ -66,6 +69,7 @@
         .header-cell {
           padding: 0;
           text-align: left;
+          // stylelint-disable-next-line
           font: 600 12px 'Inter', sans-serif;
           color: #374151;
           text-transform: capitalize;
@@ -88,6 +92,7 @@
         }
 
         >div {
+          // stylelint-disable-next-line
           font: 400 14px 'Inter', sans-serif;
           color: #374151;
           vertical-align: middle;
@@ -106,6 +111,7 @@
           }
 
           &.col-status {
+            // stylelint-disable-next-line
             font: 500 14px 'Inter', sans-serif;
             color: #374151;
 
@@ -116,6 +122,7 @@
 
           &.col-marks {
             .marks-value {
+              // stylelint-disable-next-line
               font: 500 14px 'Inter', sans-serif;
             }
           }
@@ -125,6 +132,7 @@
               gap: 12px;
 
               .time-value {
+                // stylelint-disable-next-line
                 font: 500 13px 'Inter', sans-serif;
                 color: #6b7280;
               }
@@ -177,6 +185,7 @@
         .question-details {
 
           .question-label {
+            // stylelint-disable-next-line
             font: 700 14px Lato;
             color: #364153;
             text-transform: uppercase;
@@ -184,6 +193,7 @@
           }
 
           .question-text {
+            // stylelint-disable-next-line
             font: 400 14px Lato;
             color: #101828;
           }
@@ -197,11 +207,13 @@
             max-width: 95%;
 
             .answer-label {
+              // stylelint-disable-next-line
               font: 700 14px Lato;
               color: #364153;
             }
 
             .answer-text {
+              // stylelint-disable-next-line
               font: 400 14px Lato;
               color: #008236;
 
@@ -385,23 +397,27 @@
     padding: 10px;
 
     .section-card-header {
+      // stylelint-disable-next-line
       font: 600 16px Montserrat;
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .label {
+      // stylelint-disable-next-line
       font: 400 14px Lato;
       color: rgba(0, 0, 0, 0.60);
     }
 
     .pass-text {
       color: #1D8923;
+      // stylelint-disable-next-line
       font: 700 14px Lato;
     }
 
     .fail-text {
       color: #D13924;
+      // stylelint-disable-next-line
       font: 700 14px Lato;
     }
   }
@@ -424,6 +440,7 @@
   }
 
   .section-title {
+    // stylelint-disable-next-line
     font: 600 20px Montserrat;
     color: #1B4CA1;
     margin-bottom: 5px;

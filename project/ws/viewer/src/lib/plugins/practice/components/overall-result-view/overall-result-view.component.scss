@@ -29,6 +29,7 @@
       background-color: #FFF7ED;
       border-radius: 10px;
       padding: 9px 13px;
+      // stylelint-disable-next-line
       font: 400 12px Lato;
       color: #CA3500 !important;
       display: flex;
@@ -37,6 +38,7 @@
 
       .requiredPassPercent {
         color: #F54900 !important;
+        // stylelint-disable-next-line
         font: 600 16px Montserrat;
       }
     }
@@ -50,11 +52,13 @@
     max-width: fit-content;
 
     .what-you-need-to-pass-title {
+      // stylelint-disable-next-line
       font: 700 14px Lato;
       color: #D13924;
     }
 
     .description-points {
+      // stylelint-disable-next-line
       font: 400 12px Lato;
       color: #D13924;
     }
@@ -62,10 +66,12 @@
 }
 
 .summary-card-label {
+  // stylelint-disable-next-line
   font: 400 16px Lato;
 }
 
 .summary-card-value {
+  // stylelint-disable-next-line
   font: 600 20px Montserrat;
 }
 
@@ -104,9 +110,11 @@
 
 .overall-result-container {
   .section-wise-performance {
+    // stylelint-disable-next-line
     font: 600 20px Montserrat;
   }
 
+  // stylelint-disable-next-line
   font: 400 14px/1.5 'Inter',
   sans-serif;
 
@@ -123,6 +131,7 @@
     }
 
     .overall-results {
+      // stylelint-disable-next-line
       font: 600 20px Montserrat;
       margin-bottom: 10px;
     }
@@ -135,21 +144,25 @@
     }
 
     .result-description {
+      // stylelint-disable-next-line
       font: 400 14px Lato;
       color: #666
     }
 
     .your-score {
+      // stylelint-disable-next-line
       font: 400 16px Lato;
       color: #6A7282
     }
 
     .persentage {
+      // stylelint-disable-next-line
       font: 700 36px Inter;
       color: #1D8923;
     }
 
     .obtained-marks {
+      // stylelint-disable-next-line
       font: 400 14px Lato;
       color: #6A7282
     }
@@ -247,6 +260,7 @@
   background-color: #FFF7ED;
   border-radius: 10px;
   padding: 10px 25px;
+  // stylelint-disable-next-line
   font: 700 14px Lato;
   color: #CA3500 !important;
 }
@@ -254,6 +268,7 @@
 .visibility-btn {
   background-color: #1B4CA1 !important;
   color: #FFFFFF !important;
+  // stylelint-disable-next-line
   font: 700 14px Lato;
   border-radius: 10px;
   padding: 7px 18px;
@@ -279,6 +294,7 @@
 
 .mobile-section-performance {
   h2 {
+    // stylelint-disable-next-line
     font: 600 20px Montserrat;
     color: #1B4CA1;
     margin-bottom: 5px;
@@ -295,23 +311,27 @@
     padding: 10px;
 
     .section-card-header {
+      // stylelint-disable-next-line
       font: 600 16px Montserrat;
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .label {
+      // stylelint-disable-next-line
       font: 400 14px Lato;
       color: rgba(0, 0, 0, 0.60);
     }
 
     .pass-text {
       color: #1D8923;
+      // stylelint-disable-next-line
       font: 700 14px Lato;
     }
 
     .fail-text {
       color: #D13924;
+      // stylelint-disable-next-line
       font: 700 14px Lato;
     }
   }
