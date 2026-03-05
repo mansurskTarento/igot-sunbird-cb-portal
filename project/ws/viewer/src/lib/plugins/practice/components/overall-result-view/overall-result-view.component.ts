@@ -27,6 +27,7 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
   @Input() resultsData: any
   @Input() selectedAssessmentCompatibilityLevel: number = 1
   @Input() v4questionSet: any
+  @Input() hideSectionTable = false
   @Output() viewQuestions = new EventEmitter<NSPractice.IQuizSubmitResSec>();
 
   // Component-owned computed properties
@@ -34,55 +35,12 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
   overallScorePercent = 0;
   marksObtainedText = '';
   requiredPassPercent = 0;
-  summaryCards: any[] = [
-    {
-      imgType: 'icon',
-      imgPath: 'speed',
-      class: 'icon-bg-blue',
-      summary: '',
-      summaryType: 'quizresult.score',
-    },
-    {
-      imgType: 'img',
-      imgPath: '/assets/icons/final-assessment/nest_clock_farsight_analog.svg',
-      class: 'icon-bg-lite-green',
-      summary: '',
-      summaryType: 'quizresult.timeTaken',
-    },
-    {
-      imgType: 'img',
-      imgPath: '/assets/icons/final-assessment/assignment.svg',
-      class: 'icon-bg-pink',
-      summary: '',
-      summaryType: 'quizresult.attempted',
-    },
-    {
-      imgType: 'icon',
-      imgPath: 'check_circle_outline',
-      class: 'icon-bg-yellow',
-      summary: '',
-      summaryType: 'quizresult.correct',
-    },
-    {
-      imgType: 'icon',
-      imgPath: 'cancel',
-      class: 'icon-bg-red',
-      summary: '',
-      summaryType: 'quizresult.wrong',
-    },
-    {
-      imgType: 'img',
-      imgPath: '/assets/icons/final-assessment/target.svg',
-      class: 'icon-bg-dark-green',
-      summary: '',
-      summaryType: 'quizresult.accuracy',
-    },
-  ];
+  summaryCards: any[] = [];
   sectionTableData: SectionTableData[] = [];
-  displayedColumns = ['sectionName', 'result', 'yourScore', 'requiredScore'];
+  displayedColumns = ['sectionName', 'result', 'yourScore', 'requiredScore', 'actions'];
   failureInfo: FailureInfo | null = null;
   isDataLoaded = false;
-  primaryCategories = NsContent.EPrimaryCategory.PRACTICE_RESOURCE
+  isPracticeAssessment = false
 
   // RxJS Lifecycle Management
   destroy$ = new Subject<void>();
@@ -129,6 +87,7 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
 
     // Basic derived state
     this.isPassed = _.get(results, 'pass', false)
+    this.isPracticeAssessment = results?.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
 
     this.overallScorePercent = parseFloat((this.selectedAssessmentCompatibilityLevel >= 7
       ? this.sanitizeNumber(_.get(results, 'totalPercentage', 0))
@@ -161,9 +120,6 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
     const incorrect = this.sanitizeNumber(_.get(results, 'incorrect', 0))
     const blank = this.sanitizeNumber(_.get(results, 'blank', 0))
     const total = this.sanitizeNumber(_.get(results, 'total', 0)) || (correct + incorrect + blank)
-    const overallResult = this.selectedAssessmentCompatibilityLevel >= 7
-      ? this.sanitizeNumber(_.get(results, 'totalPercentage', 0))
-      : this.sanitizeNumber(_.get(results, 'overallResult', 0))
 
     const totalSectionMarks = this.sanitizeNumber(_.get(results, 'totalSectionMarks', null))
     const totalMarks = this.sanitizeNumber(_.get(results, 'totalMarks', null))
@@ -222,16 +178,6 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
       })
     }
 
-    if (overallResult > 0) {
-      cards.push({
-        imgType: 'img',
-        imgPath: '/assets/icons/final-assessment/target.svg',
-        class: 'icon-bg-dark-green',
-        summary: `${Math.round(overallResult)}%`,
-        summaryType: 'quizresult.accuracy',
-      })
-    }
-
     this.summaryCards = cards
   }
 
@@ -276,7 +222,7 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
       return {
         sectionName,
         result: pass ? 'PASSED' : 'FAILED',
-        yourScore: result,
+        yourScore: parseFloat(this.sanitizeNumber(result).toFixed(2)),
         requiredScore: minimumPass,
         rawSectionData: section
       }

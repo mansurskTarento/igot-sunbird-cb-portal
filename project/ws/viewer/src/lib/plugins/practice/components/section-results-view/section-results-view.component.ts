@@ -25,6 +25,8 @@ interface FormattedQuestion extends NSPractice.ISectionQuestion {
 })
 export class SectionResultsViewComponent implements OnInit {
   @Input() sectionData!: NSPractice.IQuizSubmitResSec
+  @Input() hideSectionHeader = false
+  @Input() selectedAssessmentCompatibilityLevel: number = 0
   @Output() back = new EventEmitter<void>();
 
   // Question arrays for different tabs
@@ -42,22 +44,40 @@ export class SectionResultsViewComponent implements OnInit {
     this.initializeData()
   }
 
-  private initializeData(): void {
-    let questions: FormattedQuestion[] = []
+  private normalizeResult(result: string): string {
+    switch ((result || '').toLowerCase()) {
+      case 'correct': return 'Correct'
+      case 'incorrect': return 'Incorrect'
+      case 'blank': return 'Unattempted'
+      default: return result
+    }
+  }
 
-    // Handle the new flat data format with children array of questions
+  private initializeData(): void {
+    const correct: FormattedQuestion[] = []
+    const incorrect: FormattedQuestion[] = []
+    const blank: FormattedQuestion[] = []
+    const all: FormattedQuestion[] = []
+
     if (this.sectionData && this.sectionData.children && Array.isArray(this.sectionData.children)) {
-      questions = this.sectionData.children.map((question: any) => ({
-        ...question,
-        formattedTime: this.formatTime(question.timeSpent || question.timeTaken || '')
-      }))
+      for (const question of this.sectionData.children) {
+        const normalizedResult = this.normalizeResult(question.result)
+        const formatted: FormattedQuestion = {
+          ...question,
+          result: normalizedResult,
+          formattedTime: this.formatTime(question.timeSpent || '')
+        }
+        all.push(formatted)
+        if (normalizedResult === 'Correct') { correct.push(formatted) }
+        else if (normalizedResult === 'Incorrect') { incorrect.push(formatted) }
+        else if (normalizedResult === 'Unattempted') { blank.push(formatted) }
+      }
     }
 
-    // Populate question arrays
-    this.allQuestions = questions
-    this.correctQuestions = questions.filter(q => q.result === 'correct')
-    this.incorrectQuestions = questions.filter(q => q.result === 'incorrect')
-    this.blankQuestions = questions.filter(q => q.result === 'blank')
+    this.allQuestions = all
+    this.correctQuestions = correct
+    this.incorrectQuestions = incorrect
+    this.blankQuestions = blank
   }
 
   // Toggle row expansion
