@@ -7,6 +7,7 @@ const API_ENDPOINTS = {
     VerifyOtp: '/apis/proxies/v8/otp/v1/verify',
     sendEmailOtp: '/apis/proxies/v8/otp/v3/generate',
     VerifyEmailOtp: '/apis/proxies/v8/otp/v3/verify',
+    verifyOTPV4: '/apis/proxies/v8/otp/v4/verify',
 }
 
 @Injectable()
@@ -82,5 +83,27 @@ export class OtpService {
             },
         }
         return this.http.post(API_ENDPOINTS.VerifyEmailOtp, reqObj)
+    }
+
+    verifyEmailOTPV4(otp: any, email: number) {
+        const reqObj = {
+            request: {
+                otp: otp.toString(),
+                type: 'email',
+                key: `${email}`,
+            },
+        }
+        return this.http.post(API_ENDPOINTS.verifyOTPV4, reqObj)
+    }
+
+    verifyOTPV4(otp: any, mob: number) {
+        const reqObj = {
+            request: {
+                otp,
+                type: 'phone',
+                key: `${mob}`,
+            },
+        }
+        return this.http.post(API_ENDPOINTS.verifyOTPV4, reqObj)
     }
 }
