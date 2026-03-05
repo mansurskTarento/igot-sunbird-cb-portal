@@ -12,6 +12,7 @@ export class CaResultsViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() results!: any
   @Input() canAttempt: any
   @Input() selectedAssessmentCompatibilityLevel: number = 0
+  @Input() v4questionSet: any
 
   @Output() userSelection = new EventEmitter<string>()
 

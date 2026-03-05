@@ -172,6 +172,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   private viewerDataTocSubscription: Subscription | null = null
   private cachedSelectedQuestionNumber: number = 0
   private cachedQuestionId: string = ''
+  v4questionSet: any
 
   @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
@@ -590,6 +591,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               if (section.responseCode && section.responseCode === 'OK') {
                 this.compatibilityLevel = section.result.questionSet.compatibilityLevel
                 this.assessmentType = section.result.questionSet.assessmentType
+                this.v4questionSet = section.result.questionSet
                 /** this is to enable or disable Timer */
                 const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
                 if (showTimer) {
