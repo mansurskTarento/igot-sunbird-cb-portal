@@ -46,7 +46,6 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
-import { MandatoryNotificationsService } from '../../services/mandatory-notifications.service'
 import { CommonDataService } from '../../services/common-data.service'
 @Component({
   selector: 'ws-root',
@@ -81,7 +80,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private utilitySvc: UtilityService,
     private urlService: UrlService,
     private iGOTAIService: iGOTAIService,
-    private mandatoryNotificationsService: MandatoryNotificationsService,
     private commonDataSvc: CommonDataService,
 
     // private dialogRef: MatDialogRef<any>,
@@ -268,21 +266,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.isInIframe = false
     }
 
-    // Access environment from route data
-    let request = {
-      "request": {
-        "type": "page",
-        "subType": "home",
-        "action": "page-configuration",
-        "component": "portal",
-        "rootOrgId": "*"
-
-      }
-    }
-    this.mandatoryNotificationsService.formReadData(request).subscribe((data: any) => {
-      const popupDuration = data && data.result && data.result.form && data.result.form.data && data.result.form.data.mandatoryPopUpDuration
-      this.commonDataSvc.initializeMandatoryNotificationTimer(popupDuration || 7200)
-    })
 
     this.btnBackSvc.initialize()
 
@@ -293,8 +276,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
       // Extract fragment from URL
       const fragment = this.route.snapshot.fragment || ''
-      console.log('URL Fragment:', fragment)
-
       // Initialize mandatory details from common data service
       if (!['mandatorySection', 'orgDetails'].includes(fragment)) {
         this.commonDataSvc.mandatoryDetails(isPlayer)
