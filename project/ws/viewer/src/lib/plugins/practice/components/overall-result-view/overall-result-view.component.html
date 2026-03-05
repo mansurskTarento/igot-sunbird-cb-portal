@@ -3,67 +3,101 @@
     <h2 class="section-wise-performance">{{ 'quizresult.myOverallPerformanceSummary' | translate }}</h2>
 
     <!-- Header Card (two-column: info | score) -->
-    <div class="result-header-card">
+    <ng-container *ngIf="primaryCategories.PRACTICE_RESOURCE !== resultsData?.primaryCategory">
+      <div class="result-header-card">
 
-      <div class="header-grid grid grid-cols-1 md:grid-cols-3 flex flex-col md:flex-row justify-between items-start">
-        <!-- Left: icon + text -->
-        <div class="col-span-2 flex items-start gap-4">
-          <mat-icon class="check-circle-icon">
-            {{ isPassed ? 'check_circle' : 'error' }}
-          </mat-icon>
-          <div class="flex-1">
-            <h1 class="overall-results flex gap-2">{{'quizresult.overallResult' | translate}}
-              <span class="flex items-center">
-                <mat-icon class="info-icon text-gray-500"
-                  matTooltip="This is your overall result based on the performance across all sections. Click on 'View Details' for a breakdown by section and question.">
-                  info_outline
-                </mat-icon>
-              </span>
-            </h1>
-            <p class="result-description">{{ isPassed ?
-              ('quizresult.congratulations' | translate) : ('quizresult.notPassed' | translate) }}</p>
-          </div>
-        </div>
+        <div class="header-grid grid grid-cols-1 md:grid-cols-3 flex flex-col md:flex-row justify-between items-start">
+          <!-- Left: icon + text -->
+          <div class="col-span-2 flex items-start gap-4">
+            <mat-icon class="check-circle-icon">
+              {{ isPassed ? 'check_circle' : 'error' }}
+            </mat-icon>
+            <div class="flex-1">
+              <h1 class="overall-results flex gap-2">{{'quizresult.overallResult' | translate}}
+                <span class="flex items-center">
+                  <mat-icon class="info-icon text-gray-500"
+                    matTooltip="This is your overall result based on the performance across all sections. Click on 'View Details' for a breakdown by section and question.">
+                    info_outline
+                  </mat-icon>
+                </span>
+              </h1>
+              <p class="result-description">{{ isPassed ?
+                ('quizresult.congratulations' | translate) : ('quizresult.notPassed' | translate) }}</p>
 
-        <!-- Right: score card -->
-        <div class="flex items-start gap-4">
-          <div class="md:hidden check-circle-icon"></div>
-          <div class="score-card flex flex-col md:items-end justify-between md:p-0 pt-2">
-            <ng-container *ngIf="overallScorePercent !== 0">
-              <div class="your-score">{{ 'quizresult.yourScore' | translate }}</div>
-              <div class="persentage">{{
-                overallScorePercent | number:'1.1-1' }}%</div>
-              <div class="obtained-marks hidden md:block">({{ marksObtainedText }})</div>
-            </ng-container>
-            <ng-container *ngIf="requiredPassPercent !== 0">
-              <div class="required-box mt-3 obtained-marks hidden md:block">
-                {{ 'quizresult.requiredToPass' | translate }} <span class="requiredPassPercent">{{ requiredPassPercent
-                  }}%</span>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Summary Cards -->
-    <ng-container *ngIf="summaryCards && summaryCards.length > 0">
-      <div class="summary-cards">
-        <div class="flex gap-4 w-full flex-col md:flex-row">
-          <ng-container *ngFor="let card of summaryCards">
-            <div class="flex items-center gap-3 p-4 bg-white rounded-lg shadow border flex-1">
-              <div class="flex-shrink-0 flex items-center justify-center" [ngClass]="card?.class">
-                <mat-icon class="text-2xl">{{ card?.icon }}</mat-icon>
-              </div>
-              <div>
-                <div class="summary-card-label mb-1">{{ card?.label }}</div>
-                <div class="summary-card-value text-lg font-semibold text-gray-800">{{ card?.value }}</div>
+              <div class="required-box mt-3 hidden md:block" *ngIf="!isPassed && failureInfo">
+                <p class="required-box-title">{{ 'quizresult.whatYouNeedToPass' | translate }}</p>
+                <ul class="required-box-list">
+                  <li *ngIf="failureInfo.percentageMore > 0">
+                    {{ 'quizresult.moreToPassThreshold' | translate: {score: failureInfo.percentageMore} }}
+                  </li>
+                  <li *ngIf="failureInfo.additionalMarks > 0">
+                    {{ 'quizresult.additionalMarks' | translate: {marks: failureInfo.additionalMarks} }}
+                  </li>
+                </ul>
               </div>
             </div>
-          </ng-container>
+          </div>
+
+          <!-- Right: score card -->
+          <div class="flex items-start gap-4">
+            <div class="md:hidden check-circle-icon"></div>
+            <div class="score-card flex flex-col md:items-end justify-between md:p-0 pt-2">
+              <ng-container *ngIf="overallScorePercent !== 0">
+                <div class="your-score">{{ 'quizresult.yourScore' | translate }}</div>
+                <div class="persentage">{{
+                  overallScorePercent | number:'1.1-1' }}%</div>
+                <div class="obtained-marks hidden md:block">({{ marksObtainedText }})</div>
+              </ng-container>
+              <ng-container *ngIf="requiredPassPercent !== 0">
+                <div class="required-box mt-3 hidden md:block">
+                  {{ 'quizresult.requiredToPass' | translate }} <span class="requiredPassPercent">{{ requiredPassPercent
+                    }}%</span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
         </div>
       </div>
     </ng-container>
+
+    <div class="required-box mt-3 block md:hidden" *ngIf="!isPassed && failureInfo">
+      <p class="required-box-title">{{ 'quizresult.whatYouNeedToPass' | translate }}</p>
+      <ul class="required-box-list">
+        <li *ngIf="failureInfo.percentageMore">
+          {{ 'quizresult.moreToPassThreshold' | translate: {score: failureInfo.percentageMore} }}
+        </li>
+        <li *ngIf="failureInfo.additionalMarks > 0">
+          {{ 'quizresult.additionalMarks' | translate: {marks: failureInfo.additionalMarks} }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="flex gap-4 flex-col md:flex-row"
+      [ngClass]="{'viewOverAllPerformance': expandMwebOverView && isMobile, 'colapseOverAllPerformance': !expandMwebOverView && isMobile}">
+      <ng-container *ngFor="let summary of summaryCards">
+        <div class="results-card flex">
+          <div class="flex gap-4 justify-center items-center mx-4">
+            <div class="result-icons-bg flex justify-center items-center" [ngClass]="summary.class">
+              <ng-container *ngIf="summary.imgType === 'icon'">
+                <mat-icon class="icons">{{summary.imgPath}}</mat-icon>
+              </ng-container>
+              <ng-container *ngIf="summary.imgType === 'img'">
+                <img [src]="summary.imgPath">
+              </ng-container>
+            </div>
+            <div class="flex flex-col w-full">
+              <div class="results-persentsge">
+                {{summary.summary}}
+              </div>
+              <div class="result-section-text">
+                {{summary.summaryType | translate}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
 
     <!-- Section-wise Performance Table -->
     <ng-container *ngIf="sectionTableData && sectionTableData.length > 0">
@@ -133,7 +167,7 @@
             </ng-container>
 
             <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
+            <!-- <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef
                 class="bg-gray-100 font-semibold text-gray-700 border-b px-6 py-4 w-auto">
                 {{ 'quizresult.viewDetails' | translate }}
@@ -146,7 +180,7 @@
                   <mat-icon class="mr-1">chevron_right</mat-icon>
                 </button>
               </td>
-            </ng-container>
+            </ng-container> -->
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -184,11 +218,11 @@
                     section?.requiredScore }}%</span></span>
               </div>
               <div class="w-full flex justify-center items-center mb-2">
-                <button mat-raised-button
+                <!-- <button mat-raised-button
                   class="flex items-center gap-2 justify-center visibility-btn whitespace-nowrap w-full"
                   (click)="onViewQuestions(section)">
                   {{ 'quizresult.viewQuestions' | translate }}
-                </button>
+                </button> -->
               </div>
             </div>
           </ng-container>
