@@ -121,17 +121,22 @@ export class ReviewPageComponent implements OnInit {
 
   reject() {
     if (!this.requestId) return
-    if (confirm('Are you sure you want to reject this request?')) {
       const submission: NSPeerValidation.IReviewSubmission = {
         requestId: this.requestId,
         ratings: [],
         decision: 'rejected',
       }
       this.peerValidationService.submitReview(submission).subscribe(() => {
-        alert('Rejected successfully')
-        this.goBack()
+
+        const dialogRef = this.dialog.open(SuccessDialogComponent, {
+          width: '400px',
+          panelClass: 'custom-success-dialog',
+        })
+
+        dialogRef.afterClosed().subscribe(() => {
+          this.goBack()
+        })
       })
-    }
   }
 
   // Helper for array generation for read-only rating

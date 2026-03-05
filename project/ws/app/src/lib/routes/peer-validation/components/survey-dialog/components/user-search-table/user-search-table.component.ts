@@ -1,18 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit, Inject, Optional, OnChanges, SimpleChanges } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog'
-import { MatIconModule } from '@angular/material/icon'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { PeerValidationService } from '../../../../services/peer-validation.service'
 
 @Component({
   selector: 'ws-app-user-search-table',
   templateUrl: './user-search-table.component.html',
   styleUrls: ['./user-search-table.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatDialogModule, MatButtonModule, MatCheckboxModule],
 })
 export class UserSearchTableComponent implements OnInit, OnChanges {
   @Input() users: any[] = []

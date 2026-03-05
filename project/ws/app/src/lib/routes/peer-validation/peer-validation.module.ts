@@ -52,6 +52,7 @@ import { UserSearchTableComponent } from './components/survey-dialog/components/
     ReviewPageComponent,
     VideoPreviewDialogComponent,
     VerificationRequestDialogComponent,
+    UserSearchTableComponent,
   ],
   imports: [
     CommonModule,
@@ -76,7 +77,6 @@ import { UserSearchTableComponent } from './components/survey-dialog/components/
     PlayerVideoModule,
     PlayerPdfModule,
     WidgetResolverModule,
-    UserSearchTableComponent,
   ],
   providers: [
     PeerValidationService,
