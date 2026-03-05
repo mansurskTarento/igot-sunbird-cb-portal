@@ -67,7 +67,6 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.displayLoader = this.browseProviderSvc.isLoading()
-    debugger
     if (this.activatedRoute.parent) {
       this.paramSubscription = this.activatedRoute.parent.params.subscribe(async (params: any) => {
         this.provider = _.get(params, 'provider')
@@ -78,7 +77,6 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
           ...this.searchReq.request.filters,
           "secureSettings.organisation": orgId
         }
-        debugger
         this.getAllCbps()
       })
     }
