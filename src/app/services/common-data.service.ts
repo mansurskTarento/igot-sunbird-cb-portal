@@ -47,6 +47,7 @@ export class CommonDataService {
     if (this.configSvc && this.configSvc.unMappedUser) {
       this.rootOrgId = this.configSvc.unMappedUser.rootOrgId || ''
     }
+    this.popupDuration = this.configSvc?.globalConfig?.mandatoryPopupDuration || 7200
   }
   redirectToCustomProfile() {
     this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
@@ -282,9 +283,4 @@ export class CommonDataService {
   updatePlayerStatus(isPlayer: boolean) {
     this.isPlayer = isPlayer
   }
-
-  initializeMandatoryNotificationTimer(popupDuration: number) {
-    this.popupDuration = popupDuration
-  }
-
 }
