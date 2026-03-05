@@ -128,7 +128,7 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
     const cards = []
 
     if (_.get(results, 'totalSectionMarks') != null && _.get(results, 'totalMarks') != null
-      && !isNaN(totalSectionMarks) && !isNaN(totalMarks)) {
+      && !isNaN(totalSectionMarks) && !isNaN(totalMarks) && !this.isPracticeAssessment) {
       cards.push({
         imgType: 'icon',
         imgPath: 'speed',
@@ -138,7 +138,7 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
       })
     }
 
-    if (timeTaken != null && !isNaN(Number(timeTaken))) {
+    if (timeTaken != null && !isNaN(Number(timeTaken)) && !this.isPracticeAssessment) {
       cards.push({
         imgType: 'img',
         imgPath: '/assets/icons/final-assessment/nest_clock_farsight_analog.svg',
