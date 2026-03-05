@@ -31,7 +31,7 @@
       <img [src]="doc.type.includes('pdf') ? 'assets/icons/PDF_alternate.svg' : 'assets/icons/Shape.svg'"
         class="file-icon" alt="File Icon" width="24" height="24">
       <div class="file-info">
-        <div class="file-name" (click)="previewFile(doc)"
+        <div class="file-name" (click)="previewFile(doc)" [title]="doc.name"
           [class.clickable]="doc.type.includes('mp4') || doc.type.includes('video') || doc.type.includes('pdf')">
           {{ doc.name }}
         </div>
