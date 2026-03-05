@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 /* tslint:disable */
 import _ from 'lodash'
-import { MatLegacyDialog as MatDialog  } from '@angular/material/legacy-dialog'
 
 /* tslint:enable */
 import { Subject } from 'rxjs'
@@ -16,7 +15,6 @@ import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 // import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
 import { BtnSettingsService } from '@sunbird-cb/collection'
-import { ProfileVerificationDialogComponent } from 'src/app/profile-verification-dialog/profile-verification-dialog.component'
 
 // import { NotificationComponent } from './notification/notification.component'
 
@@ -31,11 +29,11 @@ function isStripActive(strip: any): boolean {
     Array.isArray(strip.strips) &&
     strip.strips.length > 0 &&
     strip.strips[0] &&
-    strip.strips[0].active === true);
+    strip.strips[0].active === true)
 }
 
 // Add this constant at the top of your file (near other constants)
-const INITIAL_VISIBLE_STRIPS = 5;
+const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
   selector: 'ws-home',
@@ -54,7 +52,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private userProfileService: UserProfileService,
     private matSnackBar: MatSnackBar,
-    private events: EventService,private dialog: MatDialog,
+    private events: EventService,
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}
@@ -149,17 +147,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.contentStripData = (this.contentStripData.newHomeStrip || []).sort((a: any, b: any) => a.order - b.order)
 
       // Clear sectionList before adding new entries
-      this.sectionList = [];
+      this.sectionList = []
 
       // Add all content strips to sectionList with correct indices
       this.contentStripData.forEach((strip: any, index: number) => {
-        const obj: any = {};
-        obj['section'] = 'section_' + index;
-        obj['isVisible'] = false;
-        obj['stripData'] = strip;
-        obj['isActive'] = isStripActive(strip);
-        this.sectionList.push(obj);
-      });
+        const obj: any = {}
+        obj['section'] = 'section_' + index
+        obj['isVisible'] = false
+        obj['stripData'] = strip
+        obj['isActive'] = isStripActive(strip)
+        this.sectionList.push(obj)
+      })
     }
 
     this.clientList = this.activatedRoute.snapshot.data.pageData.data.clientList
@@ -278,50 +276,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
-    this.mandatoryDetails()
+    // this.commondataSvc.mandatoryDetails()
   }
 
 
-  getOrgDetails() {
-    const request = {
-      request: { organisationId: this.rootOrgId },
-    }
-    this.userProfileService.readOrgData(request).subscribe((res: any) => {
-      const isPopupEnabled = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
-      const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
-      const customFieldsLength = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
-      if (isPopupEnabled && customFieldsCount && customFieldsLength.length > 0) {
-        this.readCustomattributeDetails()
-      } else {
-        this.canShowCustomAttrOpen = false
-      }
-    }, error => {
-      this.canShowCustomAttrOpen = false
-      console.error('Error fetching organization details', error)
-    })
-  }
 
-  readCustomattributeDetails() {
-    this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
-      let customFieldValues = _.get(res, 'result.response.customFieldValues', [])
-      if (customFieldValues.length === 0) {
-        this.redirectToCustomProfile()
-        this.canShowCustomAttrOpen = true
-      } else {
-        //this.redirectToCustomProfile()
-        this.canShowCustomAttrOpen = false
-      }
-    }, error => {
-      this.canShowCustomAttrOpen = false
-      console.log('Error', error)
-    })
-  }
 
   ngAfterViewInit() {
     // Make the first few content strips visible initially
     for (let i = 0; i < this.sectionList.length && i < this.initialVisibleStrips; i++) {
       if (this.sectionList[i]['section'].startsWith('section_')) {
-        this.sectionList[i]['isVisible'] = true;
+        this.sectionList[i]['isVisible'] = true
       }
     }
   }
@@ -417,7 +382,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < this.sectionList.length; i++) {
       if (!this.sectionList[i]['isVisible'] &&
         !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
-        this.checkSectionVisibility(this.sectionList[i]['section']);
+        this.checkSectionVisibility(this.sectionList[i]['section'])
       }
     }
   }
@@ -425,24 +390,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
   checkSectionVisibility(className: string) {
     // Skip already visible sections
     if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
-      return;
+      return
     }
 
     // Find the section in our list
-    const sectionIndex = this.sectionList.findIndex((item: any) => item.section === className);
-    if (sectionIndex === -1) return;
+    const sectionIndex = this.sectionList.findIndex((item: any) => item.section === className)
+    if (sectionIndex === -1) return
 
     // Check if the element is in viewport
-    const elements = document.getElementsByClassName(className);
+    const elements = document.getElementsByClassName(className)
     if (elements && elements.length > 0) {
-      const rect = elements[0].getBoundingClientRect();
-      const eleTop = rect.top;
-      const eleBottom = rect.bottom;
-      const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight);
+      const rect = elements[0].getBoundingClientRect()
+      const eleTop = rect.top
+      const eleBottom = rect.bottom
+      const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight)
 
       // Update visibility
       if (isVisible) {
-        this.sectionList[sectionIndex]['isVisible'] = true;
+        this.sectionList[sectionIndex]['isVisible'] = true
       }
     }
   }
@@ -621,67 +586,5 @@ export class HomeComponent implements OnInit, AfterViewInit {
     )
   }
 
-  redirectToCustomProfile() {
-    this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
-  }
-  mandatoryDetails() {
-    let unMappedUser = this.configSvc.unMappedUser
-    let userProfileUpdateDate= unMappedUser && unMappedUser.profileDetails && unMappedUser.profileDetails.personalDetails &&  unMappedUser.profileDetails.personalDetails?.lastProfileVerificationPromptDate ? Number(unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate) : null
-    // Difference in milliseconds
-    const currentEpochTime = new Date().getTime();
-    let diffMs = 0
-    if(userProfileUpdateDate !== null) {
-     diffMs = Math.abs(currentEpochTime - userProfileUpdateDate);
-    }
-    // Convert ms → days
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-    if((diffDays && diffDays> 90 ) || userProfileUpdateDate === null) {
-      let userData = {
-        ...this.configSvc.userProfile,
-        mobile: this.configSvc.unMappedUser.profileDetails?.personalDetails?.mobile || '',
-        primaryEmail: this.configSvc.unMappedUser.profileDetails?.personalDetails?.primaryEmail || '',
-      }
-        let dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
-          data: {
-            userProfile: userData
-          },
-          panelClass: 'profile-verification-dialog-container',
-          disableClose: true,
-          maxWidth: '95vw',
-          width: '500px'
-        })
-        dialogRef.afterClosed().subscribe(async (res: any) => {
-          if (res && res?.action === 'update') {
-            this.router.navigate(['/app/person-profile/me'], { fragment: 'mandatorySection' })
-          } else if (res && res?.action === 'verify'){
-            this.callExtPatchProfile()
-          }
-        })
-    } else {
-      this.getOrgDetails()
-    }
-  }
-  callExtPatchProfile() {
-    const currentEpoch = new Date().getTime().toString()
-    let request = {
-      "request": {
-          "userId":this.configSvc.unMappedUser.id,
-          "profileDetails": {
-              "personalDetails": {
-                "lastProfileVerificationPromptDate": currentEpoch
-              }
-          }
-      }
-    }
-    this.userProfileService.editProfileDetails(request).subscribe((res: any) => {
-      if(res && res.result && res.result.response?.toUpperCase() === 'SUCCESS') { 
-        this.matSnackBar.open('Profile verification  updated successfully', 'X', this.configSuccess)
-        if (this.configSvc?.unMappedUser?.profileDetails?.personalDetails) {
-          this.configSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = currentEpoch
-        }
-      }
-      this.getOrgDetails()
-    })
-  }
 }
