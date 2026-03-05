@@ -56,44 +56,6 @@
         margin-top: 4px;
       }
     }
-
-    .reporting-officer-info {
-      text-align: right;
-
-      .officer-name {
-        font-weight: 500;
-        margin-bottom: 4px;
-
-        .status-badge {
-          margin-left: 8px;
-          padding: 5px 12px;
-          border-radius: 10px;
-          font-size: 12px;
-
-          &.pending {
-            background: #fff3cd;
-            color: #856404;
-          }
-
-          &.approved,
-          &.agreed {
-            background: #28a745; // Solid Green
-            color: white;
-          }
-
-          &.rejected,
-          &.not-agreed {
-            background: #dc3545; // Solid Red
-            color: white;
-          }
-        }
-      }
-
-      .officer-message {
-        font-size: 12px;
-        color: #888;
-      }
-    }
   }
 
   .review-content {
@@ -246,6 +208,7 @@
           align-items: center;
           gap: 8px;
           flex: 1;
+          min-width: 0;
 
           .filename {
             font-weight: 500;
@@ -253,6 +216,11 @@
             cursor: pointer;
             text-decoration: underline;
             font-size: 14px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
             &:hover {
               color: #163d84;
@@ -262,130 +230,8 @@
           .filesize {
             color: rgba(0, 0, 0, 0.54);
             font-size: 13px;
-          }
-        }
-      }
-    }
-
-    .meta-section {
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
-
-      .meta-label {
-        font-weight: 600;
-        margin-bottom: 16px;
-        font-size: 16px;
-
-        .optional-text {
-          font-weight: 400;
-          color: #888;
-          font-size: 14px;
-          margin-left: 4px;
-        }
-      }
-
-      .meta-sub {
-        font-size: 14px;
-        margin-bottom: 8px;
-        color: #555;
-      }
-
-      // Styles for new Pill Select
-      .select-with-search {
-        cursor: pointer;
-        margin-bottom: 16px;
-
-        .display-pill {
-          border: 1px solid #ccc;
-          border-radius: 24px; // Pill shape
-          padding: 10px 16px;
-          min-height: 24px; // Adjust height
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background: white;
-          color: #666; // Placeholder color
-          font-size: 14px;
-          position: relative;
-          transition: border-color 0.2s;
-
-          &.has-value {
-            color: #333; // Selected text color
-            background: #e8f0fe; // Light blue background for selected state
-            border-color: #1a73e8;
-          }
-
-          &:hover {
-            border-color: #3f51b5;
-          }
-
-          .dropdown-arrow {
-            color: #666;
-          }
-        }
-      }
-
-      .inline-search-container {
-        margin-top: 8px;
-        margin-bottom: 24px;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 16px;
-        background: #fafafa;
-      }
-
-      .attachments {
-        margin-top: 16px;
-
-        .attachment-item {
-          display: flex;
-          align-items: center;
-          padding: 8px 12px;
-          background: rgba(27, 76, 161, 0.04); // Figma: #1B4CA1 at 4%
-          border-radius: 4px;
-          margin-bottom: 8px;
-          border: 1px solid rgba(27, 76, 161, 0.16); // Subtle primary border
-
-          .attachment-icon {
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-
-            .icon-video {
-              color: #1B4CA1; // Figma: Primary/KB-Primary-Light
-              font-size: 24px;
-              width: 24px;
-              height: 24px;
-            }
-
-            .icon-file {
-              width: 24px;
-              height: 24px;
-            }
-          }
-
-          .attachment-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-
-            .filename {
-              font-weight: 700;
-              color: #1B4CA1; // Figma: Primary/KB-Primary-Light
-              cursor: pointer;
-              text-decoration: underline;
-
-              &:hover {
-                color: #163d84;
-              }
-            }
-
-            .filesize {
-              color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
-              font-size: 13px;
-            }
+            flex-shrink: 0;
+            white-space: nowrap;
           }
         }
       }

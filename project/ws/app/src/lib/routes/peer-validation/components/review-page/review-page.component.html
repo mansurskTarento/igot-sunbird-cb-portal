@@ -71,7 +71,7 @@
             height="24" alt="File Icon">
         </div>
         <div class="attachment-info">
-          <span class="filename" (click)="previewDocument(doc)">{{ doc.name }}</span>
+          <span class="filename" (click)="previewDocument(doc)" [title]="doc.name">{{ doc.name }}</span>
           <span class="filesize">({{ formatFileSize(doc.size) }})</span>
         </div>
       </div>
