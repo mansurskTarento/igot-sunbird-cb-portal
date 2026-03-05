@@ -26,6 +26,7 @@ interface FailureInfo {
 export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() resultsData: any
   @Input() selectedAssessmentCompatibilityLevel: number = 1
+  @Input() v4questionSet: any
   @Output() viewQuestions = new EventEmitter<NSPractice.IQuizSubmitResSec>();
 
   // Component-owned computed properties
@@ -255,9 +256,19 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
 
   computeSectionTableData() {
     const children = _.get(this.resultsData, 'children', [])
+    const v4Children: any[] = this.selectedAssessmentCompatibilityLevel < 7
+      ? _.get(this.v4questionSet, 'children', [])
+      : []
 
     this.sectionTableData = children.map((section: any, index: number) => {
-      const sectionName = _.get(section, 'name', `Section ${String.fromCharCode(65 + index)}`)
+      let sectionName = _.get(section, 'name', '')
+      if (!sectionName && this.selectedAssessmentCompatibilityLevel < 7) {
+        const matched = v4Children.find((c: any) => c.identifier === section.identifier)
+        sectionName = _.get(matched, 'name', `Section ${String.fromCharCode(65 + index)}`)
+      }
+      if (!sectionName) {
+        sectionName = `Section ${String.fromCharCode(65 + index)}`
+      }
       const pass = _.get(section, 'pass', false)
       const result = _.get(section, 'result', 0)
       const minimumPass = _.get(section, 'passPercentage', this.requiredPassPercent)
