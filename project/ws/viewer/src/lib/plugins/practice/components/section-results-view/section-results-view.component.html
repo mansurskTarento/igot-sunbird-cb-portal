@@ -1,7 +1,7 @@
 <div class="section-results-container p-4 md:p-6 custom-tabs">
 
   <!-- Header Section -->
-  <div class="flex md:items-center justify-between mb-6 flex-col md:flex-row">
+  <div class="flex md:items-center justify-between mb-6 flex-col md:flex-row" *ngIf="!hideSectionHeader">
     <div class="flex gap-4">
       <mat-icon class="text-3xl text-primary cursor-pointer" (click)="goBack()">
         arrow_back
@@ -77,8 +77,10 @@
         <div class="table-header-row">
           <div class="col-question header-cell">{{ 'quizresult.question' | translate }}</div>
           <div class="col-status header-cell">{{ 'quizresult.status' | translate }}</div>
-          <!-- <div class="col-marks header-cell">{{ 'quizresult.marks' | translate }}</div> -->
-          <div class="col-time header-cell">{{ 'quizresult.timeTaken' | translate }}</div>
+          <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+            <div class="col-time header-cell">{{ 'quizresult.questionTagging' | translate }}</div>
+            <div class="col-time header-cell">{{ 'quizresult.timeTaken' | translate }}</div>
+          </ng-container>
         </div>
 
         <ng-container *ngFor="let question of questions">
@@ -90,18 +92,20 @@
             <div class="col-status">
               {{ question.result }}
             </div>
-            <!-- <div class="col-marks">
-              <span class="marks-value">2</span>
-            </div> -->
-            <div class="col-time">
-              <div class="time-with-action flex items-center justify-between w-full">
-                <span class="time-value">{{ question.formattedTime }}</span>
-                <button class="expand-btn" (click)="toggleRowExpansion(question.identifier)"
-                  [attr.aria-expanded]="isRowExpanded(question.identifier)">
-                  <mat-icon>{{ isRowExpanded(question.identifier) ? 'expand_less' : 'expand_more' }}</mat-icon>
-                </button>
+            <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+              <div class="col-status">
+                {{ question.questionLevel }}
               </div>
-            </div>
+              <div class="col-time">
+                <div class="time-with-action flex items-center justify-between w-full">
+                  <span class="time-value">{{ question.formattedTime }}</span>
+                  <!-- <button class="expand-btn" (click)="toggleRowExpansion(question.identifier)"
+                    [attr.aria-expanded]="isRowExpanded(question.identifier)">
+                    <mat-icon>{{ isRowExpanded(question.identifier) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button> -->
+                </div>
+              </div>
+            </ng-container>
           </div>
 
           <!-- Detail Row -->
@@ -119,23 +123,25 @@
   <div class="mobile-section-performance flex flex-col gap-4">
     <ng-container *ngFor="let question of questions; let i = index">
       <div class="section-card bg-white flex flex-col gap-4">
-        <div class="section-card-header flex items-center">
-          <!-- <div>{{ 'quizresult.question' | translate }} {{ i + 1 }}:</div> -->
+        <div class="section-card-header flex flex-col gap-2">
+          <div>{{ 'quizresult.question' | translate }} {{ i + 1 }}:</div>
           <div class="question-text break-words overflow-hidden" [innerHTML]="question.question"></div>
         </div>
         <div class="grid grid-cols-2 gap-3">
-          <span class="label">{{ 'quizresult.result' | translate }} <span class="ml-4"
+          <span class="label">{{ 'quizresult.status' | translate }} <span class="ml-4"
               [ngClass]="question.result === 'correct' ? 'pass-text' : 'fail-text'">{{ question.result
               }}</span></span>
-          <!-- <span class="label">{{ 'quizresult.yourScore' | translate }} <span class="ml-4"
-              [ngClass]="question.result === 'correct' ? 'pass-text' : 'fail-text'">{{ question.yourScore
-              }}%</span></span> -->
-          <span class="label ">{{ 'quizresult.timeTaken' | translate }} <span>{{
-              question.formattedTime }}</span></span>
+          <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+            <span class="label">{{ 'quizresult.questionTagging' | translate }} <span class="ml-4">
+                {{ question.questionLevel }}</span>
+            </span>
+            <span class="label ">{{ 'quizresult.timeTaken' | translate }} <span>{{
+                question.formattedTime }}</span></span>
+          </ng-container>
         </div>
-        <div>
+        <!-- <div>
           <ng-container *ngTemplateOutlet="answerSectionTemplate; context: { $implicit: question }"></ng-container>
-        </div>
+        </div> -->
       </div>
     </ng-container>
   </div>
@@ -147,7 +153,7 @@
     <h4 class="question-label">{{ 'quizresult.question' | translate }}:</h4>
     <p class="question-text" [innerHTML]="question.question"></p>
 
-    <ng-container *ngTemplateOutlet="answerSectionTemplate; context: { $implicit: question }"></ng-container>
+    <!-- <ng-container *ngTemplateOutlet="answerSectionTemplate; context: { $implicit: question }"></ng-container> -->
   </div>
 </ng-template>
 
