@@ -33,7 +33,7 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
   searchForm: UntypedFormGroup | undefined
   disableLoadMore = false
   private unsubscribe = new Subject<void>()
-  searchReq?: any = {
+  searchReq: any = {
     request: {
       filters: {
         contentType: [
