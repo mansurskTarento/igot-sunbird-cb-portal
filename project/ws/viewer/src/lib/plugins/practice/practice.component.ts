@@ -105,7 +105,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   result = 0
   sidenavMode = 'start'
   sidenavOpenDefault = false
-  finalResponse!: NSPractice.IQuizSubmitResponseV2
+  finalResponse: NSPractice.IQuizSubmitResponseV2 | null = null
   startTime = 0
   submissionState: NSPractice.TQuizSubmissionState = 'unanswered'
   telemetrySubscription: Subscription | null = null
@@ -2072,6 +2072,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.quizData)
         this.clearStoragePartial()
         this.clearStorage()
+        this.finalResponse = null
         this.retake = true
         this.isSubmitted = false
 
