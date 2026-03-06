@@ -32,9 +32,9 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
 
   // Component-owned computed properties
   isPassed = false;
-  overallScorePercent = 0;
+  overallScorePercent: number | null = null;
   marksObtainedText = '';
-  requiredPassPercent = 0;
+  requiredPassPercent: number | null = null;
   summaryCards: any[] = [];
   sectionTableData: SectionTableData[] = [];
   displayedColumns = ['sectionName', 'result', 'yourScore', 'requiredScore', 'actions'];
@@ -68,9 +68,9 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
 
   resetValues() {
     this.isPassed = false
-    this.overallScorePercent = 0
+    this.overallScorePercent = null
     this.marksObtainedText = ''
-    this.requiredPassPercent = 0
+    this.requiredPassPercent = null
     this.sectionTableData = []
     this.failureInfo = null
     this.isDataLoaded = false
@@ -89,18 +89,16 @@ export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy 
     this.isPassed = _.get(results, 'pass', false)
     this.isPracticeAssessment = results?.primaryCategory === NsContent.EPrimaryCategory.PRACTICE_RESOURCE
 
-    this.overallScorePercent = parseFloat((this.selectedAssessmentCompatibilityLevel >= 7
-      ? this.sanitizeNumber(_.get(results, 'totalPercentage', 0))
-      : this.sanitizeNumber(_.get(results, 'overallResult', 0))).toFixed(2))
-    this.requiredPassPercent = parseFloat((this.selectedAssessmentCompatibilityLevel >= 7
-      ? this.sanitizeNumber(_.get(results, 'overallResult', 0))
-      : this.sanitizeNumber(_.get(results, 'passPercentage', 0))).toFixed(2))
-
-    const correct = this.sanitizeNumber(_.get(results, 'correct', 0))
-    const incorrect = this.sanitizeNumber(_.get(results, 'incorrect', 0))
-    const blank = this.sanitizeNumber(_.get(results, 'blank', 0))
-    const total = this.sanitizeNumber(_.get(results, 'total', 0)) || (correct + incorrect + blank)
-    this.marksObtainedText = `${correct} out of ${total} marks`
+    if (this.selectedAssessmentCompatibilityLevel >= 7) {
+      this.overallScorePercent = parseFloat(this.sanitizeNumber(_.get(results, 'totalPercentage', null)).toFixed(2))
+      this.requiredPassPercent = null
+      const correct = this.sanitizeNumber(_.get(results, 'totalSectionMarks', 0))
+      const total = this.sanitizeNumber(_.get(results, 'totalMarks', 0))
+      this.marksObtainedText = `${correct} out of ${total} marks`
+    } else {
+      this.overallScorePercent = parseFloat(this.sanitizeNumber(_.get(results, 'overallResult', null)).toFixed(2))
+      this.requiredPassPercent = parseFloat(this.sanitizeNumber(_.get(results, 'passPercentage', null)).toFixed(2))
+    }
 
     // Summary cards computation
     this.computeSummaryCards()
