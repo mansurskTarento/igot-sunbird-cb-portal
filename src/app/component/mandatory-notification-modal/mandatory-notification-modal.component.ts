@@ -31,6 +31,10 @@ export class MandatoryNotificationModalComponent {
         type: 'click',
         subType,
         id: 'mandatory-notification-modal',
+      },
+      {},
+      {
+        module: 'mandatory-notification'
       }
     )
   }
