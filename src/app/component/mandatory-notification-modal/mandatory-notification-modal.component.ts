@@ -32,7 +32,10 @@ export class MandatoryNotificationModalComponent {
         subType,
         id: 'mandatory-notification-modal',
       },
-      {},
+      {
+        id: this.data?.notification?.message?.data?.assessmentId || '',
+        type: this.data?.notification?.message?.data?.primaryCategory || 'Comprehensive Assessment Program',
+      },
       {
         module: 'mandatory-notification'
       }
