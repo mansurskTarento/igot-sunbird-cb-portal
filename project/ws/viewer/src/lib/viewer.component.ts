@@ -361,13 +361,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         // Set hierarchyMapData for child components
         this.hierarchyMapData = { ...this.tocSvc.hashmap }
-
-        console.log('📊 [VIEWER] Regular course - final hashmap:', {
-          collectionId: this.collectionId,
-          hashmapKeys: Object.keys(this.tocSvc.hashmap).length,
-          rootEntry: this.tocSvc.hashmap[this.collectionId || ''],
-          sampleLeafNode: this.tocSvc.hashmap[this.hierarchyData?.leafNodes?.[0]]
-        })
       }
       this.resetAndFetchTocStructure()
       // Recompute leafNodesCount after hierarchy has been fully manipulated
@@ -801,7 +794,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   async manipulateHierarchyData() {
     if (!this.forPreview) {
       // First, map completion percentage to hierarchy structure
-      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
+      await this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
 
       // Then check and update module-wise data
       this.tocSvc.checkModuleWiseData(this.hierarchyData)
