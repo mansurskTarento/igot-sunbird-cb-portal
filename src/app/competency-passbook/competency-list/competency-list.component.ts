@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { CompetencyPassbookService } from '../competency-passbook.service'
 
 @Component({
   selector: 'ws-competency-list',
@@ -35,7 +36,41 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
   showFilterIndicator = 'all'
   filteredData: any[] = []
   filterApplied = false
+  apiResponse: any[] = []
+  allCompetencies: any[] = []
+  allThemeData: any[] = []
+  allSubThemeData: any[] = []
+  myCompetencyList: any[] = []
+  totalCompetencyCount = 0
+  totalCompetencySubThemeCount = 0
+  totalContentConsumed = 0
 
+  leftStatus: { id: string, count: number, consumedCourse: number }[] = []
+  filteredCompetencyArray: any[] = []
+  myCompetencies: {
+    id: string
+    name: string
+    subThemes: { id: string, name: string }[]
+    counts: {
+      iGOTCourses: number
+      extCourses: number
+      selfAchievement: number
+      total: number
+    }
+    themes: {
+      id: string
+      name: string
+      subThemes: { id: string, name: string }[]
+      competencyDetails: any[]
+      viewMore: boolean
+      counts: {
+        iGOTCourses: number
+        extCourses: number
+        selfAchievement: number
+        total: number
+      }
+    }[]
+  }[] = []
   TYPE_CONST = {
     behavioral: {
       capsValue: 'Behavioural',
@@ -126,7 +161,8 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
     private langtranslations: MultilingualTranslationsService,
     private translate: TranslateService,
     private configSvc: ConfigurationsService,
-    @Inject(DOCUMENT) private document: Document
+    private competencyPassbookSvc: CompetencyPassbookService,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     if (window.innerWidth < 768) {
       this.isMobile = true
@@ -157,7 +193,166 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
     }
     this.filterObjData2 = { ...this.filterObjData }
 
-    this.getUserEnrollmentList()
+    // this.getUserEnrollmentList()
+    this.getAllCompetencyList()
+    setTimeout(() => {
+      this.getMyCompetencyList()
+    }, 1000)
+
+
+  }
+
+  getMyCompetencyList(): void {
+    this.competency.skeletonLoading = true
+    this.competencyPassbookSvc.getMyCompetencyList()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          if (response && response.result && response.result.competencies) {
+            this.myCompetencyList = response.result.competencies
+            this.buildMyCompetency()
+          }
+          this.competency.skeletonLoading = false
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.competency.skeletonLoading = true
+            this.matSnackBar.open('Unable to pull My Competency list details!')
+          }
+        }
+      )
+  }
+
+  getSubThemeName(subThemeId: string): string {
+    return this.allSubThemeData.find((sub: any) => sub.refId === subThemeId)?.name || subThemeId
+  }
+
+  buildMyCompetency(): void {
+    this.myCompetencies = []
+    this.myCompetencyList.forEach((item: any) => {
+      const areaId = item.competencyAreaId
+      const themeId = item.competencyThemeId
+      const subThemeId = item.competencySubThemeId
+
+      let areaEntry = this.myCompetencies.find((a: any) => a.id === areaId)
+      const area = this.allCompetencies.find((c: any) => c.refId === areaId)?.name || ''
+      if (!areaEntry && area) {
+        areaEntry = {
+          id: areaId,
+          name: this.allCompetencies.find((c: any) => c.refId === areaId)?.name || '',
+          subThemes: [],
+          counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, total: 0 },
+          themes: [],
+        }
+        this.myCompetencies.push(areaEntry)
+      }
+      if (areaEntry) {
+        let themeEntry = areaEntry.themes.find((t: any) => t.id === themeId)
+        if (!themeEntry) {
+          themeEntry = {
+            id: themeId,
+            name: this.allThemeData.find((t: any) => t.refId === themeId)?.name || '',
+            subThemes: [],
+            competencyDetails: [],
+            viewMore: false,
+            counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, total: 0 },
+          }
+          areaEntry.themes.push(themeEntry)
+        }
+
+        if (!themeEntry.subThemes.some((s: any) => s.id === subThemeId)) {
+          themeEntry.subThemes.push({
+            id: subThemeId,
+            name: this.allSubThemeData.find((sub: any) => sub.refId === subThemeId)?.name || subThemeId,
+          })
+        }
+
+        if (!areaEntry.subThemes.some((s: any) => s.id === subThemeId)) {
+          areaEntry.subThemes.push({
+            id: subThemeId,
+            name: this.allSubThemeData.find((sub: any) => sub.refId === subThemeId)?.name || subThemeId,
+          })
+        }
+
+        if (item.competencyDetails) {
+          themeEntry.competencyDetails.push(item.competencyDetails)
+
+          const iGOTCount = Array.isArray(item.competencyDetails.iGOTCourses)
+            ? item.competencyDetails.iGOTCourses.length : 0
+          const extCount = Array.isArray(item.competencyDetails.extCourses)
+            ? item.competencyDetails.extCourses.length : 0
+          const selfCount = Array.isArray(item.competencyDetails.selfAchievement)
+            ? item.competencyDetails.selfAchievement.length : 0
+
+          themeEntry.counts.iGOTCourses += iGOTCount
+          themeEntry.counts.extCourses += extCount
+          themeEntry.counts.selfAchievement += selfCount
+          themeEntry.counts.total += iGOTCount + extCount + selfCount
+
+          areaEntry.counts.iGOTCourses += iGOTCount
+          areaEntry.counts.extCourses += extCount
+          areaEntry.counts.selfAchievement += selfCount
+          areaEntry.counts.total += iGOTCount + extCount + selfCount
+        }
+      }
+    })
+    this.filteredCompetencyArray = this.myCompetencies
+
+    this.findCounts()
+
+
+
+    console.log('My Competency Map:', this.myCompetencies)
+  }
+
+  findCounts(): void {
+    this.leftStatus = []
+    this.totalCompetencyCount = 0
+    this.totalCompetencySubThemeCount = 0
+    this.totalContentConsumed = 0
+
+    this.myCompetencies.forEach((areaEntry) => {
+      const subThemeCount = areaEntry.subThemes ? areaEntry.subThemes.length : 0
+      const consumedCourse = areaEntry.counts.total || 0
+      const themName = this.allCompetencies.find((comp: any) => comp.refId === areaEntry.id)?.name || areaEntry.id
+      const findThemInLeftCardDetails = this.leftCardDetails.find((obj: any) => obj.name.toLowerCase() === themName.toLowerCase())
+      if (findThemInLeftCardDetails) {
+        findThemInLeftCardDetails.contentConsumed += consumedCourse
+        findThemInLeftCardDetails.competencySubTheme += subThemeCount
+        this.competency[themName.toLowerCase()] = areaEntry.themes || []
+      }
+      this.totalCompetencyCount += areaEntry.themes ? areaEntry.themes.length : 0
+    })
+  }
+
+  getAllCompetenciesCount(): number {
+    return this.myCompetencies.reduce((sum, areaEntry) => {
+      return sum + (areaEntry.themes?.length || 0)
+    }, 0)
+  }
+
+  getAllCompetencyList(): void {
+    this.competencyPassbookSvc.fetchAllCompetencyList()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          if (response && response.result && response.result.framework && response.result.framework.categories) {
+            this.apiResponse = response.result.framework.categories
+            this.allCompetencies = this.apiResponse.filter((v: any) => v.code === 'competencyarea')[0].terms
+            this.allThemeData = this.apiResponse.filter((v: any) => v.code === 'theme')[0].terms
+            this.allSubThemeData = this.apiResponse.filter((v: any) => v.code === 'subtheme')[0].terms
+
+            console.log('All Competencies:', this.allCompetencies)
+            console.log('All Theme Data:', this.allThemeData)
+            console.log('All SubTheme Data:', this.allSubThemeData)
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to pull Competency list details!')
+          }
+        }
+      )
   }
 
   mapEnrollmentData(courseData: any) {
@@ -176,7 +371,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
     let enrollmentMapData: any = {}
     const userId: any = this.configService && this.configService.userProfile && this.configService.userProfile.userId
-    const req = {"request":{"retiredCoursesEnabled":true,"status":"Completed"}}
+    const req = { "request": { "retiredCoursesEnabled": true, "status": "Completed" } }
     this.widgetEnrollService.fetchInternalEnrollmentData(userId, req)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe(
@@ -216,7 +411,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
                     if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
                       .findIndex((_obj: any) => _obj.courseName === certObj.courseName) === -1) {
                       this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
-                      .push(certObj)
+                        .push(certObj)
                     }
                   })
 
@@ -224,11 +419,11 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
                   if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
                     .indexOf(eachCourse.courseName.trim()) === -1) {
                     this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
-                    .push(eachCourse.courseName.trim())
+                      .push(eachCourse.courseName.trim())
 
                     // Completed on logic...
                     this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].completedOn
-                    .push(eachCourse.completedOn)
+                      .push(eachCourse.completedOn)
                   }
 
                 } else {
@@ -266,13 +461,13 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
             v5Obj.issuedCertificates = []
             // tslint:disable-next-line: max-line-length
             const competencyArea = (v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral')
-            ? 'behavioural' : v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase()
+              ? 'behavioural' : v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase()
             if (this.competency[competencyArea]
               .findIndex((obj: any) =>
                 obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]
               ) === -1) {
-            this.competency[competencyArea].push(v5Obj)
-          }
+              this.competency[competencyArea].push(v5Obj)
+            }
 
             this.competency[competencyArea].forEach((_obj: any) => {
               if (_obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]) {
@@ -291,6 +486,8 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
           this.competencyArray = (this.isMobile) ? this.competency.all.slice(0, 3) : this.competency.all
           this.competency.skeletonLoading = false
+
+          console.log('Competency after merging with enrollment data:', this.competency)
         },
         (error: HttpErrorResponse) => {
           if (!error.ok) {
@@ -298,7 +495,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
             this.competency.skeletonLoading = false
           }
         }
-    )
+      )
   }
 
   getOtherData(): void {
@@ -332,20 +529,37 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
     this.showFilterIndicator = months
   }
 
+  filterCompetencyByTab(tab: string): void {
+    if (!tab || tab === 'all') {
+      this.filteredCompetencyArray = [...this.myCompetencies]
+    } else {
+      this.filteredCompetencyArray = this.myCompetencies.filter((area: any) => {
+        const areaName = area.name?.toLowerCase()
+        return areaName === tab
+          || (tab === 'behavioural' && areaName === 'behavioral')
+          || (tab === 'behavioral' && areaName === 'behavioural')
+      })
+    }
+  }
+
   handleTabChange(event: MatTabChangeEvent): void {
     const param = event.tab.textLabel.toLowerCase()
     this.tabValue = param
-    this.competencyArray = this.competency[param].sort((a: any, b: any) => b.latest - a.latest)
+    this.filterCompetencyByTab(param)
     this.filterObjData2 = { ...this.filterObjData }
   }
 
   handleShowAll(): void {
     this.showAll = !this.showAll
-    this.competencyArray = (this.showAll) ? this.competency['all'] : this.competency['all'].slice(0, 3)
+    if (this.showAll) {
+      this.filteredCompetencyArray = [...this.myCompetencies]
+    } else {
+      this.filteredCompetencyArray = this.myCompetencies.slice(0, 3)
+    }
   }
 
   handleClick(param: string): void {
-    this.competencyArray = (this.isMobile) ? this.competency[param].slice(0, 3) : this.competency[param]
+    this.filterCompetencyByTab(param)
   }
 
   handleViewMore(obj: any, flag?: string): void {
@@ -358,12 +572,18 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
   }
 
   handleSearch(event: string, competencyTheme: string): void {
-    // tslint:disable-next-line
     competencyTheme = competencyTheme.toLowerCase()
-    // tslint:disable-next-line
-    if (!this.competency[competencyTheme].length) return
-    // tslint:disable-next-line: max-line-length
-    this.competencyArray = (!event.length) ? this.competency[competencyTheme] : this.competency[competencyTheme].filter((obj: any) => obj[this.compentencyKey.vCompetencyTheme].toLowerCase().trim().includes(event.toLowerCase()))
+    this.filterCompetencyByTab(competencyTheme)
+    if (event.length) {
+      this.filteredCompetencyArray = this.filteredCompetencyArray
+        .map((area: any) => ({
+          ...area,
+          themes: area.themes.filter((theme: any) =>
+            theme.name?.toLowerCase().trim().includes(event.toLowerCase())
+          ),
+        }))
+        .filter((area: any) => area.themes.length > 0)
+    }
   }
 
   // Filters related functionalities...
@@ -385,53 +605,55 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
   handleClearFilterObj(event: any) {
     this.filterObjData2 = event
-    this.filterData(event)
-    this.competencyArray = this.competency[this.tabValue || 'all']
+    this.filterCompetencyByTab(this.tabValue || 'all')
   }
 
   filterData(filterValue: any) {
-    let finalFilterValue: any = []
-    // tslint:disable-next-line: max-line-length
-    if (filterValue[this.compentencyKey.vCompetencyArea].length || filterValue[this.compentencyKey.vCompetencyTheme].length || filterValue[this.compentencyKey.vCompetencySubTheme].length) {
-      let filterAppliedOnLocal = false
-      this.filteredData = this.competency[this.tabValue || 'all']
-      // tslint: disable-next-line: whitespace
-      if (filterValue[this.compentencyKey.vCompetencyArea].length) {
-        filterAppliedOnLocal = filterAppliedOnLocal ? true : false
-        finalFilterValue = (filterAppliedOnLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-          // tslint:disable-next-line: max-line-length
-          if (filterValue[this.compentencyKey.vCompetencyArea].some((r: any) =>  data[this.compentencyKey.vCompetencyArea].toLowerCase().trim().includes((r.toLowerCase() === 'behavior') ? 'behavioural' : r.toLowerCase()))) {
-            return data
-          }
-        })
-        filterAppliedOnLocal = true
-      }
+    const areaFilters = filterValue[this.compentencyKey.vCompetencyArea] || []
+    const themeFilters = filterValue[this.compentencyKey.vCompetencyTheme] || []
+    const subThemeFilters = filterValue[this.compentencyKey.vCompetencySubTheme] || []
 
-      if (filterValue[this.compentencyKey.vCompetencyTheme].length) {
-        filterAppliedOnLocal = filterAppliedOnLocal ? true : false
-        finalFilterValue = (filterAppliedOnLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-          return filterValue[this.compentencyKey.vCompetencyTheme].includes(data[this.compentencyKey.vCompetencyTheme])
-          // tslint: disable-next-line: whitespace
-        })
-        // tslint: disable-next-line: whitespace
-        filterAppliedOnLocal = true
-        // tslint: disable-next-line: whitespace
-      }
-      if (filterValue[this.compentencyKey.vCompetencySubTheme].length) {
-        filterAppliedOnLocal = filterAppliedOnLocal ? true : false
-        finalFilterValue = (filterAppliedOnLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
-          const returnedValue = data.subTheme.filter((stName: any) => {
-            return filterValue[this.compentencyKey.vCompetencySubTheme].includes(stName)
-          })
-          return (returnedValue.length) ? data : false
-        })
-        filterAppliedOnLocal = true
-      }
-      this.competencyArray = finalFilterValue
-    } else {
+    if (!areaFilters.length && !themeFilters.length && !subThemeFilters.length) {
       this.filterApplied = false
-      finalFilterValue = this.competencyArray
+      this.filterCompetencyByTab(this.tabValue || 'all')
+      return
     }
+
+    this.filterCompetencyByTab(this.tabValue || 'all')
+    let filtered = [...this.filteredCompetencyArray]
+
+    // Filter by competency area name
+    if (areaFilters.length) {
+      filtered = filtered.filter((area: any) => {
+        const areaName = area.name?.toLowerCase().trim()
+        return areaFilters.some((r: any) => {
+          const filterName = (r.toLowerCase() === 'behavior') ? 'behavioural' : r.toLowerCase()
+          return areaName === filterName || areaName.includes(filterName)
+        })
+      })
+    }
+
+    // Filter themes within each area by theme name and/or sub-theme
+    if (themeFilters.length || subThemeFilters.length) {
+      filtered = filtered
+        .map((area: any) => {
+          let themes = [...area.themes]
+          if (themeFilters.length) {
+            themes = themes.filter((theme: any) => themeFilters.includes(theme.name))
+          }
+          if (subThemeFilters.length) {
+            themes = themes.filter((theme: any) =>
+              theme.subThemes.some((st: any) =>
+                subThemeFilters.includes(st.name) || subThemeFilters.includes(st.id)
+              )
+            )
+          }
+          return { ...area, themes }
+        })
+        .filter((area: any) => area.themes.length > 0)
+    }
+
+    this.filteredCompetencyArray = filtered
   }
 
   ngOnDestroy(): void {
