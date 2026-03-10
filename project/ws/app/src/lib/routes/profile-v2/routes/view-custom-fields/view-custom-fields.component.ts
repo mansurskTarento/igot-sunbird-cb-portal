@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { UserProfileService } from '../../../user-profile/services/user-profile.service';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { Component } from '@angular/core'
+import { UserProfileService } from '../../../user-profile/services/user-profile.service'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
-import { MatLegacyDialog } from '@angular/material/legacy-dialog';
-import { CustomFieldsComponent } from '../custom-fields/custom-fields.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { ActivatedRoute } from '@angular/router';
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { CustomFieldsComponent } from '../custom-fields/custom-fields.component'
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
+import { ActivatedRoute } from '@angular/router'
+//import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service'
 
 @Component({
   selector: 'ws-app-view-custom-fields',
@@ -32,16 +33,17 @@ export class ViewCustomFieldsComponent {
     private dialog: MatLegacyDialog,
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
+    //private commondataSvc: CommonDataService
   ) {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
-        this.isMobile = result.matches;
-      });
+        this.isMobile = result.matches
+      })
 
     this.route.fragment.subscribe(fragment => {
       if (fragment === 'orgDetails') {
         setTimeout(() => {
-          const element = document.getElementById(fragment);
+          const element = document.getElementById(fragment)
           if (element) {
             element.scrollIntoView({
               behavior: 'smooth',
@@ -109,14 +111,15 @@ export class ViewCustomFieldsComponent {
   readCustomattributeDetails() {
     this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
+      //this.commondataSvc.fetchMandatoryNotification()
     }, error => {
       console.log('Error', error)
     })
   }
 
   getValue(attributeName: string) {
-    const customField = this.customFieldValues.find((item: any) => item.attributeName === attributeName);
-    return customField ? customField.value : '';
+    const customField = this.customFieldValues.find((item: any) => item.attributeName === attributeName)
+    return customField ? customField.value : ''
   }
 
   getListItemName(arryListItem: any, listItem: any) {
@@ -129,7 +132,7 @@ export class ViewCustomFieldsComponent {
   }
 
   getName(attributeName: string) {
-    return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName;
+    return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName
   }
 
   // Update handleEditCustomDetails to build the form and populate values

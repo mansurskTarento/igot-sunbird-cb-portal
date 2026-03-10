@@ -329,7 +329,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
         }, 500)
       } else {
-        this.commonSvc.mandatoryDetails()
+        this.commonSvc.mandatoryDetails(false)
       }
     })
   }

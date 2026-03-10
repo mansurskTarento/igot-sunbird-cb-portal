@@ -7,6 +7,7 @@ import { NsContent } from '@sunbird-cb/utils-v2'
 const API_ENDPOINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
   ALL_PROVIDERS: `/apis/proxies/v8/searchBy/provider`,
+  SEARCH_V4: '/apis/proxies/v8/sunbirdigot/v4/search'
 }
 
 @Injectable({
@@ -28,13 +29,21 @@ export class BrowseProviderService {
   fetchSearchData(request: any): Observable<any> {
     this.displayLoader$.next(true)
     return this.http.post<any>(API_ENDPOINTS.SEARCH_V6, request)
-    .pipe(finalize(() => this.displayLoader$.next(false)))
+      .pipe(finalize(() => this.displayLoader$.next(false)))
   }
+
+
+  fetchSearchV4Data(request: any): Observable<any> {
+    this.displayLoader$.next(true)
+    return this.http.post<any>(API_ENDPOINTS.SEARCH_V4, request)
+      .pipe(finalize(() => this.displayLoader$.next(false)))
+  }
+
 
   fetchAllProviders(_request: any): Observable<any> {
     this.displayLoader$.next(true)
     return this.http.get<any>(API_ENDPOINTS.ALL_PROVIDERS)
-    .pipe(finalize(() => this.displayLoader$.next(false)))
+      .pipe(finalize(() => this.displayLoader$.next(false)))
   }
 
   public notifyOther(data: any) {

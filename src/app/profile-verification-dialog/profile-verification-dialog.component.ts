@@ -18,7 +18,7 @@ export interface ProfileVerificationData {
   encapsulation: ViewEncapsulation.None
 })
 export class ProfileVerificationDialogComponent implements OnInit {
-  userOrganization: any | undefined 
+  userOrganization: any | undefined
   ministryOrStateType: string = 'spv'
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ProfileVerificationData,
@@ -26,7 +26,7 @@ export class ProfileVerificationDialogComponent implements OnInit {
     private router: Router,
     private configSvc: ConfigurationsService
   ) {
-    
+
     if (this.configSvc.userProfile) {
       this.userOrganization = this.configSvc.userProfile.userRootOrg
       this.ministryOrStateType = this.userOrganization?.ministryOrStateType ? this.userOrganization?.ministryOrStateType?.toLowerCase() : 'spv'

@@ -1,0 +1,101 @@
+.ca-results-container {
+  background-color: #F0F3F4;
+  // stylelint-disable-next-line
+  font: 400 14px/1.5 'Inter', sans-serif;
+  max-height: 500px;
+  overflow-y: auto;
+
+  .result-transition {
+    transition: all 0.3s ease-in-out;
+
+    &.fade-enter {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+
+    &.fade-enter-active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    &.fade-exit {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    &.fade-exit-active {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+  }
+
+  .reattempt-btn {
+    height: 32px;
+    border: 1px solid #1B4CA1;
+    border-radius: 17px;
+    padding: 0 20px;
+    // stylelint-disable-next-line
+    font: 700 14px Lato;
+    color: #1B4CA1;
+
+    mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  // Mobile-first approach
+  @media (max-width: 768px) {
+    padding: 16px;
+    min-height: calc(100vh - 80px); // Account for mobile headers
+
+    .summary-cards {
+      .flex {
+        @apply flex-col;
+      }
+    }
+
+    // Ensure components stack properly
+    >* {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  // Tablet adaptations
+  @media (min-width: 768px) and (max-width: 1024px) {
+    padding: 24px;
+  }
+
+  // Desktop optimizations
+  @media (min-width: 1024px) {
+    padding: 32px;
+    margin: 0 auto;
+  }
+
+  // High DPI screen optimizations
+  @media (-webkit-min-device-pixel-ratio: 2),
+  (min-resolution: 192dpi) {
+    .result-header-card {
+      backdrop-filter: blur(20px);
+    }
+  }
+
+  // Focus management for accessibility
+  *:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  // Print styles
+  @media print {
+    background: white;
+    color: black;
+
+    .result-transition,
+    button {
+      display: none;
+    }
+  }
+}
