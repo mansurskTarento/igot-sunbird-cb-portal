@@ -66,9 +66,9 @@ export class CommonDataService {
 
     if ((diffDays && diffDays > 90) || userProfileUpdateDate === null) {
       let userData = {
-        ...this.configSvc.userProfile,
-        mobile: this.configSvc.unMappedUser.profileDetails?.personalDetails?.mobile || '',
-        primaryEmail: this.configSvc.unMappedUser.profileDetails?.personalDetails?.primaryEmail || '',
+        ...this.configSvc?.userProfile,
+        mobile: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.mobile || '',
+        primaryEmail: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.primaryEmail || '',
       }
       let dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
         data: {
