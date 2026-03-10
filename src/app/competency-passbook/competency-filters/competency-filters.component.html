@@ -6,11 +6,11 @@
   <!-- Header -->
   <div class="filter-header flex justify-between items-center">
     <span class="label text-lg">Filters</span>
-    <mat-icon class="cursor-pointer" (click)="closeFilter()">close</mat-icon>
+    <mat-icon class="cursor-pointer" (click)="closeFilter()" tabindex="0" (keydown.enter)="closeFilter()">close</mat-icon>
   </div>
 
   <div class="filter-content-container filter">
-    <!-- Competency Area Section -->
+    <!-- Competency Area Section (always visible) -->
     <div class="filter-content">
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
@@ -27,32 +27,61 @@
       </mat-expansion-panel>
     </div>
 
-    <div class="spacer"></div>
+    <!-- Competency Theme Section (visible only when area(s) selected) -->
+    <ng-container *ngIf="showThemes">
+      <div class="spacer"></div>
+      <div class="filter-content">
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Competency Theme</mat-panel-title>
+          </mat-expansion-panel-header>
 
-    <!-- Competency Theme Section -->
-    <div class="filter-content">
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>Competency Theme</mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <div class="rsearch">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input class="sinput" type="text" placeholder="Enter competency theme" [(ngModel)]="themeSearchText" (input)="filterThemes()" />
-        </div>
-
-        <div class="category-content" style="margin-top: 8px;">
-          <div class="category-item" *ngFor="let theme of filteredThemes">
-            <mat-checkbox [checked]="theme.selected" (change)="onThemeChange(theme, $event.checked)">
-              {{ theme.name }}
-            </mat-checkbox>
+          <div class="rsearch">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input class="sinput" type="text" placeholder="Enter competency theme" [(ngModel)]="themeSearchText" (input)="filterThemes()" />
           </div>
-          <div *ngIf="filteredThemes.length === 0" class="category-item" style="text-align: center; color: #999;">
-            No themes found
+
+          <div class="category-content" style="margin-top: 8px;">
+            <div class="category-item" *ngFor="let theme of filteredThemes">
+              <mat-checkbox [checked]="theme.selected" (change)="onThemeChange(theme, $event.checked)">
+                {{ theme.name }}
+              </mat-checkbox>
+            </div>
+            <div *ngIf="filteredThemes.length === 0" class="category-item" style="text-align: center; color: #999;">
+              No themes found
+            </div>
           </div>
-        </div>
-      </mat-expansion-panel>
-    </div>
+        </mat-expansion-panel>
+      </div>
+    </ng-container>
+
+    <!-- Competency Sub-Theme Section (visible only when theme(s) selected) -->
+    <ng-container *ngIf="showSubThemes">
+      <div class="spacer"></div>
+      <div class="filter-content">
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Competency Sub-Theme</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="rsearch">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input class="sinput" type="text" placeholder="Enter competency sub-theme" [(ngModel)]="subThemeSearchText" (input)="filterSubThemes()" />
+          </div>
+
+          <div class="category-content" style="margin-top: 8px;">
+            <div class="category-item" *ngFor="let subTheme of filteredSubThemes">
+              <mat-checkbox [checked]="subTheme.selected" (change)="onSubThemeChange(subTheme, $event.checked)">
+                {{ subTheme.name }}
+              </mat-checkbox>
+            </div>
+            <div *ngIf="filteredSubThemes.length === 0" class="category-item" style="text-align: center; color: #999;">
+              No sub-themes found
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </ng-container>
   </div>
 
   <!-- Footer with Clear & Apply -->
