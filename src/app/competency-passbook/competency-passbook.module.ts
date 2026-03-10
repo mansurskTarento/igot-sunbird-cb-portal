@@ -18,7 +18,8 @@ import { DialogComponentsModule } from '@sunbird-cb/consumption'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { CompetencyFiltersComponent } from './competency-filters/competency-filters.component'
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
     CompetencySearchComponent,
     CompetencyListComponent,
     CompetencyCardDetailsComponent,
+    CompetencyFiltersComponent,
   ],
   imports: [
     CommonModule,
