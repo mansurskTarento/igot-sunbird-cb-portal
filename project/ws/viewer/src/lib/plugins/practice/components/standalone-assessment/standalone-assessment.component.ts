@@ -1,7 +1,6 @@
 import {
   Component,
 } from '@angular/core'
-// import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
   selector: 'viewer-standalone-assessment',

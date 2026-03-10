@@ -32,6 +32,7 @@ const API_ENDPOINTS = {
   GET_SEARCH_PUBLIC_DESIGNATIONS: '/apis/public/v8/designation/search',
   GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search',
   editProfileDetails: '/apis/proxies/v8/user/v1/extPatch',
+  editProfileDetailsV3: '/apis/proxies/v8/user/v3/extPatch',
   updatePrimaryEmail: '/apis/proxies/v8/user/otp/v2/extPatch',
   updateProfilePic: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   GET_GROUPS: '/api/user/v1/groups',
@@ -68,6 +69,10 @@ export class UserProfileService {
 
   editProfileDetails(data: any) {
     return this.http.post<any>(API_ENDPOINTS.editProfileDetails, data)
+  }
+
+  editProfileDetailsV3(data: any) {
+    return this.http.post<any>(API_ENDPOINTS.editProfileDetailsV3, data)
   }
 
   updatePrimaryEmailDetails(data: any) {
@@ -156,7 +161,7 @@ export class UserProfileService {
   searchDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_ENDPOINTS.GET_SEARCH_DESIGNATIONS, _req)
   }
-   searchPublicDesignation(_req: any): Observable<any> {
+  searchPublicDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_ENDPOINTS.GET_SEARCH_PUBLIC_DESIGNATIONS, _req)
   }
 

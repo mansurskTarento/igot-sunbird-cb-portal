@@ -1,0 +1,32 @@
+<!-- Parent Container with State Management -->
+<div class="ca-results-container">
+
+  <!-- Overall Result View -->
+  <ng-container *ngIf="showOverallView">
+    <viewer-overall-result-view [resultsData]="results"
+      [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [v4questionSet]="v4questionSet"
+      [hideSectionTable]="isSingleSection" (viewQuestions)="onViewQuestions($event)">
+    </viewer-overall-result-view>
+  </ng-container>
+
+  <ng-container *ngIf="selectedSection && (isSingleSection || !showOverallView)">
+    <viewer-section-results-view [sectionData]="selectedSection" [hideSectionHeader]="isSingleSection"
+      [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" (back)="onBackFromSection()">
+    </viewer-section-results-view>
+  </ng-container>
+
+  <div class="w-full flex justify-center items-center mt-4">
+    <ng-container *ngIf="!isPracticeAssessment && (canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1 === 0">
+      <div class="mat-subheading-2 message">
+        <span>{{'playerbrief.maxAllowedRetake' | translate}}</span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isPracticeAssessment || (canAttempt?.attemptsAllowed - canAttempt?.attemptsMade) - 1 > 0">
+      <button mat-button (click)="retakeTest()" class="flex items-center gap-2 justify-center reattempt-btn">
+        <mat-icon>repeat</mat-icon>
+        {{'quizresult.reattemptTest' | translate}}
+      </button>
+    </ng-container>
+  </div>
+
+</div>

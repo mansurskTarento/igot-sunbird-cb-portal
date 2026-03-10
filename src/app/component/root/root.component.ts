@@ -46,6 +46,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
+import { CommonDataService } from '../../services/common-data.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -78,8 +79,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private changeDetector: ChangeDetectorRef,
     private utilitySvc: UtilityService,
     private urlService: UrlService,
-    private iGOTAIService: iGOTAIService
-     
+    private iGOTAIService: iGOTAIService,
+    private commonDataSvc: CommonDataService,
+
     // private dialogRef: MatDialogRef<any>,
   ) {
 
@@ -99,14 +101,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
       || window.location.pathname.includes('/viewer/')
-      ) {
+    ) {
       this.customHeight = true
       // tslint: disable
     }
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails &&
       this.configSvc.unMappedUser.profileDetails.get_started_tour) {
       this.showTour = this.configSvc.unMappedUser.profileDetails.get_started_tour.skipped ||
-      this.configSvc.unMappedUser.profileDetails.get_started_tour.visited
+        this.configSvc.unMappedUser.profileDetails.get_started_tour.visited
     }
     this.mobileAppsSvc.init()
     this.openIntro()
@@ -176,11 +178,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   get isCustomHeight(): boolean {
     if (window.location.pathname.includes('/public/home')
-    || window.location.pathname.includes('/public/faq')
-    || window.location.pathname.includes('/public/contact')
-    || window.location.pathname.includes('/public/signup')
-    || window.location.pathname.includes('/public/request')
-    || /^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
+      || window.location.pathname.includes('/public/faq')
+      || window.location.pathname.includes('/public/contact')
+      || window.location.pathname.includes('/public/signup')
+      || window.location.pathname.includes('/public/request')
+      || /^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
 
     ) {
       this.customHeight = true
@@ -229,6 +231,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       // this.authSvc.logout()
     }
   }
+
   openIntro() {
     // if (!(this.rootSvc.getCookie('intro') && !!(this.rootSvc.getCookie('intro')))) {
     //   if (this.router.url === '/page/home') {
@@ -247,13 +250,13 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
       this.mobileTopHeaderVisibilityStatus = status
     })
-    this.configSvc.updateTourGuideMethod(this.showTour)  
+    this.configSvc.updateTourGuideMethod(this.showTour)
     this.route.queryParams
       .subscribe(_params => {
         // tslint:disable-next-line
         // console.log(params) // { orderby: "price" }
       }
-    )
+      )
     if (window.location.pathname.includes('/public/home')) {
       this.customHeight = true
     }
@@ -263,25 +266,37 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.isInIframe = false
     }
 
+
     this.btnBackSvc.initialize()
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
+      const isPlayer = event.url.includes('/viewer')
+
+      // Extract fragment from URL
+      const fragment = this.route.snapshot.fragment || ''
+      // Initialize mandatory details from common data service
+      if (!['mandatorySection', 'orgDetails'].includes(fragment)) {
+        this.commonDataSvc.mandatoryDetails(isPlayer)
+      }
+      // Check and show mandatory notification on route change
       this.prevUrl = this.currUrl
-     
+
       this.currUrl = event.url
-      
+
       this.urlService.setPreviousUrl(this.prevUrl)
-      if(this.currUrl === '/page/home') {
-       this.isHomePage = true
-       this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
+      if (this.currUrl === '/page/home') {
+        this.isHomePage = true
+        this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
+        // Fetch mandatory notification when navigating to home
+        //this.commonDataSvc.fetchMandatoryNotification()
       } else {
         this.isHomePage = false
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
       }
-      if(event && event.url) {
-        if(event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
+      if (event && event.url) {
+        if (event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
           this.showNavbar = false
         } else if (event.url.includes('/page/home') && window.innerWidth <= 768) {
           this.showNavbar = true
@@ -333,8 +348,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         } else {
           this.viewerPage = false
         }
-
-        this.routeChangeInProgress = true
         this.changeDetector.detectChanges()
       } else if (
         event instanceof NavigationEnd ||
@@ -358,7 +371,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           || !!this.currentUrl.startsWith('/viewer/')
           || !!this.currentUrl.startsWith('/public/request')
           || !!this.currentUrl.startsWith('/public/toc')
-          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)          
+          || !!/^\/crp\/[^\/]+(\/[^\/]+)?$/.test(window.location.pathname)
         ) {
           this.showFooter = false
           this.showNavbar = false
@@ -417,7 +430,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.openIntro()
 
       }
-      if(event && event.url && event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
+      if (event && event.url && event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
         this.showNavbar = false
       }
     })
@@ -427,7 +440,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     let isNotMyUser = false
     let isIgotOrg = false
-    if(this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
+    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
       this.iGOTAIConfig()
     }
     if (this.configSvc && this.configSvc.unMappedUser
@@ -439,7 +452,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -449,40 +462,40 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.disableHeightOnTop = false
     }
 
-    
+
   }
 
   private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
-    let payload  = {
+    let payload = {
       "request": {
-        "type":"page",
-        "subType":"iGOTAI",
-        "action":"page-configuration",
-        "component":"portal",
+        "type": "page",
+        "subType": "iGOTAI",
+        "action": "page-configuration",
+        "component": "portal",
         "rootOrgId": this.configSvc.unMappedUser.rootOrgId
       }
     }
-    const publicConfig:any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
+    const publicConfig: any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
     // console.log('publicConfig', publicConfig)
-    if(publicConfig && publicConfig && publicConfig.web) {
+    if (publicConfig && publicConfig && publicConfig.web) {
       this.configSvc.iGOTAIConfig = publicConfig.web
-    //  console.log('this.configSvc', this.configSvc)      
+      //  console.log('this.configSvc', this.configSvc)
     }
-    
+
     // this.configSvc.iGOTAIConfig = {
     //   "aiTutor": true,
     //   "iGOTAI": true,
     //   "subTitles": true,
     //   "transcription": true
     // }
-    if(publicConfig && publicConfig.error &&  publicConfig.error.status === 404) {
+    if (publicConfig && publicConfig.error && publicConfig.error.status === 404) {
       this.iGOTAIConfigLoaded = false
     } else {
-      this.iGOTAIConfigLoaded = true  
+      this.iGOTAIConfigLoaded = true
     }
     return publicConfig
   }
-  
+
   changeBg26Jan() {
     this.backGroundTheme = this.configSvc.overrideThemeChanges
     const docData: any = document.getElementById('app-bg')
