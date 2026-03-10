@@ -55,8 +55,8 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
       this.params = params
     })
     // tslint: disable-next-line: whitespace
-    if (localStorage.getItem('details_page') !== '' && localStorage.getItem('details_page') !== 'undefined') {
-      this.detailsData = JSON.parse(localStorage.getItem('details_page') as any)
+    if (localStorage.getItem('details_page_competency') !== '' && localStorage.getItem('details_page_competency') !== 'undefined') {
+      this.detailsData = JSON.parse(localStorage.getItem('details_page_competency') as any)
       if (this.detailsData) {
         this.themeDetails = this.detailsData
         this.certificateData = this.detailsData.issuedCertificates
