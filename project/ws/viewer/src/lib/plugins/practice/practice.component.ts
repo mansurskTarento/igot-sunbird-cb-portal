@@ -22,13 +22,12 @@ import { ConfigurationsService, EventService, NsContent, ValueService, WsEvents 
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { ViewerUtilService, WidgetContentService, AppTocService } from '@sunbird-cb/toc'
+import { ViewerUtilService, WidgetContentService, AppTocService, ViewerDataService } from '@sunbird-cb/toc'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSQuiz } from '../quiz/quiz.model'
 import { environment } from 'src/environments/environment'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
-import { ViewerDataService } from '../../viewer-data.service'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
@@ -36,7 +35,6 @@ import { MatSidenav } from '@angular/material/sidenav'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 
-// import { ViewerDataService } from '../../viewer-data.service'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
   selector: 'viewer-plugin-practice',
@@ -107,7 +105,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   result = 0
   sidenavMode = 'start'
   sidenavOpenDefault = false
-  finalResponse!: NSPractice.IQuizSubmitResponseV2
+  finalResponse: NSPractice.IQuizSubmitResponseV2 | null = null
   startTime = 0
   submissionState: NSPractice.TQuizSubmissionState = 'unanswered'
   telemetrySubscription: Subscription | null = null
@@ -174,6 +172,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   private viewerDataTocSubscription: Subscription | null = null
   private cachedSelectedQuestionNumber: number = 0
   private cachedQuestionId: string = ''
+  v4questionSet: any
 
   @ViewChild('publicUserDialog', { static: true }) publicUserDialog!: TemplateRef<any>
   constructor(
@@ -184,7 +183,6 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     private viewerSvc: ViewerUtilService,
     private router: Router,
     private valueSvc: ValueService,
-    // private vws: ViewerDataService,
     private configSvc: ConfigurationsService,
     private formBuilder: UntypedFormBuilder,
     public snackbar: MatSnackBar,
@@ -593,6 +591,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
               if (section.responseCode && section.responseCode === 'OK') {
                 this.compatibilityLevel = section.result.questionSet.compatibilityLevel
                 this.assessmentType = section.result.questionSet.assessmentType
+                this.v4questionSet = section.result.questionSet
                 /** this is to enable or disable Timer */
                 const showTimer = _.toLower(_.get(section, 'result.questionSet.showTimer')) === 'yes'
                 if (showTimer) {
@@ -2073,6 +2072,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
         this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.quizData)
         this.clearStoragePartial()
         this.clearStorage()
+        this.finalResponse = null
         this.retake = true
         this.isSubmitted = false
 

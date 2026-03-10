@@ -6,13 +6,12 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { RootService } from '../../../../../src/app/component/root/root.service'
-import { TStatus, ViewerDataService } from './viewer-data.service'
 import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
+import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService, TStatus, ViewerDataService } from '@sunbird-cb/toc'
 
 
 export enum ErrorType {
@@ -362,13 +361,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         // Set hierarchyMapData for child components
         this.hierarchyMapData = { ...this.tocSvc.hashmap }
-
-        console.log('📊 [VIEWER] Regular course - final hashmap:', {
-          collectionId: this.collectionId,
-          hashmapKeys: Object.keys(this.tocSvc.hashmap).length,
-          rootEntry: this.tocSvc.hashmap[this.collectionId || ''],
-          sampleLeafNode: this.tocSvc.hashmap[this.hierarchyData?.leafNodes?.[0]]
-        })
       }
       this.resetAndFetchTocStructure()
       // Recompute leafNodesCount after hierarchy has been fully manipulated
@@ -802,7 +794,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   async manipulateHierarchyData() {
     if (!this.forPreview) {
       // First, map completion percentage to hierarchy structure
-      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
+      await this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
 
       // Then check and update module-wise data
       this.tocSvc.checkModuleWiseData(this.hierarchyData)
