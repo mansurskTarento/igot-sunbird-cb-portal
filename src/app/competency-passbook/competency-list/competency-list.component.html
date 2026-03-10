@@ -292,5 +292,7 @@
     <!-- <ws-widget-cbp-filters (clearFilterObj)="handleClearFilterObj($event)" (toggleFilter)="handleFilter($event)" [filterObj]="filterObjData2"
         (getFilterData)="handleApplyFilter($event)" [showAdditionalFilters]="false"></ws-widget-cbp-filters> -->
 
-    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="filteredCompetencyArray"></ws-competency-filters>
+    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" (toggleFilter)="handleFilter($event)"
+        (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
+    </ws-competency-filters>
 </ng-container>

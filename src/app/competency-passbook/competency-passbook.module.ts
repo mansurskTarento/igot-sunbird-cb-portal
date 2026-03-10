@@ -15,10 +15,13 @@ import { CompetencyPassbookSideBarComponent } from './../component/competency-pa
 import { CompetencySearchComponent } from './competency-search/competency-search.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { DialogComponentsModule } from '@sunbird-cb/consumption'
+import { FormsModule } from '@angular/forms'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import { CompetencyFiltersComponent } from './competency-filters/competency-filters.component'
 
 @NgModule({
@@ -33,10 +36,13 @@ import { CompetencyFiltersComponent } from './competency-filters/competency-filt
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     MatIconModule,
     MatMenuModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
+    MatCheckboxModule,
     CompetencyPassbookRoutingModule,
     SkeletonLoaderModule,
     PipeSafeSanitizerModule,
