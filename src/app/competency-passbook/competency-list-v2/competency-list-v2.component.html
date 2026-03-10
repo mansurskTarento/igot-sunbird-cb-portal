@@ -289,7 +289,7 @@
 </div>
 
 <ng-container *ngIf="toggleFilter">
-    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" (toggleFilter)="handleFilter($event)"
-        (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
+    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" [appliedFilter]="appliedFilter"
+        (toggleFilter)="handleFilter($event)" (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
     </ws-competency-filters>
 </ng-container>

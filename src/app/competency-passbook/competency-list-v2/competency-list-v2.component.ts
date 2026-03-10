@@ -44,6 +44,11 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   totalCompetencyCount = 0
   totalCompetencySubThemeCount = 0
   totalContentConsumed = 0
+  appliedFilter: any = {
+    competencyarea: [],
+    theme: [],
+    subtheme: [],
+  }
 
   leftStatus: { id: string, count: number, consumedCourse: number }[] = []
   filteredCompetencyArray: any[] = []
@@ -216,7 +221,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         },
         (error: HttpErrorResponse) => {
           if (!error.ok) {
-            this.competency.skeletonLoading = true
+            this.competency.skeletonLoading = false
             this.matSnackBar.open('Unable to pull My Competency list details!')
           }
         }
@@ -547,6 +552,10 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     this.tabValue = param
     this.filterCompetencyByTab(param)
     this.filterObjData2 = { ...this.filterObjData }
+    // Re-apply filters if any are active
+    if (this.filterApplied) {
+      this.filterData()
+    }
   }
 
   handleShowAll(): void {
@@ -599,18 +608,21 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   handleApplyFilter(event: any) {
     this.toggleFilter = false
     this.document.body.classList.remove('overflow-hidden')
-    this.filterData(event)
+    this.appliedFilter = event
+    this.filterData()
   }
 
   handleClearFilterObj(event: any) {
     this.filterObjData2 = event
+    this.appliedFilter = { competencyarea: [], theme: [], subtheme: [] }
+    this.filterApplied = false
     this.filterCompetencyByTab(this.tabValue || 'all')
   }
 
-  filterData(filterValue: any) {
-    const areaFilters: string[] = filterValue.competencyarea || []
-    const themeFilters: string[] = filterValue.theme || []
-    const subThemeFilters: string[] = filterValue.subtheme || []
+  filterData() {
+    const areaFilters: string[] = this.appliedFilter.competencyarea || []
+    const themeFilters: string[] = this.appliedFilter.theme || []
+    const subThemeFilters: string[] = this.appliedFilter.subtheme || []
 
     // If no filters selected, reset to tab-based view
     if (!areaFilters.length && !themeFilters.length && !subThemeFilters.length) {

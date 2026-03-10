@@ -9,6 +9,7 @@ export class CompetencyFiltersComponent implements OnInit {
 
   @Input() allCompetencies: any[] = []
   @Input() filteredCompetencyArray: any[] = []
+  @Input() appliedFilter: any = { competencyarea: [], theme: [], subtheme: [] }
 
   @Output() toggleFilter = new EventEmitter<boolean>()
   @Output() getFilterData = new EventEmitter<any>()
@@ -30,6 +31,7 @@ export class CompetencyFiltersComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildFilterData()
+    this.restoreAppliedFilters()
   }
 
   buildFilterData(): void {
@@ -39,6 +41,47 @@ export class CompetencyFiltersComponent implements OnInit {
         refId: area.refId || area.id || '',
         selected: false,
       }))
+    }
+  }
+
+  restoreAppliedFilters(): void {
+    const savedAreas: string[] = this.appliedFilter?.competencyarea || []
+    const savedThemes: string[] = this.appliedFilter?.theme || []
+    const savedSubThemes: string[] = this.appliedFilter?.subtheme || []
+
+    if (!savedAreas.length && !savedThemes.length && !savedSubThemes.length) {
+      return
+    }
+
+    // Step 1: Mark saved areas as selected
+    if (savedAreas.length) {
+      this.competencyAreas.forEach(a => {
+        a.selected = savedAreas.some(sa =>
+          sa.toLowerCase() === a.name.toLowerCase()
+        )
+      })
+      this.rebuildThemes()
+    }
+
+    // Step 2: Mark saved themes as selected
+    if (savedThemes.length) {
+      this.allThemes.forEach(t => {
+        t.selected = savedThemes.some(st =>
+          st.toLowerCase() === t.name.toLowerCase()
+        )
+      })
+      this.filteredThemes = [...this.allThemes]
+      this.rebuildSubThemes()
+    }
+
+    // Step 3: Mark saved sub-themes as selected
+    if (savedSubThemes.length) {
+      this.allSubThemes.forEach(s => {
+        s.selected = savedSubThemes.some(ss =>
+          ss.toLowerCase() === s.name.toLowerCase()
+        )
+      })
+      this.filteredSubThemes = [...this.allSubThemes]
     }
   }
 
