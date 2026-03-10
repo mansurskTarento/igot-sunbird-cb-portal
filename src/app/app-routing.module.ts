@@ -1208,6 +1208,16 @@ const routes: Routes = [
     component: SurveyShikshaComponent,
   },
   {
+    path: 'badges',
+    loadChildren: () =>
+      import('./badges/badges.module').then(m => m.BadgesModule),
+    canActivate: [GeneralGuard],
+    data: {
+      pageId: 'badges',
+      module: 'Badges',
+    },
+  },
+  {
     path: '**',
     component: ErrorResolverComponent,
     data: {
