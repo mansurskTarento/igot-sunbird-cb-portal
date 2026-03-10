@@ -576,7 +576,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   }
 
   handleNavigate(obj: any): void {
-    localStorage.setItem('details_page', JSON.stringify(obj))
+    localStorage.setItem('details_page_competency', JSON.stringify(obj))
+    console.log('Navigating to details page with data:', obj)
     this.router.navigate(['/page/competency-passbook/details'])
   }
 

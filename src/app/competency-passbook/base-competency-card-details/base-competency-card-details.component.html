@@ -1,0 +1,8 @@
+version - {{version}}
+<ng-container *ngIf="version === 'new'">
+  <ws-competency-card-details-v2></ws-competency-card-details-v2>
+</ng-container>
+
+<ng-container *ngIf="version !== 'new'">
+  <ws-competency-card-details></ws-competency-card-details>
+</ng-container>

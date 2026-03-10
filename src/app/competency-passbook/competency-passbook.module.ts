@@ -25,6 +25,8 @@ import { CompetencyFiltersComponent } from './competency-filters/competency-filt
 import { CompetencyListV2Component } from './competency-list-v2/competency-list-v2.component'
 import { BaseCompetencyListComponent } from './base-competency-list/base-competency-list.component'
 import { CompetencyListComponent } from './competency-list/competency-list.component'
+import { BaseCompetencyCardDetailsComponent } from './base-competency-card-details/base-competency-card-details.component'
+import { CompetencyCardDetailsV2Component } from './competency-card-details-v2/competency-card-details-v2.component'
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { CompetencyListComponent } from './competency-list/competency-list.compo
     CompetencyFiltersComponent,
     BaseCompetencyListComponent,
     CompetencyListComponent,
+    BaseCompetencyCardDetailsComponent,
+    CompetencyCardDetailsV2Component,
   ],
   imports: [
     CommonModule,
