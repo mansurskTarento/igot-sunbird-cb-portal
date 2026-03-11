@@ -65,6 +65,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     themes: {
       id: string
       name: string
+      areaId: string
+      areaName: string
       subThemes: { id: string, name: string }[]
       competencyDetails: any[]
       viewMore: boolean
@@ -256,6 +258,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         if (!themeEntry) {
           themeEntry = {
             id: themeId,
+            areaId: areaId,
+            areaName: area,
             name: this.allThemeData.find((t: any) => t.refId === themeId)?.name || '',
             subThemes: [],
             competencyDetails: [],
@@ -280,6 +284,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         }
 
         if (item.competencyDetails) {
+          item.competencyDetails.subThemeId = subThemeId
+          item.competencyDetails.subThemeName = this.getSubThemeName(subThemeId)
           themeEntry.competencyDetails.push(item.competencyDetails)
 
           const iGOTCount = Array.isArray(item.competencyDetails.iGOTCourses)

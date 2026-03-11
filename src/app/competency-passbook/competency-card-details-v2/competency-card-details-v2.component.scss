@@ -25,6 +25,22 @@ $text-primary: #1B4CA1;
     line-height: 14px;
 }
 
+.pill {
+    border: 1px solid $text-primary;
+    color: $text-primary;
+    background: #fff;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+        background: rgba($text-primary, 0.08);
+    }
+
+    &.pill-active {
+        background: $text-primary;
+        color: #fff;
+    }
+}
+
 .chip-ellipsis {
     white-space: nowrap;
     max-width: 104px;

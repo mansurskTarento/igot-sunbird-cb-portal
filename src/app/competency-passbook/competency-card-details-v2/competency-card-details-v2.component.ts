@@ -1,5 +1,5 @@
 // Core imports
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core'
+import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
 import { jsPDF } from 'jspdf'
@@ -13,7 +13,7 @@ import { MultilingualTranslationsService, EventService, WsEvents, Configurations
 import { environment } from 'src/environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-competency-card-details-v2',
@@ -21,18 +21,19 @@ import { NsContent } from '@sunbird-cb/collection/src/public-api'
   styleUrls: ['./competency-card-details-v2.component.scss'],
 })
 
-export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, OnDestroy {
-  private destroySubject$ = new Subject()
-  params: any
-  certificateData: any = []
-  subThemeArray: any[] = []
-  viewMoreST = false
-  updatedTime: any
-  themeDetails: any
+export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   isMobile = false
+  params: any
   detailsData: any
-  @ViewChildren('courseName') courseNameDiv!: QueryList<ElementRef>
-  compentencyKey!: NsContent.ICompentencyKeys
+  viewMoreST = false
+  destroySubject$ = new Subject<void>()
+  myCompetencyList: any[] = []
+  filteredSelfAchievements: any[] = []
+  filteredIGOTCourses: any[] = []
+  filteredExtCourses: any[] = []
+  activeTab = ''
+  currentTabData: any[] = []
+  @ViewChildren('certificate') certificateElements!: QueryList<ElementRef>
   constructor(
     private actRouter: ActivatedRoute,
     private router: Router,
@@ -42,7 +43,9 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
     private events: EventService,
     private dialog: MatDialog,
     private configSvc: ConfigurationsService,
+    private matSnackBar: MatSnackBar,
   ) {
+    console.log('configSvc', this.configSvc.instanceConfig)
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -50,31 +53,176 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
         this.translate.use(lang)
       }
     })
-    this.isMobile = (window.innerWidth < 768) ? true : false
     this.actRouter.queryParams.subscribe((params: any) => {
       this.params = params
     })
     // tslint: disable-next-line: whitespace
     if (localStorage.getItem('details_page_competency') !== '' && localStorage.getItem('details_page_competency') !== 'undefined') {
       this.detailsData = JSON.parse(localStorage.getItem('details_page_competency') as any)
-      if (this.detailsData) {
-        this.themeDetails = this.detailsData
-        this.certificateData = this.detailsData.issuedCertificates
-
-      }
     }
   }
 
   ngOnInit() {
-    this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
+    this.getMyCompetencyList()
   }
 
-  ngAfterViewInit(): void {
-    this.courseNameDiv.forEach((_elem: ElementRef, index: number) => {
-      if (_elem.nativeElement.getBoundingClientRect().height >= 48) {
-        this.detailsData.issuedCertificates[index]['courseEllipsis'] = true
+  getMyCompetencyList(): void {
+    this.cpService.getMyCompetencyList()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          if (response && response.result && response.result.competencies) {
+            this.myCompetencyList = response.result.competencies
+            this.filterCompetenciesBySubThemes()
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to pull My Competency list details!')
+          }
+        }
+      )
+  }
+
+  filterCompetenciesBySubThemes(): void {
+    const subThemes = this.detailsData?.subThemes || []
+    if (!this.myCompetencyList.length || !subThemes.length) {
+      return
+    }
+
+    const subThemeIds = new Set(subThemes.map((st: any) => st.id))
+    const subThemeMap = new Map(subThemes.map((st: any) => [st.id, st.name]))
+
+    // Filter competencies that match any of the subthemes
+    const matchedCompetencies = this.myCompetencyList.filter(
+      (comp: any) => subThemeIds.has(comp.competencySubThemeId)
+    )
+
+    // Maps to group courses by acquiredContextId, collecting subtheme names
+    const selfAchievementMap = new Map<string, any>()
+    const iGOTCoursesMap = new Map<string, any>()
+    const extCoursesMap = new Map<string, any>()
+
+    const courseMaps: { [key: string]: Map<string, any> } = {
+      selfAchievement: selfAchievementMap,
+      iGOTCourses: iGOTCoursesMap,
+      extCourses: extCoursesMap,
+    }
+
+    for (const comp of matchedCompetencies) {
+      const subThemeName = subThemeMap.get(comp.competencySubThemeId) || comp.competencySubThemeId
+      const details = comp.competencyDetails || {}
+
+      for (const type of ['selfAchievement', 'iGOTCourses', 'extCourses']) {
+        const courses = details[type]
+        if (courses && courses.length) {
+          const map = courseMaps[type]
+          for (const course of courses) {
+            const key = course.acquiredContextId
+            if (map.has(key)) {
+              const existing = map.get(key)
+              if (!existing.subThemes.includes(subThemeName)) {
+                existing.subThemes.push(subThemeName)
+              }
+            } else {
+              map.set(key, {
+                ...course,
+                subThemes: [subThemeName],
+              })
+            }
+          }
+        }
       }
-    })
+    }
+
+    this.filteredSelfAchievements = Array.from(selfAchievementMap.values()).map(item => ({ ...item, viewMore: false }))
+    this.filteredIGOTCourses = Array.from(iGOTCoursesMap.values()).map(item => ({ ...item, viewMore: false }))
+    this.filteredExtCourses = Array.from(extCoursesMap.values()).map(item => ({ ...item, viewMore: false }))
+    if (this.filteredIGOTCourses.length) {
+      this.fetchIGOTCourseDetails()
+    }
+    if (this.filteredExtCourses.length) {
+      this.fetchExtCourseDetails()
+    }
+    if (this.filteredSelfAchievements.length) {
+      this.fetchSelfAchievementCourseDetails()
+    }
+    if (this.filteredIGOTCourses.length) {
+      this.activeTab = 'iGOTCourses'
+    } else if (this.filteredExtCourses.length) {
+      this.activeTab = 'extCourses'
+    } else if (this.filteredSelfAchievements.length) {
+      this.activeTab = 'selfAchievement'
+    }
+    this.assignData(this.activeTab)
+  }
+
+  fetchIGOTCourseDetails(): void {
+    const identifiers = this.filteredIGOTCourses.map((course: any) => course.acquiredContextId)
+    const payload = {
+      request: {
+        filters: {
+          identifier: identifiers,
+        },
+        fields: ['identifier', 'name'],
+        limit: identifiers.length,
+      },
+    }
+    this.cpService.getIGOTCourseList(payload)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          console.log('IGOT course details response', response)
+          const results: any[] = response?.result?.content || []
+          const nameMap = new Map<string, string>(results.map((item: any) => [item.identifier, item.name]))
+          this.filteredIGOTCourses = this.filteredIGOTCourses.map((course: any) => ({
+            ...course,
+            name: nameMap.get(course.acquiredContextId) || course.name || '',
+          }))
+          this.assignData('iGOTCourses')
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to fetch iGOT course details!')
+          }
+        }
+      )
+  }
+
+  fetchSelfAchievementCourseDetails(): void {
+
+  }
+
+  fetchExtCourseDetails(): void {
+    const identifiers = this.filteredExtCourses.map((course: any) => course.acquiredContextId)
+    const payload = {
+      filterCriteriaMap: {
+        contentId: identifiers
+      },
+      requestedFields: [
+        "name", "contentId"
+      ],
+      pageNumber: 0,
+      pageSize: identifiers.length,
+    }
+    this.cpService.getExternalCourseList(payload)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          const results: any[] = response?.data || []
+          const nameMap = new Map<string, string>(results.map((item: any) => [item.contentId, item.name]))
+          this.filteredExtCourses = this.filteredExtCourses.map((course: any) => ({
+            ...course,
+            name: nameMap.get(course.acquiredContextId) || course.name || '',
+          }))
+          this.assignData('extCourses')
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to fetch external course details!')
+          }
+        }
+      )
   }
 
   getCertificateSVG(obj: any, type?: string): void {
@@ -85,11 +233,11 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
         this.handleDownloadCertificatePDF(obj.printURI)
       }
       if (type === 'SHARE') {
-        this.shareCertificate(obj.identifier)
+        this.shareCertificate(obj.certificateId)
       }
       obj['loading'] = false
     } else {
-      this.cpService.fetchCertificate(obj.identifier)
+      this.cpService.fetchCertificate(obj.certificateId)
         .pipe(takeUntil(this.destroySubject$))
         .subscribe(res => {
           // tslint: disable-next-line
@@ -97,7 +245,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
           obj['loading'] = false
           this.dialog.open(CertificateDialogComponent, {
             width: '1200px',
-            data: { cet: res.result.printUri, certId: obj.identifier },
+            data: { cet: res.result.printUri, certId: obj.certificateId },
           })
         }, (error: HttpErrorResponse) => {
           if (!error.ok) {
@@ -160,6 +308,29 @@ export class CompetencyCardDetailsV2Component implements OnInit, AfterViewInit, 
         type: WsEvents.EnumInteractSubTypes.CERTIFICATE,
       }
     )
+  }
+
+  assignData(tabName: string) {
+    if (tabName === 'iGOTCourses') {
+      this.currentTabData = this.filteredIGOTCourses
+    } else if (tabName === 'extCourses') {
+      this.currentTabData = this.filteredExtCourses
+    } else if (tabName === 'selfAchievement') {
+      this.currentTabData = this.filteredSelfAchievements
+    }
+    console.log('currentTabData', this.currentTabData)
+  }
+
+  resetAllViewMore(): void {
+    this.filteredSelfAchievements.forEach(item => item.viewMore = false)
+    this.filteredIGOTCourses.forEach(item => item.viewMore = false)
+    this.filteredExtCourses.forEach(item => item.viewMore = false)
+  }
+
+  handleActiveTab(tabName: string): void {
+    this.resetAllViewMore()
+    this.activeTab = tabName
+    this.assignData(tabName)
   }
 
   ngOnDestroy(): void {
