@@ -18,7 +18,7 @@ export class BadgeDetailsComponent {
     console.log('badge', badge)
     this.selectedBadge = {
       title: 'Beginner',
-      image: 'assets/icons/BronzeBadge.svg',
+      image: 'assets/icons/badges/BronzeBadge.svg',
       level: ''
     }
     this.showModal = true
@@ -38,19 +38,19 @@ export class BadgeDetailsComponent {
     stats: [
       {
         label: 'Total Badges Earned',
-        icon: 'assets/icons/badge.svg',
+        icon: 'assets/icons/badges/badge.svg',
         iconClass: 'orange',
         value: 3,
       },
       {
         label: 'Course Completed',
-        icon: 'assets/icons/course.svg',
+        icon: 'assets/icons/badges/course.svg',
         iconClass: 'blue',
         value: 13,
       },
       {
         label: 'Average Progress',
-        icon: 'assets/icons/line_chart.svg',
+        icon: 'assets/icons/badges/line_chart.svg',
         iconClass: 'yellow',
         value: '82%',
       },
@@ -58,19 +58,19 @@ export class BadgeDetailsComponent {
 
     earnedBadges: [
       {
-        image: 'assets/icons/Below Badge.svg',
+        image: 'assets/icons/badges/Below Badge.svg',
         glow: 'glow-red',
         title: 'Course Champion',
         level: 'Beginner',
       },
       {
-        image: 'assets/icons/Police badge.svg',
+        image: 'assets/icons/badges/police badge.svg',
         glow: 'glow-orange',
         title: 'Course Champion',
         level: 'Advanced',
       },
       {
-        image: 'assets/icons/Gold cup.svg',
+        image: 'assets/icons/badges/Gold cup.svg',
         glow: '',
         title: 'Course Champion',
         level: 'Advanced',
@@ -79,19 +79,19 @@ export class BadgeDetailsComponent {
 
     inProgress: [
       {
-        icon: 'assets/icons/Bronze cup.svg',
+        icon: 'assets/icons/badges/Bronze cup.svg',
         name: 'Advance Leadership Skills',
         progress: '92%',
         continue: true,
       },
       {
-        icon: 'assets/icons/Police badge.svg',
+        icon: 'assets/icons/badges/Police badge.svg',
         name: 'Digital Transformation Workshop',
         progress: '87%',
         continue: false,
       },
       {
-        icon: 'assets/icons/Below Badge.svg',
+        icon: 'assets/icons/badges/Below Badge.svg',
         name: 'Digital Transformation Workshop',
         progress: '74%',
         continue: false,
