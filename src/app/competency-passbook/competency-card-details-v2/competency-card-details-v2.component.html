@@ -56,21 +56,25 @@
 
         <!-- Tab Pills -->
         <div class="flex flex-wrap gap-3">
-
             <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredIGOTCourses?.length !== 0"
                 [ngClass]="{'pill-active': activeTab === 'iGOTCourses'}" (click)="handleActiveTab('iGOTCourses')"
                 (keyup)="handleActiveTab('iGOTCourses')">
-                iGOT Content ({{ filteredIGOTCourses?.length }})
+                {{'competencyCardDetails.igotLearning' | translate}} ({{ filteredIGOTCourses?.length }})
             </div>
             <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredExtCourses?.length !== 0"
                 [ngClass]="{'pill-active': activeTab === 'extCourses'}" (click)="handleActiveTab('extCourses')"
                 (keyup)="handleActiveTab('extCourses')">
-                External Content ({{ filteredExtCourses?.length }})
+                {{'competencyCardDetails.marketplace' | translate}} ({{ filteredExtCourses?.length }})
             </div>
             <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredSelfAchievements?.length !== 0"
                 [ngClass]="{'pill-active': activeTab === 'selfAchievement'}" (click)="handleActiveTab('selfAchievement')"
                 (keyup)="handleActiveTab('selfAchievement')">
-                Self Achievements ({{ filteredSelfAchievements?.length }})
+                {{'competencyCardDetails.selfDeclared' | translate}} ({{ filteredSelfAchievements?.length }})
+            </div>
+            <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredProviderReported?.length !== 0"
+                [ngClass]="{'pill-active': activeTab === 'providerReported'}" (click)="handleActiveTab('providerReported')"
+                (keyup)="handleActiveTab('providerReported')">
+                {{'competencyCardDetails.ATI/CTIReported' | translate}} ({{ filteredProviderReported?.length }})
             </div>
         </div>
 

@@ -31,6 +31,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   filteredSelfAchievements: any[] = []
   filteredIGOTCourses: any[] = []
   filteredExtCourses: any[] = []
+  filteredProviderReported: any[] = []
   activeTab = ''
   currentTabData: any[] = []
   @ViewChildren('certificate') certificateElements!: QueryList<ElementRef>
@@ -316,7 +317,11 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   }
 
   handleNavigate(courseObj: any): void {
-    this.router.navigateByUrl(`app/toc/${courseObj.contentId}/overview?batchId=${courseObj.batchId}`)
+    if (this.activeTab === 'extCourses') {
+      this.router.navigateByUrl(`/app/toc/ext/${courseObj.acquiredContextId}`)
+    } else if (this.activeTab === 'iGOTCourses') {
+      this.router.navigateByUrl(`app/toc/${courseObj.acquiredContextId}/overview`)
+    }
   }
 
   handleViewMore(obj: any, flag?: string): void {
