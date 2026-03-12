@@ -1,49 +1,52 @@
 <ng-template #competencyCard>
-    <div class="flex-1 flex-col" *ngFor="let obj of competencyArray">
-        <div class="competency-passbook-theme"
-            [ngClass]="{'behavioral': obj[compentencyKey.vCompetencyArea].toLowerCase() === TYPE_CONST.behavioral.otherValue, 'functional': obj[compentencyKey.vCompetencyArea].toLowerCase() === TYPE_CONST.functional.value, 'domain': obj[compentencyKey.vCompetencyArea].toLowerCase() === TYPE_CONST.domain.value}">
-        </div>
-        <div class="detail flex flex-col">
-            <div class="flex flex-col">
-                <div class="flex flex-row justify-between p-4 cursor-pointer gap-6" (click)="handleNavigate(obj)">
-                    <div class="flex flex-col gap-3 text-primary">
-                        <div class="flex flex-row gap-2 align-baseline">
-                            <div class="competency-name font-semibold" [title]="obj[compentencyKey.vCompetencyTheme]">{{
-                                obj[compentencyKey.vCompetencyTheme] }}</div>
-                            <div class="flex items-baseline">
-                                <img src="assets/icons/competency/cp-arrow.svg" class="arrow-img" alt="cp arrow img" />
+    <ng-container *ngFor="let obj of filteredCompetencyArray">
+        <div class="flex-1 flex-col" *ngFor="let theme of obj?.themes">
+            <div class="competency-passbook-theme"
+                [ngClass]="{'behavioral': obj?.name?.toLowerCase() === TYPE_CONST.behavioral.otherValue, 'functional': obj?.name?.toLowerCase() === TYPE_CONST.functional.value, 'domain': obj?.name?.toLowerCase() === TYPE_CONST.domain.value}">
+            </div>
+            <div class="detail flex flex-col">
+                <div class="flex flex-col">
+                    <div class="flex flex-row justify-between p-4 cursor-pointer gap-6" (click)="handleNavigate(theme)">
+                        <div class="flex flex-col gap-3 text-primary">
+                            <div class="flex flex-row gap-2 align-baseline">
+                                <div class="competency-name font-semibold" [title]="theme?.name">{{
+                                    theme?.name }}</div>
+                                <div class="flex items-baseline">
+                                    <img src="assets/icons/competency/cp-arrow.svg" class="arrow-img" alt="cp arrow img" />
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-3">
+                                <mat-icon>school</mat-icon>
+                                <div class="text-base">{{ theme?.counts?.total || 0 }}</div>
                             </div>
                         </div>
-                        <div class="flex flex-row gap-3">
-                            <mat-icon>school</mat-icon>
-                            <div class="text-base">{{ obj?.contentConsumed?.length || 0 }}</div>
+                        <div class="flex items-baseline">
+                            <img src="assets/icons/competency/{{(obj?.name?.toLowerCase() === 'behavioral') ? 'behavioural' : obj?.name?.toLowerCase() }}-light.svg"
+                                alt="{{ obj?.name?.toLowerCase() }} image" />
                         </div>
                     </div>
-                    <div class="flex items-baseline">
-                        <img src="assets/icons/competency/{{(obj[compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral') ? 'behavioural' : obj[compentencyKey.vCompetencyArea].toLowerCase() }}-light.svg"
-                            alt="{{ obj[compentencyKey.vCompetencyArea].toLowerCase() }} image" />
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 p-4 chip-container">
-                    <ng-container *ngFor="let child of obj?.subTheme; let i = index">
-                        <div class="chip rounded-full p-2 text-xs"
-                            [ngClass]="{'hide': (i > 1 && !obj?.viewMore), 'chip-ellipsis': !obj?.viewMore && obj?.subTheme?.length > 1 }"
-                            [title]="child">
-                            {{ child }}
+                    <div class="flex flex-wrap gap-3 p-4 chip-container">
+                        <ng-container *ngFor="let child of theme?.subThemes; let i = index">
+                            <div class="chip rounded-full p-2 text-xs"
+                                [ngClass]="{'hide': (i > 1 && !theme?.viewMore), 'chip-ellipsis': !theme?.viewMore && theme?.subThemes?.length > 1 }"
+                                [title]="child?.name">
+                                {{ child?.name }}
+                            </div>
+                        </ng-container>
+                        <div class="flex items-center text-primary underline cursor-pointer text-xs"
+                            *ngIf="theme?.subThemes?.length > 2 && !theme?.viewMore" (click)="handleViewMore(theme)">
+                            {{'competencyList.viewMore' | translate }}
                         </div>
-                    </ng-container>
-                    <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="obj?.subTheme?.length > 2 && !obj?.viewMore"
-                        (click)="handleViewMore(obj)">
-                        {{'competencyList.viewMore' | translate }}
-                    </div>
-                    <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="obj?.viewMore"
-                        (click)="handleViewMore(obj, 'less')">
-                        {{'competencyList.viewLess' | translate }}
+                        <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="theme?.viewMore"
+                            (click)="handleViewMore(theme, 'less')">
+                            {{'competencyList.viewLess' | translate }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-container>
+
 
     <div class="flex-1 flex-col" *ngIf="competency?.error">
         <div class="flex flex-col gap-1 error-div justify-center items-center">
@@ -53,7 +56,7 @@
         </div>
     </div>
 
-    <div class="flex-1 flex-col" *ngIf="!competencyArray?.length && !competency?.error">
+    <div class="flex-1 flex-col" *ngIf="!filteredCompetencyArray?.length && !competency?.error">
         <div class="flex flex-col gap-3 justify-center items-center mt-12 p-6">
             <img src="assets/icons/competency/no-competencies.svg" alt="no competencies found image" />
             <div class="font-bold">{{'competencyList.noCompetencyDataFound' | translate }}</div>
@@ -150,24 +153,6 @@
         <div class="flex flex-col gap-4 cp-container">
             <div class="flex flex-row gap-3">
                 <div class="flex-1 text-xl font-semibold">{{'competencyList.title' | translate }}</div>
-                <!-- <div class="flex items-center">
-                    <span class="filter-dot" *ngIf="showFilterIndicator !== 'all'"></span>
-                    <mat-icon class="cursor-pointer" [matMenuTriggerFor]="filter">filter_list</mat-icon>
-                    <mat-menu #filter="matMenu" xPosition="before">
-                        <button mat-menu-item class="px-3" [ngClass]="{'highlightFilter': showFilterIndicator === 'threeMonths'}" (click)="handleLeftFilter('threeMonths')" >
-                            <span>Last 3 months</span>
-                        </button>
-                        <button mat-menu-item class="px-3" [ngClass]="{'highlightFilter': showFilterIndicator === 'sixMonths'}" (click)="handleLeftFilter('sixMonths')">
-                            <span>Last 6 months</span>
-                        </button>
-                        <button mat-menu-item class="px-3" [ngClass]="{'highlightFilter': showFilterIndicator === 'lastYear'}" (click)="handleLeftFilter('lastYear')">
-                            <span>Last year</span>
-                        </button>
-                        <button mat-menu-item class="px-3" (click)="handleLeftFilter('all')">
-                            <span>Clear</span>
-                        </button>
-                    </mat-menu>
-                </div> -->
             </div>
 
             <div class="flex flex-row gap-3 p-4">
@@ -179,7 +164,7 @@
                                 [height]="'40px'"></ws-widget-skeleton-loader>
                         </ng-container>
                         <ng-container *ngIf="!competency.skeletonLoading">
-                            <div class="text-4xl font-semibold">{{ competency.all.length }}</div>
+                            <div class="text-4xl font-semibold">{{ totalCompetencyCount }}</div>
                         </ng-container>
                     </div>
                 </div>
@@ -261,7 +246,8 @@
                                     [height]="'28px'"></ws-widget-skeleton-loader>
                             </ng-container>
                             <ng-container *ngIf="!competency.skeletonLoading">
-                                <div class="text-base font-semibold">{{ (competency[elem?.name + 'SubTheme'] || elem['competencySubTheme']) || '0' }}
+                                <div class="text-base font-semibold">{{(competency[elem?.name + 'SubTheme'] || elem['competencySubTheme']) ||
+                                    '0' }}
                                 </div>
                             </ng-container>
                         </div>
@@ -303,7 +289,7 @@
 </div>
 
 <ng-container *ngIf="toggleFilter">
-    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" (toggleFilter)="handleFilter($event)"
-        (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
+    <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" [appliedFilter]="appliedFilter"
+        (toggleFilter)="handleFilter($event)" (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
     </ws-competency-filters>
 </ng-container>
